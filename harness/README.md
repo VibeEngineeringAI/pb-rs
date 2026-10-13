@@ -54,6 +54,14 @@ two implementations compete for CPU. Fixtures, home/config and process state
 are fresh for every sample, including warmups. Outputs are retained for every
 sample. Result directories must be new; previous results are never overwritten.
 
+The default stdout sink is a captured pipe. Use `--stdout-sink file` for a
+separate cached-file experiment that reduces pipe/observer backpressure. File
+mode still validates the complete output, but first-output and first-element
+timings are unavailable. It rejects slow-reader, signal and close-stdout cases.
+The sink is recorded in the report; performance gates reject comparisons across
+different sinks. See [the measured SQL optimizations](../docs/rust-phase3-optimizations.md)
+for a same-run Go/previous-Rust/optimized-Rust comparison using both sinks.
+
 Start with the implemented portion of the Rust port:
 
 ```sh
@@ -205,6 +213,64 @@ Native Rust transport tests additionally cover TLS trust/hostname validation,
 proxies, redirects, compression and deadlines. The fixture corpus and these tests
 do not establish parity against every real deployment or OS certificate store.
 
+## Rust phase-three SQL acceptance and workloads
+
+Phase three adds noninteractive `pb sql run` with streaming text/JSON output.
+Its SQL fixture gate checks raw request-body bytes, partial output, invalid UTF-8,
+JSON float64/escaping behavior, bounded previews, redirects/refresh, process
+signals and output failures. Gated response stages test output before completion
+and cancellation of unread tails. See [the implementation scope and known
+differences](../docs/rust-phase3.md). Final acceptance evidence is pending.
+
+Build the standard and Cloud variants, run the default SQL gate, then measure
+its fixed benchmark suite:
+
+```sh
+make -f harness/Makefile phase3-build
+make -f harness/Makefile phase3-check OUT=harness/results/phase3-check
+make -f harness/Makefile phase3-measure \
+  OUT=harness/results/phase3-check REPETITIONS=30 WARMUP=5
+
+# Separate opt-in deadline gate; every case has an 80-second timeout budget.
+make -f harness/Makefile phase3-deadline-check \
+  OUT=harness/results/phase3-deadlines
+```
+
+`phase3-check` excludes the explicitly recorded `known-divergence` tier for
+non-UTF-8 argv and the opt-in `full60s` tier. Its report names the exclusions;
+they are not passing cases. Standard and Cloud binaries are supplied together,
+and skipped requirements fail the gate. `phase3-reference-check` validates the
+Go expectations separately. All result directories must be new.
+
+The Rust compatibility workflow runs the default gate and archives SQL reports
+and measurements using synthetic fixture credentials. Real deadline cases run
+only when its manual `include_full60s` input is enabled. No live account or
+production endpoint is configured in CI. Five measured hosted-CI samples are
+exploratory; the local checkpoint protocol uses 30 after five excluded warmups.
+
+After acceptance creates the result directory, the supplemental fixed workloads
+can be measured separately:
+
+```sh
+make -f harness/Makefile phase3-workloads-measure \
+  OUT=harness/results/phase3-check REPETITIONS=30 WARMUP=5
+```
+
+The supplemental workload exporter defines both output modes at 1, 500, 1,000,
+10,000 and 100,000 rows, plus delayed headers, paced chunks, a slow reader, one 8 MiB item,
+and 1 MiB leading whitespace. Queries use explicit limits so the default 500
+does not silently change the workload. The measurement runner retains output in
+memory and enforces the declared per-case 100 MiB output limit; that is a harness
+limit, not a CLI limit. Reports go to `sql-workloads/` with the input suite retained
+alongside. These workloads do not demonstrate unbounded capture or disk spooling.
+
+First complete JSON-array element is measured separately from first stdout byte
+and the existing JSONL first-record metric. Element count/order is validated for
+SQL workloads; a printed `[` is not a complete result. The single-large-item case
+can suppress in-drain first-element timing to avoid collector work distorting
+the measurement, while retaining output validation. Missing timings remain N/A.
+Do not infer live server latency or HTTP/2 parity from these loopback results.
+
 ## Saved comparisons and regression gates
 
 During the conversion, add a fixture-backed case for each newly ported command
@@ -252,3 +318,70 @@ Artifacts: `report.md` for reading, `report.json` for full metadata/samples,
 under `artifacts/`. Output lives in ignored `harness/results/` by default; nothing
 is uploaded by a local invocation. The CI workflow uploads its explicitly chosen
 result directory for review.
+
+Archive build provenance before a measurement run (supply the actual compiler
+versions and build flags for each binary):
+
+```sh
+python3 harness/manifest.py --out harness/results/my-run-builds.json \
+  --binary go=bin/pb-go --binary rust=target/release/pb \
+  --build-note 'go=Go source 07af390; pinned optimized harness build' \
+  --build-note 'rust=current captured source; cargo build --locked --release; PB_VERSION=v0.0.0-harness; empty Cloud build token' \
+  --compiler-version 'go=go1.25.4' --compiler-version 'rust=1.96.0' \
+  --runner harness/run.py --meter bin/pb-meter --fixture bin/pb-fixture
+```
+
+The manifest records hashes and a source delta against Git HEAD, including
+untracked source files. Undeclared build details remain `unknown`; the current
+source snapshot does not establish the provenance of historical binaries.
+
+### Explain SQL processing costs
+
+`diagnose.py` runs targeted release controls and separate instrumented builds.
+It retains compatibility checks, native per-child resources, exact output and
+request hashes, and the instrumentation overhead instead of treating a profile
+as an ordinary speed benchmark. See [methods and findings](../docs/rust-phase3-diagnostics.md).
+
+```sh
+make -f harness/Makefile diagnostics-build
+python3 harness/diagnose.py --out harness/results/sql-attribution
+# Focused repeat, keeping the same controls:
+python3 harness/diagnose.py --out harness/results/sql-attribution-repeat \
+  --case p3-single-8MiB-item --repetitions 10 --diagnostic-repetitions 5
+```
+
+The default matrix compares normal releases using pipe and regular-file stdout;
+then diagnostic builds disabled, fully timed, sampled every 64 elements,
+allocation-counted, and (Go only) CPU-profiled. Warmups are retained but excluded
+from summaries. Enabled modes require the disabled control. Diagnostic timings
+are advisory attribution evidence; use `run.py` for release regression gates.
+All tests use generated local HTTP fixtures and disposable profiles. No live
+credentials are read. Artifact directories must be new. Profile files and
+sidecars are stored under `samples/*/diagnostics`; full output captures are kept
+for the first measured round, and contract/resource metadata for every round.
+
+Go's source-pinned build overlay refuses unexpected source changes and leaves
+upstream Go source untouched. Its build manifest is
+`target/go-diagnostics-overlay/build.json`. Rust's `diagnostics` feature compiles
+hooks and a counting allocator only into the separate diagnostic binary.
+
+
+Profile decoding runs after sampling and uses an installed local Go toolchain;
+`--go-tool /path/to/go` selects it without allowing toolchain/module downloads.
+If only the external decoder fails, retry analysis without repeating invocations:
+
+```sh
+python3 harness/diagnose.py --reanalyze harness/results/sql-attribution/report.json \
+  --out harness/results/sql-attribution-verified --go-tool /path/to/go
+```
+
+Reanalysis keeps the original report and profiles, verifies profile hashes where
+recorded, and preserves all unrelated failures. Reports predating collection-time
+profile hashing explicitly record that limitation. A fresh 13-invocation smoke
+run validated the final collector, sidecars, hashes and decoder after the full
+252-invocation investigation.
+
+Optimized builds with debug symbols and external `perf`, `strace`, and `heaptrack`
+captures are documented in [Phase 3 external profiling](../docs/rust-phase3-profiling.md).
+Use `profiling-build` to prepare symbols and `profile_external.py` to capture
+profiles separately from unprofiled CLI resource/latency controls.

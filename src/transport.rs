@@ -78,6 +78,31 @@ impl TransportError {
     pub fn is_body(&self) -> bool {
         self.body
     }
+    /// Socket failures remain network errors even when they occur after
+    /// response headers. Truncated HTTP framing and gzip errors are body
+    /// format failures, and must not acquire this classification.
+    pub fn is_connection_error(&self) -> bool {
+        let mut cause: Option<&(dyn Error + 'static)> = Some(self.source.as_ref());
+        while let Some(error) = cause {
+            if error.downcast_ref::<io::Error>().is_some_and(|error| {
+                matches!(
+                    error.kind(),
+                    io::ErrorKind::ConnectionRefused
+                        | io::ErrorKind::ConnectionReset
+                        | io::ErrorKind::ConnectionAborted
+                        | io::ErrorKind::NotConnected
+                        | io::ErrorKind::BrokenPipe
+                        | io::ErrorKind::NetworkDown
+                        | io::ErrorKind::NetworkUnreachable
+                        | io::ErrorKind::HostUnreachable
+                )
+            }) {
+                return true;
+            }
+            cause = error.source();
+        }
+        false
+    }
     pub fn is_timeout(&self) -> bool {
         let mut cause: Option<&(dyn Error + 'static)> = Some(self.source.as_ref());
         while let Some(error) = cause {
@@ -97,6 +122,16 @@ impl fmt::Display for TransportError {
         let mut cause: Option<&(dyn Error + 'static)> = Some(self.source.as_ref());
         let mut last = self.source.to_string();
         while let Some(error) = cause {
+            // Hyper attaches framing-specific descriptions to body EOFs,
+            // including EOF while waiting for the next chunk size. Go exposes
+            // io.ErrUnexpectedEOF for these. Header EOFs have separate policy.
+            if self.body
+                && error
+                    .downcast_ref::<io::Error>()
+                    .is_some_and(|error| error.kind() == io::ErrorKind::UnexpectedEof)
+            {
+                return f.write_str("unexpected EOF");
+            }
             if let Some(io) = error.downcast_ref::<io::Error>()
                 && io.kind() == io::ErrorKind::ConnectionRefused
             {
@@ -135,6 +170,9 @@ impl fmt::Display for TransportError {
             || last.contains("end of file before message length reached")
         {
             return f.write_str("unexpected EOF");
+        }
+        if last == "Invalid chunk size line: missing size digit" {
+            return f.write_str("invalid byte in chunk length");
         }
         let lower = last.to_ascii_lowercase();
         if lower.contains("gzip") && lower.contains("header") {
@@ -301,6 +339,7 @@ impl Transport {
             reason,
             headers: parts.headers,
             body,
+            pending: Bytes::new(),
             gzip,
             gzip_input,
             url: raw_url.into(),
@@ -329,6 +368,7 @@ pub struct Response {
     reason: String,
     headers: HeaderMap,
     body: Option<Incoming>,
+    pending: Bytes,
     gzip: Option<GzipReader>,
     gzip_input: Option<Arc<std::sync::atomic::AtomicBool>>,
     url: String,
@@ -355,6 +395,15 @@ impl Response {
         self.chunk_limit(8192).await
     }
     pub async fn chunk_limit(&mut self, maximum: usize) -> Result<Option<Bytes>, TransportError> {
+        // A bounded read must also bound uncompressed Hyper frames, which can
+        // be much larger than the requested preview or bridge capacity.
+        if maximum == 0 {
+            return Ok(Some(Bytes::new()));
+        }
+        if !self.pending.is_empty() {
+            let count = maximum.min(self.pending.len());
+            return Ok(Some(self.pending.split_to(count)));
+        }
         if let Some(gzip) = &mut self.gzip {
             let mut buffer = vec![0; maximum];
             let count = match gzip.read(&mut buffer).await {
@@ -379,8 +428,14 @@ impl Response {
         };
         while let Some(frame) = body.frame().await {
             let frame = frame.map_err(|e: HyperError| TransportError::body(&self.url, e))?;
-            if let Ok(data) = frame.into_data() {
-                return Ok(Some(data));
+            if let Ok(mut data) = frame.into_data() {
+                if data.is_empty() {
+                    continue;
+                }
+                let count = maximum.min(data.len());
+                let chunk = data.split_to(count);
+                self.pending = data;
+                return Ok(Some(chunk));
             }
         }
         Ok(None)
@@ -1028,6 +1083,35 @@ mod tests {
             );
             assert!(error.to_string().contains("connect: connection refused"));
         }
+    }
+    #[test]
+    fn body_format_failures_are_distinct_from_connection_failures() {
+        for kind in [io::ErrorKind::UnexpectedEof, io::ErrorKind::InvalidData] {
+            let error = TransportError::body("http://fixture/", io::Error::new(kind, "body fault"));
+            assert!(error.is_body());
+            assert!(!error.is_connection_error());
+        }
+        let error = TransportError::body(
+            "http://fixture/",
+            io::Error::new(io::ErrorKind::ConnectionReset, "socket fault"),
+        );
+        assert!(error.is_body());
+        assert!(error.is_connection_error());
+    }
+    #[test]
+    fn chunk_size_eof_normalization_applies_only_to_body_errors() {
+        let description = "unexpected EOF during chunk size line";
+        let body = TransportError::body(
+            "http://fixture/",
+            io::Error::new(io::ErrorKind::UnexpectedEof, description),
+        );
+        assert_eq!(body.to_string(), "unexpected EOF");
+        assert!(!body.is_connection_error());
+        let header = TransportError::new(
+            "http://fixture/",
+            io::Error::new(io::ErrorKind::UnexpectedEof, description),
+        );
+        assert_eq!(header.to_string(), description);
     }
     #[test]
     fn empty_gzip_response_preserves_status_and_empty_body() {

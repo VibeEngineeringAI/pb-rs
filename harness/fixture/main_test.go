@@ -1,11 +1,13 @@
 package main
 
 import (
+	"compress/gzip"
 	"context"
 	"io"
 	"net"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -99,5 +101,57 @@ func TestFlightBatchesAndTerminalStatus(t *testing.T) {
 	defer f.mu.Unlock()
 	if len(f.requests) != 1 || f.requests[0].Body != `{"stream":"logs"}` || f.requests[0].Protocol != "flight" {
 		t.Fatalf("trace = %+v", f.requests)
+	}
+}
+
+func TestGenerateMatchesPhase3Model(t *testing.T) {
+	g := &generate{Prefix: "[", Item: `{"sequence":{{i}},"pad":"{{fill}}","b":"{{blob}}"}`, Separator: ",", Suffix: "]", Count: 3, Width: 2, BlobBytes: 2}
+	want := `[{"sequence":0,"pad":"x","b":"xx"},{"sequence":1,"pad":"x","b":"xx"},{"sequence":2,"pad":"x","b":"xx"}]`
+	if got := string(g.expand()); got != want {
+		t.Fatalf("expand = %s", got)
+	}
+}
+
+func TestGzipGeneratedRouteAndMilestones(t *testing.T) {
+	plan := scenario{Routes: []route{{Method: "POST", Path: "/api/v1/query", Gzip: true, Generate: &generate{Prefix: "[", Item: "{{i}}", Separator: ",", Suffix: "]", Count: 4}}}}
+	if err := plan.prepare(); err != nil {
+		t.Fatal(err)
+	}
+	f := &fixture{plan: plan}
+	rec := httptest.NewRecorder()
+	f.ServeHTTP(rec, httptest.NewRequest(http.MethodPost, "/api/v1/query", strings.NewReader("{}")))
+	if rec.Header().Get("Content-Encoding") != "gzip" || rec.Header().Get("Content-Length") != strconv.Itoa(rec.Body.Len()) {
+		t.Fatalf("headers = %v", rec.Header())
+	}
+	reader, err := gzip.NewReader(rec.Body)
+	if err != nil {
+		t.Fatal(err)
+	}
+	body, _ := io.ReadAll(reader)
+	if string(body) != "[0,1,2,3]" {
+		t.Fatalf("body = %q", body)
+	}
+	m := f.milestones[0]
+	if m.ReceivedMonotonicNS == 0 || m.HeadersMonotonicNS < m.ReceivedMonotonicNS || m.FirstBodyMonotonicNS < m.HeadersMonotonicNS ||
+		m.FinalBodyMonotonicNS < m.FirstBodyMonotonicNS || m.UncompressedBodyBytes != 9 || m.BodyBytesWritten != len(f.plan.Routes[0].payload) {
+		t.Fatalf("milestone = %+v", m)
+	}
+	rec = httptest.NewRecorder()
+	f.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/__harness/milestones", nil))
+	if !strings.Contains(rec.Body.String(), `"uncompressed_body_bytes":9`) {
+		t.Fatalf("milestones endpoint = %s", rec.Body.String())
+	}
+}
+
+func TestLegacyRouteFramingUnchanged(t *testing.T) {
+	plan := scenario{Routes: []route{{Method: "GET", Path: "/x", Body: `{"p":{{grpc_port}}}`}}}
+	if err := plan.prepare(); err != nil {
+		t.Fatal(err)
+	}
+	f := &fixture{plan: plan, grpcPort: 7}
+	rec := httptest.NewRecorder()
+	f.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/x", nil))
+	if rec.Body.String() != `{"p":7}` || rec.Header().Get("Content-Length") != "" || rec.Header().Get("Content-Encoding") != "" {
+		t.Fatalf("legacy response changed: %v %s", rec.Header(), rec.Body.String())
 	}
 }

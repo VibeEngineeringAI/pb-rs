@@ -96,8 +96,8 @@ impl CliError {
             value
         };
         Outcome {
-            stdout: self.stdout.clone(),
-            stderr,
+            stdout: self.stdout.as_bytes().to_vec(),
+            stderr: stderr.into_bytes(),
             exit_code: 1,
         }
     }
@@ -139,7 +139,9 @@ impl From<crate::api::ApiError> for CliError {
         {
             return Self::new(cause.code, message);
         }
-        if error.is_request_error() {
+        if error.is_request_error()
+            || matches!(error.root_cause(), ApiError::Network(source) if source.is_connection_error())
+        {
             let mut result = Self::new(ErrorCode::ConnectionFailed, message);
             result.retryable = true;
             return result;

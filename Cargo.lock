@@ -632,6 +632,7 @@ dependencies = [
  "tower-service",
  "unicode-width",
  "url",
+ "zmij",
 ]
 
 [[package]]

@@ -11,6 +11,7 @@ OUT ?= $(ROOT)/harness/results/$(shell date -u +%Y%m%dT%H%M%SZ)
 
 .PHONY: build tools baseline self-check test rust-build rust-test phase1-check phase1-measure phase2-build phase2-check phase2-measure baseline-cloud rust-cloud-build
 .PHONY: phase2-workloads-measure
+.PHONY: phase3-build phase3-reference-check phase3-check phase3-deadline-check phase3-measure phase3-workloads-measure
 
 build: tools baseline
 
@@ -21,7 +22,7 @@ tools:
 
 baseline:
 	mkdir -p $(ROOT)/bin
-	cd $(ROOT) && CGO_ENABLED=0 $(GO) build -trimpath -tags kqueue -ldflags '-s -w -X main.Version=$(VERSION) -X main.Commit=harness' -o bin/pb-go .
+	cd $(ROOT) && CGO_ENABLED=0 $(GO) build -buildvcs=false -trimpath -tags kqueue -ldflags '-s -w -X main.Version=$(VERSION) -X main.Commit=harness' -o bin/pb-go .
 
 self-check:
 	$(PYTHON) $(ROOT)/harness/run.py run --binary go=$(ROOT)/bin/pb-go --binary identical=$(ROOT)/bin/pb-go --fixture $(ROOT)/bin/pb-fixture --out $(OUT) --repetitions $(REPETITIONS)
@@ -50,7 +51,7 @@ phase1-measure:
 # artifacts let missing-release-configuration cases stay in the same gate.
 baseline-cloud:
 	mkdir -p $(ROOT)/bin
-	cd $(ROOT) && CGO_ENABLED=0 $(GO) build -trimpath -tags kqueue -ldflags '-s -w -X main.Version=$(VERSION) -X main.Commit=harness -X github.com/parseablehq/pb/pkg/config.CloudOrchestratorAuthToken=harness-orchestrator-token' -o bin/pb-go-cloud .
+	cd $(ROOT) && CGO_ENABLED=0 $(GO) build -buildvcs=false -trimpath -tags kqueue -ldflags '-s -w -X main.Version=$(VERSION) -X main.Commit=harness -X github.com/parseablehq/pb/pkg/config.CloudOrchestratorAuthToken=harness-orchestrator-token' -o bin/pb-go-cloud .
 
 rust-cloud-build:
 	cd $(ROOT) && PB_VERSION=$(VERSION) PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN=harness-orchestrator-token $(CARGO) build --locked --release --target-dir target/harness-cloud
@@ -66,3 +67,44 @@ phase2-measure:
 phase2-workloads-measure:
 	$(PYTHON) $(ROOT)/harness/phase2_workloads.py --out $(OUT)/workload-suite.json
 	$(PYTHON) $(ROOT)/harness/run.py run --suite $(OUT)/workload-suite.json --binary go=$(ROOT)/bin/pb-go --binary rust=$(ROOT)/target/release/pb --fixture $(ROOT)/bin/pb-fixture --out $(OUT)/workloads --repetitions $(REPETITIONS) --warmup $(WARMUP)
+
+phase3-build: phase2-build
+
+# The default gate excludes the opt-in full60s and known-divergence tiers.
+# Both Cloud artifacts are required; skips remain failures.
+phase3-reference-check:
+	$(PYTHON) $(ROOT)/harness/phase3.py check-reference --reference $(ROOT)/bin/pb-go --cloud-reference $(ROOT)/bin/pb-go-cloud --meter $(ROOT)/bin/pb-meter --out $(OUT)
+
+phase3-check:
+	$(PYTHON) $(ROOT)/harness/phase3.py compare --reference $(ROOT)/bin/pb-go --candidate $(ROOT)/target/release/pb --cloud-reference $(ROOT)/bin/pb-go-cloud --cloud-candidate $(ROOT)/target/harness-cloud/release/pb --meter $(ROOT)/bin/pb-meter --out $(OUT)
+
+# Separate, explicitly opt-in real 60-second deadline cases (80 s case budget).
+phase3-deadline-check:
+	$(PYTHON) $(ROOT)/harness/phase3.py compare --reference $(ROOT)/bin/pb-go --candidate $(ROOT)/target/release/pb --cloud-reference $(ROOT)/bin/pb-go-cloud --cloud-candidate $(ROOT)/target/harness-cloud/release/pb --meter $(ROOT)/bin/pb-meter --include-full60s --group deadline --out $(OUT)
+
+phase3-measure:
+	$(PYTHON) $(ROOT)/harness/run.py run --suite $(OUT)/benchmark-suite.json --binary go=$(ROOT)/bin/pb-go --binary rust=$(ROOT)/target/release/pb --fixture $(ROOT)/bin/pb-fixture --meter $(ROOT)/bin/pb-meter --out $(OUT)/performance --repetitions $(REPETITIONS) --warmup $(WARMUP)
+
+# Use a new OUT/SQL workload artifact path after the acceptance report exists.
+phase3-workloads-measure:
+	$(PYTHON) $(ROOT)/harness/phase3_workloads.py --out $(OUT)/sql-workload-suite.json
+	$(PYTHON) $(ROOT)/harness/run.py run --suite $(OUT)/sql-workload-suite.json --binary go=$(ROOT)/bin/pb-go --binary rust=$(ROOT)/target/release/pb --fixture $(ROOT)/bin/pb-fixture --out $(OUT)/sql-workloads --repetitions $(REPETITIONS) --warmup $(WARMUP)
+
+# Diagnostic binaries are deliberately separate from the release comparison.
+.PHONY: diagnostics-build diagnostics-measure
+diagnostics-build:
+	cd $(ROOT) && $(PYTHON) harness/go_diagnostics.py --go $(GO) --binary bin/pb-go-diagnostics
+	cd $(ROOT) && PB_VERSION=$(VERSION) PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN= $(CARGO) build --locked --release --features diagnostics --target-dir target/diagnostics
+
+diagnostics-measure:
+	cd $(ROOT) && $(PYTHON) harness/diagnose.py --out $(OUT) --repetitions $(REPETITIONS) --warmup $(WARMUP)
+
+# Optimized native stacks, without manual diagnostics hooks or stripped symbols.
+.PHONY: profiling-build profiling-capture
+profiling-build:
+	mkdir -p $(ROOT)/bin $(ROOT)/target/tmp
+	cd $(ROOT) && TMPDIR=$(ROOT)/target/tmp GOTMPDIR=$(ROOT)/target/tmp CGO_ENABLED=0 $(GO) build -buildvcs=false -trimpath -tags kqueue -ldflags '-X main.Version=$(VERSION) -X main.Commit=harness' -o bin/pb-go-symbolized .
+	cd $(ROOT) && TMPDIR=$(ROOT)/target/tmp PB_VERSION=$(VERSION) PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN= $(CARGO) build --locked --profile profiling --target-dir target/symbolized
+
+profiling-capture:
+	cd $(ROOT) && $(PYTHON) harness/profile_external.py --out $(OUT) --repetitions $(REPETITIONS)

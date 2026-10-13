@@ -1,10 +1,11 @@
-//! Buffered HTTP operations with explicit endpoint families and one deadline.
+//! Authenticated HTTP operations with owned streaming bodies and one deadline.
 pub use crate::transport::TransportError;
 use crate::transport::{Response as RawResponse, Transport as Client};
 use crate::{
     auth::{Auth, AuthError, orchestrator_headers},
     config::{ConfigError, ProfileRecord, ProfileStore},
 };
+use bytes::Bytes;
 use http::{
     Method, StatusCode,
     header::{
@@ -100,6 +101,7 @@ pub enum ApiError {
         url: String,
         body: bool,
     },
+    BodyCanceled,
     HttpStatus {
         status: u16,
         reason: String,
@@ -134,7 +136,7 @@ impl ApiError {
     }
     pub fn is_timeout(&self) -> bool {
         match self {
-            Self::Timeout { .. } => true,
+            Self::Timeout { .. } | Self::BodyCanceled => true,
             Self::Network(e) => e.is_timeout(),
             Self::Refresh(e)
             | Self::Request { source: e, .. }
@@ -162,6 +164,7 @@ impl fmt::Display for ApiError {
             Self::Request { method, url, source } => write!(f, "{} {:?}: {source}", go_method(method), redact_url_password(url)),
             Self::Context { message, source } => write!(f, "{message}: {source}"),
             Self::Timeout { body: true, .. } => f.write_str("context deadline exceeded (Client.Timeout or context cancellation while reading body)"),
+            Self::BodyCanceled => f.write_str("net/http: request canceled (Client.Timeout or context cancellation while reading body)"),
             Self::Timeout { method, url, .. } => write!(f, "{} {:?}: context deadline exceeded (Client.Timeout exceeded while awaiting headers)", go_method(method), redact_url_password(url)),
             Self::HttpStatus { status, reason, body, context } => {
                 if context.is_empty() { write!(f, "HTTP {status}: {}", body.trim()) }
@@ -224,6 +227,103 @@ impl ApiResponse {
             body: String::from_utf8_lossy(&self.body).into_owned(),
             context: String::new(),
         }
+    }
+}
+
+/// A replayable small request. Preparation performs no network operations;
+/// the command can start its spinner after constructing this value.
+#[derive(Debug)]
+pub struct PreparedRequest {
+    method: Method,
+    raw_endpoint: String,
+    headers: HeaderMap,
+    body: Option<Vec<u8>>,
+    timeout: Duration,
+}
+
+/// The final response owns its body and retains the deadline established by
+/// sending the request. Dropping it cancels the unread body without draining.
+pub struct StreamingResponse {
+    pub status: u16,
+    pub reason: String,
+    response: Option<RawResponse>,
+    deadline: Instant,
+    method: Method,
+    url: String,
+}
+impl fmt::Debug for StreamingResponse {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("StreamingResponse")
+            .field("status", &self.status)
+            .field("reason", &self.reason)
+            .finish_non_exhaustive()
+    }
+}
+impl StreamingResponse {
+    pub(crate) fn deadline(&self) -> Instant {
+        self.deadline
+    }
+    pub(crate) fn cancel_body(&mut self) -> ApiError {
+        self.response.take();
+        ApiError::BodyCanceled
+    }
+    pub async fn chunk(&mut self) -> Result<Option<Bytes>, ApiError> {
+        self.chunk_limit(8192).await
+    }
+    /// Read at most `maximum` decompressed bytes, retaining any frame remainder
+    /// for the next read. Zero requests no data and does not indicate EOF.
+    pub async fn chunk_limit(&mut self, maximum: usize) -> Result<Option<Bytes>, ApiError> {
+        if maximum == 0 {
+            return Ok(Some(Bytes::new()));
+        }
+        // timeout_at polls its inner future first. A ready Hyper frame or
+        // decompressor buffer would otherwise bypass an expired deadline.
+        if Instant::now() >= self.deadline || self.response.is_none() {
+            return Err(self.cancel_body());
+        }
+        let result = timeout_at(
+            self.deadline,
+            self.response
+                .as_mut()
+                .expect("body checked")
+                .chunk_limit(maximum),
+        )
+        .await;
+        match result {
+            Ok(chunk) => chunk.map_err(ApiError::Network),
+            Err(_) => {
+                self.response.take();
+                Err(ApiError::Timeout {
+                    method: self.method.clone(),
+                    url: self.url.clone(),
+                    body: true,
+                })
+            }
+        }
+    }
+    /// Stop at the byte limit without probing or draining an unread tail. Error
+    /// previews request 65,537 bytes to distinguish an exact-size body from a
+    /// truncated one while keeping only 65,536 bytes for rendering.
+    pub async fn read_limited(&mut self, maximum: usize) -> Result<Vec<u8>, ApiError> {
+        let mut bytes = Vec::new();
+        while bytes.len() < maximum {
+            let Some(chunk) = self.chunk_limit((maximum - bytes.len()).min(8192)).await? else {
+                break;
+            };
+            bytes.extend_from_slice(&chunk);
+        }
+        Ok(bytes)
+    }
+    pub async fn collect(mut self) -> Result<ApiResponse, ApiError> {
+        let mut body = Vec::new();
+        while let Some(chunk) = self.chunk().await? {
+            body.extend_from_slice(&chunk);
+        }
+        Ok(ApiResponse {
+            status: self.status,
+            reason: self.reason,
+            body,
+        })
     }
 }
 
@@ -290,14 +390,32 @@ impl ApiClient {
         self.request_with_policy(method, paths, body, timeout, false)
             .await
     }
-    async fn request_with_policy(
+    /// Prepare a standard endpoint for a streamed operation.
+    pub fn prepare_standard(
+        &self,
+        method: Method,
+        path: &str,
+        body: Option<Vec<u8>>,
+    ) -> Result<PreparedRequest, ApiError> {
+        self.prepare_with_policy(method, &["api/v1/", path], body, STANDARD_TIMEOUT, true)
+    }
+    pub fn prepare(
+        &self,
+        method: Method,
+        paths: &[&str],
+        body: Option<Vec<u8>>,
+        timeout: Duration,
+    ) -> Result<PreparedRequest, ApiError> {
+        self.prepare_with_policy(method, paths, body, timeout, false)
+    }
+    fn prepare_with_policy(
         &self,
         method: Method,
         paths: &[&str],
         body: Option<Vec<u8>>,
         timeout: Duration,
         ignore_join_error: bool,
-    ) -> Result<ApiResponse, ApiError> {
+    ) -> Result<PreparedRequest, ApiError> {
         let profile = self.profile();
         let raw_endpoint = match append_url_string(&profile.url, paths) {
             Ok(endpoint) => endpoint,
@@ -309,6 +427,27 @@ impl ApiClient {
         if ignore_join_error {
             debug_headers(&method, &raw_endpoint, &headers);
         }
+        Ok(PreparedRequest {
+            method,
+            raw_endpoint,
+            headers,
+            body,
+            timeout,
+        })
+    }
+    /// Start one absolute deadline spanning redirects, OAuth refresh/replay,
+    /// response headers, and all subsequent body reads.
+    pub async fn send_streaming(
+        &self,
+        request: PreparedRequest,
+    ) -> Result<StreamingResponse, ApiError> {
+        let PreparedRequest {
+            method,
+            raw_endpoint,
+            headers,
+            body,
+            timeout,
+        } = request;
         let endpoint = checked_http_url(&raw_endpoint).map_err(|source| ApiError::Request {
             method: method.clone(),
             url: raw_endpoint.clone(),
@@ -316,34 +455,55 @@ impl ApiClient {
         })?;
         let deadline = Instant::now() + timeout;
         let headers_received = AtomicBool::new(false);
+        let timeout_url = Mutex::new(endpoint.to_string());
         let call = self.follow_redirects(
             method.clone(),
             endpoint.clone(),
             headers,
             body,
             &headers_received,
+            &timeout_url,
         );
-        timeout_at(deadline, call)
+        let response = timeout_at(deadline, call)
             .await
             .map_err(|_| ApiError::Timeout {
                 method: method.clone(),
-                url: endpoint.to_string(),
+                url: timeout_url
+                    .lock()
+                    .expect("timeout URL mutex poisoned")
+                    .clone(),
                 body: headers_received.load(Ordering::Relaxed),
             })?
             .map_err(|source| {
-                if matches!(&source, ApiError::Request { .. })
-                    || (headers_received.load(Ordering::Relaxed)
-                        && matches!(&source, ApiError::Network(error) if error.is_body()))
-                {
+                if matches!(&source, ApiError::Request { .. }) {
                     source
                 } else {
                     ApiError::Request {
-                        method,
-                        url: raw_endpoint,
+                        method: method.clone(),
+                        url: raw_endpoint.clone(),
                         source: Box::new(source),
                     }
                 }
-            })
+            })?;
+        Ok(StreamingResponse {
+            status: response.status().as_u16(),
+            reason: response.reason().to_owned(),
+            response: Some(response),
+            deadline,
+            method,
+            url: raw_endpoint,
+        })
+    }
+    async fn request_with_policy(
+        &self,
+        method: Method,
+        paths: &[&str],
+        body: Option<Vec<u8>>,
+        timeout: Duration,
+        ignore_join_error: bool,
+    ) -> Result<ApiResponse, ApiError> {
+        let request = self.prepare_with_policy(method, paths, body, timeout, ignore_join_error)?;
+        self.send_streaming(request).await?.collect().await
     }
 
     async fn follow_redirects(
@@ -353,7 +513,8 @@ impl ApiClient {
         headers: HeaderMap,
         body: Option<Vec<u8>>,
         headers_received: &AtomicBool,
-    ) -> Result<ApiResponse, ApiError> {
+        timeout_url: &Mutex<String>,
+    ) -> Result<RawResponse, ApiError> {
         let original_method = method.clone();
         let mut current_url = endpoint.clone();
         let mut current_method = method;
@@ -361,6 +522,7 @@ impl ApiClient {
         let mut current_headers = headers.clone();
         let mut stripped = false;
         for hop in 0..10 {
+            *timeout_url.lock().expect("timeout URL mutex poisoned") = current_url.to_string();
             headers_received.store(false, Ordering::Relaxed);
             let response = self
                 .send_authenticated(
@@ -380,12 +542,12 @@ impl ApiClient {
                 || response.headers().get(LOCATION).is_none()
             {
                 headers_received.store(true, Ordering::Relaxed);
-                return buffer_response(response).await;
+                return Ok(response);
             }
             let location = crate::url_reference::location(response.headers()[LOCATION].as_bytes());
             if location.is_empty() {
                 headers_received.store(true, Ordering::Relaxed);
-                return buffer_response(response).await;
+                return Ok(response);
             }
             let next_url = current_url.join(&location).map_err(|e| ApiError::Request {
                 method: original_method.clone(),
@@ -1384,6 +1546,405 @@ mod tests {
         }
     }
     #[test]
+    fn streaming_headers_and_bounded_reads_complete_before_tail_is_released() {
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let endpoint = format!("http://{}", listener.local_addr().unwrap());
+        let (release, wait) = std::sync::mpsc::channel();
+        let task = thread::spawn(move || {
+            let (mut stream, _) = listener.accept().unwrap();
+            read_test_headers(&mut stream);
+            stream.write_all(b"HTTP/1.1 200 Query Ready\r\nContent-Length: 20\r\nConnection: close\r\n\r\nabcdefghij").unwrap();
+            // Completion of the client reads causes this tail to be released;
+            // buffering or draining before returning would deadlock the test.
+            if wait.recv_timeout(Duration::from_secs(2)).is_ok() {
+                let _ = stream.write_all(b"klmnopqrst");
+            }
+        });
+        let profile = ProfileRecord {
+            url: endpoint,
+            api_key: "key".into(),
+            ..Default::default()
+        };
+        let store = store(&profile);
+        let client = ApiClient::new(profile, store.clone()).unwrap();
+        runtime().block_on(async {
+            let request = client.prepare_standard(Method::GET, "query", None).unwrap();
+            let mut response = client.send_streaming(request).await.unwrap();
+            assert_eq!(response.status, 200);
+            assert_eq!(response.reason, "Query Ready");
+            assert!(response.read_limited(0).await.unwrap().is_empty());
+            assert_eq!(response.read_limited(3).await.unwrap(), b"abc");
+            assert_eq!(response.chunk_limit(2).await.unwrap().unwrap(), b"de"[..]);
+            assert_eq!(response.read_limited(5).await.unwrap(), b"fghij");
+            drop(response);
+            release.send(()).unwrap();
+        });
+        task.join().unwrap();
+        std::fs::remove_dir_all(store.path().parent().unwrap()).unwrap();
+    }
+    #[test]
+    fn dropping_stream_does_not_wait_for_stalled_tail() {
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let endpoint = format!("http://{}", listener.local_addr().unwrap());
+        let (closed, wait_closed) = std::sync::mpsc::channel();
+        let task = thread::spawn(move || {
+            let (mut stream, _) = listener.accept().unwrap();
+            read_test_headers(&mut stream);
+            stream
+                .set_read_timeout(Some(Duration::from_secs(2)))
+                .unwrap();
+            stream
+                .write_all(b"HTTP/1.1 200 OK\r\nContent-Length: 100\r\nConnection: close\r\n\r\n[]")
+                .unwrap();
+            let mut byte = [0];
+            let result = stream.read(&mut byte);
+            closed.send(result.is_ok_and(|count| count == 0)).unwrap();
+        });
+        let profile = ProfileRecord {
+            url: endpoint,
+            api_key: "key".into(),
+            ..Default::default()
+        };
+        let store = store(&profile);
+        let client = ApiClient::new(profile, store.clone()).unwrap();
+        runtime().block_on(async {
+            let request = client.prepare_standard(Method::GET, "query", None).unwrap();
+            let mut response = client.send_streaming(request).await.unwrap();
+            assert_eq!(response.read_limited(2).await.unwrap(), b"[]");
+            drop(response);
+            // Drive Hyper's task after dropping the reader so the server can
+            // confirm cancellation while it still withholds the remaining body.
+            for _ in 0..100 {
+                if let Ok(closed) = wait_closed.try_recv() {
+                    assert!(closed);
+                    return;
+                }
+                tokio::time::sleep(Duration::from_millis(10)).await;
+            }
+            panic!("server did not observe body cancellation");
+        });
+        task.join().unwrap();
+        std::fs::remove_dir_all(store.path().parent().unwrap()).unwrap();
+    }
+    #[test]
+    fn streamed_body_retains_deadline_while_consumer_is_idle() {
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let endpoint = format!("http://{}", listener.local_addr().unwrap());
+        let task = thread::spawn(move || {
+            let (mut stream, _) = listener.accept().unwrap();
+            read_test_headers(&mut stream);
+            stream
+                .write_all(b"HTTP/1.1 200 OK\r\nContent-Length: 10\r\nConnection: close\r\n\r\na")
+                .unwrap();
+            thread::sleep(Duration::from_millis(200));
+        });
+        let profile = ProfileRecord {
+            url: endpoint,
+            api_key: "key".into(),
+            ..Default::default()
+        };
+        let store = store(&profile);
+        let client = ApiClient::new(profile, store.clone()).unwrap();
+        runtime().block_on(async {
+            let request = client
+                .prepare(
+                    Method::GET,
+                    &["api/v1/query"],
+                    None,
+                    Duration::from_millis(40),
+                )
+                .unwrap();
+            let mut response = client.send_streaming(request).await.unwrap();
+            assert_eq!(response.read_limited(1).await.unwrap(), b"a");
+            tokio::time::sleep(Duration::from_millis(80)).await;
+            // Waiting between reads must not restart the body deadline.
+            let error = response.chunk().await.unwrap_err();
+            assert!(matches!(error, ApiError::BodyCanceled));
+            assert!(!error.is_request_error());
+        });
+        task.join().unwrap();
+        std::fs::remove_dir_all(store.path().parent().unwrap()).unwrap();
+    }
+    #[test]
+    fn expired_deadline_rejects_an_already_buffered_frame() {
+        let (endpoint, _, task) = server(vec![Reply::new(200, "abcdef")]);
+        let profile = ProfileRecord {
+            url: endpoint,
+            api_key: "key".into(),
+            ..Default::default()
+        };
+        let store = store(&profile);
+        let client = ApiClient::new(profile, store.clone()).unwrap();
+        runtime().block_on(async {
+            let request = client.prepare(Method::GET, &["api/v1/query"], None, Duration::from_secs(1)).unwrap();
+            let mut response = client.send_streaming(request).await.unwrap();
+            assert_eq!(response.read_limited(1).await.unwrap(), b"a");
+            response.deadline = Instant::now() - Duration::from_millis(1);
+            let error = response.chunk().await.unwrap_err();
+            assert!(matches!(error, ApiError::BodyCanceled));
+            assert!(error.is_timeout());
+            assert!(!error.is_request_error());
+            assert_eq!(error.to_string(), "net/http: request canceled (Client.Timeout or context cancellation while reading body)");
+            assert!(response.response.is_none());
+        });
+        task.join().unwrap();
+        std::fs::remove_dir_all(store.path().parent().unwrap()).unwrap();
+    }
+    #[test]
+    fn streamed_body_deadline_includes_oauth_refresh_and_redirect() {
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let final_url = format!("http://{}", listener.local_addr().unwrap());
+        let final_task = thread::spawn(move || {
+            let (mut stream, _) = listener.accept().unwrap();
+            read_test_headers(&mut stream);
+            stream
+                .write_all(b"HTTP/1.1 200 OK\r\nContent-Length: 10\r\nConnection: close\r\n\r\nx")
+                .unwrap();
+            thread::sleep(Duration::from_millis(350));
+        });
+        let mut redirect = Reply::new(307, "");
+        redirect.location = Some(final_url);
+        let (workspace, requests, workspace_task) = server(vec![Reply::new(401, ""), redirect]);
+        let mut refreshed = Reply::new(
+            200,
+            r#"{"access_token":"new-session","refresh_token":"new-refresh"}"#,
+        );
+        refreshed.delay = Duration::from_millis(70);
+        let (orchestrator, _, refresh_task) = server(vec![refreshed]);
+        let profile = oauth(workspace, orchestrator);
+        let store = store(&profile);
+        let client =
+            ApiClient::with_orchestrator_token(profile, store.clone(), "release-token").unwrap();
+        runtime().block_on(async {
+            let request = client
+                .prepare(
+                    Method::POST,
+                    &["api/v1/query"],
+                    Some(b"{}".to_vec()),
+                    Duration::from_millis(180),
+                )
+                .unwrap();
+            let mut response = client.send_streaming(request).await.unwrap();
+            assert_eq!(response.read_limited(1).await.unwrap(), b"x");
+            // More than the remaining original budget, less than a freshly
+            // started response-body deadline: the next read must fail at once.
+            tokio::time::sleep(Duration::from_millis(130)).await;
+            let started = Instant::now();
+            let error = response.chunk().await.unwrap_err();
+            assert!(matches!(error, ApiError::BodyCanceled));
+            assert!(started.elapsed() < Duration::from_millis(50));
+        });
+        workspace_task.join().unwrap();
+        refresh_task.join().unwrap();
+        final_task.join().unwrap();
+        assert_eq!(requests.lock().unwrap().len(), 2);
+        assert_eq!(client.profile().session_token, "new-session");
+        assert_eq!(
+            store.read().unwrap().profiles["cloud"].refresh_token,
+            "new-refresh"
+        );
+        std::fs::remove_dir_all(store.path().parent().unwrap()).unwrap();
+    }
+    #[test]
+    fn streaming_body_fault_keeps_received_prefix_and_body_error_stage() {
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let endpoint = format!("http://{}", listener.local_addr().unwrap());
+        let (close, wait) = std::sync::mpsc::channel();
+        let task = thread::spawn(move || {
+            let (mut stream, _) = listener.accept().unwrap();
+            read_test_headers(&mut stream);
+            stream
+                .write_all(
+                    b"HTTP/1.1 200 OK\r\nContent-Length: 10\r\nConnection: close\r\n\r\nprefix",
+                )
+                .unwrap();
+            let _ = wait.recv_timeout(Duration::from_secs(2));
+        });
+        let profile = ProfileRecord {
+            url: endpoint,
+            api_key: "key".into(),
+            ..Default::default()
+        };
+        let store = store(&profile);
+        let client = ApiClient::new(profile, store.clone()).unwrap();
+        runtime().block_on(async {
+            let request = client.prepare_standard(Method::GET, "query", None).unwrap();
+            let mut response = client.send_streaming(request).await.unwrap();
+            assert_eq!(response.read_limited(6).await.unwrap(), b"prefix");
+            close.send(()).unwrap();
+            let error = response.chunk().await.unwrap_err();
+            assert!(matches!(&error, ApiError::Network(source) if source.is_body() && !source.is_connection_error()));
+            assert_eq!(error.to_string(), "unexpected EOF");
+            assert!(!error.is_request_error());
+            let classified = crate::error::CliError::from(error);
+            assert_eq!(classified.code, crate::ErrorCode::CommandFailed);
+            assert!(!classified.retryable);
+        });
+        task.join().unwrap();
+        std::fs::remove_dir_all(store.path().parent().unwrap()).unwrap();
+    }
+    #[cfg(unix)]
+    #[test]
+    fn streaming_connection_reset_keeps_network_cause_after_headers() {
+        use std::os::fd::AsRawFd;
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let endpoint = format!("http://{}", listener.local_addr().unwrap());
+        let (reset, wait) = std::sync::mpsc::channel();
+        let task = thread::spawn(move || {
+            let (mut stream, _) = listener.accept().unwrap();
+            read_test_headers(&mut stream);
+            stream
+                .write_all(
+                    b"HTTP/1.1 200 OK\r\nContent-Length: 100\r\nConnection: close\r\n\r\nprefix",
+                )
+                .unwrap();
+            if wait.recv_timeout(Duration::from_secs(2)).is_ok() {
+                let linger = libc::linger {
+                    l_onoff: 1,
+                    l_linger: 0,
+                };
+                assert_eq!(
+                    unsafe {
+                        libc::setsockopt(
+                            stream.as_raw_fd(),
+                            libc::SOL_SOCKET,
+                            libc::SO_LINGER,
+                            (&linger as *const libc::linger).cast(),
+                            std::mem::size_of_val(&linger) as libc::socklen_t,
+                        )
+                    },
+                    0
+                );
+            }
+        });
+        let profile = ProfileRecord {
+            url: endpoint,
+            api_key: "key".into(),
+            ..Default::default()
+        };
+        let store = store(&profile);
+        let client = ApiClient::new(profile, store.clone()).unwrap();
+        runtime().block_on(async {
+            let request = client.prepare_standard(Method::GET, "query", None).unwrap();
+            let mut response = client.send_streaming(request).await.unwrap();
+            assert_eq!(response.read_limited(6).await.unwrap(), b"prefix");
+            reset.send(()).unwrap();
+            let error = response.chunk().await.unwrap_err();
+            assert!(matches!(&error, ApiError::Network(source) if source.is_body() && source.is_connection_error()));
+            assert!(!error.is_request_error());
+            let classified = crate::error::CliError::from(error);
+            assert_eq!(classified.code, crate::ErrorCode::ConnectionFailed);
+            assert!(classified.retryable);
+        });
+        task.join().unwrap();
+        std::fs::remove_dir_all(store.path().parent().unwrap()).unwrap();
+    }
+    #[test]
+    fn chunked_text_and_json_prefixes_preserve_partial_body_before_eof() {
+        for prefix in [&b"abcdef"[..], &b"[] \n"[..], &br#"[{"a":1},{"b":"#[..]] {
+            let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+            let endpoint = format!("http://{}", listener.local_addr().unwrap());
+            let (close, wait) = std::sync::mpsc::channel();
+            let task = thread::spawn(move || {
+                let (mut stream, _) = listener.accept().unwrap();
+                read_test_headers(&mut stream);
+                stream.write_all(b"HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\nConnection: close\r\n\r\n").unwrap();
+                stream
+                    .write_all(format!("{:x}\r\n", prefix.len()).as_bytes())
+                    .unwrap();
+                stream.write_all(prefix).unwrap();
+                stream.write_all(b"\r\n").unwrap();
+                // Omit the terminating zero chunk only after the client has
+                // received the text/JSON prefix, preserving partial output.
+                let _ = wait.recv_timeout(Duration::from_secs(2));
+            });
+            let profile = ProfileRecord {
+                url: endpoint,
+                api_key: "key".into(),
+                ..Default::default()
+            };
+            let store = store(&profile);
+            let client = ApiClient::new(profile, store.clone()).unwrap();
+            runtime().block_on(async {
+                let request = client.prepare_standard(Method::GET, "query", None).unwrap();
+                let mut response = client.send_streaming(request).await.unwrap();
+                assert_eq!(response.read_limited(prefix.len()).await.unwrap(), prefix);
+                close.send(()).unwrap();
+                let error = response.chunk().await.unwrap_err();
+                assert!(matches!(&error, ApiError::Network(cause) if cause.is_body()));
+                assert_eq!(error.to_string(), "unexpected EOF");
+                let classified = crate::error::CliError::from(error);
+                assert_eq!(classified.code, crate::ErrorCode::CommandFailed);
+                assert!(!classified.retryable);
+            });
+            task.join().unwrap();
+            std::fs::remove_dir_all(store.path().parent().unwrap()).unwrap();
+        }
+    }
+    #[test]
+    fn malformed_chunk_length_keeps_received_prefix_and_go_body_message() {
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let endpoint = format!("http://{}", listener.local_addr().unwrap());
+        let (close, wait) = std::sync::mpsc::channel();
+        let task = thread::spawn(move || {
+            let (mut stream, _) = listener.accept().unwrap();
+            read_test_headers(&mut stream);
+            stream.write_all(b"HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\nConnection: close\r\n\r\n3\r\nabc\r\n").unwrap();
+            if wait.recv_timeout(Duration::from_secs(2)).is_ok() {
+                let _ = stream.write_all(b"x\r\n");
+            }
+        });
+        let profile = ProfileRecord {
+            url: endpoint,
+            api_key: "key".into(),
+            ..Default::default()
+        };
+        let store = store(&profile);
+        let client = ApiClient::new(profile, store.clone()).unwrap();
+        runtime().block_on(async {
+            let request = client.prepare_standard(Method::GET, "query", None).unwrap();
+            let mut response = client.send_streaming(request).await.unwrap();
+            assert_eq!(response.read_limited(3).await.unwrap(), b"abc");
+            close.send(()).unwrap();
+            let error = response.chunk().await.unwrap_err();
+            assert_eq!(error.to_string(), "invalid byte in chunk length");
+            assert!(!error.is_timeout());
+            let classified = crate::error::CliError::from(error);
+            assert_eq!(classified.code, crate::ErrorCode::CommandFailed);
+            assert!(!classified.retryable);
+        });
+        task.join().unwrap();
+        std::fs::remove_dir_all(store.path().parent().unwrap()).unwrap();
+    }
+    #[test]
+    fn preparation_and_execution_failures_remain_distinct() {
+        let profile = ProfileRecord {
+            url: "http://example.com".into(),
+            ..Default::default()
+        };
+        let store = store(&profile);
+        let client = ApiClient::new(profile, store.clone()).unwrap();
+        let error = client
+            .prepare_standard(Method::POST, "query", Some(b"{}".to_vec()))
+            .unwrap_err();
+        assert!(!error.is_request_error());
+        assert_eq!(error.to_string(), "self-hosted profile missing credentials");
+        let profile = ProfileRecord {
+            url: "ftp://example.com".into(),
+            api_key: "key".into(),
+            ..Default::default()
+        };
+        let client = ApiClient::new(profile, store.clone()).unwrap();
+        let request = client
+            .prepare_standard(Method::POST, "query", Some(b"{}".to_vec()))
+            .unwrap();
+        let error = runtime()
+            .block_on(client.send_streaming(request))
+            .unwrap_err();
+        assert!(error.is_request_error());
+        std::fs::remove_dir_all(store.path().parent().unwrap()).unwrap();
+    }
+    #[test]
     fn path_append_preserves_prefix_and_base_query() {
         let url = append_url(
             "https://example.com/base/prefix?foo=bar#fragment",
@@ -1821,6 +2382,35 @@ mod tests {
         workspace_task.join().unwrap();
         refresh_task.join().unwrap();
         assert_eq!(calls.lock().unwrap().len(), 1);
+        std::fs::remove_dir_all(store.path().parent().unwrap()).unwrap();
+    }
+    #[test]
+    fn header_timeout_reports_the_current_redirect_url() {
+        let mut redirect = Reply::new(302, "");
+        redirect.location = Some("/next".into());
+        let mut delayed = Reply::new(200, "{}");
+        delayed.delay = Duration::from_millis(180);
+        let (endpoint, _, task) = server(vec![redirect, delayed]);
+        let expected_url = format!("{endpoint}/next");
+        let profile = ProfileRecord {
+            url: endpoint,
+            api_key: "key".into(),
+            ..Default::default()
+        };
+        let store = store(&profile);
+        let client = ApiClient::new(profile, store.clone()).unwrap();
+        let error = runtime()
+            .block_on(client.request(
+                Method::POST,
+                &["api/v1/query"],
+                Some(b"{}".to_vec()),
+                Duration::from_millis(60),
+            ))
+            .unwrap_err();
+        assert!(
+            matches!(&error, ApiError::Timeout { method, url, body: false } if *method == Method::POST && *url == expected_url)
+        );
+        task.join().unwrap();
         std::fs::remove_dir_all(store.path().parent().unwrap()).unwrap();
     }
     #[test]

@@ -228,7 +228,13 @@ impl Drop for OrderedDocument {
     }
 }
 pub fn drop_node(node: Node) {
-    let mut pending = vec![node];
+    // Scalars have no recursive children. Reuse array storage as the worklist
+    // instead of allocating a scratch vector for every leaf and empty guard.
+    let mut pending = match node {
+        Node::Scalar(value) => return drop_value(value),
+        Node::Array(values) => values,
+        Node::Object(fields) => fields.into_iter().map(|(_, value)| value).collect(),
+    };
     while let Some(node) = pending.pop() {
         match node {
             Node::Scalar(value) => drop_value(value),
@@ -262,7 +268,11 @@ fn node_to_value(node: Node) -> Value {
 }
 
 pub fn drop_value(value: Value) {
-    let mut pending = vec![value];
+    let mut pending = match value {
+        Value::Array(values) => values,
+        Value::Object(fields) => fields.into_values().collect(),
+        _ => return,
+    };
     while let Some(value) = pending.pop() {
         match value {
             Value::Array(values) => pending.extend(values),
@@ -397,6 +407,27 @@ struct Decoder<'a> {
     index: usize,
     depth: usize,
 }
+
+/// encoding/json advances one byte when utf8.DecodeRune reports an invalid
+/// encoding. Rust's lossy conversion groups some malformed prefixes into one
+/// replacement, so append valid spans and advance only one byte per failure.
+fn push_string_bytes(output: &mut String, mut bytes: &[u8]) {
+    while !bytes.is_empty() {
+        match std::str::from_utf8(bytes) {
+            Ok(valid) => {
+                output.push_str(valid);
+                return;
+            }
+            Err(error) => {
+                let valid = error.valid_up_to();
+                output.push_str(std::str::from_utf8(&bytes[..valid]).expect("validated span"));
+                output.push('\u{fffd}');
+                bytes = &bytes[valid + 1..];
+            }
+        }
+    }
+}
+
 impl Decoder<'_> {
     fn space(&mut self) {
         while self
@@ -528,7 +559,7 @@ impl Decoder<'_> {
                 .get(self.index)
                 .ok_or_else(|| "unexpected end of JSON input".to_string())?;
             if byte == b'"' {
-                output.push_str(&String::from_utf8_lossy(&self.bytes[start..self.index]));
+                push_string_bytes(&mut output, &self.bytes[start..self.index]);
                 self.index += 1;
                 return Ok(output);
             }
@@ -539,7 +570,7 @@ impl Decoder<'_> {
                 self.index += 1;
                 continue;
             }
-            output.push_str(&String::from_utf8_lossy(&self.bytes[start..self.index]));
+            push_string_bytes(&mut output, &self.bytes[start..self.index]);
             self.index += 1;
             let escaped = *self
                 .bytes
@@ -712,6 +743,82 @@ mod tests {
         assert_eq!(
             compact(r#"{ "x": "\u0061", "n": 1.00e+2 }"#),
             r#"{"x":"\u0061","n":1.00e+2}"#
+        );
+    }
+    #[test]
+    fn invalid_utf8_replaces_each_byte_in_strings_and_keys() {
+        for (bytes, expected) in [
+            (&b"\xe2\x82"[..], "\u{fffd}\u{fffd}"),
+            (&b"\xf0\x9f\x92"[..], "\u{fffd}\u{fffd}\u{fffd}"),
+            (&b"\xe2\x82A"[..], "\u{fffd}\u{fffd}A"),
+            (&b"\xc0\xaf"[..], "\u{fffd}\u{fffd}"),
+            (&b"\xed\xa0\x80"[..], "\u{fffd}\u{fffd}\u{fffd}"),
+            (&b"\xf4\x90\x80\x80"[..], "\u{fffd}\u{fffd}\u{fffd}\u{fffd}"),
+            (&b"a\xe2\x82A\x80z"[..], "a\u{fffd}\u{fffd}A\u{fffd}z"),
+        ] {
+            let mut body = b"{\"".to_vec();
+            body.extend_from_slice(bytes);
+            body.extend_from_slice(b"\":\"");
+            body.extend_from_slice(bytes);
+            body.extend_from_slice(b"\"}");
+            let ordered = decode_ordered(&body).unwrap();
+            let fields = ordered.as_object().unwrap();
+            assert_eq!(fields[0].0, expected, "{bytes:x?}");
+            assert_eq!(fields[0].1.as_str(), Some(expected), "{bytes:x?}");
+            assert_eq!(decode(&body).unwrap()[expected], expected);
+        }
+    }
+    #[test]
+    fn repaired_keys_keep_go_duplicate_semantics() {
+        let body = b"{\"\xe2\":1,\"\xe2\x82\":2,\"\xef\xbf\xbd\xef\xbf\xbd\":3}";
+        let ordered = decode_ordered(body).unwrap();
+        let fields = ordered.as_object().unwrap();
+        assert_eq!(fields.len(), 3);
+        assert_eq!(fields[0].0, "\u{fffd}");
+        assert_eq!(fields[1].0, "\u{fffd}\u{fffd}");
+        assert_eq!(fields[2].0, "\u{fffd}\u{fffd}");
+        let mapped = decode(body).unwrap();
+        assert_eq!(mapped.as_object().unwrap().len(), 2);
+        assert_eq!(mapped["\u{fffd}"], 1);
+        assert_eq!(mapped["\u{fffd}\u{fffd}"], 3);
+    }
+    #[test]
+    fn multibyte_prefixes_and_complete_utf8_have_distinct_replacement_rules() {
+        for text in ["¢", "€", "😀", "\u{10ffff}", "\u{fffd}"] {
+            for length in 1..=text.len() {
+                let mut body = b"\"".to_vec();
+                body.extend_from_slice(&text.as_bytes()[..length]);
+                body.push(b'"');
+                let expected = if length == text.len() {
+                    text.to_owned()
+                } else {
+                    "\u{fffd}".repeat(length)
+                };
+                assert_eq!(decode(&body).unwrap(), Value::String(expected));
+            }
+        }
+        // Network fragments are assembled before decoding a complete element;
+        // a split inside a valid rune must not cause premature replacement.
+        let body = [&b"\"\xe2"[..], &b"\x82"[..], &b"\xac\""[..]].concat();
+        assert_eq!(decode(&body).unwrap(), Value::String("€".into()));
+        assert_eq!(
+            decode(b"\"\xe2\x82").unwrap_err(),
+            "unexpected end of JSON input"
+        );
+    }
+    #[test]
+    fn raw_utf8_repair_preserves_escaped_surrogate_handling() {
+        assert_eq!(
+            decode(b"\"\xe2\x82\\ud800\\udc00\xe2\\ud800\"").unwrap(),
+            Value::String("\u{fffd}\u{fffd}\u{10000}\u{fffd}\u{fffd}".into())
+        );
+        assert_eq!(
+            decode("\"éπ€😀�\\ud800\\udc00\\ud800\\udfff\"".as_bytes()).unwrap(),
+            Value::String("éπ€😀�\u{10000}\u{103ff}".into())
+        );
+        assert_eq!(
+            decode(br#""\ud800\ud800\udc00\udfff""#).unwrap(),
+            Value::String("\u{fffd}\u{10000}\u{fffd}".into())
         );
     }
     #[test]
