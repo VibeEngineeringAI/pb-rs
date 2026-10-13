@@ -16,7 +16,7 @@ use hyper_util::{
     client::{
         legacy::{
             Client,
-            connect::{Connected, Connection, HttpConnector},
+            connect::{Connected, Connection, HttpConnector, capture_connection},
         },
         proxy::matcher::{Intercept, Matcher},
     },
@@ -29,7 +29,10 @@ use std::{
     io,
     net::IpAddr,
     pin::Pin,
-    sync::Arc,
+    sync::{
+        Arc,
+        atomic::{AtomicBool, AtomicU64, Ordering},
+    },
     task::{Context, Poll},
     time::Duration,
 };
@@ -37,8 +40,8 @@ use tokio::io::{AsyncRead, AsyncReadExt, AsyncWrite, AsyncWriteExt, ReadBuf};
 use tower_service::Service;
 
 type BoxError = Box<dyn Error + Send + Sync>;
-type HttpClient = Client<HttpsConnector<ProxyConnector>, Full<Bytes>>;
-type PlainClient = Client<ProxyConnector, Full<Bytes>>;
+type HttpClient = Client<Tracking<HttpsConnector<ProxyConnector>>, Full<Bytes>>;
+type PlainClient = Client<Tracking<ProxyConnector>, Full<Bytes>>;
 type TlsStore = Arc<tokio::sync::OnceCell<Arc<rustls::ClientConfig>>>;
 
 pub struct Transport {
@@ -54,6 +57,19 @@ pub struct TransportError {
     source: BoxError,
     body: bool,
     proxy: Option<Box<Uri>>,
+    /// Go distinguishes closes before response headers that Hyper reports as
+    /// one IncompleteMessage error, so the transport records which occurred.
+    head_eof: Option<HeadEof>,
+}
+#[derive(Clone, Copy, Debug, PartialEq)]
+enum HeadEof {
+    /// Close before any response byte: Go returns the peek error, io.EOF.
+    Clean,
+    /// TLS cut inside a record before any plaintext: io.ErrUnexpectedEOF.
+    Truncated,
+    /// Close inside the status line or headers. Go marks the connection
+    /// broken before mapping the io.ErrUnexpectedEOF from ReadResponse.
+    Partial,
 }
 impl TransportError {
     fn new(url: impl Into<String>, source: impl Into<BoxError>) -> Self {
@@ -62,6 +78,7 @@ impl TransportError {
             source: source.into(),
             body: false,
             proxy: None,
+            head_eof: None,
         }
     }
     fn body(url: impl Into<String>, source: impl Into<BoxError>) -> Self {
@@ -70,6 +87,7 @@ impl TransportError {
             source: source.into(),
             body: true,
             proxy: None,
+            head_eof: None,
         }
     }
     fn with_proxy(mut self, proxy: Option<Uri>) -> Self {
@@ -133,6 +151,15 @@ impl TransportError {
 }
 impl fmt::Display for TransportError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self.head_eof {
+            Some(HeadEof::Clean) => return f.write_str("EOF"),
+            Some(HeadEof::Truncated) => return f.write_str("unexpected EOF"),
+            Some(HeadEof::Partial) => {
+                return f
+                    .write_str("net/http: HTTP/1.x transport connection broken: unexpected EOF");
+            }
+            None => {}
+        }
         let mut cause: Option<&(dyn Error + 'static)> = Some(self.source.as_ref());
         let mut last = self.source.to_string();
         while let Some(error) = cause {
@@ -230,7 +257,7 @@ impl Transport {
             .pool_idle_timeout(Duration::from_secs(90))
             .pool_max_idle_per_host(2)
             .retry_canceled_requests(false)
-            .build(connector);
+            .build(Tracking(connector));
         Ok(Self {
             plain,
             https: tokio::sync::OnceCell::new(),
@@ -263,7 +290,7 @@ impl Transport {
                     .pool_idle_timeout(Duration::from_secs(90))
                     .pool_max_idle_per_host(2)
                     .retry_canceled_requests(false)
-                    .build(connector))
+                    .build(Tracking(connector)))
             })
             .await
     }
@@ -280,16 +307,9 @@ impl Transport {
         let uri: Uri = uri_string
             .parse()
             .map_err(|error| TransportError::new(raw_url, error))?;
-        let mut request = Request::builder()
-            .method(method.clone())
-            .uri(uri.clone())
-            .body(Full::new(Bytes::from(body.clone().unwrap_or_default())))
-            .map_err(|error| TransportError::new(raw_url, error))?;
-        *request.headers_mut() = headers.clone();
-        request
-            .headers_mut()
-            .insert(USER_AGENT, HeaderValue::from_static("Go-http-client/1.1"));
-        if !request.headers().contains_key(AUTHORIZATION)
+        let mut prepared = headers.clone();
+        prepared.insert(USER_AGENT, HeaderValue::from_static("Go-http-client/1.1"));
+        if !prepared.contains_key(AUTHORIZATION)
             && let Some(userinfo) = userinfo
         {
             use base64::Engine;
@@ -297,15 +317,13 @@ impl Transport {
             let mut value = HeaderValue::from_str(&format!("Basic {encoded}"))
                 .expect("base64 is a valid header");
             value.set_sensitive(true);
-            request.headers_mut().insert(AUTHORIZATION, value);
+            prepared.insert(AUTHORIZATION, value);
         }
         let gzip = method != Method::HEAD
             && !headers.contains_key(ACCEPT_ENCODING)
             && !headers.contains_key(RANGE);
         if gzip {
-            request
-                .headers_mut()
-                .insert(ACCEPT_ENCODING, HeaderValue::from_static("gzip"));
+            prepared.insert(ACCEPT_ENCODING, HeaderValue::from_static("gzip"));
         }
         if method == Method::POST
             || method == Method::PUT
@@ -313,7 +331,7 @@ impl Transport {
             || body.as_ref().is_some_and(|b| !b.is_empty())
         {
             let length = body.as_ref().map_or(0, Vec::len);
-            request.headers_mut().insert(
+            prepared.insert(
                 CONTENT_LENGTH,
                 HeaderValue::from_str(&length.to_string()).expect("integer is a valid header"),
             );
@@ -323,23 +341,82 @@ impl Transport {
                 .filter(|proxy| matches!(proxy.uri().scheme_str(), Some("http" | "https")))
             && let Some(auth) = intercept.basic_auth()
         {
-            request
-                .headers_mut()
-                .insert(PROXY_AUTHORIZATION, auth.clone());
+            prepared.insert(PROXY_AUTHORIZATION, auth.clone());
         }
-        let response = if uri.scheme_str() == Some("https") {
-            self.https_client()
-                .await
-                .map_err(|e| TransportError::new(raw_url, e))?
-                .request(request)
-                .await
+        let client = if uri.scheme_str() == Some("https") {
+            Some(
+                self.https_client()
+                    .await
+                    .map_err(|e| TransportError::new(raw_url, e))?,
+            )
         } else {
-            self.plain.request(request).await
-        }
-        .map_err(|e| {
-            TransportError::new(raw_url, e)
-                .with_proxy(proxy_for(&self.proxy, &uri).map(|proxy| proxy.uri().clone()))
-        })?;
+            None
+        };
+        let payload = Bytes::from(body.clone().unwrap_or_default());
+        // Retries happen inside this future, so the caller's absolute request
+        // deadline bounds every attempt together. Like Go there is no count
+        // limit: each retry consumes a pooled connection that already
+        // completed an exchange, and a failure on a fresh one is final.
+        let response = loop {
+            let mut request = Request::builder()
+                .method(method.clone())
+                .uri(uri.clone())
+                .body(Full::new(payload.clone()))
+                .map_err(|error| TransportError::new(raw_url, error))?;
+            *request.headers_mut() = prepared.clone();
+            let capture = capture_connection(&mut request);
+            // Go's per-connection read loop notices an idle close as it
+            // happens. Yielding lets the runtime deliver pending socket events
+            // first, so the pool drops such connections instead of writing
+            // this request into them.
+            tokio::task::yield_now().await;
+            let result = match client {
+                Some(client) => client.request(request).await,
+                None => self.plain.request(request).await,
+            };
+            let error = match result {
+                Ok(response) => break response,
+                Err(error) => error,
+            };
+            // Hyper reports Canceled only when it hands the request back
+            // without having dequeued it for writing.
+            let unsent = source_chain(&error).any(|cause| {
+                cause
+                    .downcast_ref::<HyperError>()
+                    .is_some_and(HyperError::is_canceled)
+            });
+            let state = capture
+                .connection_metadata()
+                .as_ref()
+                .and_then(|connected| AttemptState::observe(connected, unsent));
+            if replayable_after(method, state, unsent, &error) {
+                continue;
+            }
+            let mut error = TransportError::new(raw_url, error)
+                .with_proxy(proxy_for(&self.proxy, &uri).map(|proxy| proxy.uri().clone()));
+            let incomplete = source_chain(error.source.as_ref()).any(|cause| {
+                cause
+                    .downcast_ref::<HyperError>()
+                    .is_some_and(HyperError::is_incomplete_message)
+            });
+            // Byte counts describe one exchange only on HTTP/1 connections.
+            let http1 = state.filter(|state| !state.h2);
+            // TLS cut inside a record surfaces as an I/O error instead.
+            let truncated = http1.is_some()
+                && source_chain(error.source.as_ref()).any(|cause| {
+                    cause
+                        .downcast_ref::<io::Error>()
+                        .is_some_and(|error| error.kind() == io::ErrorKind::UnexpectedEof)
+                });
+            let received = http1.is_some_and(|state| state.received_head);
+            error.head_eof = match (incomplete, truncated, received) {
+                (true, _, false) => Some(HeadEof::Clean),
+                (false, true, false) => Some(HeadEof::Truncated),
+                (true, _, true) | (_, true, true) => Some(HeadEof::Partial),
+                (false, false, _) => None,
+            };
+            return Err(error);
+        };
         let (mut parts, body) = response.into_parts();
         let reason = parts
             .extensions
@@ -379,6 +456,258 @@ impl Transport {
             gzip_input,
             url: raw_url.into(),
         })
+    }
+}
+
+/// Per-connection facts shared by the socket wrapper below TLS, the stream
+/// wrapper above it, and `send`. Only the connection task updates them; a
+/// failed attempt reads them after the connection has stopped.
+struct ConnectionState {
+    /// Destination TLS runs between the socket and the tracked stream.
+    tls: bool,
+    /// HTTP/1 requests that began writing on this connection, counted when
+    /// the first request byte is offered, like Go's persistConn.nwrite.
+    requests: AtomicU64,
+    /// Plaintext response bytes read since the current request began; Go
+    /// peeks for the first one above TLS.
+    received: AtomicU64,
+    /// Whether received ciphertext ends between TLS records.
+    boundary: AtomicBool,
+}
+impl ConnectionState {
+    fn new(tls: bool) -> Self {
+        Self {
+            tls,
+            requests: AtomicU64::new(0),
+            received: AtomicU64::new(0),
+            boundary: AtomicBool::new(true),
+        }
+    }
+    /// HTTP/1 alternates whole requests and responses on a connection, so a
+    /// write after response bytes, or the first write, starts a new request.
+    fn begin_write(&self) {
+        if self.requests.load(Ordering::Relaxed) == 0 || self.received.load(Ordering::Relaxed) > 0 {
+            self.requests.fetch_add(1, Ordering::Relaxed);
+            self.received.store(0, Ordering::Relaxed);
+        }
+    }
+}
+#[derive(Clone)]
+struct ConnectionTracker(Arc<ConnectionState>);
+impl ConnectionTracker {
+    fn of(connected: &Connected) -> Option<Arc<ConnectionState>> {
+        let mut extensions = http::Extensions::new();
+        connected.get_extras(&mut extensions);
+        extensions.remove::<Self>().map(|tracker| tracker.0)
+    }
+}
+#[derive(Clone, Copy)]
+struct AttemptState {
+    /// An earlier request completed on this connection (Go's pc.isReused).
+    reused: bool,
+    h2: bool,
+    received_head: bool,
+}
+impl AttemptState {
+    fn observe(connected: &Connected, unsent: bool) -> Option<Self> {
+        let state = ConnectionTracker::of(connected)?;
+        let requests = state.requests.load(Ordering::Relaxed);
+        // An unsent request never began, so every counted request preceded
+        // it; otherwise the latest counted request is this attempt.
+        let earlier = if unsent {
+            requests
+        } else {
+            requests.saturating_sub(1)
+        };
+        Some(Self {
+            reused: earlier > 0,
+            h2: connected.is_negotiated_h2(),
+            received_head: !unsent && state.received.load(Ordering::Relaxed) > 0,
+        })
+    }
+}
+fn source_chain<'a>(
+    error: &'a (dyn Error + 'static),
+) -> impl Iterator<Item = &'a (dyn Error + 'static)> {
+    std::iter::successors(Some(error), |&error| error.source())
+}
+/// Go's HTTP/1 transport retries a failed request only on a connection that
+/// already completed an exchange, and then only when nothing was written
+/// (any method: pb bodies are in memory, so Go's GetBody can rewind them) or,
+/// for GET, HEAD, OPTIONS and TRACE, when no response byte arrived. pb never
+/// sends Go's Idempotency-Key exception. First use of a fresh connection,
+/// partial responses and HTTP/2 are never retried here.
+///
+/// Nothing-written is proved only by Hyper returning the request unsent. Go
+/// also retries a mutation whose first socket write fails outright; Hyper
+/// does not expose that, and byte counts cannot separate it from a server
+/// that answered mid-request, so such a mutation fails instead of replaying.
+fn replayable_after(
+    method: &Method,
+    state: Option<AttemptState>,
+    unsent: bool,
+    error: &(dyn Error + 'static),
+) -> bool {
+    let Some(state) = state else {
+        return false;
+    };
+    if !state.reused || state.h2 {
+        return false;
+    }
+    if unsent {
+        return true;
+    }
+    if !matches!(
+        *method,
+        Method::GET | Method::HEAD | Method::OPTIONS | Method::TRACE
+    ) || state.received_head
+    {
+        return false;
+    }
+    source_chain(error).any(|cause| {
+        cause
+            .downcast_ref::<HyperError>()
+            .is_some_and(HyperError::is_incomplete_message)
+            || cause.downcast_ref::<io::Error>().is_some_and(|error| {
+                matches!(
+                    error.kind(),
+                    io::ErrorKind::ConnectionReset
+                        | io::ErrorKind::ConnectionAborted
+                        | io::ErrorKind::BrokenPipe
+                        | io::ErrorKind::UnexpectedEof
+                )
+            })
+    })
+}
+
+/// Wraps a connector so every connection is observed above TLS, where Go's
+/// persistConn counts written request bytes and peeks for response bytes.
+#[derive(Clone)]
+pub struct Tracking<C>(C);
+impl<C> Service<Uri> for Tracking<C>
+where
+    C: Service<Uri, Error = BoxError>,
+    C::Response: hyper::rt::Read + hyper::rt::Write + Connection + Unpin + Send + 'static,
+    C::Future: Send + 'static,
+{
+    type Response = TokioIo<TrackedStream<C::Response>>;
+    type Error = BoxError;
+    type Future = Pin<Box<dyn Future<Output = Result<Self::Response, Self::Error>> + Send>>;
+    fn poll_ready(&mut self, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
+        self.0.poll_ready(cx)
+    }
+    fn call(&mut self, destination: Uri) -> Self::Future {
+        let connecting = self.0.call(destination);
+        Box::pin(async move {
+            let io = connecting.await?;
+            let state = ConnectionTracker::of(&io.connected())
+                .ok_or_else(|| io::Error::other("connection is missing its tracker"))?;
+            Ok(TokioIo::new(TrackedStream {
+                io: TokioIo::new(io),
+                state,
+            }))
+        })
+    }
+}
+pub struct TrackedStream<T> {
+    io: TokioIo<T>,
+    state: Arc<ConnectionState>,
+}
+impl<T: hyper::rt::Read + hyper::rt::Write + Unpin> AsyncRead for TrackedStream<T> {
+    fn poll_read(
+        mut self: Pin<&mut Self>,
+        cx: &mut Context<'_>,
+        buf: &mut ReadBuf<'_>,
+    ) -> Poll<io::Result<()>> {
+        let before = buf.filled().len();
+        match Pin::new(&mut self.io).poll_read(cx, buf) {
+            Poll::Ready(Ok(())) => {
+                let count = buf.filled().len() - before;
+                self.state
+                    .received
+                    .fetch_add(count as u64, Ordering::Relaxed);
+                Poll::Ready(Ok(()))
+            }
+            // Rustls rejects a TCP close without close_notify; crypto/tls
+            // accepts it as io.EOF when it falls between records.
+            Poll::Ready(Err(error))
+                if error.kind() == io::ErrorKind::UnexpectedEof
+                    && self.state.tls
+                    && self.state.boundary.load(Ordering::Relaxed) =>
+            {
+                Poll::Ready(Ok(()))
+            }
+            polled => polled,
+        }
+    }
+}
+impl<T: hyper::rt::Read + hyper::rt::Write + Unpin> AsyncWrite for TrackedStream<T> {
+    fn poll_write(
+        mut self: Pin<&mut Self>,
+        cx: &mut Context<'_>,
+        buf: &[u8],
+    ) -> Poll<io::Result<usize>> {
+        if !buf.is_empty() {
+            self.state.begin_write();
+        }
+        Pin::new(&mut self.io).poll_write(cx, buf)
+    }
+    fn poll_write_vectored(
+        mut self: Pin<&mut Self>,
+        cx: &mut Context<'_>,
+        bufs: &[io::IoSlice<'_>],
+    ) -> Poll<io::Result<usize>> {
+        if bufs.iter().any(|buf| !buf.is_empty()) {
+            self.state.begin_write();
+        }
+        Pin::new(&mut self.io).poll_write_vectored(cx, bufs)
+    }
+    fn is_write_vectored(&self) -> bool {
+        self.io.is_write_vectored()
+    }
+    fn poll_flush(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<io::Result<()>> {
+        Pin::new(&mut self.io).poll_flush(cx)
+    }
+    fn poll_shutdown(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<io::Result<()>> {
+        Pin::new(&mut self.io).poll_shutdown(cx)
+    }
+}
+impl<T: hyper::rt::Read + hyper::rt::Write + Connection + Unpin> Connection for TrackedStream<T> {
+    fn connected(&self) -> Connected {
+        self.io.connected()
+    }
+}
+
+/// Follows TLS record framing in received ciphertext, so an EOF can be
+/// classified as crypto/tls does: clean only between records.
+#[derive(Default)]
+struct RecordFraming {
+    /// Header bytes seen of the next record.
+    header: usize,
+    length: [u8; 2],
+    /// Payload bytes still expected for the current record.
+    payload: usize,
+}
+impl RecordFraming {
+    fn feed(&mut self, mut bytes: &[u8]) -> bool {
+        while let Some((&byte, rest)) = bytes.split_first() {
+            if self.payload > 0 {
+                let count = self.payload.min(bytes.len());
+                self.payload -= count;
+                bytes = &bytes[count..];
+                continue;
+            }
+            if self.header >= 3 {
+                self.length[self.header - 3] = byte;
+            }
+            self.header += 1;
+            bytes = rest;
+            if self.header == 5 {
+                self.header = 0;
+                self.payload = usize::from(u16::from_be_bytes(self.length));
+            }
+        }
+        self.header == 0 && self.payload == 0
     }
 }
 
@@ -689,6 +1018,8 @@ pub struct ProxyStream {
     io: Box<dyn AsyncIo>,
     proxy: bool,
     handshake: std::sync::Mutex<Option<Pin<Box<tokio::time::Sleep>>>>,
+    state: Arc<ConnectionState>,
+    records: RecordFraming,
 }
 impl ProxyStream {
     fn check_handshake(&mut self, cx: &mut Context<'_>) -> io::Result<()> {
@@ -714,7 +1045,14 @@ impl AsyncRead for ProxyStream {
         buf: &mut ReadBuf<'_>,
     ) -> Poll<io::Result<()>> {
         self.check_handshake(cx)?;
-        Pin::new(&mut *self.io).poll_read(cx, buf)
+        let before = buf.filled().len();
+        let polled = Pin::new(&mut *self.io).poll_read(cx, buf);
+        if self.state.tls && buf.filled().len() > before {
+            let this = &mut *self;
+            let boundary = this.records.feed(&buf.filled()[before..]);
+            this.state.boundary.store(boundary, Ordering::Relaxed);
+        }
+        polled
     }
 }
 impl AsyncWrite for ProxyStream {
@@ -736,7 +1074,9 @@ impl AsyncWrite for ProxyStream {
 impl Connection for ProxyStream {
     fn connected(&self) -> Connected {
         self.handshake.lock().unwrap().take();
-        Connected::new().proxy(self.proxy)
+        Connected::new()
+            .proxy(self.proxy)
+            .extra(ConnectionTracker(self.state.clone()))
     }
 }
 
@@ -826,6 +1166,9 @@ impl Service<Uri> for ProxyConnector {
                 matches!(proxy.uri().scheme_str(), Some("socks5" | "socks5h"))
             });
             let proxy = intercept.is_some() && !socks && destination.scheme_str() == Some("http");
+            let state = Arc::new(ConnectionState::new(
+                destination.scheme_str() == Some("https"),
+            ));
             if let Some(intercept) = intercept {
                 if socks {
                     socks_connect(&mut io, &destination, &intercept).await?;
@@ -875,6 +1218,8 @@ impl Service<Uri> for ProxyConnector {
                 io,
                 proxy,
                 handshake: std::sync::Mutex::new(handshake),
+                state,
+                records: RecordFraming::default(),
             }))
         })
     }
@@ -1118,6 +1463,521 @@ mod tests {
             Some(request)
         });
         (port, task)
+    }
+    /// What the scripted keep-alive server does with each received request.
+    #[derive(Clone, Copy, PartialEq)]
+    enum Fault {
+        Ok,
+        /// Abrupt close before any response byte; TLS sends no close_notify.
+        Close,
+        /// Orderly close (TLS close_notify) before any response byte.
+        CloseNotify,
+        /// Close after the status line and part of a header line.
+        PartialHead,
+        /// TLS only: cut the response record one byte short, then close, so
+        /// no plaintext reaches the client.
+        TruncatedRecord,
+        /// Respond, then close the idle connection when the test signals.
+        OkThenIdleClose,
+    }
+    /// Server socket that can drop the final byte of its next write.
+    struct Truncating {
+        tcp: tokio::net::TcpStream,
+        truncate: Arc<std::sync::atomic::AtomicBool>,
+    }
+    impl AsyncRead for Truncating {
+        fn poll_read(
+            mut self: Pin<&mut Self>,
+            cx: &mut Context<'_>,
+            buf: &mut ReadBuf<'_>,
+        ) -> Poll<io::Result<()>> {
+            Pin::new(&mut self.tcp).poll_read(cx, buf)
+        }
+    }
+    impl AsyncWrite for Truncating {
+        fn poll_write(
+            mut self: Pin<&mut Self>,
+            cx: &mut Context<'_>,
+            buf: &[u8],
+        ) -> Poll<io::Result<usize>> {
+            if buf.len() > 1 && self.truncate.swap(false, Ordering::Relaxed) {
+                let short = buf.len() - 1;
+                return Pin::new(&mut self.tcp)
+                    .poll_write(cx, &buf[..short])
+                    .map_ok(|count| if count == short { buf.len() } else { count });
+            }
+            Pin::new(&mut self.tcp).poll_write(cx, buf)
+        }
+        fn poll_flush(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<io::Result<()>> {
+            Pin::new(&mut self.tcp).poll_flush(cx)
+        }
+        fn poll_shutdown(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<io::Result<()>> {
+            Pin::new(&mut self.tcp).poll_shutdown(cx)
+        }
+    }
+    type Ledger = Arc<std::sync::Mutex<Vec<(usize, String)>>>;
+    struct Scripted {
+        scheme: &'static str,
+        port: u16,
+        ledger: Ledger,
+        idle_close: Arc<tokio::sync::Notify>,
+    }
+    /// Serves scripted actions in arrival order over HTTP or HTTPS and records
+    /// `(connection, request line)` for every request it fully receives.
+    async fn scripted_server(scheme: &'static str, script: Vec<Fault>) -> Scripted {
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let port = listener.local_addr().unwrap().port();
+        let ledger = Ledger::default();
+        let idle_close = Arc::new(tokio::sync::Notify::new());
+        let script = Arc::new(std::sync::Mutex::new(
+            script
+                .into_iter()
+                .collect::<std::collections::VecDeque<_>>(),
+        ));
+        let (log, signal) = (ledger.clone(), idle_close.clone());
+        tokio::spawn(async move {
+            for connection in 0.. {
+                let Ok((tcp, _)) = listener.accept().await else {
+                    return;
+                };
+                let (log, script, signal) = (log.clone(), script.clone(), signal.clone());
+                tokio::spawn(async move {
+                    let truncate = Arc::new(std::sync::atomic::AtomicBool::new(false));
+                    let socket = Truncating {
+                        tcp,
+                        truncate: truncate.clone(),
+                    };
+                    let mut stream: Box<dyn AsyncIo> = if scheme == "https" {
+                        let Ok(tls) = acceptor().accept(socket).await else {
+                            return;
+                        };
+                        Box::new(tls)
+                    } else {
+                        Box::new(socket)
+                    };
+                    while let Ok(head) = headers(&mut *stream).await {
+                        let length = head
+                            .lines()
+                            .find_map(|line| {
+                                let (name, value) = line.split_once(':')?;
+                                name.eq_ignore_ascii_case("content-length")
+                                    .then(|| value.trim().parse::<usize>().ok())?
+                            })
+                            .unwrap_or(0);
+                        let mut body = vec![0; length];
+                        if stream.read_exact(&mut body).await.is_err() {
+                            return;
+                        }
+                        let line = head.lines().next().unwrap_or_default().to_owned();
+                        log.lock().unwrap().push((connection, line));
+                        let fault = script.lock().unwrap().pop_front().unwrap_or(Fault::Ok);
+                        let reply: &[u8] = match fault {
+                            Fault::Close => return,
+                            Fault::CloseNotify => {
+                                let _ = stream.shutdown().await;
+                                return;
+                            }
+                            Fault::PartialHead => b"HTTP/1.1 200 OK\r\nContent-Length: 2",
+                            Fault::TruncatedRecord => {
+                                truncate.store(true, Ordering::Relaxed);
+                                b"HTTP/1.1 200 OK\r\nContent-Length: 2\r\n\r\nok"
+                            }
+                            Fault::Ok | Fault::OkThenIdleClose => {
+                                b"HTTP/1.1 200 OK\r\nContent-Length: 2\r\n\r\nok"
+                            }
+                        };
+                        if stream.write_all(reply).await.is_err()
+                            || stream.flush().await.is_err()
+                            || matches!(fault, Fault::PartialHead | Fault::TruncatedRecord)
+                        {
+                            return;
+                        }
+                        if fault == Fault::OkThenIdleClose {
+                            signal.notified().await;
+                            return;
+                        }
+                    }
+                });
+            }
+        });
+        Scripted {
+            scheme,
+            port,
+            ledger,
+            idle_close,
+        }
+    }
+    impl Scripted {
+        fn url(&self, path: &str) -> String {
+            let host = if self.scheme == "https" {
+                "localhost"
+            } else {
+                "127.0.0.1"
+            };
+            format!("{}://{host}:{}{path}", self.scheme, self.port)
+        }
+        fn requests(&self) -> Vec<(usize, String)> {
+            self.ledger.lock().unwrap().clone()
+        }
+        fn count(&self, path: &str) -> usize {
+            self.requests()
+                .iter()
+                .filter(|(_, line)| line.contains(path))
+                .count()
+        }
+    }
+    fn body_for(method: &Method) -> Option<Vec<u8>> {
+        (method == Method::POST || method == Method::PUT || method == Method::PATCH)
+            .then(|| b"[\"admin\"]".to_vec())
+    }
+    async fn exchange(
+        transport: &Transport,
+        server: &Scripted,
+        method: Method,
+        path: &str,
+    ) -> Result<Bytes, TransportError> {
+        let body = body_for(&method);
+        let response = transport
+            .send(&method, &server.url(path), &HeaderMap::new(), &body)
+            .await?;
+        let bytes = response.bytes().await?;
+        // Let Hyper return the idle connection to the pool before the next
+        // request, so the following exchange deterministically reuses it.
+        tokio::time::sleep(Duration::from_millis(20)).await;
+        Ok(bytes)
+    }
+    const SCHEMES: [&str; 2] = ["http", "https"];
+    // Expected outcomes below were characterized against Go 1.25.4 net/http,
+    // the toolchain that built the reference pb, using equivalent servers.
+    #[test]
+    fn fresh_connection_eof_before_headers_is_go_eof_without_retry() {
+        runtime().block_on(async {
+            for scheme in SCHEMES {
+                for fault in [Fault::Close, Fault::CloseNotify] {
+                    for method in [Method::GET, Method::DELETE, Method::POST] {
+                        let server = scripted_server(scheme, vec![fault]).await;
+                        let transport = trusted_transport(policy("", "", ""));
+                        let error =
+                            exchange(&transport, &server, method.clone(), "/api/v1/user/bob")
+                                .await
+                                .unwrap_err();
+                        assert_eq!(error.to_string(), "EOF", "{scheme} {method}");
+                        assert!(!error.is_body() && !error.is_connection_error());
+                        let line = format!("{method} /api/v1/user/bob HTTP/1.1");
+                        assert_eq!(server.requests(), [(0, line)], "{scheme} {method}");
+                    }
+                }
+            }
+        });
+    }
+    #[test]
+    fn eof_inside_response_headers_is_connection_broken_without_retry() {
+        runtime().block_on(async {
+            // Fresh and reused connections alike: Go retries only when no
+            // response byte arrived, and reports the broken connection.
+            for scheme in SCHEMES {
+                for reuse in [false, true] {
+                    let mut script = vec![Fault::PartialHead];
+                    if reuse {
+                        script.insert(0, Fault::Ok);
+                    }
+                    let server = scripted_server(scheme, script).await;
+                    let transport = trusted_transport(policy("", "", ""));
+                    if reuse {
+                        exchange(&transport, &server, Method::GET, "/api/v1/user")
+                            .await
+                            .unwrap();
+                    }
+                    let error = exchange(&transport, &server, Method::GET, "/api/v1/roles")
+                        .await
+                        .unwrap_err();
+                    assert_eq!(
+                        error.to_string(),
+                        "net/http: HTTP/1.x transport connection broken: unexpected EOF",
+                        "{scheme} reuse={reuse}"
+                    );
+                    assert!(!error.is_body());
+                    assert_eq!(server.count("/roles"), 1, "{scheme} reuse={reuse}");
+                }
+            }
+        });
+    }
+    #[test]
+    fn tls_record_cut_before_plaintext_is_unexpected_eof_and_retried_when_reused() {
+        runtime().block_on(async {
+            let server = scripted_server("https", vec![Fault::TruncatedRecord]).await;
+            let transport = trusted_transport(policy("", "", ""));
+            let error = exchange(&transport, &server, Method::GET, "/api/v1/roles")
+                .await
+                .unwrap_err();
+            assert_eq!(error.to_string(), "unexpected EOF");
+            assert_eq!(server.count("/roles"), 1);
+            // No plaintext arrived, so Go's first-byte peek failed: a GET on
+            // a reused connection is retried, a mutation is not.
+            let server = scripted_server("https", vec![Fault::Ok, Fault::TruncatedRecord]).await;
+            let transport = trusted_transport(policy("", "", ""));
+            exchange(&transport, &server, Method::GET, "/api/v1/user")
+                .await
+                .unwrap();
+            let body = exchange(&transport, &server, Method::GET, "/api/v1/roles")
+                .await
+                .unwrap();
+            assert_eq!(body.as_ref(), b"ok");
+            assert_eq!(
+                server.requests(),
+                [
+                    (0, "GET /api/v1/user HTTP/1.1".into()),
+                    (0, "GET /api/v1/roles HTTP/1.1".into()),
+                    (1, "GET /api/v1/roles HTTP/1.1".into()),
+                ]
+            );
+            let server = scripted_server("https", vec![Fault::Ok, Fault::TruncatedRecord]).await;
+            let transport = trusted_transport(policy("", "", ""));
+            exchange(&transport, &server, Method::GET, "/api/v1/user")
+                .await
+                .unwrap();
+            let error = exchange(&transport, &server, Method::POST, "/api/v1/user/carol")
+                .await
+                .unwrap_err();
+            assert_eq!(error.to_string(), "unexpected EOF");
+            assert_eq!(server.count("carol"), 1);
+        });
+    }
+    #[test]
+    fn reused_idle_connection_closed_before_headers_retries_read_once() {
+        runtime().block_on(async {
+            for scheme in SCHEMES {
+                for fault in [Fault::Close, Fault::CloseNotify] {
+                    let server = scripted_server(scheme, vec![Fault::Ok, fault]).await;
+                    let transport = trusted_transport(policy("", "", ""));
+                    exchange(&transport, &server, Method::GET, "/api/v1/user")
+                        .await
+                        .unwrap();
+                    let body = exchange(&transport, &server, Method::GET, "/api/v1/roles")
+                        .await
+                        .unwrap();
+                    assert_eq!(body.as_ref(), b"ok");
+                    exchange(&transport, &server, Method::POST, "/api/v1/user/carol")
+                        .await
+                        .unwrap();
+                    assert_eq!(
+                        server.requests(),
+                        [
+                            (0, "GET /api/v1/user HTTP/1.1".into()),
+                            (0, "GET /api/v1/roles HTTP/1.1".into()),
+                            (1, "GET /api/v1/roles HTTP/1.1".into()),
+                            (1, "POST /api/v1/user/carol HTTP/1.1".into()),
+                        ],
+                        "{scheme}"
+                    );
+                }
+            }
+        });
+    }
+    #[test]
+    fn retried_read_failing_on_a_fresh_connection_is_not_retried_again() {
+        runtime().block_on(async {
+            for scheme in SCHEMES {
+                let script = vec![Fault::Ok, Fault::Close, Fault::Close];
+                let server = scripted_server(scheme, script).await;
+                let transport = trusted_transport(policy("", "", ""));
+                exchange(&transport, &server, Method::GET, "/api/v1/user")
+                    .await
+                    .unwrap();
+                let error = exchange(&transport, &server, Method::GET, "/api/v1/roles")
+                    .await
+                    .unwrap_err();
+                assert_eq!(error.to_string(), "EOF");
+                assert_eq!(
+                    server.requests(),
+                    [
+                        (0, "GET /api/v1/user HTTP/1.1".into()),
+                        (0, "GET /api/v1/roles HTTP/1.1".into()),
+                        (1, "GET /api/v1/roles HTTP/1.1".into()),
+                    ],
+                    "{scheme}"
+                );
+            }
+        });
+    }
+    #[test]
+    fn mutations_on_reused_connections_are_sent_exactly_once() {
+        runtime().block_on(async {
+            // The server received each mutation in full before closing, so it
+            // may have committed; Go does not replay these methods.
+            for scheme in SCHEMES {
+                for method in [Method::POST, Method::PUT, Method::PATCH, Method::DELETE] {
+                    let server = scripted_server(scheme, vec![Fault::Ok, Fault::Close]).await;
+                    let transport = trusted_transport(policy("", "", ""));
+                    exchange(&transport, &server, Method::GET, "/api/v1/roles")
+                        .await
+                        .unwrap();
+                    let error =
+                        exchange(&transport, &server, method.clone(), "/api/v1/role/unused")
+                            .await
+                            .unwrap_err();
+                    assert_eq!(error.to_string(), "EOF", "{scheme} {method}");
+                    assert_eq!(
+                        server.requests(),
+                        [
+                            (0, "GET /api/v1/roles HTTP/1.1".into()),
+                            (0, format!("{method} /api/v1/role/unused HTTP/1.1")),
+                        ]
+                    );
+                }
+            }
+        });
+    }
+    #[test]
+    fn requests_are_counted_when_writing_begins() {
+        let state = Arc::new(ConnectionState::new(false));
+        let connected = Connected::new().extra(ConnectionTracker(state.clone()));
+        let observe = |unsent| AttemptState::observe(&connected, unsent).unwrap();
+        // The first request fails on a fresh connection, written or not.
+        assert!(!observe(true).reused);
+        state.begin_write();
+        state.begin_write();
+        assert!(!observe(false).reused);
+        state.received.fetch_add(17, Ordering::Relaxed);
+        assert!(observe(false).received_head);
+        // Reuse is known before the next request is dequeued, independent of
+        // when the caller saw the previous response.
+        let queued = observe(true);
+        assert!(queued.reused && !queued.received_head);
+        state.begin_write();
+        state.begin_write();
+        let written = observe(false);
+        assert!(written.reused && !written.received_head);
+        assert_eq!(state.requests.load(Ordering::Relaxed), 2);
+    }
+    #[test]
+    fn unsent_requests_replay_for_any_method_only_on_reused_http1_connections() {
+        runtime().block_on(async {
+            // A genuine Hyper Canceled error: the request is handed back
+            // because the connection stopped before dequeuing it. An idle
+            // close racing a new request on the pool produces the same error,
+            // but cannot be scheduled deterministically in a test.
+            let (client, _server) = tokio::io::duplex(64);
+            let (mut sender, connection) =
+                hyper::client::conn::http1::handshake::<_, Full<Bytes>>(TokioIo::new(client))
+                    .await
+                    .unwrap();
+            drop(connection);
+            let error = sender
+                .send_request(Request::new(Full::new(Bytes::new())))
+                .await
+                .unwrap_err();
+            assert!(error.is_canceled());
+            let state = |reused, h2| {
+                Some(AttemptState {
+                    reused,
+                    h2,
+                    received_head: false,
+                })
+            };
+            for method in [
+                Method::POST,
+                Method::PUT,
+                Method::PATCH,
+                Method::DELETE,
+                Method::GET,
+            ] {
+                assert!(replayable_after(&method, state(true, false), true, &error));
+                assert!(!replayable_after(
+                    &method,
+                    state(false, false),
+                    true,
+                    &error
+                ));
+                assert!(!replayable_after(&method, state(true, true), true, &error));
+                assert!(
+                    !replayable_after(&method, state(true, false), false, &error),
+                    "{method}: a written request is replayed only after a read failure"
+                );
+            }
+        });
+    }
+    #[test]
+    fn idle_close_arriving_while_the_runtime_is_busy_is_noticed_before_dispatch() {
+        // The server closes the idle connection while the client runtime is
+        // blocked by synchronous work. Go's read loop sees that close at once
+        // and dials anew, so the mutation must not be written into the dead
+        // connection, where it could neither succeed nor be replayed.
+        let (ready, server) = std::sync::mpsc::channel();
+        std::thread::spawn(move || {
+            runtime().block_on(async {
+                for scheme in SCHEMES {
+                    let script = vec![Fault::OkThenIdleClose];
+                    ready.send(scripted_server(scheme, script).await).unwrap();
+                }
+                std::future::pending::<()>().await;
+            })
+        });
+        runtime().block_on(async {
+            for scheme in SCHEMES {
+                let server = server.recv().unwrap();
+                let transport = trusted_transport(policy("", "", ""));
+                exchange(&transport, &server, Method::GET, "/api/v1/roles")
+                    .await
+                    .unwrap();
+                server.idle_close.notify_one();
+                std::thread::sleep(Duration::from_millis(200));
+                let body = transport
+                    .send(
+                        &Method::POST,
+                        &server.url("/api/v1/user/carol"),
+                        &HeaderMap::new(),
+                        &body_for(&Method::POST),
+                    )
+                    .await
+                    .unwrap()
+                    .bytes()
+                    .await
+                    .unwrap();
+                assert_eq!(body.as_ref(), b"ok");
+                assert_eq!(
+                    server.requests(),
+                    [
+                        (0, "GET /api/v1/roles HTTP/1.1".into()),
+                        (1, "POST /api/v1/user/carol HTTP/1.1".into()),
+                    ],
+                    "{scheme}"
+                );
+            }
+        });
+    }
+    #[test]
+    fn healthy_keep_alive_exchanges_are_neither_duplicated_nor_retried() {
+        runtime().block_on(async {
+            for scheme in SCHEMES {
+                let server = scripted_server(scheme, Vec::new()).await;
+                let transport = trusted_transport(policy("", "", ""));
+                for method in [Method::GET, Method::POST, Method::GET, Method::DELETE] {
+                    exchange(&transport, &server, method, "/api/v1/query")
+                        .await
+                        .unwrap();
+                }
+                let lines = server.requests();
+                assert_eq!(lines.len(), 4);
+                assert!(
+                    lines.iter().all(|(connection, _)| *connection == 0),
+                    "{scheme} {lines:?}"
+                );
+            }
+        });
+    }
+    #[test]
+    fn record_framing_reports_boundaries_across_split_reads() {
+        let mut framing = RecordFraming::default();
+        assert!(framing.feed(&[]));
+        assert!(!framing.feed(&[23, 3, 3]));
+        assert!(!framing.feed(&[0, 3, b'a']));
+        assert!(framing.feed(b"bc"));
+        // An empty record and a record split inside its payload.
+        assert!(framing.feed(&[21, 3, 3, 0, 0]));
+        assert!(!framing.feed(&[23, 3, 3, 1, 0, 0]));
+        assert!(!framing.feed(&[0; 254]));
+        assert!(framing.feed(&[0]));
     }
     #[test]
     fn metrics_transport_has_no_proxy_or_connection_timers() {

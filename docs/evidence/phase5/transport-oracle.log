@@ -1,0 +1,120 @@
+== http GET,/fresh -- close
+GET /fresh -> error "EOF"
+ledger ["0 GET /fresh"]
+== http GET,/fresh -- notify
+GET /fresh -> error "EOF"
+ledger ["0 GET /fresh"]
+== http GET,/fresh -- partial
+GET /fresh -> error "net/http: HTTP/1.x transport connection broken: malformed MIME header: missing colon: \"Content-\""
+ledger ["0 GET /fresh"]
+== http GET,/fresh -- truncate
+GET /fresh -> 200 "o" unexpected EOF
+ledger ["0 GET /fresh"]
+== http POST,/fresh -- close
+POST /fresh -> error "EOF"
+ledger ["0 POST /fresh"]
+== http POST,/fresh -- notify
+POST /fresh -> error "EOF"
+ledger ["0 POST /fresh"]
+== http POST,/fresh -- partial
+POST /fresh -> error "net/http: HTTP/1.x transport connection broken: malformed MIME header: missing colon: \"Content-\""
+ledger ["0 POST /fresh"]
+== http POST,/fresh -- truncate
+POST /fresh -> 200 "o" unexpected EOF
+ledger ["0 POST /fresh"]
+== http GET,/a GET,/b -- ok close
+GET /a -> 200 "ok" <nil>
+GET /b -> 200 "ok" <nil>
+ledger ["0 GET /a" "0 GET /b" "1 GET /b"]
+== http GET,/a GET,/b -- ok notify
+GET /a -> 200 "ok" <nil>
+GET /b -> 200 "ok" <nil>
+ledger ["0 GET /a" "0 GET /b" "1 GET /b"]
+== http GET,/a GET,/b -- ok partial
+GET /a -> 200 "ok" <nil>
+GET /b -> error "net/http: HTTP/1.x transport connection broken: malformed MIME header: missing colon: \"Content-\""
+ledger ["0 GET /a" "0 GET /b"]
+== http GET,/a GET,/b -- ok truncate
+GET /a -> 200 "ok" <nil>
+GET /b -> 200 "o" unexpected EOF
+ledger ["0 GET /a" "0 GET /b"]
+== http GET,/a GET,/b -- ok close close
+GET /a -> 200 "ok" <nil>
+GET /b -> error "EOF"
+ledger ["0 GET /a" "0 GET /b" "1 GET /b"]
+== http GET,/a POST,/b -- ok close
+GET /a -> 200 "ok" <nil>
+POST /b -> error "EOF"
+ledger ["0 GET /a" "0 POST /b"]
+== http GET,/a PUT,/b -- ok close
+GET /a -> 200 "ok" <nil>
+PUT /b -> error "EOF"
+ledger ["0 GET /a" "0 PUT /b"]
+== http GET,/a PATCH,/b -- ok close
+GET /a -> 200 "ok" <nil>
+PATCH /b -> error "EOF"
+ledger ["0 GET /a" "0 PATCH /b"]
+== http GET,/a DELETE,/b -- ok close
+GET /a -> 200 "ok" <nil>
+DELETE /b -> error "EOF"
+ledger ["0 GET /a" "0 DELETE /b"]
+== https GET,/fresh -- close
+GET /fresh -> error "EOF"
+ledger ["0 GET /fresh"]
+== https GET,/fresh -- notify
+GET /fresh -> error "EOF"
+ledger ["0 GET /fresh"]
+== https GET,/fresh -- partial
+GET /fresh -> error "net/http: HTTP/1.x transport connection broken: malformed MIME header: missing colon: \"Content-\""
+ledger ["0 GET /fresh"]
+== https GET,/fresh -- truncate
+GET /fresh -> error "unexpected EOF"
+ledger ["0 GET /fresh"]
+== https POST,/fresh -- close
+POST /fresh -> error "EOF"
+ledger ["0 POST /fresh"]
+== https POST,/fresh -- notify
+POST /fresh -> error "EOF"
+ledger ["0 POST /fresh"]
+== https POST,/fresh -- partial
+POST /fresh -> error "net/http: HTTP/1.x transport connection broken: malformed MIME header: missing colon: \"Content-\""
+ledger ["0 POST /fresh"]
+== https POST,/fresh -- truncate
+POST /fresh -> error "unexpected EOF"
+ledger ["0 POST /fresh"]
+== https GET,/a GET,/b -- ok close
+GET /a -> 200 "ok" <nil>
+GET /b -> 200 "ok" <nil>
+ledger ["0 GET /a" "0 GET /b" "1 GET /b"]
+== https GET,/a GET,/b -- ok notify
+GET /a -> 200 "ok" <nil>
+GET /b -> 200 "ok" <nil>
+ledger ["0 GET /a" "0 GET /b" "1 GET /b"]
+== https GET,/a GET,/b -- ok partial
+GET /a -> 200 "ok" <nil>
+GET /b -> error "net/http: HTTP/1.x transport connection broken: malformed MIME header: missing colon: \"Content-\""
+ledger ["0 GET /a" "0 GET /b"]
+== https GET,/a GET,/b -- ok truncate
+GET /a -> 200 "ok" <nil>
+GET /b -> 200 "ok" <nil>
+ledger ["0 GET /a" "0 GET /b" "1 GET /b"]
+== https GET,/a GET,/b -- ok close close
+GET /a -> 200 "ok" <nil>
+GET /b -> error "EOF"
+ledger ["0 GET /a" "0 GET /b" "1 GET /b"]
+== https GET,/a POST,/b -- ok close
+GET /a -> 200 "ok" <nil>
+POST /b -> error "EOF"
+ledger ["0 GET /a" "0 POST /b"]
+== https GET,/a PUT,/b -- ok close
+GET /a -> 200 "ok" <nil>
+PUT /b -> error "EOF"
+ledger ["0 GET /a" "0 PUT /b"]
+== https GET,/a PATCH,/b -- ok close
+GET /a -> 200 "ok" <nil>
+PATCH /b -> error "EOF"
+ledger ["0 GET /a" "0 PATCH /b"]
+== https GET,/a DELETE,/b -- ok close
+GET /a -> 200 "ok" <nil>
+DELETE /b -> error "EOF"
+ledger ["0 GET /a" "0 DELETE /b"]

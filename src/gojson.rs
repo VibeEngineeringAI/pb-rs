@@ -469,7 +469,7 @@ struct Decoder<'a> {
 /// encoding/json advances one byte when utf8.DecodeRune reports an invalid
 /// encoding. Rust's lossy conversion groups some malformed prefixes into one
 /// replacement, so append valid spans and advance only one byte per failure.
-fn push_string_bytes(output: &mut String, mut bytes: &[u8]) {
+pub(crate) fn push_string_bytes(output: &mut String, mut bytes: &[u8]) {
     while !bytes.is_empty() {
         match std::str::from_utf8(bytes) {
             Ok(valid) => {

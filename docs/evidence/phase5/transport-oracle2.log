@@ -1,0 +1,98 @@
+== http GET,/fresh -- p1
+GET /fresh -> error "net/http: HTTP/1.x transport connection broken: malformed HTTP response \"H\""
+ledger ["0 GET /fresh"]
+== http GET,/a GET,/b -- ok p1
+GET /a -> 200 "ok" <nil>
+GET /b -> error "net/http: HTTP/1.x transport connection broken: malformed HTTP response \"H\""
+ledger ["0 GET /a" "0 GET /b"]
+== http GET,/fresh -- p2
+GET /fresh -> error "net/http: HTTP/1.x transport connection broken: malformed HTTP status code \"2\""
+ledger ["0 GET /fresh"]
+== http GET,/a GET,/b -- ok p2
+GET /a -> 200 "ok" <nil>
+GET /b -> error "net/http: HTTP/1.x transport connection broken: malformed HTTP status code \"2\""
+ledger ["0 GET /a" "0 GET /b"]
+== http GET,/fresh -- p3
+GET /fresh -> error "net/http: HTTP/1.x transport connection broken: unexpected EOF"
+ledger ["0 GET /fresh"]
+== http GET,/a GET,/b -- ok p3
+GET /a -> 200 "ok" <nil>
+GET /b -> error "net/http: HTTP/1.x transport connection broken: unexpected EOF"
+ledger ["0 GET /a" "0 GET /b"]
+== http GET,/fresh -- p4
+GET /fresh -> error "net/http: HTTP/1.x transport connection broken: unexpected EOF"
+ledger ["0 GET /fresh"]
+== http GET,/a GET,/b -- ok p4
+GET /a -> 200 "ok" <nil>
+GET /b -> error "net/http: HTTP/1.x transport connection broken: unexpected EOF"
+ledger ["0 GET /a" "0 GET /b"]
+== http GET,/fresh -- p5
+GET /fresh -> error "net/http: HTTP/1.x transport connection broken: unexpected EOF"
+ledger ["0 GET /fresh"]
+== http GET,/a GET,/b -- ok p5
+GET /a -> 200 "ok" <nil>
+GET /b -> error "net/http: HTTP/1.x transport connection broken: unexpected EOF"
+ledger ["0 GET /a" "0 GET /b"]
+== http GET,/fresh -- p6
+GET /fresh -> error "net/http: HTTP/1.x transport connection broken: unexpected EOF"
+ledger ["0 GET /fresh"]
+== http GET,/a GET,/b -- ok p6
+GET /a -> 200 "ok" <nil>
+GET /b -> error "net/http: HTTP/1.x transport connection broken: unexpected EOF"
+ledger ["0 GET /a" "0 GET /b"]
+== http GET,/fresh -- p7
+GET /fresh -> error "net/http: HTTP/1.x transport connection broken: malformed MIME header: missing colon: \"\\r\""
+ledger ["0 GET /fresh"]
+== http GET,/a GET,/b -- ok p7
+GET /a -> 200 "ok" <nil>
+GET /b -> error "net/http: HTTP/1.x transport connection broken: malformed MIME header: missing colon: \"\\r\""
+ledger ["0 GET /a" "0 GET /b"]
+== https GET,/fresh -- p1
+GET /fresh -> error "net/http: HTTP/1.x transport connection broken: malformed HTTP response \"H\""
+ledger ["0 GET /fresh"]
+== https GET,/a GET,/b -- ok p1
+GET /a -> 200 "ok" <nil>
+GET /b -> error "net/http: HTTP/1.x transport connection broken: malformed HTTP response \"H\""
+ledger ["0 GET /a" "0 GET /b"]
+== https GET,/fresh -- p2
+GET /fresh -> error "net/http: HTTP/1.x transport connection broken: malformed HTTP status code \"2\""
+ledger ["0 GET /fresh"]
+== https GET,/a GET,/b -- ok p2
+GET /a -> 200 "ok" <nil>
+GET /b -> error "net/http: HTTP/1.x transport connection broken: malformed HTTP status code \"2\""
+ledger ["0 GET /a" "0 GET /b"]
+== https GET,/fresh -- p3
+GET /fresh -> error "net/http: HTTP/1.x transport connection broken: unexpected EOF"
+ledger ["0 GET /fresh"]
+== https GET,/a GET,/b -- ok p3
+GET /a -> 200 "ok" <nil>
+GET /b -> error "net/http: HTTP/1.x transport connection broken: unexpected EOF"
+ledger ["0 GET /a" "0 GET /b"]
+== https GET,/fresh -- p4
+GET /fresh -> error "net/http: HTTP/1.x transport connection broken: unexpected EOF"
+ledger ["0 GET /fresh"]
+== https GET,/a GET,/b -- ok p4
+GET /a -> 200 "ok" <nil>
+GET /b -> error "net/http: HTTP/1.x transport connection broken: unexpected EOF"
+ledger ["0 GET /a" "0 GET /b"]
+== https GET,/fresh -- p5
+GET /fresh -> error "net/http: HTTP/1.x transport connection broken: unexpected EOF"
+ledger ["0 GET /fresh"]
+== https GET,/a GET,/b -- ok p5
+GET /a -> 200 "ok" <nil>
+GET /b -> error "net/http: HTTP/1.x transport connection broken: unexpected EOF"
+ledger ["0 GET /a" "0 GET /b"]
+== https GET,/fresh -- p6
+GET /fresh -> error "net/http: HTTP/1.x transport connection broken: unexpected EOF"
+ledger ["0 GET /fresh"]
+== https GET,/a GET,/b -- ok p6
+GET /a -> 200 "ok" <nil>
+GET /b -> error "net/http: HTTP/1.x transport connection broken: unexpected EOF"
+ledger ["0 GET /a" "0 GET /b"]
+== https GET,/fresh -- p7
+GET /fresh -> error "net/http: HTTP/1.x transport connection broken: malformed MIME header: missing colon: \"\\r\""
+ledger ["0 GET /fresh"]
+== https GET,/a GET,/b -- ok p7
+GET /a -> 200 "ok" <nil>
+GET /b -> error "net/http: HTTP/1.x transport connection broken: malformed MIME header: missing colon: \"\\r\""
+ledger ["0 GET /a" "0 GET /b"]

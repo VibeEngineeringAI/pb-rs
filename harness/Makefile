@@ -73,6 +73,23 @@ phase3-build: phase2-build
 .PHONY: phase4-build phase4-check phase4-deadline-check phase4-workloads-measure
 phase4-build: phase3-build
 
+.PHONY: phase5-build phase5-reference-check phase5-check phase5-deadline-check phase5-workloads-measure
+phase5-build: phase4-build
+
+phase5-reference-check:
+	$(PYTHON) $(ROOT)/harness/phase5.py check-reference --reference $(ROOT)/bin/pb-go --cloud-reference $(ROOT)/bin/pb-go-cloud --repeat 2 --out $(OUT)
+
+phase5-check:
+	$(PYTHON) $(ROOT)/harness/phase5.py compare --reference $(ROOT)/bin/pb-go --cloud-reference $(ROOT)/bin/pb-go-cloud --candidate $(ROOT)/target/release/pb --cloud-candidate $(ROOT)/target/harness-cloud/release/pb --out $(OUT)
+
+phase5-deadline-check:
+	$(PYTHON) $(ROOT)/harness/phase5.py compare --reference $(ROOT)/bin/pb-go --cloud-reference $(ROOT)/bin/pb-go-cloud --candidate $(ROOT)/target/release/pb --cloud-candidate $(ROOT)/target/harness-cloud/release/pb --include-full60s --case p5-user-add-stalled-body-deadline --out $(OUT)
+
+# The prior binary is an unmeasured scope guard for newly implemented commands.
+# Set PRIOR_RUST to the frozen preceding release artifact, and use a new OUT.
+phase5-workloads-measure:
+	$(PYTHON) $(ROOT)/harness/phase5_workloads.py run --go $(ROOT)/bin/pb-go --go-cloud $(ROOT)/bin/pb-go-cloud --candidate rust=$(ROOT)/target/release/pb --candidate-cloud rust=$(ROOT)/target/harness-cloud/release/pb $(if $(PRIOR_RUST),--prior $(PRIOR_RUST)) --meter $(ROOT)/bin/pb-meter --out $(OUT) --repetitions $(REPETITIONS) --warmup $(WARMUP)
+
 phase4-check:
 	$(PYTHON) $(ROOT)/harness/phase4.py compare --reference $(ROOT)/bin/pb-go --cloud-reference $(ROOT)/bin/pb-go-cloud --candidate $(ROOT)/target/release/pb --cloud-candidate $(ROOT)/target/harness-cloud/release/pb --out $(OUT)
 

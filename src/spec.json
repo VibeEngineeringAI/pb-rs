@@ -315,7 +315,7 @@
           "silence_usage": true,
           "requires_profile": true,
           "wrapped_preflight": true,
-          "operation": "deferred"
+          "operation": "administration"
         },
         {
           "name": "info",
@@ -402,7 +402,7 @@
           "silence_usage": true,
           "requires_profile": true,
           "wrapped_preflight": true,
-          "operation": "deferred"
+          "operation": "administration"
         },
         {
           "name": "schema",
@@ -1270,7 +1270,7 @@
           "silence_usage": true,
           "requires_profile": true,
           "wrapped_preflight": true,
-          "operation": "deferred"
+          "operation": "administration"
         },
         {
           "name": "remove",
@@ -1292,7 +1292,7 @@
           "silence_usage": false,
           "requires_profile": true,
           "wrapped_preflight": true,
-          "operation": "deferred"
+          "operation": "administration"
         }
       ],
       "args": {
@@ -1550,7 +1550,7 @@
           "silence_usage": false,
           "requires_profile": true,
           "wrapped_preflight": true,
-          "operation": "deferred"
+          "operation": "administration"
         },
         {
           "name": "list",
@@ -1577,7 +1577,7 @@
           "silence_usage": true,
           "requires_profile": true,
           "wrapped_preflight": true,
-          "operation": "deferred"
+          "operation": "administration"
         },
         {
           "name": "remove",
@@ -1599,7 +1599,7 @@
           "silence_usage": false,
           "requires_profile": true,
           "wrapped_preflight": true,
-          "operation": "deferred"
+          "operation": "administration"
         },
         {
           "name": "set-role",
@@ -1616,7 +1616,7 @@
           "silence_usage": false,
           "requires_profile": true,
           "wrapped_preflight": true,
-          "operation": "deferred"
+          "operation": "administration"
         }
       ],
       "args": {

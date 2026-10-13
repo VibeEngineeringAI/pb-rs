@@ -1,0 +1,99 @@
+{
+  "base_revision": "411e56ff9b71569178cf6c30c924625d57348089",
+  "go_source_revision": "07af390ab09bda8ac9e427ffc6310077bace0125",
+  "go": {
+    "path": "/home/ajs/.cache/pb-phase5/pb-go",
+    "bytes": 71807160,
+    "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314"
+  },
+  "go_cloud": {
+    "path": "/home/ajs/.cache/pb-phase5/pb-go-cloud",
+    "bytes": 71807160,
+    "sha256": "622d4144b7e354c0ee4036244ba719cbbaf8357710804b1d733cd421a0dc227e"
+  },
+  "public_version": "v0.0.0-harness",
+  "rust_toolchain": "1.96.0",
+  "go_toolchain": "1.25.4",
+  "host": {
+    "system": "Linux",
+    "node": "ajs-mini-pc-02",
+    "release": "7.2.5-3-omarchy",
+    "version": "#1 SMP PREEMPT_DYNAMIC Mon, 14 Sep 2026 19:55:01 +0000",
+    "machine": "x86_64",
+    "processor": ""
+  },
+  "protocol": {
+    "warmup": 5,
+    "measured_samples": 30,
+    "order": "seeded randomized sequential fresh-process warm-cache",
+    "state": "reset independently before warmups and samples, outside timing",
+    "sink": "captured pipe",
+    "primary_metrics": [
+      "wall_ms",
+      "cpu_user_ms",
+      "cpu_system_ms",
+      "peak_rss_kib"
+    ],
+    "regression_investigation_budget": {
+      "shared_latency_cpu": "both >10% and >1 ms median increase versus prior Rust",
+      "shared_rss": "both >20% and >2048 KiB median increase versus prior Rust",
+      "new_commands": "report Go comparisons, no universal speed threshold"
+    },
+    "intervals": "pointwise exploratory; p95 descriptive at 30 samples"
+  },
+  "prior_rust": {
+    "path": "/home/ajs/.cache/pb-phase5/baseline-target/release/pb",
+    "sha256": "02b14a9adbc756303785c94a09f301f3dd3eae4c18967f23d59235a9eb07d3a2",
+    "bytes": 7423112
+  },
+  "rust": {
+    "path": "/home/ajs/.cache/pb-phase5/candidate-final/pb",
+    "sha256": "ec9765a4dbd4ad48fd758965cba8aaba50a525d6c7eded89b8c84c4cfcc31b0f",
+    "bytes": 7617656
+  },
+  "rust_cloud": {
+    "path": "/home/ajs/.cache/pb-phase5/candidate-final/pb-cloud",
+    "sha256": "2a91136a347fabc9256603958beb7709d0da4e8146c9adb0269c039a468bb9c4",
+    "bytes": 7618112
+  },
+  "source_sha256": {
+    "src/LICENSE-Go.txt": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+    "src/admin.rs": "cdf03778b97c57cc90a53fb4d4e14c4a0f2360c6d78039c84c75f8544dffc9eb",
+    "src/admin_datasets.rs": "67f9a877c60d45d8f8ad6b6759a425b9de1db8d7fe4c8a83cf804a686fa8a938",
+    "src/admin_inventory/style.rs": "f1014435db977fa0aca1275860114432d411df648c474ee4739abcbc656eed39",
+    "src/admin_inventory/tests.rs": "7fad3b542b124a3f3cc50dcd98931cae3324551243c1a64febd795a0e498c2c8",
+    "src/admin_inventory/wire.rs": "bbd610ebbe4880bc94a4241ff5c5d8c108a6c1e764b4b1c4a365dc5709ce7106",
+    "src/admin_inventory.rs": "bf3687e67bd1b2f191613cbf3b8ad10784d0900a7af30fdadda76957d837f6a4",
+    "src/api.rs": "3195a29ef68b485025eb540f3dba0ada718db4de39f01c3bbe2ecc38dfaafe92",
+    "src/auth.rs": "fe0623db3305abefb2cf1689bc99dd9e7edad2de6eb3722b152572099a4f10ce",
+    "src/catalog.json": "be81e4157b714d50f7529a5c7e773fb2432ac0463e67f70291bf4094c5616b24",
+    "src/config.rs": "0cf2ef32c8f7e4ec0a7dcaf3e0f9011c683fadaf40f26b124b03af4f450b3a98",
+    "src/datasets.rs": "6ff7d34a140110eb7a9fe501b8e01094541023038dc66957bebb593c1224612d",
+    "src/diagnostics.rs": "07e3845dfbf53307122d897e786540122e25d12daae7f54daeea1dbc6224f406",
+    "src/error.rs": "8bab608fd27891a1a8852ac9aa439d8184fe8498401c7a7045fc432ee77a8ce8",
+    "src/gojson.rs": "9b153fe9cbe0ab9d91f076fd5701718ae1c432c201080d649478e12ae6739aad",
+    "src/lib.rs": "b7c8747edb144431fe08e729ebd86552b6d3cd8988faab22fdfa133d112b8aed",
+    "src/main.rs": "2028f9bbbd5dbe978ddfe680f195479cb0a2f3bcc36f0bac4042c60010e11a7b",
+    "src/metrics/mod.rs": "e3943416126257b7a41023b27c211ad0aae32cc92fdb2835cdd9f5e7a635f351",
+    "src/metrics/output.rs": "0ac752817b03135bdb80e1ab3d7edc61a2e4a1dec59f368a1001f38cf1982192",
+    "src/metrics/raw_json.rs": "bb534e827211540d9b4ab69300794794f3dc6a5e2237ca6c7c4b44c29fcce5c4",
+    "src/metrics/style.rs": "b7146bbc91733a1136058cbc8a61d87676126e083aa44db1289c30c6ce8ec9c8",
+    "src/metrics/style_tests.rs": "90c726826a3e05bbb8fb1cb303620fb429b1147913140db3d93bf35f452d8bea",
+    "src/metrics/text_stream.rs": "755cb78f66e799cad462bc6401712caf560f51728083598b9932a2353ba5963b",
+    "src/parser.rs": "9a411d9639980eec15e56b13969aaa57c523640ed7dd8c053f1690131495aef6",
+    "src/printable.rs": "a8b4519f95e3e9e647bc406aa2dac79f18ef1f9f99b3bcbda4f8e9f875c78e27",
+    "src/profile.rs": "17a66c17cc76eb3231b9883f3f9ec4634fd2544d9a85b6ce42335742bc252520",
+    "src/render.rs": "348f1640b9630a64bf8d071db1bf26e769784fedf2b47702768df08558ff9abb",
+    "src/saved_queries.rs": "505461346a1423aebd1f54f36c1f6bcc27e76eb41d2d58f10a52293d71b8ed14",
+    "src/spec.json": "9a977cc2ae4304d5d5d336ca914669e786f22ad8977d0ded280cc0901cbc8317",
+    "src/spec.rs": "a856c4ea98e4538de3bf4cee594922dd0695740b89479435dc3905494386cddc",
+    "src/sql/mod.rs": "e46142ba87ec8e77f7829ab7d5aa0f9d0643c709cd37aa25dc1bc9b5979b21dc",
+    "src/sql/output.rs": "288c02248a27b6b6cb685c3c06e8d7797e1a501dfc4ef9f51f7af6ebd162396a",
+    "src/sql/rewrite.rs": "718992e87487818d58a0017a1c977ae78cfe41e4cb9a4d644b5e0aa5ebaef584",
+    "src/sql/scan.rs": "5e823ae0880f4cdd2774641abe23bbe26f774a0e1ba5a9a7da06676f2ef88c44",
+    "src/status.rs": "4352731b8b0473d1a84e407bf10f092d813d472dd70b0c9d04a42e33781996bd",
+    "src/time_compat.rs": "b26bfe888bfbaac4917bf5563198d0c11d611af3be152538c181f307c96952ac",
+    "src/transport.rs": "8007fa682cdf7c026df6adc12597dcc562b80eb77c0c9dd5004b1499d2478c83",
+    "src/url_reference.rs": "b228c8885c77f967c31153aefd36e1800e2076d38030e3c90a21f206be9b9df2"
+  }
+}

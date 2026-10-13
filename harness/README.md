@@ -385,3 +385,30 @@ Optimized builds with debug symbols and external `perf`, `strace`, and `heaptrac
 captures are documented in [Phase 3 external profiling](../docs/rust-phase3-profiling.md).
 Use `profiling-build` to prepare symbols and `profile_external.py` to capture
 profiles separately from unprofiled CLI resource/latency controls.
+
+## Phase-five administration
+
+The [administration contract](contracts/phase5.md) adds stateful dataset/user/role
+fixtures and checks every mutation's request and commit ledger. Its frozen
+reference requires the pinned Go 1.25.4 build. The [implementation report](../docs/rust-phase5.md)
+records scope, observed differences, and measurement evidence.
+
+```sh
+make -f harness/Makefile phase5-build GO=/path/to/go1.25.4 CARGO='cargo +1.96.0'
+make -f harness/Makefile phase5-reference-check OUT=harness/results/p5-reference
+make -f harness/Makefile phase5-check OUT=harness/results/p5-acceptance
+make -f harness/Makefile phase5-deadline-check OUT=harness/results/p5-deadline
+
+# Run only after builds/tests/profiling stop; keep the preceding Rust executable.
+make -f harness/Makefile phase5-workloads-measure \
+  PRIOR_RUST=/absolute/path/to/previous/pb \
+  OUT=harness/results/p5-performance WARMUP=5 REPETITIONS=30
+```
+
+The resource runner starts with a Go self-comparison, resets fixture state and
+configuration before every sample, and validates requests, output, commits and
+final state. It records native process metrics and retains raw samples. The
+previous Rust binary is an unmeasured deferred-command guard for new commands;
+use `run.py` with the same three binaries for already implemented workloads.
+Cloud replay cases require both Cloud artifacts. Loopback data does not establish
+production server performance or live mutation semantics.

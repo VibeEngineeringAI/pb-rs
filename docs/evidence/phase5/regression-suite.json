@@ -1,0 +1,473 @@
+[
+  {
+    "name": "p1-0000-root",
+    "group": "phase1-startup",
+    "argv": [],
+    "profile": false,
+    "fixture": null,
+    "expected_exit": 0,
+    "expected_requests": []
+  },
+  {
+    "name": "p1-0001-root-help",
+    "group": "phase1-startup",
+    "argv": [
+      "--help"
+    ],
+    "profile": false,
+    "fixture": null,
+    "expected_exit": 0,
+    "expected_requests": []
+  },
+  {
+    "name": "p1-0003-version",
+    "group": "phase1-startup",
+    "argv": [
+      "version"
+    ],
+    "profile": false,
+    "fixture": null,
+    "expected_exit": 0,
+    "expected_requests": []
+  },
+  {
+    "name": "p1-0009-agent-json",
+    "group": "phase1-startup",
+    "argv": [
+      "agent",
+      "-o",
+      "json"
+    ],
+    "profile": false,
+    "fixture": null,
+    "expected_exit": 0,
+    "expected_requests": []
+  },
+  {
+    "name": "p2-status-basic-json",
+    "group": "phase2-status",
+    "argv": [
+      "status",
+      "-o",
+      "json"
+    ],
+    "profile": true,
+    "fixture": {
+      "headers": {
+        "authorization": "Basic aGFybmVzczpoYXJuZXNz"
+      },
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/api/v1/about",
+          "body": "{\"version\":\"fixture-1 <&> \u00e9\",\"commit\":\"harness\",\"deploymentId\":\"x\",\"grpcPort\":1}"
+        }
+      ]
+    },
+    "expected_exit": 0,
+    "expected_requests": [
+      "GET /api/v1/about"
+    ],
+    "auth": "basic"
+  },
+  {
+    "name": "p2-profile-list-seeded-json",
+    "group": "phase2-profile",
+    "argv": [
+      "profile",
+      "list",
+      "-o",
+      "json"
+    ],
+    "profile": true,
+    "fixture": null,
+    "expected_exit": 0,
+    "expected_requests": [],
+    "auth": "basic"
+  },
+  {
+    "name": "p2-dataset-list-basic-json",
+    "group": "phase2-dataset",
+    "argv": [
+      "dataset",
+      "list",
+      "-o",
+      "json"
+    ],
+    "profile": true,
+    "fixture": {
+      "headers": {
+        "authorization": "Basic aGFybmVzczpoYXJuZXNz"
+      },
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/api/prism/v1/home",
+          "body": "{\"datasets\":[{\"title\":\"zeta\",\"datasetType\":\"traces\",\"datasetFormat\":\"otel\",\"ingestion\":false,\"extra\":1},{\"title\":\"Alpha\",\"name\":\"alpha-name\",\"datasetType\":\"logs\",\"datasetFormat\":\"json\",\"ingestion\":true},{\"title\":\"caf\u00e9 <&>\",\"datasetType\":\"\",\"datasetFormat\":\"\",\"ingestion\":true},{\"title\":\"metrics\",\"datasetType\":\"metrics\",\"datasetFormat\":\"otel\"}],\"other\":{\"x\":1}}"
+        }
+      ]
+    },
+    "expected_exit": 0,
+    "expected_requests": [
+      "GET /api/prism/v1/home"
+    ],
+    "auth": "basic"
+  },
+  {
+    "name": "p2-dataset-info-json",
+    "group": "phase2-dataset",
+    "argv": [
+      "dataset",
+      "info",
+      "logs",
+      "-o",
+      "json"
+    ],
+    "profile": true,
+    "fixture": {
+      "headers": {
+        "authorization": "Basic aGFybmVzczpoYXJuZXNz"
+      },
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/api/v1/logstream/logs/info",
+          "body": "{\"streamType\":\"UserDefined\",\"telemetryType\":\"logs\"}"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/logstream/logs/stats",
+          "body": "{\"ingestion\":{\"count\":1234,\"format\":\"json\",\"size\":5368709120},\"storage\":{\"format\":\"parquet\",\"size\":1610612736},\"stream\":\"logs\",\"time\":\"2024-01-01T00:00:00Z\"}"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/logstream/logs/retention",
+          "body": "[{\"description\":\"keep\",\"action\":\"delete\",\"duration\":\"30d\"}]"
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/logstream/logs/alert",
+          "body": "{\"version\":\"v1\",\"alerts\":[{\"name\":\"errors <hi>\",\"message\":\"m\",\"targets\":[{\"type\":\"webhook\",\"endpoint\":\"https://hook.invalid\",\"headers\":{\"a\":\"b\"},\"skip_tls_check\":false,\"repeat\":{\"interval\":\"1m\",\"times\":2}},{\"type\":\"slack\"}],\"rule\":{\"type\":\"column\",\"config\":{\"column\":\"level\",\"operator\":\"=\",\"ignoreCase\":true,\"value\":1000000,\"repeats\":3}}},{\"name\":\"second\",\"targets\":[],\"rule\":{\"config\":{\"column\":\"msg\",\"operator\":\"contains\",\"value\":\"x\"}}}]}"
+        }
+      ]
+    },
+    "expected_exit": 0,
+    "expected_requests": [
+      "GET /api/v1/logstream/logs/info",
+      "GET /api/v1/logstream/logs/stats",
+      "GET /api/v1/logstream/logs/retention",
+      "GET /api/v1/logstream/logs/alert"
+    ],
+    "auth": "basic"
+  },
+  {
+    "name": "p2-dataset-schema-json",
+    "group": "phase2-dataset",
+    "argv": [
+      "dataset",
+      "schema",
+      "logs",
+      "-o",
+      "json"
+    ],
+    "profile": true,
+    "fixture": {
+      "headers": {
+        "authorization": "Basic aGFybmVzczpoYXJuZXNz"
+      },
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/api/v1/logstream/logs/schema",
+          "body": "{\"metadata\":{\"z\":1,\"a\":12345678901234567890,\"html\":\"<&>\",\"f\":1.50e3},\"fields\":[{\"name\":\"message\",\"data_type\":\"Utf8\",\"nullable\":true,\"dict_id\":0},{\"name\":\"p_timestamp\",\"data_type\":{\"Timestamp\":[\"Millisecond\",null]},\"nullable\":false},{\"name\":\"tags\",\"data_type\":{ \"List\" : { \"name\":\"item\", \"data_type\":\"Utf8\" } }},{\"name\":\"num\",\"data_type\":7},{\"name\":\"caf\u00e9 <x>\",\"data_type\":\"Int64\"}]}"
+        }
+      ]
+    },
+    "expected_exit": 0,
+    "expected_requests": [
+      "GET /api/v1/logstream/logs/schema"
+    ],
+    "auth": "basic"
+  },
+  {
+    "name": "p3-bench-rows-1-json",
+    "group": "phase3-sql-scale",
+    "argv": [
+      "sql",
+      "run",
+      "SELECT * FROM logs LIMIT 1",
+      "--from",
+      "2024-01-01T00:00:00Z",
+      "--to",
+      "2024-01-01T00:01:00Z",
+      "-o",
+      "json"
+    ],
+    "profile": true,
+    "auth": "basic",
+    "fixture": {
+      "headers": {
+        "authorization": "Basic aGFybmVzczpoYXJuZXNz"
+      },
+      "routes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/query",
+          "generate": {
+            "prefix": "[",
+            "separator": ",",
+            "suffix": "]",
+            "count": 1,
+            "width": 6,
+            "item": "{\"sequence\":{{i}},\"pad\":\"{{fill}}\",\"p_timestamp\":\"2024-01-01T00:00:00.000Z\",\"level\":\"info\",\"message\":\"fixture <event> caf\u00e9 \u65e5\u5fd7\",\"value\":0.25,\"count\":1234567,\"ok\":true,\"optional\":null}"
+          }
+        }
+      ]
+    },
+    "expected_exit": 0,
+    "expected_requests": [
+      "POST /api/v1/query"
+    ],
+    "fixture_response_body_bytes": 182,
+    "expected_stdout_sha256": "a5c46e77be162c651469579538f197639c6425a3472b83c8298bdeccce5ba052",
+    "expected_stdout_bytes": 254,
+    "fixture_capabilities": [
+      "generate"
+    ],
+    "sql_output": "json",
+    "max_output_bytes": 33554432,
+    "json_array_rows": 1
+  },
+  {
+    "name": "p3-bench-rows-500-json",
+    "group": "phase3-sql-scale",
+    "argv": [
+      "sql",
+      "run",
+      "SELECT * FROM logs LIMIT 500",
+      "--from",
+      "2024-01-01T00:00:00Z",
+      "--to",
+      "2024-01-01T00:01:00Z",
+      "-o",
+      "json"
+    ],
+    "profile": true,
+    "auth": "basic",
+    "fixture": {
+      "headers": {
+        "authorization": "Basic aGFybmVzczpoYXJuZXNz"
+      },
+      "routes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/query",
+          "generate": {
+            "prefix": "[",
+            "separator": ",",
+            "suffix": "]",
+            "count": 500,
+            "width": 6,
+            "item": "{\"sequence\":{{i}},\"pad\":\"{{fill}}\",\"p_timestamp\":\"2024-01-01T00:00:00.000Z\",\"level\":\"info\",\"message\":\"fixture <event> caf\u00e9 \u65e5\u5fd7\",\"value\":0.25,\"count\":1234567,\"ok\":true,\"optional\":null}"
+          }
+        }
+      ]
+    },
+    "expected_exit": 0,
+    "expected_requests": [
+      "POST /api/v1/query"
+    ],
+    "fixture_response_body_bytes": 90501,
+    "expected_stdout_sha256": "f28b34cf6eb15aa8b6ede6d6c8be2780b2edc86b12fe86351076e73434e6cbcf",
+    "expected_stdout_bytes": 125503,
+    "fixture_capabilities": [
+      "generate"
+    ],
+    "sql_output": "json",
+    "max_output_bytes": 33554432,
+    "json_array_rows": 500
+  },
+  {
+    "name": "p3-bench-rows-500-text",
+    "group": "phase3-sql-scale",
+    "argv": [
+      "sql",
+      "run",
+      "SELECT * FROM logs LIMIT 500",
+      "--from",
+      "2024-01-01T00:00:00Z",
+      "--to",
+      "2024-01-01T00:01:00Z"
+    ],
+    "profile": true,
+    "auth": "basic",
+    "fixture": {
+      "headers": {
+        "authorization": "Basic aGFybmVzczpoYXJuZXNz"
+      },
+      "routes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/query",
+          "generate": {
+            "prefix": "[",
+            "separator": ",",
+            "suffix": "]",
+            "count": 500,
+            "width": 6,
+            "item": "{\"sequence\":{{i}},\"pad\":\"{{fill}}\",\"p_timestamp\":\"2024-01-01T00:00:00.000Z\",\"level\":\"info\",\"message\":\"fixture <event> caf\u00e9 \u65e5\u5fd7\",\"value\":0.25,\"count\":1234567,\"ok\":true,\"optional\":null}"
+          }
+        }
+      ]
+    },
+    "expected_exit": 0,
+    "expected_requests": [
+      "POST /api/v1/query"
+    ],
+    "fixture_response_body_bytes": 90501,
+    "expected_stdout_sha256": "a2b111c83f10d5b2c8338c3dd5d0dcdfd4510e62a77212e17f335185d3a3b7e4",
+    "expected_stdout_bytes": 90502,
+    "fixture_capabilities": [
+      "generate"
+    ],
+    "sql_output": "text",
+    "max_output_bytes": 33554432,
+    "json_array_rows": 500
+  },
+  {
+    "name": "p3-bench-rows-10000-json",
+    "group": "phase3-sql-scale",
+    "argv": [
+      "sql",
+      "run",
+      "SELECT * FROM logs LIMIT 10000",
+      "--from",
+      "2024-01-01T00:00:00Z",
+      "--to",
+      "2024-01-01T00:01:00Z",
+      "-o",
+      "json"
+    ],
+    "profile": true,
+    "auth": "basic",
+    "fixture": {
+      "headers": {
+        "authorization": "Basic aGFybmVzczpoYXJuZXNz"
+      },
+      "routes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/query",
+          "generate": {
+            "prefix": "[",
+            "separator": ",",
+            "suffix": "]",
+            "count": 10000,
+            "width": 6,
+            "item": "{\"sequence\":{{i}},\"pad\":\"{{fill}}\",\"p_timestamp\":\"2024-01-01T00:00:00.000Z\",\"level\":\"info\",\"message\":\"fixture <event> caf\u00e9 \u65e5\u5fd7\",\"value\":0.25,\"count\":1234567,\"ok\":true,\"optional\":null}"
+          }
+        }
+      ]
+    },
+    "expected_exit": 0,
+    "expected_requests": [
+      "POST /api/v1/query"
+    ],
+    "fixture_response_body_bytes": 1810001,
+    "expected_stdout_sha256": "770d64a60f62e038bfb87ec2f7a8f1e7c5b56fd2f590e6f3826cca93e7fe898d",
+    "expected_stdout_bytes": 2510003,
+    "fixture_capabilities": [
+      "generate"
+    ],
+    "sql_output": "json",
+    "max_output_bytes": 33554432,
+    "json_array_rows": 10000
+  },
+  {
+    "name": "p3-bench-rows-10000-text",
+    "group": "phase3-sql-scale",
+    "argv": [
+      "sql",
+      "run",
+      "SELECT * FROM logs LIMIT 10000",
+      "--from",
+      "2024-01-01T00:00:00Z",
+      "--to",
+      "2024-01-01T00:01:00Z"
+    ],
+    "profile": true,
+    "auth": "basic",
+    "fixture": {
+      "headers": {
+        "authorization": "Basic aGFybmVzczpoYXJuZXNz"
+      },
+      "routes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/query",
+          "generate": {
+            "prefix": "[",
+            "separator": ",",
+            "suffix": "]",
+            "count": 10000,
+            "width": 6,
+            "item": "{\"sequence\":{{i}},\"pad\":\"{{fill}}\",\"p_timestamp\":\"2024-01-01T00:00:00.000Z\",\"level\":\"info\",\"message\":\"fixture <event> caf\u00e9 \u65e5\u5fd7\",\"value\":0.25,\"count\":1234567,\"ok\":true,\"optional\":null}"
+          }
+        }
+      ]
+    },
+    "expected_exit": 0,
+    "expected_requests": [
+      "POST /api/v1/query"
+    ],
+    "fixture_response_body_bytes": 1810001,
+    "expected_stdout_sha256": "f4c2378bbc57caaae66e652d347c8536758614b3872f875ed986d2d41e14421d",
+    "expected_stdout_bytes": 1810002,
+    "fixture_capabilities": [
+      "generate"
+    ],
+    "sql_output": "text",
+    "max_output_bytes": 33554432,
+    "json_array_rows": 10000
+  },
+  {
+    "name": "p3-bench-empty-json",
+    "group": "phase3-sql-small",
+    "argv": [
+      "sql",
+      "run",
+      "SELECT * FROM logs LIMIT 10",
+      "--from",
+      "2024-01-01T00:00:00Z",
+      "--to",
+      "2024-01-01T00:01:00Z",
+      "-o",
+      "json"
+    ],
+    "profile": true,
+    "auth": "basic",
+    "fixture": {
+      "headers": {
+        "authorization": "Basic aGFybmVzczpoYXJuZXNz"
+      },
+      "routes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/query",
+          "body": "[]"
+        }
+      ]
+    },
+    "expected_exit": 0,
+    "expected_requests": [
+      "POST /api/v1/query"
+    ],
+    "fixture_response_body_bytes": 2,
+    "expected_stdout_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "expected_stdout_bytes": 3,
+    "fixture_capabilities": [],
+    "sql_output": "json",
+    "max_output_bytes": 33554432,
+    "json_array_rows": 0
+  }
+]

@@ -1,5 +1,5 @@
 //! Buffered Prometheus operations with explicit invocation and transport policy.
-mod output;
+pub(crate) mod output;
 mod raw_json;
 pub(crate) fn initialize_process_theme() {
     output::style::initialize_process_theme();

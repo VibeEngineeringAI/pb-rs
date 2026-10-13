@@ -483,7 +483,11 @@ fn go_float(value: f64) -> String {
 // ---------------------------------------------------------------------------
 
 /// ansi.StringWidth: escape sequences and C0 controls are zero width.
-fn line_width(text: &str) -> usize {
+pub(crate) fn line_width(text: &str) -> usize {
+    line_width_bytes(text.as_bytes())
+}
+
+pub(crate) fn line_width_bytes(bytes: &[u8]) -> usize {
     #[derive(Clone, Copy)]
     enum State {
         Ground,
@@ -499,7 +503,6 @@ fn line_width(text: &str) -> usize {
         Osc,
         Text,
     }
-    let bytes = text.as_bytes();
     let (mut state, mut width, mut index) = (State::Ground, 0, 0);
     while index < bytes.len() {
         let byte = bytes[index];
@@ -622,7 +625,7 @@ fn line_width(text: &str) -> usize {
 }
 
 /// lipgloss.Width: the widest newline-separated line.
-fn width(text: &str) -> usize {
+pub(crate) fn width(text: &str) -> usize {
     text.split('\n').map(line_width).max().unwrap_or(0)
 }
 

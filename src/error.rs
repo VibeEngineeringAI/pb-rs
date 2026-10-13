@@ -10,6 +10,8 @@ pub struct CliError {
     pub http_status: u16,
     pub retryable: bool,
     pub stdout: String,
+    pub(crate) raw_message: Option<Box<[u8]>>,
+    pub(crate) raw_stdout: Option<Box<[u8]>>,
 }
 
 impl CliError {
@@ -36,6 +38,8 @@ impl CliError {
             http_status: 0,
             retryable: code == ErrorCode::ConnectionFailed,
             stdout: String::new(),
+            raw_message: None,
+            raw_stdout: None,
         }
     }
 
@@ -62,26 +66,42 @@ impl CliError {
             message: message.into(),
             public_message: public_message.into(),
             stdout: String::new(),
+            raw_message: None,
+            raw_stdout: None,
         }
     }
 
     pub fn status(action: &str, status: u16, wire_status: &str, body: &[u8]) -> Self {
         let public = format!("{action} failed: {wire_status}");
-        let detail = String::from_utf8_lossy(body);
-        let detail = detail.trim();
-        let message = if detail.is_empty() {
-            public.clone()
-        } else {
-            format!("{public}: {detail}")
-        };
-        Self::http(status, message, public)
+        let body = trim_bytes(body);
+        let mut message = public.as_bytes().to_vec();
+        if !body.is_empty() {
+            message.extend_from_slice(b": ");
+            message.extend_from_slice(body);
+        }
+        Self::http(status, go_string(&message), public).with_raw_message(message)
+    }
+
+    pub(crate) fn with_raw_message(mut self, message: Vec<u8>) -> Self {
+        self.raw_message = Some(message.into_boxed_slice());
+        self
+    }
+
+    pub(crate) fn message_bytes(&self) -> &[u8] {
+        self.raw_message
+            .as_deref()
+            .unwrap_or(self.message.as_bytes())
+    }
+
+    pub(crate) fn stdout_bytes(&self) -> &[u8] {
+        self.raw_stdout.as_deref().unwrap_or(self.stdout.as_bytes())
     }
 
     pub fn render(&self, command: &CommandSpec, path: &str, structured: bool) -> Outcome {
         #[derive(Serialize)]
         struct Detail<'a> {
             code: ErrorCode,
-            message: &'a str,
+            message: &'a serde_json::value::RawValue,
             #[serde(skip_serializing_if = "is_zero")]
             http_status: u16,
             retryable: bool,
@@ -91,27 +111,38 @@ impl CliError {
             error: Detail<'a>,
         }
         let stderr = if structured {
+            let public_bytes = if self.public_message == self.message {
+                self.message_bytes()
+            } else {
+                self.public_message.as_bytes()
+            };
+            let public_json =
+                serde_json::value::RawValue::from_string(json_string_bytes(public_bytes))
+                    .expect("encoded JSON string");
             render::json(
                 &Envelope {
                     error: Detail {
                         code: self.code,
-                        message: &self.public_message,
+                        message: &public_json,
                         http_status: self.http_status,
                         retryable: self.retryable,
                     },
                 },
                 false,
             )
+            .into_bytes()
         } else {
-            let mut value = format!("Error: {}\n", self.message);
+            let mut value = b"Error: ".to_vec();
+            value.extend_from_slice(self.message_bytes());
+            value.push(b'\n');
             if !command.silence_usage {
-                value.push_str(&render::usage(command, path));
+                value.extend_from_slice(render::usage(command, path).as_bytes());
             }
             value
         };
         Outcome {
-            stdout: self.stdout.as_bytes().to_vec(),
-            stderr: stderr.into_bytes(),
+            stdout: self.stdout_bytes().to_vec(),
+            stderr,
             exit_code: 1,
         }
     }
@@ -164,5 +195,93 @@ impl From<crate::api::ApiError> for CliError {
             ApiError::Persistence(cause) => Self::new(cause.code, message),
             _ => Self::new(ErrorCode::CommandFailed, message),
         }
+    }
+}
+
+/// Go strings preserve invalid UTF-8 until JSON encoding, which replaces each
+/// invalid byte separately (Rust's lossy conversion can combine a prefix).
+pub(crate) fn go_string(bytes: &[u8]) -> String {
+    let mut text = String::new();
+    crate::gojson::push_string_bytes(&mut text, bytes);
+    text
+}
+
+fn trim_bytes(mut bytes: &[u8]) -> &[u8] {
+    // Invalid bytes are not whitespace and stop trimming on that side.
+    loop {
+        let prefix = match std::str::from_utf8(bytes) {
+            Ok(text) => text,
+            Err(error) => std::str::from_utf8(&bytes[..error.valid_up_to()]).unwrap(),
+        };
+        match prefix.chars().next() {
+            Some(c) if c.is_whitespace() => bytes = &bytes[c.len_utf8()..],
+            _ => break,
+        }
+    }
+    loop {
+        let start = bytes.len().saturating_sub(4);
+        let last = (start..bytes.len()).find_map(|index| {
+            std::str::from_utf8(&bytes[index..]).ok().and_then(|text| {
+                let mut chars = text.chars();
+                let c = chars.next()?;
+                (chars.next().is_none()).then_some(c)
+            })
+        });
+        match last {
+            Some(c) if c.is_whitespace() => bytes = &bytes[..bytes.len() - c.len_utf8()],
+            _ => break,
+        }
+    }
+    bytes
+}
+
+fn json_string_bytes(mut bytes: &[u8]) -> String {
+    let mut output = String::from("\"");
+    while !bytes.is_empty() {
+        let (valid, invalid) = match std::str::from_utf8(bytes) {
+            Ok(text) => (text, false),
+            Err(error) => (
+                std::str::from_utf8(&bytes[..error.valid_up_to()]).unwrap(),
+                true,
+            ),
+        };
+        let quoted = serde_json::to_string(valid).expect("serializable string");
+        output.push_str(&quoted[1..quoted.len() - 1]);
+        bytes = &bytes[valid.len()..];
+        if invalid {
+            output.push_str("\\ufffd");
+            bytes = &bytes[1..];
+        }
+    }
+    output.push('"');
+    output
+}
+
+#[cfg(test)]
+mod byte_tests {
+    use super::*;
+
+    #[test]
+    fn status_trims_go_whitespace_without_replacing_response_bytes() {
+        let error = CliError::status(
+            "delete user",
+            403,
+            "403 Forbidden",
+            b" \xc2\xa0\xff\xe2\x82\t\n",
+        );
+        assert_eq!(
+            error.message_bytes(),
+            b"delete user failed: 403 Forbidden: \xff\xe2\x82"
+        );
+        assert_eq!(error.public_message, "delete user failed: 403 Forbidden");
+        assert_eq!(trim_bytes(b" \xff \xc2\xa0"), b"\xff");
+    }
+
+    #[test]
+    fn json_escapes_invalid_bytes_individually_but_keeps_valid_replacement_runes() {
+        assert_eq!(
+            json_string_bytes(b"\xff\xe2\x82\xef\xbf\xbd\0\""),
+            "\"\\ufffd\\ufffd\\ufffd\u{fffd}\\u0000\\\"\""
+        );
     }
 }

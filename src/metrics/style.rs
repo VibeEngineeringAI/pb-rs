@@ -327,6 +327,8 @@ enum Role {
     Accent,
     /// StandardPrimary: Body #E4E4E7 dark / #18181B light.
     Body,
+    /// StandardSecondary: Mute #B5B5BE dark / #3F3F46 light.
+    Mute,
     /// StandardStyleRule: Border #4A4A5C dark / #D1D5DB light.
     Border,
 }
@@ -343,31 +345,44 @@ fn foreground(role: Role, terminal: &Terminal) -> Option<&'static str> {
         (Ascii, _, _) => return None,
         (TrueColor, true, Accent) => "38;2;158;158;240",
         (TrueColor, true, Body) => "38;2;227;227;231",
+        (TrueColor, true, Mute) => "38;2;181;181;190",
         (TrueColor, true, Border) => "38;2;73;73;92",
         (TrueColor, false, Accent) => "38;2;58;58;140",
         (TrueColor, false, Body) => "38;2;24;24;27",
+        (TrueColor, false, Mute) => "38;2;63;63;70",
         (TrueColor, false, Border) => "38;2;209;213;219",
         (Ansi256, true, Accent) => "38;5;147",
         (Ansi256, true, Body) => "38;5;188",
+        (Ansi256, true, Mute) => "38;5;145",
         (Ansi256, true, Border) => "38;5;59",
         (Ansi256, false, Accent) => "38;5;60",
         (Ansi256, false, Body) => "38;5;232",
+        (Ansi256, false, Mute) => "38;5;59",
         (Ansi256, false, Border) => "38;5;188",
         (Ansi, _, Accent) => "94",
         (Ansi, true, Body) => "37",
+        (Ansi, true, Mute) => "37",
         (Ansi, true, Border) => "90",
         (Ansi, false, Body) => "30",
+        (Ansi, false, Mute) => "90",
         (Ansi, false, Border) => "37",
     })
 }
 
 /// A lipgloss.Style restricted to the properties cmd/style.go sets.
 #[derive(Clone, Copy)]
-pub(super) struct Style {
+pub(crate) struct Style {
     bold: bool,
     fg: Option<Role>,
     left: usize,
 }
+
+/// StyleBold: bold without a foreground color.
+pub(crate) const BOLD: Style = Style {
+    bold: true,
+    fg: None,
+    left: 0,
+};
 
 /// ItemOuter: PaddingLeft(1), no colors.
 pub(super) const ITEM_OUTER: Style = Style {
@@ -376,21 +391,28 @@ pub(super) const ITEM_OUTER: Style = Style {
     left: 1,
 };
 /// SelectedStyle (and SelectedStyle.Bold(true)): bold accent.
-pub(super) const SELECTED: Style = Style {
+pub(crate) const SELECTED: Style = Style {
     bold: true,
     fg: Some(Role::Accent),
     left: 0,
 };
 /// StandardStyle: body foreground.
-pub(super) const STANDARD: Style = Style {
+pub(crate) const STANDARD: Style = Style {
     bold: false,
     fg: Some(Role::Body),
     left: 0,
 };
 /// StandardStyleRule: border foreground (rules and dot leaders).
-pub(super) const RULE: Style = Style {
+pub(crate) const RULE: Style = Style {
     bold: false,
     fg: Some(Role::Border),
+    left: 0,
+};
+
+/// StandardStyleAlt: muted foreground.
+pub(crate) const MUTED: Style = Style {
+    bold: false,
+    fg: Some(Role::Mute),
     left: 0,
 };
 
@@ -399,12 +421,28 @@ impl Style {
     /// wrapped in the SGR sequence (empty lines included), left padding is
     /// unstyled, and multi-line text is padded with plain spaces to its
     /// widest line measured by `line_width` (ansi.StringWidth).
-    pub(super) fn render(
+    pub(crate) fn render(
         &self,
         text: &str,
         terminal: &Terminal,
         line_width: fn(&str) -> usize,
     ) -> String {
+        String::from_utf8(self.render_raw(text.as_bytes(), terminal, |bytes| {
+            line_width(std::str::from_utf8(bytes).expect("valid styled text"))
+        }))
+        .expect("styling preserves UTF-8")
+    }
+
+    pub(crate) fn render_bytes(&self, text: &[u8], terminal: &Terminal) -> Vec<u8> {
+        self.render_raw(text, terminal, super::line_width_bytes)
+    }
+
+    fn render_raw(
+        &self,
+        text: &[u8],
+        terminal: &Terminal,
+        line_width: impl Fn(&[u8]) -> usize,
+    ) -> Vec<u8> {
         let mut resolved = *terminal;
         if self.fg.is_some() && PROCESS_RENDER.get() {
             resolved.dark = process_dark();
@@ -419,26 +457,43 @@ impl Style {
         }
         let sgr = (terminal.profile != Profile::Ascii && !params.is_empty())
             .then(|| format!("\x1b[{}m", params.join(";")));
-        let text = text.replace('\t', "    ").replace("\r\n", "\n");
-        let lines: Vec<String> = text
-            .split('\n')
+        let mut expanded = Vec::with_capacity(text.len());
+        let mut index = 0;
+        while index < text.len() {
+            match text[index] {
+                b'\t' => expanded.extend_from_slice(b"    "),
+                b'\r' if text.get(index + 1) == Some(&b'\n') => {}
+                byte => expanded.push(byte),
+            }
+            index += 1;
+        }
+        let lines: Vec<Vec<u8>> = expanded
+            .split(|byte| *byte == b'\n')
             .map(|line| {
-                let styled = match &sgr {
-                    Some(sgr) => format!("{sgr}{line}\x1b[0m"),
-                    None => line.to_owned(),
-                };
-                format!("{}{styled}", " ".repeat(self.left))
+                let mut styled = vec![b' '; self.left];
+                if let Some(sgr) = &sgr {
+                    styled.extend_from_slice(sgr.as_bytes());
+                }
+                styled.extend_from_slice(line);
+                if sgr.is_some() {
+                    styled.extend_from_slice(b"\x1b[0m");
+                }
+                styled
             })
             .collect();
         if lines.len() == 1 {
             return lines.into_iter().next().unwrap_or_default();
         }
         let widest = lines.iter().map(|line| line_width(line)).max().unwrap_or(0);
-        lines
-            .iter()
-            .map(|line| format!("{line}{}", " ".repeat(widest - line_width(line))))
-            .collect::<Vec<_>>()
-            .join("\n")
+        let mut output = Vec::new();
+        for (index, line) in lines.iter().enumerate() {
+            if index != 0 {
+                output.push(b'\n');
+            }
+            output.extend_from_slice(line);
+            output.extend(std::iter::repeat_n(b' ', widest - line_width(line)));
+        }
+        output
     }
 }
 
