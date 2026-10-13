@@ -12,6 +12,7 @@ diagnostics = []
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
 serde_json = { version = "1.0", features = ["preserve_order", "arbitrary_precision", "raw_value"] }
+zmij = "1.0.23"
 toml = { version = "0.9.11", features = ["preserve_order"] }
 tokio = { version = "1", features = ["rt", "time", "sync", "net", "io-util"] }
 url = "2"

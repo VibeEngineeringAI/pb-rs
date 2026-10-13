@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Kernel child IO is collected before reaping, separately from wait4 block ops."""
+import errno
 import json
 import os
 from pathlib import Path
@@ -8,6 +9,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 import run
 
@@ -55,6 +57,57 @@ int main(void) {
     def tearDownClass(cls):
         cls.directory.cleanup()
 
+    def probe_proc_io(self):
+        """Independently check this host's access to an exec'd, unreaped child."""
+        child = subprocess.Popen([str(self.child)], stdin=subprocess.PIPE,
+                                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        try:
+            child.stdin.write(b"x")
+            child.stdin.close()
+            os.waitid(os.P_PID, child.pid, os.WEXITED | os.WNOWAIT)
+            try:
+                source = Path(f"/proc/{child.pid}/io").open()
+            except OSError as error:
+                if error.errno in (errno.EACCES, errno.EPERM):
+                    return "permission_denied"
+                if error.errno in (errno.ENOENT, errno.ENOTDIR):
+                    return "process_io_unavailable"
+                raise
+            try:
+                with source:
+                    contents = source.read()
+            except OSError:
+                # Some kernels permit open but deny reads of an exited child.
+                # Accept this only when independently reproduced, not merely
+                # because the collector reports a read error.
+                return "process_io_read_error"
+            counters = dict(line.split(":", 1) for line in contents.splitlines())
+            for field in IO_FIELDS:
+                self.assertGreaterEqual(int(counters[field.removeprefix("proc_io_")]), 0)
+            return None
+        finally:
+            child.wait(timeout=3)
+
+    def assert_proc_io(self, metrics, expected_reason):
+        reason = metrics["proc_io_unavailable_reason"]
+        diagnostic = f"independent /proc probe: {expected_reason!r}; collector reason: {reason!r}"
+        self.assertEqual(metrics["proc_io_available"], expected_reason is None, diagnostic)
+        self.assertEqual(reason, expected_reason, diagnostic)
+        if expected_reason is None:
+            self.assertEqual(metrics["proc_io_source"], "linux_proc_pid_io_before_wait4")
+            for field in IO_FIELDS:
+                self.assertIsInstance(metrics[field], int)
+                self.assertGreaterEqual(metrics[field], 0)
+            return True
+        self.assertIn(reason, ("permission_denied", "process_io_unavailable",
+                               "process_io_read_error"), diagnostic)
+        self.assertIsNone(metrics["proc_io_source"])
+        for field in IO_FIELDS:
+            self.assertIsNone(metrics[field], diagnostic)
+        print(f"Process IO counters unavailable ({diagnostic}); checking output and wait4 metrics",
+              file=sys.stderr)
+        return False
+
     def invoke(self, meter=None, command=None, input=b"x"):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "metrics.json"
@@ -67,23 +120,21 @@ int main(void) {
         result, metrics = self.invoke()
         self.assertEqual(result.returncode, 0)
         self.assertEqual((result.stdout, result.stderr), (b"x" * 17, b"x"))
-        self.assertTrue(metrics["proc_io_available"])
-        self.assertIsNone(metrics["proc_io_unavailable_reason"])
-        self.assertEqual(metrics["proc_io_source"], "linux_proc_pid_io_before_wait4")
-        self.assertEqual(metrics["proc_io_syscw"], 18)
-        self.assertEqual(metrics["proc_io_wchar"], 18)
-        self.assertGreaterEqual(metrics["proc_io_syscr"], 1)
-        self.assertGreaterEqual(metrics["proc_io_rchar"], 1)
+        if self.assert_proc_io(metrics, self.probe_proc_io()):
+            self.assertEqual(metrics["proc_io_syscw"], 18)
+            self.assertEqual(metrics["proc_io_wchar"], 18)
+            self.assertGreaterEqual(metrics["proc_io_syscr"], 1)
+            self.assertGreaterEqual(metrics["proc_io_rchar"], 1)
+        self.assertEqual(metrics["termination"], {"exit": 0})
         self.assertEqual(metrics["block_output_operations"], 0)
         self.assertEqual(metrics["resource_source"], "native_child_wait4")
         self.assertGreater(metrics["ended_monotonic_ns"], metrics["started_monotonic_ns"])
-        for field in IO_FIELDS:
-            self.assertIsInstance(metrics[field], int)
-            self.assertGreaterEqual(metrics[field], 0)
 
     def test_unavailable_proc_counters_are_null_not_zero_and_wait4_preserved(self):
         result, metrics = self.invoke(meter=self.denied)
         self.assertEqual(result.returncode, 0)
+        self.assertEqual((result.stdout, result.stderr), (b"x" * 17, b"x"))
+        self.assertFalse(self.assert_proc_io(metrics, "permission_denied"))
         self.assertFalse(metrics["proc_io_available"])
         self.assertEqual(metrics["proc_io_unavailable_reason"], "permission_denied")
         self.assertIsNone(metrics["proc_io_source"])
@@ -102,7 +153,7 @@ int main(void) {
                 result, metrics = self.invoke(command=[sys.executable, "-c", code])
                 self.assertEqual(result.returncode, 0)
                 self.assertEqual(metrics["termination"], expected)
-                self.assertTrue(metrics["proc_io_available"])
+                self.assert_proc_io(metrics, self.probe_proc_io())
 
     def test_timeout_preserves_signal_and_supervisor_fallback(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -120,13 +171,44 @@ int main(void) {
     def test_runner_carries_kernel_io_counters_from_native_meter(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            metrics, _, _ = run.measure([sys.executable, "-c", "import os; os.write(1,b'abc')"],
+            metrics, stdout, stderr = run.measure([sys.executable, "-c", "import os; os.write(1,b'abc')"],
                                         run.isolated_env(root), root, meter=self.meter)
-            self.assertTrue(metrics["proc_io_available"])
-            self.assertGreaterEqual(metrics["proc_io_syscw"], 1)
-            self.assertGreaterEqual(metrics["proc_io_wchar"], 3)
-            for field in IO_FIELDS:
-                self.assertIsInstance(metrics[field], int)
+            self.assertEqual((stdout, stderr), (b"abc", b""))
+            self.assertEqual(metrics["termination"], {"exit": 0})
+            self.assertEqual(metrics["resource_source"], "native_child_wait4")
+            self.assertIsNone(metrics["failure"])
+            if self.assert_proc_io(metrics, self.probe_proc_io()):
+                self.assertGreaterEqual(metrics["proc_io_syscw"], 1)
+                self.assertGreaterEqual(metrics["proc_io_wchar"], 3)
+
+    def test_probe_distinguishes_denied_open_failed_read_and_malformed_counters(self):
+        with mock.patch.object(Path, "open", side_effect=PermissionError(errno.EACCES, "denied")):
+            self.assertEqual(self.probe_proc_io(), "permission_denied")
+        source = mock.MagicMock()
+        source.__enter__.return_value = source
+        source.read.side_effect = OSError(errno.ESRCH, "exited process unreadable")
+        with mock.patch.object(Path, "open", return_value=source):
+            self.assertEqual(self.probe_proc_io(), "process_io_read_error")
+        source.read.side_effect = None
+        source.read.return_value = "syscw: invalid\n"
+        with mock.patch.object(Path, "open", return_value=source):
+            with self.assertRaises((KeyError, ValueError)):
+                self.probe_proc_io()
+
+    def test_capability_check_rejects_collector_errors_and_unexpected_absence(self):
+        metrics = {"proc_io_available": False, "proc_io_source": None,
+                   **{field: None for field in IO_FIELDS}}
+        for reason, expected in [("process_io_fields_missing", "permission_denied"),
+                                 ("process_io_read_error", "permission_denied"),
+                                 ("permission_denied", None)]:
+            with self.subTest(reason=reason, expected=expected):
+                metrics["proc_io_unavailable_reason"] = reason
+                with self.assertRaisesRegex(AssertionError, "collector reason"):
+                    self.assert_proc_io(metrics, expected)
+        metrics["proc_io_unavailable_reason"] = "permission_denied"
+        metrics["proc_io_syscw"] = 0
+        with self.assertRaises(AssertionError):
+            self.assert_proc_io(metrics, "permission_denied")
 
 
 if __name__ == "__main__":

@@ -80,14 +80,14 @@ func (g *generate) expand() []byte {
 
 // milestone uses CLOCK_MONOTONIC so it is comparable with the runner and pb-meter.
 type milestone struct {
-	Request                int    `json:"request"`
-	ReceivedMonotonicNS    int64  `json:"received_monotonic_ns"`
-	HeadersMonotonicNS     int64  `json:"headers_monotonic_ns,omitempty"`
-	FirstBodyMonotonicNS   int64  `json:"first_body_monotonic_ns,omitempty"`
-	FinalBodyMonotonicNS   int64  `json:"final_body_monotonic_ns,omitempty"`
-	BodyBytesWritten       int    `json:"body_bytes_written"`
-	UncompressedBodyBytes  int    `json:"uncompressed_body_bytes"`
-	AcceptEncoding         string `json:"accept_encoding"`
+	Request               int    `json:"request"`
+	ReceivedMonotonicNS   int64  `json:"received_monotonic_ns"`
+	HeadersMonotonicNS    int64  `json:"headers_monotonic_ns,omitempty"`
+	FirstBodyMonotonicNS  int64  `json:"first_body_monotonic_ns,omitempty"`
+	FinalBodyMonotonicNS  int64  `json:"final_body_monotonic_ns,omitempty"`
+	BodyBytesWritten      int    `json:"body_bytes_written"`
+	UncompressedBodyBytes int    `json:"uncompressed_body_bytes"`
+	AcceptEncoding        string `json:"accept_encoding"`
 }
 
 func monotonicNS() int64 {
@@ -148,8 +148,8 @@ type request struct {
 
 type fixture struct {
 	flight.BaseFlightServer
-	plan     scenario
-	grpcPort int
+	plan       scenario
+	grpcPort   int
 	mu         sync.Mutex
 	requests   []request
 	milestones []milestone

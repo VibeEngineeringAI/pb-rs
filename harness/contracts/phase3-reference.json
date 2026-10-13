@@ -955,8 +955,8 @@
    "config_after_sha256": "b8092e8d001b088a45fba01aaf1a119fdacea2ebf04d6bc873353d746698034b",
    "requests_sha256": "815151447a597b209538768f25b0b78f9bef4c9f836cdaa9786f4ccff6b20ea2",
    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-   "stdout_bytes": 243,
-   "stdout_sha256": "4790ec2e94c2b996747308e07e3b9ae346e160b965b50e1a8539b2fa535ba82d",
+   "stdout_bytes": 354,
+   "stdout_sha256": "f4859ee4ac19a8d3ad358684429a881207ff51186e4151b138c06f949e0aa30a",
    "termination": {
     "exit": 0
    }
@@ -6883,15 +6883,15 @@
   }
  },
  "cloud_reference": "622d4144b7e354c0ee4036244ba719cbbaf8357710804b1d733cd421a0dc227e",
- "corpus_sha256": "7de135b9039c2187774e497c0c69b7aba301bd9e95e9f4d0849b0285aefdaed2",
+ "corpus_sha256": "b83d5abdd7951897a082382fccc50d104f0137e4da86d78507c7ad293770d82c",
  "go_toolchain": "go1.25.4",
  "platform": "linux-x86_64",
  "reference": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
  "schema_version": 1,
- "selected_sha256": "393a300fcfc470b11e5cfbee309727fee50ea78dbb55d5dc5c6ba934a41a3ad9",
+ "selected_sha256": "c533acee584c61a3779ce2b8e86d4b8369a757a942c924b4329726ad44f8c900",
  "selected_tiers": [
   "gate",
   "known-divergence"
  ],
- "source_report_runner_sha256": "6be1db91ae0fef961fcf95013ef01439213d99455be338fddd91f6a896a6ca2b"
+ "source_report_runner_sha256": "840e43e05b2712a7ada97a544291c1e832f96ce5273e8c409a088cd9b42a2a53"
 }

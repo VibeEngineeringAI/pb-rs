@@ -833,3 +833,20 @@ fn conversion_errors_cleanup_near_limit_depth_without_recursive_drop() {
         }
     }
 }
+
+#[test]
+fn float_decimals_match_go_ties_and_notation_boundaries() {
+    let body = br#"[1282462393045011.2,-1282462393045011.2,26870397977612.0625,-26870397977612.0625,-0,0.0000009999999999999997,0.000001,0.0000010000000000000002,-0.0000010000000000000002,1e16,-1e16,999999999999999900000,1e21,1.0000000000000001e21,5e-324,-5e-324,1.28246239304501125e-8]"#;
+    let expected = b"[\n  1282462393045011.2,\n  -1282462393045011.2,\n  26870397977612.062,\n  -26870397977612.062,\n  -0,\n  9.999999999999997e-7,\n  0.000001,\n  0.0000010000000000000002,\n  -0.0000010000000000000002,\n  10000000000000000,\n  -10000000000000000,\n  999999999999999900000,\n  1e+21,\n  1.0000000000000001e+21,\n  5e-324,\n  -5e-324,\n  1.2824623930450113e-8\n]\n";
+    for binary in binaries() {
+        let fixture = Fixture::new(first_chunk("200 OK", body), b"0\r\n\r\n".to_vec());
+        let sandbox = Sandbox::new(&fixture.url);
+        let mut process = Running::spawn(&mut sandbox.command(&binary, "json"));
+        fixture.ready();
+        fixture.release();
+        let (status, stdout, stderr) = process.output();
+        assert!(status.success(), "{binary:?}: {stderr:?}");
+        assert_eq!(stdout, expected, "{binary:?}");
+        assert!(stderr.is_empty(), "{binary:?}: {stderr:?}");
+    }
+}

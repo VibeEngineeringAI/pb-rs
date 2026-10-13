@@ -369,18 +369,46 @@ fn convert(node: &mut Node) -> Result<Value, String> {
     })
 }
 
-// Match encoding/json's float64 exponent thresholds and shortest rounding.
+// Rust's Display rounds shortest-decimal ties differently from Go. zmij uses
+// the same tie choice as Go; only its notation needs adjustment for encoding/json.
 fn float(value: f64) -> String {
     if value == 0.0 {
         return if value.is_sign_negative() { "-0" } else { "0" }.into();
     }
-    if (1e-6..1e21).contains(&value.abs()) {
-        return value.to_string();
+    let mut buffer = zmij::Buffer::new();
+    let text = buffer.format_finite(value);
+    if !(1e-6..1e21).contains(&value.abs()) {
+        return text.into();
     }
-    let scientific = format!("{value:e}");
-    let (mantissa, exponent) = scientific.split_once('e').expect("scientific float");
-    let exponent: i32 = exponent.parse().expect("float exponent");
-    format!("{mantissa}e{exponent:+}")
+    let Some((mantissa, exponent)) = text.split_once('e') else {
+        return text.strip_suffix(".0").unwrap_or(text).into();
+    };
+    let exponent: i32 = exponent.parse().expect("finite float exponent");
+    let negative = mantissa.starts_with('-');
+    let digits = mantissa.trim_start_matches('-');
+    let point = digits.find('.').unwrap_or(digits.len()) as i32 + exponent;
+    let digits_len = digits.len() - usize::from(digits.contains('.'));
+    // Move the decimal point without rounding again; fixed output needs at most 25 bytes.
+    let mut output = String::with_capacity(28);
+    if negative {
+        output.push('-');
+    }
+    if point <= 0 {
+        output.push_str("0.");
+        for _ in point..0 {
+            output.push('0');
+        }
+    }
+    for (i, digit) in digits.bytes().filter(|b| *b != b'.').enumerate() {
+        if point > 0 && i as i32 == point {
+            output.push('.');
+        }
+        output.push(char::from(digit));
+    }
+    for _ in digits_len as i32..point {
+        output.push('0');
+    }
+    output
 }
 
 /// Return at most 65,536 preview bytes plus `...`. The extra byte establishes
