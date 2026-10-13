@@ -87,6 +87,17 @@ impl CliError {
         self
     }
 
+    /// Add text context without changing the command's public JSON policy.
+    pub(crate) fn prefix_message(&mut self, prefix: &str) {
+        self.message.insert_str(0, prefix);
+        if let Some(raw) = &mut self.raw_message {
+            let mut message = Vec::with_capacity(prefix.len() + raw.len());
+            message.extend_from_slice(prefix.as_bytes());
+            message.extend_from_slice(raw);
+            *raw = message.into_boxed_slice();
+        }
+    }
+
     pub(crate) fn message_bytes(&self) -> &[u8] {
         self.raw_message
             .as_deref()
@@ -209,9 +220,12 @@ pub(crate) fn go_string(bytes: &[u8]) -> String {
 fn trim_bytes(mut bytes: &[u8]) -> &[u8] {
     // Invalid bytes are not whitespace and stop trimming on that side.
     loop {
-        let prefix = match std::str::from_utf8(bytes) {
+        // One rune needs at most four bytes. Validating the entire remainder
+        // here would rescan a long whitespace prefix once for every rune.
+        let next = &bytes[..bytes.len().min(4)];
+        let prefix = match std::str::from_utf8(next) {
             Ok(text) => text,
-            Err(error) => std::str::from_utf8(&bytes[..error.valid_up_to()]).unwrap(),
+            Err(error) => std::str::from_utf8(&next[..error.valid_up_to()]).unwrap(),
         };
         match prefix.chars().next() {
             Some(c) if c.is_whitespace() => bytes = &bytes[c.len_utf8()..],
@@ -219,6 +233,7 @@ fn trim_bytes(mut bytes: &[u8]) -> &[u8] {
         }
     }
     loop {
+        // Each attempt validates at most four bytes, even for long suffixes.
         let start = bytes.len().saturating_sub(4);
         let last = (start..bytes.len()).find_map(|index| {
             std::str::from_utf8(&bytes[index..]).ok().and_then(|text| {
@@ -260,6 +275,86 @@ fn json_string_bytes(mut bytes: &[u8]) -> String {
 #[cfg(test)]
 mod byte_tests {
     use super::*;
+
+    #[test]
+    fn trims_large_whitespace_prefix_and_suffix() {
+        let mut bytes = vec![b' '; 1024 * 1024];
+        bytes.extend_from_slice(b"denied");
+        bytes.resize(bytes.len() + 1024 * 1024, b' ');
+        assert_eq!(trim_bytes(&bytes), b"denied");
+    }
+
+    #[test]
+    fn trims_unicode_whitespace_and_stops_at_invalid_bytes() {
+        let whitespace = " \t\n\r\u{b}\u{c}\u{85}\u{a0}\u{1680}\u{2000}\u{200a}\u{2028}\u{2029}\u{202f}\u{205f}\u{3000}";
+        assert_eq!(
+            trim_bytes(format!("{whitespace}denied{whitespace}").as_bytes()),
+            b"denied"
+        );
+        assert_eq!(trim_bytes(whitespace.as_bytes()), b"");
+        assert_eq!(trim_bytes(b""), b"");
+        assert_eq!(trim_bytes(b" \xc2\xa0\xff \x85\xe2\x80\xa8 "), b"\xff \x85");
+        assert_eq!(trim_bytes(b" \xe2\x82 \xc2\xa0"), b"\xe2\x82");
+        assert_eq!(trim_bytes(b"\xff denied \xff"), b"\xff denied \xff");
+        assert_eq!(
+            trim_bytes(" \u{200b} \u{feff} ".as_bytes()),
+            "\u{200b} \u{feff}".as_bytes()
+        );
+    }
+
+    #[test]
+    fn prefix_keeps_raw_bytes_and_typed_http_public_output() {
+        let command = crate::spec::command_spec()
+            .child("promql")
+            .unwrap()
+            .child("run")
+            .unwrap();
+        for body in [b"".as_slice(), b"denied", b"\xff\xe2\x82"] {
+            let mut error = CliError::status("PromQL request", 403, "403 Forbidden", body);
+            let structured = error.render(command, "pb promql run", true).stderr;
+            let original = error.message_bytes().to_vec();
+            error.prefix_message("request failed: ");
+            let expected = [b"request failed: ".as_slice(), &original].concat();
+            assert_eq!(error.message_bytes(), expected);
+            assert_eq!(error.message, go_string(&expected));
+            assert_eq!(
+                error.render(command, "pb promql run", true).stderr,
+                structured
+            );
+            assert_eq!(
+                error.render(command, "pb promql run", false).stderr,
+                [
+                    b"Error: ".as_slice(),
+                    &expected,
+                    b"\n",
+                    render::usage(command, "pb promql run").as_bytes()
+                ]
+                .concat()
+            );
+        }
+    }
+
+    #[test]
+    fn prefix_allows_untyped_errors_to_publish_wrapped_raw_bytes() {
+        let command = crate::spec::command_spec()
+            .child("promql")
+            .unwrap()
+            .child("run")
+            .unwrap();
+        let mut error = CliError::new(ErrorCode::CommandFailed, go_string(b"bad \xff\xe2\x82"))
+            .with_raw_message(b"bad \xff\xe2\x82".to_vec());
+        error.prefix_message("request failed: ");
+        error.public_message = error.message.clone();
+        assert_eq!(error.http_status, 0);
+        assert_eq!(error.message_bytes(), b"request failed: bad \xff\xe2\x82");
+        assert_eq!(error.render(command, "pb promql run", true).stderr,
+            b"{\n  \"error\": {\n    \"code\": \"COMMAND_FAILED\",\n    \"message\": \"request failed: bad \\ufffd\\ufffd\\ufffd\",\n    \"retryable\": false\n  }\n}\n");
+        let mut plain = CliError::new(ErrorCode::CommandFailed, "denied");
+        plain.prefix_message("request failed: ");
+        assert_eq!(plain.message_bytes(), b"request failed: denied");
+        assert!(plain.raw_message.is_none());
+        assert_eq!(plain.public_message, "denied");
+    }
 
     #[test]
     fn status_trims_go_whitespace_without_replacing_response_bytes() {

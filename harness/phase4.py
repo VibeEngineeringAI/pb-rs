@@ -254,6 +254,18 @@ def corpus():
     for status in (400,401,403,404,429,500,503):
         add('http-error-precedence-'+str(status),['promql','labels'],PREFIX+'labels',
             b'{"status":"error","error":"envelope must not win"}',[('stream','select-dataset')],error=b'PromQL request failed',status=status)
+    for name,body,status in [('http',b'denied',403), ('http-invalid-bytes',b' \xc2\xa0denied\xff\xe2\x82\t\n',403),
+                             ('envelope',b'{"status":"error","errorType":"bad","error":"denied"}',200)]:
+        for fmt in ('text','json'):
+            message = (b'PromQL request failed: 403 Forbidden' if status == 403 else b'PromQL error (bad): denied')
+            if fmt == 'text':
+                message = b'Error: request failed: ' + message
+                if status == 403: message += b': ' + (b'denied\xff\xe2\x82' if name == 'http-invalid-bytes' else b'denied')
+                message += b'\n'
+            elif status == 200:
+                message = b'request failed: ' + message
+            add('run-error-'+name+'-'+fmt,['promql','run','up','--instant','--to',END,'-o',fmt],
+                PREFIX+'query',body,[('query','up'),('stream','select-dataset'),('time',END)],error=message,status=status)
     # Integer division admits 100 whole intervals plus a fractional remainder.
     for name,start,end,step,resolved in [
         ('auto-edge',START,'2024-01-01T00:25:14Z','auto','15s'),

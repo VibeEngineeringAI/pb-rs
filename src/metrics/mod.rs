@@ -263,7 +263,7 @@ pub(crate) fn execute(
         })();
         let body = request_result.map_err(|mut e| {
             if operation == "run" {
-                e.message = format!("request failed: {}", e.message);
+                e.prefix_message("request failed: ");
                 // Wrapped typed HTTP errors retain their original public message.
                 if e.http_status == 0 {
                     e.public_message = e.message.clone();
