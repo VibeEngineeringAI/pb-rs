@@ -80,14 +80,15 @@ func (g *generate) expand() []byte {
 
 // milestone uses CLOCK_MONOTONIC so it is comparable with the runner and pb-meter.
 type milestone struct {
-	Request               int    `json:"request"`
-	ReceivedMonotonicNS   int64  `json:"received_monotonic_ns"`
-	HeadersMonotonicNS    int64  `json:"headers_monotonic_ns,omitempty"`
-	FirstBodyMonotonicNS  int64  `json:"first_body_monotonic_ns,omitempty"`
-	FinalBodyMonotonicNS  int64  `json:"final_body_monotonic_ns,omitempty"`
-	BodyBytesWritten      int    `json:"body_bytes_written"`
-	UncompressedBodyBytes int    `json:"uncompressed_body_bytes"`
-	AcceptEncoding        string `json:"accept_encoding"`
+	Request                      int    `json:"request"`
+	ReceivedMonotonicNS          int64  `json:"received_monotonic_ns"`
+	HeadersMonotonicNS           int64  `json:"headers_monotonic_ns,omitempty"`
+	FirstBodyMonotonicNS         int64  `json:"first_body_monotonic_ns,omitempty"`
+	FinalBodyMonotonicNS         int64  `json:"final_body_monotonic_ns,omitempty"`
+	FinalWriteStartedMonotonicNS int64  `json:"final_write_started_monotonic_ns,omitempty"`
+	BodyBytesWritten             int    `json:"body_bytes_written"`
+	UncompressedBodyBytes        int    `json:"uncompressed_body_bytes"`
+	AcceptEncoding               string `json:"accept_encoding"`
 }
 
 func monotonicNS() int64 {
@@ -274,6 +275,11 @@ func (f *fixture) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	for offset := 0; offset < len(response); offset += chunk {
 		end := min(offset+chunk, len(response))
+		// A lower bound on final body delivery, recorded before bytes can reach
+		// the client. The post-write handler timestamp can race client output.
+		if end == len(response) {
+			f.mark(index, func(m *milestone) { m.FinalWriteStartedMonotonicNS = monotonicNS() })
+		}
 		if _, err := w.Write(response[offset:end]); err != nil {
 			return
 		}

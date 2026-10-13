@@ -46,6 +46,7 @@ pub struct Transport {
     https: tokio::sync::OnceCell<HttpClient>,
     tls: TlsStore,
     proxy: ProxyPolicy,
+    metrics: bool,
 }
 #[derive(Debug)]
 pub struct TransportError {
@@ -195,8 +196,21 @@ impl Transport {
         Self::with_policy(environment_proxy())
     }
     fn with_policy(proxy: ProxyPolicy) -> Result<Self, TransportError> {
+        Self::build(proxy, false)
+    }
+    pub fn metrics() -> Result<Self, TransportError> {
+        Self::build(
+            ProxyPolicy {
+                matcher: Arc::new(Matcher::builder().build()),
+                no_proxy: String::new(),
+                cgi: false,
+            },
+            true,
+        )
+    }
+    fn build(proxy: ProxyPolicy, metrics: bool) -> Result<Self, TransportError> {
         let tls = Arc::new(tokio::sync::OnceCell::new());
-        let connector = ProxyConnector::new(proxy.clone(), tls.clone());
+        let connector = ProxyConnector::with_timers(proxy.clone(), tls.clone(), !metrics);
         let plain = Client::builder(TokioExecutor::new())
             .pool_timer(TokioTimer::new())
             .timer(TokioTimer::new())
@@ -209,19 +223,27 @@ impl Transport {
             https: tokio::sync::OnceCell::new(),
             tls,
             proxy,
+            metrics,
         })
     }
     async fn https_client(&self) -> Result<&HttpClient, BoxError> {
         self.https
             .get_or_try_init(|| async {
                 let config = tls_config(&self.tls).await?;
-                let connector = ProxyConnector::new(self.proxy.clone(), self.tls.clone());
-                let connector = HttpsConnectorBuilder::new()
+                let connector = ProxyConnector::with_timers(
+                    self.proxy.clone(),
+                    self.tls.clone(),
+                    !self.metrics,
+                );
+                let builder = HttpsConnectorBuilder::new()
                     .with_tls_config((*config).clone())
                     .https_or_http()
-                    .enable_http1()
-                    .enable_http2()
-                    .wrap_connector(connector);
+                    .enable_http1();
+                let connector = if self.metrics {
+                    builder.wrap_connector(connector)
+                } else {
+                    builder.enable_http2().wrap_connector(connector)
+                };
                 Ok(Client::builder(TokioExecutor::new())
                     .pool_timer(TokioTimer::new())
                     .timer(TokioTimer::new())
@@ -710,14 +732,20 @@ pub struct ProxyConnector {
     tcp: HttpConnector,
     matcher: ProxyPolicy,
     tls: TlsStore,
+    timers: bool,
 }
 impl ProxyConnector {
-    fn new(matcher: ProxyPolicy, tls: TlsStore) -> Self {
+    fn with_timers(matcher: ProxyPolicy, tls: TlsStore, timers: bool) -> Self {
         let mut tcp = HttpConnector::new();
         tcp.enforce_http(false);
-        tcp.set_connect_timeout(Some(Duration::from_secs(30)));
+        tcp.set_connect_timeout(timers.then(|| Duration::from_secs(30)));
         tcp.set_keepalive(Some(Duration::from_secs(30)));
-        Self { tcp, matcher, tls }
+        Self {
+            tcp,
+            matcher,
+            tls,
+            timers,
+        }
     }
 }
 impl Service<Uri> for ProxyConnector {
@@ -748,14 +776,18 @@ impl Service<Uri> for ProxyConnector {
         }
         let mut tcp = self.tcp.clone();
         let tls = self.tls.clone();
+        let timers = self.timers;
         Box::pin(async move {
             if cgi {
                 return Err(io::Error::other("refusing to use HTTP_PROXY value in CGI environment; see golang.org/s/cgihttpproxy").into());
             }
-            let connection =
+            let connection = if timers {
                 tokio::time::timeout(Duration::from_secs(30), tcp.call(connect_to.clone()))
                     .await
-                    .map_err(|_| io::Error::new(io::ErrorKind::TimedOut, "i/o timeout"))??;
+                    .map_err(|_| io::Error::new(io::ErrorKind::TimedOut, "i/o timeout"))??
+            } else {
+                tcp.call(connect_to.clone()).await?
+            };
             let mut io: Box<dyn AsyncIo> = Box::new(connection.into_inner());
             if intercept.is_some() && connect_to.scheme_str() == Some("https") {
                 let name = rustls::pki_types::ServerName::try_from(
@@ -824,7 +856,7 @@ impl Service<Uri> for ProxyConnector {
                     }
                 }
             }
-            let handshake = (destination.scheme_str() == Some("https"))
+            let handshake = (timers && destination.scheme_str() == Some("https"))
                 .then(|| Box::pin(tokio::time::sleep(Duration::from_secs(10))));
             Ok(TokioIo::new(ProxyStream {
                 io,
@@ -1073,6 +1105,72 @@ mod tests {
             Some(request)
         });
         (port, task)
+    }
+    #[test]
+    fn metrics_transport_has_no_proxy_or_connection_timers() {
+        let transport = Transport::metrics().unwrap();
+        assert!(transport.metrics);
+        let connector =
+            ProxyConnector::with_timers(transport.proxy.clone(), transport.tls.clone(), false);
+        assert!(!connector.timers);
+        assert!(
+            proxy_for(
+                &transport.proxy,
+                &"http://external.example/path".parse().unwrap()
+            )
+            .is_none()
+        );
+    }
+    #[test]
+    fn metrics_tls_negotiates_http1_when_server_offers_http2() {
+        runtime().block_on(async {
+            let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+            let port = listener.local_addr().unwrap().port();
+            let mut config = rustls::ServerConfig::builder()
+                .with_no_client_auth()
+                .with_single_cert(
+                    vec![CertificateDer::from(CERT.to_vec())],
+                    PrivateKeyDer::Pkcs8(PrivatePkcs8KeyDer::from(KEY.to_vec())),
+                )
+                .unwrap();
+            config.alpn_protocols = vec![b"h2".to_vec(), b"http/1.1".to_vec()];
+            let acceptor = tokio_rustls::TlsAcceptor::from(Arc::new(config));
+            let task = tokio::spawn(async move {
+                let (stream, _) = listener.accept().await.unwrap();
+                let mut stream = acceptor.accept(stream).await.unwrap();
+                let protocol = stream.get_ref().1.alpn_protocol().map(<[u8]>::to_vec);
+                let request = headers(&mut stream).await.unwrap();
+                stream
+                    .write_all(
+                        b"HTTP/1.1 200 OK\r\nContent-Length: 4\r\nConnection: close\r\n\r\nnull",
+                    )
+                    .await
+                    .unwrap();
+                (protocol, request)
+            });
+            let transport = Transport::metrics().unwrap();
+            let mut roots = rustls::RootCertStore::empty();
+            roots.add(CertificateDer::from(CA.to_vec())).unwrap();
+            let config = rustls::ClientConfig::builder()
+                .with_root_certificates(roots)
+                .with_no_client_auth();
+            transport.tls.set(Arc::new(config)).unwrap();
+            let response = transport
+                .send(
+                    &Method::GET,
+                    &format!("https://localhost:{port}/prometheus/api/v1/labels"),
+                    &HeaderMap::new(),
+                    &None,
+                )
+                .await
+                .unwrap();
+            assert_eq!(response.bytes().await.unwrap().as_ref(), b"null");
+            let (protocol, request) = task.await.unwrap();
+            // An HTTP/1-only client may omit ALPN entirely; it must never
+            // advertise or negotiate h2 even when the server prefers it.
+            assert!(protocol.is_none() || protocol.as_deref() == Some(b"http/1.1".as_slice()));
+            assert!(request.starts_with("GET /prometheus/api/v1/labels HTTP/1.1"));
+        });
     }
     #[test]
     fn refused_error_formatting_cannot_panic_on_raw_authorities() {

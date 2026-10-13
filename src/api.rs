@@ -78,6 +78,7 @@ impl Endpoint {
     }
 }
 
+pub const METRICS_TIMEOUT: Duration = Duration::from_secs(120);
 pub const STANDARD_TIMEOUT: Duration = Duration::from_secs(60);
 pub const PRISM_TIMEOUT: Duration = Duration::from_secs(15);
 pub const CLOUD_TIMEOUT: Duration = Duration::from_secs(30);
@@ -239,6 +240,7 @@ pub struct PreparedRequest {
     headers: HeaderMap,
     body: Option<Vec<u8>>,
     timeout: Duration,
+    metrics: bool,
 }
 
 /// The final response owns its body and retains the deadline established by
@@ -331,6 +333,7 @@ impl StreamingResponse {
 /// and the refresh gate. Construction creates no runtime and starts no requests.
 pub struct ApiClient {
     transport: Client,
+    metrics_transport: std::sync::OnceLock<Client>,
     profile: Mutex<ProfileRecord>,
     store: ProfileStore,
     refresh_gate: AsyncMutex<()>,
@@ -352,6 +355,7 @@ impl ApiClient {
     ) -> Result<Self, ApiError> {
         Ok(Self {
             transport: transport()?,
+            metrics_transport: std::sync::OnceLock::new(),
             profile: Mutex::new(profile),
             store,
             refresh_gate: AsyncMutex::new(()),
@@ -408,6 +412,29 @@ impl ApiClient {
     ) -> Result<PreparedRequest, ApiError> {
         self.prepare_with_policy(method, paths, body, timeout, false)
     }
+    /// Metrics uses the Go custom transport and url.Values query encoding.
+    pub fn prepare_metrics(
+        &self,
+        path: &str,
+        pairs: &[(String, String)],
+    ) -> Result<PreparedRequest, ApiError> {
+        let profile = self.profile();
+        let mut raw_endpoint = append_url_string(&profile.url, &[path])?;
+        if !pairs.is_empty() {
+            // Go appends to the serialized JoinPath result, including an
+            // existing query or fragment. Preserve that observable quirk.
+            raw_endpoint.push('?');
+            raw_endpoint.push_str(&encode_query_pairs(pairs));
+        }
+        Ok(PreparedRequest {
+            method: Method::GET,
+            raw_endpoint,
+            headers: Auth::resolve(&profile)?.headers()?,
+            body: None,
+            timeout: METRICS_TIMEOUT,
+            metrics: true,
+        })
+    }
     fn prepare_with_policy(
         &self,
         method: Method,
@@ -433,6 +460,7 @@ impl ApiClient {
             headers,
             body,
             timeout,
+            metrics: false,
         })
     }
     /// Start one absolute deadline spanning redirects, OAuth refresh/replay,
@@ -447,6 +475,7 @@ impl ApiClient {
             headers,
             body,
             timeout,
+            metrics,
         } = request;
         let endpoint = checked_http_url(&raw_endpoint).map_err(|source| ApiError::Request {
             method: method.clone(),
@@ -456,7 +485,18 @@ impl ApiClient {
         let deadline = Instant::now() + timeout;
         let headers_received = AtomicBool::new(false);
         let timeout_url = Mutex::new(endpoint.to_string());
+        let selected_transport = if metrics {
+            if self.metrics_transport.get().is_none() {
+                let _ = self.metrics_transport.set(Client::metrics()?);
+            }
+            self.metrics_transport
+                .get()
+                .expect("metrics transport initialized")
+        } else {
+            &self.transport
+        };
         let call = self.follow_redirects(
+            selected_transport,
             method.clone(),
             endpoint.clone(),
             headers,
@@ -506,8 +546,11 @@ impl ApiClient {
         self.send_streaming(request).await?.collect().await
     }
 
+    // Redirect state and deadline observations stay explicit across both policies.
+    #[allow(clippy::too_many_arguments)]
     async fn follow_redirects(
         &self,
+        transport: &Client,
         method: Method,
         endpoint: Endpoint,
         headers: HeaderMap,
@@ -526,6 +569,7 @@ impl ApiClient {
             headers_received.store(false, Ordering::Relaxed);
             let response = self
                 .send_authenticated(
+                    transport,
                     &current_method,
                     &current_url,
                     &current_headers,
@@ -591,12 +635,13 @@ impl ApiClient {
 
     async fn send_authenticated(
         &self,
+        transport: &Client,
         method: &Method,
         endpoint: &Endpoint,
         headers: &HeaderMap,
         body: &Option<Vec<u8>>,
     ) -> Result<RawResponse, ApiError> {
-        let response = send_raw(&self.transport, method, endpoint, headers, body).await?;
+        let response = send_raw(transport, method, endpoint, headers, body).await?;
         let profile = self.profile();
         if response.status() != StatusCode::UNAUTHORIZED
             || !same_origin_raw(&profile.url, &endpoint.raw)
@@ -624,7 +669,7 @@ impl ApiClient {
         retry_headers.remove(COOKIE);
         retry_headers.extend(Auth::resolve(&self.profile())?.headers()?);
         // Exactly one replay, deliberately through the unwrapped transport.
-        send_raw(&self.transport, method, endpoint, &retry_headers, body).await
+        send_raw(transport, method, endpoint, &retry_headers, body).await
     }
 
     async fn refresh(&self, profile: &ProfileRecord) -> Result<(), ApiError> {
@@ -1373,6 +1418,33 @@ async fn send_cloud_redirects(
     unreachable!("redirect loop always returns")
 }
 
+/// Go QueryEscape leaves tilde alone and preserves repeated-value insertion order.
+pub fn encode_query_pairs(pairs: &[(String, String)]) -> String {
+    fn escape(value: &str) -> String {
+        let mut out = String::new();
+        for byte in value.bytes() {
+            match byte {
+                b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'-' | b'_' | b'.' | b'~' => {
+                    out.push(byte as char)
+                }
+                b' ' => out.push('+'),
+                _ => {
+                    use std::fmt::Write;
+                    write!(out, "%{byte:02X}").unwrap();
+                }
+            }
+        }
+        out
+    }
+    let mut sorted: Vec<_> = pairs.iter().collect();
+    sorted.sort_by(|a, b| a.0.cmp(&b.0));
+    sorted
+        .into_iter()
+        .map(|(k, v)| format!("{}={}", escape(k), escape(v)))
+        .collect::<Vec<_>>()
+        .join("&")
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1387,6 +1459,38 @@ mod tests {
         },
         thread,
     };
+
+    #[test]
+    fn metrics_preparation_uses_sorted_go_query_and_own_policy() {
+        let profile = ProfileRecord {
+            url: "http://example.com/base".into(),
+            api_key: "key".into(),
+            ..Default::default()
+        };
+        let store = store(&profile);
+        let client = ApiClient::new(profile, store.clone()).unwrap();
+        let pairs = vec![
+            ("stream".into(), "a b".into()),
+            ("match[]".into(), "a=~\"x.*\"".into()),
+            ("match[]".into(), "b+z".into()),
+        ];
+        let request = client
+            .prepare_metrics("prometheus/api/v1/series", &pairs)
+            .unwrap();
+        assert_eq!(
+            request.raw_endpoint,
+            "http://example.com/base/prometheus/api/v1/series?match%5B%5D=a%3D~%22x.%2A%22&match%5B%5D=b%2Bz&stream=a+b"
+        );
+        assert_eq!(request.timeout, METRICS_TIMEOUT);
+        assert!(request.metrics);
+        assert!(!request.headers.contains_key(CONTENT_TYPE));
+        assert!(client.metrics_transport.get().is_none());
+        let standard = client.prepare_standard(Method::GET, "query", None).unwrap();
+        assert!(!standard.metrics);
+        assert_eq!(standard.timeout, STANDARD_TIMEOUT);
+        assert!(standard.headers.contains_key(CONTENT_TYPE));
+        std::fs::remove_dir_all(store.path().parent().unwrap()).unwrap();
+    }
 
     static NEXT: AtomicUsize = AtomicUsize::new(0);
     struct Reply {

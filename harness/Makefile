@@ -70,6 +70,24 @@ phase2-workloads-measure:
 
 phase3-build: phase2-build
 
+.PHONY: phase4-build phase4-check phase4-deadline-check phase4-workloads-measure
+phase4-build: phase3-build
+
+phase4-check:
+	$(PYTHON) $(ROOT)/harness/phase4.py compare --reference $(ROOT)/bin/pb-go --cloud-reference $(ROOT)/bin/pb-go-cloud --candidate $(ROOT)/target/release/pb --cloud-candidate $(ROOT)/target/harness-cloud/release/pb --out $(OUT)
+
+# Freeze large-workload outputs before timing; pass REPETITIONS=30 WARMUP=5.
+phase4-workloads-measure:
+	mkdir -p $(OUT)
+	$(PYTHON) $(ROOT)/harness/phase4_workloads.py --out $(OUT)/oracle-suite.json
+	$(PYTHON) $(ROOT)/harness/run.py run --phase4-oracle-self-check --binary go=$(ROOT)/bin/pb-go --binary identical=$(ROOT)/bin/pb-go --fixture $(ROOT)/bin/pb-fixture --suite $(OUT)/oracle-suite.json --repetitions 1 --warmup 0 --timeout 120 --out $(OUT)/oracle
+	$(PYTHON) $(ROOT)/harness/phase4_workloads.py --oracle-report $(OUT)/oracle/report.json --out $(OUT)/workload-suite.json
+	$(PYTHON) $(ROOT)/harness/run.py run --binary go=$(ROOT)/bin/pb-go --binary rust=$(ROOT)/target/release/pb --fixture $(ROOT)/bin/pb-fixture --suite $(OUT)/workload-suite.json --repetitions $(REPETITIONS) --warmup $(WARMUP) --timeout 120 --out $(OUT)/workloads
+
+# Full 120-second metrics deadlines require a separate long-running gate.
+phase4-deadline-check:
+	$(PYTHON) $(ROOT)/harness/phase4.py compare --reference $(ROOT)/bin/pb-go --candidate $(ROOT)/target/release/pb --include-full120s --case p4-deadline-header --case p4-deadline-body --out $(OUT)
+
 # The default gate excludes the opt-in full60s and known-divergence tiers.
 # Both Cloud artifacts are required; skips remain failures.
 phase3-reference-check:

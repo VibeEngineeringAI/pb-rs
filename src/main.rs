@@ -200,6 +200,7 @@ fn write_output(mut writer: impl Write, bytes: &[u8]) -> io::Result<()> {
     pipe_result(writer.write_all(bytes).and_then(|()| writer.flush()))
 }
 fn main() {
+    pb::initialize_process_theme();
     #[cfg(feature = "diagnostics")]
     let diagnostics = pb::diagnostics::Session::begin();
     let outcome = invocation();

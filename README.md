@@ -34,7 +34,8 @@ peak memory, and saves repeatable reports for regression tracking.
 
 The Rust candidate implements the [offline CLI surface](docs/rust-phase1.md)
 and [phase-two profiles, authentication, status and dataset reads](docs/rust-phase2.md),
-plus [phase-three noninteractive SQL with streaming text/JSON output](docs/rust-phase3.md).
+plus [phase-three noninteractive SQL with streaming text/JSON output](docs/rust-phase3.md)
+and [phase-four PromQL, metrics metadata, and saved SQL](docs/rust-phase4.md).
 The Go CLI remains the complete implementation during the port.
 
 ## Quick Start

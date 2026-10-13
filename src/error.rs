@@ -13,6 +13,20 @@ pub struct CliError {
 }
 
 impl CliError {
+    pub(crate) fn output(context: &str, error: std::io::Error) -> Self {
+        // Go classifies the stdout PathError through net.Error. Preserve that
+        // public category only for the process writer's wrapped OS errors.
+        let code = if error
+            .get_ref()
+            .is_some_and(|e| e.is::<crate::OutputWriteError>())
+        {
+            ErrorCode::ConnectionFailed
+        } else {
+            ErrorCode::CommandFailed
+        };
+        Self::new(code, format!("{context}: {error}"))
+    }
+
     pub fn new(code: ErrorCode, message: impl Into<String>) -> Self {
         let message = message.into();
         Self {

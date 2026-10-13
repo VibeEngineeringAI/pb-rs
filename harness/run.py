@@ -29,7 +29,7 @@ from cases import suite
 HERE = Path(__file__).resolve().parent
 DEFAULT_METER = HERE.parent / "bin" / "pb-meter"
 SCHEMA_VERSION = 1
-METRICS = ("wall_ms", "first_stdout_ms", "first_stderr_ms", "first_record_ms",
+METRICS = ("first_useful_result_ms", "fixture_wire_body_bytes", "fixture_uncompressed_body_bytes", "wall_ms", "first_stdout_ms", "first_stderr_ms", "first_record_ms",
            "first_complete_element_ms", "json_array_elements", "rows_observed",
            "last_stdout_ms", "stdout_span_ms", "first_request_ms", "request_to_stdout_ms",
            "cpu_user_ms", "cpu_system_ms", "cpu_ms",
@@ -252,14 +252,14 @@ def spawn_measured(argv, env, cwd, stdout_path=None):
 def measure(argv, env, cwd, timeout=10, max_output=DEFAULT_OUTPUT_CAP, signal_after_lines=None,
             read_delay_ms=0, close_stdout_after_lines=None, meter=DEFAULT_METER, track_records=False,
             track_json_array=False, on_first_complete_element=None, time_first_json_element=True,
-            stdout_sink="pipe"):
+            stdout_sink="pipe", spool_output=False):
     """Drain both pipes while the native meter reaps the actual CLI with wait4.
 
     Never use cumulative RUSAGE_CHILDREN: its RSS high-water mark is not a
     per-command measurement. Fixture creation and artifact writes are outside
     this interval. First-byte times are parent-observed pipe availability.
     """
-    if not isinstance(max_output, int) or isinstance(max_output, bool) or not 0 < max_output <= MAX_OUTPUT_CAP:
+    if not isinstance(max_output, int) or isinstance(max_output, bool) or not 0 < max_output <= ((1 << 30) if spool_output else MAX_OUTPUT_CAP):
         raise ValueError("max_output must be an integer from 1 through 100 MiB")
     if stdout_sink not in ("pipe", "file"):
         raise ValueError("stdout_sink must be pipe or file")
@@ -272,6 +272,7 @@ def measure(argv, env, cwd, timeout=10, max_output=DEFAULT_OUTPUT_CAP, signal_af
     proc = spawn_measured([str(meter), str(metrics_path), "--", *argv], env, cwd, stdout_path)
     selector = selectors.DefaultSelector()
     data = {"stdout": bytearray(), "stderr": bytearray()}
+    spools = {name: tempfile.TemporaryFile() for name in data} if spool_output else {}
     first = {"stdout": None, "stderr": None}
     first_record = None
     first_element = None
@@ -334,7 +335,10 @@ def measure(argv, env, cwd, timeout=10, max_output=DEFAULT_OUTPUT_CAP, signal_af
                 # Retain at most the declared combined stdout/stderr cap. A
                 # killed writer cannot grow the collector during pipe draining.
                 retained = chunk[:max_output - collected_bytes]
-                data[name].extend(retained)
+                if spool_output:
+                    spools[name].write(retained)
+                else:
+                    data[name].extend(retained)
                 hashes[name].update(retained)
                 collected_bytes += len(retained)
                 if len(retained) < len(chunk):
@@ -381,6 +385,11 @@ def measure(argv, env, cwd, timeout=10, max_output=DEFAULT_OUTPUT_CAP, signal_af
         proc.stdout.close()
         proc.stderr.close()
     wall = (exited - started) / 1e6
+    # Validation/materialization happens after timing; measured pipe drain uses disk spools.
+    for name, stream in spools.items():
+        stream.seek(0)
+        data[name] = bytearray(stream.read())
+        stream.close()
     if stdout_path is not None:
         # Regular-file output is an explicit sink experiment. Read/validate only
         # after the measured child exits; do not invent first-output timestamps.
@@ -494,6 +503,13 @@ class Fixture:
         with opener.open(self.url + "/__harness/trace", timeout=5) as response:
             return json.load(response)
 
+    def milestones(self):
+        if self.proc is None:
+            return []
+        opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+        with opener.open(self.url + "/__harness/milestones", timeout=5) as response:
+            return json.load(response)
+
     def close(self):
         if self.proc:
             kill_group(self.proc, signal.SIGKILL)
@@ -530,6 +546,37 @@ def http_request_body_bytes(trace):
     return sum(len(r["body"].encode("utf-8")) for r in http)
 
 
+def independent_stdout_issues(case, stdout, normalized_stdout):
+    """Enforce model-pinned output hashes and raw byte counts, when supplied."""
+    issues = []
+    if "expected_stdout_sha256" in case and digest(normalized_stdout) != case["expected_stdout_sha256"]:
+        issues.append("stdout differs from independent expected hash")
+    if "expected_stdout_bytes" in case and len(stdout) != case["expected_stdout_bytes"]:
+        issues.append("stdout byte count differs from independent expectation")
+    return issues
+
+
+def phase4_body_observation(result, milestones, request_count, stdout_sink):
+    """Check an observable delivery lower bound; exact EOF proof is unavailable."""
+    result["first_useful_result_ms"] = None
+    result["body_before_output_verified"] = None
+    result["body_delivery_observation"] = "final-write lower bound; exact complete-body proof unavailable"
+    result["output_after_final_write_started"] = None
+    result["fixture_wire_body_bytes"] = sum(m.get("body_bytes_written", 0) for m in milestones) if milestones else None
+    result["fixture_uncompressed_body_bytes"] = sum(m.get("uncompressed_body_bytes", 0) for m in milestones) if milestones else None
+    if stdout_sink == "file":
+        return []
+    if len(milestones) != request_count or not milestones or any(
+            not m.get("final_write_started_monotonic_ns") or not m.get("final_body_monotonic_ns") for m in milestones):
+        return ["phase4 missing complete fixture delivery milestones"]
+    if result["first_stdout_ms"] is None:
+        return []  # Empty text output has no first-output observation.
+    first_ns = result["started_monotonic_ns"] + result["first_stdout_ms"] * 1e6
+    after = all(first_ns >= m["final_write_started_monotonic_ns"] for m in milestones)
+    result["output_after_final_write_started"] = after
+    return [] if after else ["phase4 output before final response body write began"]
+
+
 def sample(binary, case, fixture_binary, artifact, timeout, read_delay_ms=0, meter=DEFAULT_METER,
            *, diagnostic_env=None, stdout_sink="pipe"):
     diagnostic_env = diagnostic_env or {}
@@ -559,7 +606,7 @@ def sample(binary, case, fixture_binary, artifact, timeout, read_delay_ms=0, met
                                             close_stdout_after_lines=case.get("close_stdout_after_lines"), meter=meter,
                                             track_records="jsonl_rows" in case, track_json_array=track_array,
                                             time_first_json_element=case.get("time_first_json_element", True),
-                                            stdout_sink=stdout_sink)
+                                            stdout_sink=stdout_sink, spool_output=case.get("spool_output", False))
             trace = fixture.trace()
             result["first_request_ms"] = ((trace[0]["time_unix_ns"] - result["started_unix_ns"]) / 1e6) if trace else None
             result["first_request_clock"] = "realtime" if trace else None
@@ -602,9 +649,25 @@ def sample(binary, case, fixture_binary, artifact, timeout, read_delay_ms=0, met
                 result["rows_per_second"] = result["rows_observed"] / (result["wall_ms"] / 1000)
             normalized_out = normalize(stdout, replacements)
             normalized_err = normalize(stderr, replacements)
+            issues.extend(independent_stdout_issues(case, stdout, normalized_out))
             contract = {"stdout_sha256": digest(normalized_out), "stderr_sha256": digest(normalized_err),
                         "termination": result["termination"], "requests": request_contract(trace),
                         "config_before": before, "config_after": config_snapshot(root, replacements)}
+            if "phase4" in case:
+                import phase4_workloads
+                phase4_issues = phase4_workloads.validate(case, contract)
+                issues.extend(phase4_issues)
+                if not phase4_issues:
+                    result["rows_observed"] = case["phase4"]["count"]
+                    result["rows_per_second"] = result["rows_observed"] / (result["wall_ms"] / 1000)
+                # Preserve raw ordered URL/body bytes; semantic contract alone is insufficient.
+                raw_requests = [{"method": r["method"], "path": r["path"], "body": r["body"]} for r in trace]
+                result["phase4_raw_requests"] = raw_requests
+                if "raw_requests" in case["phase4"] and raw_requests != case["phase4"]["raw_requests"]:
+                    issues.append("phase4 raw request bytes mismatch")
+                if case["phase4"].get("buffered"):
+                    milestones = fixture.milestones() if hasattr(fixture, "milestones") else []
+                    issues.extend(phase4_body_observation(result, milestones, len(trace), stdout_sink))
             result["valid"] = not issues
             result["issues"] = issues
             result["contract"] = contract
@@ -742,10 +805,11 @@ def render_report(report, out):
               "First-element validation runs in the pipe reader and can add backpressure; cases with timing disabled report N/A and still validate count/order after exit.",
               "Block input/output metrics count wait4 block operations, not storage bytes or network traffic. Each sample labels native child versus supervisor fallback resources.",
               "Request-body and fixture-response-body bytes describe logical HTTP payloads only; TLS/socket bytes and unread server tails are unavailable.",
-              "Output is retained in memory up to each case's combined stdout/stderr cap (32 MiB default, at most 100 MiB); normalization and artifacts can add copies. Truncated samples fail compatibility.",
+              "Output uses bounded memory by default; opted workload cases spool during timed pipe drain (up to 1 GiB), then materialize for post-exit validation. Truncation fails compatibility.",
               "Tail finite cases deliberately end with an error after the known rows; signal cases compare true signal termination.",
               "Exact stdout/stderr and termination are compared; requests use semantic JSON/query comparison, config uses parsed TOML plus permissions.",
               "Only fixture URL and temporary HOME are normalized. Each run retains the original bytes and requests.",
+              "Phase-four pipe observations require fixture milestones and compare stdout against the start of the final body write, a delivery lower bound. Exact complete-body ordering and command-specific useful-result timing remain N/A; delayed-EOF and body-fault differential cases establish buffering correctness.",
               "This corpus is not complete parity: PTY/TUI, OAuth refresh, TLS, reconnect and other uncovered paths need additional cases."]
     (out / "report.md").write_text("\n".join(lines) + "\n")
     write_json(out / "report.json", report)
@@ -758,7 +822,17 @@ def run(args):
         if not separator or not label or any(c not in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-" for c in label) or label in binaries:
             raise ValueError("--binary needs a unique safe NAME=/absolute/path")
         binaries[label] = binary_info(path)
+    if getattr(args, "phase4_oracle_self_check", False) and (len(binaries) < 2 or len({b["sha256"] for b in binaries.values()}) != 1):
+        raise ValueError("phase4 oracle self-check requires two identical hashed binaries")
+    if getattr(args, "phase4_oracle_self_check", False):
+        manifest = json.loads((HERE / "contracts/phase4-reference.json").read_text())
+        if next(iter(binaries.values()))["sha256"] != manifest["binaries"]["reference"]["sha256"]:
+            raise ValueError("phase4 oracle must match frozen pinned Go baseline")
     cases = suite() if not args.suite else json.loads(Path(args.suite).read_text())
+    if getattr(args, "phase4_oracle_self_check", False):
+        for case in cases:
+            if "phase4" in case:
+                case["phase4"]["oracle_required"] = False
     if args.case:
         requested = set(args.case)
         unknown = requested - {case["name"] for case in cases}
@@ -780,7 +854,7 @@ def run(args):
         if "expected_exit" not in case or "expected_requests" not in case:
             raise ValueError(f"{name}: expected_exit and expected_requests are required")
         cap = case.get("max_output_bytes", DEFAULT_OUTPUT_CAP)
-        if not isinstance(cap, int) or isinstance(cap, bool) or not 0 < cap <= MAX_OUTPUT_CAP:
+        if not isinstance(cap, int) or isinstance(cap, bool) or not 0 < cap <= ((1 << 30) if case.get("spool_output") else MAX_OUTPUT_CAP):
             raise ValueError(f"{name}: max_output_bytes must be an integer from 1 through 100 MiB")
         for key in ("json_array_rows", "fixture_response_body_bytes"):
             if key in case and (not isinstance(case[key], int) or isinstance(case[key], bool) or case[key] < 0):
@@ -800,8 +874,8 @@ def run(args):
                          "timeout_s": args.timeout, "read_delay_ms": args.read_delay_ms,
                          "cache": "warm; no cache flushing", "output": "captured pipes; fixed non-TTY environment" if getattr(args, "stdout_sink", "pipe") == "pipe" else "cached temporary stdout file; fixed non-TTY environment; first-output timings unavailable",
                          "stdout_sink": getattr(args, "stdout_sink", "pipe"),
-                         "default_max_output_bytes": DEFAULT_OUTPUT_CAP, "largest_max_output_bytes": MAX_OUTPUT_CAP,
-                         "capture": "bounded in-memory bytes, incremental raw SHA-256; normalization makes additional copies",
+                         "default_max_output_bytes": DEFAULT_OUTPUT_CAP, "largest_max_output_bytes": max(case.get("max_output_bytes", DEFAULT_OUTPUT_CAP) for case in cases),
+                         "capture": "incremental raw SHA-256; opted cases disk spool during pipe drain, materialized after timing; other cases bounded memory",
                          "first_element_timing": "parent incremental validation; disabled per case for large first elements; count/order validated after exit",
                          "block_io_units": "wait4 block operations; storage/network bytes unavailable",
                          "runner_sha256": digest(Path(__file__).read_bytes()), "cases_sha256": digest(canonical(cases))}, "cases": {}}
@@ -921,6 +995,7 @@ def main():
     running.add_argument("--fixture", help="path to prebuilt pb-fixture")
     running.add_argument("--meter", default=str(DEFAULT_METER), help="path to prebuilt native meter (default bin/pb-meter)")
     running.add_argument("--out", required=True, help="new output directory (never overwritten)")
+    running.add_argument("--phase4-oracle-self-check", action="store_true", help="bootstrap frozen P4 expectations using two identical hashed Go reference binaries")
     running.add_argument("--suite", help="custom JSON suite; see list --json")
     running.add_argument("--case", action="append")
     running.add_argument("--group", action="append")

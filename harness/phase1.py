@@ -416,6 +416,13 @@ PHASE2_OPERATIONS = {
     "dataset info", "dataset schema", "sql run",
 }
 
+PHASE4_OPERATIONS = {
+    "sql save", "promql run", "promql labels", "promql label-values",
+    "promql series", "promql cardinality label-names",
+    "promql cardinality label-values", "promql cardinality active-series",
+    "promql active-queries", "promql tsdb",
+}
+
 
 def deferred_guards(surface=None):
     """Candidate safety assertions, never Go parity or benchmark workloads."""
@@ -428,7 +435,7 @@ def deferred_guards(surface=None):
     nodes = surface["nodes"]
     for node in nodes:
         path = node["path"]
-        if " ".join(path) in PHASE2_OPERATIONS:
+        if " ".join(path) in PHASE2_OPERATIONS | PHASE4_OPERATIONS:
             continue
         if not path or path in (["help"], ["agent"], ["version"]):
             continue
@@ -438,6 +445,10 @@ def deferred_guards(surface=None):
         paths = [path, *[[*path[:-1], alias] for alias in node["aliases"]]]
         for invocation in paths:
             for structured in (False, True) if any(f["name"] == "output" for f in node["flags"]) else (False,):
+                # Only the no-output picker remains deferred; explicit JSON
+                # listing is covered by phase four's request/output corpus.
+                if path == ["sql", "list"] and structured:
+                    continue
                 guards.append({"name": f"deferred-{len(guards):03d}-" + "-".join(invocation) + ("-json" if structured else "-text"),
                                "argv": [*invocation, *operands, *(["-ojson"] if structured else [])],
                                "canonical_path": "pb " + " ".join(path), "structured": structured})

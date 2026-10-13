@@ -1283,7 +1283,7 @@ def execute(command, env, cwd, plan, fixture, spool, timeout, meter=None):
                     selector.unregister(open_fds["stdout"])
                 except KeyError:
                     pass
-                time.sleep(min(resume_at - time.monotonic(), 0.01))
+                time.sleep(max(0.0, min(resume_at - time.monotonic(), 0.01)))
                 if time.monotonic() >= resume_at:
                     selector.register(open_fds["stdout"], selectors.EVENT_READ, "stdout")
                 continue
@@ -2674,7 +2674,7 @@ def seeded_cases(add):
 
 
 # --------------------------------------------------------------------------
-# Candidate-only deferred boundaries: interactive mode and nonempty --save-as.
+# Candidate-only deferred boundaries: interactive mode. Saving is phase four.
 
 def deferred_boundaries():
     """No Go parity claim: an explicit unimplemented error before any request or HOME change."""
@@ -2687,10 +2687,7 @@ def deferred_boundaries():
             ("interactive-ignores-output-validation", ["sql", "run", "SELECT 1", "-i", "-o", "yaml"], False),
             ("interactive-before-save", ["sql", "run", "SELECT 1", "-i", "--save-as", "named"], False),
             ("interactive-json", ["sql", "run", "SELECT 1", "-i", "-o", "json"], True),
-            ("save-as-named", sql("SELECT * FROM logs", "--save-as", "named"), False),
-            ("save-as-whitespace", sql("SELECT * FROM logs", "--save-as", " "), False),
-            ("save-as-equals", sql("SELECT * FROM logs", "--save-as=named", "-o", "text"), False),
-            ("save-as-json", sql("SELECT * FROM logs", "--save-as", "named", "-o", "json"), True)):
+            ("interactive-save-json", ["sql", "run", "SELECT 1", "-i", "--save-as", "named", "-o", "json"], True)):
         checks.append({"name": "p3-boundary-" + label, "argv": argv, "structured": structured, "location": "xdg",
                        "config": {"auth": "basic"}, "build": "standard", "requires": [], "env": {}, "unset": [],
                        "fixture": {"headers": {}, "routes": [route(b"[]"), route(b"{}", path="/api/v1/filters")]},
@@ -2826,7 +2823,7 @@ def scope_summary(full, tiers):
 
 
 SCOPE_EXCLUSIONS = [
-    "Interactive -i/--interactive and nonempty --save-as: candidate-only zero-request boundary checks, not Go parity.",
+    "Interactive -i/--interactive: candidate-only zero-request boundary checks, not Go parity. Nonempty --save-as is covered by phase four.",
     "TLS, certificate trust and HTTP proxies: covered by native Rust transport tests; loopback proxies are bypassed by Go.",
     "HTTP/2, 1xx informational responses, Expect/100-continue and trailers are not scripted.",
     "Spinner frame counts and timing are scheduler-dependent; frames are collapsed, order and cleanup are checked.",
