@@ -233,7 +233,7 @@ fn trim_bytes(mut bytes: &[u8]) -> &[u8] {
         }
     }
     loop {
-        // Each attempt validates at most four bytes, even for long suffixes.
+        // Each step checks at most four suffixes of at most four bytes.
         let start = bytes.len().saturating_sub(4);
         let last = (start..bytes.len()).find_map(|index| {
             std::str::from_utf8(&bytes[index..]).ok().and_then(|text| {

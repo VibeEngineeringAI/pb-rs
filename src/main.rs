@@ -200,8 +200,9 @@ fn write_output(mut writer: impl Write, bytes: &[u8]) -> io::Result<()> {
     pipe_result(writer.write_all(bytes).and_then(|()| writer.flush()))
 }
 // Go's syscall package init raises the soft open-file limit for every program
-// (go1.25 syscall/rlimit.go:30-47): when 0 < soft < hard-1, soft becomes
-// hard-1, clamped on Apple to kern.maxfilesperproc (rlimit_darwin.go:10-20).
+// (go1.25 syscall/rlimit.go:30-47): when hard > 0 and soft < hard-1, soft
+// becomes hard-1, clamped on Apple to kern.maxfilesperproc
+// (rlimit_darwin.go:10-20).
 // Inventory detail reads fan out one connection per entry, so the inherited
 // soft limit (often 1024, or 256 on macOS) would fail with EMFILE where Go
 // succeeds. Go restores the original limit only in children it execs; pb

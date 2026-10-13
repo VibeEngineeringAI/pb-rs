@@ -9,7 +9,7 @@ use std::{
     net::{TcpListener, TcpStream},
     os::unix::process::CommandExt,
     path::PathBuf,
-    process::{Command, Output, Stdio},
+    process::{Child, Command, Output, Stdio},
     sync::{
         Arc,
         atomic::{AtomicBool, AtomicUsize, Ordering},
@@ -28,8 +28,20 @@ struct Fixture {
     release: Arc<AtomicBool>,
     arrived: Arc<AtomicUsize>,
     barrier_met: Arc<AtomicBool>,
+    barrier_expired: Arc<AtomicBool>,
     stop: Arc<AtomicBool>,
     worker: Option<thread::JoinHandle<()>>,
+}
+
+/// Kills and reaps the child if a test assertion unwinds before `wait`.
+struct ChildGuard(Child);
+
+impl Drop for ChildGuard {
+    fn drop(&mut self) {
+        // kill() fails harmlessly if the child already exited.
+        let _ = self.0.kill();
+        let _ = self.0.wait();
+    }
 }
 
 fn respond(mut stream: TcpStream, body: &[u8]) {
@@ -43,7 +55,9 @@ fn respond(mut stream: TcpStream, body: &[u8]) {
 
 impl Fixture {
     /// The user listing waits for `release`; every detail read then waits
-    /// until all USERS detail requests are open at once (or a deadline).
+    /// until all USERS detail requests are open at once. No detail read is
+    /// answered before that, so a read that reaches its deadline first records
+    /// the expiry permanently and closes unanswered.
     fn new() -> Self {
         let root = std::env::temp_dir().join(format!(
             "pb-fdlimit-{}-{}",
@@ -72,16 +86,18 @@ impl Fixture {
         let release = Arc::new(AtomicBool::new(false));
         let arrived = Arc::new(AtomicUsize::new(0));
         let barrier_met = Arc::new(AtomicBool::new(false));
+        let barrier_expired = Arc::new(AtomicBool::new(false));
         let stop = Arc::new(AtomicBool::new(false));
         let shared = (
             listed.clone(),
             release.clone(),
             arrived.clone(),
             barrier_met.clone(),
+            barrier_expired.clone(),
             stop.clone(),
         );
         let worker = thread::spawn(move || {
-            let (listed, release, arrived, barrier_met, stop) = shared;
+            let (listed, release, arrived, barrier_met, barrier_expired, stop) = shared;
             let mut handlers = Vec::new();
             while !stop.load(Ordering::SeqCst) {
                 let stream = match listener.accept() {
@@ -92,11 +108,12 @@ impl Fixture {
                     }
                     Err(e) => panic!("accept: {e}"),
                 };
-                let (listed, release, arrived, barrier_met, stop, users) = (
+                let (listed, release, arrived, barrier_met, barrier_expired, stop, users) = (
                     listed.clone(),
                     release.clone(),
                     arrived.clone(),
                     barrier_met.clone(),
+                    barrier_expired.clone(),
                     stop.clone(),
                     users.clone(),
                 );
@@ -114,7 +131,8 @@ impl Fixture {
                         }
                         header.push(byte[0]);
                     }
-                    let deadline = Instant::now() + Duration::from_secs(5);
+                    // Within the 20 s child deadline, generous for slow CI.
+                    let deadline = Instant::now() + Duration::from_secs(15);
                     if header.starts_with(b"GET /api/v1/user ") {
                         listed.store(true, Ordering::SeqCst);
                         while !release.load(Ordering::SeqCst) && !stop.load(Ordering::SeqCst) {
@@ -132,6 +150,12 @@ impl Fixture {
                     {
                         thread::sleep(Duration::from_millis(1));
                     }
+                    // Later arrivals must not turn an expired barrier into a
+                    // pass: `arrived` counts requests, not concurrent ones.
+                    if !barrier_met.load(Ordering::SeqCst) {
+                        barrier_expired.store(true, Ordering::SeqCst);
+                        return;
+                    }
                     respond(
                         stream,
                         br#"{"roles":{"reader":{"actions":[]}},"group_roles":{}}"#,
@@ -148,6 +172,7 @@ impl Fixture {
             release,
             arrived,
             barrier_met,
+            barrier_expired,
             stop,
             worker: Some(worker),
         }
@@ -197,17 +222,41 @@ fn nofile() -> libc::rlimit {
     limit
 }
 
-fn wait(mut child: std::process::Child) -> Output {
+fn drain(mut reader: impl Read) -> Vec<u8> {
+    let mut bytes = Vec::new();
+    reader.read_to_end(&mut bytes).unwrap();
+    bytes
+}
+
+/// Drains both pipes while polling, so output larger than the pipe capacity
+/// (8 KiB under a per-user pipe quota) cannot block the child's exit. Also
+/// reports whether the child had to be killed at the deadline.
+fn wait(mut child: ChildGuard) -> (Output, bool) {
+    let stdout = child.0.stdout.take().unwrap();
+    let stderr = child.0.stderr.take().unwrap();
+    let stdout = thread::spawn(move || drain(stdout));
+    let stderr = thread::spawn(move || drain(stderr));
     let deadline = Instant::now() + Duration::from_secs(20);
-    while child.try_wait().unwrap().is_none() {
+    let mut stalled = false;
+    let status = loop {
+        if let Some(status) = child.0.try_wait().unwrap() {
+            break status;
+        }
         if Instant::now() >= deadline {
-            let _ = child.kill();
-            let _ = child.wait();
-            panic!("user list stalled");
+            stalled = true;
+            let _ = child.0.kill();
+            break child.0.wait().unwrap();
         }
         thread::sleep(Duration::from_millis(5));
-    }
-    child.wait_with_output().unwrap()
+    };
+    let stdout = stdout.join().unwrap();
+    let stderr = stderr.join().unwrap();
+    let output = Output {
+        status,
+        stdout,
+        stderr,
+    };
+    (output, stalled)
 }
 
 /// Soft and hard RLIMIT_NOFILE of a running process, from /proc.
@@ -237,28 +286,44 @@ fn run(binary: &PathBuf, soft: Option<libc::rlim_t>) -> Output {
             });
         }
     }
-    let child = command.spawn().unwrap();
+    // Declared after `fixture`, so an unwinding assertion reaps the child
+    // before the fixture's server stops.
+    let child = ChildGuard(command.spawn().unwrap());
     let deadline = Instant::now() + Duration::from_secs(10);
     while !fixture.listed.load(Ordering::SeqCst) {
         assert!(Instant::now() < deadline, "{binary:?}: no user listing");
         thread::sleep(Duration::from_millis(1));
     }
-    // Go leaves soft at hard-1 (syscall/rlimit.go); pb mirrors it.
+    // Go leaves soft at hard-1 (syscall/rlimit.go); pb mirrors it. Without a
+    // readable procfs the overlap and output checks below still apply.
     #[cfg(target_os = "linux")]
     if soft.is_some() {
-        let (soft, hard) = process_nofile(child.id()).expect("readable /proc limits");
-        assert_eq!(
-            soft,
-            hard - 1,
-            "{binary:?}: soft open-file limit not raised"
-        );
+        match process_nofile(child.0.id()) {
+            Some((observed, hard)) => assert_eq!(
+                observed,
+                hard - 1,
+                "{binary:?}: soft open-file limit not raised"
+            ),
+            None => eprintln!("{binary:?}: /proc limits unavailable; skipping that check"),
+        }
     }
     fixture.release.store(true, Ordering::SeqCst);
-    let output = wait(child);
+    let (output, stalled) = wait(child);
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    // Checked first: a client that never overlaps all reads may also stall.
+    assert!(
+        !fixture.barrier_expired.load(Ordering::SeqCst),
+        "{binary:?} soft={soft:?}: detail barrier expired before all {USERS} \
+         reads overlapped ({} arrived): {stderr}",
+        fixture.arrived.load(Ordering::SeqCst)
+    );
+    assert!(
+        !stalled,
+        "{binary:?} soft={soft:?}: user list stalled: {stderr}"
+    );
     assert!(
         output.status.success(),
-        "{binary:?} soft={soft:?}: {}",
-        String::from_utf8_lossy(&output.stderr)
+        "{binary:?} soft={soft:?}: {stderr}"
     );
     assert!(
         fixture.barrier_met.load(Ordering::SeqCst),
@@ -276,13 +341,20 @@ fn wide_user_list_outgrows_a_low_inherited_soft_limit() {
         eprintln!("skipping: hard RLIMIT_NOFILE {} < {needed}", limit.rlim_max);
         return;
     }
-    // The fixture itself holds one socket per overlapping detail read.
+    // The fixture itself holds one socket per overlapping detail read. Ask
+    // for a finite soft limit: Apple rejects RLIM_INFINITY with EINVAL.
     if limit.rlim_cur < needed {
         let raised = libc::rlimit {
-            rlim_cur: limit.rlim_max,
+            rlim_cur: needed,
             rlim_max: limit.rlim_max,
         };
-        assert_eq!(unsafe { libc::setrlimit(libc::RLIMIT_NOFILE, &raised) }, 0);
+        if unsafe { libc::setrlimit(libc::RLIMIT_NOFILE, &raised) } != 0 {
+            eprintln!(
+                "skipping: cannot raise soft RLIMIT_NOFILE to {needed}: {}",
+                std::io::Error::last_os_error()
+            );
+            return;
+        }
     }
     let reference = run(&binaries()[0], None);
     assert!(reference.stdout.starts_with(b"["), "{reference:?}");
