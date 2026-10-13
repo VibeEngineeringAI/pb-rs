@@ -6,6 +6,9 @@ rust-version = "1.96"
 license = "AGPL-3.0-or-later"
 description = "Native Rust Parseable CLI"
 
+[features]
+diagnostics = []
+
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
 serde_json = { version = "1.0", features = ["preserve_order", "arbitrary_precision", "raw_value"] }
@@ -39,3 +42,10 @@ libc = "0.2"
 lto = "thin"
 codegen-units = 1
 strip = true
+
+# Keep release optimizations while retaining symbols for perf and heaptrack.
+# This does not enable the separate diagnostics instrumentation feature.
+[profile.profiling]
+inherits = "release"
+debug = 2
+strip = "none"

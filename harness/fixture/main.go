@@ -3,6 +3,8 @@
 package main
 
 import (
+	"bytes"
+	"compress/gzip"
 	"context"
 	"encoding/json"
 	"flag"
@@ -11,6 +13,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -24,7 +27,12 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
+
+	"golang.org/x/sys/unix"
 )
+
+// capabilities lists optional route features; phase3.py checks them before export.
+var capabilities = []string{"generate", "gzip", "milestones"}
 
 type route struct {
 	Method       string `json:"method"`
@@ -34,6 +42,85 @@ type route struct {
 	DelayMS      int    `json:"delay_ms"`
 	ChunkBytes   int    `json:"chunk_bytes"`
 	ChunkDelayMS int    `json:"chunk_delay_ms"`
+	// Generate replaces Body with a deterministic expansion (shared with phase3.expand_generate).
+	Generate *generate `json:"generate"`
+	// Gzip sends Content-Encoding: gzip with the body compressed once at startup.
+	Gzip bool `json:"gzip"`
+
+	payload      []byte
+	uncompressed int
+}
+
+type generate struct {
+	Prefix    string `json:"prefix"`
+	Item      string `json:"item"`
+	Separator string `json:"separator"`
+	Suffix    string `json:"suffix"`
+	Count     int    `json:"count"`
+	Width     int    `json:"width"`
+	BlobBytes int    `json:"blob_bytes"`
+}
+
+func (g *generate) expand() []byte {
+	var out bytes.Buffer
+	blob := strings.Repeat("x", max(g.BlobBytes, 0))
+	out.WriteString(g.Prefix)
+	for i := 0; i < g.Count; i++ {
+		if i > 0 {
+			out.WriteString(g.Separator)
+		}
+		number := strconv.Itoa(i)
+		item := strings.ReplaceAll(g.Item, "{{i}}", number)
+		item = strings.ReplaceAll(item, "{{fill}}", strings.Repeat("x", max(g.Width-len(number), 0)))
+		out.WriteString(strings.ReplaceAll(item, "{{blob}}", blob))
+	}
+	out.WriteString(g.Suffix)
+	return out.Bytes()
+}
+
+// milestone uses CLOCK_MONOTONIC so it is comparable with the runner and pb-meter.
+type milestone struct {
+	Request                int    `json:"request"`
+	ReceivedMonotonicNS    int64  `json:"received_monotonic_ns"`
+	HeadersMonotonicNS     int64  `json:"headers_monotonic_ns,omitempty"`
+	FirstBodyMonotonicNS   int64  `json:"first_body_monotonic_ns,omitempty"`
+	FinalBodyMonotonicNS   int64  `json:"final_body_monotonic_ns,omitempty"`
+	BodyBytesWritten       int    `json:"body_bytes_written"`
+	UncompressedBodyBytes  int    `json:"uncompressed_body_bytes"`
+	AcceptEncoding         string `json:"accept_encoding"`
+}
+
+func monotonicNS() int64 {
+	var ts unix.Timespec
+	if err := unix.ClockGettime(unix.CLOCK_MONOTONIC, &ts); err != nil {
+		return 0
+	}
+	return ts.Nano()
+}
+
+// prepare computes every response payload before the ready line, so generation
+// and compression never count toward the measured CLI's latency.
+func (s *scenario) prepare() error {
+	for i := range s.Routes {
+		r := &s.Routes[i]
+		body := []byte(r.Body)
+		if r.Generate != nil {
+			body = r.Generate.expand()
+		}
+		r.payload, r.uncompressed = body, len(body)
+		if r.Gzip {
+			var compressed bytes.Buffer
+			writer := gzip.NewWriter(&compressed)
+			if _, err := writer.Write(body); err != nil {
+				return err
+			}
+			if err := writer.Close(); err != nil {
+				return err
+			}
+			r.payload = compressed.Bytes()
+		}
+	}
+	return nil
 }
 
 type flightPlan struct {
@@ -63,8 +150,15 @@ type fixture struct {
 	flight.BaseFlightServer
 	plan     scenario
 	grpcPort int
-	mu       sync.Mutex
-	requests []request
+	mu         sync.Mutex
+	requests   []request
+	milestones []milestone
+}
+
+func (f *fixture) mark(index int, update func(*milestone)) {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	update(&f.milestones[index])
 }
 
 var contractHeaders = []string{"authorization", "x-api-key", "x-p-tenant", "cookie", "content-type", "accept"}
@@ -106,6 +200,14 @@ func (f *fixture) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		_ = json.NewEncoder(w).Encode(f.requests)
 		return
 	}
+	if r.Method == http.MethodGet && r.URL.Path == "/__harness/milestones" {
+		f.mu.Lock()
+		defer f.mu.Unlock()
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(f.milestones)
+		return
+	}
+	received := monotonicNS()
 	body, err := io.ReadAll(io.LimitReader(r.Body, 8<<20))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -126,6 +228,10 @@ func (f *fixture) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	entry.Unexpected = selected == nil
 	f.record(entry)
+	f.mu.Lock()
+	index := len(f.milestones)
+	f.milestones = append(f.milestones, milestone{Request: index, ReceivedMonotonicNS: received, AcceptEncoding: r.Header.Get("Accept-Encoding")})
+	f.mu.Unlock()
 	if !f.authorized(entry.Headers) {
 		http.Error(w, "fixture: incorrect authentication", http.StatusUnauthorized)
 		return
@@ -142,8 +248,26 @@ func (f *fixture) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if code == 0 {
 		code = http.StatusOK
 	}
+	response := selected.payload
+	if response == nil {
+		response = []byte(selected.Body)
+	}
+	if selected.Generate == nil && !selected.Gzip {
+		response = []byte(strings.ReplaceAll(string(response), "{{grpc_port}}", fmt.Sprint(f.grpcPort)))
+	}
+	if selected.Gzip {
+		w.Header().Set("Content-Encoding", "gzip")
+	}
+	if selected.ChunkBytes <= 0 && (selected.Gzip || selected.Generate != nil) {
+		// Pre-phase-three routes keep net/http's implicit framing unchanged.
+		w.Header().Set("Content-Length", strconv.Itoa(len(response)))
+	}
 	w.WriteHeader(code)
-	response := []byte(strings.ReplaceAll(selected.Body, "{{grpc_port}}", fmt.Sprint(f.grpcPort)))
+	f.mark(index, func(m *milestone) {
+		m.HeadersMonotonicNS = monotonicNS()
+		m.UncompressedBodyBytes = selected.uncompressed
+	})
+	defer f.mark(index, func(m *milestone) { m.FinalBodyMonotonicNS = monotonicNS() })
 	chunk := selected.ChunkBytes
 	if chunk <= 0 {
 		chunk = len(response) + 1
@@ -153,6 +277,12 @@ func (f *fixture) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if _, err := w.Write(response[offset:end]); err != nil {
 			return
 		}
+		f.mark(index, func(m *milestone) {
+			if m.FirstBodyMonotonicNS == 0 {
+				m.FirstBodyMonotonicNS = monotonicNS()
+			}
+			m.BodyBytesWritten += end - offset
+		})
 		if selected.ChunkBytes > 0 {
 			w.(http.Flusher).Flush()
 		}
@@ -224,13 +354,20 @@ func (f *fixture) DoGet(ticket *flight.Ticket, stream flight.FlightService_DoGet
 
 func run() error {
 	path := flag.String("scenario", "", "scenario JSON file (required)")
+	listCapabilities := flag.Bool("capabilities", false, "print supported optional route features as JSON and exit")
 	flag.Parse()
+	if *listCapabilities {
+		return json.NewEncoder(os.Stdout).Encode(capabilities)
+	}
 	data, err := os.ReadFile(*path)
 	if err != nil {
 		return err
 	}
 	f := &fixture{requests: []request{}}
 	if err := json.Unmarshal(data, &f.plan); err != nil {
+		return err
+	}
+	if err := f.plan.prepare(); err != nil {
 		return err
 	}
 	httpListener, err := net.Listen("tcp", "127.0.0.1:0")

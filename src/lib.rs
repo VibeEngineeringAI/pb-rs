@@ -3,6 +3,8 @@ pub mod api;
 pub mod auth;
 pub mod config;
 pub mod datasets;
+#[cfg(feature = "diagnostics")]
+pub mod diagnostics;
 pub mod error;
 pub mod gojson;
 pub mod parser;
@@ -10,6 +12,7 @@ mod printable;
 pub mod profile;
 mod render;
 pub mod spec;
+mod sql;
 mod status;
 mod transport;
 mod url_reference;
@@ -20,14 +23,40 @@ use spec::{CommandSpec, Operation, command_spec};
 
 #[derive(Debug, Default, PartialEq)]
 pub struct Outcome {
-    pub stdout: String,
-    pub stderr: String,
+    pub stdout: Vec<u8>,
+    pub stderr: Vec<u8>,
     pub exit_code: i32,
+}
+
+/// Preserve the OS writer boundary separately from HTTP body-read failures.
+#[derive(Debug)]
+pub struct OutputWriteError {
+    pub stream: &'static str,
+    pub source: std::io::Error,
+}
+impl std::fmt::Display for OutputWriteError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let original = self.source.to_string();
+        let mut message = original
+            .split(" (os error ")
+            .next()
+            .unwrap_or(&original)
+            .to_string();
+        if let Some(first) = message.get_mut(..1) {
+            first.make_ascii_lowercase();
+        }
+        write!(f, "write /dev/{}: {message}", self.stream)
+    }
+}
+impl std::error::Error for OutputWriteError {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        Some(&self.source)
+    }
 }
 impl Outcome {
     fn success(stdout: String) -> Self {
         Self {
-            stdout,
+            stdout: stdout.into_bytes(),
             ..Self::default()
         }
     }
@@ -108,7 +137,7 @@ fn failure(
         text
     };
     Outcome {
-        stderr,
+        stderr: stderr.into_bytes(),
         exit_code: 1,
         ..Outcome::default()
     }
@@ -135,6 +164,23 @@ pub fn commit() -> &'static str {
 
 /// Execute a UTF-8 argument vector. Offline commands never initialize networking.
 pub fn run(args: &[String]) -> Outcome {
+    let mut stdout = Vec::new();
+    let mut stderr = Vec::new();
+    let mut outcome = run_with_writers(args, &mut stdout, &mut stderr, false);
+    stdout.extend_from_slice(&outcome.stdout);
+    stderr.extend_from_slice(&outcome.stderr);
+    outcome.stdout = stdout;
+    outcome.stderr = stderr;
+    outcome
+}
+
+/// Streaming commands write directly; other commands return buffered bytes.
+pub fn run_with_writers(
+    args: &[String],
+    stdout: &mut (dyn std::io::Write + Send),
+    stderr: &mut (dyn std::io::Write + Send),
+    stderr_terminal: bool,
+) -> Outcome {
     let root = command_spec();
     let structured = parser::requests_json(args);
     let (command, path, remaining) = match parser::discover(root, args) {
@@ -191,6 +237,17 @@ pub fn run(args: &[String]) -> Outcome {
             ErrorCode::InvalidInput,
             structured,
             false,
+        );
+    }
+    if path == "pb sql run" {
+        return sql::execute(
+            &parsed,
+            command,
+            &path,
+            structured,
+            stdout,
+            stderr,
+            stderr_terminal,
         );
     }
     // Operations with no local output flag must not inherit root/parent output.
@@ -386,7 +443,9 @@ fn execute_operational(
                         structured,
                         false,
                     );
-                    outcome.stderr = diagnostics + &outcome.stderr;
+                    let mut bytes = diagnostics.into_bytes();
+                    bytes.extend_from_slice(&outcome.stderr);
+                    outcome.stderr = bytes;
                     outcome
                 }
             },
@@ -436,7 +495,8 @@ fn status_preflight_failure(
             stdout: render::json(
                 &serde_json::json!({"status":"error","healthy":false,"error":message}),
                 false,
-            ),
+            )
+            .into_bytes(),
             exit_code: 1,
             ..Outcome::default()
         }

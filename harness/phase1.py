@@ -408,12 +408,12 @@ def surface_issues(tree, surface):
     return []
 
 
-# Promoted commands are exercised by phase2.py against independent Go fixtures.
+# Promoted commands are exercised by phase2.py/phase3.py against independent Go fixtures.
 # This list is explicit: a candidate's output never selects its test coverage.
 PHASE2_OPERATIONS = {
     "status", "profile add", "profile list", "profile update", "profile default",
     "profile remove", "logout", "cloud profile add", "dataset list",
-    "dataset info", "dataset schema",
+    "dataset info", "dataset schema", "sql run",
 }
 
 

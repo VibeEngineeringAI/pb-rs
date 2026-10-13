@@ -1,0 +1,243 @@
+// Diagnostic-only code appended to cmd/query.go by a verified build overlay.
+// No SQL text, response contents, keys, credentials, or command arguments are retained.
+const (
+	pbDiagRenderer = iota
+	pbDiagRequest
+	pbDiagBodyRead
+	pbDiagDecode
+	pbDiagMarshal
+	pbDiagIndent
+	pbDiagControl
+	pbDiagWrite
+	pbDiagStageCount
+)
+
+var pbDiagNames = [pbDiagStageCount]string{"renderer", "request_headers", "body_read", "decode", "marshal_indent", "indent_copy", "decoder_control", "output_write"}
+var pbDiagInclusive = [pbDiagStageCount]bool{true, true, true, true, false, false, true, true}
+
+type pbDiagStage struct {
+	calls pbDiagAtomic.Uint64
+	timed pbDiagAtomic.Uint64
+	wall pbDiagAtomic.Uint64
+}
+
+type pbDiagState struct {
+	dir string
+	mode string
+	sampleEvery uint64
+	memRate int
+	startupMemRate int
+	start time.Time
+	cpuStart int64
+	memStart pbDiagRuntime.MemStats
+	stages [pbDiagStageCount]pbDiagStage
+	writeCalls pbDiagAtomic.Uint64
+	requested pbDiagAtomic.Uint64
+	written pbDiagAtomic.Uint64
+	writeErrors pbDiagAtomic.Uint64
+	readCalls pbDiagAtomic.Uint64
+	readBytes pbDiagAtomic.Uint64
+	profile *os.File
+}
+
+var pbDiagActive *pbDiagState
+
+func pbDiagCPU() int64 {
+	var usage pbDiagSyscall.Rusage
+	if err := pbDiagSyscall.Getrusage(pbDiagSyscall.RUSAGE_SELF, &usage); err != nil { panic("diagnostics: process CPU unavailable") }
+	return usage.Utime.Sec*1e9 + usage.Utime.Usec*1e3 + usage.Stime.Sec*1e9 + usage.Stime.Usec*1e3
+}
+
+func pbDiagFail() {
+	// Never include command data or environment values in this message.
+	fmt.Fprintln(os.Stderr, "diagnostics: invalid configuration or artifact write failure")
+	os.Exit(2)
+}
+
+func pbDiagPositiveEnv(name string, fallback uint64) uint64 {
+	value := os.Getenv(name)
+	if value == "" { return fallback }
+	parsed, err := strconv.ParseUint(value, 10, 63)
+	if err != nil || parsed == 0 { pbDiagFail() }
+	return parsed
+}
+
+// DiagnosticsStart runs before the original main body. Setup and MemStats baseline
+// sampling are outside command_wall_ns. No thread CPU clocks: goroutines migrate.
+func DiagnosticsStart() {
+	dir := os.Getenv("PB_DIAGNOSTICS_DIR")
+	if dir == "" { return }
+	mode := os.Getenv("PB_DIAGNOSTICS_MODE")
+	if mode == "" { mode = "timing" }
+	if mode != "timing" && mode != "allocations" && mode != "cpu" { pbDiagFail() }
+	if err := os.MkdirAll(dir, 0700); err != nil { pbDiagFail() }
+	// Exclusive creation reserves the artifact; never overwrite an earlier run.
+	reservation, err := os.OpenFile(pbDiagPath.Join(dir, "go.json"), os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0600)
+	if err != nil { pbDiagFail() }
+	if err := reservation.Close(); err != nil { pbDiagFail() }
+	s := &pbDiagState{dir: dir, mode: mode, sampleEvery: pbDiagPositiveEnv("PB_DIAGNOSTICS_SAMPLE_EVERY", 1)}
+	if mode == "allocations" {
+		s.startupMemRate = pbDiagRuntime.MemProfileRate
+		s.memRate = int(pbDiagPositiveEnv("PB_DIAGNOSTICS_MEM_PROFILE_RATE", 524288))
+		pbDiagRuntime.MemProfileRate = s.memRate
+		pbDiagRuntime.ReadMemStats(&s.memStart)
+	}
+	if mode == "cpu" {
+		s.profile, err = os.OpenFile(pbDiagPath.Join(dir, "go-cpu.pprof"), os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0600)
+		if err != nil { pbDiagFail() }
+		if err := pbDiagPprof.StartCPUProfile(s.profile); err != nil { pbDiagFail() }
+	}
+	pbDiagActive = s
+	s.cpuStart = pbDiagCPU()
+	s.start = time.Now()
+}
+
+type pbDiagElement struct { index uint64; selected bool }
+
+func pbDiagBegin(stage int) time.Time { return pbDiagBeginElement(stage, nil) }
+
+func pbDiagBeginElement(stage int, element *pbDiagElement) time.Time {
+	s := pbDiagActive
+	if s == nil { return time.Time{} }
+	s.stages[stage].calls.Add(1)
+	if element != nil && !element.selected { return time.Time{} }
+	return time.Now()
+}
+
+func pbDiagEnd(stage int, start time.Time) {
+	if start.IsZero() { return }
+	elapsed := time.Since(start).Nanoseconds()
+	s := pbDiagActive
+	s.stages[stage].wall.Add(uint64(elapsed))
+	s.stages[stage].timed.Add(1)
+}
+
+// DiagnosticsFinish is intentionally a main defer. An os.Exit path skips it,
+// leaving the reserved sidecar empty; the runner must reject it as incomplete.
+func DiagnosticsFinish() {
+	s := pbDiagActive
+	if s == nil { return }
+	commandWall := time.Since(s.start).Nanoseconds()
+	processCPU := pbDiagCPU() - s.cpuStart
+	flushStart := time.Now()
+	var memory map[string]interface{}
+	if s.mode == "allocations" {
+		var end pbDiagRuntime.MemStats
+		pbDiagRuntime.ReadMemStats(&end)
+		memory = map[string]interface{}{
+			"total_alloc_bytes": end.TotalAlloc-s.memStart.TotalAlloc,
+			"mallocs": end.Mallocs-s.memStart.Mallocs, "frees": end.Frees-s.memStart.Frees,
+			"gc_cycles": end.NumGC-s.memStart.NumGC, "gc_pause_ns": end.PauseTotalNs-s.memStart.PauseTotalNs,
+			"heap_alloc_delta_bytes": int64(end.HeapAlloc)-int64(s.memStart.HeapAlloc),
+			"scope": "process delta across original main body; includes diagnostic stage instrumentation",
+		}
+		file, err := os.OpenFile(pbDiagPath.Join(s.dir, "go-allocs.pprof"), os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0600)
+		if err != nil { pbDiagFail() }
+		// Force profile bookkeeping only after measured command and MemStats delta.
+		pbDiagRuntime.GC()
+		if err := pbDiagPprof.Lookup("allocs").WriteTo(file, 0); err != nil { pbDiagFail() }
+		if err := file.Close(); err != nil { pbDiagFail() }
+	}
+	if s.profile != nil {
+		pbDiagPprof.StopCPUProfile()
+		if err := s.profile.Close(); err != nil { pbDiagFail() }
+	}
+	stages := make(map[string]interface{}, pbDiagStageCount)
+	for i, name := range pbDiagNames {
+		stages[name] = map[string]interface{}{"calls": s.stages[i].calls.Load(), "timed_calls": s.stages[i].timed.Load(), "wall_ns": s.stages[i].wall.Load(), "inclusive": pbDiagInclusive[i]}
+	}
+	metrics := map[string]interface{}{
+		"schema_version": 1, "language": "go", "mode": s.mode, "complete": true,
+		"command_wall_ns": commandWall, "process_cpu_ns": processCPU,
+		"sample_every": s.sampleEvery, "stages": stages,
+		"sampling_semantics": "one selection per array element shared by decode/marshal_indent/indent_copy/row output_write; framing writes and coarse renderer/request_headers/body_read/decoder_control always timed; counters count all calls",
+		"output": map[string]interface{}{"logical_write_calls": s.writeCalls.Load(), "bytes_requested": s.requested.Load(), "bytes_written": s.written.Load(), "write_errors": s.writeErrors.Load()},
+		"input": map[string]interface{}{"logical_read_calls": s.readCalls.Load(), "bytes_read": s.readBytes.Load()},
+		"allocations": memory, "allocation_profile_rate_bytes": s.memRate,
+		"allocation_profile_startup_rate_bytes": s.startupMemRate,
+		"profile_flush_ns": time.Since(flushStart).Nanoseconds(),
+		"timing_semantics": "sampled wall sums only; no extrapolation; renderer includes decode/marshal/indent/control/write; decode and decoder_control include nested body_read; do not sum inclusive stages; process CPU covers all goroutines",
+		"profile_scope": "cpu covers command plus profiler setup/finalization edges; allocs profile is process cumulative samples including startup allocations; requested MemProfileRate applies at main diagnostic setup and startup samples use prior rate; MemStats delta is command scoped",
+		"measurement_scope": "main entry to return; excludes Go runtime/package initialization, diagnostic setup, ReadMemStats snapshots, profiling stop/flush and sidecar serialization; includes timer/counter overhead; logical IO calls are not syscalls",
+	}
+	data, err := json.MarshalIndent(metrics, "", "  ")
+	if err != nil { pbDiagFail() }
+	tmp, err := os.CreateTemp(s.dir, ".go-json-")
+	if err != nil { pbDiagFail() }
+	if _, err := tmp.Write(append(data, '\n')); err != nil { pbDiagFail() }
+	if err := tmp.Close(); err != nil { pbDiagFail() }
+	if err := os.Rename(tmp.Name(), pbDiagPath.Join(s.dir, "go.json")); err != nil { pbDiagFail() }
+}
+
+type pbDiagWriter struct { inner io.Writer; element *pbDiagElement }
+func (w pbDiagWriter) Write(data []byte) (int, error) {
+	start := pbDiagBeginElement(pbDiagWrite, w.element)
+	n, err := w.inner.Write(data)
+	pbDiagEnd(pbDiagWrite, start)
+	s := pbDiagActive
+	s.writeCalls.Add(1)
+	s.requested.Add(uint64(len(data)))
+	if n > 0 { s.written.Add(uint64(n)) }
+	if err != nil { s.writeErrors.Add(1) }
+	return n, err
+}
+func pbDiagOutput(out io.Writer) io.Writer {
+	if pbDiagActive == nil { return out }
+	return pbDiagWriter{inner: out}
+}
+
+func pbDiagAttachElement(out io.Writer, element *pbDiagElement) io.Writer {
+    if pbDiagActive == nil { return out }
+    if writer, ok := out.(pbDiagWriter); ok { writer.element = element; return writer }
+    return pbDiagWriter{inner: out, element: element}
+}
+
+type pbDiagReader struct { inner io.Reader }
+func (r pbDiagReader) Read(data []byte) (int, error) {
+	start := pbDiagBegin(pbDiagBodyRead)
+	n, err := r.inner.Read(data)
+	pbDiagEnd(pbDiagBodyRead, start)
+	s := pbDiagActive
+	s.readCalls.Add(1)
+	if n > 0 { s.readBytes.Add(uint64(n)) }
+	return n, err
+}
+func pbDiagInput(body io.Reader) io.Reader {
+	if pbDiagActive == nil { return body }
+	return pbDiagReader{inner: body}
+}
+
+func pbDiagDecodeItem(decoder *json.Decoder, item interface{}, element *pbDiagElement) error {
+	start := pbDiagBeginElement(pbDiagDecode, element)
+	err := decoder.Decode(item)
+	pbDiagEnd(pbDiagDecode, start)
+	return err
+}
+func pbDiagMarshalItem(item interface{}, element *pbDiagElement) ([]byte, error) {
+	start := pbDiagBeginElement(pbDiagMarshal, element)
+	encoded, err := json.MarshalIndent(item, "", "  ")
+	pbDiagEnd(pbDiagMarshal, start)
+	return encoded, err
+}
+func pbDiagIndentItem(encoded []byte, element *pbDiagElement) string {
+	start := pbDiagBeginElement(pbDiagIndent, element)
+	text := string(bytes.ReplaceAll(encoded, []byte("\n"), []byte("\n  ")))
+	pbDiagEnd(pbDiagIndent, start)
+	return text
+}
+func pbDiagToken(decoder *json.Decoder) (json.Token, error) {
+	start := pbDiagBegin(pbDiagControl)
+	token, err := decoder.Token()
+	pbDiagEnd(pbDiagControl, start)
+	return token, err
+}
+func pbDiagMore(decoder *json.Decoder, element *pbDiagElement) bool {
+	start := pbDiagBegin(pbDiagControl)
+	more := decoder.More()
+	pbDiagEnd(pbDiagControl, start)
+	if more {
+		element.index++
+		element.selected = pbDiagActive == nil || (element.index-1)%pbDiagActive.sampleEvery == 0
+	} else { element.selected = true }
+	return more
+}

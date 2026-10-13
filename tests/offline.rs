@@ -32,8 +32,8 @@ fn specification_is_consistent_and_all_help_paths_execute() {
         let mut invocation: Vec<String> = path.split(' ').skip(1).map(str::to_string).collect();
         invocation.push("--help".into());
         let result = pb::run(&invocation);
-        assert_eq!(result.exit_code, 0, "{path}: {}", result.stderr);
-        assert!(result.stdout.contains("Usage:\n"));
+        assert_eq!(result.exit_code, 0, "{path}: {:?}", result.stderr);
+        assert!(result.stdout.windows(7).any(|w| w == b"Usage:\n"));
         assert!(result.stderr.is_empty());
     }
 }
@@ -98,7 +98,7 @@ fn raw_json_error_mode_obeys_terminator_and_any_explicit_occurrence() {
     let result = pb::run(&args(&["version", "--bogus", "-ojson", "-otext"]));
     assert!(result.stdout.is_empty());
     assert_eq!(result.exit_code, 1);
-    let value: Value = serde_json::from_str(&result.stderr).unwrap();
+    let value: Value = serde_json::from_slice(&result.stderr).unwrap();
     assert_eq!(value["error"]["code"], "INVALID_INPUT");
     assert_eq!(value["error"]["message"], "unknown flag: --bogus");
     assert_eq!(value["error"]["retryable"], false);
@@ -106,9 +106,9 @@ fn raw_json_error_mode_obeys_terminator_and_any_explicit_occurrence() {
 
 #[test]
 fn help_and_discovery_only_include_initialized_help_flags() {
-    let root: Value = serde_json::from_str(&pb::run(&args(&["-ojson"])).stdout).unwrap();
+    let root: Value = serde_json::from_slice(&pb::run(&args(&["-ojson"])).stdout).unwrap();
     let via_help: Value =
-        serde_json::from_str(&pb::run(&args(&["help", "-ojson"])).stdout).unwrap();
+        serde_json::from_slice(&pb::run(&args(&["help", "-ojson"])).stdout).unwrap();
     assert_eq!(root["flags"][0]["name"], "help");
     assert_eq!(via_help["flags"][0]["name"], "output");
     assert!(
@@ -119,7 +119,7 @@ fn help_and_discovery_only_include_initialized_help_flags() {
             .any(|c| matches!(c["command"].as_str(), Some("pb help" | "pb completion")))
     );
     let completion: Value =
-        serde_json::from_str(&pb::run(&args(&["help", "completion", "-ojson"])).stdout).unwrap();
+        serde_json::from_slice(&pb::run(&args(&["help", "completion", "-ojson"])).stdout).unwrap();
     assert_eq!(completion["subcommands"].as_array().unwrap().len(), 4);
 }
 
@@ -136,7 +136,7 @@ fn error_quotes_use_go_string_not_json_string_rules() {
         "\"\\u00ad\\u00a0\\u0378\\u200b\""
     );
     let result = pb::run(&args(&["bad\u{7}", "-ojson"]));
-    let value: Value = serde_json::from_str(&result.stderr).unwrap();
+    let value: Value = serde_json::from_slice(&result.stderr).unwrap();
     assert_eq!(
         value["error"]["message"],
         "unknown command \"bad\\a\" for \"pb\""
@@ -185,7 +185,7 @@ fn custom_profile_add_validation_precedes_operation_dispatch() {
         "--api-key=x",
         "-ojson",
     ]));
-    let value: Value = serde_json::from_str(&result.stderr).unwrap();
+    let value: Value = serde_json::from_slice(&result.stderr).unwrap();
     assert_eq!(value["error"]["code"], "INVALID_INPUT");
     assert_eq!(
         value["error"]["message"],
@@ -195,10 +195,10 @@ fn custom_profile_add_validation_precedes_operation_dispatch() {
 
 #[test]
 fn version_and_agent_outputs_follow_owned_contract() {
-    let version: Value = serde_json::from_str(&pb::run(&args(&["-vojson"])).stdout).unwrap();
+    let version: Value = serde_json::from_slice(&pb::run(&args(&["-vojson"])).stdout).unwrap();
     assert_eq!(version["version"], pb::version());
     let catalog: Value =
-        serde_json::from_str(&pb::run(&args(&["agent", "-ojson"])).stdout).unwrap();
+        serde_json::from_slice(&pb::run(&args(&["agent", "-ojson"])).stdout).unwrap();
     assert_eq!(catalog["schema_version"], "1");
     assert!(
         catalog["commands"]
@@ -329,10 +329,9 @@ fn completion_group_renders_help_with_unrecognized_extra_words() {
     let result = pb::run(&args(&["completion", "foo"]));
     assert_eq!(result.exit_code, 0);
     assert!(result.stderr.is_empty());
-    assert!(result.stdout.contains("pb completion [flags]"));
+    assert!(String::from_utf8_lossy(&result.stdout).contains("pb completion [flags]"));
     assert!(
-        result
-            .stdout
+        String::from_utf8_lossy(&result.stdout)
             .contains("Generate the autocompletion script for bash")
     );
 }
@@ -380,7 +379,7 @@ fn separated_json_error_request_uses_unicode_simple_case_folding() {
     assert!(parser::requests_json(&args(&["--output", "JſON"])));
     assert!(!parser::requests_json(&args(&["--output=jſon"])));
     let result = pb::run(&args(&["version", "-o", "jſon"]));
-    let error: Value = serde_json::from_str(&result.stderr).unwrap();
+    let error: Value = serde_json::from_slice(&result.stderr).unwrap();
     assert_eq!(error["error"]["code"], "INVALID_INPUT");
     assert_eq!(
         error["error"]["message"],

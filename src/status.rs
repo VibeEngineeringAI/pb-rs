@@ -84,7 +84,8 @@ fn failed(
                     error: message,
                 },
                 false,
-            ),
+            )
+            .into_bytes(),
             exit_code: 1,
             ..Outcome::default()
         });
@@ -229,7 +230,7 @@ mod tests {
         let result = failed(true, "fixture", "http://localhost", "denied").unwrap();
         assert_eq!(result.exit_code, 1);
         assert!(result.stderr.is_empty());
-        let value: Value = serde_json::from_str(&result.stdout).unwrap();
+        let value: Value = serde_json::from_slice(&result.stdout).unwrap();
         assert_eq!(value["healthy"], false);
         assert_eq!(value["error"], "denied");
         assert!(value.get("version").is_none());

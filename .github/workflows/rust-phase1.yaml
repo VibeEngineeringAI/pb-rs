@@ -15,6 +15,11 @@ on:
       - 'go.sum'
       - '.github/workflows/rust-phase1.yaml'
   workflow_dispatch:
+    inputs:
+      include_full60s:
+        description: Also run the opt-in real 60-second SQL deadline tier
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -22,7 +27,7 @@ permissions:
 jobs:
   compatibility:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -35,7 +40,7 @@ jobs:
       - name: Select Rust toolchain
         run: rustup toolchain install 1.96.0 --profile minimal --component clippy,rustfmt
       - name: Build Go reference, Rust candidate and measurement tools
-        run: make -f harness/Makefile phase2-build CARGO='cargo +1.96.0'
+        run: make -f harness/Makefile phase3-build CARGO='cargo +1.96.0'
       - name: Check Rust and harness
         env:
           PB_GO_ORACLE: ${{ github.workspace }}/bin/pb-go
@@ -52,6 +57,15 @@ jobs:
         run: |
           make -f harness/Makefile phase2-measure OUT=harness/results/phase2-ci REPETITIONS=5
           make -f harness/Makefile phase2-workloads-measure OUT=harness/results/phase2-ci REPETITIONS=5
+      - name: Compare phase-three SQL fixtures and deferred boundaries
+        # The default gate excludes known-divergence and full60s tiers.
+        run: make -f harness/Makefile phase3-check OUT=harness/results/phase3-ci
+      - name: Record SQL measurements
+        # Hosted-CI samples are harness evidence, not a performance release gate.
+        run: make -f harness/Makefile phase3-measure OUT=harness/results/phase3-ci REPETITIONS=5
+      - name: Compare real SQL deadline cases
+        if: github.event_name == 'workflow_dispatch' && inputs.include_full60s
+        run: make -f harness/Makefile phase3-deadline-check OUT=harness/results/phase3-deadline-ci
       - name: Retain compatibility and performance evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -60,4 +74,6 @@ jobs:
           path: |
             harness/results/phase1-ci/
             harness/results/phase2-ci/
+            harness/results/phase3-ci/
+            harness/results/phase3-deadline-ci/
           retention-days: 14
