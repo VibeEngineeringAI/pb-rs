@@ -664,7 +664,9 @@ class FixtureServer:
         self.listeners = [self._listen("127.0.0.1", "primary")]
         if alias or plan.get("alias"):
             self.listeners.append(self._listen("127.0.0.2", "alias"))
-        self.urls = {"url": "http://127.0.0.1:%d" % self.listeners[0][0].getsockname()[1]}
+        # An advertised hostname can exercise proxy policy while the listener
+        # remains bound to loopback. Existing fixtures retain their literal IP.
+        self.urls = {"url": "http://%s:%d" % (plan.get("url_host", "127.0.0.1"), self.listeners[0][0].getsockname()[1])}
         if len(self.listeners) > 1:
             self.urls["alias_url"] = "http://127.0.0.2:%d" % self.listeners[1][0].getsockname()[1]
         self.bodies = []

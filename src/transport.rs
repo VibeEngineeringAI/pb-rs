@@ -79,6 +79,19 @@ impl TransportError {
     pub fn is_body(&self) -> bool {
         self.body
     }
+    pub fn is_connection_reset(&self) -> bool {
+        let mut cause: Option<&(dyn Error + 'static)> = Some(self.source.as_ref());
+        while let Some(error) = cause {
+            if error
+                .downcast_ref::<io::Error>()
+                .is_some_and(|error| error.kind() == io::ErrorKind::ConnectionReset)
+            {
+                return true;
+            }
+            cause = error.source();
+        }
+        false
+    }
     /// Socket failures remain network errors even when they occur after
     /// response headers. Truncated HTTP framing and gzip errors are body
     /// format failures, and must not acquire this classification.
@@ -1181,6 +1194,30 @@ mod tests {
             );
             assert!(error.to_string().contains("connect: connection refused"));
         }
+    }
+    #[test]
+    fn connection_reset_detection_uses_io_kind_through_api_wrappers() {
+        use crate::api::ApiError;
+
+        let reset = TransportError::new(
+            "http://fixture/",
+            io::Error::new(io::ErrorKind::ConnectionReset, "Socket fault"),
+        );
+        assert!(reset.is_connection_reset());
+        let wrapped = ApiError::Refresh(Box::new(ApiError::Context {
+            message: "request context".into(),
+            source: Box::new(ApiError::Request {
+                method: Method::GET,
+                url: "http://fixture/".into(),
+                source: Box::new(ApiError::Network(reset)),
+            }),
+        }));
+        assert!(wrapped.is_connection_reset());
+        let other = TransportError::new(
+            "http://fixture/",
+            io::Error::new(io::ErrorKind::ConnectionAborted, "connection reset"),
+        );
+        assert!(!other.is_connection_reset());
     }
     #[test]
     fn body_format_failures_are_distinct_from_connection_failures() {

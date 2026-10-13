@@ -17,10 +17,10 @@ pub fn parse_time_with(
     }
     if let Some(days) = value.strip_suffix('d').and_then(|v| v.parse::<i64>().ok()) {
         let nanos = days.wrapping_mul(24 * 60 * 60 * 1_000_000_000);
-        return Ok(clock() - Duration::nanoseconds(nanos));
+        return Ok(clock() + Duration::nanoseconds(nanos.wrapping_neg()));
     }
     if let Some(nanos) = duration_nanos(value) {
-        return Ok(clock() - Duration::nanoseconds(nanos));
+        return Ok(clock() + Duration::nanoseconds(nanos.wrapping_neg()));
     }
     Err(format!(
         "unrecognized time format {} (use: now, 10m, 2h, 1d, or RFC3339)",
@@ -294,6 +294,24 @@ mod tests {
             "2024-01-01T00:00:00Z"
         );
     }
+    #[test]
+    fn minimum_duration_wraps_negation_before_clock_addition() {
+        let parsed = parse_time_with("-9223372036854775808ns", now).unwrap();
+        assert_eq!((parsed - now()).num_nanoseconds(), Some(i64::MIN));
+    }
+
+    #[test]
+    fn day_duration_at_minimum_wraps_negation_before_clock_addition() {
+        let parsed = parse_time_with("140737488355328d", now).unwrap();
+        assert_eq!((parsed - now()).num_nanoseconds(), Some(i64::MIN));
+    }
+
+    #[test]
+    fn adjacent_negative_duration_moves_clock_forward() {
+        let parsed = parse_time_with("-9223372036854775807ns", now).unwrap();
+        assert_eq!((parsed - now()).num_nanoseconds(), Some(i64::MAX));
+    }
+
     #[test]
     fn step_integer_division_boundary_and_manual_grammar() {
         assert_eq!(

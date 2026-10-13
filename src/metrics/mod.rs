@@ -238,7 +238,7 @@ pub(crate) fn execute(
                 .build()
                 .map_err(|e| CliError::new(ErrorCode::CommandFailed, e.to_string()))?;
             let response = send(&runtime, &client, request, stderr, terminal).map_err(|e| {
-                if e.to_string().contains("connection reset") {
+                if e.is_connection_reset() {
                     CliError::new(
                         ErrorCode::CommandFailed,
                         "server reset the connection — query timed out",

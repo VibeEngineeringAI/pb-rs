@@ -119,6 +119,9 @@ pub enum ApiError {
     Redirect(String),
 }
 impl ApiError {
+    pub fn is_connection_reset(&self) -> bool {
+        matches!(self.root_cause(), Self::Network(error) if error.is_connection_reset())
+    }
     pub fn is_request_error(&self) -> bool {
         match self {
             Self::Request { .. } => true,

@@ -387,3 +387,110 @@ For a new checkout, `phase4-workloads-measure` regenerates/freeze-checks the cur
 105-case suite against Go. The separate before-Rust binary is local retained
 evidence rather than a committed executable. No live-service or remote-CI result
 is implied.
+
+## PR review fixes
+
+The independent review of `59f18545ef25c08df0567efda23b88836c569543`
+identified one P2 and four P3 issues. Regression tests were written and run
+before the production changes: header resets, both minimum-duration paths,
+ANSI state transitions, invalid/empty case selection, and the proxy fixture
+all failed for the reported reasons. Adjacent-duration and body-reset controls
+already passed. Five GPT-6.1-Sol and six Claude Opus 5.5 agents participated
+in implementation/design verification and final independent review.
+
+The fixes preserve Go's header-only reset rewrite and wrapping duration
+negation, reproduce the pinned `x/ansi` control-state transitions, reject
+unknown/gated/empty harness selections, and make the proxy case observe a
+proxy-eligible local hostname. A standard SQL transport control proves that
+the same controlled listener sees an absolute request target when a proxy is
+used; the listener itself remains bound to loopback. The Go oracle was freshly
+captured twice and frozen, with unchanged semantic signatures for all existing
+cases. Raw capture metadata changes because fixture ports and paths change.
+
+The additional ANSI review caught orphan UTF-8 continuation bytes after a
+raw ST byte ends OSC/DCS data. Six pinned-Go process repros and permanent Rust
+regressions cover that case as well as the original padding failures. Three
+reset process repros match Go's complete stdout/stderr and exit status.
+
+Local validation after fixes: 205 Rust tests; 206 Python harness tests without
+skips; rustfmt; Clippy with warnings denied; Go fixture tests; phase two
+219 cases plus six boundaries; phase three 675 cases plus eight boundaries;
+phase four 153 cases plus four guards; and all 105 frozen large-workload cases.
+The real 120-second deadline tier was not rerun for these fixes; earlier
+successful results remain evidence, and the deadline implementation is unchanged.
+No live-service or cross-platform validation is claimed.
+
+Performance was predeclared before timing: 24 workloads, two immutable release
+binaries, five excluded warmups and 30 measured samples per binary, sequential
+seeded randomized order (`20261015`). All prior 14 optimization workloads are
+included, plus width-heavy cardinality, saved SQL and ANSI-heavy text cases.
+The latter were checked against pinned Go and their output hashes frozen before
+timing. Parent and child builds/tests were stopped during measurement. Timing
+uses native process wall/CPU and peak RSS; first useful result remains N/A.
+Budgets flag median increases exceeding both 10% and 1 ms for wall/CPU, or both
+20% and 2 MiB for peak RSS. Width-heavy text increases above 5% trigger a
+follow-up even below budget. Flagged/watched cases are repeated with seed
+`20261016` and a byte-identical baseline control to expose host noise.
+
+The first correctness fix exposed a real performance regression in the two
+ANSI-heavy stress cases: approximately 12% higher wall time and CPU in two
+seeds, while a byte-identical baseline control stayed within 1% in wall time.
+That result prompted a narrow OSC/DCS data-scan fast path. It searches directly
+for the pinned terminators, preserving cancellation, ESC restarts and raw ST
+bytes inside UTF-8. No new allocation or Unicode-width algorithm was added.
+All correctness gates relevant to the revised metrics renderer were rerun.
+The complete 24-workload final comparison uses seed `20261017`, with the ANSI
+stress cases first; all initial and follow-up measurements remain retained.
+
+The final run passed all 1,440 measured samples and 240 excluded warmups,
+with no predeclared wall/CPU/RSS budget violations or width watch flags.
+The ANSI cardinality and TSDB stress cases retain 2.7% and 4.3% wall-time
+overhead (2.6% and 4.0% CPU); this is within the limits, not a claim of zero
+cost. Small startup measurements remain sensitive to shared-host noise.
+Peak RSS is stable, including the million-point text cases. P95 observations
+are included below for visibility; the declared gates use medians.
+
+Each cell is **before → final**. Wall/CPU are milliseconds; RSS is MiB.
+
+| Workload | Median wall | P95 wall | Median CPU | Median peak RSS |
+|---|---:|---:|---:|---:|
+| p4x-ansi-cardinality-label-names-10000-text | 275.52 → 282.95 | 297.63 → 316.55 | 269.62 → 276.75 | 27.14 → 27.42 |
+| p4x-ansi-tsdb-10000-text | 1052.22 → 1097.46 | 1133.57 → 1146.08 | 1027.58 → 1068.68 | 90.42 → 90.57 |
+| p4-vector-1-json | 1.78 → 1.87 | 2.52 → 2.19 | 1.47 → 1.59 | 6.47 → 6.84 |
+| p4-vector-10000-text | 35.44 → 33.32 | 44.35 → 46.20 | 32.08 → 30.60 | 9.34 → 9.58 |
+| p4-vector-10000-json | 31.87 → 31.58 | 44.85 → 47.18 | 27.74 → 27.95 | 16.17 → 16.44 |
+| p4-matrix-100x100-text | 9.97 → 10.17 | 13.10 → 13.12 | 8.96 → 9.05 | 6.90 → 7.10 |
+| p4-matrix-1000x1000-text | 689.53 → 706.99 | 716.75 → 731.49 | 647.14 → 663.50 | 56.74 → 57.21 |
+| p4-matrix-1000x1000-json | 592.18 → 591.01 | 628.23 → 678.81 | 518.79 → 521.12 | 227.79 → 227.92 |
+| p4-labels-100000-text | 62.28 → 64.28 | 82.28 → 88.41 | 58.32 → 59.54 | 30.34 → 30.55 |
+| p4-labels-100000-json | 28.44 → 28.88 | 38.60 → 39.93 | 23.98 → 24.16 | 15.85 → 16.13 |
+| p4-series-100000-text | 475.65 → 485.45 | 520.51 → 517.06 | 434.63 → 442.18 | 55.21 → 55.32 |
+| p4-series-100000-json | 339.61 → 337.68 | 375.80 → 363.08 | 293.74 → 293.63 | 124.28 → 124.54 |
+| p4-tsdb-10000-text | 788.45 → 783.17 | 881.02 → 833.98 | 770.33 → 765.22 | 68.78 → 68.91 |
+| p4-tsdb-10000-json | 131.92 → 130.59 | 145.41 → 146.79 | 112.69 → 111.53 | 59.72 → 59.53 |
+| p4-matrix-1x1000000-text | 696.38 → 715.83 | 724.86 → 750.30 | 659.56 → 679.15 | 72.89 → 72.75 |
+| p4-matrix-1x1000000-json | 560.70 → 555.26 | 574.89 → 601.12 | 500.26 → 496.21 | 228.48 → 229.28 |
+| p4-cardinality-label-names-10000-text | 198.22 → 200.94 | 215.81 → 210.32 | 194.05 → 195.02 | 21.94 → 22.02 |
+| p4-cardinality-label-values-10000-text | 201.69 → 201.51 | 214.52 → 216.65 | 195.58 → 195.95 | 21.93 → 21.92 |
+| p4-cardinality-active-series-10000-text | 56.58 → 56.10 | 76.92 → 64.44 | 51.53 → 51.47 | 32.82 → 32.91 |
+| p4-cardinality-label-names-20-text | 2.40 → 2.40 | 2.92 → 2.79 | 2.12 → 2.03 | 6.44 → 6.61 |
+| p4-values-100000-text | 61.05 → 59.71 | 79.39 → 68.17 | 57.22 → 55.75 | 30.74 → 30.88 |
+| p4-saved-create-1-default | 1.80 → 1.92 | 2.05 → 2.08 | 1.52 → 1.59 | 6.31 → 6.53 |
+| p4-run-save-1-json | 2.12 → 2.31 | 2.45 → 2.52 | 1.72 → 1.91 | 6.51 → 6.72 |
+| p4-saved-list-10000-json | 41.92 → 42.71 | 49.28 → 54.64 | 37.74 → 38.95 | 33.31 → 33.54 |
+
+Baseline release SHA-256: `f3495152f52bc2a4e3950ca6293371aeb670e56531d94e2137632c0386677f2b`.
+Final release SHA-256: `02b14a9adbc756303785c94a09f301f3dd3eae4c18967f23d59235a9eb07d3a2`.
+Evidence is retained under `target/fixes/`: failing/passing test logs, exact
+Go process repros, refreshed compatibility reports, workload correctness, and
+`perf/{protocol.json,run,recheck,final}` with all samples and summaries.
+The prepared suite and preparation/summary scripts are retained alongside the
+reports. Shared-host measurements are evidence for these workloads, not a
+guarantee for every service, platform, input, or tail-latency distribution.
+
+The final run's saved-list P95 was 10.9% higher, despite a median inside budget.
+An additional 30-sample follow-up (`20261018`, retained in
+`perf/tail-recheck`) included the identical-baseline control: P95 was
+50.82 ms baseline, 50.61 ms control, and 45.91 ms final; medians were
+41.06 → 41.43 ms. The tail increase did not reproduce. This extra check was
+prompted by the observed P95, rather than being part of the median gate.

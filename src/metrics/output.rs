@@ -488,8 +488,14 @@ fn line_width(text: &str) -> usize {
     enum State {
         Ground,
         Escape,
-        Intermediate,
-        Csi,
+        EscapeIntermediate,
+        CsiEntry,
+        CsiParam,
+        CsiIntermediate,
+        DcsEntry,
+        DcsParam,
+        DcsIntermediate,
+        DcsString,
         Osc,
         Text,
     }
@@ -497,55 +503,118 @@ fn line_width(text: &str) -> usize {
     let (mut state, mut width, mut index) = (State::Ground, 0, 0);
     while index < bytes.len() {
         let byte = bytes[index];
-        match state {
-            State::Ground => match byte {
-                0x1b => state = State::Escape,
-                0x20..=0x7e => width += 1,
-                0x80.. => {
-                    let start = index;
-                    while index < bytes.len() && bytes[index] >= 0x80 {
-                        index += 1;
-                    }
-                    // C1 controls are zero width; the remaining run is measured
-                    // as a whole so emoji sequences count once.
-                    let run: String = String::from_utf8_lossy(&bytes[start..index])
-                        .chars()
-                        .filter(|c| !('\u{80}'..='\u{9f}').contains(c))
-                        .collect();
-                    width += unicode_width::UnicodeWidthStr::width(run.as_str());
-                    continue;
-                }
-                _ => (),
-            },
-            State::Escape => {
-                state = match byte {
-                    b'[' => State::Csi,
+        // Keep the ordinary printable ASCII path independent of the escape
+        // transitions. The rules below follow x/ansi v0.4.5's pinned table.
+        if matches!(state, State::Ground) && (0x20..=0x7e).contains(&byte) {
+            width += 1;
+            index += 1;
+            continue;
+        }
+        if matches!(state, State::Osc | State::DcsString) {
+            // String data has no width and overrides all other byte rules.
+            // Scan it together, including UTF-8, until a table terminator.
+            let terminator = if matches!(state, State::Osc) {
+                bytes[index..]
+                    .iter()
+                    .position(|b| matches!(b, 0x07 | 0x18 | 0x1a | 0x1b | 0x9c))
+            } else {
+                bytes[index..]
+                    .iter()
+                    .position(|b| matches!(b, 0x18 | 0x1a | 0x1b | 0x9c))
+            };
+            let Some(offset) = terminator else {
+                break;
+            };
+            index += offset;
+            state = if bytes[index] == 0x1b {
+                State::Escape
+            } else {
+                State::Ground
+            };
+            index += 1;
+            continue;
+        }
+        if (0xc2..=0xf4).contains(&byte) {
+            let start = index;
+            while index < bytes.len() && bytes[index] >= 0x80 {
+                index += 1;
+            }
+            // Measure the run together so emoji sequences count once. UTF-8
+            // starts a printable grapheme in every state except OSC/DCS data,
+            // and StringWidth then returns to ground.
+            let run: String = String::from_utf8_lossy(&bytes[start..index])
+                .chars()
+                .filter(|c| !('\u{80}'..='\u{9f}').contains(c))
+                .collect();
+            width += unicode_width::UnicodeWidthStr::width(run.as_str());
+            state = State::Ground;
+            continue;
+        } else if matches!(byte, 0x18 | 0x1a | 0x9c) {
+            state = State::Ground;
+        } else if byte == 0x1b {
+            // DCS entry uniquely treats ESC as passthrough data.
+            state = if matches!(state, State::DcsEntry) {
+                State::DcsString
+            } else {
+                State::Escape
+            };
+        } else if byte >= 0x80 {
+            // A string's raw ST byte can terminate it inside UTF-8. Remaining
+            // continuation bytes use table transitions, not replacement runes.
+            state = match byte {
+                0x90 => State::DcsEntry,
+                0x98 | 0x9e | 0x9f => State::Text,
+                0x9b => State::CsiEntry,
+                0x9d => State::Osc,
+                _ => State::Ground,
+            };
+        } else {
+            state = match state {
+                State::Ground => State::Ground,
+                State::Escape => match byte {
+                    b'[' => State::CsiEntry,
                     b']' => State::Osc,
-                    b'P' | b'X' | b'^' | b'_' => State::Text,
-                    0x20..=0x2f => State::Intermediate,
+                    b'P' => State::DcsEntry,
+                    b'X' | b'^' | b'_' => State::Text,
+                    0x20..=0x2f => State::EscapeIntermediate,
+                    0x00..=0x1f | 0x7f => State::Escape,
                     _ => State::Ground,
-                }
-            }
-            State::Intermediate => {
-                if (0x30..=0x7e).contains(&byte) {
-                    state = State::Ground;
-                }
-            }
-            State::Csi => {
-                if (0x40..=0x7e).contains(&byte) {
-                    state = State::Ground;
-                }
-            }
-            State::Osc => match byte {
-                0x07 => state = State::Ground,
-                0x1b => state = State::Escape,
-                _ => (),
-            },
-            State::Text => {
-                if byte == 0x1b {
-                    state = State::Escape;
-                }
-            }
+                },
+                State::EscapeIntermediate => match byte {
+                    0x00..=0x2f | 0x7f => State::EscapeIntermediate,
+                    _ => State::Ground,
+                },
+                State::CsiEntry | State::CsiParam => match byte {
+                    0x00..=0x1f | 0x7f => state,
+                    0x20..=0x2f => State::CsiIntermediate,
+                    0x30..=0x3f => State::CsiParam,
+                    _ => State::Ground,
+                },
+                State::CsiIntermediate => match byte {
+                    0x00..=0x2f | 0x7f => State::CsiIntermediate,
+                    _ => State::Ground,
+                },
+                State::DcsEntry => match byte {
+                    0x08..=0x0d | 0x40..=0x7e => State::DcsString,
+                    0x00..=0x1f | 0x7f => State::DcsEntry,
+                    0x20..=0x2f => State::DcsIntermediate,
+                    0x30..=0x3f => State::DcsParam,
+                    _ => State::Ground,
+                },
+                State::DcsParam => match byte {
+                    0x00..=0x1f | 0x30..=0x3f | 0x7f => State::DcsParam,
+                    0x20..=0x2f => State::DcsIntermediate,
+                    0x40..=0x7e => State::DcsString,
+                    _ => State::Ground,
+                },
+                State::DcsIntermediate => match byte {
+                    0x00..=0x2f | 0x7f => State::DcsIntermediate,
+                    0x30..=0x7e => State::DcsString,
+                    _ => State::Ground,
+                },
+                State::Osc if byte == 0x07 => State::Ground,
+                State::Osc | State::DcsString | State::Text => state,
+            };
         }
         index += 1;
     }
@@ -1306,6 +1375,103 @@ mod tests {
 
     fn text(operation: &str, body: &str) -> String {
         String::from_utf8(render(operation, body.as_bytes(), false, "job").unwrap()).unwrap()
+    }
+
+    #[test]
+    fn ansi_width_csi_intermediate_parameter_returns_to_ground() {
+        // charmbracelet/x/ansi v0.4.5: CSI intermediate + parameter is an
+        // IgnoreAction to GroundState, so the following A and x print.
+        assert_eq!(line_width("\x1b[ 1Ax"), 2);
+    }
+
+    #[test]
+    fn ansi_width_escape_restarts_and_c0_preserves_state() {
+        // ESC restarts EscapeState anywhere; ordinary C0 executes without
+        // leaving Escape/CSI/intermediate. DEL is ignored in those states.
+        for input in [
+            "\x1b\x1bAx",
+            "\x1b\x07Ax",
+            "\x1b\x7fAx",
+            "\x1b[1\x07Ax",
+            "\x1b \x07Ax",
+        ] {
+            assert_eq!(line_width(input), 1, "{input:?}");
+        }
+        assert_eq!(line_width("a\x00\x07\x7fb"), 2);
+    }
+
+    #[test]
+    fn ansi_width_can_and_sub_cancel_sequences() {
+        // CAN and SUB return to ground, including OSC and DCS string states.
+        for prefix in [
+            "\x1b",
+            "\x1b ",
+            "\x1b[",
+            "\x1b[1",
+            "\x1b[ ",
+            "\x1b]title",
+            "\x1bP",
+            "\x1bP1",
+            "\x1bP ",
+            "\x1bPqdata",
+            "\x1bXdata",
+            "\x1b^data",
+            "\x1b_data",
+        ] {
+            for cancel in ['\x18', '\x1a'] {
+                let input = format!("{prefix}{cancel}Ax");
+                assert_eq!(line_width(&input), 2, "{input:?}");
+            }
+        }
+    }
+
+    #[test]
+    fn ansi_width_utf8_enters_ground_except_in_osc_and_dcs_strings() {
+        // StringWidth handles Utf8State as a grapheme and then resets ground.
+        // OSC and DCS string byte ranges override the anywhere UTF-8 rule.
+        for prefix in [
+            "\x1b", "\x1b ", "\x1b[", "\x1b[1", "\x1b[ ", "\x1bP", "\x1bP1", "\x1bP ", "\x1bX",
+            "\x1b^", "\x1b_",
+        ] {
+            let input = format!("{prefix}日本");
+            assert_eq!(line_width(&input), 4, "{input:?}");
+        }
+        assert_eq!(line_width("\x1b]日本\x07x"), 1);
+        assert_eq!(line_width("\x1b]日本\x1b\\x"), 1);
+        assert_eq!(line_width("\x1bPq日本\x1b\\x"), 1);
+        assert_eq!(line_width("a日本e\u{301}👩‍💻z"), 9);
+    }
+
+    #[test]
+    fn ansi_width_orphan_continuations_follow_byte_transitions() {
+        // Pinned Go CLI widths: raw 0x9c inside string data terminates it;
+        // the next continuation can start another control sequence.
+        for (input, expected) in [
+            ("\x1b]本x", 1),
+            ("\x1bPq本x", 1),
+            ("\x1b]✜x", 1),
+            ("\x1b]✝x\x07y", 1),
+            ("\x1b]✛1Ax", 1),
+            ("\u{009b}1Ax", 3),
+        ] {
+            assert_eq!(line_width(input), expected, "{input:?}");
+        }
+    }
+
+    #[test]
+    fn ansi_width_regressions_control_table_padding() {
+        // Exact uncolored rows from the pinned Go CLI differential fixtures.
+        for (name, dots) in [("\x1b[ 1Ax", 6), ("\x1b\x1bAx", 7), ("\x1b[日本", 4)] {
+            let body = format!(
+                r#"{{"data":[{{"name":{},"value":1}}]}}"#,
+                serde_json::to_string(name).unwrap()
+            );
+            let output = text("cardinality label-names", &body);
+            assert!(
+                output.ends_with(&format!("{name} {} 1\n\n", ".".repeat(dots))),
+                "{output:?}"
+            );
+        }
     }
 
     #[test]

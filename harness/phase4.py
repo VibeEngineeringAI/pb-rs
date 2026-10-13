@@ -183,8 +183,11 @@ def corpus():
         c=add('base-suffix-'+('query' if suffix.startswith('?') else 'fragment'),['promql','labels','-o','json'],PREFIX+'labels',b'null',output=b'null\n',group='transport')
         c['config']={'toml':phase2.config_toml({'fixture':phase2.profile(url='{{url}}'+suffix)})};c['targets']=[target]
     c=add('proxy-ignored',['promql','labels','-o','json'],PREFIX+'labels',b'null',[('stream','select-dataset')],b'null\n',group='transport')
-    c['config']={'toml':phase2.config_toml({'fixture':phase2.profile(url='{{url}}'.replace('127.0.0.1','localhost'))})}
-    c['env']={'HTTP_PROXY':'http://127.0.0.1:1','HTTPS_PROXY':'http://127.0.0.1:1','ALL_PROXY':'http://127.0.0.1:1','NO_PROXY':''}
+    # The trailing-dot hostname resolves from the local hosts file, but ordinary
+    # proxy policy only exempts the spelling "localhost". Use this same listener:
+    # proxy-aware dispatch sends an absolute target and fails the pinned target.
+    c['fixture']['url_host']='localhost.'
+    c['env']={'HTTP_PROXY':'{{url}}','HTTPS_PROXY':'{{url}}','ALL_PROXY':'{{url}}','NO_PROXY':''}
     old={'cookie':'session=fixture-session','x-p-tenant':'fixture-tenant'}
     new={'cookie':'session=rotated-session','x-p-tenant':'fixture-tenant'}
     token='/orch/api/v1/cli/oauth/token'
@@ -356,7 +359,14 @@ def main(argv=None):
         report=json.loads((Path(args.source)/'report.json').read_text())
         validate_capture(report,digest,cases)
         Path(args.out).write_text(json.dumps(report,indent=2,sort_keys=True)+'\n');return 0
+    if args.case:
+        requested=set(args.case)
+        unknown=requested-{c['name'] for c in cases}
+        if unknown:raise ValueError('unknown case selection: '+', '.join(sorted(unknown)))
+        gated=[c['name'] for c in cases if c['name'] in requested and c['tier']=='full120s' and not args.include_full120s]
+        if gated:raise ValueError('case selection requires --include-full120s: '+', '.join(gated))
     selected=[c for c in cases if (c['tier']=='gate' or args.include_full120s) and (not args.case or c['name'] in args.case)]
+    if not selected:raise ValueError('no cases selected')
     out=Path(args.out);out.mkdir(parents=True,exist_ok=False)
     baseline=json.loads((Path(args.baseline)/'report.json').read_text()) if getattr(args,'baseline',None) else None
     if baseline: validate_capture(baseline,digest,cases)

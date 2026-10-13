@@ -1,12 +1,110 @@
 """Independent phase-four corpus/model assertions (no live service)."""
 import copy
+import json
 from pathlib import Path
 import sys
 import unittest
+from unittest import mock
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 import phase4
 
+class SelectionTests(unittest.TestCase):
+    def invoke(self, selectors=(), include_full120s=False, command='check-reference', real_corpus=False):
+        cases=[dict(name='gate-case',tier='gate',build='standard'),
+               dict(name='deadline-case',tier='full120s',build='standard')]
+        if real_corpus:cases=phase4.corpus()
+        argv=[command,'--reference','reference','--out','unused-output']
+        if command=='compare':argv+=['--candidate','candidate','--manifest','none']
+        for name in selectors:argv+=['--case',name]
+        if include_full120s:argv+=['--include-full120s']
+        with mock.patch.object(phase4,'corpus',return_value=cases), \
+             mock.patch.object(phase4.Path,'mkdir') as mkdir, \
+             mock.patch.object(phase4.phase1,'binary_identity',return_value={'path':'reference','sha256':'same'}), \
+             mock.patch.object(phase4.p3,'sample') as sample, \
+             mock.patch.object(phase4,'expectation_issues',return_value=[]), \
+             mock.patch.object(phase4.p3,'differences',return_value=[]), \
+             mock.patch.object(phase4,'signature',return_value={}), \
+             mock.patch.object(phase4.run,'write_json'), \
+             mock.patch('builtins.print'):
+            try:result=phase4.main(argv)
+            except ValueError:
+                sample.assert_not_called()
+                mkdir.assert_not_called()
+                raise
+            return result,[call.args[1]['name'] for call in sample.call_args_list]
+
+    def test_unknown_and_mixed_unknown_rejected_before_launch(self):
+        for selectors in [('typo',),('gate-case','typo')]:
+            with self.subTest(selectors=selectors),self.assertRaisesRegex(ValueError,'unknown.*typo'):
+                self.invoke(selectors)
+
+    def test_gated_and_mixed_gated_rejected_before_launch(self):
+        for selectors in [('deadline-case',),('gate-case','deadline-case')]:
+            with self.subTest(selectors=selectors),self.assertRaisesRegex(ValueError,'include-full120s'):
+                self.invoke(selectors)
+
+    def test_default_runs_gate_cases(self):
+        self.assertEqual(self.invoke(),(False,['gate-case','gate-case']))
+
+    def test_deadline_opt_in_runs_requested_case(self):
+        self.assertEqual(self.invoke(['deadline-case'],True),(False,['deadline-case','deadline-case']))
+
+    def test_compare_rejects_unknown_and_real_gated_cases_before_launch(self):
+        for selectors,diagnostic in [(('typo',),'unknown'),(('p4-deadline-header',),'include-full120s'),
+                                     (('p4-deadline-header','typo'),'unknown')]:
+            with self.subTest(selectors=selectors),self.assertRaisesRegex(ValueError,diagnostic):
+                self.invoke(selectors,command='compare',real_corpus=True)
+
+    def test_duplicate_selection_executes_case_once(self):
+        self.assertEqual(self.invoke(['gate-case','gate-case']),(False,['gate-case','gate-case']))
+
+    def test_empty_corpus_rejected_before_launch(self):
+        with mock.patch.object(phase4,'corpus',return_value=[]), \
+             mock.patch.object(phase4.p3,'sample') as sample, \
+             mock.patch.object(phase4.Path,'mkdir'), \
+             mock.patch.object(phase4.phase1,'binary_identity',return_value={'path':'reference','sha256':'same'}), \
+             mock.patch.object(phase4.run,'write_json'), \
+             mock.patch('builtins.print'), \
+             self.assertRaisesRegex(ValueError,'no cases'):
+            phase4.main(['check-reference','--reference','reference','--out','unused-output'])
+        sample.assert_not_called()
+
 class CorpusTests(unittest.TestCase):
+    def test_proxy_case_uses_proxy_aware_local_destination(self):
+        case=next(c for c in phase4.corpus() if c['name']=='p4-proxy-ignored')
+        self.assertEqual(case['fixture'].get('url_host'),'localhost.')
+        self.assertEqual(case['env']['HTTP_PROXY'],'{{url}}')
+        self.assertEqual(case['env']['NO_PROXY'],'')
+
+    def test_proxy_aware_fixture_host_keeps_loopback_listener(self):
+        fixture=phase4.p3.FixtureServer({'url_host':'localhost.','routes':[]})
+        try:
+            self.assertRegex(fixture.urls['url'],r'^http://localhost\.:\d+$')
+            self.assertEqual(fixture.listeners[0][0].getsockname()[0],'127.0.0.1')
+        finally:
+            for listener,_ in fixture.listeners:listener.close()
+
+    @unittest.skipUnless((phase4.ROOT.parent/'bin'/'pb-go').is_file(),'pinned Go reference not built')
+    def test_proxy_case_standard_transport_control(self):
+        import tempfile
+        binary=phase4.ROOT.parent/'bin'/'pb-go'
+        metrics=next(c for c in phase4.corpus() if c['name']=='p4-proxy-ignored')
+        control=copy.deepcopy(metrics)
+        control['argv']=['sql','list','-o','json']
+        sentinel=b'phase4 controlled proxy sentinel'
+        control['fixture']['routes']=[phase4.p3.route(sentinel,500,method='GET',path='/api/v1/filters')]
+        with tempfile.TemporaryDirectory() as tmp:
+            direct=phase4.p3.sample(binary,metrics,Path(tmp)/'direct',10)
+            proxied=phase4.p3.sample(binary,control,Path(tmp)/'control',10)
+        self.assertEqual(phase4.expectation_issues(metrics,direct),[])
+        self.assertEqual(direct['trace'][0]['path'],metrics['targets'][0])
+        self.assertEqual(proxied['termination'],{'exit':1})
+        self.assertEqual(len(proxied['trace']),1)
+        self.assertRegex(proxied['trace'][0]['path'],r'^http://localhost\.:\d+/api/v1/filters$')
+        error=json.loads(proxied['stderr'])['error']
+        self.assertEqual(error['code'],'SERVER_ERROR')
+        self.assertEqual(error['http_status'],500)
+
     def test_unique_names_and_full_inventory(self):
         cases=phase4.corpus()
         self.assertEqual(len(cases),len({c['name'] for c in cases}))
