@@ -299,11 +299,43 @@ pub fn decode_ordered(body: &[u8]) -> Result<OrderedDocument, String> {
     Ok(value)
 }
 
+/// Validate Go-compatible JSON without constructing a value tree. Invalid UTF-8
+/// in strings is accepted, just as it is by `decode_ordered`.
+pub fn validate(body: &[u8]) -> Result<(), String> {
+    let mut parser = Decoder {
+        bytes: body,
+        index: 0,
+        depth: 0,
+    };
+    parser.skip_value()?;
+    parser.finish()
+}
+
+/// Validate an object and borrow its original value fragments. Keys retain
+/// their input order and duplicates; invalid UTF-8 in values remains untouched.
+pub fn raw_members_bytes(body: &[u8]) -> Result<Vec<(String, &[u8])>, String> {
+    raw_members_inner(body, true)
+}
+
+/// Validate an array and borrow its original element fragments, including any
+/// invalid UTF-8 inside strings.
+pub fn raw_elements_bytes(body: &[u8]) -> Result<Vec<&[u8]>, String> {
+    raw_elements_inner(body, true)
+}
+
 /// Retain original value fragments for RawMessage fields without serde's
 /// stricter Unicode-string decoding. Callers validate the complete document.
 pub fn raw_members(body: &str) -> Result<Vec<(String, &str)>, String> {
+    raw_members_inner(body.as_bytes(), false).map(|fields| {
+        fields
+            .into_iter()
+            .map(|(key, value)| (key, std::str::from_utf8(value).expect("UTF-8 input span")))
+            .collect()
+    })
+}
+fn raw_members_inner(body: &[u8], complete: bool) -> Result<Vec<(String, &[u8])>, String> {
     let mut parser = Decoder {
-        bytes: body.as_bytes(),
+        bytes: body,
         index: 0,
         depth: 0,
     };
@@ -313,6 +345,10 @@ pub fn raw_members(body: &str) -> Result<Vec<(String, &str)>, String> {
     parser.enter()?;
     let mut fields = Vec::new();
     if parser.peek()? == b'}' {
+        if complete {
+            parser.index += 1;
+            parser.finish()?;
+        }
         return Ok(fields);
     }
     loop {
@@ -326,19 +362,32 @@ pub fn raw_members(body: &str) -> Result<Vec<(String, &str)>, String> {
         parser.index += 1;
         parser.space();
         let start = parser.index;
-        let node = parser.value()?;
-        drop_node(node);
+        parser.skip_value()?;
         fields.push((key, &body[start..parser.index]));
         match parser.peek()? {
-            b'}' => return Ok(fields),
+            b'}' => {
+                if complete {
+                    parser.index += 1;
+                    parser.finish()?;
+                }
+                return Ok(fields);
+            }
             b',' => parser.index += 1,
             _ => return Err(parser.invalid("after object key:value pair")),
         }
     }
 }
 pub fn raw_elements(body: &str) -> Result<Vec<&str>, String> {
+    raw_elements_inner(body.as_bytes(), false).map(|values| {
+        values
+            .into_iter()
+            .map(|value| std::str::from_utf8(value).expect("UTF-8 input span"))
+            .collect()
+    })
+}
+fn raw_elements_inner(body: &[u8], complete: bool) -> Result<Vec<&[u8]>, String> {
     let mut parser = Decoder {
-        bytes: body.as_bytes(),
+        bytes: body,
         index: 0,
         depth: 0,
     };
@@ -348,16 +397,25 @@ pub fn raw_elements(body: &str) -> Result<Vec<&str>, String> {
     parser.enter()?;
     let mut values = Vec::new();
     if parser.peek()? == b']' {
+        if complete {
+            parser.index += 1;
+            parser.finish()?;
+        }
         return Ok(values);
     }
     loop {
         parser.space();
         let start = parser.index;
-        let node = parser.value()?;
-        drop_node(node);
+        parser.skip_value()?;
         values.push(&body[start..parser.index]);
         match parser.peek()? {
-            b']' => return Ok(values),
+            b']' => {
+                if complete {
+                    parser.index += 1;
+                    parser.finish()?;
+                }
+                return Ok(values);
+            }
             b',' => parser.index += 1,
             _ => return Err(parser.invalid("after array element")),
         }
@@ -429,6 +487,13 @@ fn push_string_bytes(output: &mut String, mut bytes: &[u8]) {
 }
 
 impl Decoder<'_> {
+    fn finish(&mut self) -> Result<(), String> {
+        self.space();
+        if self.index < self.bytes.len() {
+            return Err(self.invalid("after top-level value"));
+        }
+        Ok(())
+    }
     fn space(&mut self) {
         while self
             .bytes
@@ -464,6 +529,69 @@ impl Decoder<'_> {
             b'n' => self.literal(b"null", Value::Null),
             b'-' | b'0'..=b'9' => self.number(),
             _ => Err(self.invalid("looking for beginning of value")),
+        }
+    }
+    fn skip_value(&mut self) -> Result<(), String> {
+        stacker::maybe_grow(64 * 1024, 1024 * 1024, || self.skip_value_inner())
+    }
+    fn skip_value_inner(&mut self) -> Result<(), String> {
+        match self.peek()? {
+            b'{' => self.skip_object(),
+            b'[' => self.skip_array(),
+            b'"' => self.skip_string(),
+            b't' => self.skip_literal(b"true"),
+            b'f' => self.skip_literal(b"false"),
+            b'n' => self.skip_literal(b"null"),
+            b'-' | b'0'..=b'9' => self.skip_number(),
+            _ => Err(self.invalid("looking for beginning of value")),
+        }
+    }
+    fn skip_object(&mut self) -> Result<(), String> {
+        self.enter()?;
+        if self.peek()? == b'}' {
+            self.index += 1;
+            self.depth -= 1;
+            return Ok(());
+        }
+        loop {
+            if self.peek()? != b'"' {
+                return Err(self.invalid("looking for beginning of object key string"));
+            }
+            self.skip_string()?;
+            if self.peek()? != b':' {
+                return Err(self.invalid("after object key"));
+            }
+            self.index += 1;
+            self.skip_value()?;
+            match self.peek()? {
+                b'}' => {
+                    self.index += 1;
+                    self.depth -= 1;
+                    return Ok(());
+                }
+                b',' => self.index += 1,
+                _ => return Err(self.invalid("after object key:value pair")),
+            }
+        }
+    }
+    fn skip_array(&mut self) -> Result<(), String> {
+        self.enter()?;
+        if self.peek()? == b']' {
+            self.index += 1;
+            self.depth -= 1;
+            return Ok(());
+        }
+        loop {
+            self.skip_value()?;
+            match self.peek()? {
+                b']' => {
+                    self.index += 1;
+                    self.depth -= 1;
+                    return Ok(());
+                }
+                b',' => self.index += 1,
+                _ => return Err(self.invalid("after array element")),
+            }
         }
     }
     fn enter(&mut self) -> Result<(), String> {
@@ -535,6 +663,10 @@ impl Decoder<'_> {
         }
     }
     fn literal(&mut self, literal: &[u8], value: Value) -> Result<Node, String> {
+        self.skip_literal(literal)?;
+        Ok(Node::Scalar(value))
+    }
+    fn skip_literal(&mut self, literal: &[u8]) -> Result<(), String> {
         for expected in literal {
             match self.bytes.get(self.index) {
                 Some(actual) if actual == expected => self.index += 1,
@@ -547,7 +679,42 @@ impl Decoder<'_> {
                 }
             }
         }
-        Ok(Node::Scalar(value))
+        Ok(())
+    }
+    fn skip_string(&mut self) -> Result<(), String> {
+        self.index += 1;
+        loop {
+            let byte = *self
+                .bytes
+                .get(self.index)
+                .ok_or_else(|| "unexpected end of JSON input".to_string())?;
+            if byte == b'"' {
+                self.index += 1;
+                return Ok(());
+            }
+            if byte < b' ' {
+                return Err(self.invalid("in string literal"));
+            }
+            self.index += 1;
+            if byte != b'\\' {
+                continue;
+            }
+            let escaped = *self
+                .bytes
+                .get(self.index)
+                .ok_or_else(|| "unexpected end of JSON input".to_string())?;
+            self.index += 1;
+            match escaped {
+                b'"' | b'\\' | b'/' | b'b' | b'f' | b'n' | b'r' | b't' => (),
+                b'u' => {
+                    self.hex()?;
+                }
+                _ => {
+                    self.index -= 1;
+                    return Err(self.invalid("in string escape code"));
+                }
+            }
+        }
     }
     fn string(&mut self) -> Result<String, String> {
         self.index += 1;
@@ -634,6 +801,15 @@ impl Decoder<'_> {
     }
     fn number(&mut self) -> Result<Node, String> {
         let start = self.index;
+        self.skip_number()?;
+        let raw = std::str::from_utf8(&self.bytes[start..self.index]).expect("ASCII number");
+        // The grammar above validates the token. Parsing through Number's
+        // FromStr would normalize `1e3` to `1e+3`, changing Go UseNumber output.
+        Ok(Node::Scalar(Value::Number(Number::from_string_unchecked(
+            raw.to_owned(),
+        ))))
+    }
+    fn skip_number(&mut self) -> Result<(), String> {
         if self.bytes[self.index] == b'-' {
             self.index += 1;
         }
@@ -679,12 +855,7 @@ impl Decoder<'_> {
                 self.index += 1;
             }
         }
-        let raw = std::str::from_utf8(&self.bytes[start..self.index]).expect("ASCII number");
-        // The grammar above validates the token. Parsing through Number's
-        // FromStr would normalize `1e3` to `1e+3`, changing Go UseNumber output.
-        Ok(Node::Scalar(Value::Number(Number::from_string_unchecked(
-            raw.to_owned(),
-        ))))
+        Ok(())
     }
 }
 
@@ -700,6 +871,91 @@ fn rune_quote(byte: u8) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn borrowed_fragments_preserve_duplicates_and_original_bytes() {
+        let body = b" \n{\"x\": [ 1.50E03, {\"nested\":\"\xff\"} ], \"\\u0078\": \"\xe2\x82\", \"\xe2\x82\":true}\t";
+        let members = raw_members_bytes(body).unwrap();
+        assert_eq!(members.len(), 3);
+        assert_eq!(members[0].0, "x");
+        assert_eq!(members[1].0, "x");
+        assert_eq!(members[2].0, "\u{fffd}\u{fffd}");
+        assert_eq!(members[0].1, b"[ 1.50E03, {\"nested\":\"\xff\"} ]");
+        assert_eq!(members[1].1, b"\"\xe2\x82\"");
+        let elements = raw_elements_bytes(members[0].1).unwrap();
+        assert_eq!(elements, [&b"1.50E03"[..], &b"{\"nested\":\"\xff\"}"[..]]);
+        for fragment in members.iter().map(|(_, value)| *value).chain(elements) {
+            assert!(fragment.as_ptr() >= body.as_ptr());
+            assert!(fragment.as_ptr() < body[body.len()..].as_ptr());
+        }
+        assert_eq!(raw_members_bytes(b"{} \n").unwrap().len(), 0);
+        assert_eq!(raw_elements_bytes(b"[] \n").unwrap().len(), 0);
+        for body in [&b"{} {}"[..], &b"{\"x\":0} true"[..]] {
+            assert_eq!(
+                raw_members_bytes(body).unwrap_err(),
+                decode_ordered(body).unwrap_err()
+            );
+        }
+        for body in [&b"[] []"[..], &b"[0] false"[..]] {
+            assert_eq!(
+                raw_elements_bytes(body).unwrap_err(),
+                decode_ordered(body).unwrap_err()
+            );
+        }
+    }
+
+    #[test]
+    fn skipping_matches_ordered_syntax_diagnostics() {
+        fn check(body: &[u8]) {
+            let expected = decode_ordered(body).map(|_| ());
+            assert_eq!(validate(body), expected, "{body:?}");
+            match body.first() {
+                Some(b'{') => assert_eq!(raw_members_bytes(body).map(|_| ()), expected, "{body:?}"),
+                Some(b'[') => {
+                    assert_eq!(raw_elements_bytes(body).map(|_| ()), expected, "{body:?}")
+                }
+                _ => (),
+            }
+        }
+        let fixtures: &[&[u8]] = &[
+            br#"{"x":[null,true,false,-0,1.50e+03],"x":{"a":"a\n\uD800\uDC00\uD800\u0041"}}"#,
+            b"[\"\xff\xe2\x82\",{\"\xff\":0},[],{}]",
+            br#""\ud800\ud800\udc00\udfff""#,
+            br#"["\ud800\u00xz"]"#,
+            b"true false",
+            b"-0.00E-001",
+        ];
+        for body in fixtures {
+            check(body);
+            for end in 0..body.len() {
+                check(&body[..end]);
+            }
+            for index in 0..body.len() {
+                for byte in b"{}[],:\\\"x0-+.e \n\x00\xff" {
+                    let mut mutated = body.to_vec();
+                    mutated[index] = *byte;
+                    check(&mutated);
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn borrowed_fragments_enforce_full_document_depth_limit() {
+        for (open, close) in [("[", "]"), ("{\"x\":", "}")] {
+            for depth in [10_000, 10_001] {
+                let body = format!("{}0{}", open.repeat(depth), close.repeat(depth));
+                let expected = decode_ordered(body.as_bytes()).map(|_| ());
+                assert_eq!(validate(body.as_bytes()), expected);
+                let fragments = if open == "[" {
+                    raw_elements_bytes(body.as_bytes()).map(|_| ())
+                } else {
+                    raw_members_bytes(body.as_bytes()).map(|_| ())
+                };
+                assert_eq!(fragments, expected);
+            }
+        }
+    }
+
     #[test]
     fn syntax_and_raw_numbers() {
         assert_eq!(

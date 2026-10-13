@@ -20,6 +20,10 @@ on:
         description: Also run the opt-in real 60-second SQL deadline tier
         type: boolean
         default: false
+      include_full120s:
+        description: Also run the opt-in real 120-second metrics deadline tier
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -44,6 +48,7 @@ jobs:
       - name: Check Rust and harness
         env:
           PB_GO_ORACLE: ${{ github.workspace }}/bin/pb-go
+          PB_PHASE3_FIXTURE: ${{ github.workspace }}/bin/pb-fixture
         run: |
           make -f harness/Makefile rust-test CARGO='cargo +1.96.0'
           python3 -m unittest discover -s harness -p 'test_*.py' -v
@@ -63,9 +68,14 @@ jobs:
       - name: Record SQL measurements
         # Hosted-CI samples are harness evidence, not a performance release gate.
         run: make -f harness/Makefile phase3-measure OUT=harness/results/phase3-ci REPETITIONS=5
+      - name: Compare phase-four metrics and saved SQL
+        run: make -f harness/Makefile phase4-check OUT=harness/results/phase4-ci
       - name: Compare real SQL deadline cases
         if: github.event_name == 'workflow_dispatch' && inputs.include_full60s
         run: make -f harness/Makefile phase3-deadline-check OUT=harness/results/phase3-deadline-ci
+      - name: Compare real metrics deadline cases
+        if: github.event_name == 'workflow_dispatch' && inputs.include_full120s
+        run: make -f harness/Makefile phase4-deadline-check OUT=harness/results/phase4-deadline-ci
       - name: Retain compatibility and performance evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -76,4 +86,6 @@ jobs:
             harness/results/phase2-ci/
             harness/results/phase3-ci/
             harness/results/phase3-deadline-ci/
+            harness/results/phase4-ci/
+            harness/results/phase4-deadline-ci/
           retention-days: 14

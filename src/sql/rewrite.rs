@@ -320,7 +320,7 @@ fn ends_in_line_comment(query: &str) -> bool {
     line_start.is_some_and(|start| !trim_sql_space(&query[start + 2..]).is_empty())
 }
 
-fn trim_sql_space(query: &str) -> &str {
+pub(crate) fn trim_sql_space(query: &str) -> &str {
     // Go unicode.IsSpace / strings.TrimSpace. Keep the set explicit rather than
     // tying request bytes to the Rust toolchain's Unicode property tables.
     query.trim_matches(|ch| {

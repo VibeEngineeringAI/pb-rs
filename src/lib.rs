@@ -7,13 +7,16 @@ pub mod datasets;
 pub mod diagnostics;
 pub mod error;
 pub mod gojson;
+mod metrics;
 pub mod parser;
 mod printable;
 pub mod profile;
 mod render;
+mod saved_queries;
 pub mod spec;
 mod sql;
 mod status;
+mod time_compat;
 mod transport;
 mod url_reference;
 
@@ -249,6 +252,20 @@ pub fn run_with_writers(
             stderr,
             stderr_terminal,
         );
+    }
+    if metrics::is_operation(&path) {
+        return metrics::execute(
+            &parsed,
+            command,
+            &path,
+            structured,
+            stdout,
+            stderr,
+            stderr_terminal,
+        );
+    }
+    if matches!(path.as_str(), "pb sql list" | "pb sql save") {
+        return saved_queries::execute(&parsed, command, &path, structured, stdout);
     }
     // Operations with no local output flag must not inherit root/parent output.
     if path == "pb cloud profile add" && parsed.text("api-key").trim().is_empty() {
@@ -554,4 +571,9 @@ fn is_false(value: &bool) -> bool {
 }
 fn catalog() -> AgentCatalog {
     serde_json::from_str(include_str!("catalog.json")).expect("valid owned agent catalog")
+}
+
+/// Initialize the process terminal theme before command parsing, matching Go package init.
+pub fn initialize_process_theme() {
+    metrics::initialize_process_theme();
 }

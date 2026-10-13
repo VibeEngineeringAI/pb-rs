@@ -133,6 +133,7 @@ func TestGzipGeneratedRouteAndMilestones(t *testing.T) {
 	}
 	m := f.milestones[0]
 	if m.ReceivedMonotonicNS == 0 || m.HeadersMonotonicNS < m.ReceivedMonotonicNS || m.FirstBodyMonotonicNS < m.HeadersMonotonicNS ||
+		m.FinalWriteStartedMonotonicNS < m.HeadersMonotonicNS || m.FinalWriteStartedMonotonicNS > m.FinalBodyMonotonicNS ||
 		m.FinalBodyMonotonicNS < m.FirstBodyMonotonicNS || m.UncompressedBodyBytes != 9 || m.BodyBytesWritten != len(f.plan.Routes[0].payload) {
 		t.Fatalf("milestone = %+v", m)
 	}
@@ -140,6 +141,30 @@ func TestGzipGeneratedRouteAndMilestones(t *testing.T) {
 	f.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/__harness/milestones", nil))
 	if !strings.Contains(rec.Body.String(), `"uncompressed_body_bytes":9`) {
 		t.Fatalf("milestones endpoint = %s", rec.Body.String())
+	}
+}
+
+type observingWriter struct {
+	*httptest.ResponseRecorder
+	fixture *fixture
+	testing *testing.T
+}
+
+func (w observingWriter) Write(body []byte) (int, error) {
+	// The final chunk timestamp must already be published when its bytes are
+	// handed to net/http, including a one-chunk response.
+	if string(body) == "ef" && w.fixture.milestones[0].FinalWriteStartedMonotonicNS == 0 {
+		w.testing.Fatal("final write lower bound was recorded after Write")
+	}
+	return w.ResponseRecorder.Write(body)
+}
+
+func TestFinalWriteLowerBoundPrecedesDelivery(t *testing.T) {
+	f := &fixture{plan: scenario{Routes: []route{{Method: "GET", Path: "/x", Body: "abcdef", ChunkBytes: 2}}}}
+	f.ServeHTTP(observingWriter{httptest.NewRecorder(), f, t}, httptest.NewRequest(http.MethodGet, "/x", nil))
+	m := f.milestones[0]
+	if m.FinalWriteStartedMonotonicNS < m.FirstBodyMonotonicNS || m.FinalWriteStartedMonotonicNS > m.FinalBodyMonotonicNS {
+		t.Fatalf("invalid final chunk observation: %+v", m)
 	}
 }
 

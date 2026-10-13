@@ -1,6 +1,6 @@
 //! SQL owns command policy; the transport and renderer remain independent.
 mod output;
-mod rewrite;
+pub(crate) mod rewrite;
 
 use crate::{
     ErrorCode, Outcome,
@@ -116,7 +116,8 @@ pub(super) fn execute(
             "SQL query is required; example: pb sql run \"select * from frontend\" --from=10m --to=now")
             .render(command, path, structured);
     }
-    let query = rewrite::ensure_default_limit(&rewrite::prepare_query(query));
+    let normalized_query = rewrite::prepare_query(query);
+    let query = rewrite::ensure_default_limit(&normalized_query);
     let format = match crate::output_format(parsed) {
         Ok(format) => format,
         Err(message) => {
@@ -125,9 +126,6 @@ pub(super) fn execute(
             return error.render(command, path, structured);
         }
     };
-    if !parsed.text("save-as").is_empty() {
-        return deferred();
-    }
     let start = if parsed.text("from").is_empty() {
         "1m"
     } else {
@@ -185,6 +183,7 @@ pub(super) fn execute(
         let headers_timer =
             crate::diagnostics::Timer::begin(crate::diagnostics::Stage::RequestAndHeaders);
         let response = if terminal {
+            let stderr = &mut *stderr;
             std::thread::scope(|scope| {
                 let (stop, stopped) = std::sync::mpsc::channel();
                 let spinner = scope.spawn(move || {
@@ -222,7 +221,24 @@ pub(super) fn execute(
         .map_err(|e| Failure::Api("request execution failed", e))?;
         #[cfg(feature = "diagnostics")]
         drop(headers_timer);
-        render_response(&runtime, response, format, stdout)
+        render_response(&runtime, response, format, stdout)?;
+        let name = parsed.text("save-as");
+        if !name.is_empty() {
+            match crate::saved_queries::save_after_query(
+                parsed,
+                &normalized_query,
+                &client,
+                &runtime,
+            ) {
+                Ok(()) => {
+                    let _ = writeln!(stderr, "Query saved as '{name}'");
+                }
+                Err(error) => {
+                    let _ = writeln!(stderr, "warning: could not save query: {}", error.message);
+                }
+            }
+        }
+        Ok(())
     })();
     match result {
         Ok(()) => Outcome::default(),
