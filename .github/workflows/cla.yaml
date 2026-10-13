@@ -14,6 +14,9 @@ permissions:
 
 jobs:
   CLAAssistant:
+    # Temporarily paused until this repository's CLA integration is configured.
+    # Remove this guard and re-enable the workflow in GitHub Actions to resume.
+    if: ${{ false }}
     runs-on: ubuntu-latest
     steps:
       - name: "CLA Assistant"
