@@ -1,0 +1,238 @@
+{
+  "schema_version": "1",
+  "catalog": "cli-declared read-only commands",
+  "authorization": "The server still enforces the active profile's permissions; inclusion here does not guarantee authorization.",
+  "excluded": "Commands that add, update, save, set, remove, delete, install, or uninstall resources are intentionally omitted.",
+  "contract": {
+    "success_output": "stdout",
+    "error_output": "stderr as JSON when -o json is explicit",
+    "diagnostics": "stderr",
+    "failure_exit": "non-zero",
+    "empty_lists": "[]",
+    "special_cases": [
+      "pb status -o json reports an unhealthy status as JSON on stdout and exits non-zero"
+    ]
+  },
+  "error_codes": [
+    {
+      "code": "INVALID_INPUT",
+      "retryable": false
+    },
+    {
+      "code": "AUTH_FAILED",
+      "retryable": false
+    },
+    {
+      "code": "PERMISSION_DENIED",
+      "retryable": false
+    },
+    {
+      "code": "NOT_FOUND",
+      "retryable": false
+    },
+    {
+      "code": "CONFLICT",
+      "retryable": false
+    },
+    {
+      "code": "RATE_LIMITED",
+      "retryable": true
+    },
+    {
+      "code": "CONNECTION_FAILED",
+      "retryable": true
+    },
+    {
+      "code": "TIMEOUT",
+      "retryable": true
+    },
+    {
+      "code": "INVALID_RESPONSE",
+      "retryable": false
+    },
+    {
+      "code": "SERVER_ERROR",
+      "retryable": true
+    },
+    {
+      "code": "COMMAND_FAILED",
+      "retryable": false
+    }
+  ],
+  "commands": [
+    {
+      "command": "pb agent -o json",
+      "description": "Discover this agent contract and command catalog",
+      "scope": "local",
+      "mutates": false,
+      "requires_profile": false
+    },
+    {
+      "command": "pb -o json",
+      "description": "Discover the complete reachable CLI command tree and flags",
+      "scope": "local",
+      "mutates": false,
+      "requires_profile": false
+    },
+    {
+      "command": "pb help <command...> -o json",
+      "description": "Inspect one command and its flags or subcommands",
+      "scope": "local",
+      "mutates": false,
+      "requires_profile": false
+    },
+    {
+      "command": "pb status -o json",
+      "description": "Check the active profile and server connection",
+      "scope": "local+server",
+      "mutates": false,
+      "requires_profile": false
+    },
+    {
+      "command": "pb version -o json",
+      "description": "Show the local client version. For server and connection details, use pb status -o json",
+      "scope": "local",
+      "mutates": false,
+      "requires_profile": false
+    },
+    {
+      "command": "pb profile list -o json",
+      "description": "List locally configured profiles without credentials",
+      "scope": "local",
+      "mutates": false,
+      "requires_profile": false,
+      "constraints": [
+        "Requires the local pb config file"
+      ]
+    },
+    {
+      "command": "pb dataset list -o json",
+      "description": "List datasets",
+      "scope": "server",
+      "mutates": false,
+      "requires_profile": true
+    },
+    {
+      "command": "pb dataset info <dataset> -o json",
+      "description": "Read dataset statistics and configuration",
+      "scope": "server",
+      "mutates": false,
+      "requires_profile": true
+    },
+    {
+      "command": "pb dataset schema <dataset> -o json",
+      "description": "Read dataset field names and types",
+      "scope": "server",
+      "mutates": false,
+      "requires_profile": true
+    },
+    {
+      "command": "pb user list -o json",
+      "description": "List users and their roles",
+      "scope": "server",
+      "mutates": false,
+      "requires_profile": true
+    },
+    {
+      "command": "pb role list -o json",
+      "description": "List roles and privileges",
+      "scope": "server",
+      "mutates": false,
+      "requires_profile": true
+    },
+    {
+      "command": "pb sql run \"<SELECT query>\" --from <time> --to <time> -o json",
+      "description": "Run a read-only SQL query",
+      "scope": "server",
+      "mutates": false,
+      "requires_profile": true,
+      "constraints": [
+        "Use SELECT-only SQL",
+        "Queries without a SQL LIMIT return at most 500 rows",
+        "An explicit SQL LIMIT is not capped at 500 by pb; choose a reasonable limit to avoid large JSON responses",
+        "Never use --save-as because it creates a saved query"
+      ]
+    },
+    {
+      "command": "pb sql list -o json",
+      "description": "List saved SQL queries without opening the TUI",
+      "scope": "server",
+      "mutates": false,
+      "requires_profile": true
+    },
+    {
+      "command": "pb promql run \"<expression>\" --dataset <dataset> -o json",
+      "description": "Run a PromQL query",
+      "scope": "server",
+      "mutates": false,
+      "requires_profile": true
+    },
+    {
+      "command": "pb promql labels --dataset <dataset> -o json",
+      "description": "List PromQL label names",
+      "scope": "server",
+      "mutates": false,
+      "requires_profile": true
+    },
+    {
+      "command": "pb promql label-values <label> --dataset <dataset> -o json",
+      "description": "List values for a PromQL label",
+      "scope": "server",
+      "mutates": false,
+      "requires_profile": true
+    },
+    {
+      "command": "pb promql series --match <selector> --dataset <dataset> -o json",
+      "description": "List matching PromQL series",
+      "scope": "server",
+      "mutates": false,
+      "requires_profile": true
+    },
+    {
+      "command": "pb promql cardinality label-names <dataset> -o json",
+      "description": "Inspect label-name cardinality",
+      "scope": "server",
+      "mutates": false,
+      "requires_profile": true
+    },
+    {
+      "command": "pb promql cardinality label-values <dataset> <label> -o json",
+      "description": "Inspect label-value cardinality",
+      "scope": "server",
+      "mutates": false,
+      "requires_profile": true
+    },
+    {
+      "command": "pb promql cardinality active-series <dataset> <selector> -o json",
+      "description": "Inspect active-series cardinality",
+      "scope": "server",
+      "mutates": false,
+      "requires_profile": true
+    },
+    {
+      "command": "pb promql active-queries -o json",
+      "description": "List active PromQL queries",
+      "scope": "server",
+      "mutates": false,
+      "requires_profile": true
+    },
+    {
+      "command": "pb promql tsdb <dataset> -o json",
+      "description": "Read PromQL TSDB statistics",
+      "scope": "server",
+      "mutates": false,
+      "requires_profile": true
+    },
+    {
+      "command": "pb tail <dataset> -o json",
+      "description": "Stream live dataset events until interrupted",
+      "scope": "server",
+      "mutates": false,
+      "requires_profile": true,
+      "streaming": true,
+      "constraints": [
+        "Long-running command; stop with SIGINT"
+      ]
+    }
+  ]
+}

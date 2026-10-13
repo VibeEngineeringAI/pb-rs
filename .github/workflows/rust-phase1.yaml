@@ -1,0 +1,63 @@
+name: Rust CLI compatibility
+
+on:
+  pull_request:
+    paths:
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - 'src/**'
+      - 'tests/**'
+      - 'harness/**'
+      - 'main.go'
+      - 'cmd/**'
+      - 'pkg/**'
+      - 'go.mod'
+      - 'go.sum'
+      - '.github/workflows/rust-phase1.yaml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compatibility:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          # Freeze the behavioral oracle, including its Unicode diagnostic tables.
+          go-version: '1.25.4'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Select Rust toolchain
+        run: rustup toolchain install 1.96.0 --profile minimal --component clippy,rustfmt
+      - name: Build Go reference, Rust candidate and measurement tools
+        run: make -f harness/Makefile phase2-build CARGO='cargo +1.96.0'
+      - name: Check Rust and harness
+        env:
+          PB_GO_ORACLE: ${{ github.workspace }}/bin/pb-go
+        run: |
+          make -f harness/Makefile rust-test CARGO='cargo +1.96.0'
+          python3 -m unittest discover -s harness -p 'test_*.py' -v
+      - name: Compare phase-one behavior
+        run: make -f harness/Makefile phase1-check OUT=harness/results/phase1-ci
+      - name: Record startup measurements
+        run: make -f harness/Makefile phase1-measure OUT=harness/results/phase1-ci REPETITIONS=5
+      - name: Compare phase-two behavior and configuration interoperability
+        run: make -f harness/Makefile phase2-check OUT=harness/results/phase2-ci
+      - name: Record online command measurements
+        run: |
+          make -f harness/Makefile phase2-measure OUT=harness/results/phase2-ci REPETITIONS=5
+          make -f harness/Makefile phase2-workloads-measure OUT=harness/results/phase2-ci REPETITIONS=5
+      - name: Retain compatibility and performance evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pb-rust-compatibility-${{ github.sha }}
+          path: |
+            harness/results/phase1-ci/
+            harness/results/phase2-ci/
+          retention-days: 14

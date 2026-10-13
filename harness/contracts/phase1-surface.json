@@ -1,0 +1,1148 @@
+{
+  "schema_version": 1,
+  "provenance": {
+    "source_revision": "07af390ab09bda8ac9e427ffc6310077bace0125",
+    "version": "0.0.0-harness",
+    "recorded_reference_sha256": "9ae884772ab92c52d9e226961c11db082da608dc59b378731f0689c7d8ca9e75",
+    "source_files": [
+      "main.go",
+      "cmd/*.go"
+    ],
+    "description": "Reachability, aliases, local flags and Cobra Args contracts reviewed against source and bin/pb-go; final reference built with the go.mod-pinned Go1.25.4 toolchain and Unicode15 tables. Transcript bytes are captured separately.",
+    "reference_go_toolchain": "go1.25.4",
+    "reference_unicode_version": "15.0.0"
+  },
+  "nodes": [
+    {
+      "path": [],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        },
+        {
+          "name": "version",
+          "short": "v",
+          "type": "bool"
+        }
+      ],
+      "requires_profile": false
+    },
+    {
+      "path": [
+        "agent"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        }
+      ],
+      "arity": [
+        0,
+        0
+      ],
+      "requires_profile": false
+    },
+    {
+      "path": [
+        "cloud"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        }
+      ],
+      "requires_profile": false
+    },
+    {
+      "path": [
+        "cloud",
+        "profile"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        }
+      ],
+      "requires_profile": false
+    },
+    {
+      "path": [
+        "cloud",
+        "profile",
+        "add"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "api-key",
+          "type": "string"
+        },
+        {
+          "name": "force",
+          "type": "bool"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "orchestrator-url",
+          "type": "string"
+        },
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        }
+      ],
+      "requires_profile": false
+    },
+    {
+      "path": [
+        "dataset"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        }
+      ],
+      "requires_profile": true,
+      "wrapped_preflight": true
+    },
+    {
+      "path": [
+        "dataset",
+        "add"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "type",
+          "type": "string"
+        }
+      ],
+      "arity": [
+        1,
+        1
+      ],
+      "requires_profile": true,
+      "wrapped_preflight": true
+    },
+    {
+      "path": [
+        "dataset",
+        "info"
+      ],
+      "aliases": [
+        "stat"
+      ],
+      "flags": [
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        }
+      ],
+      "arity": [
+        1,
+        1
+      ],
+      "requires_profile": true,
+      "wrapped_preflight": true
+    },
+    {
+      "path": [
+        "dataset",
+        "list"
+      ],
+      "aliases": [
+        "ls"
+      ],
+      "flags": [
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        }
+      ],
+      "requires_profile": true,
+      "wrapped_preflight": true
+    },
+    {
+      "path": [
+        "dataset",
+        "remove"
+      ],
+      "aliases": [
+        "rm"
+      ],
+      "flags": [
+        {
+          "name": "type",
+          "type": "string"
+        }
+      ],
+      "arity": [
+        1,
+        1
+      ],
+      "requires_profile": true,
+      "wrapped_preflight": true
+    },
+    {
+      "path": [
+        "dataset",
+        "schema"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        }
+      ],
+      "arity": [
+        1,
+        1
+      ],
+      "requires_profile": true,
+      "wrapped_preflight": true
+    },
+    {
+      "path": [
+        "login"
+      ],
+      "aliases": [],
+      "flags": [],
+      "requires_profile": false
+    },
+    {
+      "path": [
+        "logout"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        },
+        {
+          "name": "yes",
+          "type": "bool"
+        }
+      ],
+      "requires_profile": false
+    },
+    {
+      "path": [
+        "profile"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        }
+      ],
+      "requires_profile": false
+    },
+    {
+      "path": [
+        "profile",
+        "add"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "api-key",
+          "type": "string"
+        },
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        }
+      ],
+      "arity": [
+        2,
+        4
+      ],
+      "requires_profile": false
+    },
+    {
+      "path": [
+        "profile",
+        "default"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        }
+      ],
+      "arity": [
+        0,
+        1
+      ],
+      "requires_profile": false
+    },
+    {
+      "path": [
+        "profile",
+        "list"
+      ],
+      "aliases": [
+        "ls"
+      ],
+      "flags": [
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        }
+      ],
+      "requires_profile": false
+    },
+    {
+      "path": [
+        "profile",
+        "remove"
+      ],
+      "aliases": [
+        "rm"
+      ],
+      "flags": [
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        }
+      ],
+      "arity": [
+        1,
+        1
+      ],
+      "requires_profile": false
+    },
+    {
+      "path": [
+        "profile",
+        "update"
+      ],
+      "aliases": [
+        "set-url"
+      ],
+      "flags": [],
+      "arity": [
+        2,
+        2
+      ],
+      "requires_profile": false
+    },
+    {
+      "path": [
+        "promql"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        }
+      ],
+      "requires_profile": true,
+      "wrapped_preflight": true
+    },
+    {
+      "path": [
+        "promql",
+        "active-queries"
+      ],
+      "aliases": [
+        "ps"
+      ],
+      "flags": [
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        }
+      ],
+      "arity": [
+        0,
+        0
+      ],
+      "requires_profile": true,
+      "wrapped_preflight": true
+    },
+    {
+      "path": [
+        "promql",
+        "cardinality"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        }
+      ],
+      "requires_profile": true,
+      "wrapped_preflight": true
+    },
+    {
+      "path": [
+        "promql",
+        "cardinality",
+        "active-series"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "dataset",
+          "short": "d",
+          "type": "string"
+        },
+        {
+          "name": "limit",
+          "type": "int"
+        },
+        {
+          "name": "lookback",
+          "type": "int"
+        },
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        },
+        {
+          "name": "selector",
+          "type": "string"
+        }
+      ],
+      "arity": [
+        0,
+        2
+      ],
+      "requires_profile": true,
+      "wrapped_preflight": true
+    },
+    {
+      "path": [
+        "promql",
+        "cardinality",
+        "label-names"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "dataset",
+          "short": "d",
+          "type": "string"
+        },
+        {
+          "name": "limit",
+          "type": "int"
+        },
+        {
+          "name": "lookback",
+          "type": "int"
+        },
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        },
+        {
+          "name": "selector",
+          "type": "string"
+        }
+      ],
+      "arity": [
+        0,
+        1
+      ],
+      "requires_profile": true,
+      "wrapped_preflight": true
+    },
+    {
+      "path": [
+        "promql",
+        "cardinality",
+        "label-values"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "dataset",
+          "short": "d",
+          "type": "string"
+        },
+        {
+          "name": "label",
+          "short": "l",
+          "type": "string"
+        },
+        {
+          "name": "limit",
+          "type": "int"
+        },
+        {
+          "name": "lookback",
+          "type": "int"
+        },
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        }
+      ],
+      "arity": [
+        0,
+        2
+      ],
+      "requires_profile": true,
+      "wrapped_preflight": true
+    },
+    {
+      "path": [
+        "promql",
+        "label-values"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "dataset",
+          "short": "d",
+          "type": "string"
+        },
+        {
+          "name": "from",
+          "short": "f",
+          "type": "string"
+        },
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        },
+        {
+          "name": "to",
+          "short": "t",
+          "type": "string"
+        }
+      ],
+      "arity": [
+        1,
+        2
+      ],
+      "requires_profile": true,
+      "wrapped_preflight": true
+    },
+    {
+      "path": [
+        "promql",
+        "labels"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "dataset",
+          "short": "d",
+          "type": "string"
+        },
+        {
+          "name": "from",
+          "short": "f",
+          "type": "string"
+        },
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        },
+        {
+          "name": "to",
+          "short": "t",
+          "type": "string"
+        }
+      ],
+      "arity": [
+        0,
+        1
+      ],
+      "requires_profile": true,
+      "wrapped_preflight": true
+    },
+    {
+      "path": [
+        "promql",
+        "run"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "dataset",
+          "short": "d",
+          "type": "string"
+        },
+        {
+          "name": "from",
+          "short": "f",
+          "type": "string"
+        },
+        {
+          "name": "instant",
+          "type": "bool"
+        },
+        {
+          "name": "interactive",
+          "short": "i",
+          "type": "bool"
+        },
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        },
+        {
+          "name": "step",
+          "type": "string"
+        },
+        {
+          "name": "to",
+          "short": "t",
+          "type": "string"
+        }
+      ],
+      "arity": [
+        0,
+        1
+      ],
+      "requires_profile": true,
+      "wrapped_preflight": true
+    },
+    {
+      "path": [
+        "promql",
+        "series"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "dataset",
+          "short": "d",
+          "type": "string"
+        },
+        {
+          "name": "from",
+          "short": "f",
+          "type": "string"
+        },
+        {
+          "name": "match",
+          "short": "m",
+          "type": "array"
+        },
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        },
+        {
+          "name": "to",
+          "short": "t",
+          "type": "string"
+        }
+      ],
+      "arity": [
+        0,
+        1
+      ],
+      "requires_profile": true,
+      "wrapped_preflight": true
+    },
+    {
+      "path": [
+        "promql",
+        "tsdb"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "dataset",
+          "short": "d",
+          "type": "string"
+        },
+        {
+          "name": "date",
+          "type": "string"
+        },
+        {
+          "name": "focus-label",
+          "type": "string"
+        },
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        },
+        {
+          "name": "top",
+          "type": "int"
+        }
+      ],
+      "arity": [
+        0,
+        1
+      ],
+      "requires_profile": true,
+      "wrapped_preflight": true
+    },
+    {
+      "path": [
+        "role"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        }
+      ],
+      "requires_profile": true,
+      "wrapped_preflight": true
+    },
+    {
+      "path": [
+        "role",
+        "add"
+      ],
+      "aliases": [],
+      "flags": [],
+      "arity": [
+        1,
+        1
+      ],
+      "requires_profile": true,
+      "wrapped_preflight": true
+    },
+    {
+      "path": [
+        "role",
+        "list"
+      ],
+      "aliases": [
+        "ls"
+      ],
+      "flags": [
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        }
+      ],
+      "requires_profile": true,
+      "wrapped_preflight": true
+    },
+    {
+      "path": [
+        "role",
+        "remove"
+      ],
+      "aliases": [
+        "rm"
+      ],
+      "flags": [],
+      "arity": [
+        1,
+        1
+      ],
+      "requires_profile": true,
+      "wrapped_preflight": true
+    },
+    {
+      "path": [
+        "sql"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        }
+      ],
+      "requires_profile": true,
+      "wrapped_preflight": true
+    },
+    {
+      "path": [
+        "sql",
+        "list"
+      ],
+      "aliases": [
+        "ls"
+      ],
+      "flags": [
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        }
+      ],
+      "requires_profile": true,
+      "wrapped_preflight": true
+    },
+    {
+      "path": [
+        "sql",
+        "run"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "from",
+          "short": "f",
+          "type": "string"
+        },
+        {
+          "name": "interactive",
+          "short": "i",
+          "type": "bool"
+        },
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        },
+        {
+          "name": "save-as",
+          "type": "string"
+        },
+        {
+          "name": "to",
+          "short": "t",
+          "type": "string"
+        }
+      ],
+      "arity": [
+        0,
+        1
+      ],
+      "requires_profile": true,
+      "wrapped_preflight": true
+    },
+    {
+      "path": [
+        "sql",
+        "save"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "from",
+          "short": "f",
+          "type": "string"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "to",
+          "short": "t",
+          "type": "string"
+        }
+      ],
+      "arity": [
+        1,
+        1
+      ],
+      "requires_profile": true,
+      "wrapped_preflight": true
+    },
+    {
+      "path": [
+        "status"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        }
+      ],
+      "requires_profile": false
+    },
+    {
+      "path": [
+        "tail"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        }
+      ],
+      "arity": [
+        1,
+        1
+      ],
+      "requires_profile": true,
+      "wrapped_preflight": false
+    },
+    {
+      "path": [
+        "user"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        }
+      ],
+      "requires_profile": true,
+      "wrapped_preflight": true
+    },
+    {
+      "path": [
+        "user",
+        "add"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "role",
+          "short": "r",
+          "type": "string"
+        }
+      ],
+      "arity": [
+        1,
+        1
+      ],
+      "requires_profile": true,
+      "wrapped_preflight": true
+    },
+    {
+      "path": [
+        "user",
+        "list"
+      ],
+      "aliases": [
+        "ls"
+      ],
+      "flags": [
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        }
+      ],
+      "requires_profile": true,
+      "wrapped_preflight": true
+    },
+    {
+      "path": [
+        "user",
+        "remove"
+      ],
+      "aliases": [
+        "rm"
+      ],
+      "flags": [],
+      "arity": [
+        1,
+        1
+      ],
+      "requires_profile": true,
+      "wrapped_preflight": true
+    },
+    {
+      "path": [
+        "user",
+        "set-role"
+      ],
+      "aliases": [],
+      "flags": [],
+      "requires_profile": true,
+      "wrapped_preflight": true
+    },
+    {
+      "path": [
+        "version"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        }
+      ],
+      "requires_profile": false
+    },
+    {
+      "path": [
+        "help"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "output",
+          "short": "o",
+          "type": "string"
+        }
+      ],
+      "requires_profile": false
+    },
+    {
+      "path": [
+        "completion"
+      ],
+      "aliases": [],
+      "flags": [],
+      "hidden": true,
+      "requires_profile": false
+    },
+    {
+      "path": [
+        "completion",
+        "bash"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "no-descriptions",
+          "type": "bool"
+        }
+      ],
+      "arity": [
+        0,
+        0
+      ],
+      "hidden": true,
+      "requires_profile": false
+    },
+    {
+      "path": [
+        "completion",
+        "fish"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "no-descriptions",
+          "type": "bool"
+        }
+      ],
+      "arity": [
+        0,
+        0
+      ],
+      "hidden": true,
+      "requires_profile": false
+    },
+    {
+      "path": [
+        "completion",
+        "powershell"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "no-descriptions",
+          "type": "bool"
+        }
+      ],
+      "arity": [
+        0,
+        0
+      ],
+      "hidden": true,
+      "requires_profile": false
+    },
+    {
+      "path": [
+        "completion",
+        "zsh"
+      ],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "no-descriptions",
+          "type": "bool"
+        }
+      ],
+      "arity": [
+        0,
+        0
+      ],
+      "hidden": true,
+      "requires_profile": false
+    }
+  ],
+  "deferred": {
+    "operational_commands": "Successful operational leaf invocation, configured-profile initialization, network, authentication, TUI and streaming are outside this offline gate. Missing-profile prerequisites are characterized before operational bodies; stub failures are not Go compatibility.",
+    "profile_required_parent_json": [
+      "sql",
+      "promql",
+      "promql cardinality",
+      "dataset",
+      "user",
+      "role"
+    ],
+    "profile_required_parent_reason": "Successful direct parent -o json invokes combinedPreRun and requires a configured profile before rendering metadata. Empty-profile preflight errors are covered; help PATH -o json inspects metadata without prerequisites.",
+    "hidden_completion_execution": [
+      "completion bash",
+      "completion fish",
+      "completion powershell",
+      "completion zsh",
+      "__complete",
+      "__completeNoDesc"
+    ],
+    "hidden_completion_reason": "Completion command help and parser failures are covered. Generated shell scripts and dynamic completion protocol execution are deferred.",
+    "unreachable_commands": [
+      "schema",
+      "cluster",
+      "autocomplete",
+      "list",
+      "show",
+      "uninstall"
+    ],
+    "unreachable_reason": "Defined in source but not added to the root command in main.go.",
+    "terminal_presentation": "PTY/TTY colors, styles, terminal capability probes and interactive screens are deferred; exact plain pipe output including trailing spaces is covered.",
+    "byte_valued_argv": "The corpus covers Unicode argv only. Go accepts raw non-UTF-8 argv bytes; Rust currently rejects them explicitly at its String parser boundary. Byte-valued argv parity remains unresolved and is not normalized away.",
+    "native_platform_coverage": "Native process coverage is verified only on Linux. macOS and Windows execution, termination and platform-specific presentation remain unverified."
+  }
+}

@@ -1,0 +1,53 @@
+name: CLI harness
+
+on:
+  pull_request:
+    paths:
+      - 'harness/**'
+      - 'cmd/**'
+      - 'pkg/**'
+      - 'main.go'
+      - 'go.mod'
+      - 'go.sum'
+      - '.github/workflows/harness.yaml'
+  workflow_dispatch:
+    inputs:
+      repetitions:
+        description: Measured repetitions per binary and case
+        default: '15'
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  self-compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      REPETITIONS: ${{ inputs.repetitions || '3' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build measurement tools and Go reference
+        run: make -f harness/Makefile build
+      - name: Test the harness
+        run: make -f harness/Makefile test
+      - name: Compare the reference to itself
+        run: >-
+          python3 harness/run.py run
+          --binary go=bin/pb-go --binary identical=bin/pb-go
+          --fixture bin/pb-fixture --out harness/results/ci
+          --warmup 1 --repetitions "$REPETITIONS"
+      - name: Retain reports and transcripts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pb-harness-${{ github.sha }}
+          path: harness/results/ci/
+          retention-days: 14

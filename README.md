@@ -27,6 +27,15 @@ Query production logs. Explore metrics. Stream new events. Save repeatable inves
 - Dataset, user, role, and profile management
 - Human-readable terminal output and structured JSON for automation and agents
 
+For the Rust conversion, the [CLI comparison harness](harness/README.md) measures
+prebuilt Go and Rust binaries against isolated HTTP/Arrow Flight fixtures. It
+checks observable compatibility alongside startup, latency, throughput, CPU and
+peak memory, and saves repeatable reports for regression tracking.
+
+The Rust candidate implements the [offline CLI surface](docs/rust-phase1.md)
+and [phase-two profiles, authentication, status and dataset reads](docs/rust-phase2.md).
+The Go CLI remains the complete implementation during the port.
+
 ## Quick Start
 
 ```sh

@@ -1,0 +1,1663 @@
+{
+  "name": "pb",
+  "use": "pb",
+  "short": "\nParseable command line interface",
+  "long": "\npb is the command line interface for Parseable",
+  "example": "",
+  "aliases": [],
+  "flags": [
+    {
+      "name": "output",
+      "shorthand": "o",
+      "kind": "string",
+      "default": "text",
+      "usage": "Output format (text|json)"
+    },
+    {
+      "name": "version",
+      "shorthand": "v",
+      "kind": "bool",
+      "default": false,
+      "usage": "Print version"
+    }
+  ],
+  "children": [
+    {
+      "name": "agent",
+      "use": "agent",
+      "short": "Show the read-only command catalog for agents",
+      "long": "",
+      "example": "  pb agent -o json",
+      "aliases": [],
+      "flags": [
+        {
+          "name": "output",
+          "shorthand": "o",
+          "kind": "string",
+          "default": "text",
+          "usage": "Output format (text|json)"
+        }
+      ],
+      "children": [],
+      "args": {
+        "kind": "none"
+      },
+      "silence_usage": false,
+      "requires_profile": false,
+      "wrapped_preflight": false,
+      "operation": "agent"
+    },
+    {
+      "name": "cloud",
+      "use": "cloud",
+      "short": "Manage Parseable Cloud profiles",
+      "long": "\ncloud command is used to configure Parseable Cloud access.",
+      "example": "",
+      "aliases": [],
+      "flags": [
+        {
+          "name": "output",
+          "shorthand": "o",
+          "kind": "string",
+          "default": "text",
+          "usage": "Output format (text|json)"
+        }
+      ],
+      "children": [
+        {
+          "name": "profile",
+          "use": "profile",
+          "short": "Manage Parseable Cloud profiles",
+          "long": "\ncloud profile command is used to add Parseable Cloud profiles.",
+          "example": "",
+          "aliases": [],
+          "flags": [
+            {
+              "name": "output",
+              "shorthand": "o",
+              "kind": "string",
+              "default": "text",
+              "usage": "Output format (text|json)"
+            }
+          ],
+          "children": [
+            {
+              "name": "add",
+              "use": "add",
+              "short": "Add a Parseable Cloud profile",
+              "long": "\nAdd a Parseable Cloud profile using an API key created in Parseable Cloud.",
+              "example": "  pb cloud profile add --api-key psk_xxx\n  pb cloud profile add --api-key psk_xxx --name prod",
+              "aliases": [],
+              "flags": [
+                {
+                  "name": "api-key",
+                  "shorthand": "",
+                  "kind": "string",
+                  "default": "",
+                  "usage": "Parseable Cloud API key"
+                },
+                {
+                  "name": "force",
+                  "shorthand": "",
+                  "kind": "bool",
+                  "default": false,
+                  "usage": "overwrite existing profile"
+                },
+                {
+                  "name": "name",
+                  "shorthand": "",
+                  "kind": "string",
+                  "default": "",
+                  "usage": "profile name"
+                },
+                {
+                  "name": "orchestrator-url",
+                  "shorthand": "",
+                  "kind": "string",
+                  "default": "",
+                  "usage": "Parseable Cloud orchestrator URL"
+                },
+                {
+                  "name": "output",
+                  "shorthand": "o",
+                  "kind": "string",
+                  "default": "text",
+                  "usage": "Output format (text|json)"
+                }
+              ],
+              "children": [],
+              "args": {
+                "kind": "arbitrary"
+              },
+              "silence_usage": false,
+              "requires_profile": false,
+              "wrapped_preflight": false,
+              "operation": "deferred"
+            }
+          ],
+          "args": {
+            "kind": "arbitrary"
+          },
+          "silence_usage": false,
+          "requires_profile": false,
+          "wrapped_preflight": false,
+          "operation": "metadata"
+        }
+      ],
+      "args": {
+        "kind": "arbitrary"
+      },
+      "silence_usage": false,
+      "requires_profile": false,
+      "wrapped_preflight": false,
+      "operation": "metadata"
+    },
+    {
+      "name": "completion",
+      "use": "completion",
+      "long": "Generate the autocompletion script for pb for the specified shell.\nSee each sub-command's help for details on how to use the generated script.\n",
+      "short": "Generate the autocompletion script for the specified shell",
+      "example": "",
+      "aliases": [],
+      "flags": [],
+      "children": [
+        {
+          "name": "bash",
+          "use": "bash",
+          "long": "Generate the autocompletion script for the bash shell.\n\nThis script depends on the 'bash-completion' package.\nIf it is not installed already, you can install it via your OS's package manager.\n\nTo load completions in your current shell session:\n\n\tsource <(pb completion bash)\n\nTo load completions for every new session, execute once:\n\n#### Linux:\n\n\tpb completion bash > /etc/bash_completion.d/pb\n\n#### macOS:\n\n\tpb completion bash > $(brew --prefix)/etc/bash_completion.d/pb\n\nYou will need to start a new shell for this setup to take effect.\n",
+          "short": "Generate the autocompletion script for bash",
+          "example": "",
+          "aliases": [],
+          "flags": [
+            {
+              "name": "no-descriptions",
+              "shorthand": "",
+              "kind": "bool",
+              "default": false,
+              "usage": "disable completion descriptions"
+            }
+          ],
+          "children": [],
+          "args": {
+            "kind": "none"
+          },
+          "silence_usage": false,
+          "requires_profile": false,
+          "wrapped_preflight": false,
+          "operation": "deferred",
+          "disable_flags_in_use_line": true
+        },
+        {
+          "name": "fish",
+          "use": "fish",
+          "long": "Generate the autocompletion script for the fish shell.\n\nTo load completions in your current shell session:\n\n\tpb completion fish | source\n\nTo load completions for every new session, execute once:\n\n\tpb completion fish > ~/.config/fish/completions/pb.fish\n\nYou will need to start a new shell for this setup to take effect.\n",
+          "short": "Generate the autocompletion script for fish",
+          "example": "",
+          "aliases": [],
+          "flags": [
+            {
+              "name": "no-descriptions",
+              "shorthand": "",
+              "kind": "bool",
+              "default": false,
+              "usage": "disable completion descriptions"
+            }
+          ],
+          "children": [],
+          "args": {
+            "kind": "none"
+          },
+          "silence_usage": false,
+          "requires_profile": false,
+          "wrapped_preflight": false,
+          "operation": "deferred"
+        },
+        {
+          "name": "powershell",
+          "use": "powershell",
+          "long": "Generate the autocompletion script for powershell.\n\nTo load completions in your current shell session:\n\n\tpb completion powershell | Out-String | Invoke-Expression\n\nTo load completions for every new session, add the output of the above command\nto your powershell profile.\n",
+          "short": "Generate the autocompletion script for powershell",
+          "example": "",
+          "aliases": [],
+          "flags": [
+            {
+              "name": "no-descriptions",
+              "shorthand": "",
+              "kind": "bool",
+              "default": false,
+              "usage": "disable completion descriptions"
+            }
+          ],
+          "children": [],
+          "args": {
+            "kind": "none"
+          },
+          "silence_usage": false,
+          "requires_profile": false,
+          "wrapped_preflight": false,
+          "operation": "deferred"
+        },
+        {
+          "name": "zsh",
+          "use": "zsh",
+          "long": "Generate the autocompletion script for the zsh shell.\n\nIf shell completion is not already enabled in your environment you will need\nto enable it.  You can execute the following once:\n\n\techo \"autoload -U compinit; compinit\" >> ~/.zshrc\n\nTo load completions in your current shell session:\n\n\tsource <(pb completion zsh)\n\nTo load completions for every new session, execute once:\n\n#### Linux:\n\n\tpb completion zsh > \"${fpath[1]}/_pb\"\n\n#### macOS:\n\n\tpb completion zsh > $(brew --prefix)/share/zsh/site-functions/_pb\n\nYou will need to start a new shell for this setup to take effect.\n",
+          "short": "Generate the autocompletion script for zsh",
+          "example": "",
+          "aliases": [],
+          "flags": [
+            {
+              "name": "no-descriptions",
+              "shorthand": "",
+              "kind": "bool",
+              "default": false,
+              "usage": "disable completion descriptions"
+            }
+          ],
+          "children": [],
+          "args": {
+            "kind": "none"
+          },
+          "silence_usage": false,
+          "requires_profile": false,
+          "wrapped_preflight": false,
+          "operation": "deferred"
+        }
+      ],
+      "args": {
+        "kind": "arbitrary"
+      },
+      "silence_usage": false,
+      "requires_profile": false,
+      "wrapped_preflight": false,
+      "operation": "completion_group",
+      "hidden": true
+    },
+    {
+      "name": "dataset",
+      "use": "dataset",
+      "short": "Manage datasets",
+      "long": "\ndataset command is used to manage datasets.",
+      "example": "",
+      "aliases": [],
+      "flags": [
+        {
+          "name": "output",
+          "shorthand": "o",
+          "kind": "string",
+          "default": "text",
+          "usage": "Output format (text|json)"
+        }
+      ],
+      "children": [
+        {
+          "name": "add",
+          "use": "add dataset-name",
+          "short": "Create a new dataset",
+          "long": "",
+          "example": "  pb dataset add backend_logs\n  pb dataset add frontend_metrics --type metrics\n  pb dataset add checkout_traces --type traces",
+          "aliases": [],
+          "flags": [
+            {
+              "name": "type",
+              "shorthand": "",
+              "kind": "string",
+              "default": "",
+              "usage": "Dataset type (logs|metrics|traces)"
+            }
+          ],
+          "children": [],
+          "args": {
+            "kind": "exact",
+            "counts": [
+              1
+            ]
+          },
+          "silence_usage": true,
+          "requires_profile": true,
+          "wrapped_preflight": true,
+          "operation": "deferred"
+        },
+        {
+          "name": "info",
+          "use": "info dataset-name",
+          "short": "Get statistics for a dataset",
+          "long": "",
+          "example": "  pb dataset info backend_logs",
+          "aliases": [
+            "stat"
+          ],
+          "flags": [
+            {
+              "name": "output",
+              "shorthand": "o",
+              "kind": "string",
+              "default": "",
+              "usage": "Output format (text|json)"
+            }
+          ],
+          "children": [],
+          "args": {
+            "kind": "exact",
+            "counts": [
+              1
+            ]
+          },
+          "silence_usage": true,
+          "requires_profile": true,
+          "wrapped_preflight": true,
+          "operation": "deferred"
+        },
+        {
+          "name": "list",
+          "use": "list",
+          "short": "List all datasets",
+          "long": "",
+          "example": "  pb dataset list",
+          "aliases": [
+            "ls"
+          ],
+          "flags": [
+            {
+              "name": "output",
+              "shorthand": "o",
+              "kind": "string",
+              "default": "text",
+              "usage": "Output format: 'text' or 'json'"
+            }
+          ],
+          "children": [],
+          "args": {
+            "kind": "arbitrary"
+          },
+          "silence_usage": true,
+          "requires_profile": true,
+          "wrapped_preflight": true,
+          "operation": "deferred"
+        },
+        {
+          "name": "remove",
+          "use": "remove dataset-name",
+          "short": "Delete a dataset",
+          "long": "",
+          "example": " pb dataset remove backend_logs\n pb dataset remove backend_logs --type logs",
+          "aliases": [
+            "rm"
+          ],
+          "flags": [
+            {
+              "name": "type",
+              "shorthand": "",
+              "kind": "string",
+              "default": "",
+              "usage": "Only remove if dataset type matches (logs|metrics|traces)"
+            }
+          ],
+          "children": [],
+          "args": {
+            "kind": "exact",
+            "counts": [
+              1
+            ]
+          },
+          "silence_usage": true,
+          "requires_profile": true,
+          "wrapped_preflight": true,
+          "operation": "deferred"
+        },
+        {
+          "name": "schema",
+          "use": "schema <dataset>",
+          "short": "Show dataset field names and types",
+          "long": "",
+          "example": "  pb dataset schema backend_logs\n  pb dataset schema backend_logs -o json",
+          "aliases": [],
+          "flags": [
+            {
+              "name": "output",
+              "shorthand": "o",
+              "kind": "string",
+              "default": "text",
+              "usage": "Output format (text|json)"
+            }
+          ],
+          "children": [],
+          "args": {
+            "kind": "exact",
+            "counts": [
+              1
+            ]
+          },
+          "silence_usage": false,
+          "requires_profile": true,
+          "wrapped_preflight": true,
+          "operation": "deferred"
+        }
+      ],
+      "args": {
+        "kind": "arbitrary"
+      },
+      "silence_usage": false,
+      "requires_profile": true,
+      "wrapped_preflight": true,
+      "operation": "metadata"
+    },
+    {
+      "name": "help",
+      "use": "help [command]",
+      "short": "Help about any command",
+      "long": "",
+      "example": "",
+      "aliases": [],
+      "flags": [
+        {
+          "name": "output",
+          "shorthand": "o",
+          "kind": "string",
+          "default": "text",
+          "usage": "Output format (text|json)"
+        }
+      ],
+      "children": [],
+      "args": {
+        "kind": "arbitrary"
+      },
+      "silence_usage": false,
+      "requires_profile": false,
+      "wrapped_preflight": false,
+      "operation": "help"
+    },
+    {
+      "name": "login",
+      "use": "login",
+      "short": "Login to Parseable",
+      "long": "Interactive login wizard for Parseable.\n\nSelect self-hosted or Parseable Cloud and enter the required\ncredentials. All settings are saved to ~/.config/pb/config.toml.",
+      "example": "",
+      "aliases": [],
+      "flags": [],
+      "children": [],
+      "args": {
+        "kind": "arbitrary"
+      },
+      "silence_usage": false,
+      "requires_profile": false,
+      "wrapped_preflight": false,
+      "operation": "deferred"
+    },
+    {
+      "name": "logout",
+      "use": "logout",
+      "short": "Logout from the current Parseable profile",
+      "long": "Removes the active profile (URL and credentials) from config.",
+      "example": "  pb logout\n  pb logout --yes -o json",
+      "aliases": [],
+      "flags": [
+        {
+          "name": "output",
+          "shorthand": "o",
+          "kind": "string",
+          "default": "text",
+          "usage": "Output format (text|json)"
+        },
+        {
+          "name": "yes",
+          "shorthand": "",
+          "kind": "bool",
+          "default": false,
+          "usage": "confirm logout without prompting"
+        }
+      ],
+      "children": [],
+      "args": {
+        "kind": "arbitrary"
+      },
+      "silence_usage": false,
+      "requires_profile": false,
+      "wrapped_preflight": false,
+      "operation": "deferred"
+    },
+    {
+      "name": "profile",
+      "use": "profile",
+      "short": "Manage different Parseable targets",
+      "long": "\nuse profile command to configure different Parseable instances. Each profile takes a URL and credentials.",
+      "example": "",
+      "aliases": [],
+      "flags": [
+        {
+          "name": "output",
+          "shorthand": "o",
+          "kind": "string",
+          "default": "text",
+          "usage": "Output format (text|json)"
+        }
+      ],
+      "children": [
+        {
+          "name": "add",
+          "use": "add profile-name url [username] [password]",
+          "short": "Add a new profile",
+          "long": "Add a new profile to the config file",
+          "example": "  pb profile add local_parseable http://0.0.0.0:8000 admin admin\n  pb profile add local_parseable http://0.0.0.0:8000 --api-key psk_xxx",
+          "aliases": [],
+          "flags": [
+            {
+              "name": "api-key",
+              "shorthand": "",
+              "kind": "string",
+              "default": "",
+              "usage": "API key for self-hosted authentication"
+            },
+            {
+              "name": "output",
+              "shorthand": "o",
+              "kind": "string",
+              "default": "",
+              "usage": "Output format (text|json)"
+            }
+          ],
+          "children": [],
+          "args": {
+            "kind": "profile_add"
+          },
+          "silence_usage": false,
+          "requires_profile": false,
+          "wrapped_preflight": false,
+          "operation": "deferred"
+        },
+        {
+          "name": "default",
+          "use": "default profile-name",
+          "short": "Set default profile to use with all commands",
+          "long": "",
+          "example": "  pb profile default local_parseable",
+          "aliases": [],
+          "flags": [
+            {
+              "name": "output",
+              "shorthand": "o",
+              "kind": "string",
+              "default": "",
+              "usage": "Output format (text|json)"
+            }
+          ],
+          "children": [],
+          "args": {
+            "kind": "max",
+            "counts": [
+              1
+            ]
+          },
+          "silence_usage": false,
+          "requires_profile": false,
+          "wrapped_preflight": false,
+          "operation": "deferred"
+        },
+        {
+          "name": "list",
+          "use": "list profiles",
+          "short": "List all added profiles",
+          "long": "",
+          "example": "  pb profile list",
+          "aliases": [
+            "ls"
+          ],
+          "flags": [
+            {
+              "name": "output",
+              "shorthand": "o",
+              "kind": "string",
+              "default": "",
+              "usage": "Output format (text|json)"
+            }
+          ],
+          "children": [],
+          "args": {
+            "kind": "arbitrary"
+          },
+          "silence_usage": false,
+          "requires_profile": false,
+          "wrapped_preflight": false,
+          "operation": "deferred"
+        },
+        {
+          "name": "remove",
+          "use": "remove profile-name",
+          "short": "Delete a profile",
+          "long": "",
+          "example": "  pb profile remove local_parseable",
+          "aliases": [
+            "rm"
+          ],
+          "flags": [
+            {
+              "name": "output",
+              "shorthand": "o",
+              "kind": "string",
+              "default": "",
+              "usage": "Output format (text|json)"
+            }
+          ],
+          "children": [],
+          "args": {
+            "kind": "exact",
+            "counts": [
+              1
+            ]
+          },
+          "silence_usage": false,
+          "requires_profile": false,
+          "wrapped_preflight": false,
+          "operation": "deferred"
+        },
+        {
+          "name": "update",
+          "use": "update profile-name new-url",
+          "short": "Update the URL of an existing profile",
+          "long": "",
+          "example": "  pb profile update local http://localhost:9000",
+          "aliases": [
+            "set-url"
+          ],
+          "flags": [],
+          "children": [],
+          "args": {
+            "kind": "exact",
+            "counts": [
+              2
+            ]
+          },
+          "silence_usage": false,
+          "requires_profile": false,
+          "wrapped_preflight": false,
+          "operation": "deferred"
+        }
+      ],
+      "args": {
+        "kind": "arbitrary"
+      },
+      "silence_usage": false,
+      "requires_profile": false,
+      "wrapped_preflight": false,
+      "operation": "metadata"
+    },
+    {
+      "name": "promql",
+      "use": "promql",
+      "short": "PromQL queries and metrics exploration",
+      "long": "\nRun PromQL queries and explore metrics stored in a Parseable metrics stream.",
+      "example": "  pb promql run -i\n  pb promql run \"http_requests_total\" --dataset otel_metrics --from=1h -i",
+      "aliases": [],
+      "flags": [
+        {
+          "name": "output",
+          "shorthand": "o",
+          "kind": "string",
+          "default": "text",
+          "usage": "Output format (text|json)"
+        }
+      ],
+      "children": [
+        {
+          "name": "active-queries",
+          "use": "active-queries",
+          "short": "Show currently executing PromQL queries",
+          "long": "",
+          "example": "  pb promql active-queries\n  pb promql active-queries -o json",
+          "aliases": [
+            "ps"
+          ],
+          "flags": [
+            {
+              "name": "output",
+              "shorthand": "o",
+              "kind": "string",
+              "default": "text",
+              "usage": "Output format: text or json"
+            }
+          ],
+          "children": [],
+          "args": {
+            "kind": "none"
+          },
+          "silence_usage": false,
+          "requires_profile": true,
+          "wrapped_preflight": true,
+          "operation": "deferred"
+        },
+        {
+          "name": "cardinality",
+          "use": "cardinality",
+          "short": "Cardinality analysis for a metrics stream",
+          "long": "\nAnalyze label cardinality and active series in a Parseable metrics stream.",
+          "example": "",
+          "aliases": [],
+          "flags": [
+            {
+              "name": "output",
+              "shorthand": "o",
+              "kind": "string",
+              "default": "text",
+              "usage": "Output format (text|json)"
+            }
+          ],
+          "children": [
+            {
+              "name": "active-series",
+              "use": "active-series [stream] [selector]",
+              "short": "List currently active series",
+              "long": "",
+              "example": "  pb promql cardinality active-series otel_metrics '{job=\"api\"}'\n  pb promql cardinality active-series --dataset otel_metrics --selector '{job=\"api\"}'",
+              "aliases": [],
+              "flags": [
+                {
+                  "name": "dataset",
+                  "shorthand": "d",
+                  "kind": "string",
+                  "default": "select-dataset",
+                  "usage": "Metrics dataset"
+                },
+                {
+                  "name": "limit",
+                  "shorthand": "",
+                  "kind": "int",
+                  "default": 20,
+                  "usage": "Maximum number of series to return"
+                },
+                {
+                  "name": "lookback",
+                  "shorthand": "",
+                  "kind": "int",
+                  "default": 3600,
+                  "usage": "Seconds to look back from now"
+                },
+                {
+                  "name": "output",
+                  "shorthand": "o",
+                  "kind": "string",
+                  "default": "text",
+                  "usage": "Output format: text or json"
+                },
+                {
+                  "name": "selector",
+                  "shorthand": "",
+                  "kind": "string",
+                  "default": "",
+                  "usage": "Label selector to filter series"
+                }
+              ],
+              "children": [],
+              "args": {
+                "kind": "max",
+                "counts": [
+                  2
+                ]
+              },
+              "silence_usage": false,
+              "requires_profile": true,
+              "wrapped_preflight": true,
+              "operation": "deferred"
+            },
+            {
+              "name": "label-names",
+              "use": "label-names [stream]",
+              "short": "Labels with the highest number of distinct values",
+              "long": "",
+              "example": "  pb promql cardinality label-names otel_metrics\n  pb promql cardinality label-names --dataset otel_metrics --limit 20",
+              "aliases": [],
+              "flags": [
+                {
+                  "name": "dataset",
+                  "shorthand": "d",
+                  "kind": "string",
+                  "default": "select-dataset",
+                  "usage": "Metrics dataset"
+                },
+                {
+                  "name": "limit",
+                  "shorthand": "",
+                  "kind": "int",
+                  "default": 20,
+                  "usage": "Maximum number of labels to return"
+                },
+                {
+                  "name": "lookback",
+                  "shorthand": "",
+                  "kind": "int",
+                  "default": 3600,
+                  "usage": "Seconds to look back from now"
+                },
+                {
+                  "name": "output",
+                  "shorthand": "o",
+                  "kind": "string",
+                  "default": "text",
+                  "usage": "Output format: text or json"
+                },
+                {
+                  "name": "selector",
+                  "shorthand": "",
+                  "kind": "string",
+                  "default": "",
+                  "usage": "Label selector to filter series"
+                }
+              ],
+              "children": [],
+              "args": {
+                "kind": "max",
+                "counts": [
+                  1
+                ]
+              },
+              "silence_usage": false,
+              "requires_profile": true,
+              "wrapped_preflight": true,
+              "operation": "deferred"
+            },
+            {
+              "name": "label-values",
+              "use": "label-values [stream] [label]",
+              "short": "Series count per value for a specific label",
+              "long": "",
+              "example": "  pb promql cardinality label-values otel_metrics service.name\n  pb promql cardinality label-values --label job --dataset otel_metrics",
+              "aliases": [],
+              "flags": [
+                {
+                  "name": "dataset",
+                  "shorthand": "d",
+                  "kind": "string",
+                  "default": "select-dataset",
+                  "usage": "Metrics dataset"
+                },
+                {
+                  "name": "label",
+                  "shorthand": "l",
+                  "kind": "string",
+                  "default": "",
+                  "usage": "Label name to analyze"
+                },
+                {
+                  "name": "limit",
+                  "shorthand": "",
+                  "kind": "int",
+                  "default": 20,
+                  "usage": "Maximum number of values to return"
+                },
+                {
+                  "name": "lookback",
+                  "shorthand": "",
+                  "kind": "int",
+                  "default": 3600,
+                  "usage": "Seconds to look back from now"
+                },
+                {
+                  "name": "output",
+                  "shorthand": "o",
+                  "kind": "string",
+                  "default": "text",
+                  "usage": "Output format: text or json"
+                }
+              ],
+              "children": [],
+              "args": {
+                "kind": "max",
+                "counts": [
+                  2
+                ]
+              },
+              "silence_usage": false,
+              "requires_profile": true,
+              "wrapped_preflight": true,
+              "operation": "deferred"
+            }
+          ],
+          "args": {
+            "kind": "arbitrary"
+          },
+          "silence_usage": false,
+          "requires_profile": true,
+          "wrapped_preflight": true,
+          "operation": "metadata"
+        },
+        {
+          "name": "label-values",
+          "use": "label-values [label_name] [stream]",
+          "short": "List distinct values for a label",
+          "long": "",
+          "example": "  pb promql label-values job otel_metrics\n  pb promql label-values job --dataset otel_metrics\n  pb promql label-values __name__ --dataset otel_metrics",
+          "aliases": [],
+          "flags": [
+            {
+              "name": "dataset",
+              "shorthand": "d",
+              "kind": "string",
+              "default": "select-dataset",
+              "usage": "Metrics dataset"
+            },
+            {
+              "name": "from",
+              "shorthand": "f",
+              "kind": "string",
+              "default": "",
+              "usage": "Start time filter (optional)"
+            },
+            {
+              "name": "output",
+              "shorthand": "o",
+              "kind": "string",
+              "default": "text",
+              "usage": "Output format: text or json"
+            },
+            {
+              "name": "to",
+              "shorthand": "t",
+              "kind": "string",
+              "default": "",
+              "usage": "End time filter (optional)"
+            }
+          ],
+          "children": [],
+          "args": {
+            "kind": "range",
+            "counts": [
+              1,
+              2
+            ]
+          },
+          "silence_usage": false,
+          "requires_profile": true,
+          "wrapped_preflight": true,
+          "operation": "deferred"
+        },
+        {
+          "name": "labels",
+          "use": "labels [stream]",
+          "short": "List all label names in a metrics stream",
+          "long": "",
+          "example": "  pb promql labels otel_metrics\n  pb promql labels --dataset otel_metrics",
+          "aliases": [],
+          "flags": [
+            {
+              "name": "dataset",
+              "shorthand": "d",
+              "kind": "string",
+              "default": "select-dataset",
+              "usage": "Metrics dataset"
+            },
+            {
+              "name": "from",
+              "shorthand": "f",
+              "kind": "string",
+              "default": "",
+              "usage": "Start time filter (optional)"
+            },
+            {
+              "name": "output",
+              "shorthand": "o",
+              "kind": "string",
+              "default": "text",
+              "usage": "Output format: text or json"
+            },
+            {
+              "name": "to",
+              "shorthand": "t",
+              "kind": "string",
+              "default": "",
+              "usage": "End time filter (optional)"
+            }
+          ],
+          "children": [],
+          "args": {
+            "kind": "max",
+            "counts": [
+              1
+            ]
+          },
+          "silence_usage": false,
+          "requires_profile": true,
+          "wrapped_preflight": true,
+          "operation": "deferred"
+        },
+        {
+          "name": "run",
+          "use": "run [expr]",
+          "short": "Run a PromQL query (range or instant)",
+          "long": "\nEvaluate a PromQL expression against a Parseable metrics stream.\nDefaults to range query. Use --instant for point-in-time evaluation.",
+          "example": "  pb promql run \"http_requests_total\" --dataset otel_metrics --from 1h\n  pb promql run \"rate(http_requests_total[5m])\" --dataset otel_metrics --from 1h --step 1m\n  pb promql run \"up\" --dataset otel_metrics --instant -o json",
+          "aliases": [],
+          "flags": [
+            {
+              "name": "dataset",
+              "shorthand": "d",
+              "kind": "string",
+              "default": "select-dataset",
+              "usage": "Metrics dataset to query"
+            },
+            {
+              "name": "from",
+              "shorthand": "f",
+              "kind": "string",
+              "default": "5m",
+              "usage": "Start time (e.g. 5m, 1h, 2024-01-01T00:00:00Z)"
+            },
+            {
+              "name": "instant",
+              "shorthand": "",
+              "kind": "bool",
+              "default": false,
+              "usage": "Instant query \u2014 evaluate at --to time only"
+            },
+            {
+              "name": "interactive",
+              "shorthand": "i",
+              "kind": "bool",
+              "default": false,
+              "usage": "Open interactive TUI"
+            },
+            {
+              "name": "output",
+              "shorthand": "o",
+              "kind": "string",
+              "default": "text",
+              "usage": "Output format: text or json"
+            },
+            {
+              "name": "step",
+              "shorthand": "",
+              "kind": "string",
+              "default": "auto",
+              "usage": "Resolution step for range queries (auto, 15s, 1m)"
+            },
+            {
+              "name": "to",
+              "shorthand": "t",
+              "kind": "string",
+              "default": "now",
+              "usage": "End time"
+            }
+          ],
+          "children": [],
+          "args": {
+            "kind": "max",
+            "counts": [
+              1
+            ]
+          },
+          "silence_usage": false,
+          "requires_profile": true,
+          "wrapped_preflight": true,
+          "operation": "deferred"
+        },
+        {
+          "name": "series",
+          "use": "series [stream]",
+          "short": "Find time series matching a label selector",
+          "long": "",
+          "example": "  pb promql series otel_metrics --match 'http_requests_total'\n  pb promql series --match '{job=\"api\"}' --dataset otel_metrics",
+          "aliases": [],
+          "flags": [
+            {
+              "name": "dataset",
+              "shorthand": "d",
+              "kind": "string",
+              "default": "select-dataset",
+              "usage": "Metrics dataset"
+            },
+            {
+              "name": "from",
+              "shorthand": "f",
+              "kind": "string",
+              "default": "",
+              "usage": "Start time filter (optional)"
+            },
+            {
+              "name": "match",
+              "shorthand": "m",
+              "kind": "strings",
+              "default": [],
+              "usage": "Series selector (repeatable, e.g. '{job=\"api\"}')"
+            },
+            {
+              "name": "output",
+              "shorthand": "o",
+              "kind": "string",
+              "default": "text",
+              "usage": "Output format: text or json"
+            },
+            {
+              "name": "to",
+              "shorthand": "t",
+              "kind": "string",
+              "default": "",
+              "usage": "End time filter (optional)"
+            }
+          ],
+          "children": [],
+          "args": {
+            "kind": "max",
+            "counts": [
+              1
+            ]
+          },
+          "silence_usage": false,
+          "requires_profile": true,
+          "wrapped_preflight": true,
+          "operation": "deferred"
+        },
+        {
+          "name": "tsdb",
+          "use": "tsdb [stream]",
+          "short": "Show TSDB statistics for a metrics stream",
+          "long": "",
+          "example": "  pb promql tsdb otel_metrics\n  pb promql tsdb --dataset otel_metrics\n  pb promql tsdb --dataset otel_metrics --top 20 --focus-label job",
+          "aliases": [],
+          "flags": [
+            {
+              "name": "dataset",
+              "shorthand": "d",
+              "kind": "string",
+              "default": "select-dataset",
+              "usage": "Metrics dataset"
+            },
+            {
+              "name": "date",
+              "shorthand": "",
+              "kind": "string",
+              "default": "",
+              "usage": "Date to analyze (YYYY-MM-DD, defaults to today)"
+            },
+            {
+              "name": "focus-label",
+              "shorthand": "",
+              "kind": "string",
+              "default": "",
+              "usage": "Label to break down series counts by"
+            },
+            {
+              "name": "output",
+              "shorthand": "o",
+              "kind": "string",
+              "default": "text",
+              "usage": "Output format: text or json"
+            },
+            {
+              "name": "top",
+              "shorthand": "",
+              "kind": "int",
+              "default": 10,
+              "usage": "Max entries per category"
+            }
+          ],
+          "children": [],
+          "args": {
+            "kind": "max",
+            "counts": [
+              1
+            ]
+          },
+          "silence_usage": false,
+          "requires_profile": true,
+          "wrapped_preflight": true,
+          "operation": "deferred"
+        }
+      ],
+      "args": {
+        "kind": "arbitrary"
+      },
+      "silence_usage": false,
+      "requires_profile": true,
+      "wrapped_preflight": true,
+      "operation": "metadata"
+    },
+    {
+      "name": "role",
+      "use": "role",
+      "short": "Manage roles",
+      "long": "\nrole command is used to manage roles.",
+      "example": "",
+      "aliases": [],
+      "flags": [
+        {
+          "name": "output",
+          "shorthand": "o",
+          "kind": "string",
+          "default": "text",
+          "usage": "Output format (text|json)"
+        }
+      ],
+      "children": [
+        {
+          "name": "add",
+          "use": "add role-name",
+          "short": "Add a new role",
+          "long": "Add a new role using an interactive prompt that asks only for its privilege.",
+          "example": "  pb role add ingestors",
+          "aliases": [],
+          "flags": [],
+          "children": [],
+          "args": {
+            "kind": "exact",
+            "counts": [
+              1
+            ]
+          },
+          "silence_usage": false,
+          "requires_profile": true,
+          "wrapped_preflight": true,
+          "operation": "deferred"
+        },
+        {
+          "name": "list",
+          "use": "list",
+          "short": "List all roles",
+          "long": "",
+          "example": "  pb role list",
+          "aliases": [
+            "ls"
+          ],
+          "flags": [
+            {
+              "name": "output",
+              "shorthand": "o",
+              "kind": "string",
+              "default": "text",
+              "usage": "Output format: 'text' or 'json'"
+            }
+          ],
+          "children": [],
+          "args": {
+            "kind": "arbitrary"
+          },
+          "silence_usage": true,
+          "requires_profile": true,
+          "wrapped_preflight": true,
+          "operation": "deferred"
+        },
+        {
+          "name": "remove",
+          "use": "remove role-name",
+          "short": "Delete a role",
+          "long": "Delete an existing role. If the role name is missing, show the available role names without sending a delete request.",
+          "example": "  pb role remove ingestor\n  pb role rm ingestor",
+          "aliases": [
+            "rm"
+          ],
+          "flags": [],
+          "children": [],
+          "args": {
+            "kind": "exact",
+            "counts": [
+              1
+            ]
+          },
+          "silence_usage": false,
+          "requires_profile": true,
+          "wrapped_preflight": true,
+          "operation": "deferred"
+        }
+      ],
+      "args": {
+        "kind": "arbitrary"
+      },
+      "silence_usage": false,
+      "requires_profile": true,
+      "wrapped_preflight": true,
+      "operation": "metadata"
+    },
+    {
+      "name": "sql",
+      "use": "sql",
+      "short": "Run SQL query on a dataset",
+      "long": "\nRun SQL query on a dataset. Default output format is json. Use -i flag to open interactive table view.",
+      "example": "  pb sql run -i\n  pb sql run \"SELECT * FROM backend\" --from=1h -i",
+      "aliases": [],
+      "flags": [
+        {
+          "name": "output",
+          "shorthand": "o",
+          "kind": "string",
+          "default": "text",
+          "usage": "Output format (text|json)"
+        }
+      ],
+      "children": [
+        {
+          "name": "list",
+          "use": "list",
+          "short": "List of saved queries",
+          "long": "\nShow the list of saved queries for active user",
+          "example": "pb sql list [-o | --output]",
+          "aliases": [
+            "ls"
+          ],
+          "flags": [
+            {
+              "name": "output",
+              "shorthand": "o",
+              "kind": "string",
+              "default": "",
+              "usage": "Output format (text or json)"
+            }
+          ],
+          "children": [],
+          "args": {
+            "kind": "arbitrary"
+          },
+          "silence_usage": true,
+          "requires_profile": true,
+          "wrapped_preflight": true,
+          "operation": "deferred"
+        },
+        {
+          "name": "run",
+          "use": "run [query] [flags]",
+          "short": "Run SQL query on a dataset",
+          "long": "\nRun SQL query on a dataset. Default output format is text.\nUse --output json for JSON output, or -i for interactive table view.\nQueries without a SQL LIMIT return at most 500 rows.\nExplicit limits are not capped at 500 by pb; choose a reasonable value.",
+          "example": "  pb sql run \"select * from frontend\" --from=10m --to=now\n  pb sql run \"select * from frontend\" -i",
+          "aliases": [],
+          "flags": [
+            {
+              "name": "from",
+              "shorthand": "f",
+              "kind": "string",
+              "default": "1m",
+              "usage": "Start time for query."
+            },
+            {
+              "name": "interactive",
+              "shorthand": "i",
+              "kind": "bool",
+              "default": false,
+              "usage": "Open interactive table view"
+            },
+            {
+              "name": "output",
+              "shorthand": "o",
+              "kind": "string",
+              "default": "",
+              "usage": "Output format (text|json)"
+            },
+            {
+              "name": "save-as",
+              "shorthand": "",
+              "kind": "string",
+              "default": "",
+              "usage": "Save this query with a name for later use"
+            },
+            {
+              "name": "to",
+              "shorthand": "t",
+              "kind": "string",
+              "default": "now",
+              "usage": "End time for query."
+            }
+          ],
+          "children": [],
+          "args": {
+            "kind": "max",
+            "counts": [
+              1
+            ]
+          },
+          "silence_usage": true,
+          "requires_profile": true,
+          "wrapped_preflight": true,
+          "operation": "deferred"
+        },
+        {
+          "name": "save",
+          "use": "save [query]",
+          "short": "Save SQL query",
+          "long": "\nSave a SQL query without running it.",
+          "example": "  pb sql save 'select * from frontend'\n  pb sql save \"select * from frontend\" --name frontend-errors --from=1h --to=now",
+          "aliases": [],
+          "flags": [
+            {
+              "name": "from",
+              "shorthand": "f",
+              "kind": "string",
+              "default": "1m",
+              "usage": "Start time for query."
+            },
+            {
+              "name": "name",
+              "shorthand": "",
+              "kind": "string",
+              "default": "",
+              "usage": "Saved query name. Defaults to the dataset name when available."
+            },
+            {
+              "name": "to",
+              "shorthand": "t",
+              "kind": "string",
+              "default": "now",
+              "usage": "End time for query."
+            }
+          ],
+          "children": [],
+          "args": {
+            "kind": "exact",
+            "counts": [
+              1
+            ]
+          },
+          "silence_usage": true,
+          "requires_profile": true,
+          "wrapped_preflight": true,
+          "operation": "deferred"
+        }
+      ],
+      "args": {
+        "kind": "arbitrary"
+      },
+      "silence_usage": false,
+      "requires_profile": true,
+      "wrapped_preflight": true,
+      "operation": "metadata"
+    },
+    {
+      "name": "status",
+      "use": "status",
+      "short": "Check connection status for the active profile",
+      "long": "",
+      "example": "  pb status\n  pb status -o json",
+      "aliases": [],
+      "flags": [
+        {
+          "name": "output",
+          "shorthand": "o",
+          "kind": "string",
+          "default": "text",
+          "usage": "Output format (text|json)"
+        }
+      ],
+      "children": [],
+      "args": {
+        "kind": "arbitrary"
+      },
+      "silence_usage": false,
+      "requires_profile": false,
+      "wrapped_preflight": false,
+      "operation": "status"
+    },
+    {
+      "name": "tail",
+      "use": "tail dataset-name",
+      "short": "Stream live events from a dataset",
+      "long": "",
+      "example": " pb tail backend_logs",
+      "aliases": [],
+      "flags": [
+        {
+          "name": "output",
+          "shorthand": "o",
+          "kind": "string",
+          "default": "text",
+          "usage": "Output format (text|json)"
+        }
+      ],
+      "children": [],
+      "args": {
+        "kind": "exact",
+        "counts": [
+          1
+        ]
+      },
+      "silence_usage": false,
+      "requires_profile": true,
+      "wrapped_preflight": false,
+      "operation": "deferred"
+    },
+    {
+      "name": "user",
+      "use": "user",
+      "short": "Manage users",
+      "long": "\nuser command is used to manage users.",
+      "example": "",
+      "aliases": [],
+      "flags": [
+        {
+          "name": "output",
+          "shorthand": "o",
+          "kind": "string",
+          "default": "text",
+          "usage": "Output format (text|json)"
+        }
+      ],
+      "children": [
+        {
+          "name": "add",
+          "use": "add user-name",
+          "short": "Add a new user",
+          "long": "Add a self-hosted user and assign at least one existing role. For Parseable Cloud, invite the user from the dashboard instead.",
+          "example": "  pb user add bob --role reader",
+          "aliases": [],
+          "flags": [
+            {
+              "name": "role",
+              "shorthand": "r",
+              "kind": "string",
+              "default": "",
+              "usage": "specify the role(s) to be assigned to the user. Use comma separated values for multiple roles. Example: --role admin,developer"
+            }
+          ],
+          "children": [],
+          "args": {
+            "kind": "exact",
+            "counts": [
+              1
+            ]
+          },
+          "silence_usage": false,
+          "requires_profile": true,
+          "wrapped_preflight": true,
+          "operation": "deferred"
+        },
+        {
+          "name": "list",
+          "use": "list",
+          "short": "List all users",
+          "long": "",
+          "example": "  pb user list",
+          "aliases": [
+            "ls"
+          ],
+          "flags": [
+            {
+              "name": "output",
+              "shorthand": "o",
+              "kind": "string",
+              "default": "",
+              "usage": "Output format: 'text' or 'json'"
+            }
+          ],
+          "children": [],
+          "args": {
+            "kind": "arbitrary"
+          },
+          "silence_usage": true,
+          "requires_profile": true,
+          "wrapped_preflight": true,
+          "operation": "deferred"
+        },
+        {
+          "name": "remove",
+          "use": "remove user-name",
+          "short": "Delete a user",
+          "long": "",
+          "example": "  pb user remove bob",
+          "aliases": [
+            "rm"
+          ],
+          "flags": [],
+          "children": [],
+          "args": {
+            "kind": "exact",
+            "counts": [
+              1
+            ]
+          },
+          "silence_usage": false,
+          "requires_profile": true,
+          "wrapped_preflight": true,
+          "operation": "deferred"
+        },
+        {
+          "name": "set-role",
+          "use": "set-role user-name roles",
+          "short": "Add roles to a user",
+          "long": "Add one or more roles to a user without removing their existing role assignments.",
+          "example": "  pb user set-role bob admin,developer",
+          "aliases": [],
+          "flags": [],
+          "children": [],
+          "args": {
+            "kind": "arbitrary"
+          },
+          "silence_usage": false,
+          "requires_profile": true,
+          "wrapped_preflight": true,
+          "operation": "deferred"
+        }
+      ],
+      "args": {
+        "kind": "arbitrary"
+      },
+      "silence_usage": false,
+      "requires_profile": true,
+      "wrapped_preflight": true,
+      "operation": "metadata"
+    },
+    {
+      "name": "version",
+      "use": "version",
+      "short": "Print version",
+      "long": "Print the client version. For server and connection details, use pb status.",
+      "example": "  pb version",
+      "aliases": [],
+      "flags": [
+        {
+          "name": "output",
+          "shorthand": "o",
+          "kind": "string",
+          "default": "text",
+          "usage": "Output format (text|json)"
+        }
+      ],
+      "children": [],
+      "args": {
+        "kind": "arbitrary"
+      },
+      "silence_usage": false,
+      "requires_profile": false,
+      "wrapped_preflight": false,
+      "operation": "version"
+    }
+  ],
+  "args": {
+    "kind": "arbitrary"
+  },
+  "silence_usage": false,
+  "requires_profile": false,
+  "wrapped_preflight": false,
+  "operation": "root"
+}

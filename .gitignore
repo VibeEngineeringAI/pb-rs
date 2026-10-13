@@ -31,3 +31,10 @@ dist/
 
 # OS Files
 .DS_Store
+
+# CLI comparison artifacts and Python harness bytecode
+/harness/results/
+__pycache__/
+
+# Rust build artifacts
+/target/

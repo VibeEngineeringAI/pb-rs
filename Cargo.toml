@@ -1,0 +1,41 @@
+[package]
+name = "pb"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.96"
+license = "AGPL-3.0-or-later"
+description = "Native Rust Parseable CLI"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = { version = "1.0", features = ["preserve_order", "arbitrary_precision", "raw_value"] }
+toml = { version = "0.9.11", features = ["preserve_order"] }
+tokio = { version = "1", features = ["rt", "time", "sync", "net", "io-util"] }
+url = "2"
+base64 = "0.22"
+unicode-width = "0.2"
+stacker = "0.1"
+serde_stacker = "0.1"
+hyper = { version = "1", features = ["client", "http1", "http2"] }
+hyper-util = { version = "0.1", features = ["client", "client-legacy", "client-proxy", "http1", "http2", "tokio"] }
+hyper-rustls = { version = "0.27", default-features = false, features = ["http1", "http2", "native-tokio", "aws-lc-rs", "tls12"] }
+http = "1"
+http-body-util = "0.1"
+bytes = "1"
+async-compression = { version = "0.4", features = ["tokio", "gzip"] }
+tokio-util = { version = "0.7", features = ["io"] }
+futures-core = "0.3"
+tower-service = "0.3"
+tokio-rustls = "0.26"
+rustls = { version = "0.23", default-features = false, features = ["aws_lc_rs", "std", "tls12"] }
+
+[dev-dependencies]
+flate2 = "1"
+
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = true
