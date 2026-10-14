@@ -10958,9 +10958,441 @@
         },
         "trace": "147955b5e5f2831de20b4636bd666039b1deaa0126fea7a1a0dd072d845c280f"
       }
+    },
+    {
+      "issues": [],
+      "name": "p4-run-error-http-text",
+      "signature": {
+        "config": {
+          ".": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "cache": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "config": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "config/pb": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "config/pb/config.toml": {
+            "mode": "0o600",
+            "raw_sha256": "bfbf7cf275d7a6b380365c8ba0ffe1d11220e2484d0f5fc2de854018caa44fdf",
+            "toml": {
+              "DefaultProfile": "fixture",
+              "Profiles": {
+                "fixture": {
+                  "cloud": false,
+                  "password": "harness",
+                  "url": "http://<FIXTURE>",
+                  "username": "harness"
+                }
+              }
+            },
+            "type": "file"
+          },
+          "data": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "state": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "tmp": {
+            "mode": "0o755",
+            "type": "directory"
+          }
+        },
+        "requests": [
+          {
+            "body_b64": "",
+            "framing": "none",
+            "headers": {
+              "accept-encoding": "gzip",
+              "authorization": "Basic aGFybmVzczpoYXJuZXNz"
+            },
+            "listener": "primary",
+            "method": "GET",
+            "target": "/prometheus/api/v1/query?query=up&stream=select-dataset&time=2024-01-01T00%3A01%3A00Z"
+          }
+        ],
+        "stderr": "7834a819a1c4d152715ac89440e5a29c6a14b4c575d7c528a02e6945435a6e84",
+        "stderr_raw": "7834a819a1c4d152715ac89440e5a29c6a14b4c575d7c528a02e6945435a6e84",
+        "stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "termination": {
+          "exit": 1
+        },
+        "trace": "6740c57142c08ae5efc6a49f9286ad62b099513642e16220187931131541e61d"
+      }
+    },
+    {
+      "issues": [],
+      "name": "p4-run-error-http-json",
+      "signature": {
+        "config": {
+          ".": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "cache": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "config": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "config/pb": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "config/pb/config.toml": {
+            "mode": "0o600",
+            "raw_sha256": "ac69646863859321a28cd8c8092c256b5e77baf76044a5c978716e9b83272f10",
+            "toml": {
+              "DefaultProfile": "fixture",
+              "Profiles": {
+                "fixture": {
+                  "cloud": false,
+                  "password": "harness",
+                  "url": "http://<FIXTURE>",
+                  "username": "harness"
+                }
+              }
+            },
+            "type": "file"
+          },
+          "data": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "state": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "tmp": {
+            "mode": "0o755",
+            "type": "directory"
+          }
+        },
+        "requests": [
+          {
+            "body_b64": "",
+            "framing": "none",
+            "headers": {
+              "accept-encoding": "gzip",
+              "authorization": "Basic aGFybmVzczpoYXJuZXNz"
+            },
+            "listener": "primary",
+            "method": "GET",
+            "target": "/prometheus/api/v1/query?query=up&stream=select-dataset&time=2024-01-01T00%3A01%3A00Z"
+          }
+        ],
+        "stderr": "cea45dbba541ddccb49a4e10b4cdbedb4d9b0cec65084d67ca933ba13992bf7e",
+        "stderr_raw": "cea45dbba541ddccb49a4e10b4cdbedb4d9b0cec65084d67ca933ba13992bf7e",
+        "stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "termination": {
+          "exit": 1
+        },
+        "trace": "e5923d02871eb1e449c6c00de9eb1a92b24c27c2582ea241557e864693790331"
+      }
+    },
+    {
+      "issues": [],
+      "name": "p4-run-error-http-invalid-bytes-text",
+      "signature": {
+        "config": {
+          ".": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "cache": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "config": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "config/pb": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "config/pb/config.toml": {
+            "mode": "0o600",
+            "raw_sha256": "fc24cb11d8f6119233411d3efe167f5f053a14cf31eda3e80a5bc023da33ca9b",
+            "toml": {
+              "DefaultProfile": "fixture",
+              "Profiles": {
+                "fixture": {
+                  "cloud": false,
+                  "password": "harness",
+                  "url": "http://<FIXTURE>",
+                  "username": "harness"
+                }
+              }
+            },
+            "type": "file"
+          },
+          "data": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "state": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "tmp": {
+            "mode": "0o755",
+            "type": "directory"
+          }
+        },
+        "requests": [
+          {
+            "body_b64": "",
+            "framing": "none",
+            "headers": {
+              "accept-encoding": "gzip",
+              "authorization": "Basic aGFybmVzczpoYXJuZXNz"
+            },
+            "listener": "primary",
+            "method": "GET",
+            "target": "/prometheus/api/v1/query?query=up&stream=select-dataset&time=2024-01-01T00%3A01%3A00Z"
+          }
+        ],
+        "stderr": "d165705135c2798c6845ac802a2e3f4a9ee68a32fa78366249e4a774c8353a82",
+        "stderr_raw": "d165705135c2798c6845ac802a2e3f4a9ee68a32fa78366249e4a774c8353a82",
+        "stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "termination": {
+          "exit": 1
+        },
+        "trace": "84a87797852123576820699e0f772621a98ae689c48bd8b01186cd9fcb533c88"
+      }
+    },
+    {
+      "issues": [],
+      "name": "p4-run-error-http-invalid-bytes-json",
+      "signature": {
+        "config": {
+          ".": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "cache": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "config": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "config/pb": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "config/pb/config.toml": {
+            "mode": "0o600",
+            "raw_sha256": "91594deef87fc7ada1272dbe2482a787eaa3819cc866cd12e5024888960d189b",
+            "toml": {
+              "DefaultProfile": "fixture",
+              "Profiles": {
+                "fixture": {
+                  "cloud": false,
+                  "password": "harness",
+                  "url": "http://<FIXTURE>",
+                  "username": "harness"
+                }
+              }
+            },
+            "type": "file"
+          },
+          "data": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "state": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "tmp": {
+            "mode": "0o755",
+            "type": "directory"
+          }
+        },
+        "requests": [
+          {
+            "body_b64": "",
+            "framing": "none",
+            "headers": {
+              "accept-encoding": "gzip",
+              "authorization": "Basic aGFybmVzczpoYXJuZXNz"
+            },
+            "listener": "primary",
+            "method": "GET",
+            "target": "/prometheus/api/v1/query?query=up&stream=select-dataset&time=2024-01-01T00%3A01%3A00Z"
+          }
+        ],
+        "stderr": "cea45dbba541ddccb49a4e10b4cdbedb4d9b0cec65084d67ca933ba13992bf7e",
+        "stderr_raw": "cea45dbba541ddccb49a4e10b4cdbedb4d9b0cec65084d67ca933ba13992bf7e",
+        "stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "termination": {
+          "exit": 1
+        },
+        "trace": "7fc9ab3c429a56b82a2a099cd1a434da08551b8ddc89154afce7cc0926b9af4e"
+      }
+    },
+    {
+      "issues": [],
+      "name": "p4-run-error-envelope-text",
+      "signature": {
+        "config": {
+          ".": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "cache": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "config": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "config/pb": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "config/pb/config.toml": {
+            "mode": "0o600",
+            "raw_sha256": "ca8be748f886ea1e02b04c2c356f4be3d323f346743c715831c1dacebdf56db1",
+            "toml": {
+              "DefaultProfile": "fixture",
+              "Profiles": {
+                "fixture": {
+                  "cloud": false,
+                  "password": "harness",
+                  "url": "http://<FIXTURE>",
+                  "username": "harness"
+                }
+              }
+            },
+            "type": "file"
+          },
+          "data": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "state": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "tmp": {
+            "mode": "0o755",
+            "type": "directory"
+          }
+        },
+        "requests": [
+          {
+            "body_b64": "",
+            "framing": "none",
+            "headers": {
+              "accept-encoding": "gzip",
+              "authorization": "Basic aGFybmVzczpoYXJuZXNz"
+            },
+            "listener": "primary",
+            "method": "GET",
+            "target": "/prometheus/api/v1/query?query=up&stream=select-dataset&time=2024-01-01T00%3A01%3A00Z"
+          }
+        ],
+        "stderr": "c0caf3ffbc7e96cfa6cbb6a87bfae564e6d02b767ffa509ab98c700e082912d2",
+        "stderr_raw": "c0caf3ffbc7e96cfa6cbb6a87bfae564e6d02b767ffa509ab98c700e082912d2",
+        "stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "termination": {
+          "exit": 1
+        },
+        "trace": "99358e8e08aae1301728a43f46931341913721c835483b75babd4e69de45985b"
+      }
+    },
+    {
+      "issues": [],
+      "name": "p4-run-error-envelope-json",
+      "signature": {
+        "config": {
+          ".": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "cache": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "config": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "config/pb": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "config/pb/config.toml": {
+            "mode": "0o600",
+            "raw_sha256": "df91e2bf90d8d687ae0917cbfacc3c0b4bbbd09ce589d69f09db0a4b2b2855db",
+            "toml": {
+              "DefaultProfile": "fixture",
+              "Profiles": {
+                "fixture": {
+                  "cloud": false,
+                  "password": "harness",
+                  "url": "http://<FIXTURE>",
+                  "username": "harness"
+                }
+              }
+            },
+            "type": "file"
+          },
+          "data": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "state": {
+            "mode": "0o755",
+            "type": "directory"
+          },
+          "tmp": {
+            "mode": "0o755",
+            "type": "directory"
+          }
+        },
+        "requests": [
+          {
+            "body_b64": "",
+            "framing": "none",
+            "headers": {
+              "accept-encoding": "gzip",
+              "authorization": "Basic aGFybmVzczpoYXJuZXNz"
+            },
+            "listener": "primary",
+            "method": "GET",
+            "target": "/prometheus/api/v1/query?query=up&stream=select-dataset&time=2024-01-01T00%3A01%3A00Z"
+          }
+        ],
+        "stderr": "a529e33cd42f52a86f87b4e1a949d8b2d3ef89d6b65fe69ee623607da6c0071e",
+        "stderr_raw": "a529e33cd42f52a86f87b4e1a949d8b2d3ef89d6b65fe69ee623607da6c0071e",
+        "stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "termination": {
+          "exit": 1
+        },
+        "trace": "389711e29b6dfab2e1513650306549c8a7589f6d8f489969b5fb05a20ae79e80"
+      }
     }
   ],
-  "corpus_sha256": "684b83199750a48bce3c012c0bd569eeb8114e704572e385d8b7794594f225a5",
+  "corpus_sha256": "e57adb313c8b385639533c68c6562cfe508c56b46c88840a13d2d3508badb07a",
   "excluded_cases": [
     {
       "name": "p4-deadline-header",
@@ -10974,7 +11406,7 @@
   "failed": 0,
   "mode": "check-reference",
   "partial": false,
-  "runner_sha256": "df704d344a64fa6c9f1bebe9e989a1c3c7047321331fa270d4a46b477afc0642",
+  "runner_sha256": "748f2702a30f9727df53b8f0cd7abfe9f06f3effb8e80d7255c7b335824a9327",
   "tiers": [
     "gate"
   ]

@@ -199,7 +199,55 @@ fn write_output(mut writer: impl Write, bytes: &[u8]) -> io::Result<()> {
     }
     pipe_result(writer.write_all(bytes).and_then(|()| writer.flush()))
 }
+// Go's syscall package init raises the soft open-file limit for every program
+// (go1.25 syscall/rlimit.go:30-47): when hard > 0 and soft < hard-1, soft
+// becomes hard-1, clamped on Apple to kern.maxfilesperproc
+// (rlimit_darwin.go:10-20).
+// Inventory detail reads fan out one connection per entry, so the inherited
+// soft limit (often 1024, or 256 on macOS) would fail with EMFILE where Go
+// succeeds. Go restores the original limit only in children it execs; pb
+// starts no child processes, so nothing is retained. Best effort, and never
+// lowers the limit: one getrlimit, at most one setrlimit.
+#[cfg(unix)]
+fn raise_open_file_limit() {
+    let mut limit = libc::rlimit {
+        rlim_cur: 0,
+        rlim_max: 0,
+    };
+    if unsafe { libc::getrlimit(libc::RLIMIT_NOFILE, &mut limit) } != 0
+        || limit.rlim_max == 0
+        || limit.rlim_cur >= limit.rlim_max - 1
+    {
+        return;
+    }
+    #[allow(unused_mut)]
+    let mut soft = limit.rlim_max - 1;
+    #[cfg(target_vendor = "apple")]
+    {
+        let mut per_process: u32 = 0;
+        let mut size = std::mem::size_of::<u32>();
+        let status = unsafe {
+            libc::sysctlbyname(
+                c"kern.maxfilesperproc".as_ptr(),
+                (&raw mut per_process).cast(),
+                &mut size,
+                std::ptr::null_mut(),
+                0,
+            )
+        };
+        if status == 0 && size == std::mem::size_of::<u32>() {
+            soft = soft.min(libc::rlim_t::from(per_process));
+        }
+    }
+    if soft > limit.rlim_cur {
+        limit.rlim_cur = soft;
+        unsafe { libc::setrlimit(libc::RLIMIT_NOFILE, &limit) };
+    }
+}
+
 fn main() {
+    #[cfg(unix)]
+    raise_open_file_limit();
     pb::initialize_process_theme();
     #[cfg(feature = "diagnostics")]
     let diagnostics = pb::diagnostics::Session::begin();

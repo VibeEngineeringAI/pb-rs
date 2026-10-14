@@ -423,6 +423,11 @@ PHASE4_OPERATIONS = {
     "promql active-queries", "promql tsdb",
 }
 
+PHASE5_OPERATIONS = {
+    "dataset remove", "user add", "user remove", "user set-role", "user list",
+    "role remove", "role list",
+}
+
 
 def deferred_guards(surface=None):
     """Candidate safety assertions, never Go parity or benchmark workloads."""
@@ -435,7 +440,7 @@ def deferred_guards(surface=None):
     nodes = surface["nodes"]
     for node in nodes:
         path = node["path"]
-        if " ".join(path) in PHASE2_OPERATIONS | PHASE4_OPERATIONS:
+        if " ".join(path) in PHASE2_OPERATIONS | PHASE4_OPERATIONS | PHASE5_OPERATIONS:
             continue
         if not path or path in (["help"], ["agent"], ["version"]):
             continue

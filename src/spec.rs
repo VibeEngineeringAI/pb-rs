@@ -35,6 +35,7 @@ pub enum Operation {
     Status,
     Metadata,
     CompletionGroup,
+    Administration,
     Deferred,
 }
 

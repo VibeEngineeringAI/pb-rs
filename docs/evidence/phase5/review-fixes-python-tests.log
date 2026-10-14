@@ -1,0 +1,12 @@
+........................................................................................Process IO counters unavailable (independent /proc probe: 'permission_denied'; collector reason: 'permission_denied'); checking output and wait4 metrics
+...............................................................s...phase3 setup error: reference fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314 is not the frozen manifest's 0000000000000000000000000000000000000000000000000000000000000000
+.............................................................................................................phase3 reference-check: 6 passed, 0 failed, 0 skipped of 6; boundaries 0/0 (not applicable (reference check)); report: $PB_CACHE/tmp/rev/val-tmp/tmpgc80gimc/ref/report.md
+t p5-refresh-dataset-add:
+  skipped (counted as failure): no cloud binary for go-a, go-b
+u p5-user-remove:
+  skipped (counted as failure): scoped rule not validated by the Go self-comparison
+..............
+----------------------------------------------------------------------
+Ran 278 tests in 40.838s
+
+OK (skipped=1)

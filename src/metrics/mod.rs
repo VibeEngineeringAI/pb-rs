@@ -1,5 +1,5 @@
 //! Buffered Prometheus operations with explicit invocation and transport policy.
-mod output;
+pub(crate) mod output;
 mod raw_json;
 pub(crate) fn initialize_process_theme() {
     output::style::initialize_process_theme();
@@ -263,7 +263,7 @@ pub(crate) fn execute(
         })();
         let body = request_result.map_err(|mut e| {
             if operation == "run" {
-                e.message = format!("request failed: {}", e.message);
+                e.prefix_message("request failed: ");
                 // Wrapped typed HTTP errors retain their original public message.
                 if e.http_status == 0 {
                     e.public_message = e.message.clone();

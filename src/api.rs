@@ -9,7 +9,8 @@ use bytes::Bytes;
 use http::{
     Method, StatusCode,
     header::{
-        ACCEPT, AUTHORIZATION, CONTENT_TYPE, COOKIE, HeaderMap, HeaderValue, LOCATION, REFERER,
+        ACCEPT, AUTHORIZATION, CONTENT_TYPE, COOKIE, HeaderMap, HeaderName, HeaderValue, LOCATION,
+        REFERER,
     },
 };
 use serde::{Deserialize, de::DeserializeOwned};
@@ -244,6 +245,13 @@ pub struct PreparedRequest {
     body: Option<Vec<u8>>,
     timeout: Duration,
     metrics: bool,
+}
+impl PreparedRequest {
+    /// Go callers use Header.Set after NewRequest, so these headers follow
+    /// redirects and the OAuth replay but are absent from the debug listing.
+    pub fn set_header(&mut self, name: HeaderName, value: HeaderValue) {
+        self.headers.insert(name, value);
+    }
 }
 
 /// The final response owns its body and retains the deadline established by
@@ -2466,6 +2474,46 @@ mod tests {
             store.read().unwrap().profiles["cloud"].refresh_token,
             "new-refresh"
         );
+        std::fs::remove_dir_all(store.path().parent().unwrap()).unwrap();
+    }
+    #[test]
+    fn custom_headers_follow_redirect_and_oauth_replay() {
+        let mut redirect = Reply::new(307, "");
+        redirect.location = Some("/moved".into());
+        let (workspace, calls, workspace_task) = server(vec![
+            redirect,
+            Reply::new(401, "unauthorized"),
+            Reply::new(200, "ignored"),
+        ]);
+        let (orchestrator, _, refresh_task) = server(vec![Reply::new(
+            200,
+            r#"{"access_token":"new-session","refresh_token":"new-refresh"}"#,
+        )]);
+        let profile = oauth(workspace, orchestrator);
+        let store = store(&profile);
+        let client =
+            ApiClient::with_orchestrator_token(profile, store.clone(), "release-token").unwrap();
+        runtime().block_on(async {
+            let mut request = client
+                .prepare_standard(Method::PUT, "logstream/app", None)
+                .unwrap();
+            request.set_header(
+                HeaderName::from_static("x-p-telemetry-type"),
+                HeaderValue::from_static("metrics"),
+            );
+            let response = client.send_streaming(request).await.unwrap();
+            assert_eq!(response.status, 200);
+        });
+        workspace_task.join().unwrap();
+        refresh_task.join().unwrap();
+        let calls = calls.lock().unwrap();
+        assert_eq!(calls.len(), 3);
+        assert!(calls[1].starts_with("PUT /moved HTTP/1.1"));
+        assert!(calls[2].contains("session=new-session"));
+        for call in calls.iter() {
+            assert!(call.contains("x-p-telemetry-type: metrics\r\n"), "{call}");
+            assert!(call.contains("content-type: application/json\r\n"));
+        }
         std::fs::remove_dir_all(store.path().parent().unwrap()).unwrap();
     }
     #[test]

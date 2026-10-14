@@ -1,4 +1,7 @@
 //! Parseable CLI with owned command declarations and explicit command services.
+mod admin;
+mod admin_datasets;
+mod admin_inventory;
 pub mod api;
 pub mod auth;
 pub mod config;
@@ -266,6 +269,9 @@ pub fn run_with_writers(
     }
     if matches!(path.as_str(), "pb sql list" | "pb sql save") {
         return saved_queries::execute(&parsed, command, &path, structured, stdout);
+    }
+    if admin::is_operation(&parsed) {
+        return admin::execute(&parsed, command, structured, stdout);
     }
     // Operations with no local output flag must not inherit root/parent output.
     if path == "pb cloud profile add" && parsed.text("api-key").trim().is_empty() {

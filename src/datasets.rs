@@ -370,7 +370,7 @@ fn info_http_error(status: u16, wire_status: &str, body: &[u8], numeric: bool) -
     )
 }
 const TYPE_RESPONSE: &str = "struct { StreamType string \"json:\\\"streamType\\\"\"; TelemetryType string \"json:\\\"telemetryType\\\"\" }";
-fn decode_type(body: &[u8]) -> Result<String, CliError> {
+pub(crate) fn decode_type(body: &[u8]) -> Result<String, CliError> {
     let result = (|| {
         let value = decode(body)?;
         let (mut stream, mut telemetry) = (String::new(), String::new());

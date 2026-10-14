@@ -1,0 +1,20 @@
+{
+  "rust_tests": 251,
+  "python_tests": 278,
+  "final_release_cases": {
+    "phase1": 2018,
+    "phase2": 219,
+    "phase3": 675,
+    "phase4": 153,
+    "phase5": 185
+  },
+  "deferred_boundary_checks": 32,
+  "full60s_admin_deadline_cases": 1,
+  "main_measured_samples": 4470,
+  "main_excluded_warmups": 745,
+  "confirmation_measured_samples": 60,
+  "opus_5_5_tasks": 9,
+  "live_server_tests": false,
+  "all_main_samples_valid": true,
+  "shared_budget_regressions": []
+}

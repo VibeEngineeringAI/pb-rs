@@ -1,0 +1,9 @@
+..................................................................t p5-refresh-dataset-add:
+  skipped (counted as failure): no cloud binary for go-a, go-b
+u p5-user-remove:
+  skipped (counted as failure): scoped rule not validated by the Go self-comparison
+......
+----------------------------------------------------------------------
+Ran 72 tests in 16.370s
+
+OK

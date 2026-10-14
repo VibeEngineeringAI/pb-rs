@@ -1,0 +1,205 @@
+{
+  "description": "Review-fix candidate for PR #3. Supersedes candidate-final-manifest.json (7cda2ad) as the PR head; that manifest and its reports remain the pre-fix release evidence.",
+  "source_revision": "4fcbd51fdaebed08164bfe7041e16c9c51cbb565",
+  "prior_release_candidate_revision": "7cda2ad9cdc6da9030c9ad7d5c146e0ca2bd438d",
+  "base_revision": "411e56ff9b71569178cf6c30c924625d57348089",
+  "go_source_revision": "07af390ab09bda8ac9e427ffc6310077bace0125",
+  "commits_since_prior_release_candidate": [
+    "4fcbd51fdaebed08164bfe7041e16c9c51cbb565 test: harden fd-limit regression per cross-review",
+    "4e301a304f00b84d00ad45b74153b14b21a1a5e1 fix: address phase-five review findings"
+  ],
+  "changed_files_since_prior_release_candidate": {
+    "harness/contracts/phase4-reference.json": "d8e4afddca0f23abe0590bc3793557e1ba391b9a97f3626765754af1b398f87e",
+    "harness/contracts/phase4.md": "b5860c0d584b591a2f02eb39418770fab3daec08dd95b28b0670b90cb6c5d335",
+    "harness/phase4.py": "748f2702a30f9727df53b8f0cd7abfe9f06f3effb8e80d7255c7b335824a9327",
+    "src/error.rs": "e2ee65175d1764ab6e7c829b59e5a0bfac1275689b8a45cda5fe612ce59a75c0",
+    "src/main.rs": "68f04d772c2a51d13df15fec98a0a364f45cd83745f4d6a07990603439b34ab2",
+    "src/metrics/mod.rs": "f732bd27c0fc575082fc4f1b66c06252c9a8b145b3caa12f6bc01896aa5dffc8",
+    "tests/fd_limit.rs": "901a4bad8d400d465c54e186c6e38de58bebe051c0b2d7bd462f04eae6558dc8"
+  },
+  "go": {
+    "path": "$PB_CACHE/pb-go",
+    "bytes": 71807160,
+    "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314"
+  },
+  "go_cloud": {
+    "path": "$PB_CACHE/pb-go-cloud",
+    "bytes": 71807160,
+    "sha256": "622d4144b7e354c0ee4036244ba719cbbaf8357710804b1d733cd421a0dc227e"
+  },
+  "frozen_7cda2ad": {
+    "rust": {
+      "path": "$PB_CACHE/candidate-final/pb",
+      "bytes": 7617656,
+      "sha256": "ec9765a4dbd4ad48fd758965cba8aaba50a525d6c7eded89b8c84c4cfcc31b0f"
+    },
+    "rust_cloud": {
+      "path": "$PB_CACHE/candidate-final/pb-cloud",
+      "bytes": 7618112,
+      "sha256": "2a91136a347fabc9256603958beb7709d0da4e8146c9adb0269c039a468bb9c4"
+    }
+  },
+  "rust": {
+    "path": "$PB_CACHE/fix-candidate/pb",
+    "bytes": 7617800,
+    "sha256": "9bd38b9db4f4f8e76cd43384cb024dddd4d122c6bc109d29a8afa483ae0e2c6d"
+  },
+  "rust_cloud": {
+    "path": "$PB_CACHE/fix-candidate/pb-cloud",
+    "bytes": 7618256,
+    "sha256": "457619bb5cfd6603288cf6ab21a9f606ef2dbfb618bd65f97860d8849f03e9de"
+  },
+  "meter": {
+    "path": "$CHECKOUT/bin/pb-meter",
+    "bytes": 17232,
+    "sha256": "17c3b73491b2a31e465f58eda9f210000b5cd886a4ba9fc0764dc3576899127c"
+  },
+  "fixture": {
+    "path": "$CHECKOUT/bin/pb-fixture",
+    "bytes": 23569535,
+    "sha256": "fa8b4711ce6c901fc2b277318337268b45953e9868d4bc1b24407b274cc9ec5c"
+  },
+  "public_version": "v0.0.0-harness",
+  "build": {
+    "environment": {
+      "PB_VERSION": "v0.0.0-harness",
+      "PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN": {
+        "rust": "",
+        "rust_cloud": "harness-orchestrator-token"
+      }
+    },
+    "commands": [
+      "cargo build --locked --release",
+      "PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN=harness-orchestrator-token cargo build --locked --release --target-dir target/harness-cloud"
+    ],
+    "snapshot": "release binaries copied to fix-candidate/ before any gate, benchmark or probe"
+  },
+  "rust_toolchain": "1.96.0",
+  "go_toolchain": "1.25.4",
+  "python": "3.14.7",
+  "toolchain_versions": [
+    "rustc 1.96.0 (ac68faa20 2026-05-25)",
+    "cargo 1.96.0 (30a34c682 2026-05-25)",
+    "go version go1.25.4 linux/amd64",
+    "Python 3.14.7"
+  ],
+  "host": {
+    "system": "Linux",
+    "release": "7.2.5-3-omarchy",
+    "machine": "x86_64",
+    "cpu": "13th Gen Intel(R) Core(TM) i9-13900HK",
+    "cpu_count": 20,
+    "affinity": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19
+    ],
+    "governor_cpu0": "powersave",
+    "python": "3.14.7",
+    "load_average": [
+      6.625,
+      7.57275390625,
+      9.228515625
+    ]
+  },
+  "protocol": {
+    "warmup": 5,
+    "measured_samples": 30,
+    "seed": 2026,
+    "order": "seeded randomized sequential fresh-process warm-cache",
+    "state": "fresh HOME/config per sample; fixture model, ledger and fault budgets rebuilt from the scenario after the previous CLI exited and its handlers finished (verified per sample)",
+    "sink": "captured pipe",
+    "primary_metrics": [
+      "wall_ms",
+      "cpu_ms",
+      "peak_rss_bytes"
+    ],
+    "shared_binaries": [
+      "go",
+      "frozen 7cda2ad (label prior)",
+      "fix 4fcbd51 (label rust)"
+    ],
+    "admin_binaries": [
+      "go/go_cloud",
+      "frozen 7cda2ad standard/Cloud (candidate label prior)",
+      "fix 4fcbd51 standard/Cloud (candidate label rust)"
+    ],
+    "admin_go_aa_control": "two repetitions per Go label, no warmups; completed view of a passing 208-sample control reused via --oracle-report (review-fixes-admin-selfcheck.json.gz)",
+    "startup": "pb --version, 20 excluded warmups and 500 measured interleaved runs per binary with inherited soft RLIMIT_NOFILE equal to hard (524288) and 1024",
+    "intervals": "pointwise exploratory bootstrap (2,000 resamples); p95 descriptive at 30 samples"
+  },
+  "budgets": {
+    "shared_latency_cpu": "both >10% and >1 ms median increase versus frozen 7cda2ad",
+    "shared_rss": "both >20% and >2 MiB (2,097,152 bytes) median increase versus frozen 7cda2ad",
+    "harness_regression_rule": "a budget is crossed only if the whole bootstrap ratio interval is above the relative threshold",
+    "new_commands": "administration: report Go and frozen comparisons, no universal speed threshold"
+  },
+  "acceptance": {
+    "functional": [
+      "cargo fmt --check; cargo clippy --locked --all-targets -- -D warnings; cargo test --locked",
+      "python3 -m unittest discover -s harness -p \"test_*.py\"",
+      "all phase 1-5 release gates and their deferred-boundary guards pass",
+      "real 60-second administration body deadline passes"
+    ],
+    "manifest_budgets": "no shared workload crosses the budgets above",
+    "five_percent_confirmation": "every primary shared/admin workload with a median wall, CPU or RSS increase above 5% versus frozen 7cda2ad is rerun alone in a fresh interleaved session (5 warmups, 30 samples). It fails only if the confirmation median remains above +5% and its pointwise bootstrap 95% ratio interval lies wholly above 1.05 (harness significance test, no absolute allowance). An interval spanning 1.05 does not establish a >5% regression; this is not an equivalence proof.",
+    "host_quiet": "no builds, tests or profilers from the validation run during accepted timing; interrupted attempts discarded"
+  },
+  "source_sha256": {
+    "src/LICENSE-Go.txt": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+    "src/admin.rs": "cdf03778b97c57cc90a53fb4d4e14c4a0f2360c6d78039c84c75f8544dffc9eb",
+    "src/admin_datasets.rs": "67f9a877c60d45d8f8ad6b6759a425b9de1db8d7fe4c8a83cf804a686fa8a938",
+    "src/admin_inventory.rs": "bf3687e67bd1b2f191613cbf3b8ad10784d0900a7af30fdadda76957d837f6a4",
+    "src/admin_inventory/style.rs": "f1014435db977fa0aca1275860114432d411df648c474ee4739abcbc656eed39",
+    "src/admin_inventory/tests.rs": "7fad3b542b124a3f3cc50dcd98931cae3324551243c1a64febd795a0e498c2c8",
+    "src/admin_inventory/wire.rs": "bbd610ebbe4880bc94a4241ff5c5d8c108a6c1e764b4b1c4a365dc5709ce7106",
+    "src/api.rs": "3195a29ef68b485025eb540f3dba0ada718db4de39f01c3bbe2ecc38dfaafe92",
+    "src/auth.rs": "fe0623db3305abefb2cf1689bc99dd9e7edad2de6eb3722b152572099a4f10ce",
+    "src/catalog.json": "be81e4157b714d50f7529a5c7e773fb2432ac0463e67f70291bf4094c5616b24",
+    "src/config.rs": "0cf2ef32c8f7e4ec0a7dcaf3e0f9011c683fadaf40f26b124b03af4f450b3a98",
+    "src/datasets.rs": "6ff7d34a140110eb7a9fe501b8e01094541023038dc66957bebb593c1224612d",
+    "src/diagnostics.rs": "07e3845dfbf53307122d897e786540122e25d12daae7f54daeea1dbc6224f406",
+    "src/error.rs": "e2ee65175d1764ab6e7c829b59e5a0bfac1275689b8a45cda5fe612ce59a75c0",
+    "src/gojson.rs": "9b153fe9cbe0ab9d91f076fd5701718ae1c432c201080d649478e12ae6739aad",
+    "src/lib.rs": "b7c8747edb144431fe08e729ebd86552b6d3cd8988faab22fdfa133d112b8aed",
+    "src/main.rs": "68f04d772c2a51d13df15fec98a0a364f45cd83745f4d6a07990603439b34ab2",
+    "src/metrics/mod.rs": "f732bd27c0fc575082fc4f1b66c06252c9a8b145b3caa12f6bc01896aa5dffc8",
+    "src/metrics/output.rs": "0ac752817b03135bdb80e1ab3d7edc61a2e4a1dec59f368a1001f38cf1982192",
+    "src/metrics/raw_json.rs": "bb534e827211540d9b4ab69300794794f3dc6a5e2237ca6c7c4b44c29fcce5c4",
+    "src/metrics/style.rs": "b7146bbc91733a1136058cbc8a61d87676126e083aa44db1289c30c6ce8ec9c8",
+    "src/metrics/style_tests.rs": "90c726826a3e05bbb8fb1cb303620fb429b1147913140db3d93bf35f452d8bea",
+    "src/metrics/text_stream.rs": "755cb78f66e799cad462bc6401712caf560f51728083598b9932a2353ba5963b",
+    "src/parser.rs": "9a411d9639980eec15e56b13969aaa57c523640ed7dd8c053f1690131495aef6",
+    "src/printable.rs": "a8b4519f95e3e9e647bc406aa2dac79f18ef1f9f99b3bcbda4f8e9f875c78e27",
+    "src/profile.rs": "17a66c17cc76eb3231b9883f3f9ec4634fd2544d9a85b6ce42335742bc252520",
+    "src/render.rs": "348f1640b9630a64bf8d071db1bf26e769784fedf2b47702768df08558ff9abb",
+    "src/saved_queries.rs": "505461346a1423aebd1f54f36c1f6bcc27e76eb41d2d58f10a52293d71b8ed14",
+    "src/spec.json": "9a977cc2ae4304d5d5d336ca914669e786f22ad8977d0ded280cc0901cbc8317",
+    "src/spec.rs": "a856c4ea98e4538de3bf4cee594922dd0695740b89479435dc3905494386cddc",
+    "src/sql/mod.rs": "e46142ba87ec8e77f7829ab7d5aa0f9d0643c709cd37aa25dc1bc9b5979b21dc",
+    "src/sql/output.rs": "288c02248a27b6b6cb685c3c06e8d7797e1a501dfc4ef9f51f7af6ebd162396a",
+    "src/sql/rewrite.rs": "718992e87487818d58a0017a1c977ae78cfe41e4cb9a4d644b5e0aa5ebaef584",
+    "src/sql/scan.rs": "5e823ae0880f4cdd2774641abe23bbe26f774a0e1ba5a9a7da06676f2ef88c44",
+    "src/status.rs": "4352731b8b0473d1a84e407bf10f092d813d472dd70b0c9d04a42e33781996bd",
+    "src/time_compat.rs": "b26bfe888bfbaac4917bf5563198d0c11d611af3be152538c181f307c96952ac",
+    "src/transport.rs": "8007fa682cdf7c026df6adc12597dcc562b80eb77c0c9dd5004b1499d2478c83",
+    "src/url_reference.rs": "b228c8885c77f967c31153aefd36e1800e2076d38030e3c90a21f206be9b9df2"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "base_revision": "411e56ff9b71569178cf6c30c924625d57348089",
+  "go_source_revision": "07af390ab09bda8ac9e427ffc6310077bace0125",
+  "go": {
+    "path": "/home/ajs/.cache/pb-phase5/pb-go",
+    "bytes": 71807160,
+    "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314"
+  },
+  "go_cloud": {
+    "path": "/home/ajs/.cache/pb-phase5/pb-go-cloud",
+    "bytes": 71807160,
+    "sha256": "622d4144b7e354c0ee4036244ba719cbbaf8357710804b1d733cd421a0dc227e"
+  },
+  "public_version": "v0.0.0-harness",
+  "rust_toolchain": "1.96.0",
+  "go_toolchain": "1.25.4",
+  "host": {
+    "system": "Linux",
+    "node": "ajs-mini-pc-02",
+    "release": "7.2.5-3-omarchy",
+    "version": "#1 SMP PREEMPT_DYNAMIC Mon, 14 Sep 2026 19:55:01 +0000",
+    "machine": "x86_64",
+    "processor": ""
+  },
+  "protocol": {
+    "warmup": 5,
+    "measured_samples": 30,
+    "order": "seeded randomized sequential fresh-process warm-cache",
+    "state": "reset independently before warmups and samples, outside timing",
+    "sink": "captured pipe",
+    "primary_metrics": [
+      "wall_ms",
+      "cpu_user_ms",
+      "cpu_system_ms",
+      "peak_rss_kib"
+    ],
+    "regression_investigation_budget": {
+      "shared_latency_cpu": "both >10% and >1 ms median increase versus prior Rust",
+      "shared_rss": "both >20% and >2048 KiB median increase versus prior Rust",
+      "new_commands": "report Go comparisons, no universal speed threshold"
+    },
+    "intervals": "pointwise exploratory; p95 descriptive at 30 samples"
+  },
+  "prior_rust": {
+    "path": "/home/ajs/.cache/pb-phase5/baseline-target/release/pb",
+    "sha256": "02b14a9adbc756303785c94a09f301f3dd3eae4c18967f23d59235a9eb07d3a2",
+    "bytes": 7423112
+  }
+}
