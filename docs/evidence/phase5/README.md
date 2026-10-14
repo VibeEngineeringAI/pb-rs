@@ -86,9 +86,26 @@ Review-fix validation of `4fcbd51` (see
   records the path, size and SHA-256 of the full local report. The bundle
   explains its derivation and lists the omitted files with their hashes.
 
-Except for `review-fixes-refresh-ab.json.gz`, the review-fix JSON reports are
-changed only by compression. Harness sample CSV and `report.md` renderings are
-not committed because they duplicate the JSON.
+The Phase 2–5, deadline, shared, administration, administration self-check,
+confirmation and startup gzip reports preserve their source bytes, apart from
+the path normalization described below. `review-fixes-p1-summary.json.gz` is a
+derived summary, `review-fixes-analysis.json.gz` is a lossless JSON bundle and
+`review-fixes-refresh-ab.json.gz` is a derived bundle. Their source hashes and
+derivations are recorded in the artifacts. Harness sample CSV and `report.md`
+renderings are not committed because they duplicate the JSON.
+
+Absolute paths from the development host are normalized in every
+`review-fixes-*` file, including source and provenance fields, reproduction
+commands, logs and the A/B report. `$CHECKOUT` stands for the repository
+checkout that ran the review-fix validation, so `$CHECKOUT/bin/pb-meter` is
+`bin/pb-meter` in this repository. `$PB_CACHE` stands for the local evidence
+cache named below, so `$PB_CACHE/fix-candidate/pb` is the fix binary snapshot
+there. The normalization changes nothing else. Replacing the two placeholders
+with the original directories gives back each source file exactly, so the
+recorded sizes and SHA-256 values still identify the untouched originals. The
+logs and `review-fixes-refresh-ab.md` are otherwise verbatim, except that the
+A/B report and the Rust test log each lost a trailing blank line to pass
+`git diff --check`.
 
 Inspect a compressed report without installing additional packages:
 

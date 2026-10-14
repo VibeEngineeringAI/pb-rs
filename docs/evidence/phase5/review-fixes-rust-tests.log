@@ -101,7 +101,7 @@
    Compiling rustls-webpki v0.103.15
    Compiling tokio-rustls v0.26.6
    Compiling hyper-rustls v0.27.10
-   Compiling pb v0.1.0 (/home/ajs/.t3/worktrees/pb-rs/review-phase5-pr3-sol-opus)
+   Compiling pb v0.1.0 ($CHECKOUT)
     Finished `test` profile [unoptimized + debuginfo] target(s) in 24.78s
      Running unittests src/lib.rs (target/debug/deps/pb-2afcdde8c630c858)
 

@@ -202,17 +202,19 @@ Both corpora measured Go, frozen `7cda2ad` and the fix in the same
 interleaved sessions, with 5 excluded warmups and 30 samples each. Against
 `7cda2ad`, no shared workload crossed a manifest budget. Shared median elapsed
 changes ranged from −0.219 to +1.267 ms, CPU from −0.218 to +1.142 ms, and peak
-RSS from −0.15 to +0.06 MiB. Administration elapsed changes ranged from −7.349
+RSS from −0.14 to +0.06 MiB. Administration elapsed changes ranged from −7.349
 to +7.457 ms, and RSS from −0.65 to +0.06 MiB. The largest relative elapsed
 increases were +14.3% on a 2 ms shared command and +8.0% on an administration
 command.
 
-A stricter 5% rule was also applied. Thirty workload/metric pairs (5 shared and
-15 administration workloads) had a primary median increase above 5%. Each was
-rerun alone in a fresh interleaved session. A pair would fail if its
-confirmation median stayed above +5% and its whole ratio interval lay above
-1.05. None did, so no regression above 5% is confirmed. Eight confirmation
-point estimates stayed above +5%:
+A stricter 5% rule was also applied. Twenty-nine workload/metric pairs (5 shared
+and 15 administration workloads) had a primary median increase above 5%. Each
+flagged workload was rerun alone in a fresh interleaved session. A pair would
+fail if its confirmation median stayed above +5% and its whole ratio interval
+lay above 1.05. None did, so no regression above 5% is confirmed. Eight
+confirmation point estimates were above +5%. One of them,
+`p5-refresh-dataset-add` elapsed, was +4.84% in the primary run and so was not
+a flagged pair; it was measured because its CPU was flagged:
 
 | Workload | Metric | Frozen / fix median ms | Change | Ratio interval |
 |---|---|---:|---:|---:|

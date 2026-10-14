@@ -16,7 +16,7 @@ A fresh preliminary Go A/A failed one dataset-add milestone check before any can
 
 Variant/normalized/counter sessions call unchanged `phase5_workloads.run_sample` directly through external `variants.py`, using the same validated scoped oracle and fresh/reset fixture protocol. This avoids repeating Go in diagnostic rounds. Variant session: five labels × 100 samples; normalized: two labels × 200 samples; counters: four labels × 50 samples, followed by two independent set-role-only sessions of four labels × 100 samples with different random seeds and reversed label insertion order. One variant dataset-add copy sample hits the same timestamp race; that comparison has **no accepted ratio/CI**, while other comparisons are valid. Its invalid sample is retained in the report.
 
-All artifacts are under `/home/ajs/.cache/pb-phase5/tmp/rev/sol/refresh-ab`. Main-worktree tracked files were not edited by this investigation; no commit, push or GitHub post was made. Another authorized agent staged docs/evidence during the investigation; its changes were left untouched. The detached diagnostic worktree `/home/ajs/.cache/pb-phase5/tmp/rev/ab-wt` was removed after the builds.
+All artifacts are under `$PB_CACHE/tmp/rev/sol/refresh-ab`. Main-worktree tracked files were not edited by this investigation; no commit, push or GitHub post was made. Another authorized agent staged docs/evidence during the investigation; its changes were left untouched. The detached diagnostic worktree `$PB_CACHE/tmp/rev/ab-wt` was removed after the builds.
 
 ## Host and timing separation
 
@@ -221,32 +221,32 @@ A ~2% user-cycle difference cannot be converted exactly to native CPU millisecon
 
 Working directory for the primary commands:
 ```text
-/home/ajs/.t3/worktrees/pb-rs/review-phase5-pr3-sol-opus
+$CHECKOUT
 ```
 Environment for all benchmark/diagnostic drivers:
 ```bash
-export TMPDIR=/home/ajs/.cache/pb-phase5/tmp/rev/val-tmp
+export TMPDIR=$PB_CACHE/tmp/rev/val-tmp
 export GOTMPDIR="$TMPDIR"
 export PYTHONDONTWRITEBYTECODE=1
 ```
 Accepted primary CLI invocations (also preserved with environment in `commands.jsonl`):
 ```bash
-python3 harness/phase5_workloads.py run --go /home/ajs/.cache/pb-phase5/pb-go --go-cloud /home/ajs/.cache/pb-phase5/pb-go-cloud --meter /home/ajs/.t3/worktrees/pb-rs/review-phase5-pr3-sol-opus/bin/pb-meter --warmup 5 --repetitions 100 --self-check-repetitions 2 --oracle-report /home/ajs/.cache/pb-phase5/tmp/rev/sol/refresh-ab/subset-aa-oracle.json --artifacts failures --out /home/ajs/.cache/pb-phase5/tmp/rev/sol/refresh-ab/session1-admin --candidate prior=/home/ajs/.cache/pb-phase5/candidate-final/pb --candidate-cloud prior=/home/ajs/.cache/pb-phase5/candidate-final/pb-cloud --candidate rust=/home/ajs/.cache/pb-phase5/fix-candidate/pb --candidate-cloud rust=/home/ajs/.cache/pb-phase5/fix-candidate/pb-cloud --workload p5-refresh-rejected-no-commit --workload p5-refresh-dataset-add --workload p5-refresh-user-list-small-json --workload p5-user-set-role-large
-python3 harness/run.py run --suite docs/evidence/phase5/regression-suite.json --fixture /home/ajs/.t3/worktrees/pb-rs/review-phase5-pr3-sol-opus/bin/pb-fixture --meter /home/ajs/.t3/worktrees/pb-rs/review-phase5-pr3-sol-opus/bin/pb-meter --warmup 5 --repetitions 100 --seed 2026 --out /home/ajs/.cache/pb-phase5/tmp/rev/sol/refresh-ab/session1-shared --case p3-bench-rows-1-json --binary prior=/home/ajs/.cache/pb-phase5/candidate-final/pb --binary rust=/home/ajs/.cache/pb-phase5/fix-candidate/pb
-python3 harness/phase5_workloads.py run --go /home/ajs/.cache/pb-phase5/pb-go --go-cloud /home/ajs/.cache/pb-phase5/pb-go-cloud --meter /home/ajs/.t3/worktrees/pb-rs/review-phase5-pr3-sol-opus/bin/pb-meter --warmup 5 --repetitions 100 --self-check-repetitions 2 --oracle-report /home/ajs/.cache/pb-phase5/tmp/rev/sol/refresh-ab/subset-aa-oracle.json --artifacts failures --out /home/ajs/.cache/pb-phase5/tmp/rev/sol/refresh-ab/session2-admin --candidate rust=/home/ajs/.cache/pb-phase5/fix-candidate/pb --candidate-cloud rust=/home/ajs/.cache/pb-phase5/fix-candidate/pb-cloud --candidate prior=/home/ajs/.cache/pb-phase5/candidate-final/pb --candidate-cloud prior=/home/ajs/.cache/pb-phase5/candidate-final/pb-cloud --workload p5-refresh-rejected-no-commit --workload p5-refresh-dataset-add --workload p5-refresh-user-list-small-json --workload p5-user-set-role-large
-python3 harness/run.py run --suite docs/evidence/phase5/regression-suite.json --fixture /home/ajs/.t3/worktrees/pb-rs/review-phase5-pr3-sol-opus/bin/pb-fixture --meter /home/ajs/.t3/worktrees/pb-rs/review-phase5-pr3-sol-opus/bin/pb-meter --warmup 5 --repetitions 100 --seed 2027 --out /home/ajs/.cache/pb-phase5/tmp/rev/sol/refresh-ab/session2-shared --case p3-bench-rows-1-json --binary rust=/home/ajs/.cache/pb-phase5/fix-candidate/pb --binary prior=/home/ajs/.cache/pb-phase5/candidate-final/pb
+python3 harness/phase5_workloads.py run --go $PB_CACHE/pb-go --go-cloud $PB_CACHE/pb-go-cloud --meter $CHECKOUT/bin/pb-meter --warmup 5 --repetitions 100 --self-check-repetitions 2 --oracle-report $PB_CACHE/tmp/rev/sol/refresh-ab/subset-aa-oracle.json --artifacts failures --out $PB_CACHE/tmp/rev/sol/refresh-ab/session1-admin --candidate prior=$PB_CACHE/candidate-final/pb --candidate-cloud prior=$PB_CACHE/candidate-final/pb-cloud --candidate rust=$PB_CACHE/fix-candidate/pb --candidate-cloud rust=$PB_CACHE/fix-candidate/pb-cloud --workload p5-refresh-rejected-no-commit --workload p5-refresh-dataset-add --workload p5-refresh-user-list-small-json --workload p5-user-set-role-large
+python3 harness/run.py run --suite docs/evidence/phase5/regression-suite.json --fixture $CHECKOUT/bin/pb-fixture --meter $CHECKOUT/bin/pb-meter --warmup 5 --repetitions 100 --seed 2026 --out $PB_CACHE/tmp/rev/sol/refresh-ab/session1-shared --case p3-bench-rows-1-json --binary prior=$PB_CACHE/candidate-final/pb --binary rust=$PB_CACHE/fix-candidate/pb
+python3 harness/phase5_workloads.py run --go $PB_CACHE/pb-go --go-cloud $PB_CACHE/pb-go-cloud --meter $CHECKOUT/bin/pb-meter --warmup 5 --repetitions 100 --self-check-repetitions 2 --oracle-report $PB_CACHE/tmp/rev/sol/refresh-ab/subset-aa-oracle.json --artifacts failures --out $PB_CACHE/tmp/rev/sol/refresh-ab/session2-admin --candidate rust=$PB_CACHE/fix-candidate/pb --candidate-cloud rust=$PB_CACHE/fix-candidate/pb-cloud --candidate prior=$PB_CACHE/candidate-final/pb --candidate-cloud prior=$PB_CACHE/candidate-final/pb-cloud --workload p5-refresh-rejected-no-commit --workload p5-refresh-dataset-add --workload p5-refresh-user-list-small-json --workload p5-user-set-role-large
+python3 harness/run.py run --suite docs/evidence/phase5/regression-suite.json --fixture $CHECKOUT/bin/pb-fixture --meter $CHECKOUT/bin/pb-meter --warmup 5 --repetitions 100 --seed 2027 --out $PB_CACHE/tmp/rev/sol/refresh-ab/session2-shared --case p3-bench-rows-1-json --binary rust=$PB_CACHE/fix-candidate/pb --binary prior=$PB_CACHE/candidate-final/pb
 ```
 Subsequent diagnostic drivers (run separately, sequentially; variants timing starts only after all builds complete):
 ```bash
-python3 /home/ajs/.cache/pb-phase5/tmp/rev/sol/refresh-ab/diagnose.py
-python3 /home/ajs/.cache/pb-phase5/tmp/rev/sol/refresh-ab/build_variants.py
-python3 /home/ajs/.cache/pb-phase5/tmp/rev/sol/refresh-ab/variants.py variants
-python3 /home/ajs/.cache/pb-phase5/tmp/rev/sol/refresh-ab/normalize.py
-python3 /home/ajs/.cache/pb-phase5/tmp/rev/sol/refresh-ab/variants.py perf
-python3 /home/ajs/.cache/pb-phase5/tmp/rev/sol/refresh-ab/perf_analysis.py
-python3 /home/ajs/.cache/pb-phase5/tmp/rev/sol/refresh-ab/perf_repeat.py
-python3 /home/ajs/.cache/pb-phase5/tmp/rev/sol/refresh-ab/build_oldtrim.py
-python3 /home/ajs/.cache/pb-phase5/tmp/rev/sol/refresh-ab/perf_layout.py
+python3 $PB_CACHE/tmp/rev/sol/refresh-ab/diagnose.py
+python3 $PB_CACHE/tmp/rev/sol/refresh-ab/build_variants.py
+python3 $PB_CACHE/tmp/rev/sol/refresh-ab/variants.py variants
+python3 $PB_CACHE/tmp/rev/sol/refresh-ab/normalize.py
+python3 $PB_CACHE/tmp/rev/sol/refresh-ab/variants.py perf
+python3 $PB_CACHE/tmp/rev/sol/refresh-ab/perf_analysis.py
+python3 $PB_CACHE/tmp/rev/sol/refresh-ab/perf_repeat.py
+python3 $PB_CACHE/tmp/rev/sol/refresh-ab/build_oldtrim.py
+python3 $PB_CACHE/tmp/rev/sol/refresh-ab/perf_layout.py
 ```
 `build-commands.json` and `oldtrim-build-commands.json` give every build/checkout command and environment. `variants.py` implements only external orchestration, repeatedly calling the unchanged native meter and harness validators. To reproduce on fresh paths, use a new artifact directory because the drivers deliberately refuse to overwrite completed session directories.
 
