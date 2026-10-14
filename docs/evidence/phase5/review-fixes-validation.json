@@ -31,7 +31,7 @@
   "shared_budget_regressions": [],
   "confirmed_five_percent_regressions": [],
   "confirmation_point_estimates_above_five_percent": 8,
-  "refresh_workload_follow_up": "under investigation; no conclusion recorded",
+  "refresh_workload_follow_up": "attributed to executable page-cache state, not source; residual ~2% large set-role user cycles likely code layout; see review-fixes-refresh-ab.md",
   "live_server_tests": false,
   "all_main_samples_valid": true
 }

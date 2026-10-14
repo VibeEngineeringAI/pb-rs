@@ -73,9 +73,22 @@ Review-fix validation of `4fcbd51` (see
   probe, before and after the fixes.
 - `review-fixes-*.log`: Rust tests, Clippy, Python tests and the targeted
   Phase 3 fixture-oracle rerun.
+- `review-fixes-refresh-ab.md`: the focused A/B report on the small refresh
+  workload increases. Controls include a byte-identical rebuild of `7cda2ad`,
+  equal page-cache treatment of both executables, pinned `perf stat` counters,
+  smaps and strace. See
+  [the follow-up summary](../../rust-phase5.md#refresh-workload-ab-follow-up).
+- `review-fixes-refresh-ab.json.gz`: data for that report. It holds nine
+  session reports (8,032 measured samples) and every analysis verbatim. It
+  also holds the cache-treatment, smaps, strace, limits and build records, and
+  the before/after load averages. Each per-sample run is reduced to its timing,
+  resource and counter columns plus any issues. Each report's `source` field
+  records the path, size and SHA-256 of the full local report. The bundle
+  explains its derivation and lists the omitted files with their hashes.
 
-The review-fix JSON reports have not been changed apart from compression. Sample
-CSV and Markdown renderings are not committed because they duplicate the JSON.
+Except for `review-fixes-refresh-ab.json.gz`, the review-fix JSON reports are
+changed only by compression. Harness sample CSV and `report.md` renderings are
+not committed because they duplicate the JSON.
 
 Inspect a compressed report without installing additional packages:
 

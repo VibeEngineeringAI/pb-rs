@@ -228,9 +228,9 @@ point estimates stayed above +5%:
 Every one of these intervals includes 1.05, so none establishes a regression
 above 5%. Some lower bounds exceed 1.0, especially in the small OAuth-refresh
 workloads, so a small positive difference may be real. It amounts to 0.13–0.31
-ms per invocation. The fixes do not change the refresh logic itself. A
-separate, longer A/B run of these refresh workloads is under investigation.
-This document draws no conclusion about them yet.
+ms per invocation. The fixes do not change the refresh logic itself, so these
+workloads got a separate A/B run, described in the
+[refresh follow-up](#refresh-workload-ab-follow-up) below.
 
 The Go comparisons are unchanged in character. The large refresh-contention
 workload measured 835.556 ms for the fix, 840.456 ms for `7cda2ad` and
@@ -238,8 +238,56 @@ workload measured 835.556 ms for the fix, 840.456 ms for `7cda2ad` and
 [confirmed tradeoff](#confirmed-refresh-contention-tradeoff) below still holds.
 Error-trim and 1,500-user FD probes were rerun after timing, in a quiet window.
 Reports, analyses, startup samples, probes and logs are listed in
-[the evidence index](evidence/phase5/README.md). The first two sections below
-are the pre-fix release evidence for `7cda2ad` and are kept as published.
+[the evidence index](evidence/phase5/README.md). After the refresh follow-up,
+the next two sections are the pre-fix release evidence for `7cda2ad` and are
+kept as published.
+
+#### Refresh workload A/B follow-up
+
+A second delegated Codex (gpt-6.1-sol) task compared `7cda2ad` and the fix on
+the three refresh workloads, large set-role and one shared SQL control. Two
+independent sessions, each with 100 samples per binary, reproduced the refresh
+difference. The fix took about 0.09–0.20 ms more elapsed time and 0.11–0.16 ms
+more CPU, with 0.5–0.6 MiB lower peak RSS and 20–23 more minor faults. Two
+controls tie this to the cached state of each executable file, not to the
+source:
+
+- A local rebuild of `7cda2ad` was byte-identical to the stored binary (same
+  SHA-256) but was a new file. Compared with the stored file, it showed the
+  same pattern: refresh-rejection CPU +9.7% (interval [+4.2%, +16.5%]), with
+  similarly lower RSS.
+- Next, both stored executables were given the same page-cache treatment
+  (`POSIX_FADV_DONTNEED`, then a full sequential read). A 200-sample session
+  then measured refresh CPU changes of −4.0%, −0.5% and −1.5%. Every interval
+  includes 1.0 and every upper bound is below 1.05. The RSS gap fell to about
+  0–0.2%.
+
+`/proc/PID/smaps` attributes the RSS difference to mapped executable pages.
+User-mode instruction counts are unchanged on all four administration
+workloads. On these paths the fix adds one system call, a read of
+`RLIMIT_NOFILE`. It makes no `setrlimit` call, because in these runs the
+inherited soft limit already equals the hard limit.
+
+One small residual remains. In three pinned-core `perf stat` sessions, large
+set-role used 1.7–2.3% more user cycles for the same instruction count. Two of
+the three intervals exclude zero. The residual stayed when the startup FD call
+was removed and when the old trim was restored; successful set-role runs
+neither the trim nor the prefix code. The likely cause is code layout: `.text`
+starts 64 bytes later in the fix. The specific microarchitectural cause was
+not identified. In native timing after cache treatment, the set-role CPU
+change was +0.076 ms (interval [−0.136, +0.298] ms). The elapsed-time interval
+still reaches +5.8%, so equality is not proven.
+
+All three fixes stay, and no source performance change is warranted. This
+does not prove equivalence. The intervals are pointwise bootstrap intervals,
+measured on a busy hybrid-core host (load average about 6–8) against loopback
+fixtures with warm caches. A strict sub-2% cycle budget would need separate
+layout profiling. In this run, five process warmups did not equalize
+executable cache state. Future sub-millisecond startup comparisons should
+normalize it before timing, or include byte-identical new-file controls.
+[The full A/B report](evidence/phase5/review-fixes-refresh-ab.md) has the
+tables and methods. Its per-sample data and analyses are in
+`review-fixes-refresh-ab.json.gz`.
 
 ## Pre-fix release results (`7cda2ad`)
 
