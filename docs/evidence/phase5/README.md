@@ -9,6 +9,9 @@ methodology, validity checks, distributions and comparisons. CSV files contain
 individual measured samples. A Go A/A run is a correctness control, not a
 performance baseline. Warmups are excluded from reported distributions.
 
+The files listed first are the pre-fix release evidence for `7cda2ad`. The
+`review-fixes-*` files at the end validate the current PR head, `4fcbd51`.
+
 - `candidate-final-manifest.json`: Go, prior Rust and final candidate hashes,
   compiler versions, public version, source hashes and predeclared budgets.
 - `final-p*.json.gz`: all five release compatibility gates.
@@ -38,6 +41,41 @@ performance baseline. Warmups are excluded from reported distributions.
 - Test logs: Rust unit/integration tests, Clippy and Python tests. Some Python
   tests deliberately exercise failure/skip paths; the final unittest summary
   determines whether those tests passed.
+
+Review-fix validation of `4fcbd51` (see
+[the implementation report](../../rust-phase5.md#review-fixes)):
+
+- `review-fixes-manifest.json`: Go, frozen `7cda2ad` and fix binary hashes,
+  meter/fixture hashes, toolchains, build environment, source hashes, budgets
+  and the acceptance criteria applied, including the 5% confirmation rule.
+- `review-fixes-validation.json`: test, case and sample counts.
+- `review-fixes-p2.json.gz` to `review-fixes-p5.json.gz` and
+  `review-fixes-deadline.json.gz`: complete gate and 60-second deadline reports.
+- `review-fixes-p1-summary.json.gz`: the Phase 1 gate (2,018 cases, 11 guards)
+  as a per-case summary. It records the name, issues and exit codes for every
+  case, and the SHA-256 of the 19.8 MB full report. The full report compresses to
+  2.9 MB and has the same corpus as `final-p1.json.gz`, so it is kept locally
+  and not committed.
+- `review-fixes-shared.json.gz` and `review-fixes-admin.json.gz`: 15 shared and
+  52 administration workloads, each measuring Go, frozen `7cda2ad` (label
+  `prior`) and the fix (label `rust`). `review-fixes-admin-selfcheck.json.gz` is
+  the passing Go A/A control that the administration run reused through
+  `--oracle-report`. Its `derived_from` field records how it was derived.
+- `review-fixes-confirm-shared.json.gz` and `review-fixes-confirm-admin.json.gz`:
+  fresh-session reruns of every workload/metric whose primary median rose by
+  more than 5%. These subset reports mark themselves partial.
+- `review-fixes-analysis.json.gz`: a lossless bundle of the frozen/fix budget
+  comparisons, Go comparisons, flagged lists and confirmation analyses.
+- `review-fixes-startup.json.gz`: `pb --version` startup samples. Each binary
+  was measured 500 times with the inherited soft `RLIMIT_NOFILE` equal to the
+  hard limit, and 500 times with it at 1024.
+- `review-fixes-probes.json`: the error-trim scaling probe and 1,500-user FD
+  probe, before and after the fixes.
+- `review-fixes-*.log`: Rust tests, Clippy, Python tests and the targeted
+  Phase 3 fixture-oracle rerun.
+
+The review-fix JSON reports have not been changed apart from compression. Sample
+CSV and Markdown renderings are not committed because they duplicate the JSON.
 
 Inspect a compressed report without installing additional packages:
 
@@ -69,6 +107,14 @@ python3 harness/phase5_workloads.py run --go GO --go-cloud GO_CLOUD \
   --prior PRIOR_RUST --meter bin/pb-meter --warmup 5 --repetitions 30 \
   --self-check-repetitions 2 --out NEW_ADMIN_OUT
 ```
+
+The review-fix runs replace prior Rust with the frozen `7cda2ad` build. The shared
+run uses `--binary prior=FROZEN`. The administration run omits `--prior` and
+passes `--candidate prior=FROZEN --candidate-cloud prior=FROZEN_CLOUD` alongside
+the fix. Its `--prior` scope guard expects unsupported-command stubs, and the
+frozen build already implements administration. Confirmation reruns add
+`--case`/`--workload` for each flagged workload, then compare with
+`harness/run.py compare ... --max-regression-percent 5 --min-regression 0`.
 
 Use newly built binary paths, not the development machine's absolute manifest
 paths. Run functional checks before timing and avoid concurrent builds or

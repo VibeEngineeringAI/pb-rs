@@ -118,14 +118,132 @@ Predeclared shared-command investigation budgets are increases exceeding both
 10% and 1 ms for median elapsed/CPU time, or both 20% and 2 MiB for median RSS.
 New administration commands report Go comparisons without a universal speed
 threshold. Baseline identities and protocol are retained in
-[the published manifest](evidence/phase5/candidate-final-manifest.json).
+[the published manifest](evidence/phase5/candidate-final-manifest.json). The
+review-fix run's binaries, budgets and acceptance rules are in
+[its own manifest](evidence/phase5/review-fixes-manifest.json).
 
 This phase does not establish live-server deletion/assignment semantics,
 cross-platform release readiness, or successful live SQL/metrics integration.
 Fixture role deletion behavior is a test assumption, not a server guarantee.
 
-## Final release results
+## Review fixes
 
+Review of the `7cda2ad` release candidate found three defects. Commits
+`4e301a3` and `4fcbd51` fix them, and the PR head is now `4fcbd51`. The fixed
+standard binary is SHA-256
+`9bd38b9db4f4f8e76cd43384cb024dddd4d122c6bc109d29a8afa483ae0e2c6d`
+(7,617,800 bytes, +144 bytes over `7cda2ad`). The Cloud build is in
+[the review-fix manifest](evidence/phase5/review-fixes-manifest.json).
+
+- **Linear error-body trimming.** Rejected responses are trimmed of Unicode
+  whitespace before they become the error message, like Go's `TrimSpace`. The
+  old `trim_bytes` revalidated the entire remaining body for each rune it
+  removed, so its cost was quadratic. Against a 400 response body padded with
+  leading spaces, `user remove` took 3.06 s with 512 KiB of padding. With 1 MiB
+  it hit the probe's 8 s timeout, while Go took about 35 ms. Each step now
+  decodes at most four bytes. On the same probe, the fix took 2.7–11.0 ms from
+  64 KiB to 1 MiB and Go took 26.6–39.4 ms. Exit status and the captured
+  100-byte error prefix matched Go. Invalid UTF-8 still stops trimming on its side.
+- **PromQL run error wrapper.** When a `promql run` error had its raw bytes
+  cached, its text output lost Go's `request failed: ` prefix.
+  `CliError::prefix_message` now prefixes both the message and the raw bytes.
+  JSON output follows Go: typed HTTP failures keep the original public message,
+  and untyped envelope errors include the wrapper. Six new Phase 4 cases cover
+  typed HTTP failures, invalid response bytes and untyped envelopes, each in
+  text and JSON. The Phase 4 gate is now 159 cases.
+- **Open-file limit.** Inventory detail reads hold one connection each across
+  the full fan-out. With the common inherited soft `RLIMIT_NOFILE` of 1024,
+  `7cda2ad` failed 482 of 1,500 user detail reads with EMFILE and exited 1. Go
+  succeeds there because its runtime raises the soft limit at startup
+  (`syscall/rlimit.go`). `main` now does the same before any other work. If the
+  hard limit is nonzero and the soft limit is below hard − 1, it raises the soft
+  limit to hard − 1. On Apple targets it also clamps to `kern.maxfilesperproc`,
+  as `rlimit_darwin.go` does. Errors are ignored, as in Go. One difference
+  remains: Rust only raises the limit, but Go can lower it on Apple when
+  `kern.maxfilesperproc` is below the inherited soft limit. Go restores the
+  original limit only in processes it executes. Rust `pb` starts no child
+  processes, so it keeps nothing to restore. Any future subprocess, such as a
+  browser opener or `sw_vers`, must restore the limit itself. The 1,500-user
+  probe now gives output byte-identical to Go. `tests/fd_limit.rs` runs the CLI
+  with a soft limit of 64 against 200 detail reads that must all be open at
+  once behind a strict barrier, and reads the raised limit from `/proc`.
+
+The Apple `kern.maxfilesperproc` branch has not been compiled or run. Only the
+Linux x86-64 target is installed, so the `sysctlbyname` call was checked by hand
+against the locked `libc` 0.2.190 source. `tests/fd_limit.rs` has not run on
+macOS either. Startup cost was measured with `pb --version`, 500 interleaved
+runs per binary and condition. When the inherited soft limit already equals
+the hard limit, only `getrlimit` runs. The median rose 0.031 ms (+2.4%, ratio
+interval [1.008, 1.041]) over `7cda2ad`. With soft 1024, where `setrlimit` also
+runs, it rose 0.010 ms (+0.8%, [0.994, 1.023]). Both compare complete release
+builds, not the system calls alone.
+
+### Review-fix validation
+
+A delegated Codex (gpt-6.1-sol) task validated `4fcbd51`. It used the same Go
+reference, toolchains, `v0.0.0-harness` metadata and host as the pre-fix run:
+
+| Check | `7cda2ad` (pre-fix) | `4fcbd51` (review fixes) |
+|---|---:|---:|
+| Rust unit/integration tests; fmt and Clippy `-D warnings` | 251, pass | 256, pass |
+| Python harness tests | 278 | 278 |
+| Phase 1 / 2 / 3 / 4 / 5 cases | 2,018 / 219 / 675 / 153 / 185 | 2,018 / 219 / 675 / 159 / 185 |
+| Release compatibility cases | 3,250 | 3,256 |
+| Deferred-boundary guards | 32/32 | 32/32 |
+| Real 60-second administration deadline | pass | pass |
+| Primary measured samples (shared + administration) | 4,470 | 1,350 + 4,680 |
+
+All cases, guards and samples passed or were valid. The first Python run picked
+up an unpinned Go shim on `PATH`. The rerun with Go 1.25.4 had one skip, the
+Phase 3 fixture-generator parity test, which passed in a targeted rerun with
+`PB_PHASE3_FIXTURE`. No test was edited.
+
+Both corpora measured Go, frozen `7cda2ad` and the fix in the same
+interleaved sessions, with 5 excluded warmups and 30 samples each. Against
+`7cda2ad`, no shared workload crossed a manifest budget. Shared median elapsed
+changes ranged from −0.219 to +1.267 ms, CPU from −0.218 to +1.142 ms, and peak
+RSS from −0.15 to +0.06 MiB. Administration elapsed changes ranged from −7.349
+to +7.457 ms, and RSS from −0.65 to +0.06 MiB. The largest relative elapsed
+increases were +14.3% on a 2 ms shared command and +8.0% on an administration
+command.
+
+A stricter 5% rule was also applied. Thirty workload/metric pairs (5 shared and
+15 administration workloads) had a primary median increase above 5%. Each was
+rerun alone in a fresh interleaved session. A pair would fail if its
+confirmation median stayed above +5% and its whole ratio interval lay above
+1.05. None did, so no regression above 5% is confirmed. Eight confirmation
+point estimates stayed above +5%:
+
+| Workload | Metric | Frozen / fix median ms | Change | Ratio interval |
+|---|---|---:|---:|---:|
+| `p3-bench-rows-1-json` | CPU | 1.631 / 1.719 | +5.4% | [0.995, 1.127] |
+| `p5-user-set-role-large` | CPU | 5.576 / 5.887 | +5.6% | [0.972, 1.122] |
+| `p5-refresh-user-list-small-json` | elapsed | 5.932 / 6.237 | +5.1% | [1.007, 1.119] |
+| `p5-refresh-user-list-small-json` | CPU | 2.888 / 3.048 | +5.5% | [1.004, 1.170] |
+| `p5-refresh-dataset-add` | elapsed | 2.873 / 3.108 | +8.2% | [1.005, 1.167] |
+| `p5-refresh-dataset-add` | CPU | 1.962 / 2.091 | +6.6% | [0.989, 1.139] |
+| `p5-refresh-rejected-no-commit` | elapsed | 2.309 / 2.584 | +11.9% | [1.010, 1.184] |
+| `p5-refresh-rejected-no-commit` | CPU | 1.693 / 1.891 | +11.7% | [1.040, 1.213] |
+
+Every one of these intervals includes 1.05, so none establishes a regression
+above 5%. Some lower bounds exceed 1.0, especially in the small OAuth-refresh
+workloads, so a small positive difference may be real. It amounts to 0.13–0.31
+ms per invocation. The fixes do not change the refresh logic itself. A
+separate, longer A/B run of these refresh workloads is under investigation.
+This document draws no conclusion about them yet.
+
+The Go comparisons are unchanged in character. The large refresh-contention
+workload measured 835.556 ms for the fix, 840.456 ms for `7cda2ad` and
+751.755 ms for Go (fix/Go 1.112× [1.083, 1.156]), so the
+[confirmed tradeoff](#confirmed-refresh-contention-tradeoff) below still holds.
+Error-trim and 1,500-user FD probes were rerun after timing, in a quiet window.
+Reports, analyses, startup samples, probes and logs are listed in
+[the evidence index](evidence/phase5/README.md). The first two sections below
+are the pre-fix release evidence for `7cda2ad` and are kept as published.
+
+## Pre-fix release results (`7cda2ad`)
+
+These results describe the original release candidate, before the review fixes.
 The final standard binary is SHA-256
 `ec9765a4dbd4ad48fd758965cba8aaba50a525d6c7eded89b8c84c4cfcc31b0f`.
 The Cloud binary and all baselines are recorded in the manifest. Nine Opus 5.5

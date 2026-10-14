@@ -1,0 +1,200 @@
+{
+  "error_trim": {
+    "method": "Loopback server answers DELETE user/u with HTTP 400 and a body of N ASCII spaces followed by \"denied\"; `pb user remove u` runs once per binary and size with an 8 s timeout. Single observations: a functional/scaling probe, not a benchmark distribution. stderr is truncated to 100 bytes.",
+    "pre_fix_7cda2ad": {
+      "source": {
+        "path": "/home/ajs/.cache/pb-phase5/tmp/rev/sol/error-trim-probe.log",
+        "bytes": 1779,
+        "sha256": "6bd6c60f02d82983738f348a673d17934c8ce81225dbb67f02e6010ee2cc1ec1"
+      },
+      "results": [
+        {
+          "size": 65536,
+          "binary": "go",
+          "elapsed_ms": 34.659,
+          "status": 1,
+          "stderr": "Error: delete user failed: 400 Bad Request: denied\nUsage:\n  pb user remove user-name [flags]\n\nAliase"
+        },
+        {
+          "size": 65536,
+          "binary": "rust",
+          "elapsed_ms": 50.905,
+          "status": 1,
+          "stderr": "Error: delete user failed: 400 Bad Request: denied\nUsage:\n  pb user remove user-name [flags]\n\nAliase"
+        },
+        {
+          "size": 131072,
+          "binary": "go",
+          "elapsed_ms": 31.587,
+          "status": 1,
+          "stderr": "Error: delete user failed: 400 Bad Request: denied\nUsage:\n  pb user remove user-name [flags]\n\nAliase"
+        },
+        {
+          "size": 131072,
+          "binary": "rust",
+          "elapsed_ms": 280.961,
+          "status": 1,
+          "stderr": "Error: delete user failed: 400 Bad Request: denied\nUsage:\n  pb user remove user-name [flags]\n\nAliase"
+        },
+        {
+          "size": 262144,
+          "binary": "go",
+          "elapsed_ms": 35.107,
+          "status": 1,
+          "stderr": "Error: delete user failed: 400 Bad Request: denied\nUsage:\n  pb user remove user-name [flags]\n\nAliase"
+        },
+        {
+          "size": 262144,
+          "binary": "rust",
+          "elapsed_ms": 728.868,
+          "status": 1,
+          "stderr": "Error: delete user failed: 400 Bad Request: denied\nUsage:\n  pb user remove user-name [flags]\n\nAliase"
+        },
+        {
+          "size": 524288,
+          "binary": "go",
+          "elapsed_ms": 30.854,
+          "status": 1,
+          "stderr": "Error: delete user failed: 400 Bad Request: denied\nUsage:\n  pb user remove user-name [flags]\n\nAliase"
+        },
+        {
+          "size": 524288,
+          "binary": "rust",
+          "elapsed_ms": 3062.23,
+          "status": 1,
+          "stderr": "Error: delete user failed: 400 Bad Request: denied\nUsage:\n  pb user remove user-name [flags]\n\nAliase"
+        },
+        {
+          "size": 1048576,
+          "binary": "go",
+          "elapsed_ms": 34.801,
+          "status": 1,
+          "stderr": "Error: delete user failed: 400 Bad Request: denied\nUsage:\n  pb user remove user-name [flags]\n\nAliase"
+        },
+        {
+          "size": 1048576,
+          "binary": "rust",
+          "elapsed_ms": 8027.904,
+          "status": "timeout",
+          "stderr": ""
+        }
+      ]
+    },
+    "fix_4fcbd51": {
+      "source": {
+        "path": "/home/ajs/.cache/pb-phase5/tmp/rev/sol/validation/error-trim-probe.log",
+        "bytes": 1864,
+        "sha256": "9ac5147a2ee4ddf0f9a1f497b6dfe3725a270192ed20a79148989e8cf59bc646"
+      },
+      "results": [
+        {
+          "size": 65536,
+          "binary": "go",
+          "elapsed_ms": 29.164,
+          "status": 1,
+          "stderr": "Error: delete user failed: 400 Bad Request: denied\nUsage:\n  pb user remove user-name [flags]\n\nAliase"
+        },
+        {
+          "size": 65536,
+          "binary": "rust",
+          "elapsed_ms": 2.669,
+          "status": 1,
+          "stderr": "Error: delete user failed: 400 Bad Request: denied\nUsage:\n  pb user remove user-name [flags]\n\nAliase"
+        },
+        {
+          "size": 131072,
+          "binary": "go",
+          "elapsed_ms": 26.599,
+          "status": 1,
+          "stderr": "Error: delete user failed: 400 Bad Request: denied\nUsage:\n  pb user remove user-name [flags]\n\nAliase"
+        },
+        {
+          "size": 131072,
+          "binary": "rust",
+          "elapsed_ms": 2.662,
+          "status": 1,
+          "stderr": "Error: delete user failed: 400 Bad Request: denied\nUsage:\n  pb user remove user-name [flags]\n\nAliase"
+        },
+        {
+          "size": 262144,
+          "binary": "go",
+          "elapsed_ms": 27.969,
+          "status": 1,
+          "stderr": "Error: delete user failed: 400 Bad Request: denied\nUsage:\n  pb user remove user-name [flags]\n\nAliase"
+        },
+        {
+          "size": 262144,
+          "binary": "rust",
+          "elapsed_ms": 4.219,
+          "status": 1,
+          "stderr": "Error: delete user failed: 400 Bad Request: denied\nUsage:\n  pb user remove user-name [flags]\n\nAliase"
+        },
+        {
+          "size": 524288,
+          "binary": "go",
+          "elapsed_ms": 31.19,
+          "status": 1,
+          "stderr": "Error: delete user failed: 400 Bad Request: denied\nUsage:\n  pb user remove user-name [flags]\n\nAliase"
+        },
+        {
+          "size": 524288,
+          "binary": "rust",
+          "elapsed_ms": 7.06,
+          "status": 1,
+          "stderr": "Error: delete user failed: 400 Bad Request: denied\nUsage:\n  pb user remove user-name [flags]\n\nAliase"
+        },
+        {
+          "size": 1048576,
+          "binary": "go",
+          "elapsed_ms": 39.401,
+          "status": 1,
+          "stderr": "Error: delete user failed: 400 Bad Request: denied\nUsage:\n  pb user remove user-name [flags]\n\nAliase"
+        },
+        {
+          "size": 1048576,
+          "binary": "rust",
+          "elapsed_ms": 11.039,
+          "status": 1,
+          "stderr": "Error: delete user failed: 400 Bad Request: denied\nUsage:\n  pb user remove user-name [flags]\n\nAliase"
+        }
+      ]
+    }
+  },
+  "fd_limit": {
+    "method": "`pb user list -o json` against a loopback fixture with N users whose detail reads are held open; the CLI inherits the given soft RLIMIT_NOFILE (hard 524288). Outputs are compared byte-for-byte.",
+    "pre_fix_7cda2ad_1500_users_soft_1024": {
+      "source": {
+        "path": "/home/ajs/.cache/pb-phase5/tmp/rev/opus/fd-candidate-final-pb-1500-1024.err",
+        "bytes": 58941,
+        "sha256": "3275669228f23ae14c4078272235fc1e82a7adf2147beb6d8cc18a527163948a"
+      },
+      "exit": "exit=1",
+      "emfile_lookups": 482,
+      "stderr_head": "{\n  \"error\": {\n    \"code\": \"COMMAND_FAILED\",\n    \"message\": \"failed to fetch roles for 482 user(s): Error fetching roles for u1018: Get \\\"http://127.0.0.1:30986/api/v1/user/u1018/role\\\": Too many open files (os error 24); Error fetching roles for u1019: Get \\\"http://127.0.0.1:30986/api/v1/user/u1019/role\\\": Too many open files (os error 24); Error fetching roles for u1020: Get \\\"http://127.0.0.1:3"
+    },
+    "fix_4fcbd51_1500_users_soft_1024": {
+      "source": {
+        "path": "/home/ajs/.cache/pb-phase5/tmp/rev/sol/validation/fd-probe/verified.json",
+        "bytes": 413,
+        "sha256": "7f3307057d37e7b3743223229397a9198178f31f545858fe999e2ec3cfc2cd62"
+      },
+      "verified": {
+        "pb-phase5-pb-go": {
+          "json_type": "list",
+          "rows": 1500,
+          "stdout_bytes": 94893,
+          "stderr": "exit=0\n",
+          "sha256": "784c0939bbe67d16f39e12d8e1a5939755e0772fe4c3fb53f6a4e3876f6da352"
+        },
+        "fix-candidate-pb": {
+          "json_type": "list",
+          "rows": 1500,
+          "stdout_bytes": 94893,
+          "stderr": "exit=0\n",
+          "sha256": "784c0939bbe67d16f39e12d8e1a5939755e0772fe4c3fb53f6a4e3876f6da352"
+        }
+      },
+      "log": "pb-phase5-pb-go: exit=0 stdout_bytes=94893 stderr_head=exit=0 \nfix-candidate-pb: exit=0 stdout_bytes=94893 stderr_head=exit=0 \n"
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "source_revision": "4fcbd51fdaebed08164bfe7041e16c9c51cbb565",
+  "rust_tests": 256,
+  "python_tests": 278,
+  "python_skips_after_targeted_rerun": 0,
+  "final_release_cases": {
+    "phase1": 2018,
+    "phase2": 219,
+    "phase3": 675,
+    "phase4": 159,
+    "phase5": 185
+  },
+  "final_release_case_total": 3256,
+  "deferred_boundary_checks": 32,
+  "full60s_admin_deadline_cases": 1,
+  "shared_workloads": 15,
+  "admin_workloads": 52,
+  "main_measured_samples": {
+    "shared": 1350,
+    "admin": 4680
+  },
+  "confirmation_workloads": {
+    "shared": 5,
+    "admin": 15
+  },
+  "confirmation_measured_samples": {
+    "shared": 300,
+    "admin": 1350
+  },
+  "startup_measured_samples": 3000,
+  "shared_budget_regressions": [],
+  "confirmed_five_percent_regressions": [],
+  "confirmation_point_estimates_above_five_percent": 8,
+  "refresh_workload_follow_up": "under investigation; no conclusion recorded",
+  "live_server_tests": false,
+  "all_main_samples_valid": true
+}
