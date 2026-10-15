@@ -1,0 +1,21 @@
+{
+  "review": "docs/phase7-review-a1-fanout-opus-r1.md",
+  "sha256": "ef8e9cac80befd09c7b141816f85d43f92ea57974e643e15b15900f1d4b48892",
+  "disposition": "R1prose/R2wiringtests closed byroot evidenceverification; sourcepatchacceptedforfuturecomposition; R3rootfullsuite+bindingpending; unapplied",
+  "unapplied_patch_sha256": "2d97ed82084e13930938fd3ee8cbe40c843052ce6f2a038c129776ae31fa87ce",
+  "source_base_sha256": "e03e1d2bfce45d7123b67a1870e8e3e38c7d5a6ae92c99881c513f4965846c01",
+  "correction": "three original request-order issues, nottwo; derived8passing4densefail unchanged",
+  "N1": "late legitimate startup receipt mustinvalidate/preservefailure; no retryorreadinessrelaxation",
+  "N2": "24unchangedcasehashes gainstrictboundarygate; fullsource/preflightbindingmustregenerate",
+  "N3_N4": "informational futurehardening; noextra sourcechange now",
+  "runtime_acceptance": false,
+  "geometry_and_pagestep": "separate; actualGo navigation control pending",
+  "R1_R2_root_closure": {
+    "artifact_identities_verified": 72,
+    "doc_sha256": "2b4de8f9213ced83e53845717b30a785f93df7ef74ebd6f3bc76e3ca7ee2afcc",
+    "exact_single_wiring_line_removal_verified": true,
+    "tests": "2baselinepass;2mutantassertionfailures,0errors; actualobservationentrypoint,comparealonepasses",
+    "author_evidence_checked_not_reexecuted": true,
+    "source_patch_unchanged": true
+  }
+}

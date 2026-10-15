@@ -1,0 +1,14 @@
+{
+  "status": "causal diagnosis accepted; implementation and actual pagination control pending",
+  "review_sha256": "031c2b096bd8ec9a5a5be7ebfe9679a19ebbd0769b5597608c5c408341c5fc53",
+  "review": "docs/phase7-review-a1retry-promql-opus-r1.md",
+  "root_cause": "tablefooter actualH-8 vs predicateH-6 inall8Go/Rustdenseframes; W-3columncorrect",
+  "retained_replay": "exactsetup/finalframe reconstruction; predicatefalseallstream; proposalpassesactualframesand10negativecontrols; singlebytefollowupfailedpyteIndexError retained",
+  "additional_requirements": [
+    "tablehintH-3 mustfinish repaint",
+    "exacttokenboundary rejects11vs1alias",
+    "actualGoPageDown control beforeadopting source-inferred15step"
+  ],
+  "scope": "off-tree implementation only, no live source changes or run admission",
+  "request_order": "intrinsic3startupfanout noted, separateSolproposal notwaived"
+}

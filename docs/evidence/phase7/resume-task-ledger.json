@@ -1,0 +1,1012 @@
+{
+  "head": "ea70f7ad7d501d59b26cf6397f6a0b1f28143fc4",
+  "user_constraint": "each performance run strictly under30minutes including cleanup",
+  "tasks": [
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Athread-send%3Aphase7-r4-user-resume",
+      "scope": "Sol6.1 decision corrections"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Athread-send%3Aphase7-accounting-user-resume",
+      "scope": "Sol6.1 accounting research"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Adelegate-task%3Aphase7-opus-under30-plan-r1",
+      "scope": "Opus5.5 bounded execution design"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Adelegate-task%3Aphase7-opus-merged-integration-review-r1",
+      "scope": "Opus5.5 combined integration review"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Athread-send%3Aphase7-r4-p1-disposition-freeze",
+      "scope": "Sol6.1 final conditional protocol"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Adelegate-task%3Aphase7-opus-decisions-r4-review",
+      "scope": "Opus5.5 fresh protocol closure review"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Adelegate-task%3Aphase7-sol-pr4-replay-adapter-r1",
+      "scope": "Sol6.1 durable Flight14 replay implementation"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Adelegate-task%3Aphase7-sol-decisions-r5-hardening",
+      "scope": "Sol6.1 PD4 input hardening"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Adelegate-task%3Aphase7-opus-flight14-adapter-review-r1",
+      "scope": "Opus5.5 adapter ownership and O1 closure review"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Adelegate-task%3Aphase7-opus-bounded-runner-r1",
+      "scope": "Opus5.5 under30 execution supervisor implementation",
+      "status": "implementation complete, fresh independent review pending"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Athread-send%3Aphase7-flight14-b1b2-fixes",
+      "scope": "Sol6.1 adapter ownership corrections"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Adelegate-task%3Aphase7-opus-decisions-r5-closure",
+      "scope": "Opus5.5 narrow R5 closure"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Adelegate-task%3Aphase7-opus-combined-dark-spinner-review-r1",
+      "scope": "Opus5.5 exact dark spinner contract review",
+      "status": "accepted scope; root applied/reduced"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Adelegate-task%3Aphase7-opus-bounded-runner-review-r1",
+      "scope": "Opus5.5 independent bounded supervisor review",
+      "status": "not accepted; B1/B2/B3 scoped fixes assigned"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Adelegate-task%3Aphase7-sol-combined-header-deadline-r1",
+      "scope": "Sol6.1 exact combined Go A/A header deadline investigation",
+      "status": "off-tree proposal complete; independent review pending"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3A9d6a5b57-0a9e-4b56-9b82-b1f418f71f7b%3Adelegate-task%3Aphase7-flight14-adapter-r2b-closure-opus-20261015-2",
+      "scope": "Nested Opus5.5 Flight14 corrected R2 closure",
+      "status": "closed; source review accepted, root actual14 pairs pass"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Athread-send%3Aphase7-flight14-r2-review-handoff",
+      "scope": "Sol6.1 nested review result relay, no source edit",
+      "status": "completed"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Athread-send%3Aphase7-bounded-runner-r1-fixes",
+      "scope": "Opus5.5 bounded supervisor concrete review corrections",
+      "status": "R2 source frozen; author32 tests pass; fresh independent R2 review running"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Adelegate-task%3Aphase7-opus-combined-header-deadline-review-r1",
+      "scope": "Opus5.5 exact header-stall whole-stream rule independent review",
+      "status": "exact off-tree patch accepted; awaiting original retained driver completion before live application"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Adelegate-task%3Aphase7-opus-bounded-runner-review-r2",
+      "scope": "Opus5.5 fresh bounded supervisor R2 correction closure",
+      "status": "code accepted; root doc-only D1 closure checked, prerequisite only"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Adelegate-task%3Aphase7-sol-shared-performance-preparation-r1",
+      "scope": "Sol6.1 exact retained shared-command performance preparation, no execution",
+      "status": "read-only preparation complete; root will preserve whole-suite RNG in bounded complete-or-failed attempt, not proposed restarted singleton order"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Adelegate-task%3Aphase7-sol-shared-runner-owned-cleanup-r1",
+      "scope": "Sol6.1 off-tree narrow shared-runner ownership correction proposal",
+      "status": "off-tree proposal complete; not promoted because macOS waitid contract; Linux-only separate adapter continuation"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Athread-send%3Aphase7-shared-runner-linux-adapter-scope-r2",
+      "scope": "Sol6.1 Linux-only generated shared measurement adapter, live run.py unchanged",
+      "status": "paused with zero-process ACK before A1; nine own-control children reaped"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Athread-send%3Aphase7-linux-adapter-a1-release",
+      "scope": "Sol6.1 resume Linux-only adapter packaging after explicit A1 cleanup RELEASE",
+      "status": "author frozen:39pure + changed Fixture control;18tiny native children total reaped,40packet+7durable hashes rootverified; independent review pending"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Adelegate-task%3Aphase7-opus-a1-functional-failure-r1",
+      "scope": "Opus5.5 independent actual A1 Go readiness/resize retained-artifact diagnosis",
+      "status": "complete: actual retained replay proves impossible closed-drawer footer assumption; root accepts diagnosis, exact-case/action-preserving correction assigned"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Adelegate-task%3Aphase7-opus-shared-linux-adapter-review-r1",
+      "scope": "Fresh Opus5.5 Linux-only generated measurement runner ownership/mapping/schedule review",
+      "status": "accepted Linux-only15case runner; root disposition records9limits; no measurement yet"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Adelegate-task%3Aphase7-sol-a1-sql-geometry-fix-r1",
+      "scope": "Sol6.1 actual retained-frame-backed SQL open-drawer geometry and additive primary capture-failure reporting",
+      "status": "frozen implementation;23focused+119purebench,52+12casehashes unchanged;25identities rootverified; fresh review pending"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Adelegate-task%3Aphase7-opus-a1-geometry-fix-review-r1",
+      "scope": "Fresh Opus5.5 actual-retained-frame-backed open-drawer geometry and additive failure reporting closure",
+      "status": "accepted scoped correction; actual retry pending; intentional out-of-scope lock guard failure disclosed"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Adelegate-task%3Aphase7-sol-shared-aa-evidence-review-r1",
+      "scope": "Fresh Sol6.1 offline same-Go full15case evidence audit",
+      "status": "complete; see followupauditdisposition"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Athread-send%3Aphase7-shared-aa-audit-a1retry02-release",
+      "scope": "Resume unfinished sameSol offline sharedAAaudit after explicit quietrelease",
+      "status": "completed:46183checks plus duplicateflockrow reconciliation,12219originalsunmodified,nointegrityblocker; interpretationlimitsretained"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Adelegate-task%3Aphase7-opus-a1retry-promql-diagnosis-r1",
+      "scope": "FreshOpus actualretained densePromQL table readiness diagnosis",
+      "status": "diagnosis complete;offtreeimplementation active afterrelease"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Adelegate-task%3Aphase7-sol-a1retry-request-fanout-proposal-r1",
+      "scope": "Sol off-tree startuprequest contract proposal using existing acceptedfanout semantics",
+      "status": "complete off-tree;freshOpusreviewactive"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Athread-send%3Aphase7-shared-primary01-release-promql",
+      "scope": "Resume unfinishedOpus dense-table retaineddiagnosis afterexplicitquietrelease",
+      "status": "diagnosis complete:all8actualframesfooterH-8 notH-6; fullrawreplay proves collectorbug; paginationstep source-only needsactualGo control"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Athread-send%3Aphase7-shared-primary01-release-fanout",
+      "scope": "Resume unfinishedSol off-treefanoutproposal afterexplicitquietrelease",
+      "status": "complete off-tree proposal13tests;notapplied"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Adelegate-task%3Aphase7-sol-shared-primary-audit-r1",
+      "scope": "Fresh independentSol primarycapture evidence andhistoricalscreens audit",
+      "status": "complete, no integrity blocker;30metrics requirefreshconfirmation"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Athread-send%3Aphase7-promql-geometry-implementation-control-prepare-r1",
+      "scope": "Opus off-tree densepredicate/tests and root-run pinnedGo navigationcontrol implementation",
+      "status": "paused thenresumed via explicitconfirmationcleanuprelease"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Athread-send%3Aphase7-confirmations01-release-geometry",
+      "scope": "Resume Opus off-tree geometry implementation/control runner, no native",
+      "status": "active, no native execution"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Adelegate-task%3Aphase7-sol-shared-confirmations-audit-r1",
+      "scope": "Fresh Sol6.1 independent offline15isolatedconfirmation evidence/CI audit",
+      "status": "complete;15RSSnumericalfailuresconfirmed,nointegrityblocker"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Adelegate-task%3Aphase7-opus-a1-fanout-review-r1",
+      "scope": "Fresh Opus5.5 off-tree benchmarkstartupfanout proposal review",
+      "status": "complete; conditional narrow source acceptance, R1R2requiredfixesassigned,R3rootintegrationpending"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Adelegate-task%3Aphase7-sol-rss-three-baseline-preparation-r1",
+      "scope": "Sol6.1 off-tree descriptive3Rustbaselineattribution preparation",
+      "status": "complete;rootreviewedplan, noactualadmission, waitingownlanezeroACK"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Athread-send%3Aphase7-fanout-r1-required-fixes",
+      "scope": "Sol6.1 requiredproseandwiringtestclosure, nochangeacceptedbenchpatch",
+      "status": "complete; root72artifacthashverified,R1R2closed;R3pendingcomposition"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Athread-send%3Aphase7-rss-triad-pause-geometry",
+      "scope": "Request actualzero-processpause beforefutureRSSdiagnostic",
+      "status": "actuallaterACK:boundedretryexit0/reaped,zeroactiveprocesses; remainsrootpaused; testfixturelinefix/freezehashespending"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3A78a62eba-9e95-4ed0-8754-e373aac96a0d%3Athread-send%3Aphase7-three-baseline-release-geometry-finalfix",
+      "scope": "Opus narrowremainingfixturelinefix/freeze afterexplicitRSSrelease",
+      "status": "activeofftreepure"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3A78a62eba-9e95-4ed0-8754-e373aac96a0d%3Athread-send%3Aphase7-triad-version-mismatch-build-preparation",
+      "scope": "Sol matchedmergedPhase6build preparation andfailedversionevidence",
+      "status": "activepure/noactualbuild"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3A78a62eba-9e95-4ed0-8754-e373aac96a0d%3Adelegate-task%3Aphase7-opus-a1-retry04-launcher-review-r1",
+      "scope": "Opus5.5 fresh narrow A1-04 launcher permission coverage and owned cleanup review",
+      "status": "accepted narrow launcher; 48 pure mocks; 9 non-equivalent mutants killed; root disposition literal booleans written; no native acceptance"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3A78a62eba-9e95-4ed0-8754-e373aac96a0d%3Adelegate-task%3Aphase7-sol-a1-retry04-sustained-timeout-investigation-r1",
+      "scope": "Sol6.1 offline sustained PromQL candidate timeout investigation",
+      "status": "complete offline diagnosis; target7951absent,16correctupdates beforedeadline; two deep fullrowclones perrender sourceconfirmed, costattributionunprofiled"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3A78a62eba-9e95-4ed0-8754-e373aac96a0d%3Adelegate-task%3Aphase7-sol-promql-shared-rows-implementation-r1",
+      "scope": "Sol6.1 narrow immutable row sharing in promql.rs plus focusedtests/docs; rooteditwindowopen",
+      "status": "implemented frozen9e186f17;60focusedtestsplain+ANSI/48frames/libclippy passed; no nativeCLI/speedclaim"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3A78a62eba-9e95-4ed0-8754-e373aac96a0d%3Adelegate-task%3Aphase7-opus-promql-shared-rows-review-r1",
+      "scope": "Opus5.5 independent rowownership semantic review",
+      "status": "accepted sourceownership; independentlyrebuilt60tests; nonblockingtest/doclimits rootrecorded"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3A78a62eba-9e95-4ed0-8754-e373aac96a0d%3Athread-send%3Aphase7-a1-retry05-successor-build-preparation",
+      "scope": "Sol6.1 A1-05 successor source/artifact binding, same reviewed launcher policy and12cases24roles",
+      "status": "completed17purechecks; root221artifacts687inputsverified; onlycandidate/output/sourcebindings changed"
+    },
+    {
+      "task_id": "node:delegated-task:command%3Amcp%3A78a62eba-9e95-4ed0-8754-e373aac96a0d%3Adelegate-task%3Aphase7-opus-a1-retry05-binding-review-r1",
+      "scope": "Opus narrow A1-05 binding review",
+      "status": "accepted; A1-05 subsequent12pairs24rolespass/cleanupverified; no performanceclaim"
+    }
+  ],
+  "shared_primary_audit": {
+    "task": "phase7-sol-shared-primary-audit-r1",
+    "status": "complete; integrity accepted,30screenedmetrics requireconfirmation",
+    "review_sha256": "e816de99049f8c83d3b4fca038586509aaae1a68384f9b716f52c2067fd06e0b"
+  },
+  "shared_confirmations01": {
+    "status": "scoped evidence integrity accepted;15RSS numerical failures confirmed, performance issue remains open",
+    "root_checks": {
+      "start": "2026-10-15T13:54:29.247986+00:00",
+      "end": "2026-10-15T13:56:15.346092+00:00",
+      "cleanup": "2026-10-15T13:56:15.499969+00:00",
+      "elapsed": 106.25200732098892,
+      "actual_exit": 0,
+      "supervisor_verdict": "ok",
+      "echild": true,
+      "remaining": [],
+      "lock_reacquired_released": true,
+      "end_identities_unchanged": true,
+      "cleanup_pass": true,
+      "capture_provisional_pass": true,
+      "session_checks": [
+        {
+          "case": "p1-0000-root",
+          "complete": true,
+          "passed": true,
+          "shape": true,
+          "spec_exact": true,
+          "schedule": true,
+          "allvalid": true,
+          "warmups_clean": true,
+          "labels_exact": true,
+          "sha256": "d0ab512137b2fb300c5bccdcb9911fab30a2fbdf636bfe4071e0c337a1580f05"
+        },
+        {
+          "case": "p1-0001-root-help",
+          "complete": true,
+          "passed": true,
+          "shape": true,
+          "spec_exact": true,
+          "schedule": true,
+          "allvalid": true,
+          "warmups_clean": true,
+          "labels_exact": true,
+          "sha256": "2c6b02a1a01cde512872a830a7ceca9e1bbee94391412021356b7d88c24f0027"
+        },
+        {
+          "case": "p1-0003-version",
+          "complete": true,
+          "passed": true,
+          "shape": true,
+          "spec_exact": true,
+          "schedule": true,
+          "allvalid": true,
+          "warmups_clean": true,
+          "labels_exact": true,
+          "sha256": "64812c65a0623a2523caaa0d58e8c5301715bda7ac0276a086f20180ad4a12ae"
+        },
+        {
+          "case": "p1-0009-agent-json",
+          "complete": true,
+          "passed": true,
+          "shape": true,
+          "spec_exact": true,
+          "schedule": true,
+          "allvalid": true,
+          "warmups_clean": true,
+          "labels_exact": true,
+          "sha256": "3031f28472334f171df83e764663c4acc59eb7bc5b23ce5f7d90441c92a4ef31"
+        },
+        {
+          "case": "p2-status-basic-json",
+          "complete": true,
+          "passed": true,
+          "shape": true,
+          "spec_exact": true,
+          "schedule": true,
+          "allvalid": true,
+          "warmups_clean": true,
+          "labels_exact": true,
+          "sha256": "40140c46eaa8ef44632a69fb28dba32192e59201979caf2f2e91819522605618"
+        },
+        {
+          "case": "p2-profile-list-seeded-json",
+          "complete": true,
+          "passed": true,
+          "shape": true,
+          "spec_exact": true,
+          "schedule": true,
+          "allvalid": true,
+          "warmups_clean": true,
+          "labels_exact": true,
+          "sha256": "b6b54a3cbfc6599c71fea500bbe5c47bedbf8c6010e758c96de7e7ce615549e9"
+        },
+        {
+          "case": "p2-dataset-list-basic-json",
+          "complete": true,
+          "passed": true,
+          "shape": true,
+          "spec_exact": true,
+          "schedule": true,
+          "allvalid": true,
+          "warmups_clean": true,
+          "labels_exact": true,
+          "sha256": "c43c141c1d6492286eb321ac33a5521e1283d93abd49f2b534b9bad82c27d7d5"
+        },
+        {
+          "case": "p2-dataset-info-json",
+          "complete": true,
+          "passed": true,
+          "shape": true,
+          "spec_exact": true,
+          "schedule": true,
+          "allvalid": true,
+          "warmups_clean": true,
+          "labels_exact": true,
+          "sha256": "683a54826661e4f3d14537d9cfe1ca14c2082027af5340966d12cfad654da15f"
+        },
+        {
+          "case": "p2-dataset-schema-json",
+          "complete": true,
+          "passed": true,
+          "shape": true,
+          "spec_exact": true,
+          "schedule": true,
+          "allvalid": true,
+          "warmups_clean": true,
+          "labels_exact": true,
+          "sha256": "f39e53567a1146bbe746628c7bfa17b9b4905ee5c31d0525598a916e9d7c078e"
+        },
+        {
+          "case": "p3-bench-rows-1-json",
+          "complete": true,
+          "passed": true,
+          "shape": true,
+          "spec_exact": true,
+          "schedule": true,
+          "allvalid": true,
+          "warmups_clean": true,
+          "labels_exact": true,
+          "sha256": "25ff8b132a766e3d38fe11000d92c7f901c02046e67e5f81bd2e67b11dd7e919"
+        },
+        {
+          "case": "p3-bench-rows-500-json",
+          "complete": true,
+          "passed": true,
+          "shape": true,
+          "spec_exact": true,
+          "schedule": true,
+          "allvalid": true,
+          "warmups_clean": true,
+          "labels_exact": true,
+          "sha256": "eaabaf826a3ac40a330bb353f24c8d62652a29d8b8e3ea48a74152728ee26641"
+        },
+        {
+          "case": "p3-bench-rows-500-text",
+          "complete": true,
+          "passed": true,
+          "shape": true,
+          "spec_exact": true,
+          "schedule": true,
+          "allvalid": true,
+          "warmups_clean": true,
+          "labels_exact": true,
+          "sha256": "ce09c8874455a9f2df7ec576b5ac9f00ca0b46df9b87fa29d07a94a7612ea9e4"
+        },
+        {
+          "case": "p3-bench-rows-10000-json",
+          "complete": true,
+          "passed": true,
+          "shape": true,
+          "spec_exact": true,
+          "schedule": true,
+          "allvalid": true,
+          "warmups_clean": true,
+          "labels_exact": true,
+          "sha256": "9c371a6b96f9e7caa95e96c89f89712d0e62a486787474f4265b90fe8d0b966c"
+        },
+        {
+          "case": "p3-bench-rows-10000-text",
+          "complete": true,
+          "passed": true,
+          "shape": true,
+          "spec_exact": true,
+          "schedule": true,
+          "allvalid": true,
+          "warmups_clean": true,
+          "labels_exact": true,
+          "sha256": "104959c6799b91689b4820dad3d5509b7d1bcafefe8981590e00232f7c0864e9"
+        },
+        {
+          "case": "p3-bench-empty-json",
+          "complete": true,
+          "passed": true,
+          "shape": true,
+          "spec_exact": true,
+          "schedule": true,
+          "allvalid": true,
+          "warmups_clean": true,
+          "labels_exact": true,
+          "sha256": "3552ec8803b5a0bdef7edfe0d1cd85fd70b406885c2fd5b5e4a5d1f63994d0b5"
+        }
+      ],
+      "batch_sha256": "54a69ee17e9b4bbdb10015bc678bdb6a19d0dfb6c0b71eda748ff0e770b485fe",
+      "supervisor_sha256": "8bc8eea6b6934c15d9f45a1bc389f34babd3bad0de7992ddf373e3ab6101c175",
+      "performance_interpretation": false
+    },
+    "native_role_runs": 1575,
+    "measured": 1350,
+    "warmups": 225,
+    "source_unchanged": true,
+    "production_inputs": 64,
+    "plan_sha256": "5b8c87573f3141f75213a6dad05df0584eab85016d0cd92ab510ae08ba70389d",
+    "batch_sha256": "54a69ee17e9b4bbdb10015bc678bdb6a19d0dfb6c0b71eda748ff0e770b485fe",
+    "reports": [
+      {
+        "case": "p1-0000-root",
+        "returncode": 0,
+        "started_ns": 1083827942996097,
+        "ended_ns": 1083829489366501,
+        "complete": true,
+        "passed": true,
+        "report_sha256": "d0ab512137b2fb300c5bccdcb9911fab30a2fbdf636bfe4071e0c337a1580f05",
+        "report": "/home/ajs/.cache/pb-phase7/shared-performance-combined-confirmations-01/01-p1-0000-root/report.json"
+      },
+      {
+        "case": "p1-0001-root-help",
+        "returncode": 0,
+        "started_ns": 1083829489927562,
+        "ended_ns": 1083831089142576,
+        "complete": true,
+        "passed": true,
+        "report_sha256": "2c6b02a1a01cde512872a830a7ceca9e1bbee94391412021356b7d88c24f0027",
+        "report": "/home/ajs/.cache/pb-phase7/shared-performance-combined-confirmations-01/02-p1-0001-root-help/report.json"
+      },
+      {
+        "case": "p1-0003-version",
+        "returncode": 0,
+        "started_ns": 1083831089562977,
+        "ended_ns": 1083832629605973,
+        "complete": true,
+        "passed": true,
+        "report_sha256": "64812c65a0623a2523caaa0d58e8c5301715bda7ac0276a086f20180ad4a12ae",
+        "report": "/home/ajs/.cache/pb-phase7/shared-performance-combined-confirmations-01/03-p1-0003-version/report.json"
+      },
+      {
+        "case": "p1-0009-agent-json",
+        "returncode": 0,
+        "started_ns": 1083832630176230,
+        "ended_ns": 1083834152707367,
+        "complete": true,
+        "passed": true,
+        "report_sha256": "3031f28472334f171df83e764663c4acc59eb7bc5b23ce5f7d90441c92a4ef31",
+        "report": "/home/ajs/.cache/pb-phase7/shared-performance-combined-confirmations-01/04-p1-0009-agent-json/report.json"
+      },
+      {
+        "case": "p2-status-basic-json",
+        "returncode": 0,
+        "started_ns": 1083834153227095,
+        "ended_ns": 1083836953212497,
+        "complete": true,
+        "passed": true,
+        "report_sha256": "40140c46eaa8ef44632a69fb28dba32192e59201979caf2f2e91819522605618",
+        "report": "/home/ajs/.cache/pb-phase7/shared-performance-combined-confirmations-01/05-p2-status-basic-json/report.json"
+      },
+      {
+        "case": "p2-profile-list-seeded-json",
+        "returncode": 0,
+        "started_ns": 1083836953753181,
+        "ended_ns": 1083838586461528,
+        "complete": true,
+        "passed": true,
+        "report_sha256": "b6b54a3cbfc6599c71fea500bbe5c47bedbf8c6010e758c96de7e7ce615549e9",
+        "report": "/home/ajs/.cache/pb-phase7/shared-performance-combined-confirmations-01/06-p2-profile-list-seeded-json/report.json"
+      },
+      {
+        "case": "p2-dataset-list-basic-json",
+        "returncode": 0,
+        "started_ns": 1083838586967188,
+        "ended_ns": 1083841383634991,
+        "complete": true,
+        "passed": true,
+        "report_sha256": "c43c141c1d6492286eb321ac33a5521e1283d93abd49f2b534b9bad82c27d7d5",
+        "report": "/home/ajs/.cache/pb-phase7/shared-performance-combined-confirmations-01/07-p2-dataset-list-basic-json/report.json"
+      },
+      {
+        "case": "p2-dataset-info-json",
+        "returncode": 0,
+        "started_ns": 1083841384131591,
+        "ended_ns": 1083844245440974,
+        "complete": true,
+        "passed": true,
+        "report_sha256": "683a54826661e4f3d14537d9cfe1ca14c2082027af5340966d12cfad654da15f",
+        "report": "/home/ajs/.cache/pb-phase7/shared-performance-combined-confirmations-01/08-p2-dataset-info-json/report.json"
+      },
+      {
+        "case": "p2-dataset-schema-json",
+        "returncode": 0,
+        "started_ns": 1083844246122417,
+        "ended_ns": 1083847107972683,
+        "complete": true,
+        "passed": true,
+        "report_sha256": "f39e53567a1146bbe746628c7bfa17b9b4905ee5c31d0525598a916e9d7c078e",
+        "report": "/home/ajs/.cache/pb-phase7/shared-performance-combined-confirmations-01/09-p2-dataset-schema-json/report.json"
+      },
+      {
+        "case": "p3-bench-rows-1-json",
+        "returncode": 0,
+        "started_ns": 1083847108447388,
+        "ended_ns": 1083850046362932,
+        "complete": true,
+        "passed": true,
+        "report_sha256": "25ff8b132a766e3d38fe11000d92c7f901c02046e67e5f81bd2e67b11dd7e919",
+        "report": "/home/ajs/.cache/pb-phase7/shared-performance-combined-confirmations-01/10-p3-bench-rows-1-json/report.json"
+      },
+      {
+        "case": "p3-bench-rows-500-json",
+        "returncode": 0,
+        "started_ns": 1083850046943806,
+        "ended_ns": 1083854964542845,
+        "complete": true,
+        "passed": true,
+        "report_sha256": "eaabaf826a3ac40a330bb353f24c8d62652a29d8b8e3ea48a74152728ee26641",
+        "report": "/home/ajs/.cache/pb-phase7/shared-performance-combined-confirmations-01/11-p3-bench-rows-500-json/report.json"
+      },
+      {
+        "case": "p3-bench-rows-500-text",
+        "returncode": 0,
+        "started_ns": 1083854965054922,
+        "ended_ns": 1083859514708709,
+        "complete": true,
+        "passed": true,
+        "report_sha256": "ce09c8874455a9f2df7ec576b5ac9f00ca0b46df9b87fa29d07a94a7612ea9e4",
+        "report": "/home/ajs/.cache/pb-phase7/shared-performance-combined-confirmations-01/12-p3-bench-rows-500-text/report.json"
+      },
+      {
+        "case": "p3-bench-rows-10000-json",
+        "returncode": 0,
+        "started_ns": 1083859515441732,
+        "ended_ns": 1083900933367120,
+        "complete": true,
+        "passed": true,
+        "report_sha256": "9c371a6b96f9e7caa95e96c89f89712d0e62a486787474f4265b90fe8d0b966c",
+        "report": "/home/ajs/.cache/pb-phase7/shared-performance-combined-confirmations-01/13-p3-bench-rows-10000-json/report.json"
+      },
+      {
+        "case": "p3-bench-rows-10000-text",
+        "returncode": 0,
+        "started_ns": 1083900933983880,
+        "ended_ns": 1083930553424731,
+        "complete": true,
+        "passed": true,
+        "report_sha256": "104959c6799b91689b4820dad3d5509b7d1bcafefe8981590e00232f7c0864e9",
+        "report": "/home/ajs/.cache/pb-phase7/shared-performance-combined-confirmations-01/14-p3-bench-rows-10000-text/report.json"
+      },
+      {
+        "case": "p3-bench-empty-json",
+        "returncode": 0,
+        "started_ns": 1083930554056663,
+        "ended_ns": 1083933619328978,
+        "complete": true,
+        "passed": true,
+        "report_sha256": "3552ec8803b5a0bdef7edfe0d1cd85fd70b406885c2fd5b5e4a5d1f63994d0b5",
+        "report": "/home/ajs/.cache/pb-phase7/shared-performance-combined-confirmations-01/15-p3-bench-empty-json/report.json"
+      }
+    ],
+    "audit_task": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Adelegate-task%3Aphase7-sol-shared-confirmations-audit-r1"
+  },
+  "shared_rss_triad01": {
+    "status": "failed diagnostic, no acceptance or comparativeinterpretation; originals preserved",
+    "cleanup": {
+      "start_utc": "2026-10-15T15:44:27.649342+00:00",
+      "end_utc": "2026-10-15T15:45:59.419636+00:00",
+      "cleanup_utc": "2026-10-15T15:45:59.494484+00:00",
+      "elapsed_through_cleanup": 91.84515933296643,
+      "actual_supervisor_exit": 2,
+      "supervisor_verdict": "child_failed",
+      "echild_verified": true,
+      "remaining": [],
+      "lock_reacquired_released": true,
+      "end_identities_unchanged": true,
+      "report_complete": true,
+      "report_passed": false,
+      "case_count": 15,
+      "shape_exact15x3x30": true,
+      "all_measured_report_valid": true,
+      "all_warmups_report_clean": true,
+      "all_labels_exact_declared_binaries": true,
+      "report_sha256": "396289cee5133f686ad336e7bdb07a7b38b0d65c79795168cd0f64a033d276a6",
+      "supervisor_sha256": "306e59299b1cfcf5b2290629e3e45562b4edee21e118ef53e05a65f33710a793",
+      "performance_interpretation": false,
+      "measured_schedule_matches_original_rng": true,
+      "cleanup_pass": true,
+      "diagnostic_capture_provisional_pass": false
+    },
+    "actual_coordinator_exit": 1,
+    "all_comparisons": 30,
+    "incompatible": [
+      {
+        "case": "p1-0003-version",
+        "label": "phase6",
+        "differences": [
+          "stdout_sha256"
+        ]
+      }
+    ],
+    "raw_version_stdout": {
+      "phase5": "pb version 0.0.0-harness\n",
+      "phase6": "pb version 0.1.0\n",
+      "phase7": "pb version 0.0.0-harness\n"
+    },
+    "source_boundary": "src/lib.rs version() option_env!(PB_VERSION) else CARGO_PKG_VERSION; separate PB_COMMIT",
+    "next": "preparenewpinnedmergedPhase6buildwithmatchedharnessversionandcommit; no normalization orreplacementoldartifact; no rerun until newbindingsandquiet",
+    "report_sha256": "396289cee5133f686ad336e7bdb07a7b38b0d65c79795168cd0f64a033d276a6",
+    "no_physical_or_causal_claim": true
+  },
+  "promql_geometry_final_review": {
+    "implementation_status": "frozen off-tree; focused synthetic correction passes; no user input needed",
+    "final_patch_sha256": "bbdd22270629eb2c9db5b7f29aba87cf88232b0215f200fecc5fdefc27c6a486",
+    "review_task": "node:delegated-task:command%3Amcp%3A78a62eba-9e95-4ed0-8754-e373aac96a0d%3Adelegate-task%3Aphase7-opus-promql-geometry-final-review-r1",
+    "status": "terminal scoped acceptance reported; root full review read and disposition pending; no live application",
+    "native_navigation_control": "unrun; root admission required after review"
+  },
+  "phase6_metadata_build": {
+    "status": "build complete; artifact verified; runtime compatibility and performance unassessed",
+    "plan": "/home/ajs/.cache/pb-phase7/shared-rss-phase6-version-build-preparation/build-plan.json",
+    "plan_sha256": "3baf43e91cf4241a37454e684236fb11e5ecd428f45f74130defb0c816857235",
+    "session_id": 4693,
+    "source_commit": "ea70f7ad7d501d59b26cf6397f6a0b1f28143fc4",
+    "source_verified_compiled_paths": 46,
+    "runtime_acceptance": false,
+    "performance_acceptance": false,
+    "artifact": {
+      "path": "/home/ajs/.cache/pb-phase7/shared-rss-phase6-version-build-preparation/build-output/pb-phase6-metadata-matched",
+      "sha256": "51e36f6c359f416ee11c920b239ee5e72c7fe55e923100d5df294c1aac1b61e0",
+      "bytes": 10796744
+    },
+    "cleanup": {
+      "actual_supervisor_exit": 0,
+      "supervisor_verdict": "ok",
+      "echild_verified": true,
+      "end_identities_unchanged": true,
+      "elapsed_before_final_write": 129.22951526287943,
+      "build_manifest": {
+        "sha256": "c4dd1ff7f650886c36fea914d4238818a1182a2fb38f527fb4ce487070574902",
+        "bytes": 9745
+      },
+      "runtime_acceptance": false,
+      "performance_acceptance": false,
+      "measured_build_cost": false,
+      "provisional_build_only_complete": true
+    },
+    "successor_plan_task": "node:delegated-task:command%3Amcp%3A78a62eba-9e95-4ed0-8754-e373aac96a0d%3Athread-send%3Aphase7-triad-matched-build-r2-plan"
+  },
+  "shared_rss_triad02": {
+    "status": "independent evidence integrity audit accepted; diagnostic RSS localization only; prior performance failures remain open",
+    "plan_sha256": "80164464e59eae01bac23a6f480d1b0a29f47fbbd10d4a47a998ea5c7b40296b",
+    "launcher_sha256": "d7e5fd4a58c8014f68eab71ae7f8fa3f4354e68ed3cad2d7375691310a4a7b0a",
+    "all_owned_lanes_zero_process": true,
+    "cleanup": {
+      "start_utc": "2026-10-15T16:03:31.516747+00:00",
+      "end_utc": "2026-10-15T16:05:27.363651+00:00",
+      "cleanup_utc": "2026-10-15T16:05:27.497334+00:00",
+      "elapsed_through_cleanup": 115.98061308311298,
+      "actual_supervisor_exit": 0,
+      "supervisor_verdict": "ok",
+      "echild_verified": true,
+      "remaining": [],
+      "lock_reacquired_released": true,
+      "end_identities_unchanged": true,
+      "report_complete": true,
+      "report_passed": true,
+      "case_count": 15,
+      "shape_exact15x3x30": true,
+      "all_measured_report_valid": true,
+      "all_warmups_report_clean": true,
+      "all_labels_exact_declared_binaries": true,
+      "report_sha256": "7b95a13057223670fdf81ee1b1dcf4b055e33c542a5524cca6ad06f3fe2e6f57",
+      "supervisor_sha256": "c48d63aaa0525425e4e03e6e510700485ba151844871024657a2fb674a463d02",
+      "performance_interpretation": false,
+      "measured_schedule_matches_original_rng": true,
+      "cleanup_pass": true,
+      "diagnostic_capture_provisional_pass": true,
+      "actual_coordinator_exit": 0,
+      "independent_audit_pending": true
+    },
+    "audit_client_request_id": "phase7-sol-rss-triad-r2-evidence-audit-r1",
+    "audit_task": "node:delegated-task:command%3Amcp%3A78a62eba-9e95-4ed0-8754-e373aac96a0d%3Adelegate-task%3Aphase7-sol-rss-triad-r2-evidence-audit-r1",
+    "review": {
+      "review_sha256": "082ca754d1ac4836385dd3d2df1543d3883cd3d7025641ff8182351a436117b5",
+      "review_artifacts_verified": 27,
+      "scope": "complete full15 triad evidence integrity accepted; descriptive artifact-level RSS localization only",
+      "originals_unchanged": 24700,
+      "all_samples": 1575,
+      "comparison_cells": 135,
+      "reported_rss_median_percent_ranges": {
+        "phase6_vs_phase5": [
+          23.68339,
+          33.528951
+        ],
+        "phase7_vs_phase6": [
+          -10.609212,
+          -0.982615
+        ],
+        "phase7_vs_phase5": [
+          17.857143,
+          24.858044
+        ]
+      },
+      "all15_gap_already_present_phase6": true,
+      "all15_phase7_median_lower_than_phase6": true,
+      "accepted_phase5_regressions_remain_open": true,
+      "code_cause_or_physical_accounting_proven": false,
+      "estimator_correction": "Root brief incorrectly called retained independent marginal bootstrap paired. Exact prior independent estimator remains governing retained comparisons; newly computed paired estimator is separately labeled supplemental diagnostic only. No retrospective estimator substitution.",
+      "original_failed_version_capture_preserved": true,
+      "performance_acceptance": false,
+      "remaining": "15 confirmed RSS failures and unresolved original/new timing signals stay open"
+    }
+  },
+  "geometry_fanout_composition": {
+    "task_id": "node:delegated-task:command%3Amcp%3A78a62eba-9e95-4ed0-8754-e373aac96a0d%3Athread-send%3Aphase7-geometry-fanout-composition-prepare-r1",
+    "status": "off-tree frozen; root verified exact reviewed AST union; Go control and fresh composition review pending",
+    "preparation": {
+      "freeze_entries_verified": 28,
+      "bench_ast_union_verified": true,
+      "changed_definitions": [
+        "dense_case",
+        "dense_table_geometry",
+        "editor_case",
+        "error_case",
+        "observation_issues",
+        "startup_fanout",
+        "startup_fanout_issues"
+      ],
+      "live_applied": false,
+      "page_step_adopted": false,
+      "native_control_pending": true,
+      "independent_composition_review_pending": true,
+      "source_patch_sha256": "eb9fe2fd9b5dceed18bef4059b009087dee052423ccde3c0bde652823576ff0e"
+    }
+  },
+  "go_pagenav_preparation": {
+    "task": "node:delegated-task:command%3Amcp%3A78a62eba-9e95-4ed0-8754-e373aac96a0d%3Athread-send%3Aphase7-go-pagenav-root-launch-preparation-r1",
+    "status": "source preparation complete and root full reviewed; fresh 180s quiet request pending; all own lanes terminal and zero processes",
+    "plan_sha256": "2e379878b2fe2dd3be889335328d2be0cf1fb67448e6171193d7ef154d16d518",
+    "launcher_sha256": "71c312ea739cf76c911a6e994a5ae3e86f33e79cbe1fa5cacdb4c9b05a8a9adb"
+  },
+  "go_pagenav_result": {
+    "status": "actual functional control complete; independent review pending; no page-step adoption or performance claim",
+    "actual_coordinator_exit": 0,
+    "receipt": {
+      "path": "/home/ajs/.cache/pb-phase7/promql-pagenav-root-preparation-r1/coordination/receipt.json",
+      "sha256": "15e3699f180e5890595a214de36aab5b39997a73115d57d62ad3fe81361d8088"
+    },
+    "report": {
+      "available": true,
+      "sha256": "010881265fb5a977b80ec47e04ae1a08e8d8c4e849a50d966c16205dda17d3c4",
+      "bytes": 20584,
+      "resolved_path": "/home/ajs/.cache/pb-phase7/promql-pagenav-go-r1/report.json",
+      "symlink": false,
+      "link_target": null
+    },
+    "start_utc": "2026-10-15T16:29:43.643051+00:00",
+    "cleanup_utc_before_final_receipt": "2026-10-15T16:29:47.493513+00:00",
+    "elapsed_before_final_receipt": 3.850467345910147,
+    "sequence_one_based": [
+      1,
+      16,
+      31,
+      46,
+      256,
+      241,
+      1
+    ],
+    "helper_checks": {
+      "report_helper_present": true,
+      "session_fingerprints": {
+        "reference/session.json": true,
+        "reference/execute/session.json": true
+      },
+      "resolved_path_exact": true,
+      "reported_elf_sha256_exact": true,
+      "actual_file_identity_exact": true,
+      "actual_file_is_elf": true,
+      "provenance_path_exact": true,
+      "provenance_sha256_exact": true,
+      "pinned_provenance_fields_exact": true,
+      "capability_present": true
+    },
+    "end_identities_unchanged": true,
+    "supervisor_echild_verified": true,
+    "coordinator_echild_verified": true,
+    "passive_lock_release_verified": true,
+    "token": "phase6-quiet-phase7-pagenav-go-r1-20261015T162917Z",
+    "token_released": true,
+    "unused_prior_token": "phase6-quiet-phase7-pagenav-go-r1-20261015T162649Z",
+    "prior_token_disposition": "expired before launch; no workload or lock acquisition",
+    "independent_review_task": "node:delegated-task:command%3Amcp%3A78a62eba-9e95-4ed0-8754-e373aac96a0d%3Adelegate-task%3Aphase7-opus-pagenav-evidence-composition-review-r1",
+    "live_source_applied": false
+  },
+  "pagenav_composition_review": {
+    "review": "docs/phase7-review-pagenav-composition-opus-r1.md",
+    "review_sha256": "aaecaa4840971b47d2f760f15196753080f0c61f2b4f3672b4ec0047c9da983d",
+    "review_artifacts_rehashed": 20,
+    "root_read_full": true,
+    "capture_integrity": "accepted narrowly",
+    "composition_source": "accepted; successor tests and docs corrections required",
+    "observed_step_scope": "Go dense1 dark 120x40 single-key writes;15 rows",
+    "runtime_parity_or_performance_acceptance": false,
+    "M1": "three gate branch mutants survive durable tests; assigned successor tests",
+    "L1": "geometry does not establish in-place footer paint completion; stable80ms and actual boundaries protect captured states",
+    "L2": "End at nonaligned totals, bursts/light/256000rows/Rust are source extrapolation, not observed control",
+    "L3": "other width guarantee overstrong; narrow sustained construction guard required",
+    "L4": "durable prefix test2roles vs historical off-tree8roles must be distinguished",
+    "review_failed_case_map_attempt": "off-tree ROOT FileNotFoundError retained; separate corrected ROOT run passed",
+    "implementation_task": "node:delegated-task:command%3Amcp%3A78a62eba-9e95-4ed0-8754-e373aac96a0d%3Adelegate-task%3Aphase7-sol-a1-composition-step15-implementation-r2",
+    "next_gates": [
+      "successor narrow review",
+      "root full bench suite",
+      "52case90argv rebind",
+      "fresh24role functional preflight"
+    ],
+    "created_utc": "2026-10-15T16:49:13.196768+00:00"
+  },
+  "a1_step15_integration": {
+    "status": "applied source; fresh review and root full suite active; no successor runtime preflight",
+    "freeze": {
+      "path": "/home/ajs/.cache/pb-phase7/a1-composition-step15-r2/final-source-freeze.json",
+      "sha256": "f4ba9886d8d06af76ffc492a85978848cae7678a4233ac85955a57594da00adc"
+    },
+    "owned_files": {
+      "docs/evidence/phase7/a1-pagenav-go.json.gz": "d4a025067889e7a2c4ffea4ae6067c971fab0275a7447842fb6abaab86c839df",
+      "docs/evidence/phase7/a1retry-fanout-observation-pairs.json.gz": "05c0ca626ad8f1adb00f4c583d222f23b03fcd1ca8cd9cdb978e1d96da69e2ce",
+      "docs/evidence/phase7/a1retry-promql-retained.json.gz": "12a14654697b1c7b10f328d998382eddf2fb0e67c662fbc62f37ff30ff267b6b",
+      "docs/phase7-measurement.md": "65fadf0c1623bf517369f97e385d36aafc30d84fd3e2a1e0cf8118e80160b901",
+      "harness/contracts/phase7.md": "075b1323abb497fbddc3607efdbd301147f58bab62a91096a685e996f899b36d",
+      "harness/phase7_bench.py": "b874ac0a591b3b04bba25946b4037145271c4ebc11a2e65de836291d9a020372",
+      "harness/test_phase7_bench.py": "d760ccba79bc2b25e38401f870a67dc3c0a0eabcb4e058bc5c53a2ee0d294d86"
+    },
+    "root_artifact_hash_checks": 68,
+    "author_checks": "12 scoped tests, six mutants killed; missing dispatch mutant errors explicitly retained",
+    "prospective_rebind": "52cases90argv;28composition metadata changes24unchanged;4additional sustainedaction changes; not actual preflight",
+    "opus_r2": "EDQUOT tooling failure; no review performed, no acceptance; no evidence root suite caused it",
+    "opus_r3_task": "node:delegated-task:command%3Amcp%3A78a62eba-9e95-4ed0-8754-e373aac96a0d%3Adelegate-task%3Aphase7-opus-a1-step15-successor-review-r3",
+    "launcher_preparation_task": "node:delegated-task:command%3Amcp%3A78a62eba-9e95-4ed0-8754-e373aac96a0d%3Adelegate-task%3Aphase7-sol-a1-retry03-launch-preparation",
+    "root_suite": "/home/ajs/.cache/pb-phase7/a1-step15-root-full-suite",
+    "created_utc": "2026-10-15T17:00:46.518287+00:00"
+  },
+  "a1_step15_root_suite": {
+    "actual_exit": 0,
+    "tests": 130,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "elapsed_seconds": 219.78430960606784,
+    "guard_trips": [],
+    "source_unchanged": true,
+    "head": "ea70f7ad7d501d59b26cf6397f6a0b1f28143fc4",
+    "artifacts": {
+      "run.py": {
+        "path": "/home/ajs/.cache/pb-phase7/a1-step15-root-full-suite/run.py",
+        "sha256": "b47d25048e6a888c23ba3aa007f614d2e9434b9dbf6420b34543cb321ba1f2f3"
+      },
+      "report.json": {
+        "path": "/home/ajs/.cache/pb-phase7/a1-step15-root-full-suite/report.json",
+        "sha256": "830baa55a97a562f2e25588c20fec184d096b4c27fd415996cfb7ee55af70a5f"
+      },
+      "bench.log": {
+        "path": "/home/ajs/.cache/pb-phase7/a1-step15-root-full-suite/bench.log",
+        "sha256": "0d96466c21c19bb17282a3b19f061ee4833d44635958354487ea174340fec60d"
+      },
+      "stdout.log": {
+        "path": "/home/ajs/.cache/pb-phase7/a1-step15-root-full-suite/stdout.log",
+        "sha256": "50a292a987c98a26f5c552672997bc7382515390badbf335f03b4ba688ff6d91"
+      },
+      "stderr.log": {
+        "path": "/home/ajs/.cache/pb-phase7/a1-step15-root-full-suite/stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "scope": "full bench suite; child/PTY/network blocked, common performance lock prohibited; unit temp-file locks allowed; exact verified Git HEAD stubbed after one read-only Git call",
+    "native_preflight": false,
+    "independent_review": "pending fresh R3; R2 EDQUOT no acceptance"
+  },
+  "a1_step15_review_r3": {
+    "review_path": "docs/phase7-review-a1-step15-successor-opus-r3.md",
+    "review_sha256": "ea94f609cd3d2e4fb57b3c62723f3a649ae4d4546edaa23590553b75c5f16c15",
+    "review_artifacts_rehashed": 39,
+    "root_read_full": true,
+    "source_scope": "accepted120x40; no blocker/medium; no runtime or performance acceptance",
+    "M1_L1_L4": "closed by executed OpusR3",
+    "N1": "root added whole-campaign/profiler size refusal disclosure",
+    "N2": "root added distinct-last-input SQL NaN rejection test; first-only mutant1assertion failure0errors",
+    "root_scoped_tests": {
+      "live_tests": 6,
+      "live_success": true,
+      "live_failures": 0,
+      "live_errors": 0,
+      "mutant_tests": 1,
+      "mutant_failures": 1,
+      "mutant_errors": 0,
+      "guard_trips": [],
+      "before": {
+        "harness/phase7_bench.py": "b874ac0a591b3b04bba25946b4037145271c4ebc11a2e65de836291d9a020372",
+        "harness/test_phase7_bench.py": "a776f6b7c83796a422ccefdb49574273d83604c88fc90075c8584221e5eb7263",
+        "harness/contracts/phase7.md": "76c0c9a1767ea6eb484fb49b2b5bdd3eaade6d15b1158b33a221b88a88cbe9f7",
+        "docs/phase7-measurement.md": "46b3aa7ef8771797b3b08375ab2b61e392f61da10240308c49407bd03969d625",
+        "harness/phase7.py": "dc7574f058b9ff6ae7b77a912847fdbe02d8b68baab8728237d6ef040e6a44fa"
+      },
+      "after": {
+        "harness/phase7_bench.py": "b874ac0a591b3b04bba25946b4037145271c4ebc11a2e65de836291d9a020372",
+        "harness/test_phase7_bench.py": "a776f6b7c83796a422ccefdb49574273d83604c88fc90075c8584221e5eb7263",
+        "harness/contracts/phase7.md": "76c0c9a1767ea6eb484fb49b2b5bdd3eaade6d15b1158b33a221b88a88cbe9f7",
+        "docs/phase7-measurement.md": "46b3aa7ef8771797b3b08375ab2b61e392f61da10240308c49407bd03969d625",
+        "harness/phase7.py": "dc7574f058b9ff6ae7b77a912847fdbe02d8b68baab8728237d6ef040e6a44fa"
+      },
+      "source_unchanged_during_tests": true,
+      "bench_unchanged": true,
+      "case_hash_effect": "none; only test/docs changed",
+      "scope": "N1 docs plus N2 four-input SQL last-dispatch NaN rejection; prior130 suite historical; no full rerun"
+    },
+    "reviewed_bench_unchanged": true,
+    "original_handoff": "historical first/last statement was degenerate on one-input PromQL captures; new SQL test covers actual distinct events",
+    "artifacts": {
+      "check.py": {
+        "path": "/home/ajs/.cache/pb-phase7/a1-step15-r3-low-closure/check.py",
+        "sha256": "f01325531597e691cbd9c3173b7c81d709c830716159b3b64e8b131eb45d23f8"
+      },
+      "stdout.log": {
+        "path": "/home/ajs/.cache/pb-phase7/a1-step15-r3-low-closure/stdout.log",
+        "sha256": "e43c668d0cef5fda72bc556b597995a274266a3afd8ec05bdbfc260a7a127ab3"
+      },
+      "stderr.log": {
+        "path": "/home/ajs/.cache/pb-phase7/a1-step15-r3-low-closure/stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "tests.log": {
+        "path": "/home/ajs/.cache/pb-phase7/a1-step15-r3-low-closure/tests.log",
+        "sha256": "7022c42d5eac9de8e3162d98d6be41d44c70c3a03c6ebecb26ff303b4ee66d31"
+      },
+      "mutant.log": {
+        "path": "/home/ajs/.cache/pb-phase7/a1-step15-r3-low-closure/mutant.log",
+        "sha256": "5dd2f30d4bb5b3555acbc566ba2f9f7b443268cd9cbe895a28012bd6619e721b"
+      },
+      "owned.patch": {
+        "path": "/home/ajs/.cache/pb-phase7/a1-step15-r3-low-closure/owned.patch",
+        "sha256": "7eb499bdb6c283d3ecf0d2206287d03925fea62946ee52c9d8a698235da31a30"
+      },
+      "report.json": {
+        "path": "/home/ajs/.cache/pb-phase7/a1-step15-r3-low-closure/report.json",
+        "sha256": "c39aa8f53fee303c7dddeaee450ea36973999b9aa56dd40f7044530608674531"
+      }
+    },
+    "full_suite": "130/130 historical exact reviewed source; subsequent test/docs-only delta6focusedtests pass, no unnecessary full repeat",
+    "next_gate": "actual24role Go/combined preflight with new source/runtime/end identity binding"
+  },
+  "a1_retry03_prelaunch_refusal": {
+    "path": "docs/evidence/phase7/a1-retry03-prelaunch-refusal.json",
+    "successor_task": "node:delegated-task:command%3Amcp%3A78a62eba-9e95-4ed0-8754-e373aac96a0d%3Athread-send%3Aphase7-a1-prelaunch-permission-refusal-successor04",
+    "native_runs": 0,
+    "token_released": true
+  },
+  "latest_checkpoint": {
+    "at_utc": "2026-10-15T18:27:09.822224Z",
+    "summary": "A1-05 full12pair24rolefunctionalpass; release7 source/build reviewed; user15min progress checkpoint reached",
+    "evidence": "docs/evidence/phase7/a1-retry05-functional-pass.json",
+    "active_owned_native_work": false
+  }
+}

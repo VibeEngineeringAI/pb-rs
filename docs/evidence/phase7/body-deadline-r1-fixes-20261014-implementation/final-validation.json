@@ -1,0 +1,89 @@
+{
+  "normal_and_optimized_computed_reductions_equal_excluding_interpreter": true,
+  "reduction_optimize_flags": [
+    0,
+    1
+  ],
+  "frozen_source_and_test_match_before": {
+    "harness/phase3.py": true,
+    "harness/test_phase3.py": true
+  },
+  "staged_source_and_test_match_after": {
+    "harness/phase3.py": true,
+    "harness/test_phase3.py": true
+  },
+  "patch_matches_manifest_and_cache": true,
+  "actual_offtree_apply_bytes_match_staged": {
+    "harness/phase3.py": true,
+    "harness/test_phase3.py": true
+  },
+  "patch_sha256": "40df1e798bc5ea26b2541682ad4820d3b212c64851562e4f467022ebc99a820d",
+  "pure_suite_tests_run": [
+    29,
+    29
+  ],
+  "pure_suite_optimize_flags": [
+    0,
+    1
+  ],
+  "any_known_context_mutant_caught_by_identity_under_O": true,
+  "preserved_report_capture_hash_checks": {
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/stdout.bin": true,
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/meter.json": true,
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/stderr.bin": true,
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/stderr.normalized": true,
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/stdout.normalized": true,
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/trace.json": true,
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/milestones.json": true,
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/config-after.toml": true,
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/result.json": true,
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/stdout.bin": true,
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/meter.json": true,
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/stderr.bin": true,
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/stderr.normalized": true,
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/stdout.normalized": true,
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/trace.json": true,
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/milestones.json": true,
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/config-after.toml": true,
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/result.json": true,
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/stdout.bin": true,
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/meter.json": true,
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/stderr.bin": true,
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/stderr.normalized": true,
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/stdout.normalized": true,
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/trace.json": true,
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/milestones.json": true,
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/config-after.toml": true,
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/result.json": true,
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/stdout.bin": true,
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/meter.json": true,
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/stderr.bin": true,
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/stderr.normalized": true,
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/stdout.normalized": true,
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/trace.json": true,
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/milestones.json": true,
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/config-after.toml": true,
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/result.json": true,
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/stdout.bin": true,
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/meter.json": true,
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/stderr.bin": true,
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/stderr.normalized": true,
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/stdout.normalized": true,
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/trace.json": true,
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/milestones.json": true,
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/config-after.toml": true,
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/result.json": true,
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/report.json": true,
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/report.json": true,
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-body-deadline-original.json": true,
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-body-deadline-proposed-reduction.json": true
+  },
+  "scope": "body-only off-tree implementation; not promoted, independently re-reviewed, or replayed",
+  "remaining": [
+    "combined patch independent review",
+    "full process suite with fixture",
+    "parent/companion handshake after companion phases4/5 complete",
+    "explicit parent body deadline edit window open",
+    "final successor retained replay"
+  ]
+}

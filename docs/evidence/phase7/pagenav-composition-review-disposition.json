@@ -1,0 +1,24 @@
+{
+  "review": "docs/phase7-review-pagenav-composition-opus-r1.md",
+  "review_sha256": "aaecaa4840971b47d2f760f15196753080f0c61f2b4f3672b4ec0047c9da983d",
+  "review_artifacts_rehashed": 20,
+  "root_read_full": true,
+  "capture_integrity": "accepted narrowly",
+  "composition_source": "accepted; successor tests and docs corrections required",
+  "observed_step_scope": "Go dense1 dark 120x40 single-key writes;15 rows",
+  "runtime_parity_or_performance_acceptance": false,
+  "M1": "three gate branch mutants survive durable tests; assigned successor tests",
+  "L1": "geometry does not establish in-place footer paint completion; stable80ms and actual boundaries protect captured states",
+  "L2": "End at nonaligned totals, bursts/light/256000rows/Rust are source extrapolation, not observed control",
+  "L3": "other width guarantee overstrong; narrow sustained construction guard required",
+  "L4": "durable prefix test2roles vs historical off-tree8roles must be distinguished",
+  "review_failed_case_map_attempt": "off-tree ROOT FileNotFoundError retained; separate corrected ROOT run passed",
+  "implementation_task": "node:delegated-task:command%3Amcp%3A78a62eba-9e95-4ed0-8754-e373aac96a0d%3Adelegate-task%3Aphase7-sol-a1-composition-step15-implementation-r2",
+  "next_gates": [
+    "successor narrow review",
+    "root full bench suite",
+    "52case90argv rebind",
+    "fresh24role functional preflight"
+  ],
+  "created_utc": "2026-10-15T16:49:13.196768+00:00"
+}

@@ -1,0 +1,9 @@
+{"Input":"  测测测测测测测测测测测测测测测测测测测测\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000…","Width":33,"Tail":"","Output":"  测测测测测测测测测测测测测测测"}
+{"Input":"\u001b[1mabcdef","Width":3,"Tail":"…","Output":"\u001b[1mab…\u001b[0m"}
+{"Input":"\u001b[2@abcdef","Width":2,"Tail":"","Output":"\u001b[2@ab"}
+{"Input":"ab\u001b[3","Width":5,"Tail":"","Output":"ab"}
+{"Input":"ab\u001b[3","Width":1,"Tail":"~","Output":"~"}
+{"Input":"\u001b[\u001b[1mabc","Width":2,"Tail":"","Output":"\u001b[\u001b[1mab\u001b[0m"}
+{"Input":"\u001b[31ma\u001b[0mbc","Width":2,"Tail":"","Output":"\u001b[31ma\u001b[0mb"}
+{"Input":"\u001b[Kabc","Width":2,"Tail":"","Output":"\u001b[Kab"}
+{"Input":"abc","Width":0,"Tail":"…","Output":"…"}

@@ -1,0 +1,197 @@
+{
+  "argv": [
+    "/home/ajs/.cache/pb-phase7/body-deadline-r1-fixes/run-pure-tests.py",
+    "--runner-dir",
+    "/home/ajs/.cache/pb-phase7/body-deadline-r1-fixes/before/harness",
+    "--test",
+    "/home/ajs/.cache/pb-phase7/body-deadline-r1-fixes/before/harness/test_phase3.py",
+    "--out",
+    "/home/ajs/.cache/pb-phase7/body-deadline-r1-fixes/baseline-pure"
+  ],
+  "executable": "/usr/bin/python3",
+  "version": "3.14.7 (main, Aug 10 2026, 07:46:56) [GCC 16.1.1 20260728]",
+  "optimize": 0,
+  "runner_path": "/home/ajs/.cache/pb-phase7/body-deadline-r1-fixes/before/harness/phase3.py",
+  "test_path": "/home/ajs/.cache/pb-phase7/body-deadline-r1-fixes/before/harness/test_phase3.py",
+  "source_sha256": {
+    "/home/ajs/.cache/pb-phase7/body-deadline-r1-fixes/before/harness/phase3.py": "39d16e2ba220aad27ec0e67646e04aacbcdd9a9c28d3013f3f04ddefec789099",
+    "/home/ajs/.cache/pb-phase7/body-deadline-r1-fixes/before/harness/test_phase3.py": "0bea853fcedcf6dd2724d057d88813440454183a64f643c944321c624f414e95",
+    "/home/ajs/.cache/pb-phase7/body-deadline-r1-fixes/body-deadline-r1-fixes.patch": "2a692f38dd1faa2d721bfd9106b6586d05d82051b4ff2489fe93d73cde9afd0e"
+  },
+  "dependency_paths": {
+    "phase1": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase1.py",
+    "phase2": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase2.py",
+    "run": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/run.py"
+  },
+  "excluded_tests": [
+    {
+      "id": "test_phase3_offtree.FixtureTests.test_go_fixture_generate_parity",
+      "reason": "launches shell, Go fixture or pb CLI processes; outside pure authorization"
+    },
+    {
+      "id": "test_phase3_offtree.GoOracleTests.test_small_reference_subset_and_manifest_identity",
+      "reason": "launches shell, Go fixture or pb CLI processes; outside pure authorization"
+    },
+    {
+      "id": "test_phase3_offtree.RunnerTests.test_bytes_digest_and_elements",
+      "reason": "launches shell, Go fixture or pb CLI processes; outside pure authorization"
+    },
+    {
+      "id": "test_phase3_offtree.RunnerTests.test_close_stdout_produces_sigpipe",
+      "reason": "launches shell, Go fixture or pb CLI processes; outside pure authorization"
+    },
+    {
+      "id": "test_phase3_offtree.RunnerTests.test_devfull_pty_and_timeout",
+      "reason": "launches shell, Go fixture or pb CLI processes; outside pure authorization"
+    },
+    {
+      "id": "test_phase3_offtree.RunnerTests.test_unmet_required_action_is_reported",
+      "reason": "launches shell, Go fixture or pb CLI processes; outside pure authorization"
+    }
+  ],
+  "selected_tests": [
+    "test_phase3_offtree.BaselineTrustTests.test_baseline_requires_passing_complete_capture",
+    "test_phase3_offtree.BaselineTrustTests.test_stored_artifacts_are_verified",
+    "test_phase3_offtree.ComparisonTests.test_boundary_check_rejects_go_like_behavior",
+    "test_phase3_offtree.ComparisonTests.test_spinner_clear_only_candidate_fails_activation_case",
+    "test_phase3_offtree.ComparisonTests.test_stub_and_blocked_bytes",
+    "test_phase3_offtree.CorpusTests.test_benchmark_suite_is_runpy_compatible",
+    "test_phase3_offtree.CorpusTests.test_boundaries_and_scope",
+    "test_phase3_offtree.CorpusTests.test_deterministic_unique_and_pinned",
+    "test_phase3_offtree.CorpusTests.test_required_coverage",
+    "test_phase3_offtree.DeadlineTierTests.test_bare_deadline_cause_is_limited_to_two_exact_text_messages",
+    "test_phase3_offtree.DeadlineTierTests.test_only_the_two_go_timeout_causes_are_normalized",
+    "test_phase3_offtree.DeadlineTierTests.test_out_of_tier_cases_are_unfrozen_not_missing",
+    "test_phase3_offtree.DeadlineTierTests.test_paced_chunk_prefix_allowance_and_wall_bounds",
+    "test_phase3_offtree.DeadlineTierTests.test_redirect_bare_deadline_has_an_exact_case_and_error_boundary",
+    "test_phase3_offtree.DeadlineTierTests.test_redirect_normalization_keeps_exit_request_and_duration_gates",
+    "test_phase3_offtree.FixtureTests.test_chunk_script_barrier_and_abort",
+    "test_phase3_offtree.FixtureTests.test_gzip_and_corruption",
+    "test_phase3_offtree.FixtureTests.test_reasonless_custom_status_and_trace",
+    "test_phase3_offtree.FixtureTests.test_unexpected_and_auth",
+    "test_phase3_offtree.ManifestPlatformTests.test_other_platform_manifest_is_rejected",
+    "test_phase3_offtree.ModelTests.test_default_limit_quirks",
+    "test_phase3_offtree.ModelTests.test_error_preview",
+    "test_phase3_offtree.ModelTests.test_generate_matches_go_fixture_semantics",
+    "test_phase3_offtree.ModelTests.test_go_trim_space_and_runes",
+    "test_phase3_offtree.ModelTests.test_json_encoding",
+    "test_phase3_offtree.ModelTests.test_pretty_and_text_outputs",
+    "test_phase3_offtree.ModelTests.test_upstream_rewrite_examples"
+  ],
+  "executable_launches_forbidden_by_audit_hook": true,
+  "tests_run": 27,
+  "failures": [],
+  "errors": [],
+  "skipped": [],
+  "outcomes": [
+    {
+      "id": "test_phase3_offtree.BaselineTrustTests.test_baseline_requires_passing_complete_capture",
+      "status": "pass"
+    },
+    {
+      "id": "test_phase3_offtree.BaselineTrustTests.test_stored_artifacts_are_verified",
+      "status": "pass"
+    },
+    {
+      "id": "test_phase3_offtree.ComparisonTests.test_boundary_check_rejects_go_like_behavior",
+      "status": "pass"
+    },
+    {
+      "id": "test_phase3_offtree.ComparisonTests.test_spinner_clear_only_candidate_fails_activation_case",
+      "status": "pass"
+    },
+    {
+      "id": "test_phase3_offtree.ComparisonTests.test_stub_and_blocked_bytes",
+      "status": "pass"
+    },
+    {
+      "id": "test_phase3_offtree.CorpusTests.test_benchmark_suite_is_runpy_compatible",
+      "status": "pass"
+    },
+    {
+      "id": "test_phase3_offtree.CorpusTests.test_boundaries_and_scope",
+      "status": "pass"
+    },
+    {
+      "id": "test_phase3_offtree.CorpusTests.test_deterministic_unique_and_pinned",
+      "status": "pass"
+    },
+    {
+      "id": "test_phase3_offtree.CorpusTests.test_required_coverage",
+      "status": "pass"
+    },
+    {
+      "id": "test_phase3_offtree.DeadlineTierTests.test_bare_deadline_cause_is_limited_to_two_exact_text_messages",
+      "status": "pass"
+    },
+    {
+      "id": "test_phase3_offtree.DeadlineTierTests.test_only_the_two_go_timeout_causes_are_normalized",
+      "status": "pass"
+    },
+    {
+      "id": "test_phase3_offtree.DeadlineTierTests.test_out_of_tier_cases_are_unfrozen_not_missing",
+      "status": "pass"
+    },
+    {
+      "id": "test_phase3_offtree.DeadlineTierTests.test_paced_chunk_prefix_allowance_and_wall_bounds",
+      "status": "pass"
+    },
+    {
+      "id": "test_phase3_offtree.DeadlineTierTests.test_redirect_bare_deadline_has_an_exact_case_and_error_boundary",
+      "status": "pass"
+    },
+    {
+      "id": "test_phase3_offtree.DeadlineTierTests.test_redirect_normalization_keeps_exit_request_and_duration_gates",
+      "status": "pass"
+    },
+    {
+      "id": "test_phase3_offtree.FixtureTests.test_chunk_script_barrier_and_abort",
+      "status": "pass"
+    },
+    {
+      "id": "test_phase3_offtree.FixtureTests.test_gzip_and_corruption",
+      "status": "pass"
+    },
+    {
+      "id": "test_phase3_offtree.FixtureTests.test_reasonless_custom_status_and_trace",
+      "status": "pass"
+    },
+    {
+      "id": "test_phase3_offtree.FixtureTests.test_unexpected_and_auth",
+      "status": "pass"
+    },
+    {
+      "id": "test_phase3_offtree.ManifestPlatformTests.test_other_platform_manifest_is_rejected",
+      "status": "pass"
+    },
+    {
+      "id": "test_phase3_offtree.ModelTests.test_default_limit_quirks",
+      "status": "pass"
+    },
+    {
+      "id": "test_phase3_offtree.ModelTests.test_error_preview",
+      "status": "pass"
+    },
+    {
+      "id": "test_phase3_offtree.ModelTests.test_generate_matches_go_fixture_semantics",
+      "status": "pass"
+    },
+    {
+      "id": "test_phase3_offtree.ModelTests.test_go_trim_space_and_runes",
+      "status": "pass"
+    },
+    {
+      "id": "test_phase3_offtree.ModelTests.test_json_encoding",
+      "status": "pass"
+    },
+    {
+      "id": "test_phase3_offtree.ModelTests.test_pretty_and_text_outputs",
+      "status": "pass"
+    },
+    {
+      "id": "test_phase3_offtree.ModelTests.test_upstream_rewrite_examples",
+      "status": "pass"
+    }
+  ],
+  "successful": true
+}

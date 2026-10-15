@@ -1,0 +1,118 @@
+{
+  "kind": "bounded actual-process SQL byte-identity regression",
+  "case": "late_dataset_list_after_empty_raw_schema",
+  "role": "go",
+  "binary": "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+  "binary_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+  "source_pin": "07af390",
+  "dimensions": [
+    120,
+    35
+  ],
+  "raw_dataset_hex": "b58be8af95",
+  "replacement_title": "\ufffd\ufffd\u8bd5",
+  "provenance": {
+    "fixture_path": "tests/interactive_effects.rs:PROCESS_FIXTURE",
+    "fixture_sha256": "8fd9bef44f7cc5e7e7f45fdbace92e33f7388373ea78ef4c26d6b9ab632b6e26",
+    "fixture_file_sha256": "5334d8471c2bbe2735afcfa2435c87c8af18f0b2012785d0bde924646ded8d76"
+  },
+  "candidate_executed": false,
+  "rust_tests_executed": false,
+  "crate_builds_executed": false,
+  "scope": "request identity and causal completion; no full styled-frame parity or timings",
+  "passed": true,
+  "raw_schema_idle_frame_offset": 26505,
+  "logs_schema_frame_offset": 30220,
+  "terminal_restored": true,
+  "config_unchanged": true,
+  "byte_identity_selected": "logs",
+  "returncode": 0,
+  "raw_stdout_path": "/home/ajs/.cache/pb-phase7/sql-byte-identity/durable-go/sql-byte-identity-go-1791985022681729614.stdout",
+  "raw_stderr_path": "/home/ajs/.cache/pb-phase7/sql-byte-identity/durable-go/sql-byte-identity-go-1791985022681729614.stderr",
+  "stdout_sha256": "2511d170ee40c385c849512a151a7203883e5f2383c771694ac66a52ed3371d9",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "returncode_after_cleanup": 0,
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/prism/v1/home",
+      "params": {},
+      "body": "",
+      "headers": {
+        "Host": "127.0.0.1:33769",
+        "User-Agent": "Go-http-client/1.1",
+        "Content-Type": "application/json",
+        "X-Api-Key": "fixture-key",
+        "Accept-Encoding": "gzip"
+      },
+      "received": 996386.105260443,
+      "protocol": "HTTP/1.1",
+      "closed_before_response": false,
+      "response_status": 200,
+      "response_preview": "{\"datasets\": [{\"title\": \"logs\", \"datasetType\": \"logs\"}, {\"title\": \"\\ufffd\\ufffd\\u8bd5\", \"datasetType\": \"logs\"}]}",
+      "response_bytes": 112,
+      "done": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/logstream/%B5%8B%E8%AF%95/schema",
+      "params": {},
+      "body": "",
+      "headers": {
+        "Host": "127.0.0.1:33769",
+        "User-Agent": "Go-http-client/1.1",
+        "X-Api-Key": "fixture-key",
+        "Accept-Encoding": "gzip"
+      },
+      "received": 996386.305935089,
+      "protocol": "HTTP/1.1",
+      "response_status": 200,
+      "response_preview": "{\"fields\": []}",
+      "response_bytes": 14,
+      "done": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/query",
+      "params": {
+        "fields": [
+          "true"
+        ]
+      },
+      "body": "{\"endTime\":\"2026-10-14T13:37:07Z\",\"query\":\"SELECT * FROM '\\ufffd\\ufffd\u8bd5' LIMIT 1\",\"startTime\":\"2000-01-01T00:00:00+00:00\"}",
+      "headers": {
+        "Host": "127.0.0.1:33769",
+        "User-Agent": "Go-http-client/1.1",
+        "Content-Length": "124",
+        "Content-Type": "application/json",
+        "X-Api-Key": "fixture-key",
+        "Accept-Encoding": "gzip"
+      },
+      "received": 996386.306705126,
+      "protocol": "HTTP/1.1",
+      "response_status": 200,
+      "response_preview": "{\"fields\": [], \"records\": []}",
+      "response_bytes": 29,
+      "done": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/logstream/logs/schema",
+      "params": {},
+      "body": "",
+      "headers": {
+        "Host": "127.0.0.1:33769",
+        "User-Agent": "Go-http-client/1.1",
+        "X-Api-Key": "fixture-key",
+        "Accept-Encoding": "gzip"
+      },
+      "received": 996386.37169113,
+      "protocol": "HTTP/1.1",
+      "response_status": 200,
+      "response_preview": "{\"fields\": [{\"name\": \"LOGS_SELECTED_SCHEMA\"}]}",
+      "response_bytes": 46,
+      "done": true
+    }
+  ],
+  "binary_unchanged": true
+}

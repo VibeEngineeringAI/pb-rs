@@ -1,0 +1,408 @@
+--- a/harness/run.py
++++ b/harness/run.py
+@@ -1,9 +1,14 @@
+ #!/usr/bin/env python3
+-"""Process-level compatibility/performance harness. Python 3.11+, Linux/macOS."""
++"""Generated Linux-only ownership adaptation of the historical measurement harness.
++
++Python 3.11+, Linux only. Shared live harness and its macOS contract are unchanged.
++Use the reviewed patch/generation manifest and explicit --suite/--fixture/--meter.
++"""
+ 
+ import argparse
+ import base64
+ import csv
++from contextlib import contextmanager, ExitStack
+ import hashlib
+ import json
+ import math
+@@ -219,34 +224,96 @@
+         pass
+ 
+ 
++def _require_measured_ownership():
++    if sys.platform != "linux":
++        raise RuntimeError("this generated ownership adaptation is Linux-only; shared harness is unchanged")
++    if not all(hasattr(os, name) for name in ("waitid", "P_PID", "WEXITED", "WNOWAIT", "WNOHANG")):
++        raise RuntimeError("Linux ownership adaptation requires waitid(WNOWAIT)")
++    if signal.getsignal(signal.SIGCHLD) != signal.SIG_DFL:
++        raise RuntimeError("safe measurement requires default SIGCHLD and no competing reaper")
++
++
++@contextmanager
++def _defer_measured_interrupt():
++    # Child exec gets setsigmask=(); only the observer's ownership handoff and
++    # final signal/reap bookkeeping defer the ordinary KeyboardInterrupt.
++    previous = signal.pthread_sigmask(signal.SIG_BLOCK, {signal.SIGINT})
++    try:
++        yield
++    finally:
++        signal.pthread_sigmask(signal.SIG_SETMASK, previous)
++
++
++def _signal_measured(proc, sig):
++    # This private path owns an exact direct child in the single-threaded runner.
++    # WNOWAIT confirms it is still ours without releasing PID == PGID.
++    if proc.returncode is not None:
++        return
++    _require_measured_ownership()
++    os.waitid(os.P_PID, proc.pid, os.WEXITED | os.WNOHANG | os.WNOWAIT)
++    kill_group(proc, sig)
++
++
++def _finish_measured(proc):
++    # No group access is allowed after the sole final reap, even on failure.
++    _signal_measured(proc, signal.SIGKILL)
++    while True:
++        try:
++            result = os.wait4(proc.pid, 0)
++            break
++        except InterruptedError:
++            continue
++    proc.returncode = os.waitstatus_to_exitcode(result[1])
++    return result
++
++
+ def spawn_measured(argv, env, cwd, stdout_path=None):
+-    # Start a fresh minimal native supervisor. Its subsequent fork/exec charges
+-    # child resources to the CLI instead of inheriting Python's memory footprint.
+-    out_r, out_w = os.pipe()
+-    err_r, err_w = os.pipe()
+-    stdout_action = ((os.POSIX_SPAWN_OPEN, 1, str(stdout_path), os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+-                     if stdout_path is not None else (os.POSIX_SPAWN_DUP2, out_w, 1))
+-    actions = [(os.POSIX_SPAWN_OPEN, 0, os.devnull, os.O_RDONLY, 0),
+-               stdout_action, (os.POSIX_SPAWN_DUP2, err_w, 2)]
+-    actions += [(os.POSIX_SPAWN_CLOSE, fd) for fd in (out_r, out_w, err_r, err_w)]
+-    previous = os.getcwd()
++    _require_measured_ownership()
++    # The caller masks SIGINT through return/ownership assignment. Every partial
++    # acquisition is unwound here; successful calls retain the existing handle.
++    fds, streams = [], []
++    pid = None
+     try:
+-        # Runner is deliberately single-threaded; fixture runs in another process.
+-        # Python 3.11 posix_spawn has no cwd argument.
+-        os.chdir(cwd)
+-        defaults = tuple(getattr(signal, name) for name in ("SIGPIPE", "SIGXFZ", "SIGXFSZ") if hasattr(signal, name))
+-        pid = os.posix_spawn(argv[0], argv, env, file_actions=actions, setsid=True,
+-                             setsigdef=defaults, setsigmask=())
++        out_r, out_w = os.pipe()
++        fds.extend((out_r, out_w))
++        err_r, err_w = os.pipe()
++        fds.extend((err_r, err_w))
++        stdout_action = ((os.POSIX_SPAWN_OPEN, 1, str(stdout_path), os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
++                         if stdout_path is not None else (os.POSIX_SPAWN_DUP2, out_w, 1))
++        actions = [(os.POSIX_SPAWN_OPEN, 0, os.devnull, os.O_RDONLY, 0),
++                   stdout_action, (os.POSIX_SPAWN_DUP2, err_w, 2)]
++        actions += [(os.POSIX_SPAWN_CLOSE, fd) for fd in (out_r, out_w, err_r, err_w)]
++        previous = os.getcwd()
++        try:
++            # Runner is deliberately single-threaded; fixture runs separately.
++            # Python 3.11 posix_spawn has no cwd argument.
++            os.chdir(cwd)
++            defaults = tuple(getattr(signal, name) for name in ("SIGPIPE", "SIGXFZ", "SIGXFSZ") if hasattr(signal, name))
++            pid = os.posix_spawn(argv[0], argv, env, file_actions=actions, setsid=True,
++                                 setsigdef=defaults, setsigmask=())
++        finally:
++            os.chdir(previous)
++        stdout = os.fdopen(out_r, "rb", buffering=0)
++        streams.append(stdout)
++        fds.remove(out_r)
++        stderr = os.fdopen(err_r, "rb", buffering=0)
++        streams.append(stderr)
++        fds.remove(err_r)
++        return SimpleNamespace(pid=pid, stdout=stdout, stderr=stderr, returncode=None)
+     except BaseException:
+-        os.close(out_r)
+-        os.close(err_r)
++        try:
++            if pid is not None:
++                with _defer_measured_interrupt():
++                    _finish_measured(SimpleNamespace(pid=pid, returncode=None))
++        finally:
++            with ExitStack() as cleanup:
++                for stream in streams:
++                    cleanup.callback(stream.close)
+         raise
+     finally:
+-        os.chdir(previous)
+-        os.close(out_w)
+-        os.close(err_w)
+-    return SimpleNamespace(pid=pid, stdout=os.fdopen(out_r, "rb", buffering=0),
+-                           stderr=os.fdopen(err_r, "rb", buffering=0), returncode=None)
++        with ExitStack() as cleanup:
++            for fd in fds:
++                cleanup.callback(os.close, fd)
+ 
+ 
+ def measure(argv, env, cwd, timeout=10, max_output=DEFAULT_OUTPUT_CAP, signal_after_lines=None,
+@@ -269,32 +336,37 @@
+     started_unix_ns = time.time_ns()
+     started = clock_ns()
+     metrics_path = Path(cwd) / "meter.json"
+-    proc = spawn_measured([str(meter), str(metrics_path), "--", *argv], env, cwd, stdout_path)
+-    selector = selectors.DefaultSelector()
+-    data = {"stdout": bytearray(), "stderr": bytearray()}
+-    spools = {name: tempfile.TemporaryFile() for name in data} if spool_output else {}
+-    first = {"stdout": None, "stderr": None}
+-    first_record = None
+-    first_element = None
+-    element_tracker = JSONElementTracker() if track_json_array and time_first_json_element and stdout_sink == "pipe" else None
+-    hashes = {name: hashlib.sha256() for name in data}
+-    collected_bytes = 0
+-    output_truncated = False
+-    last_stdout = None
+-    pending_line = b""
+-    lines = 0
+-    sent_signal = False
+-    failure = None
+-    exited = None
+-    usage = None
+-    status = None
+-    paused_until = 0
+-    stdout_paused = False
+-    for name, pipe in (("stdout", proc.stdout), ("stderr", proc.stderr)):
+-        os.set_blocking(pipe.fileno(), False)
+-        selector.register(pipe, selectors.EVENT_READ, name)
++    proc = None
++    exited = usage = status = None
++    spools = {}
++    cleanup, spool_cleanup = ExitStack(), ExitStack()
+     try:
+-        while status is None or selector.get_map() or stdout_paused:
++        _require_measured_ownership()
++        with _defer_measured_interrupt():
++            proc = spawn_measured([str(meter), str(metrics_path), "--", *argv], env, cwd, stdout_path)
++        selector = cleanup.enter_context(selectors.DefaultSelector())
++        data = {"stdout": bytearray(), "stderr": bytearray()}
++        if spool_output:
++            for name in data:
++                spools[name] = spool_cleanup.enter_context(tempfile.TemporaryFile())
++        first = {"stdout": None, "stderr": None}
++        first_record = None
++        first_element = None
++        element_tracker = JSONElementTracker() if track_json_array and time_first_json_element and stdout_sink == "pipe" else None
++        hashes = {name: hashlib.sha256() for name in data}
++        collected_bytes = 0
++        output_truncated = False
++        last_stdout = None
++        pending_line = b""
++        lines = 0
++        sent_signal = False
++        failure = None
++        paused_until = 0
++        stdout_paused = False
++        for name, pipe in (("stdout", proc.stdout), ("stderr", proc.stderr)):
++            os.set_blocking(pipe.fileno(), False)
++            selector.register(pipe, selectors.EVENT_READ, name)
++        while exited is None or selector.get_map() or stdout_paused:
+             now = clock_ns()
+             if stdout_path is not None and failure is None:
+                 try:
+@@ -303,19 +375,18 @@
+                     file_bytes = 0
+                 if file_bytes + collected_bytes > max_output:
+                     output_truncated, failure = True, "output-limit"
+-                    kill_group(proc, signal.SIGKILL)
+-            if status is None:
+-                pid, raw_status, stats = os.wait4(proc.pid, os.WNOHANG)
+-                if pid:
+-                    status, usage, exited = raw_status, stats, now
+-                    proc.returncode = os.waitstatus_to_exitcode(status)
++                    _signal_measured(proc, signal.SIGKILL)
++            if exited is None:
++                observed_exit = os.waitid(os.P_PID, proc.pid, os.WEXITED | os.WNOHANG | os.WNOWAIT)
++                if observed_exit is not None:
++                    exited = now
+             if now - started > timeout * 1e9 and failure is None:
+                 failure = "timeout"
+-                kill_group(proc, signal.SIGKILL)
++                _signal_measured(proc, signal.SIGKILL)
+             if exited is not None and now - started > timeout * 1e9:
+                 if selector.get_map() or stdout_paused:
+                     failure = failure or "descendant-held-pipe"
+-                    kill_group(proc, signal.SIGKILL)
++                    _signal_measured(proc, signal.SIGKILL)
+                     break
+             if stdout_paused and now >= paused_until:
+                 selector.register(proc.stdout, selectors.EVENT_READ, "stdout")
+@@ -345,7 +416,7 @@
+                     output_truncated = True
+                     if failure is None:
+                         failure = "output-limit"
+-                        kill_group(proc, signal.SIGKILL)
++                        _signal_measured(proc, signal.SIGKILL)
+                 if name == "stdout" and element_tracker is not None:
+                     # Only the first value is inspected while the CLI runs;
+                     # validating every row here would benchmark Python-induced
+@@ -364,7 +435,7 @@
+                     if first_record is None and nonblank:
+                         first_record = (observed - started) / 1e6
+                     if signal_after_lines and lines >= signal_after_lines and not sent_signal:
+-                        kill_group(proc, signal.SIGINT)
++                        _signal_measured(proc, signal.SIGINT)
+                         sent_signal = True
+                 if name == "stdout" and close_stdout_after_lines and lines >= close_stdout_after_lines:
+                     selector.unregister(key.fileobj)
+@@ -374,22 +445,29 @@
+                     stdout_paused = True
+                     paused_until = observed + read_delay_ms * 1_000_000
+     finally:
+-        if status is None:
+-            kill_group(proc, signal.SIGKILL)
+-            _, status, usage = os.wait4(proc.pid, 0)
+-            exited = clock_ns()
+-            proc.returncode = os.waitstatus_to_exitcode(status)
+-        # Also remove accidental descendants after normal parent termination.
+-        kill_group(proc, signal.SIGKILL)
+-        selector.close()
+-        proc.stdout.close()
+-        proc.stderr.close()
++        try:
++            with _defer_measured_interrupt():
++                try:
++                    if proc is not None:
++                        _, status, usage = _finish_measured(proc)
++                        if exited is None:
++                            exited = clock_ns()
++                finally:
++                    with cleanup:
++                        if proc is not None:
++                            cleanup.callback(proc.stdout.close)
++                            cleanup.callback(proc.stderr.close)
++        except BaseException:
++            spool_cleanup.close()
++            raise
++        if sys.exc_info()[0] is not None:
++            spool_cleanup.close()
+     wall = (exited - started) / 1e6
+     # Validation/materialization happens after timing; measured pipe drain uses disk spools.
+-    for name, stream in spools.items():
+-        stream.seek(0)
+-        data[name] = bytearray(stream.read())
+-        stream.close()
++    with spool_cleanup:
++        for name, stream in spools.items():
++            stream.seek(0)
++            data[name] = bytearray(stream.read())
+     if stdout_path is not None:
+         # Regular-file output is an explicit sink experiment. Read/validate only
+         # after the measured child exits; do not invent first-output timestamps.
+@@ -468,30 +546,57 @@
+     return result, bytes(data["stdout"]), bytes(data["stderr"])
+ 
+ 
++@contextmanager
++def _fixture_acquisition_handoff():
++    # Unlike posix_spawn, Popen cannot reset an inherited signal mask. Defer
++    # parent SIGINT with a temporary handler, leaving the child's mask intact.
++    previous = signal.getsignal(signal.SIGINT)
++    pending = []
++    if previous is None:
++        raise RuntimeError("fixture acquisition requires a known SIGINT disposition")
++    def remember(number, frame):
++        pending[:] = [(number, frame)]
++    if previous != signal.SIG_IGN:
++        signal.signal(signal.SIGINT, remember)
++    try:
++        yield
++    finally:
++        signal.signal(signal.SIGINT, previous)
++        if pending:
++            if callable(previous):
++                previous(*pending[0])
++            else:
++                signal.raise_signal(signal.SIGINT)
++
++
+ class Fixture:
+     def __init__(self, binary, scenario, root):
+-        self.proc = None
++        self.proc = self.log = None
+         self.url = "http://127.0.0.1:1"
+         self.port = None
+         self.root = root
+         if scenario is None:
+             return
++        _require_measured_ownership()
+         if not binary:
+             raise ValueError("HTTP/Flight cases require --fixture (build harness/fixture first)")
+         path = root / "scenario.json"
+         write_json(path, scenario)
+-        self.log = (root / "fixture.stderr").open("wb")
+-        self.proc = subprocess.Popen([str(binary), "--scenario", str(path)], stdout=subprocess.PIPE,
+-                                     stderr=self.log, start_new_session=True)
+         try:
++            with _fixture_acquisition_handoff():
++                self.log = (root / "fixture.stderr").open("wb")
++                self.proc = subprocess.Popen([str(binary), "--scenario", str(path)], stdout=subprocess.PIPE,
++                                             stderr=self.log, start_new_session=True)
+             with selectors.DefaultSelector() as selector:
+                 selector.register(self.proc.stdout, selectors.EVENT_READ)
+                 if not selector.select(10):
+                     raise RuntimeError("fixture did not become ready within 10s")
+             info = json.loads(self.proc.stdout.readline())
+             self.url, self.port = info["url"], info["grpc_port"]
+-        except Exception as error:
++        except BaseException as error:
+             self.close()
++            if not isinstance(error, Exception):
++                raise
+             details = (root / "fixture.stderr").read_text(errors="replace")[:4096]
+             raise RuntimeError(f"fixture startup failed: {details or error}") from error
+ 
+@@ -511,11 +616,25 @@
+             return json.load(response)
+ 
+     def close(self):
+-        if self.proc:
+-            kill_group(self.proc, signal.SIGKILL)
+-            self.proc.wait()
+-            self.proc.stdout.close()
+-            self.log.close()
++        with _defer_measured_interrupt():
++            proc = self.proc
++            with ExitStack() as cleanup:
++                if self.log is not None:
++                    cleanup.callback(self.log.close)
++                    self.log = None
++                if proc is not None:
++                    if proc.stdout is not None:
++                        cleanup.callback(proc.stdout.close)
++                    try:
++                        if proc.returncode is None:
++                            _finish_measured(proc)
++                    except ChildProcessError:
++                        # An external reap loses ownership; never retry its PGID.
++                        self.proc = None
++                        raise
++                    finally:
++                        if proc.returncode is not None:
++                            self.proc = None
+ 
+ 
+ def request_contract(trace):
+@@ -816,6 +935,7 @@
+ 
+ 
+ def run(args):
++    _require_measured_ownership()
+     binaries = {}
+     for spec in args.binary:
+         label, separator, path = spec.partition("=")
+@@ -1015,11 +1135,13 @@
+     comparing.add_argument("--min-regression", type=float, default=1, help="minimum absolute median increase in metric units (default 1 ms for wall_ms)")
+     comparing.add_argument("--out", help="new comparison JSON file")
+     args = parser.parse_args()
++    if sys.platform != "linux":
++        parser.error("this generated ownership adaptation is Linux-only; shared harness is unchanged")
+     if args.command == "list":
+         print(json.dumps(suite(), indent=2) if args.json else "\n".join(f"{c['name']:28} {c['group']}" for c in suite()))
+         return 0
+-    if not hasattr(os, "wait4") or sys.platform not in ("linux", "darwin"):
+-        parser.error("measurement currently requires Linux or macOS (wait4 and pipe selectors)")
++    if not hasattr(os, "wait4"):
++        parser.error("generated Linux ownership adaptation requires wait4 and pipe selectors")
+     if args.command == "run" and (args.repetitions < 1 or args.warmup < 0 or not math.isfinite(args.timeout) or args.timeout <= 0 or args.read_delay_ms < 0):
+         parser.error("invalid repetitions, warmup, timeout or read delay")
+     if args.command == "compare" and (not math.isfinite(args.min_regression) or args.min_regression < 0 or (args.max_regression_percent is not None and (not math.isfinite(args.max_regression_percent) or args.max_regression_percent < 0))):

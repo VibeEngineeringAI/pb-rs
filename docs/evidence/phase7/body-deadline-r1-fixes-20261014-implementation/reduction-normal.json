@@ -1,0 +1,2091 @@
+{
+  "status": "off-tree process-free reduction only; not promoted or independently reviewed; no CLI execution",
+  "interpreter": {
+    "executable": "/usr/bin/python3",
+    "version": "3.14.7 (main, Aug 10 2026, 07:46:56) [GCC 16.1.1 20260728]",
+    "optimize": 0,
+    "argv": [
+      "docs/evidence/phase7/p3-body-deadline-reduction.py",
+      "--capture-root",
+      "/home/ajs/.cache/pb-phase7/retained-release4-phase3",
+      "--capture-root",
+      "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1",
+      "--staged-runner",
+      "/home/ajs/.cache/pb-phase7/body-deadline-r1-fixes/staged/harness/phase3.py",
+      "--out",
+      "/home/ajs/.cache/pb-phase7/body-deadline-r1-fixes/reduction-normal"
+    ]
+  },
+  "imported_runner_path": "/home/ajs/.cache/pb-phase7/body-deadline-r1-fixes/staged/harness/phase3.py",
+  "source_and_script_sha256": {
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase3.py": "39d16e2ba220aad27ec0e67646e04aacbcdd9a9c28d3013f3f04ddefec789099",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase3.py": "0bea853fcedcf6dd2724d057d88813440454183a64f643c944321c624f414e95",
+    "/home/ajs/.cache/pb-phase7/body-deadline-r1-fixes/staged/harness/phase3.py": "7ad84976872ef5ee16fb1b96c3282b1c59902a59736606f78f662e41ecc47dfc",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-body-deadline-reduction.py": "44d36b22de2344e23882c0478bf15e5399487e9777b23deb1a7270a29d304d33"
+  },
+  "corpus_unchanged": true,
+  "corpus_sha256": "b83d5abdd7951897a082382fccc50d104f0137e4da86d78507c7ad293770d82c",
+  "positive_checks": [
+    {
+      "input_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465640a",
+      "output_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a203c434c49454e542d54494d454f55543e2028436c69656e742e54696d656f7574206f7220636f6e746578742063616e63656c6c6174696f6e207768696c652072656164696e6720626f6479290a",
+      "canonical": true
+    },
+    {
+      "input_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465642028436c69656e742e54696d656f7574206f7220636f6e746578742063616e63656c6c6174696f6e207768696c652072656164696e6720626f6479290a",
+      "output_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a203c434c49454e542d54494d454f55543e2028436c69656e742e54696d656f7574206f7220636f6e746578742063616e63656c6c6174696f6e207768696c652072656164696e6720626f6479290a",
+      "canonical": true
+    },
+    {
+      "input_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a206e65742f687474703a20726571756573742063616e63656c65642028436c69656e742e54696d656f7574206f7220636f6e746578742063616e63656c6c6174696f6e207768696c652072656164696e6720626f6479290a",
+      "output_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a203c434c49454e542d54494d454f55543e2028436c69656e742e54696d656f7574206f7220636f6e746578742063616e63656c6c6174696f6e207768696c652072656164696e6720626f6479290a",
+      "canonical": true
+    }
+  ],
+  "negative_checks": [
+    {
+      "name": "bare_canceled",
+      "input_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a206e65742f687474703a20726571756573742063616e63656c65640a",
+      "output_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a206e65742f687474703a20726571756573742063616e63656c65640a",
+      "unchanged_from_original": true,
+      "noncanonical": true
+    },
+    {
+      "name": "no_newline",
+      "input_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a20636f6e7465787420646561646c696e65206578636565646564",
+      "output_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a20636f6e7465787420646561646c696e65206578636565646564",
+      "unchanged_from_original": true,
+      "noncanonical": true
+    },
+    {
+      "name": "crlf",
+      "input_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465640d0a",
+      "output_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465640d0a",
+      "unchanged_from_original": true,
+      "noncanonical": true
+    },
+    {
+      "name": "trailing_line",
+      "input_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465640a65787472610a",
+      "output_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465640a65787472610a",
+      "unchanged_from_original": true,
+      "noncanonical": true
+    },
+    {
+      "name": "preceding_line",
+      "input_hex": "65787472610a4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465640a",
+      "output_hex": "65787472610a4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465640a",
+      "unchanged_from_original": true,
+      "noncanonical": true
+    },
+    {
+      "name": "prefix_phase",
+      "input_hex": "4572726f723a206661696c656420746f207265616420726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465640a",
+      "output_hex": "4572726f723a206661696c656420746f207265616420726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465640a",
+      "unchanged_from_original": true,
+      "noncanonical": true
+    },
+    {
+      "name": "error_response_phase",
+      "input_hex": "4572726f723a206661696c656420746f2072656164206572726f7220726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465640a",
+      "output_hex": "4572726f723a206661696c656420746f2072656164206572726f7220726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465640a",
+      "unchanged_from_original": true,
+      "noncanonical": true
+    },
+    {
+      "name": "header_branch",
+      "input_hex": "4572726f723a207265717565737420657865637574696f6e206661696c65643a20506f73742022687474703a2f2f3c464958545552453e2f6170692f76312f7175657279223a20636f6e7465787420646561646c696e652065786365656465640a",
+      "output_hex": "4572726f723a207265717565737420657865637574696f6e206661696c65643a20506f73742022687474703a2f2f3c464958545552453e2f6170692f76312f7175657279223a20636f6e7465787420646561646c696e652065786365656465640a",
+      "unchanged_from_original": true,
+      "noncanonical": true
+    },
+    {
+      "name": "wrong_suffix",
+      "input_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465642028436c69656e742e54696d656f7574206578636565646564207768696c65206177616974696e672068656164657273290a",
+      "output_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a203c434c49454e542d54494d454f55543e2028436c69656e742e54696d656f7574206578636565646564207768696c65206177616974696e672068656164657273290a",
+      "unchanged_from_original": true,
+      "noncanonical": true
+    },
+    {
+      "name": "json_wrapper",
+      "input_hex": "7b226572726f72223a20224572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465645c6e227d",
+      "output_hex": "7b226572726f72223a20224572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465645c6e227d",
+      "unchanged_from_original": true,
+      "noncanonical": true
+    },
+    {
+      "name": "scope:p3-deadline-body-stall-json",
+      "output_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465640a",
+      "unchanged": true,
+      "noncanonical": true
+    },
+    {
+      "name": "scope:p3-text-empty",
+      "output_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465640a",
+      "unchanged": true,
+      "noncanonical": true
+    },
+    {
+      "name": "scope:p3-deadline-body-stall-text-extra",
+      "output_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465640a",
+      "unchanged": true,
+      "noncanonical": true
+    },
+    {
+      "name": "scope:p3-deadline-text-empty-array-lookahead",
+      "output_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465640a",
+      "unchanged": true,
+      "noncanonical": true
+    },
+    {
+      "name": "scope:p3-deadline-preview-needs-one-more-byte",
+      "output_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465640a",
+      "unchanged": true,
+      "noncanonical": true
+    },
+    {
+      "name": "scope:p3-deadline-header-stall-text",
+      "output_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465640a",
+      "unchanged": true,
+      "noncanonical": true
+    },
+    {
+      "name": "scope:p3-deadline-spans-redirects",
+      "output_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465640a",
+      "unchanged": true,
+      "noncanonical": true
+    },
+    {
+      "name": "opt_in",
+      "compare": {},
+      "output_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465640a",
+      "unchanged": true,
+      "noncanonical": true
+    },
+    {
+      "name": "opt_in",
+      "compare": {
+        "timeout_cause": false
+      },
+      "output_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465640a",
+      "unchanged": true,
+      "noncanonical": true
+    }
+  ],
+  "captures": [
+    {
+      "path": "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference",
+      "role": "reference",
+      "original_issues": [
+        "stderr b'Error: failed to stream response body: context deadline exceeded\\n', expected b'Error: failed to stream response body: <CLIENT-TIMEOUT> (Client.Timeout or context cancellation while reading body)\\n'"
+      ],
+      "proposed_issues": [],
+      "manifest_stderr_sha256": "949f61e6cf521d91d1653d4f76c7f11c877431e8136760465f110da55667232c",
+      "raw_stderr_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465640a",
+      "normalized_stderr_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465640a",
+      "raw_stderr_digest_verified": true,
+      "raw_stdout_digest_verified": true,
+      "wall_ms": 60040.947993,
+      "rejection_controls": [
+        {
+          "name": "exit_zero",
+          "gate": "expectation_issues",
+          "field": "termination",
+          "value": {
+            "exit": 0
+          },
+          "issues": [
+            "termination {'exit': 0}, expected {'exit': 1}"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "empty_trace",
+          "gate": "expectation_issues",
+          "field": "trace",
+          "value": [],
+          "issues": [
+            "requests [], expected ['POST /api/v1/query']"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "extra_request",
+          "gate": "expectation_issues",
+          "field": "trace",
+          "value": [
+            {
+              "protocol": "http",
+              "method": "POST",
+              "path": "/api/v1/query",
+              "headers": {
+                "authorization": "Basic aGFybmVzczpoYXJuZXNz",
+                "content-type": "application/json",
+                "accept-encoding": "gzip",
+                "content-length": "98"
+              },
+              "user_agent": "Go-http-client/1.1",
+              "header_names": [
+                "Host",
+                "User-Agent",
+                "Content-Length",
+                "Authorization",
+                "Content-Type",
+                "Accept-Encoding"
+              ],
+              "body": "{\"query\":\"SELECT 1 LIMIT 500\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "body_b64": "eyJxdWVyeSI6IlNFTEVDVCAxIExJTUlUIDUwMCIsInN0YXJ0VGltZSI6IjIwMjQtMDEtMDFUMDA6MDA6MDBaIiwiZW5kVGltZSI6IjIwMjQtMDEtMDFUMDA6MDE6MDBaIn0=",
+              "framing": "length",
+              "listener": "primary",
+              "connection": 1,
+              "time_unix_ns": 1791991053601032057,
+              "unexpected": false,
+              "route": 0
+            },
+            {
+              "protocol": "http",
+              "method": "POST",
+              "path": "/api/v1/query",
+              "headers": {
+                "authorization": "Basic aGFybmVzczpoYXJuZXNz",
+                "content-type": "application/json",
+                "accept-encoding": "gzip",
+                "content-length": "98"
+              },
+              "user_agent": "Go-http-client/1.1",
+              "header_names": [
+                "Host",
+                "User-Agent",
+                "Content-Length",
+                "Authorization",
+                "Content-Type",
+                "Accept-Encoding"
+              ],
+              "body": "{\"query\":\"SELECT 1 LIMIT 500\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "body_b64": "eyJxdWVyeSI6IlNFTEVDVCAxIExJTUlUIDUwMCIsInN0YXJ0VGltZSI6IjIwMjQtMDEtMDFUMDA6MDA6MDBaIiwiZW5kVGltZSI6IjIwMjQtMDEtMDFUMDA6MDE6MDBaIn0=",
+              "framing": "length",
+              "listener": "primary",
+              "connection": 1,
+              "time_unix_ns": 1791991053601032057,
+              "unexpected": false,
+              "route": 0
+            }
+          ],
+          "issues": [
+            "requests ['POST /api/v1/query', 'POST /api/v1/query'], expected ['POST /api/v1/query']"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "unexpected_request",
+          "gate": "expectation_issues",
+          "field": "trace",
+          "value": [
+            {
+              "protocol": "http",
+              "method": "POST",
+              "path": "/api/v1/query",
+              "headers": {
+                "authorization": "Basic aGFybmVzczpoYXJuZXNz",
+                "content-type": "application/json",
+                "accept-encoding": "gzip",
+                "content-length": "98"
+              },
+              "user_agent": "Go-http-client/1.1",
+              "header_names": [
+                "Host",
+                "User-Agent",
+                "Content-Length",
+                "Authorization",
+                "Content-Type",
+                "Accept-Encoding"
+              ],
+              "body": "{\"query\":\"SELECT 1 LIMIT 500\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "body_b64": "eyJxdWVyeSI6IlNFTEVDVCAxIExJTUlUIDUwMCIsInN0YXJ0VGltZSI6IjIwMjQtMDEtMDFUMDA6MDA6MDBaIiwiZW5kVGltZSI6IjIwMjQtMDEtMDFUMDA6MDE6MDBaIn0=",
+              "framing": "length",
+              "listener": "primary",
+              "connection": 1,
+              "time_unix_ns": 1791991053601032057,
+              "unexpected": true,
+              "route": 0
+            }
+          ],
+          "issues": [
+            "unexpected fixture request"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "empty_stdout",
+          "gate": "expectation_issues",
+          "field": "stdout_normalized",
+          "value": {
+            "hex": ""
+          },
+          "issues": [
+            "stdout b'', expected b'[{\"sequence\":0,\"message\":\"first\"},'"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "altered_stdout",
+          "gate": "expectation_issues",
+          "field": "stdout_normalized",
+          "value": {
+            "hex": "5b7b2273657175656e6365223a302c226d657373616765223a226669727374227d21"
+          },
+          "issues": [
+            "stdout b'[{\"sequence\":0,\"message\":\"first\"}!', expected b'[{\"sequence\":0,\"message\":\"first\"},'"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "early_deadline",
+          "gate": "expectation_issues",
+          "field": "wall_ms",
+          "value": 58000,
+          "issues": [
+            "wall 58000 ms is below 59000 ms (deadline fired early)"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "late_deadline",
+          "gate": "expectation_issues",
+          "field": "wall_ms",
+          "value": 71000,
+          "issues": [
+            "wall 71000 ms exceeds 70000 ms (early completion)"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "prefix_phase_error",
+          "gate": "expectation_issues",
+          "field": "stderr_normalized",
+          "value": {
+            "hex": "4572726f723a206661696c656420746f207265616420726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465640a"
+          },
+          "issues": [
+            "stderr b'Error: failed to read response body: context deadline exceeded\\n', expected b'Error: failed to stream response body: <CLIENT-TIMEOUT> (Client.Timeout or context cancellation while reading body)\\n'"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "request_body",
+          "gate": "differences",
+          "value": "eyJxdWVyeSI6IlNFTEVDVCAyIn0=",
+          "issues": [
+            "requests differ: candidate ['POST /api/v1/query'], reference ['POST /api/v1/query']"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "contract_header",
+          "gate": "differences",
+          "value": "text/plain",
+          "issues": [
+            "requests differ: candidate ['POST /api/v1/query'], reference ['POST /api/v1/query']"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "config_before",
+          "gate": "differences",
+          "value": "mutated-profile",
+          "issues": [
+            "config before differs semantically"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "config_after",
+          "gate": "differences",
+          "value": "mutated-profile",
+          "issues": [
+            "config after differs semantically"
+          ],
+          "rejected_by_expected_gate": true
+        }
+      ]
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1",
+      "role": "reference-repeat-1",
+      "original_issues": [],
+      "proposed_issues": [],
+      "manifest_stderr_sha256": "949f61e6cf521d91d1653d4f76c7f11c877431e8136760465f110da55667232c",
+      "raw_stderr_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a206e65742f687474703a20726571756573742063616e63656c65642028436c69656e742e54696d656f7574206f7220636f6e746578742063616e63656c6c6174696f6e207768696c652072656164696e6720626f6479290a",
+      "normalized_stderr_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a206e65742f687474703a20726571756573742063616e63656c65642028436c69656e742e54696d656f7574206f7220636f6e746578742063616e63656c6c6174696f6e207768696c652072656164696e6720626f6479290a",
+      "raw_stderr_digest_verified": true,
+      "raw_stdout_digest_verified": true,
+      "wall_ms": 60090.449583,
+      "rejection_controls": [
+        {
+          "name": "exit_zero",
+          "gate": "expectation_issues",
+          "field": "termination",
+          "value": {
+            "exit": 0
+          },
+          "issues": [
+            "termination {'exit': 0}, expected {'exit': 1}"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "empty_trace",
+          "gate": "expectation_issues",
+          "field": "trace",
+          "value": [],
+          "issues": [
+            "requests [], expected ['POST /api/v1/query']"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "extra_request",
+          "gate": "expectation_issues",
+          "field": "trace",
+          "value": [
+            {
+              "protocol": "http",
+              "method": "POST",
+              "path": "/api/v1/query",
+              "headers": {
+                "authorization": "Basic aGFybmVzczpoYXJuZXNz",
+                "content-type": "application/json",
+                "accept-encoding": "gzip",
+                "content-length": "98"
+              },
+              "user_agent": "Go-http-client/1.1",
+              "header_names": [
+                "Host",
+                "User-Agent",
+                "Content-Length",
+                "Authorization",
+                "Content-Type",
+                "Accept-Encoding"
+              ],
+              "body": "{\"query\":\"SELECT 1 LIMIT 500\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "body_b64": "eyJxdWVyeSI6IlNFTEVDVCAxIExJTUlUIDUwMCIsInN0YXJ0VGltZSI6IjIwMjQtMDEtMDFUMDA6MDA6MDBaIiwiZW5kVGltZSI6IjIwMjQtMDEtMDFUMDA6MDE6MDBaIn0=",
+              "framing": "length",
+              "listener": "primary",
+              "connection": 1,
+              "time_unix_ns": 1791991113735259521,
+              "unexpected": false,
+              "route": 0
+            },
+            {
+              "protocol": "http",
+              "method": "POST",
+              "path": "/api/v1/query",
+              "headers": {
+                "authorization": "Basic aGFybmVzczpoYXJuZXNz",
+                "content-type": "application/json",
+                "accept-encoding": "gzip",
+                "content-length": "98"
+              },
+              "user_agent": "Go-http-client/1.1",
+              "header_names": [
+                "Host",
+                "User-Agent",
+                "Content-Length",
+                "Authorization",
+                "Content-Type",
+                "Accept-Encoding"
+              ],
+              "body": "{\"query\":\"SELECT 1 LIMIT 500\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "body_b64": "eyJxdWVyeSI6IlNFTEVDVCAxIExJTUlUIDUwMCIsInN0YXJ0VGltZSI6IjIwMjQtMDEtMDFUMDA6MDA6MDBaIiwiZW5kVGltZSI6IjIwMjQtMDEtMDFUMDA6MDE6MDBaIn0=",
+              "framing": "length",
+              "listener": "primary",
+              "connection": 1,
+              "time_unix_ns": 1791991113735259521,
+              "unexpected": false,
+              "route": 0
+            }
+          ],
+          "issues": [
+            "requests ['POST /api/v1/query', 'POST /api/v1/query'], expected ['POST /api/v1/query']"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "unexpected_request",
+          "gate": "expectation_issues",
+          "field": "trace",
+          "value": [
+            {
+              "protocol": "http",
+              "method": "POST",
+              "path": "/api/v1/query",
+              "headers": {
+                "authorization": "Basic aGFybmVzczpoYXJuZXNz",
+                "content-type": "application/json",
+                "accept-encoding": "gzip",
+                "content-length": "98"
+              },
+              "user_agent": "Go-http-client/1.1",
+              "header_names": [
+                "Host",
+                "User-Agent",
+                "Content-Length",
+                "Authorization",
+                "Content-Type",
+                "Accept-Encoding"
+              ],
+              "body": "{\"query\":\"SELECT 1 LIMIT 500\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "body_b64": "eyJxdWVyeSI6IlNFTEVDVCAxIExJTUlUIDUwMCIsInN0YXJ0VGltZSI6IjIwMjQtMDEtMDFUMDA6MDA6MDBaIiwiZW5kVGltZSI6IjIwMjQtMDEtMDFUMDA6MDE6MDBaIn0=",
+              "framing": "length",
+              "listener": "primary",
+              "connection": 1,
+              "time_unix_ns": 1791991113735259521,
+              "unexpected": true,
+              "route": 0
+            }
+          ],
+          "issues": [
+            "unexpected fixture request"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "empty_stdout",
+          "gate": "expectation_issues",
+          "field": "stdout_normalized",
+          "value": {
+            "hex": ""
+          },
+          "issues": [
+            "stdout b'', expected b'[{\"sequence\":0,\"message\":\"first\"},'"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "altered_stdout",
+          "gate": "expectation_issues",
+          "field": "stdout_normalized",
+          "value": {
+            "hex": "5b7b2273657175656e6365223a302c226d657373616765223a226669727374227d21"
+          },
+          "issues": [
+            "stdout b'[{\"sequence\":0,\"message\":\"first\"}!', expected b'[{\"sequence\":0,\"message\":\"first\"},'"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "early_deadline",
+          "gate": "expectation_issues",
+          "field": "wall_ms",
+          "value": 58000,
+          "issues": [
+            "wall 58000 ms is below 59000 ms (deadline fired early)"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "late_deadline",
+          "gate": "expectation_issues",
+          "field": "wall_ms",
+          "value": 71000,
+          "issues": [
+            "wall 71000 ms exceeds 70000 ms (early completion)"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "prefix_phase_error",
+          "gate": "expectation_issues",
+          "field": "stderr_normalized",
+          "value": {
+            "hex": "4572726f723a206661696c656420746f207265616420726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465640a"
+          },
+          "issues": [
+            "stderr b'Error: failed to read response body: context deadline exceeded\\n', expected b'Error: failed to stream response body: <CLIENT-TIMEOUT> (Client.Timeout or context cancellation while reading body)\\n'"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "request_body",
+          "gate": "differences",
+          "value": "eyJxdWVyeSI6IlNFTEVDVCAyIn0=",
+          "issues": [
+            "requests differ: candidate ['POST /api/v1/query'], reference ['POST /api/v1/query']"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "contract_header",
+          "gate": "differences",
+          "value": "text/plain",
+          "issues": [
+            "requests differ: candidate ['POST /api/v1/query'], reference ['POST /api/v1/query']"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "config_before",
+          "gate": "differences",
+          "value": "mutated-profile",
+          "issues": [
+            "config before differs semantically"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "config_after",
+          "gate": "differences",
+          "value": "mutated-profile",
+          "issues": [
+            "config after differs semantically"
+          ],
+          "rejected_by_expected_gate": true
+        }
+      ]
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate",
+      "role": "candidate",
+      "original_issues": [],
+      "proposed_issues": [],
+      "manifest_stderr_sha256": "949f61e6cf521d91d1653d4f76c7f11c877431e8136760465f110da55667232c",
+      "raw_stderr_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465642028436c69656e742e54696d656f7574206f7220636f6e746578742063616e63656c6c6174696f6e207768696c652072656164696e6720626f6479290a",
+      "normalized_stderr_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465642028436c69656e742e54696d656f7574206f7220636f6e746578742063616e63656c6c6174696f6e207768696c652072656164696e6720626f6479290a",
+      "raw_stderr_digest_verified": true,
+      "raw_stdout_digest_verified": true,
+      "wall_ms": 60004.588833,
+      "rejection_controls": [
+        {
+          "name": "exit_zero",
+          "gate": "expectation_issues",
+          "field": "termination",
+          "value": {
+            "exit": 0
+          },
+          "issues": [
+            "termination {'exit': 0}, expected {'exit': 1}"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "empty_trace",
+          "gate": "expectation_issues",
+          "field": "trace",
+          "value": [],
+          "issues": [
+            "requests [], expected ['POST /api/v1/query']"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "extra_request",
+          "gate": "expectation_issues",
+          "field": "trace",
+          "value": [
+            {
+              "protocol": "http",
+              "method": "POST",
+              "path": "/api/v1/query",
+              "headers": {
+                "authorization": "Basic aGFybmVzczpoYXJuZXNz",
+                "content-type": "application/json",
+                "accept-encoding": "gzip",
+                "content-length": "98"
+              },
+              "user_agent": "Go-http-client/1.1",
+              "header_names": [
+                "authorization",
+                "content-type",
+                "user-agent",
+                "accept-encoding",
+                "content-length",
+                "host"
+              ],
+              "body": "{\"query\":\"SELECT 1 LIMIT 500\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "body_b64": "eyJxdWVyeSI6IlNFTEVDVCAxIExJTUlUIDUwMCIsInN0YXJ0VGltZSI6IjIwMjQtMDEtMDFUMDA6MDA6MDBaIiwiZW5kVGltZSI6IjIwMjQtMDEtMDFUMDA6MDE6MDBaIn0=",
+              "framing": "length",
+              "listener": "primary",
+              "connection": 1,
+              "time_unix_ns": 1791991173925793392,
+              "unexpected": false,
+              "route": 0
+            },
+            {
+              "protocol": "http",
+              "method": "POST",
+              "path": "/api/v1/query",
+              "headers": {
+                "authorization": "Basic aGFybmVzczpoYXJuZXNz",
+                "content-type": "application/json",
+                "accept-encoding": "gzip",
+                "content-length": "98"
+              },
+              "user_agent": "Go-http-client/1.1",
+              "header_names": [
+                "authorization",
+                "content-type",
+                "user-agent",
+                "accept-encoding",
+                "content-length",
+                "host"
+              ],
+              "body": "{\"query\":\"SELECT 1 LIMIT 500\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "body_b64": "eyJxdWVyeSI6IlNFTEVDVCAxIExJTUlUIDUwMCIsInN0YXJ0VGltZSI6IjIwMjQtMDEtMDFUMDA6MDA6MDBaIiwiZW5kVGltZSI6IjIwMjQtMDEtMDFUMDA6MDE6MDBaIn0=",
+              "framing": "length",
+              "listener": "primary",
+              "connection": 1,
+              "time_unix_ns": 1791991173925793392,
+              "unexpected": false,
+              "route": 0
+            }
+          ],
+          "issues": [
+            "requests ['POST /api/v1/query', 'POST /api/v1/query'], expected ['POST /api/v1/query']"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "unexpected_request",
+          "gate": "expectation_issues",
+          "field": "trace",
+          "value": [
+            {
+              "protocol": "http",
+              "method": "POST",
+              "path": "/api/v1/query",
+              "headers": {
+                "authorization": "Basic aGFybmVzczpoYXJuZXNz",
+                "content-type": "application/json",
+                "accept-encoding": "gzip",
+                "content-length": "98"
+              },
+              "user_agent": "Go-http-client/1.1",
+              "header_names": [
+                "authorization",
+                "content-type",
+                "user-agent",
+                "accept-encoding",
+                "content-length",
+                "host"
+              ],
+              "body": "{\"query\":\"SELECT 1 LIMIT 500\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "body_b64": "eyJxdWVyeSI6IlNFTEVDVCAxIExJTUlUIDUwMCIsInN0YXJ0VGltZSI6IjIwMjQtMDEtMDFUMDA6MDA6MDBaIiwiZW5kVGltZSI6IjIwMjQtMDEtMDFUMDA6MDE6MDBaIn0=",
+              "framing": "length",
+              "listener": "primary",
+              "connection": 1,
+              "time_unix_ns": 1791991173925793392,
+              "unexpected": true,
+              "route": 0
+            }
+          ],
+          "issues": [
+            "unexpected fixture request"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "empty_stdout",
+          "gate": "expectation_issues",
+          "field": "stdout_normalized",
+          "value": {
+            "hex": ""
+          },
+          "issues": [
+            "stdout b'', expected b'[{\"sequence\":0,\"message\":\"first\"},'"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "altered_stdout",
+          "gate": "expectation_issues",
+          "field": "stdout_normalized",
+          "value": {
+            "hex": "5b7b2273657175656e6365223a302c226d657373616765223a226669727374227d21"
+          },
+          "issues": [
+            "stdout b'[{\"sequence\":0,\"message\":\"first\"}!', expected b'[{\"sequence\":0,\"message\":\"first\"},'"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "early_deadline",
+          "gate": "expectation_issues",
+          "field": "wall_ms",
+          "value": 58000,
+          "issues": [
+            "wall 58000 ms is below 59000 ms (deadline fired early)"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "late_deadline",
+          "gate": "expectation_issues",
+          "field": "wall_ms",
+          "value": 71000,
+          "issues": [
+            "wall 71000 ms exceeds 70000 ms (early completion)"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "prefix_phase_error",
+          "gate": "expectation_issues",
+          "field": "stderr_normalized",
+          "value": {
+            "hex": "4572726f723a206661696c656420746f207265616420726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465640a"
+          },
+          "issues": [
+            "stderr b'Error: failed to read response body: context deadline exceeded\\n', expected b'Error: failed to stream response body: <CLIENT-TIMEOUT> (Client.Timeout or context cancellation while reading body)\\n'"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "request_body",
+          "gate": "differences",
+          "value": "eyJxdWVyeSI6IlNFTEVDVCAyIn0=",
+          "issues": [
+            "requests differ: candidate ['POST /api/v1/query'], reference ['POST /api/v1/query']"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "contract_header",
+          "gate": "differences",
+          "value": "text/plain",
+          "issues": [
+            "requests differ: candidate ['POST /api/v1/query'], reference ['POST /api/v1/query']"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "config_before",
+          "gate": "differences",
+          "value": "mutated-profile",
+          "issues": [
+            "config before differs semantically"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "config_after",
+          "gate": "differences",
+          "value": "mutated-profile",
+          "issues": [
+            "config after differs semantically"
+          ],
+          "rejected_by_expected_gate": true
+        }
+      ]
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference",
+      "role": "reference",
+      "original_issues": [],
+      "proposed_issues": [],
+      "manifest_stderr_sha256": "949f61e6cf521d91d1653d4f76c7f11c877431e8136760465f110da55667232c",
+      "raw_stderr_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a206e65742f687474703a20726571756573742063616e63656c65642028436c69656e742e54696d656f7574206f7220636f6e746578742063616e63656c6c6174696f6e207768696c652072656164696e6720626f6479290a",
+      "normalized_stderr_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a206e65742f687474703a20726571756573742063616e63656c65642028436c69656e742e54696d656f7574206f7220636f6e746578742063616e63656c6c6174696f6e207768696c652072656164696e6720626f6479290a",
+      "raw_stderr_digest_verified": true,
+      "raw_stdout_digest_verified": true,
+      "wall_ms": 60027.680262,
+      "rejection_controls": [
+        {
+          "name": "exit_zero",
+          "gate": "expectation_issues",
+          "field": "termination",
+          "value": {
+            "exit": 0
+          },
+          "issues": [
+            "termination {'exit': 0}, expected {'exit': 1}"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "empty_trace",
+          "gate": "expectation_issues",
+          "field": "trace",
+          "value": [],
+          "issues": [
+            "requests [], expected ['POST /api/v1/query']"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "extra_request",
+          "gate": "expectation_issues",
+          "field": "trace",
+          "value": [
+            {
+              "protocol": "http",
+              "method": "POST",
+              "path": "/api/v1/query",
+              "headers": {
+                "authorization": "Basic aGFybmVzczpoYXJuZXNz",
+                "content-type": "application/json",
+                "accept-encoding": "gzip",
+                "content-length": "98"
+              },
+              "user_agent": "Go-http-client/1.1",
+              "header_names": [
+                "Host",
+                "User-Agent",
+                "Content-Length",
+                "Authorization",
+                "Content-Type",
+                "Accept-Encoding"
+              ],
+              "body": "{\"query\":\"SELECT 1 LIMIT 500\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "body_b64": "eyJxdWVyeSI6IlNFTEVDVCAxIExJTUlUIDUwMCIsInN0YXJ0VGltZSI6IjIwMjQtMDEtMDFUMDA6MDA6MDBaIiwiZW5kVGltZSI6IjIwMjQtMDEtMDFUMDA6MDE6MDBaIn0=",
+              "framing": "length",
+              "listener": "primary",
+              "connection": 1,
+              "time_unix_ns": 1791992766345855807,
+              "unexpected": false,
+              "route": 0
+            },
+            {
+              "protocol": "http",
+              "method": "POST",
+              "path": "/api/v1/query",
+              "headers": {
+                "authorization": "Basic aGFybmVzczpoYXJuZXNz",
+                "content-type": "application/json",
+                "accept-encoding": "gzip",
+                "content-length": "98"
+              },
+              "user_agent": "Go-http-client/1.1",
+              "header_names": [
+                "Host",
+                "User-Agent",
+                "Content-Length",
+                "Authorization",
+                "Content-Type",
+                "Accept-Encoding"
+              ],
+              "body": "{\"query\":\"SELECT 1 LIMIT 500\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "body_b64": "eyJxdWVyeSI6IlNFTEVDVCAxIExJTUlUIDUwMCIsInN0YXJ0VGltZSI6IjIwMjQtMDEtMDFUMDA6MDA6MDBaIiwiZW5kVGltZSI6IjIwMjQtMDEtMDFUMDA6MDE6MDBaIn0=",
+              "framing": "length",
+              "listener": "primary",
+              "connection": 1,
+              "time_unix_ns": 1791992766345855807,
+              "unexpected": false,
+              "route": 0
+            }
+          ],
+          "issues": [
+            "requests ['POST /api/v1/query', 'POST /api/v1/query'], expected ['POST /api/v1/query']"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "unexpected_request",
+          "gate": "expectation_issues",
+          "field": "trace",
+          "value": [
+            {
+              "protocol": "http",
+              "method": "POST",
+              "path": "/api/v1/query",
+              "headers": {
+                "authorization": "Basic aGFybmVzczpoYXJuZXNz",
+                "content-type": "application/json",
+                "accept-encoding": "gzip",
+                "content-length": "98"
+              },
+              "user_agent": "Go-http-client/1.1",
+              "header_names": [
+                "Host",
+                "User-Agent",
+                "Content-Length",
+                "Authorization",
+                "Content-Type",
+                "Accept-Encoding"
+              ],
+              "body": "{\"query\":\"SELECT 1 LIMIT 500\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "body_b64": "eyJxdWVyeSI6IlNFTEVDVCAxIExJTUlUIDUwMCIsInN0YXJ0VGltZSI6IjIwMjQtMDEtMDFUMDA6MDA6MDBaIiwiZW5kVGltZSI6IjIwMjQtMDEtMDFUMDA6MDE6MDBaIn0=",
+              "framing": "length",
+              "listener": "primary",
+              "connection": 1,
+              "time_unix_ns": 1791992766345855807,
+              "unexpected": true,
+              "route": 0
+            }
+          ],
+          "issues": [
+            "unexpected fixture request"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "empty_stdout",
+          "gate": "expectation_issues",
+          "field": "stdout_normalized",
+          "value": {
+            "hex": ""
+          },
+          "issues": [
+            "stdout b'', expected b'[{\"sequence\":0,\"message\":\"first\"},'"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "altered_stdout",
+          "gate": "expectation_issues",
+          "field": "stdout_normalized",
+          "value": {
+            "hex": "5b7b2273657175656e6365223a302c226d657373616765223a226669727374227d21"
+          },
+          "issues": [
+            "stdout b'[{\"sequence\":0,\"message\":\"first\"}!', expected b'[{\"sequence\":0,\"message\":\"first\"},'"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "early_deadline",
+          "gate": "expectation_issues",
+          "field": "wall_ms",
+          "value": 58000,
+          "issues": [
+            "wall 58000 ms is below 59000 ms (deadline fired early)"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "late_deadline",
+          "gate": "expectation_issues",
+          "field": "wall_ms",
+          "value": 71000,
+          "issues": [
+            "wall 71000 ms exceeds 70000 ms (early completion)"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "prefix_phase_error",
+          "gate": "expectation_issues",
+          "field": "stderr_normalized",
+          "value": {
+            "hex": "4572726f723a206661696c656420746f207265616420726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465640a"
+          },
+          "issues": [
+            "stderr b'Error: failed to read response body: context deadline exceeded\\n', expected b'Error: failed to stream response body: <CLIENT-TIMEOUT> (Client.Timeout or context cancellation while reading body)\\n'"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "request_body",
+          "gate": "differences",
+          "value": "eyJxdWVyeSI6IlNFTEVDVCAyIn0=",
+          "issues": [
+            "requests differ: candidate ['POST /api/v1/query'], reference ['POST /api/v1/query']"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "contract_header",
+          "gate": "differences",
+          "value": "text/plain",
+          "issues": [
+            "requests differ: candidate ['POST /api/v1/query'], reference ['POST /api/v1/query']"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "config_before",
+          "gate": "differences",
+          "value": "mutated-profile",
+          "issues": [
+            "config before differs semantically"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "config_after",
+          "gate": "differences",
+          "value": "mutated-profile",
+          "issues": [
+            "config after differs semantically"
+          ],
+          "rejected_by_expected_gate": true
+        }
+      ]
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1",
+      "role": "reference-repeat-1",
+      "original_issues": [],
+      "proposed_issues": [],
+      "manifest_stderr_sha256": "949f61e6cf521d91d1653d4f76c7f11c877431e8136760465f110da55667232c",
+      "raw_stderr_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465642028436c69656e742e54696d656f7574206f7220636f6e746578742063616e63656c6c6174696f6e207768696c652072656164696e6720626f6479290a",
+      "normalized_stderr_hex": "4572726f723a206661696c656420746f2073747265616d20726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465642028436c69656e742e54696d656f7574206f7220636f6e746578742063616e63656c6c6174696f6e207768696c652072656164696e6720626f6479290a",
+      "raw_stderr_digest_verified": true,
+      "raw_stdout_digest_verified": true,
+      "wall_ms": 60032.099363,
+      "rejection_controls": [
+        {
+          "name": "exit_zero",
+          "gate": "expectation_issues",
+          "field": "termination",
+          "value": {
+            "exit": 0
+          },
+          "issues": [
+            "termination {'exit': 0}, expected {'exit': 1}"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "empty_trace",
+          "gate": "expectation_issues",
+          "field": "trace",
+          "value": [],
+          "issues": [
+            "requests [], expected ['POST /api/v1/query']"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "extra_request",
+          "gate": "expectation_issues",
+          "field": "trace",
+          "value": [
+            {
+              "protocol": "http",
+              "method": "POST",
+              "path": "/api/v1/query",
+              "headers": {
+                "authorization": "Basic aGFybmVzczpoYXJuZXNz",
+                "content-type": "application/json",
+                "accept-encoding": "gzip",
+                "content-length": "98"
+              },
+              "user_agent": "Go-http-client/1.1",
+              "header_names": [
+                "Host",
+                "User-Agent",
+                "Content-Length",
+                "Authorization",
+                "Content-Type",
+                "Accept-Encoding"
+              ],
+              "body": "{\"query\":\"SELECT 1 LIMIT 500\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "body_b64": "eyJxdWVyeSI6IlNFTEVDVCAxIExJTUlUIDUwMCIsInN0YXJ0VGltZSI6IjIwMjQtMDEtMDFUMDA6MDA6MDBaIiwiZW5kVGltZSI6IjIwMjQtMDEtMDFUMDA6MDE6MDBaIn0=",
+              "framing": "length",
+              "listener": "primary",
+              "connection": 1,
+              "time_unix_ns": 1791992826480006988,
+              "unexpected": false,
+              "route": 0
+            },
+            {
+              "protocol": "http",
+              "method": "POST",
+              "path": "/api/v1/query",
+              "headers": {
+                "authorization": "Basic aGFybmVzczpoYXJuZXNz",
+                "content-type": "application/json",
+                "accept-encoding": "gzip",
+                "content-length": "98"
+              },
+              "user_agent": "Go-http-client/1.1",
+              "header_names": [
+                "Host",
+                "User-Agent",
+                "Content-Length",
+                "Authorization",
+                "Content-Type",
+                "Accept-Encoding"
+              ],
+              "body": "{\"query\":\"SELECT 1 LIMIT 500\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "body_b64": "eyJxdWVyeSI6IlNFTEVDVCAxIExJTUlUIDUwMCIsInN0YXJ0VGltZSI6IjIwMjQtMDEtMDFUMDA6MDA6MDBaIiwiZW5kVGltZSI6IjIwMjQtMDEtMDFUMDA6MDE6MDBaIn0=",
+              "framing": "length",
+              "listener": "primary",
+              "connection": 1,
+              "time_unix_ns": 1791992826480006988,
+              "unexpected": false,
+              "route": 0
+            }
+          ],
+          "issues": [
+            "requests ['POST /api/v1/query', 'POST /api/v1/query'], expected ['POST /api/v1/query']"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "unexpected_request",
+          "gate": "expectation_issues",
+          "field": "trace",
+          "value": [
+            {
+              "protocol": "http",
+              "method": "POST",
+              "path": "/api/v1/query",
+              "headers": {
+                "authorization": "Basic aGFybmVzczpoYXJuZXNz",
+                "content-type": "application/json",
+                "accept-encoding": "gzip",
+                "content-length": "98"
+              },
+              "user_agent": "Go-http-client/1.1",
+              "header_names": [
+                "Host",
+                "User-Agent",
+                "Content-Length",
+                "Authorization",
+                "Content-Type",
+                "Accept-Encoding"
+              ],
+              "body": "{\"query\":\"SELECT 1 LIMIT 500\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "body_b64": "eyJxdWVyeSI6IlNFTEVDVCAxIExJTUlUIDUwMCIsInN0YXJ0VGltZSI6IjIwMjQtMDEtMDFUMDA6MDA6MDBaIiwiZW5kVGltZSI6IjIwMjQtMDEtMDFUMDA6MDE6MDBaIn0=",
+              "framing": "length",
+              "listener": "primary",
+              "connection": 1,
+              "time_unix_ns": 1791992826480006988,
+              "unexpected": true,
+              "route": 0
+            }
+          ],
+          "issues": [
+            "unexpected fixture request"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "empty_stdout",
+          "gate": "expectation_issues",
+          "field": "stdout_normalized",
+          "value": {
+            "hex": ""
+          },
+          "issues": [
+            "stdout b'', expected b'[{\"sequence\":0,\"message\":\"first\"},'"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "altered_stdout",
+          "gate": "expectation_issues",
+          "field": "stdout_normalized",
+          "value": {
+            "hex": "5b7b2273657175656e6365223a302c226d657373616765223a226669727374227d21"
+          },
+          "issues": [
+            "stdout b'[{\"sequence\":0,\"message\":\"first\"}!', expected b'[{\"sequence\":0,\"message\":\"first\"},'"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "early_deadline",
+          "gate": "expectation_issues",
+          "field": "wall_ms",
+          "value": 58000,
+          "issues": [
+            "wall 58000 ms is below 59000 ms (deadline fired early)"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "late_deadline",
+          "gate": "expectation_issues",
+          "field": "wall_ms",
+          "value": 71000,
+          "issues": [
+            "wall 71000 ms exceeds 70000 ms (early completion)"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "prefix_phase_error",
+          "gate": "expectation_issues",
+          "field": "stderr_normalized",
+          "value": {
+            "hex": "4572726f723a206661696c656420746f207265616420726573706f6e736520626f64793a20636f6e7465787420646561646c696e652065786365656465640a"
+          },
+          "issues": [
+            "stderr b'Error: failed to read response body: context deadline exceeded\\n', expected b'Error: failed to stream response body: <CLIENT-TIMEOUT> (Client.Timeout or context cancellation while reading body)\\n'"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "request_body",
+          "gate": "differences",
+          "value": "eyJxdWVyeSI6IlNFTEVDVCAyIn0=",
+          "issues": [
+            "requests differ: candidate ['POST /api/v1/query'], reference ['POST /api/v1/query']"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "contract_header",
+          "gate": "differences",
+          "value": "text/plain",
+          "issues": [
+            "requests differ: candidate ['POST /api/v1/query'], reference ['POST /api/v1/query']"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "config_before",
+          "gate": "differences",
+          "value": "mutated-profile",
+          "issues": [
+            "config before differs semantically"
+          ],
+          "rejected_by_expected_gate": true
+        },
+        {
+          "name": "config_after",
+          "gate": "differences",
+          "value": "mutated-profile",
+          "issues": [
+            "config after differs semantically"
+          ],
+          "rejected_by_expected_gate": true
+        }
+      ]
+    }
+  ],
+  "comparison_pairs": [
+    {
+      "reference": "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference",
+      "candidate": "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "reference": "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference",
+      "candidate": "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate",
+      "issues": []
+    },
+    {
+      "reference": "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference",
+      "candidate": "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference",
+      "issues": []
+    },
+    {
+      "reference": "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference",
+      "candidate": "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "reference": "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1",
+      "candidate": "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference",
+      "issues": []
+    },
+    {
+      "reference": "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1",
+      "candidate": "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate",
+      "issues": []
+    },
+    {
+      "reference": "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1",
+      "candidate": "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference",
+      "issues": []
+    },
+    {
+      "reference": "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1",
+      "candidate": "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "reference": "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate",
+      "candidate": "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference",
+      "issues": []
+    },
+    {
+      "reference": "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate",
+      "candidate": "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "reference": "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate",
+      "candidate": "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference",
+      "issues": []
+    },
+    {
+      "reference": "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate",
+      "candidate": "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "reference": "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference",
+      "candidate": "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference",
+      "issues": []
+    },
+    {
+      "reference": "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference",
+      "candidate": "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "reference": "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference",
+      "candidate": "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate",
+      "issues": []
+    },
+    {
+      "reference": "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference",
+      "candidate": "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "reference": "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1",
+      "candidate": "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference",
+      "issues": []
+    },
+    {
+      "reference": "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1",
+      "candidate": "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "reference": "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1",
+      "candidate": "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate",
+      "issues": []
+    },
+    {
+      "reference": "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1",
+      "candidate": "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference",
+      "issues": []
+    }
+  ],
+  "manifest_stderr_digests_equal": true,
+  "reports": [
+    {
+      "path": "/home/ajs/.cache/pb-phase7/retained-release4-phase3/report.json",
+      "sha256": "a44393207ae776a838daace9e76462a5f9d8a8505843f73e5c52ab1795187934",
+      "runner_sha256": "39d16e2ba220aad27ec0e67646e04aacbcdd9a9c28d3013f3f04ddefec789099",
+      "runner_matches_frozen_source": true,
+      "mode": "compare",
+      "partial": false,
+      "reference_runs": 2,
+      "binaries": {
+        "reference": {
+          "path": "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+          "bytes": 71807160,
+          "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314"
+        },
+        "cloud_reference": {
+          "path": "/home/ajs/.cache/pb-phase7/baselines/pb-go-cloud",
+          "bytes": 71807160,
+          "sha256": "622d4144b7e354c0ee4036244ba719cbbaf8357710804b1d733cd421a0dc227e"
+        },
+        "candidate": {
+          "path": "/home/ajs/.cache/pb-phase7/candidates/release4/pb-normal",
+          "bytes": 9386464,
+          "sha256": "fd1f91b608bbf76832fab183f02d9c63e658f7bc12ca4aabf57a811559a871c1"
+        },
+        "cloud_candidate": {
+          "path": "/home/ajs/.cache/pb-phase7/candidates/release4/pb-cloud",
+          "bytes": 9386344,
+          "sha256": "3804b936c9967560da7ab63e8e1c61eca65dd9fa08bd2295375619ef8e484c43"
+        }
+      },
+      "original_case_entry": {
+        "name": "p3-deadline-body-stall-text",
+        "group": "phase3-deadline",
+        "tier": "full60s",
+        "argv": [
+          "sql",
+          "run",
+          "SELECT 1",
+          "--from",
+          "2024-01-01T00:00:00Z",
+          "--to",
+          "2024-01-01T00:01:00Z"
+        ],
+        "status": "fail",
+        "issues": [
+          "reference: stderr b'Error: failed to stream response body: context deadline exceeded\\n', expected b'Error: failed to stream response body: <CLIENT-TIMEOUT> (Client.Timeout or context cancellation while reading body)\\n'",
+          "reference unstable: stderr differs at byte 39: candidate 116 bytes, reference 65 bytes",
+          "stderr differs at byte 39: candidate 116 bytes, reference 65 bytes"
+        ],
+        "advisories": [
+          "request header order/case differs"
+        ],
+        "runs": {
+          "reference": {
+            "binary": "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+            "termination": {
+              "exit": 1
+            },
+            "failure": null,
+            "wall_ms": 60040.947993,
+            "stdout_sha256": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+            "stdout_bytes": 34,
+            "stdout_normalized_sha256": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+            "stdout_elements": 1,
+            "first_stdout_ms": 39.099213,
+            "first_element_ms": 39.099213,
+            "last_stdout_ms": 39.099213,
+            "first_stderr_ms": 60038.470524,
+            "actions": [],
+            "resources": {
+              "source": "native_child_wait4",
+              "cpu_ms": 48.675,
+              "peak_rss_bytes": 50860032
+            },
+            "requests": [
+              {
+                "method": "POST",
+                "target": "/api/v1/query",
+                "headers": {
+                  "accept-encoding": "gzip",
+                  "authorization": "Basic aGFybmVzczpoYXJuZXNz",
+                  "content-length": "98",
+                  "content-type": "application/json"
+                },
+                "body_b64": "eyJxdWVyeSI6IlNFTEVDVCAxIExJTUlUIDUwMCIsInN0YXJ0VGltZSI6IjIwMjQtMDEtMDFUMDA6MDA6MDBaIiwiZW5kVGltZSI6IjIwMjQtMDEtMDFUMDA6MDE6MDBaIn0=",
+                "framing": "length",
+                "listener": "primary"
+              }
+            ],
+            "stderr_sha256": "4ac82e6f88228c4289456931f97f03e61a05b5e0ed0f3c7008bd8fdfbfca10a9",
+            "stderr_raw_sha256": "4ac82e6f88228c4289456931f97f03e61a05b5e0ed0f3c7008bd8fdfbfca10a9",
+            "trace_sha256": "3c7f80e023759d9113184cf67d07b09d4bdd18729aebcf612efefa2f36d7679f",
+            "milestones_sha256": "ea8e873abd36e9bec4e8ebd277bdb2453b8b7e8bba97c4ccca0fd1cd1127b73e",
+            "user_agents": [
+              "Go-http-client/1.1"
+            ],
+            "fixture_milestones_relative_ms": [
+              {
+                "request": 0,
+                "received_ms": 38.854441,
+                "events": [
+                  {
+                    "name": "received",
+                    "ms": 38.92649
+                  },
+                  {
+                    "name": "headers",
+                    "ms": 38.996036
+                  },
+                  {
+                    "name": "first-body",
+                    "ms": 39.025896
+                  },
+                  {
+                    "name": "stall",
+                    "ms": 39.030267
+                  },
+                  {
+                    "name": "client-gone",
+                    "ms": 60040.448782
+                  }
+                ],
+                "body_bytes_sent": 34,
+                "wire_bytes_sent": 119
+              }
+            ],
+            "config_before": {
+              ".": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "cache": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "config": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "config/pb": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "config/pb/config.toml": {
+                "type": "file",
+                "mode": "0o600",
+                "raw_sha256": "71659d2c6ff5e9422cb47205e390b8bf4174b76b2b17316387bb3d633257c331",
+                "toml": {
+                  "DefaultProfile": "fixture",
+                  "Profiles": {
+                    "fixture": {
+                      "url": "http://<FIXTURE>",
+                      "username": "harness",
+                      "password": "harness",
+                      "cloud": false
+                    }
+                  }
+                }
+              },
+              "data": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "state": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "tmp": {
+                "type": "directory",
+                "mode": "0o755"
+              }
+            },
+            "config_after": {
+              ".": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "cache": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "config": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "config/pb": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "config/pb/config.toml": {
+                "type": "file",
+                "mode": "0o600",
+                "raw_sha256": "71659d2c6ff5e9422cb47205e390b8bf4174b76b2b17316387bb3d633257c331",
+                "toml": {
+                  "DefaultProfile": "fixture",
+                  "Profiles": {
+                    "fixture": {
+                      "url": "http://<FIXTURE>",
+                      "username": "harness",
+                      "password": "harness",
+                      "cloud": false
+                    }
+                  }
+                }
+              },
+              "data": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "state": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "tmp": {
+                "type": "directory",
+                "mode": "0o755"
+              }
+            }
+          },
+          "candidate": {
+            "binary": "/home/ajs/.cache/pb-phase7/candidates/release4/pb-normal",
+            "termination": {
+              "exit": 1
+            },
+            "failure": null,
+            "wall_ms": 60004.588833,
+            "stdout_sha256": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+            "stdout_bytes": 34,
+            "stdout_normalized_sha256": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+            "stdout_elements": 1,
+            "first_stdout_ms": 2.873361,
+            "first_element_ms": 2.873361,
+            "last_stdout_ms": 2.873361,
+            "first_stderr_ms": 60004.015838,
+            "actions": [],
+            "resources": {
+              "source": "native_child_wait4",
+              "cpu_ms": 2.161,
+              "peak_rss_bytes": 7151616
+            },
+            "requests": [
+              {
+                "method": "POST",
+                "target": "/api/v1/query",
+                "headers": {
+                  "accept-encoding": "gzip",
+                  "authorization": "Basic aGFybmVzczpoYXJuZXNz",
+                  "content-length": "98",
+                  "content-type": "application/json"
+                },
+                "body_b64": "eyJxdWVyeSI6IlNFTEVDVCAxIExJTUlUIDUwMCIsInN0YXJ0VGltZSI6IjIwMjQtMDEtMDFUMDA6MDA6MDBaIiwiZW5kVGltZSI6IjIwMjQtMDEtMDFUMDA6MDE6MDBaIn0=",
+                "framing": "length",
+                "listener": "primary"
+              }
+            ],
+            "stderr_sha256": "21994d8e6f67f391b6aed79a3d9371de45c904ea56c8ae5d0f7bcb3e88f5b074",
+            "stderr_raw_sha256": "21994d8e6f67f391b6aed79a3d9371de45c904ea56c8ae5d0f7bcb3e88f5b074",
+            "trace_sha256": "6ed688ade400df782fe2a0b22131c5670145f9901a0b180d61f91699ce5befd9",
+            "milestones_sha256": "5b02e3d04437aeb5cbcfa1b2b8660eeb70c0786e3921598e799ae27eea0c51d6",
+            "user_agents": [
+              "Go-http-client/1.1"
+            ],
+            "fixture_milestones_relative_ms": [
+              {
+                "request": 0,
+                "received_ms": 2.600206,
+                "events": [
+                  {
+                    "name": "received",
+                    "ms": 2.659776
+                  },
+                  {
+                    "name": "headers",
+                    "ms": 2.724815
+                  },
+                  {
+                    "name": "first-body",
+                    "ms": 2.772939
+                  },
+                  {
+                    "name": "stall",
+                    "ms": 2.776951
+                  }
+                ],
+                "body_bytes_sent": 34,
+                "wire_bytes_sent": 119
+              }
+            ],
+            "config_before": {
+              ".": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "cache": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "config": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "config/pb": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "config/pb/config.toml": {
+                "type": "file",
+                "mode": "0o600",
+                "raw_sha256": "c56da8e42db5f80ec0c038af719c6b18fcb3912e1dd91994173a07270bd3bee8",
+                "toml": {
+                  "DefaultProfile": "fixture",
+                  "Profiles": {
+                    "fixture": {
+                      "url": "http://<FIXTURE>",
+                      "username": "harness",
+                      "password": "harness",
+                      "cloud": false
+                    }
+                  }
+                }
+              },
+              "data": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "state": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "tmp": {
+                "type": "directory",
+                "mode": "0o755"
+              }
+            },
+            "config_after": {
+              ".": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "cache": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "config": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "config/pb": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "config/pb/config.toml": {
+                "type": "file",
+                "mode": "0o600",
+                "raw_sha256": "c56da8e42db5f80ec0c038af719c6b18fcb3912e1dd91994173a07270bd3bee8",
+                "toml": {
+                  "DefaultProfile": "fixture",
+                  "Profiles": {
+                    "fixture": {
+                      "url": "http://<FIXTURE>",
+                      "username": "harness",
+                      "password": "harness",
+                      "cloud": false
+                    }
+                  }
+                }
+              },
+              "data": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "state": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "tmp": {
+                "type": "directory",
+                "mode": "0o755"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/report.json",
+      "sha256": "013dd5c74307d373eb6d8e83052ed5125e7e9f41793528bcf81be9c7a0f6cf0d",
+      "runner_sha256": "39d16e2ba220aad27ec0e67646e04aacbcdd9a9c28d3013f3f04ddefec789099",
+      "runner_matches_frozen_source": true,
+      "mode": "reference-check",
+      "partial": true,
+      "reference_runs": 2,
+      "binaries": {
+        "reference": {
+          "path": "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+          "bytes": 71807160,
+          "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314"
+        }
+      },
+      "original_case_entry": {
+        "name": "p3-deadline-body-stall-text",
+        "group": "phase3-deadline",
+        "tier": "full60s",
+        "argv": [
+          "sql",
+          "run",
+          "SELECT 1",
+          "--from",
+          "2024-01-01T00:00:00Z",
+          "--to",
+          "2024-01-01T00:01:00Z"
+        ],
+        "status": "pass",
+        "issues": [],
+        "advisories": [],
+        "runs": {
+          "reference": {
+            "binary": "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+            "termination": {
+              "exit": 1
+            },
+            "failure": null,
+            "wall_ms": 60027.680262,
+            "stdout_sha256": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+            "stdout_bytes": 34,
+            "stdout_normalized_sha256": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+            "stdout_elements": 1,
+            "first_stdout_ms": 25.726423,
+            "first_element_ms": 25.726423,
+            "last_stdout_ms": 25.726423,
+            "first_stderr_ms": 60025.443489,
+            "actions": [],
+            "resources": {
+              "source": "native_child_wait4",
+              "cpu_ms": 38.956,
+              "peak_rss_bytes": 49827840
+            },
+            "requests": [
+              {
+                "method": "POST",
+                "target": "/api/v1/query",
+                "headers": {
+                  "accept-encoding": "gzip",
+                  "authorization": "Basic aGFybmVzczpoYXJuZXNz",
+                  "content-length": "98",
+                  "content-type": "application/json"
+                },
+                "body_b64": "eyJxdWVyeSI6IlNFTEVDVCAxIExJTUlUIDUwMCIsInN0YXJ0VGltZSI6IjIwMjQtMDEtMDFUMDA6MDA6MDBaIiwiZW5kVGltZSI6IjIwMjQtMDEtMDFUMDA6MDE6MDBaIn0=",
+                "framing": "length",
+                "listener": "primary"
+              }
+            ],
+            "stderr_sha256": "9eb8dc6b5680771ed6a37561ace00247ec768ed6f8af757252ef7a9113cff71b",
+            "stderr_raw_sha256": "9eb8dc6b5680771ed6a37561ace00247ec768ed6f8af757252ef7a9113cff71b",
+            "trace_sha256": "0e3d0a457aae67d74abc6c22b29453e5825500d5adeda097847b8c6623a122a7",
+            "milestones_sha256": "a20b7d1dd0a9deb24dcec7ad41211e8a7ab936b47731dbbf2459ba0e5e53e41e",
+            "user_agents": [
+              "Go-http-client/1.1"
+            ],
+            "fixture_milestones_relative_ms": [
+              {
+                "request": 0,
+                "received_ms": 25.525152,
+                "events": [
+                  {
+                    "name": "received",
+                    "ms": 25.571062
+                  },
+                  {
+                    "name": "headers",
+                    "ms": 25.637894
+                  },
+                  {
+                    "name": "first-body",
+                    "ms": 25.653461
+                  },
+                  {
+                    "name": "stall",
+                    "ms": 25.65611
+                  },
+                  {
+                    "name": "client-gone",
+                    "ms": 60026.945536
+                  }
+                ],
+                "body_bytes_sent": 34,
+                "wire_bytes_sent": 119
+              }
+            ],
+            "config_before": {
+              ".": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "cache": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "config": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "config/pb": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "config/pb/config.toml": {
+                "type": "file",
+                "mode": "0o600",
+                "raw_sha256": "e38998e4846a0828174517ac77fe885296f0e208deca9180ea0b5930e313aac8",
+                "toml": {
+                  "DefaultProfile": "fixture",
+                  "Profiles": {
+                    "fixture": {
+                      "url": "http://<FIXTURE>",
+                      "username": "harness",
+                      "password": "harness",
+                      "cloud": false
+                    }
+                  }
+                }
+              },
+              "data": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "state": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "tmp": {
+                "type": "directory",
+                "mode": "0o755"
+              }
+            },
+            "config_after": {
+              ".": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "cache": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "config": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "config/pb": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "config/pb/config.toml": {
+                "type": "file",
+                "mode": "0o600",
+                "raw_sha256": "e38998e4846a0828174517ac77fe885296f0e208deca9180ea0b5930e313aac8",
+                "toml": {
+                  "DefaultProfile": "fixture",
+                  "Profiles": {
+                    "fixture": {
+                      "url": "http://<FIXTURE>",
+                      "username": "harness",
+                      "password": "harness",
+                      "cloud": false
+                    }
+                  }
+                }
+              },
+              "data": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "state": {
+                "type": "directory",
+                "mode": "0o755"
+              },
+              "tmp": {
+                "type": "directory",
+                "mode": "0o755"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "preserved_evidence_sha256": {
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/stdout.bin": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/meter.json": "62bc31a333f31102b60999c4b037601a456b154700ca9d53f93fe177d913cccd",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/stderr.bin": "4ac82e6f88228c4289456931f97f03e61a05b5e0ed0f3c7008bd8fdfbfca10a9",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/stderr.normalized": "4ac82e6f88228c4289456931f97f03e61a05b5e0ed0f3c7008bd8fdfbfca10a9",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/stdout.normalized": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/trace.json": "14c4d874a914103058e7f8ebdf79eefdd7fe77e28c4d01589bda12e026e2f8f7",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/milestones.json": "78a04c899de70baf58ea986e3a0cf694dd5a669797bd1df4a7423ce257e7cdbf",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/config-after.toml": "71659d2c6ff5e9422cb47205e390b8bf4174b76b2b17316387bb3d633257c331",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/result.json": "399b1219a7ab136b916b76865433f634709a365fb752599424f899d8a56ec334",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/stdout.bin": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/meter.json": "ca1eb45c0251cbd649f6440f4fb9773ccdac2ef196e757a0c9366d9448a35876",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/stderr.bin": "9eb8dc6b5680771ed6a37561ace00247ec768ed6f8af757252ef7a9113cff71b",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/stderr.normalized": "9eb8dc6b5680771ed6a37561ace00247ec768ed6f8af757252ef7a9113cff71b",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/stdout.normalized": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/trace.json": "36d9fe249f72b2b432fb6f9a08c5f46dcfed00e04a2e609d6147daa1995802f5",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/milestones.json": "fd3e45610551658d2063b2d79ba3ef2ff18e410d534dd0a6ca8f45e98e42c51e",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/config-after.toml": "00fa7ffd31000dc29da6932a9bbb10d4aa235c901676325aafd9e99fb9b51ec8",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/result.json": "3ee86a45fc09ed7e9dc69c4b13efce2139962bd179c84f8f3cac80268f95f72a",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/stdout.bin": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/meter.json": "ecf4f607daa7fa8464e3b17f53c23f7ce481f1e1be190a84ab0709cb4450042f",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/stderr.bin": "21994d8e6f67f391b6aed79a3d9371de45c904ea56c8ae5d0f7bcb3e88f5b074",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/stderr.normalized": "21994d8e6f67f391b6aed79a3d9371de45c904ea56c8ae5d0f7bcb3e88f5b074",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/stdout.normalized": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/trace.json": "3c1d46e922c116b83d992a3247c8b487d15ec33ca92051554e75da05b9426a43",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/milestones.json": "62957b931f73139c9411687075011efb7fe2efa6a5f32943dac2d8d01ce4834c",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/config-after.toml": "c56da8e42db5f80ec0c038af719c6b18fcb3912e1dd91994173a07270bd3bee8",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/result.json": "625f21cdb2f292cd2038eef3ff9d37f2e18f8b18026c56a85942d74f509603b3",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/stdout.bin": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/meter.json": "c6bb48b8f1e41d809c706b6594a045c2e27d9b95182ae58af6221e2c4476bdca",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/stderr.bin": "9eb8dc6b5680771ed6a37561ace00247ec768ed6f8af757252ef7a9113cff71b",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/stderr.normalized": "9eb8dc6b5680771ed6a37561ace00247ec768ed6f8af757252ef7a9113cff71b",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/stdout.normalized": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/trace.json": "010c9ea9e3bd1bd24bff752e1dbe0d2321d60b92a23a0689ec64b9e4e6e7b34c",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/milestones.json": "ac8774d1e66d77b70fd4579e16bc08d0bb4a0d620b2e945f0a4a351839d56510",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/config-after.toml": "e38998e4846a0828174517ac77fe885296f0e208deca9180ea0b5930e313aac8",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/result.json": "2bddd023a18df95e1bfc5f00376255504adf28d18d55f83dfbb614fb983ee498",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/stdout.bin": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/meter.json": "651fcd5118495c7f528f952b3a9a50b33147a38397b0c821f7296c441d1f1cca",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/stderr.bin": "21994d8e6f67f391b6aed79a3d9371de45c904ea56c8ae5d0f7bcb3e88f5b074",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/stderr.normalized": "21994d8e6f67f391b6aed79a3d9371de45c904ea56c8ae5d0f7bcb3e88f5b074",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/stdout.normalized": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/trace.json": "2a8782308b3af8f7764b09f03ffae248d2582085838723866955a22757aa4bd8",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/milestones.json": "74c77fe5c0117f61c58ec1050684603bd11a8d2fcd2589f4f32b89629810cdaa",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/config-after.toml": "f777c861cb5e681e177045cef487f325be3412fc0f10e1e1482f65beda7566cd",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/result.json": "b1050d1c28ea21e423ac3c9ec7b15df3a47313bac2a21bc91cf4d16e931307d0",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/report.json": "a44393207ae776a838daace9e76462a5f9d8a8505843f73e5c52ab1795187934",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/report.json": "013dd5c74307d373eb6d8e83052ed5125e7e9f41793528bcf81be9c7a0f6cf0d",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-body-deadline-original.json": "8656ff75b3d88df2bd73ab3cd91bb38286af4299aafd770c40c935527bdc0b96",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-body-deadline-proposed-reduction.json": "611c232c77e51bb3e7c8f17797378256cda773731ba0283dc4c7ff6fc2030a27"
+  },
+  "all_bound_inputs_unchanged": true
+}

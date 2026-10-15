@@ -1,0 +1,103 @@
+{
+  "kind": "A1 functional preflight pass only",
+  "campaign": "under30-combined-a1-primary-dark-05",
+  "report": {
+    "path": "/home/ajs/.cache/pb-phase7/under30-combined-a1-primary-dark-05/report.json",
+    "sha256": "7cd36ecc4f07a0aa98eae2827234c7be79a30d1f2e66a2d5cbb4010328f41bb1"
+  },
+  "coordinator_receipt": {
+    "path": "/home/ajs/.cache/pb-phase7/under30-combined-a1-retry05-preparation/coordination/receipt.json",
+    "sha256": "fe32c88805b6937066210aad2fd79c124c2995cfa0cd86a9bc9ccb0086e17e93"
+  },
+  "actual_coordinator_exit": 0,
+  "actual_supervisor_exit": 0,
+  "start_utc": "2026-10-15T18:23:10.701341+00:00",
+  "end_receipt_utc": "2026-10-15T18:27:09.822224+00:00",
+  "elapsed_seconds": 239.1208873449359,
+  "case_pairs_passed": 12,
+  "role_sessions": 24,
+  "unchanged_deadlines": true,
+  "end_identities_unchanged": true,
+  "inventory_end_exact": true,
+  "supervisor_cleanup": {
+    "converged_before_reap_by": true,
+    "echild_verified": true,
+    "own_children_after": [],
+    "recorded_descendants": 0,
+    "recorded_unreaped": []
+  },
+  "root_echild": true,
+  "common_lock_reacquired_released": true,
+  "post_scan_coverage": {
+    "scope": "supplemental same-effective-UID exact-known-path observations; never an owned-tree cleanup proof",
+    "status": "incomplete",
+    "reason": null,
+    "coverage_complete": false,
+    "enumeration_completed": true,
+    "same_uid_entries": 177,
+    "owner_unknown_entries": 0,
+    "matches": [],
+    "component_errors": [
+      {
+        "pid": 1222,
+        "stage": "exe",
+        "classification": "permission_denied",
+        "error": {
+          "type": "PermissionError",
+          "errno": 13,
+          "message": "Permission denied"
+        }
+      },
+      {
+        "pid": 1226,
+        "stage": "exe",
+        "classification": "permission_denied",
+        "error": {
+          "type": "PermissionError",
+          "errno": 13,
+          "message": "Permission denied"
+        }
+      },
+      {
+        "pid": 1685,
+        "stage": "exe",
+        "classification": "vanished",
+        "error": {
+          "type": "FileNotFoundError",
+          "errno": 2,
+          "message": "No such file or directory"
+        }
+      },
+      {
+        "pid": 254971,
+        "stage": "exe",
+        "classification": "permission_denied",
+        "error": {
+          "type": "PermissionError",
+          "errno": 13,
+          "message": "Permission denied"
+        }
+      },
+      {
+        "pid": 1728763,
+        "stage": "exe",
+        "classification": "vanished",
+        "error": {
+          "type": "FileNotFoundError",
+          "errno": 2,
+          "message": "No such file or directory"
+        }
+      }
+    ],
+    "global_scan_empty_claimed": false,
+    "owned_cleanup_authority": "supervisor ECHILD and owned descendant ledger plus coordinator ECHILD"
+  },
+  "quiet_token_released": true,
+  "performance_claim": false,
+  "candidate_normal_sha256": "af3c0922a9065c909c7faf6718bda38f58224a872a8a93f724cd18fa529a366e",
+  "remaining": [
+    "Fresh complete UI/device/retained compatibility validation for release7 beyond this A1 scope",
+    "Actual performance campaigns and independent evidence interpretation",
+    "Existing RSS regression findings and other program limitations remain open; no blanket acceptance"
+  ]
+}

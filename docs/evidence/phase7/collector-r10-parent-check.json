@@ -1,0 +1,164 @@
+{
+  "status": "root exact diff read and freeze identities verified; fresh Opus R11 running; not final source acceptance",
+  "checked": [
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_bench.py",
+      "size_bytes": 191089,
+      "sha256": "bf4adf5f8867109c4e36fd645ac7bbbd62b22434c9612540a679bd4890573f6b"
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7_bench.py",
+      "size_bytes": 176647,
+      "sha256": "8d1e51232c9309bf57332c178cfeb0316921b18b5a78b039204860be11922cb5"
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-measurement.md",
+      "size_bytes": 91579,
+      "sha256": "c33d5cc62d17b8bf4ee188a511c63e1dc7ef3305a92407928ccd98b09f71bc6e"
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/contracts/phase7.md",
+      "size_bytes": 32780,
+      "sha256": "9413c4bbda4dc432d974508a66b424e218023845cf2c141cde97bd20177e62b2"
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_bench.py",
+      "size_bytes": 191089,
+      "sha256": "bf4adf5f8867109c4e36fd645ac7bbbd62b22434c9612540a679bd4890573f6b"
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7_bench.py",
+      "size_bytes": 176647,
+      "sha256": "8d1e51232c9309bf57332c178cfeb0316921b18b5a78b039204860be11922cb5"
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-measurement.md",
+      "size_bytes": 91579,
+      "sha256": "c33d5cc62d17b8bf4ee188a511c63e1dc7ef3305a92407928ccd98b09f71bc6e"
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/contracts/phase7.md",
+      "size_bytes": 32780,
+      "sha256": "9413c4bbda4dc432d974508a66b424e218023845cf2c141cde97bd20177e62b2"
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_profile.py",
+      "size_bytes": 43899,
+      "sha256": "cd064da4a3f192a64c9e015a12d2ec5cbc6b305b3ca992d95f3641d83e5b2385"
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7_profile.py",
+      "size_bytes": 37130,
+      "sha256": "75bb14229f18b212cd234e9d2d4af5ad8cef3eb290f2c483d45e6e1c2e6443dd"
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-profiling.md",
+      "size_bytes": 27526,
+      "sha256": "f28aced955ea7d30fa431df78b03ca5c93c7348ff13c4e777543b7213487426e"
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7.py",
+      "size_bytes": 90070,
+      "sha256": "dc7574f058b9ff6ae7b77a912847fdbe02d8b68baab8728237d6ef040e6a44fa"
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7.py",
+      "size_bytes": 85821,
+      "sha256": "97f19258eaf3a7d052d1f8b1ea7577ad4b3b5acc1d284dbd0162cdcace3080a5"
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_spawn.c",
+      "size_bytes": 9383,
+      "sha256": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4"
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_workloads.py",
+      "size_bytes": 41781,
+      "sha256": "54a9efb7767372c976b459c3e2dc59c590e0b9d6b47b4cc29e36ae81ff588d1c"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/collector-r10-label-correction/before.json",
+      "size_bytes": 1584,
+      "sha256": "2780e282a755968ad8f16c4253be600e087cf63bf407683c59b00713b620b6de"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/collector-r10-label-correction/owned.diff",
+      "size_bytes": 17842,
+      "sha256": "10d81db36cba5403eabe6315ad7a8a3e07c205fa4e52b2fea79aec2fa6c6e657"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/collector-r10-label-correction/response.json",
+      "size_bytes": 2353,
+      "sha256": "fb992258a1f775f1f06d7d24f8d7d4bdf8dbd9cb05b11cb3c4155f5e59bed6d0"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/collector-r10-label-correction/checks.json",
+      "size_bytes": 2097,
+      "sha256": "1fd94ae29ef4312f9e6cc96a048a72bdeda47727a1ee47b5f1753732d812f168"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/collector-r10-label-correction/matrix-addendum.json",
+      "size_bytes": 10930,
+      "sha256": "8b8476b1d669200f3ccdd0fcf9ce760533594d345f8034da95f6ad34135f41cc"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/collector-r10-label-correction/source-snapshot.json",
+      "size_bytes": 3018,
+      "sha256": "9656bc58fbb50eb44dbb231fbd4c64a006029e682140fac04b26673c01db489a"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/collector-r8-corrections/final-checks.json",
+      "size_bytes": 1691,
+      "sha256": "b087da6f1b36fa249c5f3199e78c34e23403e420537e37d55726522ff4879402"
+    }
+  ],
+  "author_checks": {
+    "root": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive",
+    "command": [
+      "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+      "/home/ajs/.cache/pb-phase7/collector-r10-label-correction/checks.py"
+    ],
+    "environment": {
+      "PATH": "/home/ajs/.cargo/bin:$PATH",
+      "TMPDIR": "/home/ajs/.cache/pb-phase7/tmp",
+      "GOTMPDIR": "/home/ajs/.cache/pb-phase7/tmp",
+      "CLAUDE_CODE_TMPDIR": "/home/ajs/.cache/pb-phase7/tmp",
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "actual_tests": {
+      "path": "/home/ajs/.cache/pb-phase7/collector-r10-label-correction/actual-tests.json",
+      "size_bytes": 4200,
+      "sha256": "b45b5565aaa9b50405a9f4afe899b256a9bf0a0518eeebf0adc5130957e5bbee"
+    },
+    "final_log": {
+      "path": "/home/ajs/.cache/pb-phase7/collector-r10-label-correction/scoped-final.log",
+      "size_bytes": 1512,
+      "sha256": "b51658931b2bbac866c1ea94fbad369d30ee269eb2c6f3a62ab4355fc6946d0e"
+    },
+    "checks_script": {
+      "path": "/home/ajs/.cache/pb-phase7/collector-r10-label-correction/checks.py",
+      "size_bytes": 1995,
+      "sha256": "cb406f7dd6b4df766f1ceb442b473259c536b71ed3cf6c5589a3f48d609346c1"
+    },
+    "earlier_scoped_logs": {
+      "scoped1.log": {
+        "path": "/home/ajs/.cache/pb-phase7/collector-r10-label-correction/scoped1.log",
+        "size_bytes": 104,
+        "sha256": "fb526d31566ebddce2817c65d6141b21b917818c314ade6c7bae1ee5fdd84c32"
+      },
+      "scoped2.log": {
+        "path": "/home/ajs/.cache/pb-phase7/collector-r10-label-correction/scoped2.log",
+        "size_bytes": 105,
+        "sha256": "a9afbba2c530b0c5608838aca069b9007c41f78ab492ed6643029deb2b9e256b"
+      }
+    },
+    "static": "AST/whitespace; production diff exactly3summary calls plus local saved-Options binding; public signatures unchanged; unchanged-profile/helper/workload hashes; inherited root NO COMMIT HEAD declaration (not re-resolved)",
+    "no_full_rerun": true,
+    "preserved_R8_final_checks": {
+      "path": "/home/ajs/.cache/pb-phase7/collector-r8-corrections/final-checks.json",
+      "size_bytes": 1691,
+      "sha256": "b087da6f1b36fa249c5f3199e78c34e23403e420537e37d55726522ff4879402"
+    }
+  },
+  "root_test_rerun": false
+}

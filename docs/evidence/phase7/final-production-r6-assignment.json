@@ -1,0 +1,7 @@
+{
+  "purpose": "Fresh independent supplemental Opus review of R5 unread obligations and precise O5-1 timer ordering",
+  "previous": "docs/evidence/phase7/final-production-r5-assignment.json",
+  "r5": "docs/phase7-review-final-opus-r5.md",
+  "no_production_edits": true,
+  "source_only_due_to_claude_tmp_quota": true
+}

@@ -1,0 +1,8 @@
+{
+  "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-measurement-review-r2",
+  "status": "failed",
+  "reason": "Claude API rate limit reached. Try again later.",
+  "review_occurred": false,
+  "interim_taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-sol-measurement-interim-review-r2",
+  "final_opus_review": "outstanding"
+}

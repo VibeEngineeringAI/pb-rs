@@ -71,7 +71,7 @@ fn process_tty() -> bool {
     std::io::stdout().is_terminal() && process_env("CI").is_empty()
 }
 static BACKGROUND: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
-fn process_dark() -> bool {
+pub(crate) fn process_dark() -> bool {
     *BACKGROUND.get_or_init(|| dark_background(process_tty(), &process_env, probe_background))
 }
 /// bubbletea v1.2.2's tea_init.go primes lipgloss's background cache before

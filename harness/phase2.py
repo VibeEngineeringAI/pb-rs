@@ -863,6 +863,15 @@ def corpus():
 
 
 def deferred_boundaries(cases=None):
+    """Interactive workflows graduated to the phase-seven PTY/effect gate.
+
+    Retain historical definitions below for old evidence readers, never select
+    coverage by inspecting the candidate binary. Ordinary cases are unchanged.
+    """
+    return []
+
+
+def historical_deferred_boundaries(cases=None):
     """Candidate-only checks for future terminal cases: an explicit unimplemented error, no effects.
 
     Go itself prompts or needs /dev/tty here, so these are not compatibility claims. Profiles and the
@@ -1522,7 +1531,7 @@ def compare(args):
     elif report["partial"]:
         report["boundaries_status"] = "not run (case/group filter)"
     else:
-        report["boundaries_status"] = "run"
+        report["boundaries_status"] = "promoted to phase7 PTY/effect gate"
         for check in deferred_boundaries(full):
             actual = sample([binaries["candidate"]["path"]], check, None, args.timeout)
             store(out / "boundaries" / check["name"], actual)

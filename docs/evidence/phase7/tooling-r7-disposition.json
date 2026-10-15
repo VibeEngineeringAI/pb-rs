@@ -1,0 +1,78 @@
+{
+  "review": "docs/phase7-review-measurement-opus-r7.md",
+  "review_sha256": "59ac06a4c0a07b2ff6f55797be281bc55a5c54a08ea18a79f34bf09f81ba9174",
+  "scope": "Source-only after one EDQUOT shell failure; no reviewer tests/hashes. Exact read/unread/inherited boundaries in review. Root93bench+24profile separate.",
+  "review_task": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-tooling-final-review-r7",
+  "implementation_task": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-collector-opus-r7-corrections",
+  "status": "corrections assigned; not implemented/validated",
+  "R6": "All corrections and historical-line-default clone fix hold at source per R7.",
+  "decisions": {
+    "R7-M1": "Ineligible means inconclusive for BOTH budget pass and confirmed trigger. A descriptive paired-median increase crossing10ms AND10% remains a material potential regression requiring fresh-seed confirmation/investigation; no dismissal as observer artifact without further control. Retain explicit independent descriptive-crossing flag, not accepted trigger. Do not change observer/evaluation instrument.",
+    "R7-M2": "Use serialization cap on both work-ratio sides; retain actual bytes separately and enforce actual<=cap. Real campaign_diagnostics+real pilot_allocation identical-session ratio1 regression; actual pilot cost unknown.",
+    "R7-L1": "Coordinator rule: ALL run preparation, compiler-version/capability probe and retained revalidation starts only within its own explicitly agreed window with common lock free. No launching run during another quiet window; no extra nested flock refactor.",
+    "R7-L2": "Predeclare9max4pair chunks beforepreflight, preserving floor_sessions3 and allreserves: [(4,0),(1,3),6x(0,4),(0,3)] =5warm+30measured. Exactspec/IDs/seeds/counts bind. Actualfitunknown. No posthoc controlreduction.",
+    "I3": "Report per-role max/p95 actual session observer work; no tailbiasbound.",
+    "I4": "Retained validation is not hard realtime; bounded evidence-size but guard detection may follow validation.",
+    "I5": "FULL preflight means all workloads within campaign profile/theme/size/longidle options, not necessarilyboth themes."
+  },
+  "no_commit": true,
+  "actual_campaigns_run": false,
+  "production_and_shared_helper_unchanged": true,
+  "approved_nine_chunk_contract": {
+    "counts": [
+      [
+        4,
+        0
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        0,
+        3
+      ]
+    ],
+    "pairs": 35,
+    "warmups": 5,
+    "measured": 30,
+    "max_pairs_per_chunk": 4,
+    "floor_sessions_per_chunk": 3,
+    "worst_chunk_formula_seconds": "2934 +12*x; x is non-idle role scheduling cost",
+    "synthetic_role_wall_fit_boundary_seconds": 355.5,
+    "actual_fit": "UNKNOWN; full matching preflight and actual remaining approval lifetime required",
+    "campaigns_and_unique_seeds": 84,
+    "functional_roles": 104,
+    "capture_control_children": 4648,
+    "measured_role_session_replays": 3120,
+    "runnable_diagnostic_templates": 80,
+    "potential_primary_diagnostics": 24,
+    "optional_descriptive_diagnostics": 56,
+    "warmup_only_not_applicable": 4,
+    "no_source_edits_after_binding_without_revalidation": true
+  }
+}

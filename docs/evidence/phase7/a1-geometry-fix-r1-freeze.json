@@ -1,0 +1,366 @@
+{
+  "status": "FROZEN implementation only; fresh independent Opus review and actual root preflight pending",
+  "scope": "exact four owner files plus NEW a1-geometry-* evidence; no commit or nested agents",
+  "cache": "/home/ajs/.cache/pb-phase7/a1-sql-geometry-fix-r1",
+  "owned_files": {
+    "harness/phase7_bench.py": {
+      "before": {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_bench.py",
+        "size_bytes": 192294,
+        "sha256": "bf630d9ac4dd4e615f221e218cfce7cbb99438c2de1bf5cfdc388941eef013c2"
+      },
+      "after": {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_bench.py",
+        "size_bytes": 193150,
+        "sha256": "e03e1d2bfce45d7123b67a1870e8e3e38c7d5a6ae92c99881c513f4965846c01"
+      }
+    },
+    "harness/test_phase7_bench.py": {
+      "before": {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7_bench.py",
+        "size_bytes": 188880,
+        "sha256": "9b3b0a9455a396c669cb5c5b5ee812f4162a42609eeb0e053b7d612b87c6300c"
+      },
+      "after": {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7_bench.py",
+        "size_bytes": 200504,
+        "sha256": "244bd6e40432711a4e0c93c9144d9d2e8115cf5b2953815ead01af0e2b0a845c"
+      }
+    },
+    "docs/phase7-measurement.md": {
+      "before": {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-measurement.md",
+        "size_bytes": 95153,
+        "sha256": "a7bf74932da60bdef1995212e48da0354a55a05c3ed4ad13185bd679364466ee"
+      },
+      "after": {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-measurement.md",
+        "size_bytes": 98381,
+        "sha256": "b9c6b9915979c677c4b672940c5a9fcbf67a2be6e508f83f2cb8557f236a6313"
+      }
+    },
+    "harness/contracts/phase7.md": {
+      "before": {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/contracts/phase7.md",
+        "size_bytes": 36646,
+        "sha256": "def73db20712e846de7c8127eb70f1cff1ae8ce068e1079ec087b191abbb1a90"
+      },
+      "after": {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/contracts/phase7.md",
+        "size_bytes": 38191,
+        "sha256": "19f4412a206e33c93fb065b7a74b0d54ef85f21fea9b82767036ef8838883006"
+      }
+    }
+  },
+  "artifacts": [
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/a1-geometry-fix-r1-four-files.patch",
+      "size_bytes": 28551,
+      "sha256": "853d686a6db448261d5f9ce1eca82f09cc066a8379768a1587c3265c4e1adf59"
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/a1-geometry-case-hashes.json",
+      "size_bytes": 20069,
+      "sha256": "cd55e7a6936210ebada08eeaaaa4f1312eadcf5608bf1fab167438f6b25b1382"
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/a1-geometry-retained-go.json.gz",
+      "size_bytes": 10076,
+      "sha256": "c713340e3df43b3d2cc96ade055a8f8da535ff855b75c3ec2ca75b247e59ae2c"
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/a1-geometry-fix-r1.md",
+      "size_bytes": 6141,
+      "sha256": "edbdedcadbc159f9005badb678fa68d2e51715a020ae25f8dea705bfb691abca"
+    }
+  ],
+  "tests": {
+    "focused": {
+      "tests": 23,
+      "success": true,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "elapsed_seconds": 3.3977445838972926,
+      "guard_trips": [],
+      "head_stubs": [],
+      "emulated_test_lock_calls": 7,
+      "kernel_locks_acquired": 0,
+      "tmp": "/home/ajs/.cache/pb-phase7/a1-sql-geometry-fix-r1/tmp"
+    },
+    "full_owned_pure_bench": {
+      "tests": 119,
+      "success": true,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "elapsed_seconds": 133.85777310887352,
+      "guard_trips": [],
+      "head_stubs": [
+        "ea70f7ad7d501d59b26cf6397f6a0b1f28143fc4"
+      ],
+      "emulated_test_lock_calls": 53,
+      "kernel_locks_acquired": 0,
+      "tmp": "/home/ajs/.cache/pb-phase7/a1-sql-geometry-fix-r1/tmp"
+    },
+    "preserved_first_focused_runner_error": {
+      "tests": 23,
+      "failures": 0,
+      "errors": 1,
+      "guard_trips": [],
+      "cause": "pure flock emulator did not accept file-object arguments; fixed only runner; logs/source preserved"
+    },
+    "tested_code_matches_preserved_focused_source": true
+  },
+  "definitions": {
+    "unchanged_prospective_count": 52,
+    "unchanged_primary": 26,
+    "unchanged_resource_attribution": 26,
+    "unchanged_actual_A1_prospective": 12,
+    "case_hash_artifact": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/a1-geometry-case-hashes.json",
+      "size_bytes": 20069,
+      "sha256": "cd55e7a6936210ebada08eeaaaa4f1312eadcf5608bf1fab167438f6b25b1382"
+    },
+    "no_case_action_key_count_seed_fixture_definition_change": true,
+    "exact_90_option_profile_not_recomputed": "all52 prospective plus12 A1 directly compared instead"
+  },
+  "bench_changed_functions": [
+    "sql_resize_geometry",
+    "_functional_preflight"
+  ],
+  "immutable_evidence_and_sources": [
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-review-a1-functional-failure-opus-r1.md",
+      "size_bytes": 8965,
+      "sha256": "5638a0b6cb03a8c97c9884aca67b98cfe1342db800b6e7a390977d0ff7746f68",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7.py",
+      "size_bytes": 90070,
+      "sha256": "dc7574f058b9ff6ae7b77a912847fdbe02d8b68baab8728237d6ef040e6a44fa",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_workloads.py",
+      "size_bytes": 41824,
+      "sha256": "04404c96efabad1d2b0674df17751856913363443744c3dd1fb497f07a5f6178",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_spawn.c",
+      "size_bytes": 9383,
+      "sha256": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/pkg/model/query.go",
+      "size_bytes": 82461,
+      "sha256": "e902816d2c78163cfcdb6a5d272ae750f5beae533c1d01fa50e13eb9715c781d",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/sql.rs",
+      "size_bytes": 188964,
+      "sha256": "98eb54071505344d5c42f3fd32e221d1d86664ebd4623a6af884c85d7d2fcb1f",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/pkg/model/promql.go",
+      "size_bytes": 102835,
+      "sha256": "7332d30d8c4b18ff1e46ce2c9f9907ca4207184db0b4e4d335523570d8b788b8",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/promql.rs",
+      "size_bytes": 254186,
+      "sha256": "51387004ec5207391d8c60252d1eb62997ae200d8ec23a89237238a1f114cf55",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/under30-combined-a1-primary-dark-01/sql-scroll-500-120x40-dark/reference/session.json",
+      "size_bytes": 2900685,
+      "sha256": "b0a6919c04a9c157d15101dfabaff64f2e546364e5c841a4d5149aaf1029ce6b",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/under30-combined-a1-primary-dark-01/sql-scroll-500-120x40-dark/reference/stdout.bin",
+      "size_bytes": 38198,
+      "sha256": "2524289b1f62556ade81159f34fb528b18f8b0c12a912dc51357b1f81c9af0fa",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/under30-combined-a1-primary-dark-01/sql-scroll-500-120x40-dark/reference/execute/session.json",
+      "size_bytes": 8720793,
+      "sha256": "ea407b7dc5c292ca86b6ee2324f150f883e94c88860f8f959b4f541d528fcf52",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/under30-combined-a1-primary-dark-01/sql-scroll-500-120x40-dark/reference/execute/stdout.bin",
+      "size_bytes": 38198,
+      "sha256": "2524289b1f62556ade81159f34fb528b18f8b0c12a912dc51357b1f81c9af0fa",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/a1-functional-failure-opus-r1/replay.py",
+      "size_bytes": 6476,
+      "sha256": "931e41c0ddfcf9a80798178cef11c3fe71458b808cc28edbd008d7ff6e9e6d03",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/a1-functional-failure-opus-r1/replay-output.json",
+      "size_bytes": 4000,
+      "sha256": "4935267d3dc894ad660d2a593e349d6e51d67e6aa7164f25f5593aabc51699fb",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/a1-functional-failure-opus-r1/replay-stderr.txt",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/under30-combined-a1-primary-dark-01/report.json",
+      "size_bytes": 52394,
+      "sha256": "f3e40e83612bbe5202510da3bd1d9638f9fa0188659882edbf1a02d852f83ee9",
+      "unchanged_from_review": true
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/under30-combined-a1-primary-dark-01-supervision/report.json",
+      "size_bytes": 97526,
+      "sha256": "b91eca1834c0199ca327d191d57186b69e72d8d631701454b01d149b773df8e4",
+      "unchanged_from_review": true
+    }
+  ],
+  "constraints": {
+    "native_sessions": 0,
+    "helper_probe_build_compiler": 0,
+    "fixture_servers": 0,
+    "PTY_or_socket_creation": 0,
+    "kernel_locks": 0,
+    "profile_or_real_campaign": 0,
+    "shared_phase7_C_production_run_py_edits": 0,
+    "guard_before_harness_import": true,
+    "guard_ssl_compatible_socket_subclass": true,
+    "disk_tmp": "/home/ajs/.cache/pb-phase7/a1-sql-geometry-fix-r1/tmp"
+  },
+  "remaining_unknowns": [
+    "Rust actual capture",
+    "actual second resize and complete Go/Rust preflight",
+    "other SQL variants and actual PromQL preflight",
+    "budget feasibility and observer acceptance; no timing claim"
+  ],
+  "cache_evidence": [
+    {
+      "path": "/home/ajs/.cache/pb-phase7/a1-sql-geometry-fix-r1/guard.py",
+      "size_bytes": 962,
+      "sha256": "d502e51d83b1368ed95f16fa86be80362a58ff293a3d2c72d522856464324632"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/a1-sql-geometry-fix-r1/prepare.py",
+      "size_bytes": 3554,
+      "sha256": "0bda25b6ffa8d3f4f5a839481cf113a5ff8443933cd188ea75e2aa533d95a92a"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/a1-sql-geometry-fix-r1/prepare.log",
+      "size_bytes": 307,
+      "sha256": "69821f897120364a1cdfe769bf4c6be42f914d1f19d33481b6a370501e5a87b4"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/a1-sql-geometry-fix-r1/before-identities.json",
+      "size_bytes": 4453,
+      "sha256": "38e142d476314a3fcf0cbfd959e171b84f7263a96ebee56e4884282b04c9afc0"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/a1-sql-geometry-fix-r1/cases-before.json",
+      "size_bytes": 8410,
+      "sha256": "a4f1a6f9be7fb3cd8ab2e18a317063cc001549715ec894dab9b26ab7e519e689"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/a1-sql-geometry-fix-r1/verify-cases.py",
+      "size_bytes": 2663,
+      "sha256": "1e5485b954dafb708bb407ba0ebf124a38786996386abf145cdf7879ed72a578"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/a1-sql-geometry-fix-r1/verify-cases.log",
+      "size_bytes": 156,
+      "sha256": "9c550ad782919464012b024b75be68b242973c68797952fdb3db2e2db7e92957"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/a1-sql-geometry-fix-r1/cases-after.json",
+      "size_bytes": 20069,
+      "sha256": "cd55e7a6936210ebada08eeaaaa4f1312eadcf5608bf1fab167438f6b25b1382"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/a1-sql-geometry-fix-r1/run-tests.py",
+      "size_bytes": 3739,
+      "sha256": "25db978f6a48f98fbf386bd628efa969b08dc5519b60c6a9f1867a415f13dbc0"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/a1-sql-geometry-fix-r1/focused.log",
+      "size_bytes": 4235,
+      "sha256": "45f9d22fc417295a79eb01b21589b98be240114a319ea7a774e171fb8462a1d7"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/a1-sql-geometry-fix-r1/focused-run.log",
+      "size_bytes": 272,
+      "sha256": "4f04f7d31ba2129488c4a62486324e0a9c472e68a9af615f4991dbf5ffea0298"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/a1-sql-geometry-fix-r1/focused-tests.json",
+      "size_bytes": 296,
+      "sha256": "a3b2afd1abe507798d8b2768c46229a238ce7e6cd636345fbd024529033e7083"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/a1-sql-geometry-fix-r1/full.log",
+      "size_bytes": 20400,
+      "sha256": "96ab370871f5e46ed35c2d57a8b9f7c90cfa55d00b5a68236489de505e903d16"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/a1-sql-geometry-fix-r1/full-run.log",
+      "size_bytes": 316,
+      "sha256": "4630d040fe555f0df2fbb1d876929cb929761cab83268a62dc417969557b9f65"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/a1-sql-geometry-fix-r1/full-tests.json",
+      "size_bytes": 348,
+      "sha256": "6b2c8ebcd50ef99b0e97c4fc8d306786bc1d703d11f651b02fe83e47812ac5d1"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/a1-sql-geometry-fix-r1/freeze.py",
+      "size_bytes": 5125,
+      "sha256": "283557909c6333c6f4a72cbbef0363c0f7673234ca0a8c846d9d6fe8a886dd6c"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/a1-sql-geometry-fix-r1/failed-focused-1/run-tests.py",
+      "size_bytes": 3687,
+      "sha256": "bfbc3fa8fcb31998486fde8aab8c37f1599f77cfa4daaf6642575bf776ed794a"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/a1-sql-geometry-fix-r1/failed-focused-1/phase7_bench.py",
+      "size_bytes": 193150,
+      "sha256": "e03e1d2bfce45d7123b67a1870e8e3e38c7d5a6ae92c99881c513f4965846c01"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/a1-sql-geometry-fix-r1/failed-focused-1/test_phase7_bench.py",
+      "size_bytes": 200504,
+      "sha256": "244bd6e40432711a4e0c93c9144d9d2e8115cf5b2953815ead01af0e2b0a845c"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/a1-sql-geometry-fix-r1/failed-focused-1/focused.log",
+      "size_bytes": 5555,
+      "sha256": "291e99003021427d2595d0804116607e8f41922cbc7af8410ec7f0131e89e6be"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/a1-sql-geometry-fix-r1/failed-focused-1/focused-run.log",
+      "size_bytes": 273,
+      "sha256": "15b7e779c9aa111faaa8a8289d79d229721a31d19932e7679008f87509a6b8fb"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/a1-sql-geometry-fix-r1/failed-focused-1/focused-tests.json",
+      "size_bytes": 297,
+      "sha256": "346bc5d5d55172d48bd8c1cf365700b59b886db77c09c845881cea14ab586eba"
+    }
+  ]
+}

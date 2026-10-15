@@ -1,0 +1,54 @@
+{
+  "changed_existing_definitions": [
+    "spawn_measured",
+    "measure",
+    "Fixture",
+    "run",
+    "main"
+  ],
+  "run_body_except_prechild_guard_identical": true,
+  "native_and_fallback_result_tail_byte_identical": true,
+  "fixture_trace_milestones_identical": true,
+  "live_runner_unchanged": true,
+  "cases_provenance_verified": true,
+  "r1_unchanged": true,
+  "pure_suite": {
+    "tests": 39,
+    "passed": 39,
+    "log": "logs/pure-final.log",
+    "children_created": 0,
+    "source_snapshot": "validation/pure-before-fixture-control-source.py",
+    "changed_fixture_control_retest": {
+      "tests": 1,
+      "passed": 1,
+      "log": "logs/pure-changed-fixture-control.log"
+    }
+  },
+  "new_r1_fixture_negative_controls": {
+    "tests": 2,
+    "expected_failures": 2,
+    "actual_failures": 2,
+    "children_created": 0
+  },
+  "native_controls": {
+    "first_elapsed": 0.44790989998728037,
+    "final_elapsed": 0.4362258210312575,
+    "attempts": 2,
+    "children_created": 18,
+    "children_remaining": 0,
+    "final_success_used_test_cleanup_signals": false,
+    "actual_native_meter_evidence": false
+  },
+  "suite": {
+    "path": "docs/evidence/phase5/regression-suite.json",
+    "sha256": "3c73172426a990d2c4771b74786245281095ed2640d525f680c8dffbde1e92bc",
+    "count": 15,
+    "phase4_dynamic_import_needed": false
+  },
+  "expected_output": {
+    "ordinary_stdout_sha256": "54034ac5c6e9ea95734ec2b729fd6d62abf64af34a9f9ce5d466cb788191a73d",
+    "ordinary_stderr_sha256": "2ccde4875ec595757efdf23d7b1336fcd69cf0fb869310b12a0d219c52817b20",
+    "descendant_stdout_sha256": "2d6e3ead17e5ee151361cb4fb45ca3e159537b937ec8b7bdf62f528d2a1a645b",
+    "empty_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

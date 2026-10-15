@@ -1,0 +1,26 @@
+{
+  "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-final-production-review-r4",
+  "model": "claudeAgent/claude-opus-5-5",
+  "kind": "fresh independent final production source R4; moving collector excluded",
+  "prior_reports": [
+    "final-r1",
+    "lifecycle-r1",
+    "lifecycle-r2",
+    "service-r1",
+    "service-r2",
+    "byte-interim-sol-r1",
+    "sql-identity-interim-sol-r2",
+    "final-contract-sol-r3",
+    "final-opus-r3"
+  ],
+  "scope": "Whole phase7 production contracts/lifecycle plus R3-F1/O3-1/O3-2 corrections; no production edits or builds/native sessions/timing",
+  "current_evidence": [
+    "release4-source-checkpoint.json",
+    "unicode-rust-central.json",
+    "schema-fallback-clock-applied-freeze.json",
+    "opus-r3-low-freeze.json",
+    "input-fairness-release3.json"
+  ],
+  "successor_process_gates": "pending immutable release4 build",
+  "limitations": "Source-only if shell EDQUOT; must distinguish supplied manifests from independently verified facts; no performance/platform/release acceptance"
+}

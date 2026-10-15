@@ -1,0 +1,48 @@
+{
+  "status": "failed diagnostic, no acceptance or comparativeinterpretation; originals preserved",
+  "cleanup": {
+    "start_utc": "2026-10-15T15:44:27.649342+00:00",
+    "end_utc": "2026-10-15T15:45:59.419636+00:00",
+    "cleanup_utc": "2026-10-15T15:45:59.494484+00:00",
+    "elapsed_through_cleanup": 91.84515933296643,
+    "actual_supervisor_exit": 2,
+    "supervisor_verdict": "child_failed",
+    "echild_verified": true,
+    "remaining": [],
+    "lock_reacquired_released": true,
+    "end_identities_unchanged": true,
+    "report_complete": true,
+    "report_passed": false,
+    "case_count": 15,
+    "shape_exact15x3x30": true,
+    "all_measured_report_valid": true,
+    "all_warmups_report_clean": true,
+    "all_labels_exact_declared_binaries": true,
+    "report_sha256": "396289cee5133f686ad336e7bdb07a7b38b0d65c79795168cd0f64a033d276a6",
+    "supervisor_sha256": "306e59299b1cfcf5b2290629e3e45562b4edee21e118ef53e05a65f33710a793",
+    "performance_interpretation": false,
+    "measured_schedule_matches_original_rng": true,
+    "cleanup_pass": true,
+    "diagnostic_capture_provisional_pass": false
+  },
+  "actual_coordinator_exit": 1,
+  "all_comparisons": 30,
+  "incompatible": [
+    {
+      "case": "p1-0003-version",
+      "label": "phase6",
+      "differences": [
+        "stdout_sha256"
+      ]
+    }
+  ],
+  "raw_version_stdout": {
+    "phase5": "pb version 0.0.0-harness\n",
+    "phase6": "pb version 0.1.0\n",
+    "phase7": "pb version 0.0.0-harness\n"
+  },
+  "source_boundary": "src/lib.rs version() option_env!(PB_VERSION) else CARGO_PKG_VERSION; separate PB_COMMIT",
+  "next": "preparenewpinnedmergedPhase6buildwithmatchedharnessversionandcommit; no normalization orreplacementoldartifact; no rerun until newbindingsandquiet",
+  "report_sha256": "396289cee5133f686ad336e7bdb07a7b38b0d65c79795168cd0f64a033d276a6",
+  "no_physical_or_causal_claim": true
+}

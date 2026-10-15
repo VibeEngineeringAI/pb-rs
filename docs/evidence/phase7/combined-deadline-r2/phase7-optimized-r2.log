@@ -1,0 +1,47 @@
+IMPORTED_RUNNER /home/ajs/.cache/pb-phase7/combined-body-lookahead-r2/phase7/staged/harness/phase3.py
+OPTIMIZE 1
+IMPORTED_TEST /home/ajs/.cache/pb-phase7/combined-body-lookahead-r2/phase7/staged/harness/test_phase3.py
+test_baseline_requires_passing_complete_capture (combined_test_phase3.BaselineTrustTests.test_baseline_requires_passing_complete_capture) ... ok
+test_stored_artifacts_are_verified (combined_test_phase3.BaselineTrustTests.test_stored_artifacts_are_verified) ... ok
+test_boundary_check_rejects_go_like_behavior (combined_test_phase3.ComparisonTests.test_boundary_check_rejects_go_like_behavior) ... ok
+test_spinner_clear_only_candidate_fails_activation_case (combined_test_phase3.ComparisonTests.test_spinner_clear_only_candidate_fails_activation_case) ... ok
+test_stub_and_blocked_bytes (combined_test_phase3.ComparisonTests.test_stub_and_blocked_bytes) ... ok
+test_benchmark_suite_is_runpy_compatible (combined_test_phase3.CorpusTests.test_benchmark_suite_is_runpy_compatible) ... ok
+test_boundaries_and_scope (combined_test_phase3.CorpusTests.test_boundaries_and_scope) ... ok
+test_deterministic_unique_and_pinned (combined_test_phase3.CorpusTests.test_deterministic_unique_and_pinned) ... ok
+test_required_coverage (combined_test_phase3.CorpusTests.test_required_coverage) ... ok
+test_body_stall_text_bare_deadline_has_an_exact_error_boundary (combined_test_phase3.DeadlineTierTests.test_body_stall_text_bare_deadline_has_an_exact_error_boundary) ... ok
+test_body_stall_text_normalization_keeps_all_existing_gates (combined_test_phase3.DeadlineTierTests.test_body_stall_text_normalization_keeps_all_existing_gates) ... ok
+test_empty_array_lookahead_bare_deadline_exact_boundary (combined_test_phase3.DeadlineTierTests.test_empty_array_lookahead_bare_deadline_exact_boundary) ... ok
+test_empty_array_lookahead_keeps_independent_and_differential_gates (combined_test_phase3.DeadlineTierTests.test_empty_array_lookahead_keeps_independent_and_differential_gates) ... ok
+test_legacy_bare_deadline_contexts_remain_case_specific (combined_test_phase3.DeadlineTierTests.test_legacy_bare_deadline_contexts_remain_case_specific) ... ok
+test_only_the_two_go_timeout_causes_are_normalized (combined_test_phase3.DeadlineTierTests.test_only_the_two_go_timeout_causes_are_normalized) ... ok
+test_out_of_tier_cases_are_unfrozen_not_missing (combined_test_phase3.DeadlineTierTests.test_out_of_tier_cases_are_unfrozen_not_missing) ... ok
+test_paced_chunk_prefix_allowance_and_wall_bounds (combined_test_phase3.DeadlineTierTests.test_paced_chunk_prefix_allowance_and_wall_bounds) ... ok
+test_redirect_bare_deadline_has_an_exact_case_and_error_boundary (combined_test_phase3.DeadlineTierTests.test_redirect_bare_deadline_has_an_exact_case_and_error_boundary) ... ok
+test_redirect_normalization_keeps_exit_request_and_duration_gates (combined_test_phase3.DeadlineTierTests.test_redirect_normalization_keeps_exit_request_and_duration_gates) ... ok
+test_chunk_script_barrier_and_abort (combined_test_phase3.FixtureTests.test_chunk_script_barrier_and_abort) ... ok
+test_go_fixture_generate_parity (combined_test_phase3.FixtureTests.test_go_fixture_generate_parity) ... ok
+test_gzip_and_corruption (combined_test_phase3.FixtureTests.test_gzip_and_corruption) ... ok
+test_reasonless_custom_status_and_trace (combined_test_phase3.FixtureTests.test_reasonless_custom_status_and_trace) ... ok
+test_unexpected_and_auth (combined_test_phase3.FixtureTests.test_unexpected_and_auth) ... ok
+test_small_reference_subset_and_manifest_identity (combined_test_phase3.GoOracleTests.test_small_reference_subset_and_manifest_identity) ... phase3 setup error: reference fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314 is not the frozen manifest's 0000000000000000000000000000000000000000000000000000000000000000
+ok
+test_other_platform_manifest_is_rejected (combined_test_phase3.ManifestPlatformTests.test_other_platform_manifest_is_rejected) ... ok
+test_default_limit_quirks (combined_test_phase3.ModelTests.test_default_limit_quirks) ... ok
+test_error_preview (combined_test_phase3.ModelTests.test_error_preview) ... ok
+test_generate_matches_go_fixture_semantics (combined_test_phase3.ModelTests.test_generate_matches_go_fixture_semantics) ... ok
+test_go_trim_space_and_runes (combined_test_phase3.ModelTests.test_go_trim_space_and_runes) ... ok
+test_json_encoding (combined_test_phase3.ModelTests.test_json_encoding) ... ok
+test_pretty_and_text_outputs (combined_test_phase3.ModelTests.test_pretty_and_text_outputs) ... ok
+test_upstream_rewrite_examples (combined_test_phase3.ModelTests.test_upstream_rewrite_examples) ... ok
+test_bytes_digest_and_elements (combined_test_phase3.RunnerTests.test_bytes_digest_and_elements) ... ok
+test_close_stdout_produces_sigpipe (combined_test_phase3.RunnerTests.test_close_stdout_produces_sigpipe) ... ok
+test_devfull_pty_and_timeout (combined_test_phase3.RunnerTests.test_devfull_pty_and_timeout) ... ok
+test_unmet_required_action_is_reported (combined_test_phase3.RunnerTests.test_unmet_required_action_is_reported) ... ok
+
+----------------------------------------------------------------------
+Ran 37 tests in 8.266s
+
+OK
+phase3 reference-check: 6 passed, 0 failed, 0 skipped of 6; boundaries 0/0 (not applicable (reference check)); report: /home/ajs/.cache/pb-phase7/tmp/tmp6eg9gb7c/ref/report.md

@@ -1,0 +1,67 @@
+{
+  "kind": "original immutable release4 styled result; failures unwaived",
+  "report": "/home/ajs/.cache/pb-phase7/styled-release4/report.json",
+  "report_sha256": "df965a005732d7f32cf2319da796c489ff43e17a5bfbd863f945f98101fed795",
+  "gates": 160,
+  "gate_passes": 157,
+  "documentary": 30,
+  "documentary_clean": 29,
+  "failures": [
+    {
+      "name": "p7-login-overwrite-bad-config-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [
+        "styled cells/cursor/scrollback differ at masked-password"
+      ],
+      "documentary": false
+    },
+    {
+      "name": "p7-login-duplicate-replace-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [
+        "styled cells/cursor/scrollback differ at masked-password"
+      ],
+      "documentary": false
+    },
+    {
+      "name": "p7-login-overwrite-bad-config-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [
+        "styled cells/cursor/scrollback differ at masked-password"
+      ],
+      "documentary": false
+    },
+    {
+      "name": "p7-logout-replacement-cancel-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [
+        "styled cells/cursor/scrollback differ at filter-draft",
+        "final styled cells/cursor/scrollback differ"
+      ],
+      "documentary": true
+    }
+  ],
+  "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-release4-masked-checkpoint-investigate",
+  "source_edits_authorized": false,
+  "limits": "Exact masked-password discrepancy under bounded evidence-only investigation; no assumed animation waiver."
+}

@@ -1,0 +1,2708 @@
+{
+  "schema_version": 2,
+  "audit_date": "2026-10-14",
+  "scope": "Phase7 incorporated algorithms/behavior/data; exact notice preservation, not a blanket Rust dependency or legal assessment",
+  "worktree": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive",
+  "rust_base": "4a812d5b9bc4c40882ab10897a73c3ce1e715ce0",
+  "go_baseline": "07af390ab09bda8ac9e427ffc6310077bace0125",
+  "pin_files": [
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/go.mod",
+      "sha256": "90555a3ae88bee209ce16845ad259afa2e4c9b3c14890e0578a8a514c1350565",
+      "bytes": 9116
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/go.sum",
+      "sha256": "ae20b3abc13e58b529d7f5219d657f506df24c471aa873d9b72d3435954f92ac",
+      "bytes": 60333
+    }
+  ],
+  "go_pin_files_equal_baseline": true,
+  "components": [
+    {
+      "name": "Go standard library",
+      "version": "go1.25.4",
+      "license_file": "LICENSE",
+      "incorporated_material": "go_sort (pdqsort, stable sorting); go_format_unix (absolute-day/time formatting); parse_hex_float/atof_hex and underscore validation; saved matcher fold/Ll/Lu tables generated from Go Unicode 15.0.0. Also preserves the pre-Phase7 diagnostic printable-range data attribution (src/printable.rs), reused by parser quoting. go_f64_to_i64 reproduces the linux/amd64 cast result; no separately copied compiler implementation was identified.",
+      "license_id": "BSD-3-Clause",
+      "notice_section": 1,
+      "license_origin": {
+        "path": "/home/ajs/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.4.linux-amd64/LICENSE",
+        "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+        "bytes": 1453
+      },
+      "license_snapshot": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/01-license.txt",
+        "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+        "bytes": 1453
+      },
+      "source_files": [
+        {
+          "path": "/home/ajs/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.4.linux-amd64/src/sort/sort.go",
+          "sha256": "f6679c3f16f9f0d1c51b68246853d035c84becb42ed3be3f253170945114e422",
+          "bytes": 10503
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.4.linux-amd64/src/sort/slice.go",
+          "sha256": "842b1095d5a97a239e0d88726de1e7a7bbcf5bb7417e2d6a4dd7706dd6645ae9",
+          "bytes": 1850
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.4.linux-amd64/src/sort/zsortfunc.go",
+          "sha256": "35cdbcbc3a63372e12eebc815c249adfd420e9d783a99b0405998a7ccb00ac1a",
+          "bytes": 11768
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.4.linux-amd64/src/time/time.go",
+          "sha256": "ab61194d541aee6a83f9f45400bec8a78426377a7c4f59d7d807fa4f6e6a18f0",
+          "bytes": 62882
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.4.linux-amd64/src/time/format.go",
+          "sha256": "4c61521c0afb7d0eaa809efd090404ff3ece4285a2089a6f189c897908afe148",
+          "bytes": 50561
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.4.linux-amd64/src/time/format_rfc3339.go",
+          "sha256": "14b2a58fa295cca1a4f99467f5a5059418ed266a2298316124af97ffa014f271",
+          "bytes": 5809
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.4.linux-amd64/src/strconv/atof.go",
+          "sha256": "2681a77796dd968b4294c87ccacbf537ca6938a85d208bf2f54f98b086160772",
+          "bytes": 16229
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.4.linux-amd64/src/strconv/atoi.go",
+          "sha256": "956e9c3af07ef5bb2b5ac1ae6656e255f110e29d397e6fb4b97f3cc5347b3270",
+          "bytes": 8490
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.4.linux-amd64/src/strconv/isprint.go",
+          "sha256": "24114557c2b3cad7b80c8e71683831bfbe1c72eb99e8fd28a3a48eaf77705fb4",
+          "bytes": 11824
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.4.linux-amd64/src/strings/strings.go",
+          "sha256": "ac1d74f15027b6c703ee13fd08f10b3ad337e61a79b874d403a10f3bee5bb4fb",
+          "bytes": 33626
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.4.linux-amd64/src/unicode/letter.go",
+          "sha256": "b35a6d259313cef88d07e9e4027b8bd72c60ae140418f5be2c41a2ecea6074fe",
+          "bytes": 10702
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.4.linux-amd64/src/unicode/tables.go",
+          "sha256": "6a88d48746c4b2c471cc04ae40559694b734770212e6f5ea5f1962adb0c0bdb1",
+          "bytes": 243953
+        }
+      ],
+      "repository_files": [
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/promql.rs",
+          "sha256": "51387004ec5207391d8c60252d1eb62997ae200d8ec23a89237238a1f114cf55",
+          "bytes": 254186
+        },
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/saved_fuzzy_unicode.rs",
+          "sha256": "3a88503ae1955216f7f2da881d3a1d41d7e112dcd9fa18e0aeb8163155e2e634",
+          "bytes": 39961
+        },
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/saved.rs",
+          "sha256": "d25a3358cb60a78977d0ee9bddc239c7b83246fa8cf66d46afccf288ff032bf7",
+          "bytes": 35733
+        },
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/printable.rs",
+          "sha256": "a8b4519f95e3e9e647bc406aa2dac79f18ef1f9f99b3bcbda4f8e9f875c78e27",
+          "bytes": 16934
+        }
+      ],
+      "pin": {
+        "version_file": {
+          "path": "/home/ajs/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.4.linux-amd64/VERSION",
+          "sha256": "6a9c019e68916fea57fb97b855ce069fe38bc8916b2f58c1e33abf3d60024946",
+          "bytes": 35
+        },
+        "toolchain_directive": "toolchain go1.25.4",
+        "cache_path": "/home/ajs/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.4.linux-amd64",
+        "license_equals_tracked_src_LICENSE_Go": true,
+        "source_origin": "https://go.googlesource.com/go/+/refs/tags/go1.25.4/",
+        "source_origin_basis": "local VERSION and toolchain cache identity; no network lookup",
+        "license_version_and_mapped_sources_equal_toolchain_archive": true
+      },
+      "notice_license_byte_offset": 2129,
+      "notice_license_bytes": 1453
+    },
+    {
+      "name": "github.com/charmbracelet/lipgloss",
+      "version": "v1.0.0",
+      "license_file": "LICENSE",
+      "incorporated_material": "Style rendering/inheritance, align, borders/glyphs, joins, placement, whitespace, clamping.",
+      "license_id": "MIT",
+      "notice_section": 2,
+      "license_origin": {
+        "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/lipgloss@v1.0.0/LICENSE",
+        "sha256": "699cffa88b62691ea09706d356e5ee0982e87ca2b1c58ca682f27d6ae87f9efc",
+        "bytes": 1080
+      },
+      "license_snapshot": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/02-license.txt",
+        "sha256": "699cffa88b62691ea09706d356e5ee0982e87ca2b1c58ca682f27d6ae87f9efc",
+        "bytes": 1080
+      },
+      "source_files": [
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/lipgloss@v1.0.0/style.go",
+          "sha256": "63cd1034a389db27559f325215f8fb60163ff06a169098d817fdaf3ff9cc6f15",
+          "bytes": 13074
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/lipgloss@v1.0.0/align.go",
+          "sha256": "670ff15a322dacaa44ff22922878af3228a0ad2cd415eb1ea0244b164a7ab66b",
+          "bytes": 2195
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/lipgloss@v1.0.0/borders.go",
+          "sha256": "e4b5f6f8f05e48fb083800c99a78a481dc7a210dd8863c54e340e1fa006fcf39",
+          "bytes": 10375
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/lipgloss@v1.0.0/join.go",
+          "sha256": "53df54bb304c584eaa1dfd0b2eebb81cea5877c25ff453eb314d335e9dc3440a",
+          "bytes": 4128
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/lipgloss@v1.0.0/position.go",
+          "sha256": "c98507b4848de4fbf9b960853c16622500af634cfa3626f6aefb43aa9c8d9bae",
+          "bytes": 4394
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/lipgloss@v1.0.0/whitespace.go",
+          "sha256": "945148cd41f2ee768316847b6d630ac5e37bf6f38c314d4debf4d522304146f8",
+          "bytes": 1993
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/lipgloss@v1.0.0/set.go",
+          "sha256": "e1a8a8d5a115eb4bef4266792ca95ace632e3d649ee4bef2fefe46cf6fe38ecc",
+          "bytes": 22583
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/lipgloss@v1.0.0/get.go",
+          "sha256": "1caad435ba91640e5893fd7f98f8cde46e510f64a7b9f3ba8e2b90b2353f61ec",
+          "bytes": 15879
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/lipgloss@v1.0.0/color.go",
+          "sha256": "ff8ac4f438aa0de4e8614267d16022b8b693ddc11d9561380df19f24bbf2e5da",
+          "bytes": 4906
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/lipgloss@v1.0.0/size.go",
+          "sha256": "c7922a53bf2d9d864c96c9427dd62d5f040e5f55218b5988c222021e5e945f79",
+          "bytes": 1166
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/lipgloss@v1.0.0/renderer.go",
+          "sha256": "ed1bce08d81c9ba7a7a85c6410a1b7664c8a8a72cfb5cd6311824ac89d77ff18",
+          "bytes": 5125
+        }
+      ],
+      "repository_files": [
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/style.rs",
+          "sha256": "f4bf856201fde8fb1883707d59f3481ca143e1297609c5c92a706dc583d083e5",
+          "bytes": 181954
+        }
+      ],
+      "pin": {
+        "go_mod_line": "github.com/charmbracelet/lipgloss v1.0.0\n\tgithub.com/dustin/go-humanize v1.0.1",
+        "go_sum_h1": "h1:O7VkGDvqEdGi93X+DeqsQ7PKHDgtQfF8j8/O2qFMQNg=",
+        "cached_ziphash": "h1:O7VkGDvqEdGi93X+DeqsQ7PKHDgtQfF8j8/O2qFMQNg=",
+        "info": {
+          "Version": "v1.0.0",
+          "Time": "2024-10-30T14:10:46Z",
+          "Origin": {
+            "VCS": "git",
+            "URL": "https://github.com/charmbracelet/lipgloss",
+            "Hash": "761d265f761271293f20f9bf62884b15f2d7c0cc",
+            "Ref": "refs/tags/v1.0.0"
+          }
+        },
+        "info_file": {
+          "path": "/home/ajs/go/pkg/mod/cache/download/github.com/charmbracelet/lipgloss/@v/v1.0.0.info",
+          "sha256": "f36f247267cc739701521fd383aee2c4d785d6e887d8a8d2a1d9f1b36abca2e7",
+          "bytes": 198
+        },
+        "archive_h1_recomputed_equal": true,
+        "license_and_mapped_sources_equal_archive": true
+      },
+      "notice_license_byte_offset": 4100,
+      "notice_license_bytes": 1080
+    },
+    {
+      "name": "github.com/charmbracelet/x/ansi",
+      "version": "v0.4.5",
+      "license_file": "LICENSE",
+      "incorporated_material": "ANSI parser transitions, StringWidth, Truncate, Wrap; editor plain-text Wordwrap/Hardwrap.",
+      "license_id": "MIT",
+      "notice_section": 3,
+      "license_origin": {
+        "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/x/ansi@v0.4.5/LICENSE",
+        "sha256": "0baa4a5942a801d93f4050d2bc0039d8c037105fcd335230d118eec99a11782b",
+        "bytes": 1076
+      },
+      "license_snapshot": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/03-license.txt",
+        "sha256": "0baa4a5942a801d93f4050d2bc0039d8c037105fcd335230d118eec99a11782b",
+        "bytes": 1076
+      },
+      "source_files": [
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/x/ansi@v0.4.5/parser/transition_table.go",
+          "sha256": "99ad73e2c609dcdf7a4573f705fd2ef36692419dcf07dcba1b206761a133a9f2",
+          "bytes": 12783
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/x/ansi@v0.4.5/parser/const.go",
+          "sha256": "44c8fa695f6774c29f4bc96bf836303e41a2dc8b6a42094867e6ce21070dabba",
+          "bytes": 1392
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/x/ansi@v0.4.5/parser_decode.go",
+          "sha256": "c29b54081a45c846d41d667befe744cd563ec42fc5159e9a4d4867aa4d3a4d45",
+          "bytes": 12272
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/x/ansi@v0.4.5/width.go",
+          "sha256": "4d1702f52516e6de7e8f040b5a09e1e4939fdb2dbcacee7ec01e15222b828eff",
+          "bytes": 2241
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/x/ansi@v0.4.5/truncate.go",
+          "sha256": "31824d4400e63ebcc14724f7202c0618d7c8ea7aae016eb01b6b932135360cc7",
+          "bytes": 2472
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/x/ansi@v0.4.5/wrap.go",
+          "sha256": "c4eac8e46d96a6b95c25fcf1fdcf79fc1eef0d97f56e6270bc40faf54bb99c73",
+          "bytes": 8240
+        }
+      ],
+      "repository_files": [
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/style.rs",
+          "sha256": "f4bf856201fde8fb1883707d59f3481ca143e1297609c5c92a706dc583d083e5",
+          "bytes": 181954
+        },
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/editor.rs",
+          "sha256": "43dd1ea2279e0e0f06f05f253d3975c1c321f94e6146e6bdf1e015543908db49",
+          "bytes": 90023
+        }
+      ],
+      "pin": {
+        "go_mod_line": "github.com/charmbracelet/x/ansi v0.4.5 // indirect",
+        "go_sum_h1": "h1:LqK4vwBNaXw2AyGIICa5/29Sbdq58GbGdFngSexTdRM=",
+        "cached_ziphash": "h1:LqK4vwBNaXw2AyGIICa5/29Sbdq58GbGdFngSexTdRM=",
+        "info": {
+          "Version": "v0.4.5",
+          "Time": "2024-11-05T16:57:49Z",
+          "Origin": {
+            "VCS": "git",
+            "URL": "https://github.com/charmbracelet/x",
+            "Subdir": "ansi",
+            "Hash": "d3dd7340b31f6c8d8e95dc7ba55fccb38d6ba8ad",
+            "Ref": "refs/tags/ansi/v0.4.5"
+          }
+        },
+        "info_file": {
+          "path": "/home/ajs/go/pkg/mod/cache/download/github.com/charmbracelet/x/ansi/@v/v0.4.5.info",
+          "sha256": "15478cc0c55b3c1f84084047c4745a68a4ba2049094906318f6244db0c802de6",
+          "bytes": 212
+        },
+        "archive_h1_recomputed_equal": true,
+        "license_and_mapped_sources_equal_archive": true
+      },
+      "notice_license_byte_offset": 5932,
+      "notice_license_bytes": 1076
+    },
+    {
+      "name": "github.com/muesli/termenv",
+      "version": "v0.15.2",
+      "license_file": "LICENSE",
+      "incorporated_material": "Color-profile conversion, ANSI palette table, sequence formats and Styled behavior; reused Phase4 environment/profile behavior resides in src/metrics/style.rs.",
+      "license_id": "MIT",
+      "notice_section": 4,
+      "license_origin": {
+        "path": "/home/ajs/go/pkg/mod/github.com/muesli/termenv@v0.15.2/LICENSE",
+        "sha256": "233e8cf9a812999ccee4d3edb270b0f11ab3539658e680bcb873604915ca5038",
+        "bytes": 1079
+      },
+      "license_snapshot": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/04-license.txt",
+        "sha256": "233e8cf9a812999ccee4d3edb270b0f11ab3539658e680bcb873604915ca5038",
+        "bytes": 1079
+      },
+      "source_files": [
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/muesli/termenv@v0.15.2/color.go",
+          "sha256": "f2113e0d863d39412f49fc837875c3808136425ec6c482891961eb9fd9f91c20",
+          "bytes": 4391
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/muesli/termenv@v0.15.2/ansicolors.go",
+          "sha256": "8e469d8b9c3778c792da6f6cf132ffc21db58da4905fa02e5a81bdba08dbe7b8",
+          "bytes": 3423
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/muesli/termenv@v0.15.2/style.go",
+          "sha256": "e28076d5ee391a7c203ab10f44c04671f239c140cd5f425779439fd50f906cf7",
+          "bytes": 2369
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/muesli/termenv@v0.15.2/termenv.go",
+          "sha256": "2acfbc7ba58f759e65f0fcc2bdde409d14e027783f85365aff3029854d2b5b7e",
+          "bytes": 3518
+        }
+      ],
+      "repository_files": [
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/style.rs",
+          "sha256": "f4bf856201fde8fb1883707d59f3481ca143e1297609c5c92a706dc583d083e5",
+          "bytes": 181954
+        }
+      ],
+      "pin": {
+        "go_mod_line": "github.com/muesli/termenv v0.15.2 // indirect",
+        "go_sum_h1": "h1:GohcuySI0QmI3wN8Ok9PtKGkgkFIk7y6Vpb5PvrY+Wo=",
+        "cached_ziphash": "h1:GohcuySI0QmI3wN8Ok9PtKGkgkFIk7y6Vpb5PvrY+Wo=",
+        "info": {
+          "Version": "v0.15.2",
+          "Time": "2023-06-26T14:31:49Z",
+          "Origin": {
+            "VCS": "git",
+            "URL": "https://github.com/muesli/termenv",
+            "Hash": "51d72d34e2b9778a31aa5dd79fbdd8cdac50b4d5",
+            "Ref": "refs/tags/v0.15.2"
+          }
+        },
+        "info_file": {
+          "path": "/home/ajs/go/pkg/mod/cache/download/github.com/muesli/termenv/@v/v0.15.2.info",
+          "sha256": "8958bf3e793026120290c0ddbf9082eb59c1daa291b975ba6518eee4ce37bae6",
+          "bytes": 192
+        },
+        "archive_h1_recomputed_equal": true,
+        "license_and_mapped_sources_equal_archive": true
+      },
+      "notice_license_byte_offset": 7510,
+      "notice_license_bytes": 1079
+    },
+    {
+      "name": "github.com/lucasb-eyer/go-colorful",
+      "version": "v1.2.0",
+      "license_file": "LICENSE",
+      "incorporated_material": "Hex, linearization, XYZ/Luv/LCh/HSLuv conversion and color distance; includes the separately recorded hsluv-go provenance header.",
+      "license_id": "MIT",
+      "notice_section": 5,
+      "license_origin": {
+        "path": "/home/ajs/go/pkg/mod/github.com/lucasb-eyer/go-colorful@v1.2.0/LICENSE",
+        "sha256": "1e4cf2a117516ec1b54041d68ed4f5d331878b04de3386f4790e7b5b9c04e1ec",
+        "bytes": 1055
+      },
+      "license_snapshot": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/05-license.txt",
+        "sha256": "1e4cf2a117516ec1b54041d68ed4f5d331878b04de3386f4790e7b5b9c04e1ec",
+        "bytes": 1055
+      },
+      "source_files": [
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/lucasb-eyer/go-colorful@v1.2.0/colors.go",
+          "sha256": "a75c3edb5dd7e957c49694a6ac3c8901ec7aba2fb5dededca552510eb533e37c",
+          "bytes": 27612
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/lucasb-eyer/go-colorful@v1.2.0/hsluv.go",
+          "sha256": "c4ebf971de76f56b1e1c1417d9c5cfe1633990b58ff1b5c05d66c4148a87fa0b",
+          "bytes": 6167
+        }
+      ],
+      "repository_files": [
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/style.rs",
+          "sha256": "f4bf856201fde8fb1883707d59f3481ca143e1297609c5c92a706dc583d083e5",
+          "bytes": 181954
+        }
+      ],
+      "pin": {
+        "go_mod_line": "github.com/lucasb-eyer/go-colorful v1.2.0 // indirect",
+        "go_sum_h1": "h1:1nnpGOrhyZZuNyfu1QjKiUICQ74+3FNCN69Aj6K7nkY=",
+        "cached_ziphash": "h1:1nnpGOrhyZZuNyfu1QjKiUICQ74+3FNCN69Aj6K7nkY=",
+        "info": {
+          "Version": "v1.2.0",
+          "Time": "2021-01-28T03:22:51Z"
+        },
+        "info_file": {
+          "path": "/home/ajs/go/pkg/mod/cache/download/github.com/lucasb-eyer/go-colorful/@v/v1.2.0.info",
+          "sha256": "743596bdc92719c1d8c6057751c1932c594a11dd68c12be8828ca89dd4163635",
+          "bytes": 50
+        },
+        "archive_h1_recomputed_equal": true,
+        "license_and_mapped_sources_equal_archive": true
+      },
+      "notice_license_byte_offset": 9051,
+      "notice_license_bytes": 1055
+    },
+    {
+      "name": "github.com/rivo/uniseg",
+      "version": "v0.4.7",
+      "license_file": "LICENSE.txt",
+      "incorporated_material": "Grapheme rules, cluster/rune width and Unicode 15.0.0 generated grapheme/emoji properties.",
+      "license_id": "MIT",
+      "notice_section": 6,
+      "license_origin": {
+        "path": "/home/ajs/go/pkg/mod/github.com/rivo/uniseg@v0.4.7/LICENSE.txt",
+        "sha256": "a59885f5f0f3b3c07cf9444db5fe399b6f0791eac82055f7b85cc65500551039",
+        "bytes": 1072
+      },
+      "license_snapshot": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/06-license.txt",
+        "sha256": "a59885f5f0f3b3c07cf9444db5fe399b6f0791eac82055f7b85cc65500551039",
+        "bytes": 1072
+      },
+      "source_files": [
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/rivo/uniseg@v0.4.7/graphemerules.go",
+          "sha256": "5a4414dfc0402ab1f2b415c0faf89166270f7201a584aee503da69ce6a65d738",
+          "bytes": 5152
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/rivo/uniseg@v0.4.7/grapheme.go",
+          "sha256": "9b19b4dab5926971b5da48e77d33c66bb4f8ffc795b0c61fe52f06ebd08d90ac",
+          "bytes": 9910
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/rivo/uniseg@v0.4.7/graphemeproperties.go",
+          "sha256": "321483625d9a4aa92e4a5730df51c59d5b49725cd20e3879749488e5628b3da8",
+          "bytes": 179629
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/rivo/uniseg@v0.4.7/emojipresentation.go",
+          "sha256": "c4e1921aafedd787a29a0a6e329b85c6833eb1cfad0cfaf00450783f99e33b9c",
+          "bytes": 26466
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/rivo/uniseg@v0.4.7/width.go",
+          "sha256": "9a76bbb3ef247b33e00a3d5d7b98380d8d3ea46e793b50ab13fbbc8b246008ee",
+          "bytes": 1631
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/rivo/uniseg@v0.4.7/eastasianwidth.go",
+          "sha256": "1cd2368ddedc56182d2f64576f2a713a2ad6234265d940575285f61006527c5b",
+          "bytes": 215729
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/rivo/uniseg@v0.4.7/gen_properties.go",
+          "sha256": "6fc3dda9e39d2346e516b463b1ccae7be7594fe9f7e665aeef69e01644ca4a88",
+          "bytes": 7932
+        }
+      ],
+      "repository_files": [
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/style.rs",
+          "sha256": "f4bf856201fde8fb1883707d59f3481ca143e1297609c5c92a706dc583d083e5",
+          "bytes": 181954
+        }
+      ],
+      "pin": {
+        "go_mod_line": "github.com/rivo/uniseg v0.4.7 // indirect",
+        "go_sum_h1": "h1:WUdvkW8uEhrYfLC4ZzdpI2ztxP1I582+49Oc5Mq64VQ=",
+        "cached_ziphash": "h1:WUdvkW8uEhrYfLC4ZzdpI2ztxP1I582+49Oc5Mq64VQ=",
+        "info": {
+          "Version": "v0.4.7",
+          "Time": "2024-02-08T13:16:15Z",
+          "Origin": {
+            "VCS": "git",
+            "URL": "https://github.com/rivo/uniseg",
+            "Hash": "03509a98a092b522b2ff0de13e53513d18b3b837",
+            "Ref": "refs/tags/v0.4.7"
+          }
+        },
+        "info_file": {
+          "path": "/home/ajs/go/pkg/mod/cache/download/github.com/rivo/uniseg/@v/v0.4.7.info",
+          "sha256": "37af97355d2409f00be924c87dc07138e0de850881363c7751075b73b3f2f7d0",
+          "bytes": 187
+        },
+        "archive_h1_recomputed_equal": true,
+        "license_and_mapped_sources_equal_archive": true
+      },
+      "notice_license_byte_offset": 10612,
+      "notice_license_bytes": 1072
+    },
+    {
+      "name": "github.com/mattn/go-runewidth",
+      "version": "v0.0.16",
+      "license_file": "LICENSE",
+      "incorporated_material": "RuneWidth/StringWidth, locale detection, nonprint and generated combining/doublewidth/ambiguous/narrow tables. Generator explicitly pins Unicode 15.1.0; uniseg W/F widths exclude U+2FFC..U+2FFF and U+31EF.",
+      "license_id": "MIT",
+      "notice_section": 7,
+      "license_origin": {
+        "path": "/home/ajs/go/pkg/mod/github.com/mattn/go-runewidth@v0.0.16/LICENSE",
+        "sha256": "88a2379b3ca34bf5c57127aff9dcb802bbb60ece0805cdbda65b3bd115f971d9",
+        "bytes": 1085
+      },
+      "license_snapshot": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/07-license.txt",
+        "sha256": "88a2379b3ca34bf5c57127aff9dcb802bbb60ece0805cdbda65b3bd115f971d9",
+        "bytes": 1085
+      },
+      "source_files": [
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/mattn/go-runewidth@v0.0.16/runewidth.go",
+          "sha256": "56b9750f0e57f712eceb7fa648143c7cec7554098d5270088bed0dcf96d260f7",
+          "bytes": 7712
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/mattn/go-runewidth@v0.0.16/runewidth_posix.go",
+          "sha256": "b12863c62429bf672f85e334546c33aac4dcc7cea2cac3c59cb754d1e9e37d5a",
+          "bytes": 1481
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/mattn/go-runewidth@v0.0.16/runewidth_table.go",
+          "sha256": "45bc641d3875d78e0405bb40cea1214c88cdd69468afcc935e2b374f795b282a",
+          "bytes": 24709
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/mattn/go-runewidth@v0.0.16/script/generate.go",
+          "sha256": "57c01bf3026112650f2964b0de887cdf8c9194c86c88138e8842fcf3e72dd72b",
+          "bytes": 3491
+        }
+      ],
+      "repository_files": [
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/style.rs",
+          "sha256": "f4bf856201fde8fb1883707d59f3481ca143e1297609c5c92a706dc583d083e5",
+          "bytes": 181954
+        }
+      ],
+      "pin": {
+        "go_mod_line": "github.com/mattn/go-runewidth v0.0.16 // indirect",
+        "go_sum_h1": "h1:E5ScNMtiwvlvB5paMFdw9p4kSQzbXFikJ5SQO6TULQc=",
+        "cached_ziphash": "h1:E5ScNMtiwvlvB5paMFdw9p4kSQzbXFikJ5SQO6TULQc=",
+        "info": {
+          "Version": "v0.0.16",
+          "Time": "2024-07-22T12:40:34Z",
+          "Origin": {
+            "VCS": "git",
+            "URL": "https://github.com/mattn/go-runewidth",
+            "Hash": "6ceadc68530e7bfea8cba17d6523bed32912d4fa",
+            "Ref": "refs/tags/v0.0.16"
+          }
+        },
+        "info_file": {
+          "path": "/home/ajs/go/pkg/mod/cache/download/github.com/mattn/go-runewidth/@v/v0.0.16.info",
+          "sha256": "aef281792d587a65d6fa4cf1cfde5e762d7f0c2ae6ca2fc913adcb1740c72a06",
+          "bytes": 196
+        },
+        "archive_h1_recomputed_equal": true,
+        "license_and_mapped_sources_equal_archive": true
+      },
+      "notice_license_byte_offset": 12267,
+      "notice_license_bytes": 1085
+    },
+    {
+      "name": "github.com/muesli/reflow",
+      "version": "v0.3.0",
+      "license_file": "LICENSE",
+      "incorporated_material": "reflow_width/reflow_truncate defined in sql.rs, also called by PromQL clipping/limitStr.",
+      "license_id": "MIT",
+      "notice_section": 8,
+      "license_origin": {
+        "path": "/home/ajs/go/pkg/mod/github.com/muesli/reflow@v0.3.0/LICENSE",
+        "sha256": "233e8cf9a812999ccee4d3edb270b0f11ab3539658e680bcb873604915ca5038",
+        "bytes": 1079
+      },
+      "license_snapshot": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/08-license.txt",
+        "sha256": "233e8cf9a812999ccee4d3edb270b0f11ab3539658e680bcb873604915ca5038",
+        "bytes": 1079
+      },
+      "source_files": [
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/muesli/reflow@v0.3.0/ansi/ansi.go",
+          "sha256": "fc78f2a63fd3847002a536e11188eb6ff65eadc3e26c446f886029b402eb381e",
+          "bytes": 133
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/muesli/reflow@v0.3.0/ansi/buffer.go",
+          "sha256": "093b68258f4b459cfc426fbd114a018ec1cad978c234a88be55e7fe0ad58ec12",
+          "bytes": 708
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/muesli/reflow@v0.3.0/ansi/writer.go",
+          "sha256": "a1a0a9d045783d78e53ec2e9557e36e39673de4a0e230e390dc529c00e647e90",
+          "bytes": 1424
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/muesli/reflow@v0.3.0/truncate/truncate.go",
+          "sha256": "fa90572fd57b6cea12ec5bb8cab67b05ae6defe15ced03c9779e53a8d4692080",
+          "bytes": 2674
+        }
+      ],
+      "repository_files": [
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/sql.rs",
+          "sha256": "98eb54071505344d5c42f3fd32e221d1d86664ebd4623a6af884c85d7d2fcb1f",
+          "bytes": 188964
+        },
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/promql.rs",
+          "sha256": "51387004ec5207391d8c60252d1eb62997ae200d8ec23a89237238a1f114cf55",
+          "bytes": 254186
+        }
+      ],
+      "pin": {
+        "go_mod_line": "github.com/muesli/reflow v0.3.0\n\tgithub.com/rivo/uniseg v0.4.7 // indirect",
+        "go_sum_h1": "h1:IFsN6K9NfGtjeggFP+68I4chLZV2yIKsXJFNZ+eWh6s=",
+        "cached_ziphash": "h1:IFsN6K9NfGtjeggFP+68I4chLZV2yIKsXJFNZ+eWh6s=",
+        "info": {
+          "Version": "v0.3.0",
+          "Time": "2021-05-17T09:53:52Z"
+        },
+        "info_file": {
+          "path": "/home/ajs/go/pkg/mod/cache/download/github.com/muesli/reflow/@v/v0.3.0.info",
+          "sha256": "338cca717787e6e80eb3f2e85ac7bfbb48153a47be982728fba37d1e6fd5b42d",
+          "bytes": 50
+        },
+        "archive_h1_recomputed_equal": true,
+        "license_and_mapped_sources_equal_archive": true
+      },
+      "notice_license_byte_offset": 13817,
+      "notice_license_bytes": 1079
+    },
+    {
+      "name": "github.com/sahilm/fuzzy",
+      "version": "v0.1.1",
+      "license_file": "LICENSE",
+      "incorporated_material": "Saved-title candidate scoring, separator/camel/adjacency bonuses, byte penalties, retained candidate and fold matching. fuzzy.go labels equalFold as taken from strings.EqualFold; Go BSD text is also retained.",
+      "license_id": "MIT",
+      "notice_section": 9,
+      "license_origin": {
+        "path": "/home/ajs/go/pkg/mod/github.com/sahilm/fuzzy@v0.1.1/LICENSE",
+        "sha256": "079761b785aaf03158eeb4e9256b9f081ab23d0f63b62794ae92cddb41f39780",
+        "bytes": 1079
+      },
+      "license_snapshot": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/09-license.txt",
+        "sha256": "079761b785aaf03158eeb4e9256b9f081ab23d0f63b62794ae92cddb41f39780",
+        "bytes": 1079
+      },
+      "source_files": [
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/sahilm/fuzzy@v0.1.1/fuzzy.go",
+          "sha256": "de103ddfed0e4fb2c0e2ef6eb3225ad93cfa7aee7162d0dd4476ea2f0a338afa",
+          "bytes": 7051
+        }
+      ],
+      "repository_files": [
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/saved.rs",
+          "sha256": "d25a3358cb60a78977d0ee9bddc239c7b83246fa8cf66d46afccf288ff032bf7",
+          "bytes": 35733
+        }
+      ],
+      "pin": {
+        "go_mod_line": "github.com/sahilm/fuzzy v0.1.1 // indirect",
+        "go_sum_h1": "h1:ceu5RHF8DGgoi+/dR5PsECjCDH1BE3Fnmpo7aVXOdRA=",
+        "cached_ziphash": "h1:ceu5RHF8DGgoi+/dR5PsECjCDH1BE3Fnmpo7aVXOdRA=",
+        "info": {
+          "Version": "v0.1.1",
+          "Time": "2023-05-30T13:39:25Z",
+          "Origin": {
+            "VCS": "git",
+            "URL": "https://github.com/sahilm/fuzzy",
+            "Hash": "c48e322e2a8f19bbd962faf82eee4cf11dbf81ba",
+            "Ref": "refs/tags/v0.1.1"
+          }
+        },
+        "info_file": {
+          "path": "/home/ajs/go/pkg/mod/cache/download/github.com/sahilm/fuzzy/@v/v0.1.1.info",
+          "sha256": "70f93a43aea42e8abc576a84e6e5bd65496c6c97a18d345a67f82d7d1735a021",
+          "bytes": 188
+        },
+        "archive_h1_recomputed_equal": true,
+        "license_and_mapped_sources_equal_archive": true
+      },
+      "notice_license_byte_offset": 15404,
+      "notice_license_bytes": 1079
+    },
+    {
+      "name": "github.com/charmbracelet/bubbles",
+      "version": "v0.20.0",
+      "license_file": "LICENSE",
+      "incorporated_material": "Editor keymaps/sanitization/cursor/viewport/wrapping; list filtering/ranking/pagination and item chrome; spinner frames and tags.",
+      "license_id": "MIT",
+      "notice_section": 10,
+      "license_origin": {
+        "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/bubbles@v0.20.0/LICENSE",
+        "sha256": "9ca49aaf6748976a8f0a9d7448f34a5f5edf1f363385f1a789e09e328c3d3f84",
+        "bytes": 1080
+      },
+      "license_snapshot": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/10-license.txt",
+        "sha256": "9ca49aaf6748976a8f0a9d7448f34a5f5edf1f363385f1a789e09e328c3d3f84",
+        "bytes": 1080
+      },
+      "source_files": [
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/bubbles@v0.20.0/textinput/textinput.go",
+          "sha256": "7706d88e7b6db5dc2e85ea239b42e3c094175adba2247c2da47c12cff1e9181f",
+          "bytes": 22694
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/bubbles@v0.20.0/textarea/textarea.go",
+          "sha256": "65db89174ba5499145c339497b4996e58392f3ba12396edaee50faa355bd553d",
+          "bytes": 43834
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/bubbles@v0.20.0/cursor/cursor.go",
+          "sha256": "1289232b076eec8b19d18d8fff5787a3d4791766769a7f748c1751d2839d1c2e",
+          "bytes": 4688
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/bubbles@v0.20.0/viewport/viewport.go",
+          "sha256": "694ebfe79372a9825b74bb19424728c8f07a05d6dcb1d139a2105330ece52930",
+          "bytes": 10589
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/bubbles@v0.20.0/key/key.go",
+          "sha256": "ebd64ff20ce2cad76a4f7d6ae00ea93da655cca577438c25c6ea4f0d3f48bb9e",
+          "bytes": 3592
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/bubbles@v0.20.0/runeutil/runeutil.go",
+          "sha256": "a6f14f975da9f887947b18d1622d352c64bc26cf7decdf7188b49c7d7be66613",
+          "bytes": 2747
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/bubbles@v0.20.0/list/list.go",
+          "sha256": "0915a08d18719a8afa0126dbf76042f56464f3065b8e0785e881c3b6bbf3c2ba",
+          "bytes": 32782
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/bubbles@v0.20.0/list/defaultitem.go",
+          "sha256": "a24dff655786ffaccdbb54631820bf47c946f04bdc409a30f31dc316e64f85dd",
+          "bytes": 6240
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/bubbles@v0.20.0/list/keys.go",
+          "sha256": "263cfb6a82019231f11810d5d0c9748af7037a73029c335c5b10084b18358a66",
+          "bytes": 2424
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/bubbles@v0.20.0/paginator/paginator.go",
+          "sha256": "964f7e2c2e02067f4f117b50db5dcd519158940a6ad59816788b145ec6388804",
+          "bytes": 5446
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/bubbles@v0.20.0/spinner/spinner.go",
+          "sha256": "5433ca1a944770fcf3ad9f3aad6ce0b7f8eb7fb04dba4210929ea9a1a5b552ca",
+          "bytes": 5332
+        }
+      ],
+      "repository_files": [
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/editor.rs",
+          "sha256": "43dd1ea2279e0e0f06f05f253d3975c1c321f94e6146e6bdf1e015543908db49",
+          "bytes": 90023
+        },
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/saved.rs",
+          "sha256": "d25a3358cb60a78977d0ee9bddc239c7b83246fa8cf66d46afccf288ff032bf7",
+          "bytes": 35733
+        },
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/profile.rs",
+          "sha256": "ebde62e754490dfa759465293af2e253992ff84b7cbb6e432435025452c9e1ec",
+          "bytes": 52963
+        },
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/device.rs",
+          "sha256": "2cd61ba777ea8e3d46fcc586484c2dac09f2f66e8d8b2aae731e0f65372508b6",
+          "bytes": 32458
+        },
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/sql.rs",
+          "sha256": "98eb54071505344d5c42f3fd32e221d1d86664ebd4623a6af884c85d7d2fcb1f",
+          "bytes": 188964
+        },
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/promql.rs",
+          "sha256": "51387004ec5207391d8c60252d1eb62997ae200d8ec23a89237238a1f114cf55",
+          "bytes": 254186
+        }
+      ],
+      "pin": {
+        "go_mod_line": "github.com/charmbracelet/bubbles v0.20.0\n\tgithub.com/charmbracelet/bubbletea v1.2.2",
+        "go_sum_h1": "h1:jSZu6qD8cRQ6k9OMfR1WlM+ruM8fkPWkHvQWD9LIutE=",
+        "cached_ziphash": "h1:jSZu6qD8cRQ6k9OMfR1WlM+ruM8fkPWkHvQWD9LIutE=",
+        "info": {
+          "Version": "v0.20.0",
+          "Time": "2024-09-05T17:10:05Z",
+          "Origin": {
+            "VCS": "git",
+            "URL": "https://github.com/charmbracelet/bubbles",
+            "Hash": "d3bd075ed2b27a3b5d76bb79b5d1c928dcd780d0",
+            "Ref": "refs/tags/v0.20.0"
+          }
+        },
+        "info_file": {
+          "path": "/home/ajs/go/pkg/mod/cache/download/github.com/charmbracelet/bubbles/@v/v0.20.0.info",
+          "sha256": "0ab990712fb75de08c6bddae3f49798f5f06c842e3a29b952860d971616578f5",
+          "bytes": 199
+        },
+        "archive_h1_recomputed_equal": true,
+        "license_and_mapped_sources_equal_archive": true
+      },
+      "notice_license_byte_offset": 17230,
+      "notice_license_bytes": 1080
+    },
+    {
+      "name": "github.com/charmbracelet/bubbletea",
+      "version": "v1.2.2",
+      "license_file": "LICENSE",
+      "incorporated_material": "Key names/sequences and per-read decoding; frame diff/rendering and terminal lifecycle behavior. Owned Rust reducers/tasks are described separately in Phase7 docs.",
+      "license_id": "MIT",
+      "notice_section": 11,
+      "license_origin": {
+        "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/bubbletea@v1.2.2/LICENSE",
+        "sha256": "9ca49aaf6748976a8f0a9d7448f34a5f5edf1f363385f1a789e09e328c3d3f84",
+        "bytes": 1080
+      },
+      "license_snapshot": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/11-license.txt",
+        "sha256": "9ca49aaf6748976a8f0a9d7448f34a5f5edf1f363385f1a789e09e328c3d3f84",
+        "bytes": 1080
+      },
+      "source_files": [
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/bubbletea@v1.2.2/key.go",
+          "sha256": "45f73a46face46158192b89fda8d08a856beedc78343a6c4c03132a23c07d5f0",
+          "bytes": 21811
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/bubbletea@v1.2.2/key_sequences.go",
+          "sha256": "e29f4507389a83208da16ed7d684f816bc2041107899ea48c664759c0fb00900",
+          "bytes": 3538
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/bubbletea@v1.2.2/standard_renderer.go",
+          "sha256": "aa7648e78a414cbc4ea8e2b4debe2ef95850c08bb503b163b67dcf114957ae02",
+          "bytes": 20315
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/bubbletea@v1.2.2/tea.go",
+          "sha256": "1efc7e49ea11fa50fc268cae7c9b7cbbfa732e586377160df6d00a0c9759928f",
+          "bytes": 20123
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/bubbletea@v1.2.2/screen.go",
+          "sha256": "5b9e2e02635c661ab7caecdea4cabc69c68c0005cd713e1368398f35df4deb68",
+          "bytes": 8767
+        }
+      ],
+      "repository_files": [
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/input.rs",
+          "sha256": "98ae1711caff4a29b364cc3e65a907fb4f1867b9d8714d33eb247ef721385470",
+          "bytes": 28699
+        },
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/terminal.rs",
+          "sha256": "5b9b9ba74a7c9767a0e1b70020b0557d6252345b7241a60c52b5fa7c7d0e4a26",
+          "bytes": 93785
+        }
+      ],
+      "pin": {
+        "go_mod_line": "github.com/charmbracelet/bubbletea v1.2.2\n\tgithub.com/charmbracelet/lipgloss v1.0.0",
+        "go_sum_h1": "h1:EMz//Ky/aFS2uLcKqpCst5UOE6z5CFDGRsUpyXz0chs=",
+        "cached_ziphash": "h1:EMz//Ky/aFS2uLcKqpCst5UOE6z5CFDGRsUpyXz0chs=",
+        "info": {
+          "Version": "v1.2.2",
+          "Time": "2024-11-12T18:54:54Z",
+          "Origin": {
+            "VCS": "git",
+            "URL": "https://github.com/charmbracelet/bubbletea",
+            "Hash": "97fc4fada84eba82ccfce0ffcc1b9d6216fca05c",
+            "Ref": "refs/tags/v1.2.2"
+          }
+        },
+        "info_file": {
+          "path": "/home/ajs/go/pkg/mod/cache/download/github.com/charmbracelet/bubbletea/@v/v1.2.2.info",
+          "sha256": "75f84c0d9838c589bb672719e6e1647d053c22e9ce45ff12eace127547b8cbf7",
+          "bytes": 199
+        },
+        "archive_h1_recomputed_equal": true,
+        "license_and_mapped_sources_equal_archive": true
+      },
+      "notice_license_byte_offset": 18875,
+      "notice_license_bytes": 1080
+    },
+    {
+      "name": "github.com/atotto/clipboard",
+      "version": "v0.1.4",
+      "license_file": "LICENSE",
+      "incorporated_material": "Clipboard utility selection/order, command arguments, missing-utility text and DOS trimming; native Windows backend remains outside this port.",
+      "license_id": "BSD-3-Clause",
+      "notice_section": 12,
+      "license_origin": {
+        "path": "/home/ajs/go/pkg/mod/github.com/atotto/clipboard@v0.1.4/LICENSE",
+        "sha256": "2c4bac8e2a97180d6e7758c37de85d1cda1859aaf85b56da15d935d2d9a5564f",
+        "bytes": 1471
+      },
+      "license_snapshot": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/12-license.txt",
+        "sha256": "2c4bac8e2a97180d6e7758c37de85d1cda1859aaf85b56da15d935d2d9a5564f",
+        "bytes": 1471
+      },
+      "source_files": [
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/atotto/clipboard@v0.1.4/clipboard.go",
+          "sha256": "731101f1a72856da50ff1fa791ff3d1b8fefbc3aabfe641d9007d80484a8cf20",
+          "bytes": 554
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/atotto/clipboard@v0.1.4/clipboard_unix.go",
+          "sha256": "c3c123edf5697462020b0c4fb8613657f36824d3bbb7f49d307de20b12f99f4a",
+          "bytes": 3249
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/atotto/clipboard@v0.1.4/clipboard_darwin.go",
+          "sha256": "31a5fcf1196a12708a2bc184f26348780e6cc84deeec06dc4a943e9542f7f18d",
+          "bytes": 908
+        }
+      ],
+      "repository_files": [
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/clipboard.rs",
+          "sha256": "0e689be56d31cf836e7dc84e490b76a4cae42179c855f00c62be4fea045197e8",
+          "bytes": 7320
+        }
+      ],
+      "pin": {
+        "go_mod_line": "github.com/atotto/clipboard v0.1.4 // indirect",
+        "go_sum_h1": "h1:EH0zSVneZPSuFR11BlR9YppQTVDbh5+16AmcJi4g1z4=",
+        "cached_ziphash": "h1:EH0zSVneZPSuFR11BlR9YppQTVDbh5+16AmcJi4g1z4=",
+        "info": {
+          "Version": "v0.1.4",
+          "Time": "2021-02-24T14:02:39Z"
+        },
+        "info_file": {
+          "path": "/home/ajs/go/pkg/mod/cache/download/github.com/atotto/clipboard/@v/v0.1.4.info",
+          "sha256": "a1f31e7b6ff29ee2ea9f81bedd351e266c4f8db4606068cfb60ae715eb39c349",
+          "bytes": 50
+        },
+        "archive_h1_recomputed_equal": true,
+        "license_and_mapped_sources_equal_archive": true
+      },
+      "notice_license_byte_offset": 20473,
+      "notice_license_bytes": 1471
+    },
+    {
+      "name": "github.com/evertras/bubble-table",
+      "version": "v0.19.2",
+      "license_file": "LICENSE",
+      "incorporated_material": "Results-table border/style inheritance, clipping and table filter/key behavior; table/model.go also credits Bubbles/List.",
+      "license_id": "MIT",
+      "notice_section": 13,
+      "license_origin": {
+        "path": "/home/ajs/go/pkg/mod/github.com/evertras/bubble-table@v0.19.2/LICENSE",
+        "sha256": "ee4b99f731bcceda67bafa45d06c7a9b417686a3d0aadb0a38d6516696f0ecd1",
+        "bytes": 1074
+      },
+      "license_snapshot": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/13-license.txt",
+        "sha256": "ee4b99f731bcceda67bafa45d06c7a9b417686a3d0aadb0a38d6516696f0ecd1",
+        "bytes": 1074
+      },
+      "source_files": [
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/evertras/bubble-table@v0.19.2/table/border.go",
+          "sha256": "db766477f0cb4464d6d43f3d2ce3e6689671a337215cac6e624eba4081f312c6",
+          "bytes": 10094
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/evertras/bubble-table@v0.19.2/table/view.go",
+          "sha256": "4a17699716309e6b890eb662cdad5b5be6d9ad001bab6525c15f34affab92cb7",
+          "bytes": 1406
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/evertras/bubble-table@v0.19.2/table/header.go",
+          "sha256": "558cc81704dbba466f4c91f755f364c792b0ef6aa99d0917d4f84198b6cea281",
+          "bytes": 2456
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/evertras/bubble-table@v0.19.2/table/row.go",
+          "sha256": "dfdd1b5180a38b3653edc7e9bd13d8db4b8298efa2027a37c813f7fc36d4e1dc",
+          "bytes": 6363
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/evertras/bubble-table@v0.19.2/table/strlimit.go",
+          "sha256": "8c04bb2642a79d5936d726a53e7999a087814d9a1f422f53b02deb48ea8a1c98",
+          "bytes": 434
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/evertras/bubble-table@v0.19.2/table/filter.go",
+          "sha256": "a82da7371bccf8277abdd956a1680ed9474cb2f291f842a1d5923ed9baac38f8",
+          "bytes": 3670
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/evertras/bubble-table@v0.19.2/table/keys.go",
+          "sha256": "a52a948e1b463758c22bdeb40230285a51d646206fc8cc8c2ed4427d5bdda469",
+          "bytes": 3375
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/evertras/bubble-table@v0.19.2/table/model.go",
+          "sha256": "9776dc089888b500fe44ba3a3f1541209126bbfcc8ed2ec513617e3a44141817",
+          "bytes": 3722
+        }
+      ],
+      "repository_files": [
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/sql.rs",
+          "sha256": "98eb54071505344d5c42f3fd32e221d1d86664ebd4623a6af884c85d7d2fcb1f",
+          "bytes": 188964
+        },
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/promql.rs",
+          "sha256": "51387004ec5207391d8c60252d1eb62997ae200d8ec23a89237238a1f114cf55",
+          "bytes": 254186
+        }
+      ],
+      "pin": {
+        "go_mod_line": "github.com/evertras/bubble-table v0.19.2\n\tgithub.com/muesli/termenv v0.15.2 // indirect",
+        "go_sum_h1": "h1:u77oiM6JlRR+CvS5FZc3Hz+J6iEsvEDcR5kO8OFb1Yw=",
+        "cached_ziphash": "h1:u77oiM6JlRR+CvS5FZc3Hz+J6iEsvEDcR5kO8OFb1Yw=",
+        "info": {
+          "Version": "v0.19.2",
+          "Time": "2025-09-06T14:26:13Z",
+          "Origin": {
+            "VCS": "git",
+            "URL": "https://github.com/evertras/bubble-table",
+            "Hash": "ef37988ad03a2abfa4eb7d6de8f2089f3920a88f",
+            "Ref": "refs/tags/v0.19.2"
+          }
+        },
+        "info_file": {
+          "path": "/home/ajs/go/pkg/mod/cache/download/github.com/evertras/bubble-table/@v/v0.19.2.info",
+          "sha256": "f033fcc54db144449fbbcd88fa772ab7f6b5f8102f9de6cf47adc9d044001022",
+          "bytes": 199
+        },
+        "archive_h1_recomputed_equal": true,
+        "license_and_mapped_sources_equal_archive": true
+      },
+      "notice_license_byte_offset": 22524,
+      "notice_license_bytes": 1074
+    },
+    {
+      "name": "github.com/NimbleMarkets/ntcharts",
+      "version": "v0.5.1",
+      "license_file": "LICENSE.txt",
+      "incorporated_material": "Canvas, line glyph combination/Bresenham, graph dimensions, coordinate scaling and timeseries column buckets. Project-specific nice Y scale, compact values, legend and palette come from pb pkg/model/promql.go.",
+      "license_id": "MIT",
+      "notice_section": 14,
+      "license_origin": {
+        "path": "/home/ajs/go/pkg/mod/github.com/!nimble!markets/ntcharts@v0.5.1/LICENSE.txt",
+        "sha256": "52c60da9f79c4b1dc35a81de14475eae034e3609c44a99ec0790532942a4d1da",
+        "bytes": 1070
+      },
+      "license_snapshot": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/14-license.txt",
+        "sha256": "52c60da9f79c4b1dc35a81de14475eae034e3609c44a99ec0790532942a4d1da",
+        "bytes": 1070
+      },
+      "source_files": [
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/!nimble!markets/ntcharts@v0.5.1/canvas/canvas.go",
+          "sha256": "d4536180a0ba833f3b3adbba63192bce0bfdcec02160ef50c7ee6a55c0b3d1bc",
+          "bytes": 14986
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/!nimble!markets/ntcharts@v0.5.1/canvas/graph/graph.go",
+          "sha256": "f6f19ec88ea6b5c716a60fa02e91ddb1bf2bb5dcad1cce0a6925bde67cfa000c",
+          "bytes": 28761
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/!nimble!markets/ntcharts@v0.5.1/canvas/runes/runes.go",
+          "sha256": "e17718f4bfa479e20c4b2fa1ed7d87eba86ca4d1aab358c642f16cd7bc7290a6",
+          "bytes": 15440
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/!nimble!markets/ntcharts@v0.5.1/canvas/buffer/buffer.go",
+          "sha256": "44d31f8bba3717afa14792ffd3128398052bba30ca19de3ecda8513e2066743a",
+          "bytes": 9675
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/!nimble!markets/ntcharts@v0.5.1/linechart/linechart.go",
+          "sha256": "74a57966cabef545566d5b86624a607d8a51233f6be2fce1afc6810c2d92ac90",
+          "bytes": 23005
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/!nimble!markets/ntcharts@v0.5.1/linechart/timeserieslinechart/timeserieslinechart.go",
+          "sha256": "594ba1965a6a6bd5c603f0120f521e866df8383f8c520a0dafe91e464c0634a9",
+          "bytes": 16056
+        }
+      ],
+      "repository_files": [
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/promql.rs",
+          "sha256": "51387004ec5207391d8c60252d1eb62997ae200d8ec23a89237238a1f114cf55",
+          "bytes": 254186
+        }
+      ],
+      "pin": {
+        "go_mod_line": "github.com/NimbleMarkets/ntcharts v0.5.1\n\tgithub.com/alecthomas/chroma/v2 v2.24.1",
+        "go_sum_h1": "h1:HWtekubEXfESwi24pyFynwGo2Hulbb9fPh7INMUc1dg=",
+        "cached_ziphash": "h1:HWtekubEXfESwi24pyFynwGo2Hulbb9fPh7INMUc1dg=",
+        "info": {
+          "Version": "v0.5.1",
+          "Time": "2026-03-20T22:29:29Z",
+          "Origin": {
+            "VCS": "git",
+            "URL": "https://github.com/NimbleMarkets/ntcharts",
+            "Hash": "e3d84f21669c3eb609c711c7465d5c239e332a5a",
+            "Ref": "refs/tags/v0.5.1"
+          }
+        },
+        "info_file": {
+          "path": "/home/ajs/go/pkg/mod/cache/download/github.com/!nimble!markets/ntcharts/@v/v0.5.1.info",
+          "sha256": "1dac2053b976d4ecaf2f9fa960da4d07826f452f3934d5f045faeceafd1a5fa6",
+          "bytes": 198
+        },
+        "archive_h1_recomputed_equal": true,
+        "license_and_mapped_sources_equal_archive": true
+      },
+      "notice_license_byte_offset": 24291,
+      "notice_license_bytes": 1070
+    },
+    {
+      "name": "github.com/charmbracelet/x/term",
+      "version": "v0.2.1",
+      "license_file": "LICENSE",
+      "incorporated_material": "Unix raw terminal flags, state/restore and size behavior at the Go baseline call path.",
+      "license_id": "MIT",
+      "notice_section": 15,
+      "license_origin": {
+        "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/x/term@v0.2.1/LICENSE",
+        "sha256": "0baa4a5942a801d93f4050d2bc0039d8c037105fcd335230d118eec99a11782b",
+        "bytes": 1076
+      },
+      "license_snapshot": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/15-license.txt",
+        "sha256": "0baa4a5942a801d93f4050d2bc0039d8c037105fcd335230d118eec99a11782b",
+        "bytes": 1076
+      },
+      "source_files": [
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/x/term@v0.2.1/term.go",
+          "sha256": "899bf7d9c3212c1ca5e814e41d2fe1b0ffa4642b2fcdda1901491c61ba3f0e37",
+          "bytes": 1438
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/x/term@v0.2.1/term_unix.go",
+          "sha256": "103822e728b312cddada666066717ee60ff1bf641bf2e3f50ca344ad5c0ee98f",
+          "bytes": 2562
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/x/term@v0.2.1/term_unix_bsd.go",
+          "sha256": "65e103dffbdff3a82377c48aad9a23eca5b86c8291281afcf82e3504028ea03d",
+          "bytes": 240
+        },
+        {
+          "path": "/home/ajs/go/pkg/mod/github.com/charmbracelet/x/term@v0.2.1/term_unix_other.go",
+          "sha256": "b61f2b8a9e966a0b7d243a8cc2ca9f00eccb97f66dd4d38a488a54742e32b31b",
+          "bytes": 197
+        }
+      ],
+      "repository_files": [
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/terminal.rs",
+          "sha256": "5b9b9ba74a7c9767a0e1b70020b0557d6252345b7241a60c52b5fa7c7d0e4a26",
+          "bytes": 93785
+        }
+      ],
+      "pin": {
+        "go_mod_line": "github.com/charmbracelet/x/term v0.2.1 // indirect",
+        "go_sum_h1": "h1:AQeHeLZ1OqSXhrAWpYUtZyX1T3zVxfpZuEQMIQaGIAQ=",
+        "cached_ziphash": "h1:AQeHeLZ1OqSXhrAWpYUtZyX1T3zVxfpZuEQMIQaGIAQ=",
+        "info": {
+          "Version": "v0.2.1",
+          "Time": "2024-11-08T15:25:49Z",
+          "Origin": {
+            "VCS": "git",
+            "URL": "https://github.com/charmbracelet/x",
+            "Subdir": "term",
+            "Hash": "66d4aed428d9330a4b1a97b3d6fcd985b08cfaeb",
+            "Ref": "refs/tags/term/v0.2.1"
+          }
+        },
+        "info_file": {
+          "path": "/home/ajs/go/pkg/mod/cache/download/github.com/charmbracelet/x/term/@v/v0.2.1.info",
+          "sha256": "12c0bb473ad9fab4789dedff43b47b725370d2277b65d5db2d0d500fbb5e67a5",
+          "bytes": 212
+        },
+        "archive_h1_recomputed_equal": true,
+        "license_and_mapped_sources_equal_archive": true
+      },
+      "notice_license_byte_offset": 25819,
+      "notice_license_bytes": 1076
+    },
+    {
+      "name": "golang.org/x/term",
+      "version": "v0.25.0",
+      "license_file": "LICENSE",
+      "incorporated_material": "Go Authors BSD notice retained for the matching raw-mode implementation also present in the pinned Go module graph; direct Phase7 call path is charmbracelet/x/term.",
+      "license_id": "BSD-3-Clause",
+      "notice_section": 16,
+      "license_origin": {
+        "path": "/home/ajs/go/pkg/mod/golang.org/x/term@v0.25.0/LICENSE",
+        "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+        "bytes": 1453
+      },
+      "license_snapshot": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/16-license.txt",
+        "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+        "bytes": 1453
+      },
+      "source_files": [
+        {
+          "path": "/home/ajs/go/pkg/mod/golang.org/x/term@v0.25.0/term_unix.go",
+          "sha256": "e6a95d1ac948b5e2b389676545101de744f2715766e77f55160375a49a765b15",
+          "bytes": 2396
+        }
+      ],
+      "repository_files": [
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/terminal.rs",
+          "sha256": "5b9b9ba74a7c9767a0e1b70020b0557d6252345b7241a60c52b5fa7c7d0e4a26",
+          "bytes": 93785
+        }
+      ],
+      "pin": {
+        "go_mod_line": "golang.org/x/term v0.25.0\n\tgoogle.golang.org/grpc v1.65.0",
+        "go_sum_h1": "h1:WtHI/ltw4NvSUig5KARz9h521QvRC8RmF/cuYqifU24=",
+        "cached_ziphash": "h1:WtHI/ltw4NvSUig5KARz9h521QvRC8RmF/cuYqifU24=",
+        "info": {
+          "Version": "v0.25.0",
+          "Time": "2024-10-04T14:58:26Z",
+          "Origin": {
+            "VCS": "git",
+            "URL": "https://go.googlesource.com/term",
+            "Hash": "9d5441ab55ca2ec4afd8611a45a4bb5c5a957d32",
+            "Ref": "refs/tags/v0.25.0"
+          }
+        },
+        "info_file": {
+          "path": "/home/ajs/go/pkg/mod/cache/download/golang.org/x/term/@v/v0.25.0.info",
+          "sha256": "e957baf53bc4c21cb24f66779fe809859effc897939945eed25512e10f614a73",
+          "bytes": 191
+        },
+        "archive_h1_recomputed_equal": true,
+        "license_and_mapped_sources_equal_archive": true
+      },
+      "notice_license_byte_offset": 27376,
+      "notice_license_bytes": 1453
+    },
+    {
+      "name": "Unicode data",
+      "version": "15.0.0 and 15.1.0 (see mapping)",
+      "license_file": "LICENSE-UNICODE",
+      "incorporated_material": "UCD 15.0.0 grapheme, emoji, East Asian width through uniseg and Go fold/Ll/Lu tables; UCD 15.1.0 EastAsianWidth/emoji through go-runewidth. Verbatim Unicode License V3 preserved from the local unicode-ident 1.0.24 cache, as in style-notices.txt. Primary distributed UCD ReadMe files and tagged Unicode repository licenses are now preserved in sections 19-22; historical shared terms-of-use page bytes remain unknown.",
+      "license_id": "Unicode-3.0",
+      "notice_section": 17,
+      "license_origin": {
+        "path": "/home/ajs/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/unicode-ident-1.0.24/LICENSE-UNICODE",
+        "sha256": "f7db81051789b729fea528a63ec4c938fdcb93d9d61d97dc8cc2e9df6d47f2a1",
+        "bytes": 1995
+      },
+      "license_snapshot": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/17-license.txt",
+        "sha256": "f7db81051789b729fea528a63ec4c938fdcb93d9d61d97dc8cc2e9df6d47f2a1",
+        "bytes": 1995
+      },
+      "source_files": [],
+      "repository_files": [
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/style.rs",
+          "sha256": "f4bf856201fde8fb1883707d59f3481ca143e1297609c5c92a706dc583d083e5",
+          "bytes": 181954
+        },
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/saved_fuzzy_unicode.rs",
+          "sha256": "3a88503ae1955216f7f2da881d3a1d41d7e112dcd9fa18e0aeb8163155e2e634",
+          "bytes": 39961
+        }
+      ],
+      "pin": {
+        "license_carrier": "unicode-ident 1.0.24; license text only, not a Phase7 code dependency",
+        "original_ucd_license_snapshot_verified": false,
+        "carrier_vcs_info": {
+          "git": {
+            "sha1": "5b54a632702b5744a1c40ea01c127c0ac0498172"
+          },
+          "path_in_vcs": ""
+        },
+        "carrier_manifest": {
+          "path": "/home/ajs/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/unicode-ident-1.0.24/Cargo.toml",
+          "sha256": "0bb9c0e006a21355cb85c7df72e78dd8ba6fffbb7dc3f1e7a4c19af53cd354da",
+          "bytes": 2072
+        },
+        "carrier_origin": "https://github.com/dtolnay/unicode-ident",
+        "primary_release_attribution_verified": true,
+        "historical_tagged_repository_licenses_preserved": true,
+        "original_ucd_license_snapshot_explanation": "UCD archives contain no separate license file; ReadMe points to a shared terms-of-use URL. Tagged repository licenses are primary historical evidence, not asserted identical to the release-time website."
+      },
+      "notice_license_byte_offset": 29713,
+      "notice_license_bytes": 1995
+    }
+  ],
+  "hsluv_provenance": {
+    "source": {
+      "path": "/home/ajs/go/pkg/mod/github.com/lucasb-eyer/go-colorful@v1.2.0/hsluv.go",
+      "sha256": "c4ebf971de76f56b1e1c1417d9c5cfe1633990b58ff1b5c05d66c4148a87fa0b",
+      "bytes": 6167
+    },
+    "header_verbatim": "// Source: https://github.com/hsluv/hsluv-go\n// Under MIT License\n// Modified so that Saturation and Luminance are in [0..1] instead of [0..100].\n",
+    "version": null,
+    "separate_original_license_text": {
+      "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/hsluv-pre2021-LICENSE.txt",
+      "sha256": "092cd62d642081a92e81c12da3ad7659e18b38fd1ac7e273d5fcec265d192f3b",
+      "bytes": 1059,
+      "url": "https://raw.githubusercontent.com/hsluv/hsluv-go/a29f6990a3be79fefb4470f2a0b9a4d076949577/LICENSE.txt",
+      "retrieved_at_utc": "2026-10-14T17:02:56.580802+00:00"
+    },
+    "introduced_in_go_colorful_commit": "4380d764288e7022c51d648eb7e37dc1804e2300",
+    "introduction_date": "2021-01-27",
+    "introduction_equals_v1_2_0_and_local_cache": true,
+    "inspected_upstream_source_commit": "a29f6990a3be79fefb4470f2a0b9a4d076949577",
+    "inspected_upstream_source_date": "2016-12-17",
+    "inspection_commit_is_latest_source_path_change_before_import": true,
+    "adopted_upstream_tree_sha_recorded_by_importer": false,
+    "whitespace_ignored_shared_function_bodies_equal": [
+      "getBounds",
+      "maxChromaForLH",
+      "maxSafeChromaForL",
+      "intersectLineLine",
+      "distanceFromPole",
+      "lengthOfRayUntilIntersect"
+    ],
+    "license_introduction_commit": "34f81136a322719b960c333f4767e9764de6328d",
+    "license_introduction_date": "2016-01-17",
+    "license_unchanged_between_introduction_and_inspected_source_commit": true,
+    "notice_section": 18
+  },
+  "existing_notices": [
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/LICENSE-Go.txt",
+      "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+      "bytes": 1453
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/style-notices.txt",
+      "sha256": "f5c3126974ce8b9174d62c3e22da16ae66fa67a7620cd50f0c46caff0d7fdfd4",
+      "bytes": 14472
+    }
+  ],
+  "reconciliation": {
+    "src_LICENSE_Go_tracked": true,
+    "style_license_texts_match_primary_cache": true,
+    "reflow_source_comment_matches_primary_cache": true,
+    "reflow_already_in_style_evidence_section": 9,
+    "style_reflow_only_SQL_wording_omits_PromQL_callers": true,
+    "existing_hsluv_notice_coverage_assertion_not_adopted": true
+  },
+  "notice_file": {
+    "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/THIRD-PARTY-NOTICES",
+    "sha256": "f4792205d3de5f6f1c6060a94dbbacb81c67b4d6340eb76be4ca3d971a0ce1c2",
+    "bytes": 86825
+  },
+  "attribution_doc": {
+    "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-attribution.md",
+    "sha256": "d6b55629d199aa8867457b25870802a689488e985486961b2192de28e822bf9b",
+    "bytes": 13563
+  },
+  "unknowns": [
+    "hsluv-go notice and pre-import source state are identified and preserved; go-colorful does not record an adopted upstream tree SHA. The inspected a29f6990 source is the latest hsluv.go path-history change before import, not a claim of the exact adopted tree.",
+    "Exact UCD release ReadMe attribution and tagged repository LICENSE files are preserved. The historical bytes of the shared Unicode terms-of-use/license website at release/download time remain unverified; UCD ZIPs do not include a separate license file.",
+    "DEC specification effective license at x/ansi derivation time remains unresolved: the retrieved page has BY-NC-SA 3.0 diagram metadata and a BY 4.0 statement inside an HTML comment. No dated primary snapshot resolving those declarations or evidence of x/ansi adopting vtparse was found in the bounded reads."
+  ],
+  "packaging": {
+    "inspected_files": [
+      {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/.goreleaser.yml",
+        "sha256": "ce3c823861731f4e3fb2ce63cbc56654a4e35959112a004a358c98d459bd242b",
+        "bytes": 839
+      },
+      {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/.github/workflows/release.yaml",
+        "sha256": "d8ecf772cc2d50fe8e93f66e4ba82b62fd0292bd373119931908ae628c8079cc",
+        "bytes": 1430
+      },
+      {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/scripts/install.sh",
+        "sha256": "421369d8f9a9cc446ebe1362312a31c4df70ed8516998746e1060a3f0c2c500a",
+        "bytes": 3931
+      },
+      {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/scripts/install.ps1",
+        "sha256": "c7fcdda24d845f01fe40a6b1116d8c4c573c2247e3e50f843f913a174d0fa49c",
+        "bytes": 3351
+      },
+      {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/scripts/update-homebrew-tap.sh",
+        "sha256": "95d81df6464088b6a9a911aacb8feb9db318fe2fd2514d11277d02dfbf376a6c",
+        "bytes": 2007
+      },
+      {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/Cargo.toml",
+        "sha256": "755b352ace1888fa6d9196ef401b15efd8509430b0607143dbab33e2eaee6eaa",
+        "bytes": 1757
+      },
+      {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/.github/workflows/rust-phase1.yaml",
+        "sha256": "e772dcb9613049b3cd2b340147e6143142feee338b76456d27c6882e4c139b2c",
+        "bytes": 4311
+      },
+      {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/Makefile",
+        "sha256": "83420e3e7b16ab0c4d5a0f2e6ad1f4d797443001389d7fbe8da3ff8bf92d7722",
+        "bytes": 9587
+      }
+    ],
+    "goreleaser": "Go ./main.go; windows/darwin/linux x amd64/arm64; archives files explicitly README.md and LICENSE, not THIRD-PARTY-NOTICES or src/LICENSE-Go.txt or style-notices.txt.",
+    "shell_installer": "Extracts archive into temporary directory and installs only pb; temporary directory removed by trap.",
+    "powershell_installer": "Extracts archive, moves only pb.exe, removes temporary directory in finally.",
+    "homebrew_template": "Generated formula def install contains only bin.install \"pb\"; notice retention not established.",
+    "cargo": "Cargo.toml has no explicit include/exclude or license-file setting; package contents were not enumerated with Cargo. This unstaged notice is not proven present in a crate/source archive.",
+    "delivery_boundary": "Verified repository notice bytes only. Release archive inclusion, installed notice retention, Rust release packaging, actual delivered artifacts and six-platform shipping gate are unverified; existing explicit archive/installer configuration does not deliver this new notice.",
+    "shipping_gate_passed": false
+  },
+  "validation": {
+    "network_used": true,
+    "builds_or_cli_oracles_run": false,
+    "module_archives_h1_recomputed": 15,
+    "verbatim_license_sections": 22,
+    "go_license_identity_and_tracked_status_checked": true,
+    "all_notice_sections_equal_primary_local_license_bytes": true,
+    "network_scope": "public primary upstream reads; raw responses and URL/status/hash metadata retained",
+    "verbatim_supplemental_source_notices": 3,
+    "all_original_17_license_bytes_preserved": true,
+    "all_original_non_owned_repository_input_hashes_unchanged": true,
+    "shared_hsluv_function_body_comparisons": 6,
+    "ucd_tagged_input_comparisons": 9,
+    "ucd_tagged_input_equal_comparisons": 8,
+    "ucd_15_1_tagged_ReadMe_template_distinguished": true,
+    "no_builds_or_oracles_timing_profilers_or_commonlock": true
+  },
+  "provenance_before": {
+    "snapshot_directory": "/home/ajs/.cache/pb-phase7/attribution/before-provenance-20261014T170022Z",
+    "files": [
+      {
+        "repository_path": "THIRD-PARTY-NOTICES",
+        "snapshot_path": "/home/ajs/.cache/pb-phase7/attribution/before-provenance-20261014T170022Z/THIRD-PARTY-NOTICES",
+        "sha256": "4443fee000887d72478fc8ac6d87bfdeda47721efeaa73aab9563de773130ae1",
+        "bytes": 32178
+      },
+      {
+        "repository_path": "docs/phase7-attribution.md",
+        "snapshot_path": "/home/ajs/.cache/pb-phase7/attribution/before-provenance-20261014T170022Z/docs/phase7-attribution.md",
+        "sha256": "8d9b137dfe707de094181e61850c23e96024d3984511e0445776e04f6f9a238b",
+        "bytes": 8718
+      },
+      {
+        "repository_path": "docs/evidence/phase7/attribution-inventory.json",
+        "snapshot_path": "/home/ajs/.cache/pb-phase7/attribution/before-provenance-20261014T170022Z/docs/evidence/phase7/attribution-inventory.json",
+        "sha256": "36116bb411fb0deb15fb036251fd7b2ad6bbb7e51731bb5427c96b53004c8343",
+        "bytes": 65209
+      }
+    ]
+  },
+  "supplemental_notices": [
+    {
+      "notice_section": 18,
+      "title": "hsluv-go — MIT notice at a29f6990a3be79fefb4470f2a0b9a4d076949577",
+      "kind": "license",
+      "origin": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/hsluv-pre2021-LICENSE.txt",
+        "sha256": "092cd62d642081a92e81c12da3ad7659e18b38fd1ac7e273d5fcec265d192f3b",
+        "bytes": 1059,
+        "url": "https://raw.githubusercontent.com/hsluv/hsluv-go/a29f6990a3be79fefb4470f2a0b9a4d076949577/LICENSE.txt",
+        "retrieved_at_utc": "2026-10-14T17:02:56.580802+00:00"
+      },
+      "notice_byte_offset": 32832,
+      "notice_bytes": 1059,
+      "mapping": "Source path: hsluv-go/LICENSE.txt; derived through go-colorful v1.2.0/hsluv.go into src/tui/style.rs.\ngo-colorful introduced the file at 4380d764288e7022c51d648eb7e37dc1804e2300 on 2021-01-27; introduction and pinned v1.2.0 bytes are identical.\nThe inspected upstream source revision is the latest hsluv.go path-history change before that date (2016-12-17); the importer does not record an adopted tree SHA.\nSix shared function bodies match ignoring whitespace. LICENSE.txt is identical to its 2016 introduction at 34f81136a322719b960c333f4767e9764de6328d.\nVerbatim importer provenance header:\n// Source: https://github.com/hsluv/hsluv-go\n// Under MIT License\n// Modified so that Saturation and Luminance are in [0..1] instead of [0..100].\n"
+    },
+    {
+      "notice_section": 19,
+      "title": "Unicode 15.0.0 — contemporaneous Unicode repository license",
+      "kind": "license",
+      "origin": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.0-LICENSE",
+        "sha256": "80b381b2f157c31e7f3222bdb932bda9fbd7b335e888beec56820fb2993363de",
+        "bytes": 2275,
+        "url": "https://raw.githubusercontent.com/unicode-org/unicodetools/f6478e318a43632989bda65b8e0134088efd9c5f/LICENSE",
+        "retrieved_at_utc": "2026-10-14T17:02:56.582893+00:00"
+      },
+      "notice_byte_offset": 34813,
+      "notice_bytes": 2275,
+      "mapping": "Primary source: unicode-org/unicodetools tag release-2022-09-16-u15-0, commit f6478e318a43632989bda65b8e0134088efd9c5f, root LICENSE.\nRepository paths: src/tui/style.rs and src/tui/saved_fuzzy_unicode.rs (also existing src/printable.rs).\nThis tagged repository carries byte-identical ReadMe, grapheme/emoji/width and fold/category input files to the public UCD 15.0.0 archive.\nThe license text is preserved exactly, including its 1991-2020 copyright and UTF-8 BOM. It is not asserted identical to the historical shared Unicode web license page."
+    },
+    {
+      "notice_section": 20,
+      "title": "Unicode 15.1.0 — contemporaneous Unicode License V3",
+      "kind": "license",
+      "origin": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.1-LICENSE",
+        "sha256": "9ba0dc030e14ab692310b5395ea4f3a4921bcdbc1b9dbcebb1f81d83eb08f4e6",
+        "bytes": 1995,
+        "url": "https://raw.githubusercontent.com/unicode-org/unicodetools/9595f090650e99e3e752b37a7a3866ac8a91999b/LICENSE",
+        "retrieved_at_utc": "2026-10-14T17:02:56.737381+00:00"
+      },
+      "notice_byte_offset": 38016,
+      "notice_bytes": 1995,
+      "mapping": "Primary source: unicode-org/unicodetools tag final-15.1-20230908, commit 9595f090650e99e3e752b37a7a3866ac8a91999b, root LICENSE.\nRepository path: src/tui/style.rs, via go-runewidth v0.0.16 generated EastAsianWidth/emoji tables.\nThe tagged EastAsianWidth.txt and emoji-data.txt match the UCD 15.1.0 archive byte for byte. Its dev ReadMe is a publication template, not identical to the released ReadMe.\nThis primary LICENSE has Copyright 2001-2023; section 17 separately preserves the earlier local carrier text (1991-2023). No historical website identity is asserted."
+    },
+    {
+      "notice_section": 21,
+      "title": "Unicode UCD 15.0.0 — distributed ReadMe attribution",
+      "kind": "release_readme",
+      "origin": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/ucd-15.0.0-ReadMe.txt",
+        "sha256": "53672c0d0b5185e3cf04c8e970d544c3af81ae7c8eeba0b9cf6d355aa954ae1f",
+        "bytes": 635,
+        "url": "https://www.unicode.org/Public/15.0.0/ucd/ReadMe.txt",
+        "retrieved_at_utc": "2026-10-14T17:00:55.533021+00:00"
+      },
+      "notice_byte_offset": 40752,
+      "notice_bytes": 635,
+      "mapping": "Primary distributed file: https://www.unicode.org/Public/15.0.0/ucd/ReadMe.txt; verified byte-identical to ReadMe.txt in https://www.unicode.org/Public/zipped/15.0.0/UCD.zip.\nRepository mapping: src/tui/style.rs; UCD 15.0.0 also underlies saved_fuzzy_unicode.rs through Go 1.25.4.\nThe archives contain no separate LICENSE/copyright file; data-file headers repeat the year-specific Unicode attribution and terms-of-use URL below."
+    },
+    {
+      "notice_section": 22,
+      "title": "Unicode UCD 15.1.0 — distributed ReadMe attribution",
+      "kind": "release_readme",
+      "origin": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/ucd-15.1.0-ReadMe.txt",
+        "sha256": "0d2da782ead4e85630d510f50808355e8c3355e670841d257dd1e6fbd40db9fa",
+        "bytes": 631,
+        "url": "https://www.unicode.org/Public/15.1.0/ucd/ReadMe.txt",
+        "retrieved_at_utc": "2026-10-14T17:00:55.533536+00:00"
+      },
+      "notice_byte_offset": 42134,
+      "notice_bytes": 631,
+      "mapping": "Primary distributed file: https://www.unicode.org/Public/15.1.0/ucd/ReadMe.txt; verified byte-identical to ReadMe.txt in https://www.unicode.org/Public/zipped/15.1.0/UCD.zip.\nRepository mapping: src/tui/style.rs; UCD 15.0.0 also underlies saved_fuzzy_unicode.rs through Go 1.25.4.\nThe archives contain no separate LICENSE/copyright file; data-file headers repeat the year-specific Unicode attribution and terms-of-use URL below."
+    },
+    {
+      "notice_section": 23,
+      "title": "DEC parser specification — author credit and conflicting source references",
+      "kind": "source_attribution",
+      "origin": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/dec-source-attribution.txt",
+        "sha256": "e23525f1fab615e99399ebd150ebc4c793b94b77f8d16993071c2a42bd1a3f99",
+        "bytes": 653,
+        "url": "https://vt100.net/emu/dec_ansi_parser",
+        "extracted_from": {
+          "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/dec-ansi-parser.xhtml",
+          "sha256": "72db5905ebd81bb4f3da420db66db390bfa6693704bc5e24aec74290d2ce691d",
+          "bytes": 90287,
+          "url": "https://vt100.net/emu/dec_ansi_parser",
+          "retrieved_at_utc": "2026-10-14T17:00:55.705714+00:00"
+        }
+      },
+      "notice_byte_offset": 43862,
+      "notice_bytes": 653,
+      "mapping": "Source mapping: x/ansi v0.4.5 parser/transition_table.go links this specification; Phase7 src/tui/style.rs derives parser transitions from that pinned x/ansi source.\nPinned x/ansi source bytes match the public tag; path history begins with the 2024-05-08 move commit 1af817ff5ef91ba5321c5e5ffa1f2632df6e8f32 and four subsequent transition fixes through 2024-08-05.\nThe retrieved specification has visible author copyright, BY-NC-SA 3.0 SVG metadata, and a BY 4.0 statement only inside an HTML comment.\nThe two linked license texts follow as source-reference preservation; these inconsistent declarations do not establish which governed the specification when x/ansi derived its transitions. x/ansi’s own complete MIT notice remains in section 3."
+    },
+    {
+      "notice_section": 24,
+      "title": "DEC page reference — CC BY 4.0 legal code (commented footer reference)",
+      "kind": "license",
+      "origin": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/ccby4-legalcode.txt",
+        "sha256": "9ba9550ad48438d0836ddab3da480b3b69ffa0aac7b7878b5a0039e7ab429411",
+        "bytes": 18657,
+        "url": "https://creativecommons.org/licenses/by/4.0/legalcode.txt",
+        "retrieved_at_utc": "2026-10-14T17:02:08.827734+00:00"
+      },
+      "notice_byte_offset": 45184,
+      "notice_bytes": 18657,
+      "mapping": "Referenced by the DEC page HTML comment described in section 23. Full text from the named Creative Commons 4.0 legal-code endpoint.\nRepository mapping: linked specification provenance for src/tui/style.rs; effective historical applicability remains unresolved. This is not a replacement for x/ansi’s MIT notice."
+    },
+    {
+      "notice_section": 25,
+      "title": "DEC diagram metadata reference — CC BY-NC-SA 3.0 legal code",
+      "kind": "license",
+      "origin": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/cc-by-nc-sa3-legalcode.txt",
+        "sha256": "8812f83442fd0eca14eb0208988e190fdcbfebec58fa5459d3218edfdfdc5a32",
+        "bytes": 22306,
+        "url": "https://creativecommons.org/licenses/by-nc-sa/3.0/legalcode.txt",
+        "retrieved_at_utc": "2026-10-14T17:02:56.901973+00:00"
+      },
+      "notice_byte_offset": 64497,
+      "notice_bytes": 22306,
+      "mapping": "Referenced by the DEC page embedded SVG metadata described in section 23. Full text from the named Creative Commons 3.0 legal-code endpoint.\nRepository mapping: linked specification provenance for src/tui/style.rs; effective historical applicability remains unresolved. This is not a replacement for x/ansi’s MIT notice."
+    }
+  ],
+  "primary_read_evidence": [
+    {
+      "requested_url": "https://creativecommons.org/licenses/by-nc-sa/3.0/legalcode.txt",
+      "retrieved_at_utc": "2026-10-14T17:02:56.901973+00:00",
+      "status": 200,
+      "final_url": "https://creativecommons.org/licenses/by-nc-sa/3.0/legalcode.txt",
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 22306,
+      "sha256": "8812f83442fd0eca14eb0208988e190fdcbfebec58fa5459d3218edfdfdc5a32",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/cc-by-nc-sa3-legalcode.txt",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/cc-by-nc-sa3-legalcode.txt.metadata.json",
+        "sha256": "0003fc06b8082bdf69c337d4c7a17b04300bb95cce46c64a0f0c9f3a41a8671f",
+        "bytes": 483
+      }
+    },
+    {
+      "requested_url": "https://creativecommons.org/licenses/by/4.0/legalcode.txt",
+      "retrieved_at_utc": "2026-10-14T17:02:08.827734+00:00",
+      "status": 200,
+      "final_url": "https://creativecommons.org/licenses/by/4.0/legalcode.txt",
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 18657,
+      "sha256": "9ba9550ad48438d0836ddab3da480b3b69ffa0aac7b7878b5a0039e7ab429411",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/ccby4-legalcode.txt",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/ccby4-legalcode.txt.metadata.json",
+        "sha256": "03b2509a15e67bb621d02b2d4e0a416e0725684301666da776730eeb05ee657e",
+        "bytes": 464
+      }
+    },
+    {
+      "requested_url": "https://api.github.com/repos/lucasb-eyer/go-colorful/commits?path=hsluv.go&sha=v1.2.0&per_page=100",
+      "retrieved_at_utc": "2026-10-14T17:00:55.530570+00:00",
+      "status": 200,
+      "final_url": "https://api.github.com/repos/lucasb-eyer/go-colorful/commits?path=hsluv.go&sha=v1.2.0&per_page=100",
+      "content_type": "application/json; charset=utf-8",
+      "bytes": 4061,
+      "sha256": "c1595ef52ac1f7c095d9bcbc7d1f5df389a34bc757a7b59839ecea22435faf7f",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/colorful-hsluv-history.json",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/colorful-hsluv-history.json.metadata.json",
+        "sha256": "927241b87c055f050a86797bb7b2078c2aca0fcc7657e3b6959e67197ed667bd",
+        "bytes": 559
+      }
+    },
+    {
+      "requested_url": "https://api.github.com/repos/lucasb-eyer/go-colorful/commits/4380d764288e7022c51d648eb7e37dc1804e2300",
+      "retrieved_at_utc": "2026-10-14T17:01:21.309356+00:00",
+      "status": 200,
+      "final_url": "https://api.github.com/repos/lucasb-eyer/go-colorful/commits/4380d764288e7022c51d648eb7e37dc1804e2300",
+      "content_type": "application/json; charset=utf-8",
+      "bytes": 41536,
+      "sha256": "e3f1be7e4223fd5b308bfc6f117eba3d0f7663d4cb562b8dfa56b00bc31208da",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/colorful-hsluv-introduction.json",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/colorful-hsluv-introduction.json.metadata.json",
+        "sha256": "a38ff09e2d19e99a4e5bc0f2489890b3dac0333cc157e17857246b1e35aea719",
+        "bytes": 571
+      }
+    },
+    {
+      "requested_url": "https://raw.githubusercontent.com/lucasb-eyer/go-colorful/4380d764288e7022c51d648eb7e37dc1804e2300/hsluv.go",
+      "retrieved_at_utc": "2026-10-14T17:02:56.582489+00:00",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/lucasb-eyer/go-colorful/4380d764288e7022c51d648eb7e37dc1804e2300/hsluv.go",
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 6167,
+      "sha256": "c4ebf971de76f56b1e1c1417d9c5cfe1633990b58ff1b5c05d66c4148a87fa0b",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/colorful-introduction-hsluv.go",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/colorful-introduction-hsluv.go.metadata.json",
+        "sha256": "6c7debf2d5b88f9c81d183daca50e9032496cd69f42b0efaea7acacd1c6755d0",
+        "bytes": 574
+      }
+    },
+    {
+      "requested_url": "https://api.github.com/repos/lucasb-eyer/go-colorful/pulls/51",
+      "retrieved_at_utc": "2026-10-14T17:02:08.529971+00:00",
+      "status": 200,
+      "final_url": "https://api.github.com/repos/lucasb-eyer/go-colorful/pulls/51",
+      "content_type": "application/json; charset=utf-8",
+      "bytes": 12515,
+      "sha256": "beca2ab83197456742bf8866ed3995c49af0c072189951f3ec34e5dee673237d",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/colorful-pr51.json",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/colorful-pr51.json.metadata.json",
+        "sha256": "2ef37026b34ae9a87215d6cc0afe92038b7ea5a95eff538ec12bcc7087a17e6e",
+        "bytes": 477
+      }
+    },
+    {
+      "requested_url": "https://raw.githubusercontent.com/lucasb-eyer/go-colorful/v1.2.0/hsluv.go",
+      "retrieved_at_utc": "2026-10-14T17:00:55.530007+00:00",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/lucasb-eyer/go-colorful/v1.2.0/hsluv.go",
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 6167,
+      "sha256": "c4ebf971de76f56b1e1c1417d9c5cfe1633990b58ff1b5c05d66c4148a87fa0b",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/colorful-v1.2.0-hsluv.go",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/colorful-v1.2.0-hsluv.go.metadata.json",
+        "sha256": "49321f72cd442cbdef61ca76b56940aeb983fd6eb01c3d86d4292ce93fbcbb65",
+        "bytes": 500
+      }
+    },
+    {
+      "requested_url": "https://vt100.net/emu/dec_ansi_parser",
+      "retrieved_at_utc": "2026-10-14T17:00:55.705714+00:00",
+      "status": 200,
+      "final_url": "https://vt100.net/emu/dec_ansi_parser",
+      "content_type": "application/xhtml+xml",
+      "bytes": 90287,
+      "sha256": "72db5905ebd81bb4f3da420db66db390bfa6693704bc5e24aec74290d2ce691d",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/dec-ansi-parser.xhtml",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/dec-ansi-parser.xhtml.metadata.json",
+        "sha256": "c316b7605353e1e7dbeeb38249218946d1115b00ed1d721f6aa9c3ad5751497f",
+        "bytes": 422
+      }
+    },
+    {
+      "requested_url": "https://raw.githubusercontent.com/hsluv/hsluv-go/master/LICENSE",
+      "retrieved_at_utc": "2026-10-14T17:00:55.531032+00:00",
+      "error": "HTTP Error 404: Not Found",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/hsluv-go-license-head.txt.metadata.json",
+        "sha256": "482998737b96761f68c655c3c9d14e7d2494bbddec6de2f3db2d3428252f6212",
+        "bytes": 187
+      }
+    },
+    {
+      "requested_url": "https://api.github.com/repos/hsluv/hsluv-go/commits?path=LICENSE&per_page=100",
+      "retrieved_at_utc": "2026-10-14T17:00:55.531445+00:00",
+      "status": 200,
+      "final_url": "https://api.github.com/repos/hsluv/hsluv-go/commits?path=LICENSE&per_page=100",
+      "content_type": "application/json; charset=utf-8",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/hsluv-go-license-history.json",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/hsluv-go-license-history.json.metadata.json",
+        "sha256": "e90f94d46099ee50a089a208d4a26e8fd6e2f21c4b5601daed8999198cc57fcd",
+        "bytes": 516
+      }
+    },
+    {
+      "requested_url": "https://api.github.com/repos/hsluv/hsluv-go/commits?path=LICENSE.txt&per_page=100",
+      "retrieved_at_utc": "2026-10-14T17:02:08.528551+00:00",
+      "status": 200,
+      "final_url": "https://api.github.com/repos/hsluv/hsluv-go/commits?path=LICENSE.txt&per_page=100",
+      "content_type": "application/json; charset=utf-8",
+      "bytes": 2995,
+      "sha256": "5226398f82e10bf74a60cd1e38c7bef9cf8c977296fa6e30ede9a18e34ae3ebb",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/hsluv-license-history.txt.json",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/hsluv-license-history.txt.json.metadata.json",
+        "sha256": "dbeba9335432efff39f37aa8fe3c06354a17cef95d0760a0c480687ffbafcc00",
+        "bytes": 528
+      }
+    },
+    {
+      "requested_url": "https://raw.githubusercontent.com/hsluv/hsluv-go/34f81136a322719b960c333f4767e9764de6328d/LICENSE.txt",
+      "retrieved_at_utc": "2026-10-14T17:02:56.581321+00:00",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/hsluv/hsluv-go/34f81136a322719b960c333f4767e9764de6328d/LICENSE.txt",
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 1059,
+      "sha256": "092cd62d642081a92e81c12da3ad7659e18b38fd1ac7e273d5fcec265d192f3b",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/hsluv-license-introduction-LICENSE.txt",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/hsluv-license-introduction-LICENSE.txt.metadata.json",
+        "sha256": "06d7ddda77ddf8bc7b5a1bde14484fd1dd05560401109d77fd11f42227eb954a",
+        "bytes": 570
+      }
+    },
+    {
+      "requested_url": "https://raw.githubusercontent.com/hsluv/hsluv-go/a29f6990a3be79fefb4470f2a0b9a4d076949577/LICENSE.txt",
+      "retrieved_at_utc": "2026-10-14T17:02:56.580802+00:00",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/hsluv/hsluv-go/a29f6990a3be79fefb4470f2a0b9a4d076949577/LICENSE.txt",
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 1059,
+      "sha256": "092cd62d642081a92e81c12da3ad7659e18b38fd1ac7e273d5fcec265d192f3b",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/hsluv-pre2021-LICENSE.txt",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/hsluv-pre2021-LICENSE.txt.metadata.json",
+        "sha256": "c3b76347f40e065133ddac4d8f04f6d7802f1b7007fc954e21a008de94974d65",
+        "bytes": 557
+      }
+    },
+    {
+      "requested_url": "https://api.github.com/repos/hsluv/hsluv-go/commits/a29f6990a3be79fefb4470f2a0b9a4d076949577",
+      "retrieved_at_utc": "2026-10-14T17:02:56.581955+00:00",
+      "status": 200,
+      "final_url": "https://api.github.com/repos/hsluv/hsluv-go/commits/a29f6990a3be79fefb4470f2a0b9a4d076949577",
+      "content_type": "application/json; charset=utf-8",
+      "bytes": 6591,
+      "sha256": "957532b584ef43ca2af6730b0cad56de1f040f9d4d2c3da7956e3269bd54666d",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/hsluv-pre2021-commit.json",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/hsluv-pre2021-commit.json.metadata.json",
+        "sha256": "af4f6a6d41765b9f37d35b109c5baf0108e8efb21e7b503eb04b159e70c20176",
+        "bytes": 545
+      }
+    },
+    {
+      "requested_url": "https://raw.githubusercontent.com/hsluv/hsluv-go/a29f6990a3be79fefb4470f2a0b9a4d076949577/hsluv.go",
+      "retrieved_at_utc": "2026-10-14T17:02:56.580236+00:00",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/hsluv/hsluv-go/a29f6990a3be79fefb4470f2a0b9a4d076949577/hsluv.go",
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 8143,
+      "sha256": "6cf5652b578969ea98c303fc237f3a58efb85fea53105e9240d55dfe68c386c0",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/hsluv-pre2021-hsluv.go",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/hsluv-pre2021-hsluv.go.metadata.json",
+        "sha256": "71283c889de1fbab4f40896366fffe8f71d51a95ee81d231f3011ccaa2cf995c",
+        "bytes": 548
+      }
+    },
+    {
+      "requested_url": "https://api.github.com/repos/hsluv/hsluv-go",
+      "retrieved_at_utc": "2026-10-14T17:01:21.308241+00:00",
+      "status": 200,
+      "final_url": "https://api.github.com/repos/hsluv/hsluv-go",
+      "content_type": "application/json; charset=utf-8",
+      "bytes": 5959,
+      "sha256": "f97f13ea2ba2dc3ba253c2e5c78e0c3068d0c4364ee0c8454882c027a502d047",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/hsluv-repo.json",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/hsluv-repo.json.metadata.json",
+        "sha256": "cd2f8ef5cf2f977045d7086ce047df64b55d0bb2f4bd63c5b4c246b2e5dfeda2",
+        "bytes": 437
+      }
+    },
+    {
+      "requested_url": "https://api.github.com/repos/hsluv/hsluv-go/contents/",
+      "retrieved_at_utc": "2026-10-14T17:01:21.309044+00:00",
+      "status": 200,
+      "final_url": "https://api.github.com/repos/hsluv/hsluv-go/contents/",
+      "content_type": "application/json; charset=utf-8",
+      "bytes": 5026,
+      "sha256": "8805dbdda8e4494670383c782d511feca287ed22c6e4f01258b9e511deb0742d",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/hsluv-root.json",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/hsluv-root.json.metadata.json",
+        "sha256": "382c2addb3b6983e09a5a068015d4d67a491f746240374b4bd275073dff5550a",
+        "bytes": 457
+      }
+    },
+    {
+      "requested_url": "https://api.github.com/repos/hsluv/hsluv-go/commits?path=hsluv.go&until=2021-01-27T14%3A45%3A10Z&per_page=100",
+      "retrieved_at_utc": "2026-10-14T17:02:08.529408+00:00",
+      "status": 200,
+      "final_url": "https://api.github.com/repos/hsluv/hsluv-go/commits?path=hsluv.go&until=2021-01-27T14%3A45%3A10Z&per_page=100",
+      "content_type": "application/json; charset=utf-8",
+      "bytes": 4344,
+      "sha256": "59a0c79d43e8a54cd383faa3058121077ae7499a738718092c72db6b6271f4d4",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/hsluv-source-history-pre2021.json",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/hsluv-source-history-pre2021.json.metadata.json",
+        "sha256": "054085d07d6a3a0de6fc0249ff5dcfaa638d09029eb20ae19b0e3fa73cb4e24c",
+        "bytes": 587
+      }
+    },
+    {
+      "requested_url": "https://www.unicode.org/Public/15.0.0/ucd/ReadMe.txt",
+      "retrieved_at_utc": "2026-10-14T17:00:55.533021+00:00",
+      "status": 200,
+      "final_url": "https://www.unicode.org/Public/15.0.0/ucd/ReadMe.txt",
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 635,
+      "sha256": "53672c0d0b5185e3cf04c8e970d544c3af81ae7c8eeba0b9cf6d355aa954ae1f",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/ucd-15.0.0-ReadMe.txt",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/ucd-15.0.0-ReadMe.txt.metadata.json",
+        "sha256": "e2766568ec643188a3a6f1e75595b8de44f41d02179f4ed41ccd3b67adfbf1f2",
+        "bytes": 454
+      }
+    },
+    {
+      "requested_url": "https://www.unicode.org/Public/zipped/15.0.0/UCD.zip",
+      "retrieved_at_utc": "2026-10-14T17:00:55.625686+00:00",
+      "status": 200,
+      "final_url": "https://www.unicode.org/Public/zipped/15.0.0/UCD.zip",
+      "content_type": "application/zip",
+      "bytes": 7059105,
+      "sha256": "5fbde400f3e687d25cc9b0a8d30d7619e76cb2f4c3e85ba9df8ec1312cb6718c",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/ucd-15.0.0.zip",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/ucd-15.0.0.zip.metadata.json",
+        "sha256": "2a959920e1503917355456fce21dd4e2ddd3b3bfac0c907be3e5490ecefb3584",
+        "bytes": 441
+      }
+    },
+    {
+      "requested_url": "https://www.unicode.org/Public/15.1.0/ucd/ReadMe.txt",
+      "retrieved_at_utc": "2026-10-14T17:00:55.533536+00:00",
+      "status": 200,
+      "final_url": "https://www.unicode.org/Public/15.1.0/ucd/ReadMe.txt",
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 631,
+      "sha256": "0d2da782ead4e85630d510f50808355e8c3355e670841d257dd1e6fbd40db9fa",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/ucd-15.1.0-ReadMe.txt",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/ucd-15.1.0-ReadMe.txt.metadata.json",
+        "sha256": "bf905456f7ccec856fcbe9c44367abffdd87d6ade46576c4128fce76a458bb52",
+        "bytes": 454
+      }
+    },
+    {
+      "requested_url": "https://www.unicode.org/Public/zipped/15.1.0/UCD.zip",
+      "retrieved_at_utc": "2026-10-14T17:00:55.626208+00:00",
+      "status": 200,
+      "final_url": "https://www.unicode.org/Public/zipped/15.1.0/UCD.zip",
+      "content_type": "application/zip",
+      "bytes": 8248819,
+      "sha256": "cb1c663d053926500cd501229736045752713a066bd75802098598b7a7056177",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/ucd-15.1.0.zip",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/ucd-15.1.0.zip.metadata.json",
+        "sha256": "2034a37b48ca4dfbd1f4ceed2cb5e9f736b839568ef2b9406a6a42bdb8b13037",
+        "bytes": 441
+      }
+    },
+    {
+      "requested_url": "https://www.unicode.org/Public/15.0.0/",
+      "retrieved_at_utc": "2026-10-14T17:02:08.770917+00:00",
+      "status": 200,
+      "final_url": "https://www.unicode.org/Public/15.0.0/",
+      "content_type": "text/html;charset=UTF-8",
+      "bytes": 2652,
+      "sha256": "3204784de2b334af56c430c13de49c6673c31adc636d254911c3dc3d33ae0838",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-15.0-root.html",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-15.0-root.html.metadata.json",
+        "sha256": "741010fff2bf3ae9747bdc4aa963269150001c55a651c25e1ccf39c472e0f95e",
+        "bytes": 426
+      }
+    },
+    {
+      "requested_url": "https://www.unicode.org/Public/15.1.0/",
+      "retrieved_at_utc": "2026-10-14T17:02:08.816983+00:00",
+      "status": 200,
+      "final_url": "https://www.unicode.org/Public/15.1.0/",
+      "content_type": "text/html;charset=UTF-8",
+      "bytes": 1821,
+      "sha256": "a0cdc5adf4cd8c330a5654391079680cc166f722e2ae84a34957f91c3d91e135",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-15.1-root.html",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-15.1-root.html.metadata.json",
+        "sha256": "95d697bb5ece616297018d9897c5b935afbadefe43a473499268b41bb86c5a6e",
+        "bytes": 426
+      }
+    },
+    {
+      "requested_url": "https://www.unicode.org/copyright.html",
+      "retrieved_at_utc": "2026-10-14T17:01:21.309942+00:00",
+      "status": 200,
+      "final_url": "https://www.unicode.org/copyright.html",
+      "content_type": "text/html; charset=UTF-8",
+      "bytes": 17115,
+      "sha256": "9f83fb0a046180c87d22c2678e79300475125611ac8dfc2da303db6c6b347251",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-copyright.html",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-copyright.html.metadata.json",
+        "sha256": "ea94dafbd51623d2c2269f38c75de17c4fb0b4ebd6f30290bf5bf49b9866d6c7",
+        "bytes": 428
+      }
+    },
+    {
+      "requested_url": "https://www.unicode.org/license.txt",
+      "retrieved_at_utc": "2026-10-14T17:01:21.310402+00:00",
+      "status": 200,
+      "final_url": "https://www.unicode.org/license.txt",
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 1995,
+      "sha256": "e7a93b009565cfce55919a381437ac4db883e9da2126fa28b91d12732bc53d96",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-license.txt",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-license.txt.metadata.json",
+        "sha256": "19e9e6330d7002848f3857f09f65e5e503527a243d87eb8c8823254044605390",
+        "bytes": 419
+      }
+    },
+    {
+      "requested_url": "https://raw.githubusercontent.com/unicode-org/unicodetools/f6478e318a43632989bda65b8e0134088efd9c5f/LICENSE",
+      "retrieved_at_utc": "2026-10-14T17:02:56.582893+00:00",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/unicode-org/unicodetools/f6478e318a43632989bda65b8e0134088efd9c5f/LICENSE",
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 2275,
+      "sha256": "80b381b2f157c31e7f3222bdb932bda9fbd7b335e888beec56820fb2993363de",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.0-LICENSE",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.0-LICENSE.metadata.json",
+        "sha256": "694facd7f7258ea7229728eaa68ec5d4af064c1ec9ff63c138a7fd2c772d77e8",
+        "bytes": 570
+      }
+    },
+    {
+      "requested_url": "https://api.github.com/repos/unicode-org/unicodetools/commits/f6478e318a43632989bda65b8e0134088efd9c5f",
+      "retrieved_at_utc": "2026-10-14T17:03:58.175924+00:00",
+      "status": 200,
+      "final_url": "https://api.github.com/repos/unicode-org/unicodetools/commits/f6478e318a43632989bda65b8e0134088efd9c5f",
+      "content_type": "application/json; charset=utf-8",
+      "bytes": 146020,
+      "sha256": "a582f90786bdb0a22ef4257042442f1511756cfdbf7eafc85c3a1fbc0e2b8de3",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.0-commit.json",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.0-commit.json.metadata.json",
+        "sha256": "4a57c70fee8f6e4e27a8ca46972b5e6a1f37599fd69e05bbe185af2b2e432817",
+        "bytes": 572
+      }
+    },
+    {
+      "requested_url": "https://raw.githubusercontent.com/unicode-org/unicodetools/f6478e318a43632989bda65b8e0134088efd9c5f/unicodetools/data/ucd/dev/CaseFolding.txt",
+      "retrieved_at_utc": "2026-10-14T17:03:57.914012+00:00",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/unicode-org/unicodetools/f6478e318a43632989bda65b8e0134088efd9c5f/unicodetools/data/ucd/dev/CaseFolding.txt",
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 84690,
+      "sha256": "cdd49e55eae3bbf1f0a3f6580c974a0263cb86a6a08daa10fbf705b4808a56f7",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.0-dev-CaseFolding.txt",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.0-dev-CaseFolding.txt.metadata.json",
+        "sha256": "aee56c619202c7425d1759611d0713c33ce881313acb75234f1466b2a34b2456",
+        "bytes": 651
+      }
+    },
+    {
+      "requested_url": "https://raw.githubusercontent.com/unicode-org/unicodetools/f6478e318a43632989bda65b8e0134088efd9c5f/unicodetools/data/ucd/dev/EastAsianWidth.txt",
+      "retrieved_at_utc": "2026-10-14T17:03:57.913699+00:00",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/unicode-org/unicodetools/f6478e318a43632989bda65b8e0134088efd9c5f/unicodetools/data/ucd/dev/EastAsianWidth.txt",
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 186337,
+      "sha256": "743e7bc435c04ab1a8459710b1c3cad56eedced5b806b4659b6e69b85d0adf2a",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.0-dev-EastAsianWidth.txt",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.0-dev-EastAsianWidth.txt.metadata.json",
+        "sha256": "75c9e2973faf9e56eb88b83a4f8fecf7b047f316b1c3b94a0db3a22905686011",
+        "bytes": 661
+      }
+    },
+    {
+      "requested_url": "https://raw.githubusercontent.com/unicode-org/unicodetools/f6478e318a43632989bda65b8e0134088efd9c5f/unicodetools/data/ucd/dev/ReadMe.txt",
+      "retrieved_at_utc": "2026-10-14T17:03:57.912356+00:00",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/unicode-org/unicodetools/f6478e318a43632989bda65b8e0134088efd9c5f/unicodetools/data/ucd/dev/ReadMe.txt",
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 635,
+      "sha256": "53672c0d0b5185e3cf04c8e970d544c3af81ae7c8eeba0b9cf6d355aa954ae1f",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.0-dev-ReadMe.txt",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.0-dev-ReadMe.txt.metadata.json",
+        "sha256": "2ec325d746157e36ab1c982fe9fa573f7bdc25584a18e314b73a5c6cfd0497a6",
+        "bytes": 634
+      }
+    },
+    {
+      "requested_url": "https://raw.githubusercontent.com/unicode-org/unicodetools/f6478e318a43632989bda65b8e0134088efd9c5f/unicodetools/data/ucd/dev/UnicodeData.txt",
+      "retrieved_at_utc": "2026-10-14T17:03:57.914328+00:00",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/unicode-org/unicodetools/f6478e318a43632989bda65b8e0134088efd9c5f/unicodetools/data/ucd/dev/UnicodeData.txt",
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 1913704,
+      "sha256": "806e9aed65037197f1ec85e12be6e8cd870fc5608b4de0fffd990f689f376a73",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.0-dev-UnicodeData.txt",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.0-dev-UnicodeData.txt.metadata.json",
+        "sha256": "8c146cd094e40467613592b5a3733ca201cb2c47b51f1d713b2ded29c2fa5559",
+        "bytes": 653
+      }
+    },
+    {
+      "requested_url": "https://raw.githubusercontent.com/unicode-org/unicodetools/f6478e318a43632989bda65b8e0134088efd9c5f/unicodetools/data/ucd/dev/auxiliary/GraphemeBreakProperty.txt",
+      "retrieved_at_utc": "2026-10-14T17:03:57.913165+00:00",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/unicode-org/unicodetools/f6478e318a43632989bda65b8e0134088efd9c5f/unicodetools/data/ucd/dev/auxiliary/GraphemeBreakProperty.txt",
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 96863,
+      "sha256": "5a0f8748575432f8ff95e1dd5bfaa27bda1a844809e17d6939ee912bba6568a1",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.0-dev-auxiliary-GraphemeBreakProperty.txt",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.0-dev-auxiliary-GraphemeBreakProperty.txt.metadata.json",
+        "sha256": "5099f368e37a9c587f0a53071c8a0d1a0ac73841639ce2e084561f8b753b729b",
+        "bytes": 711
+      }
+    },
+    {
+      "requested_url": "https://raw.githubusercontent.com/unicode-org/unicodetools/f6478e318a43632989bda65b8e0134088efd9c5f/unicodetools/data/ucd/dev/emoji/emoji-data.txt",
+      "retrieved_at_utc": "2026-10-14T17:03:57.913468+00:00",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/unicode-org/unicodetools/f6478e318a43632989bda65b8e0134088efd9c5f/unicodetools/data/ucd/dev/emoji/emoji-data.txt",
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 111505,
+      "sha256": "29071dba22c72c27783a73016afb8ffaeb025866740791f9c2d0b55cc45a3470",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.0-dev-emoji-emoji-data.txt",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.0-dev-emoji-emoji-data.txt.metadata.json",
+        "sha256": "f041780fc3e538f69507ba32edbd085a246bf1ecdc5ba403746fbd4d201594bf",
+        "bytes": 667
+      }
+    },
+    {
+      "requested_url": "https://api.github.com/repos/unicode-org/unicodetools/git/trees/f6478e318a43632989bda65b8e0134088efd9c5f?recursive=1",
+      "retrieved_at_utc": "2026-10-14T17:02:56.755109+00:00",
+      "status": 200,
+      "final_url": "https://api.github.com/repos/unicode-org/unicodetools/git/trees/f6478e318a43632989bda65b8e0134088efd9c5f?recursive=1",
+      "content_type": "application/json; charset=utf-8",
+      "bytes": 2115133,
+      "sha256": "b627e0077ebe0770f4399626f496e44c0e4cb8d701f0ea89053426f779062fc7",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.0-tree.json",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.0-tree.json.metadata.json",
+        "sha256": "60ac031223e2bef79207574efde8a83a7d291c7b75050f085159861e69717a68",
+        "bytes": 599
+      }
+    },
+    {
+      "requested_url": "https://raw.githubusercontent.com/unicode-org/unicodetools/9595f090650e99e3e752b37a7a3866ac8a91999b/LICENSE",
+      "retrieved_at_utc": "2026-10-14T17:02:56.737381+00:00",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/unicode-org/unicodetools/9595f090650e99e3e752b37a7a3866ac8a91999b/LICENSE",
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 1995,
+      "sha256": "9ba0dc030e14ab692310b5395ea4f3a4921bcdbc1b9dbcebb1f81d83eb08f4e6",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.1-LICENSE",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.1-LICENSE.metadata.json",
+        "sha256": "99ec41ee3f16b2263768ac20ccd2e3d20af2249760d50a25a39e5e667a6f9dbb",
+        "bytes": 570
+      }
+    },
+    {
+      "requested_url": "https://api.github.com/repos/unicode-org/unicodetools/commits/9595f090650e99e3e752b37a7a3866ac8a91999b",
+      "retrieved_at_utc": "2026-10-14T17:03:58.208593+00:00",
+      "status": 200,
+      "final_url": "https://api.github.com/repos/unicode-org/unicodetools/commits/9595f090650e99e3e752b37a7a3866ac8a91999b",
+      "content_type": "application/json; charset=utf-8",
+      "bytes": 4770,
+      "sha256": "a465a7ef1050785eff236466490c9d67d1088577ae39112e322e921fc92c999e",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.1-commit.json",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.1-commit.json.metadata.json",
+        "sha256": "fb94fc1659b4b4186e34567c192a8ade00993326351cec48d18ba61aa08c580a",
+        "bytes": 570
+      }
+    },
+    {
+      "requested_url": "https://raw.githubusercontent.com/unicode-org/unicodetools/9595f090650e99e3e752b37a7a3866ac8a91999b/unicodetools/data/ucd/dev/EastAsianWidth.txt",
+      "retrieved_at_utc": "2026-10-14T17:03:58.173519+00:00",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/unicode-org/unicodetools/9595f090650e99e3e752b37a7a3866ac8a91999b/unicodetools/data/ucd/dev/EastAsianWidth.txt",
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 194188,
+      "sha256": "b08191401dc125f4e84ef262a95754faae6b737c79538e17ea9664a63434e94e",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.1-dev-EastAsianWidth.txt",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.1-dev-EastAsianWidth.txt.metadata.json",
+        "sha256": "fe580c18bab21e9ef8ff600d4c91af8e3de8b0c0cfaf7e74636594e6572ffbce",
+        "bytes": 661
+      }
+    },
+    {
+      "requested_url": "https://raw.githubusercontent.com/unicode-org/unicodetools/9595f090650e99e3e752b37a7a3866ac8a91999b/unicodetools/data/ucd/dev/ReadMe.txt",
+      "retrieved_at_utc": "2026-10-14T17:03:58.073688+00:00",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/unicode-org/unicodetools/9595f090650e99e3e752b37a7a3866ac8a91999b/unicodetools/data/ucd/dev/ReadMe.txt",
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 641,
+      "sha256": "5f1b70aeecdc005a09350bec1d6f66c80d9cd7f6bdaf4620fc456b40e8f0cd11",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.1-dev-ReadMe.txt",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.1-dev-ReadMe.txt.metadata.json",
+        "sha256": "c2cd345a6ed8567114f5ffa3fe28a05c34ec0f68faea56507fd679503e3f9264",
+        "bytes": 634
+      }
+    },
+    {
+      "requested_url": "https://raw.githubusercontent.com/unicode-org/unicodetools/9595f090650e99e3e752b37a7a3866ac8a91999b/unicodetools/data/ucd/dev/emoji/emoji-data.txt",
+      "retrieved_at_utc": "2026-10-14T17:03:58.120226+00:00",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/unicode-org/unicodetools/9595f090650e99e3e752b37a7a3866ac8a91999b/unicodetools/data/ucd/dev/emoji/emoji-data.txt",
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 111505,
+      "sha256": "d7aef489c8fe4c14f09ea5695200277c6b93ac82ac60845cdd2161b0d6835cc1",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.1-dev-emoji-emoji-data.txt",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.1-dev-emoji-emoji-data.txt.metadata.json",
+        "sha256": "28536889b828a422a399d9ae8358facc5a4e77352f9ab39797b446cf9bf76a62",
+        "bytes": 667
+      }
+    },
+    {
+      "requested_url": "https://api.github.com/repos/unicode-org/unicodetools/git/trees/9595f090650e99e3e752b37a7a3866ac8a91999b?recursive=1",
+      "retrieved_at_utc": "2026-10-14T17:02:56.769590+00:00",
+      "status": 200,
+      "final_url": "https://api.github.com/repos/unicode-org/unicodetools/git/trees/9595f090650e99e3e752b37a7a3866ac8a91999b?recursive=1",
+      "content_type": "application/json; charset=utf-8",
+      "bytes": 2171012,
+      "sha256": "a4612d7c2aeb73c682c965511e42cb034018ef25c599444eaa02ae1bc2ebfdac",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.1-tree.json",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.1-tree.json.metadata.json",
+        "sha256": "fd7cb177183d2dbfba9bb7b137b223a399450e49c6a617d3d47f117f08beec8d",
+        "bytes": 599
+      }
+    },
+    {
+      "requested_url": "https://api.github.com/repos/unicode-org/unicodetools/commits?path=LICENSE&until=2023-09-12T00%3A00%3A00Z&per_page=100",
+      "retrieved_at_utc": "2026-10-14T17:02:08.535002+00:00",
+      "status": 200,
+      "final_url": "https://api.github.com/repos/unicode-org/unicodetools/commits?path=LICENSE&until=2023-09-12T00%3A00%3A00Z&per_page=100",
+      "content_type": "application/json; charset=utf-8",
+      "bytes": 8532,
+      "sha256": "261a86b966216f6734d8009802ea51aaf67981fafca72dafee723c6a39d21e44",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-license-history.json",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-license-history.json.metadata.json",
+        "sha256": "2f6f851c6ae14bffde8d44a25b214f9f2106c45951ff929d3b0b5be891aa58df",
+        "bytes": 606
+      }
+    },
+    {
+      "requested_url": "https://api.github.com/repos/unicode-org/unicodetools/contents/",
+      "retrieved_at_utc": "2026-10-14T17:02:08.532968+00:00",
+      "status": 200,
+      "final_url": "https://api.github.com/repos/unicode-org/unicodetools/contents/",
+      "content_type": "application/json; charset=utf-8",
+      "bytes": 12378,
+      "sha256": "78f4422784920620b7e7edc981b22bef5fc394d3d5e011d0c8ea5f2d23be7551",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-root.json",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-root.json.metadata.json",
+        "sha256": "c803fe32e1349025b011462a1a3f4431c2f7d2b0a19b84e24f9adb6ef358d78e",
+        "bytes": 486
+      }
+    },
+    {
+      "requested_url": "https://api.github.com/repos/unicode-org/unicodetools/tags?per_page=100",
+      "retrieved_at_utc": "2026-10-14T17:02:08.531862+00:00",
+      "status": 200,
+      "final_url": "https://api.github.com/repos/unicode-org/unicodetools/tags?per_page=100",
+      "content_type": "application/json; charset=utf-8",
+      "bytes": 20189,
+      "sha256": "213790a799fa4411508598b4cb2562980c833a7872b6d82e2fc8b9a7c44c445b",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-tags.json",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-tags.json.metadata.json",
+        "sha256": "48305303410318fa46636a2cfab4c60b71d9c3143a073948272851b726c2b159",
+        "bytes": 502
+      }
+    },
+    {
+      "requested_url": "https://raw.githubusercontent.com/haberman/vtparse/master/README",
+      "retrieved_at_utc": "2026-10-14T17:03:58.270792+00:00",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/haberman/vtparse/master/README",
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 2091,
+      "sha256": "573d9861174d8c5d3971eb692564c854e08e2e269818c6b95ce4f1683ae830ef",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/vtparse-README",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/vtparse-README.metadata.json",
+        "sha256": "c91856ce3b32b8dd79b18519ff5bcef66eee600549e4bded3c4133cf10ab0e3d",
+        "bytes": 472
+      }
+    },
+    {
+      "requested_url": "https://api.github.com/repos/haberman/vtparse/commits?until=2024-05-08T19%3A06%3A37Z&per_page=1",
+      "retrieved_at_utc": "2026-10-14T17:03:58.405361+00:00",
+      "status": 200,
+      "final_url": "https://api.github.com/repos/haberman/vtparse/commits?until=2024-05-08T19%3A06%3A37Z&per_page=1",
+      "content_type": "application/json; charset=utf-8",
+      "bytes": 1450,
+      "sha256": "5e3730b824ca326e41ce882ed2429717b485000b566134a20b25ddb721fc8d73",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/vtparse-historical-head.json",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/vtparse-historical-head.json.metadata.json",
+        "sha256": "06a86bbf858d11dd3ca3743968df92f33a3ae3cbc7caaca52e7e70396c285860",
+        "bytes": 554
+      }
+    },
+    {
+      "requested_url": "https://raw.githubusercontent.com/haberman/vtparse/198ea4382f824dbb3f0e5b5553a9eb3290764694/README",
+      "retrieved_at_utc": "2026-10-14T17:05:09.196753+00:00",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/haberman/vtparse/198ea4382f824dbb3f0e5b5553a9eb3290764694/README",
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 2091,
+      "sha256": "573d9861174d8c5d3971eb692564c854e08e2e269818c6b95ce4f1683ae830ef",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/vtparse-pinned-README",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/vtparse-pinned-README.metadata.json",
+        "sha256": "9f82c331c34c435e608a0dcfe67fdda8468bd3a02e912c317c4f97f49ee4c01e",
+        "bytes": 547
+      }
+    },
+    {
+      "requested_url": "https://api.github.com/repos/haberman/vtparse/commits/198ea4382f824dbb3f0e5b5553a9eb3290764694",
+      "retrieved_at_utc": "2026-10-14T17:05:09.198092+00:00",
+      "status": 200,
+      "final_url": "https://api.github.com/repos/haberman/vtparse/commits/198ea4382f824dbb3f0e5b5553a9eb3290764694",
+      "content_type": "application/json; charset=utf-8",
+      "bytes": 2570,
+      "sha256": "ba29165b95a6f9b2a1f109c1467f5801964ca1ec8a383715cbe94de3e86de9c8",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/vtparse-pinned-commit.json",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/vtparse-pinned-commit.json.metadata.json",
+        "sha256": "b5faef28efb6da91f2272adac2d5933a6799534336dca4dab3ef8f484abf8a6a",
+        "bytes": 550
+      }
+    },
+    {
+      "requested_url": "https://raw.githubusercontent.com/haberman/vtparse/198ea4382f824dbb3f0e5b5553a9eb3290764694/vtparse_tables.rb",
+      "retrieved_at_utc": "2026-10-14T17:05:09.197534+00:00",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/haberman/vtparse/198ea4382f824dbb3f0e5b5553a9eb3290764694/vtparse_tables.rb",
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 7182,
+      "sha256": "fbc6433a6b9e4b0b8ecd9e67533002b36339b87cbdb658b3deab6a59749b007d",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/vtparse-pinned-tables.rb",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/vtparse-pinned-tables.rb.metadata.json",
+        "sha256": "889836b51a2e7a1ef23e57b7025f237d2c59e6dd4a4a39cd8165499731fae3e2",
+        "bytes": 572
+      }
+    },
+    {
+      "requested_url": "https://api.github.com/repos/haberman/vtparse/contents/",
+      "retrieved_at_utc": "2026-10-14T17:02:56.769943+00:00",
+      "status": 200,
+      "final_url": "https://api.github.com/repos/haberman/vtparse/contents/",
+      "content_type": "application/json; charset=utf-8",
+      "bytes": 6114,
+      "sha256": "32494004b080f60cc4334c942597541d82aac1c1145f12a6397004dcd90b026d",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/vtparse-root.json",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/vtparse-root.json.metadata.json",
+        "sha256": "40429e3723f3e730ba3790ed7c99a373c679789353e405447311b21780da0f97",
+        "bytes": 463
+      }
+    },
+    {
+      "requested_url": "https://api.github.com/repos/charmbracelet/x/commits/1af817ff5ef91ba5321c5e5ffa1f2632df6e8f32",
+      "retrieved_at_utc": "2026-10-14T17:02:08.828061+00:00",
+      "status": 200,
+      "final_url": "https://api.github.com/repos/charmbracelet/x/commits/1af817ff5ef91ba5321c5e5ffa1f2632df6e8f32",
+      "content_type": "application/json; charset=utf-8",
+      "bytes": 207045,
+      "sha256": "36f91da04ef89fce639c80a41978e32f1ce215618292fba404f50213745a9d31",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/x-ansi-move-commit.json",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/x-ansi-move-commit.json.metadata.json",
+        "sha256": "088bb2c5d7c9b0c347d1f7c5cbf2bfaf25dfd345d1732b6c186cdae502b97dee",
+        "bytes": 547
+      }
+    },
+    {
+      "requested_url": "https://raw.githubusercontent.com/charmbracelet/x/1af817ff5ef91ba5321c5e5ffa1f2632df6e8f32/ansi/parser/transition_table.go",
+      "retrieved_at_utc": "2026-10-14T17:03:58.443787+00:00",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/charmbracelet/x/1af817ff5ef91ba5321c5e5ffa1f2632df6e8f32/ansi/parser/transition_table.go",
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 12501,
+      "sha256": "c7dcb14588fffe4d54ad9b82b62187794172b95358d01afae534e134cfee2a97",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/x-ansi-move-transition.go",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/x-ansi-move-transition.go.metadata.json",
+        "sha256": "1b7fd1b528e8db3a917174c4f2072ddd6b08f926450fbcb53efb0c67c3ccd718",
+        "bytes": 600
+      }
+    },
+    {
+      "requested_url": "https://api.github.com/repos/charmbracelet/ansi/contents/?ref=main",
+      "retrieved_at_utc": "2026-10-14T17:02:56.778122+00:00",
+      "error": "HTTP Error 404: Not Found",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/x-ansi-pre-move-root.json.metadata.json",
+        "sha256": "4117fb341ada2f1e1a16b1c237ffdfed7308a0b82f41b24cfe891743410c3a98",
+        "bytes": 190
+      }
+    },
+    {
+      "requested_url": "https://api.github.com/repos/charmbracelet/x/commits?path=ansi/parser/transition_table.go&sha=ansi/v0.4.5&per_page=100",
+      "retrieved_at_utc": "2026-10-14T17:00:55.782792+00:00",
+      "status": 200,
+      "final_url": "https://api.github.com/repos/charmbracelet/x/commits?path=ansi/parser/transition_table.go&sha=ansi/v0.4.5&per_page=100",
+      "content_type": "application/json; charset=utf-8",
+      "bytes": 17531,
+      "sha256": "69f29591a632b5ca764b7b76ea1d2c89a6726a9233eca16585814906fb627c1c",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/x-ansi-transition-history.json",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/x-ansi-transition-history.json.metadata.json",
+        "sha256": "f32be377641ee40a926fde45c1664315b0a041b095fff4b3decd0298a1c8b818",
+        "bytes": 603
+      }
+    },
+    {
+      "requested_url": "https://raw.githubusercontent.com/charmbracelet/x/ansi/v0.4.5/ansi/parser/transition_table.go",
+      "retrieved_at_utc": "2026-10-14T17:00:55.846657+00:00",
+      "status": 200,
+      "final_url": "https://raw.githubusercontent.com/charmbracelet/x/ansi/v0.4.5/ansi/parser/transition_table.go",
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 12783,
+      "sha256": "99ad73e2c609dcdf7a4573f705fd2ef36692419dcf07dcba1b206761a133a9f2",
+      "raw_path": "/home/ajs/.cache/pb-phase7/attribution/upstream/x-ansi-v0.4.5-transition.go",
+      "metadata_file": {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/x-ansi-v0.4.5-transition.go.metadata.json",
+        "sha256": "e7d7f6605609d45940ae003b579a826e738636072652bb699f569ddf916f6fa0",
+        "bytes": 544
+      }
+    }
+  ],
+  "unicode_primary_provenance": {
+    "release_archives": [
+      {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/ucd-15.0.0.zip",
+        "sha256": "5fbde400f3e687d25cc9b0a8d30d7619e76cb2f4c3e85ba9df8ec1312cb6718c",
+        "bytes": 7059105,
+        "url": "https://www.unicode.org/Public/zipped/15.0.0/UCD.zip",
+        "retrieved_at_utc": "2026-10-14T17:00:55.625686+00:00"
+      },
+      {
+        "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/ucd-15.1.0.zip",
+        "sha256": "cb1c663d053926500cd501229736045752713a066bd75802098598b7a7056177",
+        "bytes": 8248819,
+        "url": "https://www.unicode.org/Public/zipped/15.1.0/UCD.zip",
+        "retrieved_at_utc": "2026-10-14T17:00:55.626208+00:00"
+      }
+    ],
+    "readme_matches_archive": true,
+    "archives_have_separate_license_file": false,
+    "data_file_comparisons": [
+      {
+        "version": "15.0.0",
+        "archive_member": "ReadMe.txt",
+        "sha256": "53672c0d0b5185e3cf04c8e970d544c3af81ae7c8eeba0b9cf6d355aa954ae1f",
+        "bytes": 635,
+        "tagged_repository_file": {
+          "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.0-dev-ReadMe.txt",
+          "sha256": "53672c0d0b5185e3cf04c8e970d544c3af81ae7c8eeba0b9cf6d355aa954ae1f",
+          "bytes": 635,
+          "url": "https://raw.githubusercontent.com/unicode-org/unicodetools/f6478e318a43632989bda65b8e0134088efd9c5f/unicodetools/data/ucd/dev/ReadMe.txt",
+          "retrieved_at_utc": "2026-10-14T17:03:57.912356+00:00"
+        },
+        "archive_equals_tagged_file": true,
+        "difference": null
+      },
+      {
+        "version": "15.0.0",
+        "archive_member": "auxiliary/GraphemeBreakProperty.txt",
+        "sha256": "5a0f8748575432f8ff95e1dd5bfaa27bda1a844809e17d6939ee912bba6568a1",
+        "bytes": 96863,
+        "tagged_repository_file": {
+          "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.0-dev-auxiliary-GraphemeBreakProperty.txt",
+          "sha256": "5a0f8748575432f8ff95e1dd5bfaa27bda1a844809e17d6939ee912bba6568a1",
+          "bytes": 96863,
+          "url": "https://raw.githubusercontent.com/unicode-org/unicodetools/f6478e318a43632989bda65b8e0134088efd9c5f/unicodetools/data/ucd/dev/auxiliary/GraphemeBreakProperty.txt",
+          "retrieved_at_utc": "2026-10-14T17:03:57.913165+00:00"
+        },
+        "archive_equals_tagged_file": true,
+        "difference": null
+      },
+      {
+        "version": "15.0.0",
+        "archive_member": "emoji/emoji-data.txt",
+        "sha256": "29071dba22c72c27783a73016afb8ffaeb025866740791f9c2d0b55cc45a3470",
+        "bytes": 111505,
+        "tagged_repository_file": {
+          "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.0-dev-emoji-emoji-data.txt",
+          "sha256": "29071dba22c72c27783a73016afb8ffaeb025866740791f9c2d0b55cc45a3470",
+          "bytes": 111505,
+          "url": "https://raw.githubusercontent.com/unicode-org/unicodetools/f6478e318a43632989bda65b8e0134088efd9c5f/unicodetools/data/ucd/dev/emoji/emoji-data.txt",
+          "retrieved_at_utc": "2026-10-14T17:03:57.913468+00:00"
+        },
+        "archive_equals_tagged_file": true,
+        "difference": null
+      },
+      {
+        "version": "15.0.0",
+        "archive_member": "EastAsianWidth.txt",
+        "sha256": "743e7bc435c04ab1a8459710b1c3cad56eedced5b806b4659b6e69b85d0adf2a",
+        "bytes": 186337,
+        "tagged_repository_file": {
+          "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.0-dev-EastAsianWidth.txt",
+          "sha256": "743e7bc435c04ab1a8459710b1c3cad56eedced5b806b4659b6e69b85d0adf2a",
+          "bytes": 186337,
+          "url": "https://raw.githubusercontent.com/unicode-org/unicodetools/f6478e318a43632989bda65b8e0134088efd9c5f/unicodetools/data/ucd/dev/EastAsianWidth.txt",
+          "retrieved_at_utc": "2026-10-14T17:03:57.913699+00:00"
+        },
+        "archive_equals_tagged_file": true,
+        "difference": null
+      },
+      {
+        "version": "15.0.0",
+        "archive_member": "CaseFolding.txt",
+        "sha256": "cdd49e55eae3bbf1f0a3f6580c974a0263cb86a6a08daa10fbf705b4808a56f7",
+        "bytes": 84690,
+        "tagged_repository_file": {
+          "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.0-dev-CaseFolding.txt",
+          "sha256": "cdd49e55eae3bbf1f0a3f6580c974a0263cb86a6a08daa10fbf705b4808a56f7",
+          "bytes": 84690,
+          "url": "https://raw.githubusercontent.com/unicode-org/unicodetools/f6478e318a43632989bda65b8e0134088efd9c5f/unicodetools/data/ucd/dev/CaseFolding.txt",
+          "retrieved_at_utc": "2026-10-14T17:03:57.914012+00:00"
+        },
+        "archive_equals_tagged_file": true,
+        "difference": null
+      },
+      {
+        "version": "15.0.0",
+        "archive_member": "UnicodeData.txt",
+        "sha256": "806e9aed65037197f1ec85e12be6e8cd870fc5608b4de0fffd990f689f376a73",
+        "bytes": 1913704,
+        "tagged_repository_file": {
+          "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.0-dev-UnicodeData.txt",
+          "sha256": "806e9aed65037197f1ec85e12be6e8cd870fc5608b4de0fffd990f689f376a73",
+          "bytes": 1913704,
+          "url": "https://raw.githubusercontent.com/unicode-org/unicodetools/f6478e318a43632989bda65b8e0134088efd9c5f/unicodetools/data/ucd/dev/UnicodeData.txt",
+          "retrieved_at_utc": "2026-10-14T17:03:57.914328+00:00"
+        },
+        "archive_equals_tagged_file": true,
+        "difference": null
+      },
+      {
+        "version": "15.1.0",
+        "archive_member": "ReadMe.txt",
+        "sha256": "0d2da782ead4e85630d510f50808355e8c3355e670841d257dd1e6fbd40db9fa",
+        "bytes": 631,
+        "tagged_repository_file": {
+          "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.1-dev-ReadMe.txt",
+          "sha256": "5f1b70aeecdc005a09350bec1d6f66c80d9cd7f6bdaf4620fc456b40e8f0cd11",
+          "bytes": 641,
+          "url": "https://raw.githubusercontent.com/unicode-org/unicodetools/9595f090650e99e3e752b37a7a3866ac8a91999b/unicodetools/data/ucd/dev/ReadMe.txt",
+          "retrieved_at_utc": "2026-10-14T17:03:58.073688+00:00"
+        },
+        "archive_equals_tagged_file": false,
+        "difference": "15.1 tagged dev ReadMe is a publication template with PUB_DATE/COPY_YEAR/UNI_VER/PUB_STATUS placeholders; released archive is concrete."
+      },
+      {
+        "version": "15.1.0",
+        "archive_member": "emoji/emoji-data.txt",
+        "sha256": "d7aef489c8fe4c14f09ea5695200277c6b93ac82ac60845cdd2161b0d6835cc1",
+        "bytes": 111505,
+        "tagged_repository_file": {
+          "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.1-dev-emoji-emoji-data.txt",
+          "sha256": "d7aef489c8fe4c14f09ea5695200277c6b93ac82ac60845cdd2161b0d6835cc1",
+          "bytes": 111505,
+          "url": "https://raw.githubusercontent.com/unicode-org/unicodetools/9595f090650e99e3e752b37a7a3866ac8a91999b/unicodetools/data/ucd/dev/emoji/emoji-data.txt",
+          "retrieved_at_utc": "2026-10-14T17:03:58.120226+00:00"
+        },
+        "archive_equals_tagged_file": true,
+        "difference": null
+      },
+      {
+        "version": "15.1.0",
+        "archive_member": "EastAsianWidth.txt",
+        "sha256": "b08191401dc125f4e84ef262a95754faae6b737c79538e17ea9664a63434e94e",
+        "bytes": 194188,
+        "tagged_repository_file": {
+          "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.1-dev-EastAsianWidth.txt",
+          "sha256": "b08191401dc125f4e84ef262a95754faae6b737c79538e17ea9664a63434e94e",
+          "bytes": 194188,
+          "url": "https://raw.githubusercontent.com/unicode-org/unicodetools/9595f090650e99e3e752b37a7a3866ac8a91999b/unicodetools/data/ucd/dev/EastAsianWidth.txt",
+          "retrieved_at_utc": "2026-10-14T17:03:58.173519+00:00"
+        },
+        "archive_equals_tagged_file": true,
+        "difference": null
+      }
+    ],
+    "repository_license_tags": [
+      {
+        "tag": "release-2022-09-16-u15-0",
+        "commit": "f6478e318a43632989bda65b8e0134088efd9c5f",
+        "license": {
+          "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.0-LICENSE",
+          "sha256": "80b381b2f157c31e7f3222bdb932bda9fbd7b335e888beec56820fb2993363de",
+          "bytes": 2275,
+          "url": "https://raw.githubusercontent.com/unicode-org/unicodetools/f6478e318a43632989bda65b8e0134088efd9c5f/LICENSE",
+          "retrieved_at_utc": "2026-10-14T17:02:56.582893+00:00"
+        }
+      },
+      {
+        "tag": "final-15.1-20230908",
+        "commit": "9595f090650e99e3e752b37a7a3866ac8a91999b",
+        "license": {
+          "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-tools-15.1-LICENSE",
+          "sha256": "9ba0dc030e14ab692310b5395ea4f3a4921bcdbc1b9dbcebb1f81d83eb08f4e6",
+          "bytes": 1995,
+          "url": "https://raw.githubusercontent.com/unicode-org/unicodetools/9595f090650e99e3e752b37a7a3866ac8a91999b/LICENSE",
+          "retrieved_at_utc": "2026-10-14T17:02:56.737381+00:00"
+        }
+      }
+    ],
+    "current_unicode_license_read_is_not_historical_evidence": {
+      "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/unicode-license.txt",
+      "sha256": "e7a93b009565cfce55919a381437ac4db883e9da2126fa28b91d12732bc53d96",
+      "bytes": 1995,
+      "url": "https://www.unicode.org/license.txt",
+      "retrieved_at_utc": "2026-10-14T17:01:21.310402+00:00"
+    },
+    "current_license_year_is_1991_2026": true,
+    "historical_shared_website_license_identity_asserted": false
+  },
+  "dec_primary_provenance": {
+    "pinned_x_ansi_source_equals_public_tag": true,
+    "public_source": {
+      "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/x-ansi-v0.4.5-transition.go",
+      "sha256": "99ad73e2c609dcdf7a4573f705fd2ef36692419dcf07dcba1b206761a133a9f2",
+      "bytes": 12783,
+      "url": "https://raw.githubusercontent.com/charmbracelet/x/ansi/v0.4.5/ansi/parser/transition_table.go",
+      "retrieved_at_utc": "2026-10-14T17:00:55.846657+00:00"
+    },
+    "history": {
+      "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/x-ansi-transition-history.json",
+      "sha256": "69f29591a632b5ca764b7b76ea1d2c89a6726a9233eca16585814906fb627c1c",
+      "bytes": 17531,
+      "url": "https://api.github.com/repos/charmbracelet/x/commits?path=ansi/parser/transition_table.go&sha=ansi/v0.4.5&per_page=100",
+      "retrieved_at_utc": "2026-10-14T17:00:55.782792+00:00"
+    },
+    "earliest_observed_path_commit": "1af817ff5ef91ba5321c5e5ffa1f2632df6e8f32",
+    "source_page": {
+      "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/dec-ansi-parser.xhtml",
+      "sha256": "72db5905ebd81bb4f3da420db66db390bfa6693704bc5e24aec74290d2ce691d",
+      "bytes": 90287,
+      "url": "https://vt100.net/emu/dec_ansi_parser",
+      "retrieved_at_utc": "2026-10-14T17:00:55.705714+00:00"
+    },
+    "visible_copyright": "Copyright 2002‒2017 Paul Flo Williams",
+    "svg_metadata_license_uri": "http://creativecommons.org/licenses/by-nc-sa/3.0/",
+    "commented_footer_license_uri": "http://creativecommons.org/licenses/by/4.0/",
+    "footer_license_statement_is_in_html_comment": true,
+    "source_declarations_conflict": true,
+    "effective_historical_specification_license": null,
+    "related_vtparse_primary_notice": {
+      "path": "/home/ajs/.cache/pb-phase7/attribution/upstream/vtparse-pinned-README",
+      "sha256": "573d9861174d8c5d3971eb692564c854e08e2e269818c6b95ce4f1683ae830ef",
+      "bytes": 2091,
+      "url": "https://raw.githubusercontent.com/haberman/vtparse/198ea4382f824dbb3f0e5b5553a9eb3290764694/README",
+      "retrieved_at_utc": "2026-10-14T17:05:09.196753+00:00"
+    },
+    "related_vtparse_revision": "198ea4382f824dbb3f0e5b5553a9eb3290764694",
+    "related_vtparse_public_domain_statement_establishes_x_ansi_lineage": false,
+    "explanation": "DEC page links Josh Haberman vtparse; its pinned README calls that implementation public domain. The x/ansi source links the specification, not vtparse; no inference that vtparse terms govern x/ansi/specification is made."
+  }
+}

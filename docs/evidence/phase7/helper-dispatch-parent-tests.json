@@ -1,0 +1,14 @@
+{
+  "kind": "central full phase7 helper suite after R3-H1 dispatch correction",
+  "tests": 72,
+  "passed": true,
+  "log": "/home/ajs/.cache/pb-phase7/helper-dispatch-parent-tests.log",
+  "log_sha256": "881c542fcd60461c43f0f50aace9aa37df775441115cf2e9873c27e0a207b39a",
+  "source_sha256": {
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7.py": "26895f680be00ba1f65440a4e7097ee8d94027e15c64bd7fb317691700f7da0a",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7.py": "e25bd26ff4229e1487f2492647addf7f778e048f47bba3d19359adc10b535d37",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_spawn.c": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4"
+  },
+  "review_acceptance": false,
+  "timing_admission": false
+}

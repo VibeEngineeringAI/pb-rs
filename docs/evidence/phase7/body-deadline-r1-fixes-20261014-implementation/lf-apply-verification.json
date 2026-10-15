@@ -1,0 +1,20 @@
+{
+  "scope": "cache-only actual dry-run and apply, shared worktree never edited",
+  "lf_only": true,
+  "git_apply_check_exit": 0,
+  "git_apply_exit": 0,
+  "files": [
+    {
+      "file": "harness/phase3.py",
+      "applied_sha256": "7ad84976872ef5ee16fb1b96c3282b1c59902a59736606f78f662e41ecc47dfc",
+      "staged_sha256": "7ad84976872ef5ee16fb1b96c3282b1c59902a59736606f78f662e41ecc47dfc",
+      "exact_bytes_equal": true
+    },
+    {
+      "file": "harness/test_phase3.py",
+      "applied_sha256": "9db8d2b054e1968d1a799cf721e167087d765c5529400743a664b0066d583b98",
+      "staged_sha256": "9db8d2b054e1968d1a799cf721e167087d765c5529400743a664b0066d583b98",
+      "exact_bytes_equal": true
+    }
+  ]
+}

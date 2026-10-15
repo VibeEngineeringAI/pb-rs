@@ -1,0 +1,57 @@
+{
+  "scope": "Phase7 coordination record; Phase6 reported outcomes, not independently assessed by Phase7 or evidence of Rust performance",
+  "windows": [
+    {
+      "token": "phase7-quiet-phase6-samego-aa-20261014T173040Z",
+      "acknowledged_at_utc": "2026-10-14T17:30:40Z",
+      "start_deadline_utc": "2026-10-14T17:32:40Z",
+      "maximum_seconds_from_start": 900,
+      "absolute_end_deadline_utc": "2026-10-14T17:47:40Z",
+      "scope": "Phase6 same-Go A/A one-row+many-small, full collector5warm/30rep per label; manifest supplied prefix a47093...047b; common nonblocking lock",
+      "root_execution": "quiescent; no active validation/build/native/profiler; fullUI/retained unlaunched",
+      "helper_lane": "explicit quiescence acknowledgement; last22pure tests completed before pause; source/docs only until RELEASE",
+      "collector_lane": "explicit quiescence acknowledgement; no process launched in resize followup; source/docs only until RELEASE",
+      "phase7_release": "first campaign explicitly released by companion; child lanes remained paused, no root RELEASE sent",
+      "campaign_identity": "companion supplied exact binding, root records without measurement-result claim",
+      "campaign_id": "campaign-r6-timing-aa-full-01",
+      "campaign_manifest_sha256": "a47093f4a3ea785a310f7ca1baa92444deaf7e21db5ba7db72dc897ddc3d047b",
+      "campaign_start_utc": "2026-10-14T17:31:16.076852Z",
+      "campaign_end_deadline_utc": "2026-10-14T17:46:16.076852Z",
+      "campaign_pid": 3755667,
+      "actual_end_utc": "2026-10-14T17:31:24.783970Z",
+      "companion_report": {
+        "exit": 0,
+        "measured_samples": 120,
+        "passed_complete": true,
+        "end_identities_unchanged": true,
+        "owned_processes_empty": true,
+        "common_lock_reacquired_released": true,
+        "root_independently_inspected_results": false
+      }
+    },
+    {
+      "token": "phase7-quiet-phase6-aa-hash-20261014T173242Z",
+      "acknowledged_at_utc": "2026-10-14T17:32:42Z",
+      "start_deadline_utc": "2026-10-14T17:34:42Z",
+      "maximum_seconds_from_start": 900,
+      "absolute_end_deadline_utc": "2026-10-14T17:49:42Z",
+      "campaign_id": "campaign-r6-timing-aa-hash-01",
+      "manifest_sha256": "a47093f4a3ea785a310f7ca1baa92444deaf7e21db5ba7db72dc897ddc3d047b",
+      "scope": "Same-Go hash-framing observer control, one-row+many-small,5warm/30rep per label,seed2026,sameGo/fixture/meter,common nonblocking lock",
+      "confirmed_pause": "Root launched no validation; neither child received root RELEASE, both remain execution-paused",
+      "release": "Companion explicit cleanup release; root sent RELEASE to both child lanes",
+      "actual_start_utc": "2026-10-14T17:33:18.936599Z",
+      "actual_end_utc": "2026-10-14T17:33:27.741985Z",
+      "companion_report": {
+        "exit": 0,
+        "measured_samples": 120,
+        "contracts_passed": true,
+        "end_identities_unchanged": true,
+        "owned_processes_empty": true,
+        "common_lock_reacquired_released": true,
+        "root_independently_inspected_results": false
+      }
+    }
+  ],
+  "current_state": "Both windows explicitly released after companion cleanup; root released both Sol lanes and started release5 retained compatibility replay"
+}

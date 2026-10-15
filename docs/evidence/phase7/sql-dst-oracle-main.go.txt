@@ -1,0 +1,41 @@
+// SQL L-SQL-1 oracle: time.Date / ParseInLocation on skipped and repeated
+// wall times, with the pinned toolchain's tzdata.
+// Run: cd /home/ajs/.cache/pb-phase7/sql-dst-oracle && go mod init dstoracle >/dev/null 2>&1; \
+//      GOTOOLCHAIN=go1.25.4 go run . > ../sql-dst-oracle.txt
+// Expected (from the go1.25 time.Date source; unit test go_date_resolves_skipped_and_repeated_wall_times):
+//   America/New_York 2024-03-10 02:30 -> 2024-03-10T06:30:00Z (01:30 EST)
+//   America/New_York 2024-11-03 01:30 -> 2024-11-03T05:30:00Z (01:30 EDT)
+//   Europe/Berlin    2024-03-31 02:30 -> 2024-03-31T01:30:00Z (03:30 CEST)
+//   Europe/Berlin    2024-10-27 02:30 -> 2024-10-27T01:30:00Z (02:30 CET)
+//   Europe/London    2024-10-27 01:30 -> 2024-10-27T01:30:00Z (01:30 GMT)
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+	cases := []struct{ zone, wall string }{
+		{"America/New_York", "2024-Mar-10 02:30:00"},
+		{"America/New_York", "2024-Nov-03 01:30:00"},
+		{"Europe/Berlin", "2024-Mar-31 02:30:00"},
+		{"Europe/Berlin", "2024-Oct-27 02:30:00"},
+		{"Europe/London", "2024-Oct-27 01:30:00"},
+	}
+	for _, c := range cases {
+		loc, err := time.LoadLocation(c.zone)
+		if err != nil {
+			panic(err)
+		}
+		// pkg/model/datetime parses edits with this layout in Local.
+		t, err := time.ParseInLocation("2006-Jan-02 15:04:05", c.wall, loc)
+		if err != nil {
+			panic(err)
+		}
+		// AddDate goes through time.Date as well.
+		d := t.AddDate(0, 0, 0)
+		fmt.Printf("%s %s -> %s (%s) adddate=%s\n", c.zone, c.wall,
+			t.UTC().Format(time.RFC3339), t.Format("15:04 MST"), d.UTC().Format(time.RFC3339))
+	}
+}

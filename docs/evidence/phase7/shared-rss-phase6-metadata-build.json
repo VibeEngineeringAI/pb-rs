@@ -1,0 +1,29 @@
+{
+  "build": {
+    "actual_supervisor_exit": 0,
+    "supervisor_verdict": "ok",
+    "echild_verified": true,
+    "end_identities_unchanged": true,
+    "elapsed_before_final_write": 129.22951526287943,
+    "build_manifest": {
+      "sha256": "c4dd1ff7f650886c36fea914d4238818a1182a2fb38f527fb4ce487070574902",
+      "bytes": 9745
+    },
+    "runtime_acceptance": false,
+    "performance_acceptance": false,
+    "measured_build_cost": false,
+    "provisional_build_only_complete": true
+  },
+  "artifact": {
+    "path": "/home/ajs/.cache/pb-phase7/shared-rss-phase6-version-build-preparation/build-output/pb-phase6-metadata-matched",
+    "sha256": "51e36f6c359f416ee11c920b239ee5e72c7fe55e923100d5df294c1aac1b61e0",
+    "bytes": 10796744
+  },
+  "source_commit": "ea70f7ad7d501d59b26cf6397f6a0b1f28143fc4",
+  "compiled_input_count": 46,
+  "manifest_sha256": "c4dd1ff7f650886c36fea914d4238818a1182a2fb38f527fb4ce487070574902",
+  "verified_binary_sha256": true,
+  "runtime_acceptance": false,
+  "performance_acceptance": false,
+  "old_artifact_and_failed_capture_preserved": true
+}

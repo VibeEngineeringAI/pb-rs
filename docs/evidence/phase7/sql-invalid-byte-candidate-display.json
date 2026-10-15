@@ -1,0 +1,245 @@
+{
+  "kind": "authorized current prebuilt candidate functional display control",
+  "binary": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/target/debug/pb",
+  "binary_sha256_before_and_after": "5b14cbd7e1bc3c00ba5d70147b53c07351564de97ce4fabed28e41a2851afb7d",
+  "raw_stdout_path": "/home/ajs/.cache/pb-phase7/sql-invalid-display-candidate/candidate.stdout",
+  "raw_stdout_sha256": "3681e0966ec81de3520fb0964b8519622ffc22c4e1165083045f8b85c4850584",
+  "actual_read_chunks": [
+    [
+      0,
+      12
+    ],
+    [
+      12,
+      47
+    ],
+    [
+      47,
+      4142
+    ],
+    [
+      4142,
+      8237
+    ],
+    [
+      8237,
+      12332
+    ],
+    [
+      12332,
+      16427
+    ],
+    [
+      16427,
+      19510
+    ],
+    [
+      19510,
+      22219
+    ],
+    [
+      22219,
+      26314
+    ],
+    [
+      26314,
+      30409
+    ],
+    [
+      30409,
+      30467
+    ],
+    [
+      30467,
+      34562
+    ],
+    [
+      34562,
+      36436
+    ],
+    [
+      36436,
+      37417
+    ],
+    [
+      37417,
+      37474
+    ]
+  ],
+  "returncode": 0,
+  "candidate_value_hex": "efbfbdefbfbde8af95",
+  "candidate_value_occurrences": 2,
+  "value_contexts": [
+    {
+      "offset": 21789,
+      "context_hex": "37333b39326de294821b5b306d2020201b5b33383b323b3232373b3232373b3233316defbfbdefbfbde8af951b5b306d202020202020202020202020202020202020202020202020201b5b33383b323b37333b37333b39326de294821b5b306d0d0a1b5b33383b323b"
+    },
+    {
+      "offset": 24921,
+      "context_hex": "303b3232346de294821b5b306d2020201b5b33383b323b3232373b3232373b3233316defbfbdefbfbde8af951b5b306d202020202020202020202020202020202020202020202020201b5b33383b323b3132303b3132303b3232346de294821b5b306d0d0a1b5b3338"
+    }
+  ],
+  "actual_sidebar_value_cells": [
+    {
+      "row_1based": 8,
+      "column_1based": 91,
+      "cells": [
+        [
+          "\ufffd",
+          "e3e3e7",
+          "default",
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          "\ufffd",
+          "e3e3e7",
+          "default",
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          "\u8bd5",
+          "e3e3e7",
+          "default",
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          "",
+          "e3e3e7",
+          "default",
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          " ",
+          "default",
+          "default",
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      ]
+    },
+    {
+      "row_1based": 8,
+      "column_1based": 92,
+      "cells": [
+        [
+          "\ufffd",
+          "e3e3e7",
+          "default",
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          "\u8bd5",
+          "e3e3e7",
+          "default",
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          "",
+          "e3e3e7",
+          "default",
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          " ",
+          "default",
+          "default",
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        [
+          " ",
+          "default",
+          "default",
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      ]
+    }
+  ],
+  "cursor": {
+    "x": 0,
+    "y": 34,
+    "visible": true,
+    "shape": 0
+  },
+  "unsupported": [],
+  "execute_harness_used": false,
+  "build_run": false
+}

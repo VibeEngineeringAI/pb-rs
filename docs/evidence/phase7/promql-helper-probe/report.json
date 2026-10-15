@@ -1,0 +1,10 @@
+{
+  "cases": 654,
+  "go_lines": 654,
+  "rust_lines": 654,
+  "mismatches": [],
+  "extracted_sort_sha256": "4e0f0a43ed7210ff60c77baddb138eb4f585086db49d1e6c3cc95fbbceac6854",
+  "extracted_float_sha256": "6a76e84c0144df165a2ea68ac87a0605731d9f28a171912189932b8780260549",
+  "scope": "standalone exact source extraction; functional Go/Rust helper differential, not full CLI or performance evidence",
+  "seed": 71014
+}

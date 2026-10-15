@@ -1,0 +1,24 @@
+{
+  "status": "root read FULL171-line R3 document and README; verified manifest file identities; fresh independent review pending",
+  "manifest": {
+    "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r3/artifact-manifest.json",
+    "size_bytes": 79058,
+    "sha256": "b37987f61a8bc0abdefed244ba520d54141c472a02a0abd241b1624c97600f1a"
+  },
+  "document": {
+    "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-performance-decisions.md",
+    "size_bytes": 58328,
+    "sha256": "86402302ded6d4746058bcd5611475969835cf7bc4db2af25b1bb46edf7ec069"
+  },
+  "verified_manifest_file_count": 354,
+  "declaration": {
+    "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r3/declaration-pending.json",
+    "size_bytes": 83950,
+    "sha256": "16c628c23e7fb9323100f197727f0fd2d18ebd755642537e97b51851bb09e07e"
+  },
+  "claimed_final_static_checks": 1572,
+  "tests_rerun": false,
+  "actual_preflight": false,
+  "accepted_protocol": false,
+  "admission": false
+}

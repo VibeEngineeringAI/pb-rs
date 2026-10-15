@@ -1,0 +1,96 @@
+{
+  "kind": "Immutable release5 full styled/device functional checkpoint; no performance or full release readiness claim",
+  "groups": {
+    "gates": {
+      "total": 160,
+      "passed": 160,
+      "differences": []
+    },
+    "documentary": {
+      "total": 30,
+      "passed": 30,
+      "differences": []
+    }
+  },
+  "device": {
+    "total": 17,
+    "passed": 17,
+    "issues": []
+  },
+  "driver": {
+    "kind": "functional release5 full styled/device replay, no timing claim",
+    "build_manifest_sha256": "ce10ef451f4bd3bdb88f3dd7919737989d7066af677492d2a79eade94fda937a",
+    "runners": {
+      "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7.py": "dc7574f058b9ff6ae7b77a912847fdbe02d8b68baab8728237d6ef040e6a44fa",
+      "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_workloads.py": "54a9efb7767372c976b459c3e2dc59c590e0b9d6b47b4cc29e36ae81ff588d1c",
+      "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_device.py": "8173255290e5f4989611350db50e713d8ac61ab9af7b6e327e1c4d95f20a7be0",
+      "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_spawn.c": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4",
+      "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/run.py": "b280d1295a4b351e6f2d838c56acaac58b2247bb77fc9881587bb7bbe849a076",
+      "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase1.py": "26ca8380b608a49404da1f8bc7233e577b2d48044d5194cdba20186b38ffaca5",
+      "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase2.py": "66568cd9b0663011547763a258875f45949b21f5ed4c05fe9a695cebdc89cfbd",
+      "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase3.py": "33be7605b2e3ea44712a8118b8909b129d00ef3f46c7f4d3932a522351e2b7bd",
+      "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase4.py": "e5105ae22b0c599901d8622adf4e2942abb05a8c38bd220e8f685cae58782213",
+      "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase5.py": "2bd03937195ea26b07faffa9281d109013d0b785fe33c63fa10905ce262d4c85",
+      "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/bin/pb-fixture": "fa8b4711ce6c901fc2b277318337268b45953e9868d4bc1b24407b274cc9ec5c"
+    },
+    "artifacts": {
+      "/home/ajs/.cache/pb-phase7/candidates/release5/pb-normal": "9ad4f4fc9e732b4a790c0d2ea97dcc58f127ee7580d3df9bc26c8cee28edef21",
+      "/home/ajs/.cache/pb-phase7/candidates/release5/pb-cloud": "4923a466729bc9bd0760ee6baf504c7a3ca31abfce47a8ff452c7b507ef7e931",
+      "/home/ajs/.cache/pb-phase7/candidates/release5/pb-login": "60152f5c48190606afa87c56dcc39f85a674bab3ef0ac7529702d70bf4845e03",
+      "/home/ajs/.cache/pb-phase7/baselines/pb-go": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "/home/ajs/.cache/pb-phase7/baselines/pb-go-cloud": "622d4144b7e354c0ee4036244ba719cbbaf8357710804b1d733cd421a0dc227e",
+      "/home/ajs/.cache/pb-phase7/baselines/pb-go-login": "aa393ccf301bcf04404baa87183f812efa0e563c6b17e04d446f439a251e87bd"
+    },
+    "checks": [
+      {
+        "label": "styled",
+        "command": [
+          "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+          "harness/phase7.py",
+          "compare",
+          "--theme",
+          "both",
+          "--reference",
+          "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+          "--cloud-reference",
+          "/home/ajs/.cache/pb-phase7/baselines/pb-go-cloud",
+          "--candidate",
+          "/home/ajs/.cache/pb-phase7/candidates/release5/pb-normal",
+          "--cloud-candidate",
+          "/home/ajs/.cache/pb-phase7/candidates/release5/pb-cloud",
+          "--out",
+          "/home/ajs/.cache/pb-phase7/styled-release5"
+        ],
+        "exit": 0,
+        "log": "/home/ajs/.cache/pb-phase7/release5-styled.log",
+        "log_sha256": "91de5a57c92fbb4466d9c1eccfdff515ce7f6bdee86b869dc25341545abb33cc",
+        "identities_unchanged": true
+      },
+      {
+        "label": "device",
+        "command": [
+          "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+          "harness/phase7_device.py",
+          "--reference",
+          "/home/ajs/.cache/pb-phase7/baselines/pb-go-login",
+          "--candidate",
+          "/home/ajs/.cache/pb-phase7/candidates/release5/pb-login",
+          "--out",
+          "/home/ajs/.cache/pb-phase7/device-release5"
+        ],
+        "exit": 0,
+        "log": "/home/ajs/.cache/pb-phase7/release5-device.log",
+        "log_sha256": "f54dc7c8c0725f0c8ba6c1783f1b5559b1e94b73166d83608c1cf804609aec4b",
+        "identities_unchanged": true
+      }
+    ]
+  },
+  "report_sha256": {
+    "styled": "6aa2c9ac12e6942c927e1cc987e2d4ac9f7a9a6ddf6515dfbf183204b0136c2a",
+    "device": "b4211491ed1438896f72734f8251273224e7a973d2dbc72933f4b4afd7653a7d"
+  },
+  "root_end_hashes_reverified": true,
+  "compiled_source_map_count": 57,
+  "full_retained": "in progress",
+  "original_reports_preserved": true
+}

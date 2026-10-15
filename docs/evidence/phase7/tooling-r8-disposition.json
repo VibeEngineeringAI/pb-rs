@@ -1,0 +1,90 @@
+{
+  "review": "docs/phase7-review-measurement-opus-r8.md",
+  "review_sha256": "1c30ca018c0e08ccdcf0fefea3dee71572c21523d5f146145de8d6486a23c740",
+  "scope": "Source-only after one EDQUOT shell attempt; no reviewer tests or hashes. Full read/unread/inherited scope in report. Root R7 99 bench +24 full profiler checks are separate supplied execution evidence.",
+  "review_task": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-tooling-final-review-r8",
+  "implementation_task": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-collector-opus-r8-corrections",
+  "decision_contract_task": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-sol-performance-decisions-r1",
+  "status": "Frozen four Python sources; owner106+23 passes verified by root without rerun. Fresh Opus R9 source review and separate Opus decision protocol review active. Seven-file/matrix packaging pending.",
+  "prior_findings": "R8 confirms R7 source corrections and nine-chunk arithmetic. No actual feasibility or performance acceptance.",
+  "decisions": {
+    "R8-M1": "Predeclare separate coordinator performance decision protocol before any measurement, using existing investigation margins, conservative exploratory pointwise noninferiority, fixed confirmation seeds, sentinel A/A conditioning, correct metric scopes and explicit unassessed outcomes. Generic summary fields remain no acceptance; derived decisions must bind reviewed protocol and raw-validated reports. Draft assigned; exact contract pending root adjudication and independent review.",
+    "R8-M2": "Implement finite declared pool budget <=3600 and one full feasibility validation per reduction, retaining all chunk identity/seed/count/options checks and end bindings. Causal call-count and invalid-budget controls.",
+    "R8-L1": "Add eligible noncrossing no-false-pass, independently crossed absolute/relative arms, full interpret decision assertions and causal mutation checks.",
+    "R8-L2": "Distinguish same-artifact A/A bias indications, descriptive attribution/pool/stable-ready, and primary first-expected potential regressions; do not silently expand existing campaign program.",
+    "R8-L3": "Mark obsolete current sections historical and reconcile nine chunks/ownership/limits.",
+    "I1": "All profiler preparation and probes also require explicit own coordinated execution window; no preparation during companion quiet.",
+    "I2": "Unvalidated reduce output never supports acceptance decisions."
+  },
+  "production_and_shared_helper_unchanged": true,
+  "no_commit": true,
+  "actual_phase7_preflight_or_measurement": false,
+  "quiet_reservation": false,
+  "approved_pool_factor": {
+    "live_admission": "validate_pool_spec always performs fresh require_pool_feasibility; no bypass flag",
+    "reducer": "One fresh full-profile feasibility comparison bound to same spec/preflight; private per-chunk contract validator, all retained raw/approval/artifact/helper/source/control checks and end rehashes preserved",
+    "guard": "Finite numeric nonboolean 0<budget<=3600, starts before first spec read, budget and elapsed recorded including failures",
+    "option_binding": "Bind all fields; exact exclusions sessions,warmups,seed,campaign_id,pool_chunk,pool_spec location are checked separately. Any per-chunk max_sessions variation needs an exact predeclared table, not blanket exclusion.",
+    "causal_tests": [
+      "One full feasibility validation in complete nine-chunk reduction",
+      "Late-chunk allocation-affecting option drift rejected without repeating expensive validation",
+      "Live validator performs fresh feasibility each invocation",
+      "Reject invalid/nonfinite/bool/out-of-range budgets while preserving failure evidence"
+    ],
+    "status": "Design authorized; implementation and successor validation pending",
+    "exact_chunk_caps": {
+      "formula": "2*(warmups+sessions)+4*floor_sessions*len(sizes)*len(themes)",
+      "current_caps": [
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        18
+      ],
+      "worst_feasibility_cap": 20,
+      "actual_last_chunk_cap": 18,
+      "binding": "Declare and verify exact table from actual controls/profile and schedule; normalize common max_sessions only after exact actual chunk check. Worst-four-pair feasibility uses maximum declared cap; actual capture cap unchanged.",
+      "tests": "Valid last18, altered cap rejection, live last-chunk worst feasibility, identical allocations across chunk indices.",
+      "status": "Authorized design; tests not yet executed"
+    }
+  },
+  "decision_proposal": {
+    "status": "proposed protocol; root adjudication and independent review pending",
+    "doc": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-performance-decisions.md",
+      "size_bytes": 31142,
+      "sha256": "a5a16114f7463713fcabb2b8c68fb9fa8fdc35736bcb6dd079d70e3eccb08274"
+    },
+    "manifest_sha256": "54b37fe5eaa21b942772183820c9f21fb0455e5efed94b80eb313a72585efbc9",
+    "verified_deliverable_files": 17,
+    "root_checks": "All manifest file sizes and SHA256 verified. Full protocol and source measurement-plan sections read. No arithmetic suite rerun; author 90 static/mock passes remain author evidence.",
+    "author_task": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-sol-performance-decisions-r1",
+    "review_task": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-performance-decisions-review-r1",
+    "root_review_questions": [
+      "Whether adding 18 pooled-latency budget obligations is justified by long-idle resource experiment scope; must resolve prospectively, no silent deletion after results.",
+      "CPU accounting uncertainty provenance and full idle interval bounds remain unknown; no current budget acceptance.",
+      "Four dark editor A/A sentinels condition profile decisions but cannot establish workload/light calibration."
+    ],
+    "no_execution_admission": true,
+    "no_actual_measurements": true
+  },
+  "root_successor_source_read": {
+    "file": "harness/phase7_bench.py",
+    "observed_sha256": "b59cf46e346bfa94cba2cdc08040e1335a218713794051e73c321dd6d97c6b3c",
+    "scope": [
+      "require_pool_feasibility/pool_session_caps/common_options/pool_definition/contract/live validator",
+      "pool_reports full guard/loop/end bindings",
+      "descriptive_latency_decision and summaries"
+    ],
+    "finding": "No new concrete objection in this scoped read. Not a frozen-source acceptance or executed test result.",
+    "pending": "Owner final source-bound pure suite, accepted decision protocol, frozen matrix and fresh independent successor review."
+  },
+  "owner_completion_evidence": "docs/evidence/phase7/collector-r8-owner-checks-verified.json",
+  "successor_source_review_task": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-tooling-source-review-r10",
+  "r9_status": "Ended to ACK execution pause, unfinished, no findings/report. Replaced by freshR10 aftercleanupRELEASE.",
+  "decision_review_disposition": "docs/evidence/phase7/performance-decisions-opus-r1-disposition.json"
+}

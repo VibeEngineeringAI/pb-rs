@@ -1,0 +1,25 @@
+{
+  "go_version": "go1.25.4",
+  "unicode_version": "15.0.0",
+  "generator_sha256": "58e1dca99b064e79aec3f4c01584644b4f5e35f4de1c1a22a1d67fb26103c555",
+  "oracle_source_sha256": "93bfc89bc88681235a6932226418cfd56f02e05a75a9746ca739bb2f16f92f60",
+  "helper_sha256": "3a88503ae1955216f7f2da881d3a1d41d7e112dcd9fa18e0aeb8163155e2e634",
+  "source_hashes": {
+    "go.mod": "90555a3ae88bee209ce16845ad259afa2e4c9b3c14890e0578a8a514c1350565",
+    "go.sum": "ae20b3abc13e58b529d7f5219d657f506df24c471aa873d9b72d3435954f92ac",
+    "/home/ajs/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.4.linux-amd64/src/unicode/tables.go": "6a88d48746c4b2c471cc04ae40559694b734770212e6f5ea5f1962adb0c0bdb1",
+    "/home/ajs/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.4.linux-amd64/src/unicode/letter.go": "b35a6d259313cef88d07e9e4027b8bd72c60ae140418f5be2c41a2ecea6074fe",
+    "/home/ajs/go/pkg/mod/github.com/sahilm/fuzzy@v0.1.1/fuzzy.go": "de103ddfed0e4fb2c0e2ef6eb3225ad93cfa7aee7162d0dd4476ea2f0a338afa",
+    "/home/ajs/go/pkg/mod/github.com/charmbracelet/bubbles@v0.20.0/list/list.go": "0915a08d18719a8afa0126dbf76042f56464f3065b8e0785e881c3b6bbf3c2ba"
+  },
+  "scalar_count": 1112064,
+  "fold_entries": 1428,
+  "lower_ranges": 163,
+  "upper_ranges": 149,
+  "exhaustive_go_comparison_passed": true,
+  "idempotence_passed": true,
+  "regeneration_equal": true,
+  "rust_executed": false,
+  "full_oracle_path": "/home/ajs/.cache/pb-phase7/opus-r3-low/unicode-oracle-full.json",
+  "full_oracle_sha256": "ed0dd50d8b8c1843b0351dc8b90a3935d2a47d886a9f04468fe6f2c4829eaa42"
+}

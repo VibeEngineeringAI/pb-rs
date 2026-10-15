@@ -1,0 +1,56 @@
+{
+  "manifest_sha256": "16662d6d4484c9a87df8a5760e95ad08d021d240c39da27e8c380a9cafd6ff46",
+  "supervisor_sha256": "7bff31f447a70a83d88881f433a10debdd35d84d9f368e7c1d6b2504ffc07c7c",
+  "actual_exit": 0,
+  "verified_source_count": 64,
+  "artifacts": {
+    "normal": {
+      "path": "/home/ajs/.cache/pb-phase7/candidates/release7-shared-rows/pb-normal",
+      "sha256": "af3c0922a9065c909c7faf6718bda38f58224a872a8a93f724cd18fa529a366e",
+      "bytes": 12512408,
+      "profile": "release",
+      "features": [],
+      "version": "0.0.0-harness",
+      "commit_metadata": "harness",
+      "fixture_token": false,
+      "fixture_url": null
+    },
+    "cloud": {
+      "path": "/home/ajs/.cache/pb-phase7/candidates/release7-shared-rows/pb-cloud",
+      "sha256": "4335c551eeacf07aed75713efeaae9f251a6d7975dc8f4e0999482876e7447e5",
+      "bytes": 12512360,
+      "profile": "release",
+      "features": [],
+      "version": "0.0.0-harness",
+      "commit_metadata": "harness",
+      "fixture_token": true,
+      "fixture_url": null
+    },
+    "login": {
+      "path": "/home/ajs/.cache/pb-phase7/candidates/release7-shared-rows/pb-login",
+      "sha256": "6b07db0e0564d8a3f0e658501650adc574764f6aefddf7e03c3f41fb64933519",
+      "bytes": 12512552,
+      "profile": "release",
+      "features": [],
+      "version": "0.0.0-harness",
+      "commit_metadata": "harness",
+      "fixture_token": true,
+      "fixture_url": "http://phase7-orchestrator.invalid"
+    }
+  },
+  "cleanup": {
+    "converged_before_reap_by": true,
+    "echild_verified": true,
+    "own_children_after": [],
+    "recorded_descendants": 0,
+    "recorded_unreaped": []
+  },
+  "lock_post": {
+    "device": "0:30",
+    "entries": [],
+    "inode": 115796775,
+    "path": "/home/ajs/.cache/pb-rs-performance.lock",
+    "state": "free"
+  },
+  "kind": "build only; no runtime/performance acceptance"
+}

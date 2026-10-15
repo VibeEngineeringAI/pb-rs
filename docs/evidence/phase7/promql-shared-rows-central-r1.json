@@ -1,0 +1,53 @@
+{
+  "report_path": "/home/ajs/.cache/pb-phase7/promql-shared-rows-central-r1/report.json",
+  "report_sha256": "02077b05708dbb9fc588a9fc9ed82eb8b4d4fc4910cee42289cc000bd4a1b06b",
+  "checks": [
+    {
+      "name": "fmt",
+      "argv": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "elapsed_s": 0.7153398501686752,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "clippy",
+      "argv": [
+        "cargo",
+        "clippy",
+        "--offline",
+        "--locked",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "elapsed_s": 4.82234491687268,
+      "log_sha256": "e71327d9685e275b04595da70dcd69bce20a9d56db6965d5b0116e3e46299916"
+    },
+    {
+      "name": "lib",
+      "argv": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--lib",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "elapsed_s": 40.54998012795113,
+      "log_sha256": "7318b0e7b48ae6e04f8d1ad2b825e62a647d306731584dcda1c335851a393f1c"
+    }
+  ],
+  "source_unchanged": true,
+  "source_sha256": "9e186f17c9f61d81ce1d16a9ca0847ad0d44294be0fa9386f8831b17f8a572d2",
+  "kind": "central source checks; independent review pending; no candidate/performance acceptance"
+}

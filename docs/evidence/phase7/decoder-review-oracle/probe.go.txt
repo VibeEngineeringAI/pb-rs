@@ -1,0 +1,152 @@
+// Actual-Go control for review F1/F3 (docs/phase7-review-final-r1.md) against
+// the Rust decoders in src/tui/sql_service.rs and src/tui/promql_service.rs.
+//
+// Run with the pinned toolchain (go1.25.4, the phase-7 oracle) from this
+// directory:   go run probe.go > probe-result.txt
+// Not run by the implementation agent (shell unavailable: EDQUOT).
+//
+// The struct types are copies of the pinned Go oracle 07af390:
+//   - QueryData: model.QueryData as decoded by fetchDataRaw
+//     (pkg/model/query.go:2720, json.NewDecoder(resp.Body).Decode(&data)).
+//     Copied by its Rust-recorded wire contract (fields/records, error text
+//     "Go struct field QueryData.<f>"); confirm against the model source.
+//   - arrow: the anonymous struct in fetchStreamSchema (pkg/model/query.go:3061-3066).
+//   - promqlRespModel/promqlDataModel/promqlSeriesModel: pkg/model/promql.go:87-103.
+//   - promqlLabelListResp: copied by its Rust-recorded contract (status, data
+//     []string, error); confirm the declaration in pkg/model/promql.go.
+// Each line prints the case name, then %#v of the decoded value and the error.
+package main
+
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+)
+
+type QueryData struct {
+	Fields  []string                 `json:"fields"`
+	Records []map[string]interface{} `json:"records"`
+}
+
+type arrow struct {
+	Fields []struct {
+		Name string `json:"name"`
+	} `json:"fields"`
+}
+
+type promqlRespModel struct {
+	Status    string          `json:"status"`
+	Data      promqlDataModel `json:"data"`
+	Error     string          `json:"error,omitempty"`
+	ErrorType string          `json:"errorType,omitempty"`
+}
+
+type promqlDataModel struct {
+	ResultType string              `json:"resultType"`
+	Result     []promqlSeriesModel `json:"result"`
+}
+
+type promqlSeriesModel struct {
+	Metric map[string]string `json:"metric"`
+	Value  []any             `json:"value,omitempty"`
+	Values [][]any           `json:"values,omitempty"`
+}
+
+type promqlLabelListResp struct {
+	Status string   `json:"status"`
+	Data   []string `json:"data"`
+	Error  string   `json:"error"`
+}
+
+// Window: json.Decoder.Decode, as fetchDataRaw.
+func window(name, body string) {
+	var data QueryData
+	err := json.NewDecoder(bytes.NewReader([]byte(body))).Decode(&data)
+	fmt.Printf("window %s: fields=%q records=%v err=%v\n", name, data.Fields, data.Records, err)
+}
+
+// Schema: json.Unmarshal plus the fetchStreamSchema acceptance rule.
+func schema(name, body string) {
+	var a arrow
+	err := json.Unmarshal([]byte(body), &a)
+	var names []string
+	if err == nil && len(a.Fields) > 0 {
+		for _, f := range a.Fields {
+			if f.Name != "" {
+				names = append(names, f.Name)
+			}
+		}
+	}
+	fmt.Printf("schema %s: names=%q fallback=%v err=%v\n", name, names, len(names) == 0, err)
+}
+
+func labels(name, body string) {
+	var l promqlLabelListResp
+	err := json.Unmarshal([]byte(body), &l)
+	fmt.Printf("labels %s: status=%q data=%q err=%v\n", name, l.Status, l.Data, err)
+}
+
+func result(name, body string) {
+	var r promqlRespModel
+	err := json.Unmarshal([]byte(body), &r)
+	fmt.Printf("result %s: %+v err=%v\n", name, r, err)
+}
+
+func main() {
+	// F1 trigger 1 -> records=[map[a:1 b:2]]
+	window("t1-merge", `{"fields":["a","b"],"records":[{"a":"1"}],"records":[{"b":"2"}]}`)
+	window("merge-replace", `{"records":[{"a":{"x":1},"n":"s"}],"records":[{"a":[2]}]}`)
+	// F1 trigger 2 -> fields=["a" "x"]
+	window("t2-null-string", `{"fields":["a","b"],"fields":[null,"x"],"records":[]}`)
+	// -> fields=["x" "b" "c" ""] records=[map[a:1 d:4] map[b:2 e:5] map[]]
+	window("hidden", `{"fields":["a","b","c"],"fields":["x"],"fields":[null,null,null,null],
+		"records":[{"a":"1"},{"b":"2"},{"c":"3"}],"records":[{"d":"4"}],
+		"records":[{},{"e":"5"},null]}`)
+	for _, reset := range []string{"[]", "null"} {
+		// -> fields=["" ""] records=[map[] map[]]
+		window("reset-"+reset, `{"fields":["a","b"],"fields":`+reset+`,"fields":[null,null],
+			"records":[{"a":"1"},{"b":"2"}],"records":`+reset+`,"records":[{},null]}`)
+	}
+	window("trailing-empty", `{"fields":["a"],"fields":[],"records":[{"a":"1"}],"records":[]}`)
+	window("null-record", `{"records":[{"a":"1"}],"records":[null],"records":[{"b":"2"}]}`)
+	window("err-fields", `{"fields":[1],"fields":["ok"]}`)
+	window("err-record", `{"records":["x"],"records":[{"a":"1"}]}`)
+	window("err-overflow", `{"records":[{"a":1e400}],"records":null}`)
+	// F3 -> fields=["x"] records=[map[a:1]]
+	window("fold-long-s", "{\"FIELDſ\":[\"x\"],\"recordſ\":[{\"a\":\"1\"}]}")
+	for _, key := range []string{"fıelds", "fieldß", "fieldsſ"} {
+		window("fold-ignored-"+key, `{"`+key+`":["x"]}`)
+	}
+
+	// F1 trigger 3 -> names=["a"] fallback=false
+	schema("t3-empty-struct", `{"fields":[{"name":"a"}],"fields":[{}]}`)
+	// -> names=["c" "b"]
+	schema("hidden", `{"fields":[{"name":"a"},{"name":"b"}],"fields":[{"name":"c"}],"fields":[null,{"name":null}]}`)
+	for _, reset := range []string{"[]", "null"} {
+		// -> fallback=true
+		schema("reset-"+reset, `{"fields":[{"name":"a"}],"fields":`+reset+`,"fields":[{}]}`)
+	}
+	schema("err-first", `{"fields":[{"name":1}],"fields":[{"name":"a"}]}`)
+	schema("fold", "{\"Fieldſ\":[{\"NAME\":\"a\"}]}")
+
+	// F1 trigger 4 -> data=["a"]
+	labels("t4-null-string", `{"status":"success","data":["a","b"],"data":[null]}`)
+	// -> data=["x" "b" "c" ""]
+	labels("hidden", `{"data":["a","b","c"],"data":["x"],"data":[null,null,null,null]}`)
+	for _, reset := range []string{"[]", "null"} {
+		labels("reset-"+reset, `{"data":["a","b"],"data":`+reset+`,"data":[null,null]}`)
+	}
+	labels("trailing-empty", `{"data":["a"],"data":[]}`)
+	labels("err-first", `{"data":[1],"data":["ok"]}`)
+	labels("fold", "{\"ſTATUſ\":\"success\"}")
+
+	// F3 trigger -> Status:error Error:x ErrorType:bad_data
+	result("fold-status", "{\"ſtatus\":\"error\",\"error\":\"x\",\"errorType\":\"bad_data\"}")
+	result("fold-values", "{\"data\":{\"RESULTTYPE\":\"vector\",\"result\":[{\"valueſ\":[[1,\"2\"]]}]}}")
+	// U+212A: no phase-7 field name contains k; probe the fold directly.
+	var kelvin struct {
+		Key string `json:"key"`
+	}
+	err := json.Unmarshal([]byte("{\"Key\":\"v\"}"), &kelvin)
+	fmt.Printf("fold kelvin: %q err=%v\n", kelvin.Key, err)
+}

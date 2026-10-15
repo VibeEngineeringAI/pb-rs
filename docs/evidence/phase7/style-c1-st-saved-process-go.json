@@ -1,0 +1,102 @@
+{
+  "case": "ONE literal L-STYLE-1 saved title",
+  "input_text": "x\u001b]0;t\u2705y z",
+  "input_utf8_hex": "781b5d303b74e29c8579207a",
+  "dimensions": [
+    40,
+    20
+  ],
+  "binary": "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+  "binary_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+  "process_effects_passed": true,
+  "failure": null,
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/v1/filters",
+      "params": {},
+      "body": "",
+      "headers": {
+        "Host": "127.0.0.1:44227",
+        "User-Agent": "Go-http-client/1.1",
+        "Content-Type": "application/json",
+        "X-Api-Key": "fixture-key",
+        "Accept-Encoding": "gzip"
+      },
+      "received": 995214.61216613,
+      "protocol": "HTTP/1.1",
+      "response_status": 200,
+      "response_preview": "[{\"filter_id\": \"saved-id\", \"filter_name\": \"x\\u001b]0;t\\u2705y z\", \"stream_name\": \"logs\", \"query\": {\"filter_type\": \"sql\", \"filter_query\": \"SELECT 1\"}}]",
+      "response_bytes": 150,
+      "done": true
+    }
+  ],
+  "checkpoint_byte_offset": 2244,
+  "returncode": 0,
+  "raw_stdout_path": "/home/ajs/.cache/pb-phase7/style-c1-st-cli/saved-title-1791983856197107573.stdout",
+  "raw_stdout_sha256": "8d2fa411d4d0d69b8e9373c82e43209c1eef4b4d40c53e181f7aeb5514ac6c15",
+  "actual_read_chunks": [
+    [
+      0,
+      12
+    ],
+    [
+      12,
+      47
+    ],
+    [
+      47,
+      2244
+    ],
+    [
+      2244,
+      2301
+    ]
+  ],
+  "live_observer_unsupported": [],
+  "final_replay_unsupported": [
+    "incomplete terminal sequence: '\\x1b]0;t\\udce2\\udc9c\\x85y z\\x1b[0m                            \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m      \\x1b[38;2;126;126;138mSELECT 1\\x1b[0m                        \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m \\x1b[1;38;2;158;158;240m<a/enter>\\x1b[0m\\x1b[38;2;126;126;138m apply    \\x1b[0m\\x1b[1;38;2;158;158;240m<\u2191/\u2193>\\x1b[0m\\x1b[38;2;126;126;138m navigate    \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m \\x1b[0m\\x1b[1;38;2;158;158;240m<\u2192/\u2190>\\x1b[0m\\x1b[38;2;126;126;138m pages    \\x1b[0m\\x1b[1;38;2;158;158;240m<b/ctrl-c>\\x1b[0m\\x1b[38;2;126;126;138m quit\\x1b[0m       \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\\x1b[0m\\x1b[20;0H\\x1b[2K\\r\\x1b[?2004l\\x1b[?25h\\x1b[?1002l\\x1b[?1003l\\x1b[?1006l\\x1b[?1049l\\x1b[?25h'"
+  ],
+  "live_pending": "'\\x1b]0;t\\udce2\\udc9c\\x85y z\\x1b[0m                            \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m      \\x1b[38;2;126;126;138mSELECT 1\\x1b[0m                        \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m \\x1b[1;38;2;158;158;240m<a/enter>\\x1b[0m\\x1b[38;2;126;126;138m apply    \\x1b[0m\\x1b[1;38;2;158;158;240m<\u2191/\u2193>\\x1b[0m\\x1b[38;2;126;126;138m navigate    \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m \\x1b[0m\\x1b[1;38;2;158;158;240m<\u2192/\u2190>\\x1b[0m\\x1b[38;2;126;126;138m pages    \\x1b[0m\\x1b[1;38;2;158;158;240m<b/ctrl-c>\\x1b[0m\\x1b[38;2;126;126;138m quit\\x1b[0m       \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\\x1b[0m\\x1b[20;0H\\x1b[2K\\r\\x1b[?2004l\\x1b[?25h\\x1b[?1002l\\x1b[?1003l\\x1b[?1006l\\x1b[?1049l\\x1b[?25h'",
+  "raw_partial_e29c_count": 1,
+  "raw_valid_checkmark_count": 0,
+  "raw_c285_count": 1,
+  "title_byte_contexts": [
+    {
+      "offset": 489,
+      "context_hex": "5b313b33383b323b35363b3138393b3234386d781b5d303b74e29cc28579207a1b5b306d202020202020202020202020202020202020202020202020202020201b5b33383b323b37333b37333b39326de294821b5b306d0d0a1b5b33383b323b37333b37333b39326de294821b5b306d2020202020201b5b"
+    }
+  ],
+  "go_source_pin": "07af390",
+  "source_diff_pin_empty": true,
+  "styled_final_observation_supported": false,
+  "partial_frame_path": "/home/ajs/.cache/pb-phase7/style-c1-st-cli/saved-title-1791983856197107573.frame.json",
+  "partial_prefix_cell": {
+    "row_1based": 5,
+    "column_1based": 8,
+    "cell": [
+      "x",
+      "38bdf8",
+      "default",
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "partial_prefix_cursor": {
+    "x": 8,
+    "y": 4,
+    "visible": false,
+    "shape": 0
+  },
+  "clip_width": 30,
+  "input_byte_length": 12,
+  "clipping_applied": false,
+  "ledger_disposition": "Reachable Go byte transform; final styled-cell equivalence unknown due unsupported unterminated OSC grammar"
+}

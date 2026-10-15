@@ -1,0 +1,52 @@
+// L-SQL-4 oracle: Go strings.ToLower offsets applied to original bytes in
+// pkg/model/query.go extractDataset / resolveDatasetPlaceholder (pinned 07af390).
+//
+// Run on a SCRATCH COPY of the pinned Go tree (do not edit the worktree):
+//   T=/home/ajs/.cache/pb-phase7/tmp/lsql4-go && rm -rf $T && mkdir -p $T
+//   git -C /home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive archive 07af390 | tar -x -C $T
+//   cp /home/ajs/.cache/pb-phase7/sql-lower-oracle/lsql4_oracle_test.go $T/pkg/model/
+//   cd $T && GOTOOLCHAIN=go1.25.4 GOFLAGS=-mod=mod go test ./pkg/model -run TestLSQL4Oracle -v \
+//     > /home/ajs/.cache/pb-phase7/sql-lower-oracle-results.txt 2>&1
+//
+// Expected (Rust tests go_lowering_* in src/tui/sql.rs):
+//   kelvin  resolve=unchanged  extract="m"
+//   idot    resolve="select 'İ' from'logs'"
+//   grow    resolve=unchanged  extract="ataset"
+//   midrune extract="\xb5\x8b试"   json="��试"   (Rust keeps U+FFFD per invalid byte)
+//   past    extract panic "runtime error: slice bounds out of range [18:17]" (same for resolve)
+package model
+
+import (
+	"encoding/json"
+	"fmt"
+	"testing"
+)
+
+func lsql4Call(f func() string) (out string, panicked string) {
+	defer func() {
+		if r := recover(); r != nil {
+			panicked = fmt.Sprint(r)
+		}
+	}()
+	return f(), ""
+}
+
+func TestLSQL4Oracle(t *testing.T) {
+	cases := []struct{ name, sql string }{
+		{"kelvin", "select 'K' as k from dataset limit 5"},
+		{"idot", "select 'İ' from dataset"},
+		{"grow", "select 'Ⱥ' from dataset"},
+		{"ascii", "SELECT * FROM Dataset"},
+		{"midrune", "select 'Ⱥ' from 测试"},
+		{"past", "select 'Ⱥ' from "},
+		{"preflight-ok", "select 'Ⱥ' from dataset limit 1"},
+	}
+	for _, c := range cases {
+		ex, exPanic := lsql4Call(func() string { return extractDataset(c.sql) })
+		res, resPanic := lsql4Call(func() string { return resolveDatasetPlaceholder(c.sql, "logs") })
+		exJSON, _ := json.Marshal(ex)
+		resJSON, _ := json.Marshal(map[string]string{"query": res})
+		fmt.Printf("%s extract=%q extractPanic=%q extractJSON=%s resolve=%q resolvePanic=%q resolveJSON=%s\n",
+			c.name, ex, exPanic, exJSON, res, resPanic, resJSON)
+	}
+}

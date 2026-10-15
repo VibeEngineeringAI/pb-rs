@@ -1,0 +1,8 @@
+{
+  "base": "4a812d5b9bc4c40882ab10897a73c3ce1e715ce0",
+  "unchanged_from_base": {
+    "src/spec.json": "9a977cc2ae4304d5d5d336ca914669e786f22ad8977d0ded280cc0901cbc8317",
+    "src/catalog.json": "be81e4157b714d50f7529a5c7e773fb2432ac0463e67f70291bf4094c5616b24"
+  },
+  "scope": "embedded production JSON inputs supplemental to Rust-source build snapshot"
+}

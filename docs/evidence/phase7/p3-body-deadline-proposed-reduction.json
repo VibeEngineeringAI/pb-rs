@@ -1,0 +1,303 @@
+{
+  "status": "process-free proposed reduction only; not approved/applied; no CLI execution",
+  "source_sha256_unchanged": "39d16e2ba220aad27ec0e67646e04aacbcdd9a9c28d3013f3f04ddefec789099",
+  "corpus_unchanged": true,
+  "exact_rule_negative_checks": 10,
+  "captures": [
+    {
+      "campaign": "/home/ajs/.cache/pb-phase7/retained-release4-phase3",
+      "role": "reference",
+      "original_issues": [
+        "stderr b'Error: failed to stream response body: context deadline exceeded\\n', expected b'Error: failed to stream response body: <CLIENT-TIMEOUT> (Client.Timeout or context cancellation while reading body)\\n'"
+      ],
+      "proposed_issues": [],
+      "proposed_differences": [],
+      "wall_ms": 60040.947993,
+      "raw_stderr": "Error: failed to stream response body: context deadline exceeded\n",
+      "rejection_controls": [
+        {
+          "field": "termination",
+          "value": {
+            "exit": 0
+          },
+          "issues": [
+            "termination {'exit': 0}, expected {'exit': 1}"
+          ]
+        },
+        {
+          "field": "trace",
+          "value": [],
+          "issues": [
+            "requests [], expected ['POST /api/v1/query']"
+          ]
+        },
+        {
+          "field": "stdout_normalized",
+          "value": "",
+          "issues": [
+            "stdout b'', expected b'[{\"sequence\":0,\"message\":\"first\"},'"
+          ]
+        },
+        {
+          "field": "wall_ms",
+          "value": 58000,
+          "issues": [
+            "wall 58000 ms is below 59000 ms (deadline fired early)"
+          ]
+        },
+        {
+          "field": "wall_ms",
+          "value": 71000,
+          "issues": [
+            "wall 71000 ms exceeds 70000 ms (early completion)"
+          ]
+        }
+      ]
+    },
+    {
+      "campaign": "/home/ajs/.cache/pb-phase7/retained-release4-phase3",
+      "role": "reference-repeat-1",
+      "original_issues": [],
+      "proposed_issues": [],
+      "proposed_differences": [],
+      "wall_ms": 60090.449583,
+      "raw_stderr": "Error: failed to stream response body: net/http: request canceled (Client.Timeout or context cancellation while reading body)\n",
+      "rejection_controls": [
+        {
+          "field": "termination",
+          "value": {
+            "exit": 0
+          },
+          "issues": [
+            "termination {'exit': 0}, expected {'exit': 1}"
+          ]
+        },
+        {
+          "field": "trace",
+          "value": [],
+          "issues": [
+            "requests [], expected ['POST /api/v1/query']"
+          ]
+        },
+        {
+          "field": "stdout_normalized",
+          "value": "",
+          "issues": [
+            "stdout b'', expected b'[{\"sequence\":0,\"message\":\"first\"},'"
+          ]
+        },
+        {
+          "field": "wall_ms",
+          "value": 58000,
+          "issues": [
+            "wall 58000 ms is below 59000 ms (deadline fired early)"
+          ]
+        },
+        {
+          "field": "wall_ms",
+          "value": 71000,
+          "issues": [
+            "wall 71000 ms exceeds 70000 ms (early completion)"
+          ]
+        }
+      ]
+    },
+    {
+      "campaign": "/home/ajs/.cache/pb-phase7/retained-release4-phase3",
+      "role": "candidate",
+      "original_issues": [],
+      "proposed_issues": [],
+      "proposed_differences": [],
+      "wall_ms": 60004.588833,
+      "raw_stderr": "Error: failed to stream response body: context deadline exceeded (Client.Timeout or context cancellation while reading body)\n",
+      "rejection_controls": [
+        {
+          "field": "termination",
+          "value": {
+            "exit": 0
+          },
+          "issues": [
+            "termination {'exit': 0}, expected {'exit': 1}"
+          ]
+        },
+        {
+          "field": "trace",
+          "value": [],
+          "issues": [
+            "requests [], expected ['POST /api/v1/query']"
+          ]
+        },
+        {
+          "field": "stdout_normalized",
+          "value": "",
+          "issues": [
+            "stdout b'', expected b'[{\"sequence\":0,\"message\":\"first\"},'"
+          ]
+        },
+        {
+          "field": "wall_ms",
+          "value": 58000,
+          "issues": [
+            "wall 58000 ms is below 59000 ms (deadline fired early)"
+          ]
+        },
+        {
+          "field": "wall_ms",
+          "value": 71000,
+          "issues": [
+            "wall 71000 ms exceeds 70000 ms (early completion)"
+          ]
+        }
+      ]
+    },
+    {
+      "campaign": "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1",
+      "role": "reference",
+      "original_issues": [],
+      "proposed_issues": [],
+      "proposed_differences": [],
+      "wall_ms": 60027.680262,
+      "raw_stderr": "Error: failed to stream response body: net/http: request canceled (Client.Timeout or context cancellation while reading body)\n",
+      "rejection_controls": [
+        {
+          "field": "termination",
+          "value": {
+            "exit": 0
+          },
+          "issues": [
+            "termination {'exit': 0}, expected {'exit': 1}"
+          ]
+        },
+        {
+          "field": "trace",
+          "value": [],
+          "issues": [
+            "requests [], expected ['POST /api/v1/query']"
+          ]
+        },
+        {
+          "field": "stdout_normalized",
+          "value": "",
+          "issues": [
+            "stdout b'', expected b'[{\"sequence\":0,\"message\":\"first\"},'"
+          ]
+        },
+        {
+          "field": "wall_ms",
+          "value": 58000,
+          "issues": [
+            "wall 58000 ms is below 59000 ms (deadline fired early)"
+          ]
+        },
+        {
+          "field": "wall_ms",
+          "value": 71000,
+          "issues": [
+            "wall 71000 ms exceeds 70000 ms (early completion)"
+          ]
+        }
+      ]
+    },
+    {
+      "campaign": "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1",
+      "role": "reference-repeat-1",
+      "original_issues": [],
+      "proposed_issues": [],
+      "proposed_differences": [],
+      "wall_ms": 60032.099363,
+      "raw_stderr": "Error: failed to stream response body: context deadline exceeded (Client.Timeout or context cancellation while reading body)\n",
+      "rejection_controls": [
+        {
+          "field": "termination",
+          "value": {
+            "exit": 0
+          },
+          "issues": [
+            "termination {'exit': 0}, expected {'exit': 1}"
+          ]
+        },
+        {
+          "field": "trace",
+          "value": [],
+          "issues": [
+            "requests [], expected ['POST /api/v1/query']"
+          ]
+        },
+        {
+          "field": "stdout_normalized",
+          "value": "",
+          "issues": [
+            "stdout b'', expected b'[{\"sequence\":0,\"message\":\"first\"},'"
+          ]
+        },
+        {
+          "field": "wall_ms",
+          "value": 58000,
+          "issues": [
+            "wall 58000 ms is below 59000 ms (deadline fired early)"
+          ]
+        },
+        {
+          "field": "wall_ms",
+          "value": 71000,
+          "issues": [
+            "wall 71000 ms exceeds 70000 ms (early completion)"
+          ]
+        }
+      ]
+    }
+  ],
+  "original_reports": {
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/report.json": "a44393207ae776a838daace9e76462a5f9d8a8505843f73e5c52ab1795187934",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/report.json": "013dd5c74307d373eb6d8e83052ed5125e7e9f41793528bcf81be9c7a0f6cf0d"
+  },
+  "artifact_hashes": {
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/stdout.bin": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/meter.json": "62bc31a333f31102b60999c4b037601a456b154700ca9d53f93fe177d913cccd",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/stderr.bin": "4ac82e6f88228c4289456931f97f03e61a05b5e0ed0f3c7008bd8fdfbfca10a9",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/stderr.normalized": "4ac82e6f88228c4289456931f97f03e61a05b5e0ed0f3c7008bd8fdfbfca10a9",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/stdout.normalized": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/trace.json": "14c4d874a914103058e7f8ebdf79eefdd7fe77e28c4d01589bda12e026e2f8f7",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/milestones.json": "78a04c899de70baf58ea986e3a0cf694dd5a669797bd1df4a7423ce257e7cdbf",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/config-after.toml": "71659d2c6ff5e9422cb47205e390b8bf4174b76b2b17316387bb3d633257c331",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/result.json": "399b1219a7ab136b916b76865433f634709a365fb752599424f899d8a56ec334",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/stdout.bin": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/meter.json": "ca1eb45c0251cbd649f6440f4fb9773ccdac2ef196e757a0c9366d9448a35876",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/stderr.bin": "9eb8dc6b5680771ed6a37561ace00247ec768ed6f8af757252ef7a9113cff71b",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/stderr.normalized": "9eb8dc6b5680771ed6a37561ace00247ec768ed6f8af757252ef7a9113cff71b",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/stdout.normalized": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/trace.json": "36d9fe249f72b2b432fb6f9a08c5f46dcfed00e04a2e609d6147daa1995802f5",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/milestones.json": "fd3e45610551658d2063b2d79ba3ef2ff18e410d534dd0a6ca8f45e98e42c51e",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/config-after.toml": "00fa7ffd31000dc29da6932a9bbb10d4aa235c901676325aafd9e99fb9b51ec8",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/result.json": "3ee86a45fc09ed7e9dc69c4b13efce2139962bd179c84f8f3cac80268f95f72a",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/stdout.bin": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/meter.json": "ecf4f607daa7fa8464e3b17f53c23f7ce481f1e1be190a84ab0709cb4450042f",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/stderr.bin": "21994d8e6f67f391b6aed79a3d9371de45c904ea56c8ae5d0f7bcb3e88f5b074",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/stderr.normalized": "21994d8e6f67f391b6aed79a3d9371de45c904ea56c8ae5d0f7bcb3e88f5b074",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/stdout.normalized": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/trace.json": "3c1d46e922c116b83d992a3247c8b487d15ec33ca92051554e75da05b9426a43",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/milestones.json": "62957b931f73139c9411687075011efb7fe2efa6a5f32943dac2d8d01ce4834c",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/config-after.toml": "c56da8e42db5f80ec0c038af719c6b18fcb3912e1dd91994173a07270bd3bee8",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/result.json": "625f21cdb2f292cd2038eef3ff9d37f2e18f8b18026c56a85942d74f509603b3",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/stdout.bin": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/meter.json": "c6bb48b8f1e41d809c706b6594a045c2e27d9b95182ae58af6221e2c4476bdca",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/stderr.bin": "9eb8dc6b5680771ed6a37561ace00247ec768ed6f8af757252ef7a9113cff71b",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/stderr.normalized": "9eb8dc6b5680771ed6a37561ace00247ec768ed6f8af757252ef7a9113cff71b",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/stdout.normalized": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/trace.json": "010c9ea9e3bd1bd24bff752e1dbe0d2321d60b92a23a0689ec64b9e4e6e7b34c",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/milestones.json": "ac8774d1e66d77b70fd4579e16bc08d0bb4a0d620b2e945f0a4a351839d56510",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/config-after.toml": "e38998e4846a0828174517ac77fe885296f0e208deca9180ea0b5930e313aac8",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/result.json": "2bddd023a18df95e1bfc5f00376255504adf28d18d55f83dfbb614fb983ee498",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/stdout.bin": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/meter.json": "651fcd5118495c7f528f952b3a9a50b33147a38397b0c821f7296c441d1f1cca",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/stderr.bin": "21994d8e6f67f391b6aed79a3d9371de45c904ea56c8ae5d0f7bcb3e88f5b074",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/stderr.normalized": "21994d8e6f67f391b6aed79a3d9371de45c904ea56c8ae5d0f7bcb3e88f5b074",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/stdout.normalized": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/trace.json": "2a8782308b3af8f7764b09f03ffae248d2582085838723866955a22757aa4bd8",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/milestones.json": "74c77fe5c0117f61c58ec1050684603bd11a8d2fcd2589f4f32b89629810cdaa",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/config-after.toml": "f777c861cb5e681e177045cef487f325be3412fc0f10e1e1482f65beda7566cd",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/result.json": "b1050d1c28ea21e423ac3c9ec7b15df3a47313bac2a21bc91cf4d16e931307d0"
+  },
+  "patch_sha256": "2065d801a9a4e4caf844f407997d9bbce0594eca2b53d89a20fd69708acd033a",
+  "runner_sha256": "928119fef6922213a8890d7af50153470083cd856445f8efc8faf9c1bdd98226"
+}

@@ -1,0 +1,3 @@
+Error reading Default Profile
+Error creating request: self-hosted profile missing credentials
+Error: could not open a new TTY: open /dev/tty: no such device or address

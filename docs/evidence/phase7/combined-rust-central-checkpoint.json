@@ -1,0 +1,76 @@
+{
+  "scope": "combined source functional validation; no performance inference",
+  "head": "ea70f7ad7d501d59b26cf6397f6a0b1f28143fc4",
+  "report": "/home/ajs/.cache/pb-phase7/integration-combined-round1.json",
+  "report_sha256": "f30f639e236a486dfe2f1f334e4059f56db9af609738ad9bc842af66f97839e4",
+  "build_manifest_sha256": "c1aabd24afc0ed82e9bcd1a5028bc52c5cc507113a826119fabd91d7b63fc56c",
+  "checks": [
+    {
+      "label": "alltargets",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--all-targets",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "log": "/home/ajs/.cache/pb-phase7/integration-alltargets-combined1.log",
+      "sha256": "0e35e273c07632f109409213f834de7b2edd051fbf5433c1779c1d5d8e944808"
+    },
+    {
+      "label": "oauth",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--test",
+        "interactive_effects",
+        "oauth_",
+        "--",
+        "--ignored",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "log": "/home/ajs/.cache/pb-phase7/integration-oauth-combined1.log",
+      "sha256": "fe789f1d1c448c27c0e34fb4fa06d7ee1d2f1b430cf5d0a6cc5e8c1120b0d5fe"
+    },
+    {
+      "label": "deadlines",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--test",
+        "interactive_effects",
+        "deadline_",
+        "--",
+        "--ignored",
+        "--test-threads=4"
+      ],
+      "exit": 0,
+      "log": "/home/ajs/.cache/pb-phase7/integration-deadlines-combined1.log",
+      "sha256": "f7cb0ff9747d94b3b2c639ec2400390f9b0bf8e4333606f32e2719db8d824f53"
+    }
+  ],
+  "counts": {
+    "alltargets": {
+      "passed": 680,
+      "failed": 0,
+      "ignored": 9
+    },
+    "oauth": {
+      "passed": 4,
+      "failed": 0,
+      "ignored": 0
+    },
+    "deadlines": {
+      "passed": 4,
+      "failed": 0,
+      "ignored": 0
+    }
+  },
+  "source_unchanged": true,
+  "remaining": "combined styled/device, retained phases1-6, diagnostic feature, performance and profiling"
+}

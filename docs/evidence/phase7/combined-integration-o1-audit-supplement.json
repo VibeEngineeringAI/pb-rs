@@ -1,0 +1,42 @@
+{
+  "scope": "source-only in-memory mutations; no native child",
+  "commands": [
+    "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+    "/home/ajs/.cache/pb-phase7/phase6-merged-integration/o1-auditable-controls.py"
+  ],
+  "script_sha256": "108943c721d1afd9cda1c20acb115c89082ab6b218d6755b3abf232d8764078c",
+  "inputs_before_and_after": {
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase4.py": "0d6115259b95d3fb1342f4fd65af041a0a246e0c3ee8c955a6d2e377c3e5a34e",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase4.py": "e5105ae22b0c599901d8622adf4e2942abb05a8c38bd220e8f685cae58782213",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase3.py": "33be7605b2e3ea44712a8118b8909b129d00ef3f46c7f4d3932a522351e2b7bd"
+  },
+  "checks": [
+    {
+      "mode": "baseline",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "log": "/home/ajs/.cache/pb-phase7/phase6-merged-integration/o1-auditable/baseline.log",
+      "log_sha256": "796fafa1ccd2c1f0bf7b8291f6f2d17dc280966a410212fa56137680870b06ae"
+    },
+    {
+      "mode": "empty-historical",
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "log": "/home/ajs/.cache/pb-phase7/phase6-merged-integration/o1-auditable/empty-historical.log",
+      "log_sha256": "7e8968aa00b47bae59161a96b76738c1f9687c99fc56d4f5ecbb0a31038e98e1"
+    },
+    {
+      "mode": "drop-network",
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "log": "/home/ajs/.cache/pb-phase7/phase6-merged-integration/o1-auditable/drop-network.log",
+      "log_sha256": "d6bdb5b6eb797b90c67a508bb7581cd2c772e9806a354ea192c0af5610cbf61b"
+    }
+  ],
+  "review": "docs/phase7-review-flight14-adapter-opus-r1.md",
+  "status": "source-level O1 closure independently confirmed; root now retains reproducible mutation script and raw logs",
+  "original_closure_untouched": true
+}

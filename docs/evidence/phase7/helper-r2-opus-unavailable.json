@@ -1,0 +1,7 @@
+{
+  "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-spawn-helper-review-r2",
+  "status": "failed",
+  "reason": "Claude API rate limit reached. Try again later.",
+  "review_occurred": false,
+  "disposition": "Fresh independent Sol interim audit started; final Opus review remains outstanding."
+}

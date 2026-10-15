@@ -1,0 +1,101 @@
+// Probe: what a Linux PTY slave read returns when its master closes, through
+// Go's os.File (netpoller/epoll + read, the path cancelreader's Linux reader
+// uses for Bubble Tea). Two modes per iteration:
+//   blocked: the read is already waiting when the master closes (the TUI case)
+//   late:    the read starts 5 ms after the master closed
+// Prints counts of EOF / EIO / other plus the first error text of each kind.
+// Run: cd this dir && GOTMPDIR=$TMPDIR go run . [iterations]
+package main
+
+import (
+	"errors"
+	"fmt"
+	"io"
+	"os"
+	"strconv"
+	"syscall"
+	"time"
+	"unsafe"
+)
+
+func ioctl(fd, req, arg uintptr) error {
+	if _, _, e := syscall.Syscall(syscall.SYS_IOCTL, fd, req, arg); e != 0 {
+		return e
+	}
+	return nil
+}
+
+func openPair() (*os.File, *os.File) {
+	master, err := os.OpenFile("/dev/ptmx", os.O_RDWR|syscall.O_NOCTTY, 0)
+	if err != nil {
+		panic(err)
+	}
+	var unlock int32
+	if err := ioctl(master.Fd(), syscall.TIOCSPTLCK, uintptr(unsafe.Pointer(&unlock))); err != nil {
+		panic(err)
+	}
+	var n uint32
+	if err := ioctl(master.Fd(), syscall.TIOCGPTN, uintptr(unsafe.Pointer(&n))); err != nil {
+		panic(err)
+	}
+	slave, err := os.OpenFile(fmt.Sprintf("/dev/pts/%d", n), os.O_RDWR|syscall.O_NOCTTY, 0)
+	if err != nil {
+		panic(err)
+	}
+	return master, slave
+}
+
+type tally struct {
+	eof, eio, other int
+	eioText, other1 string
+}
+
+func (t *tally) add(err error) {
+	switch {
+	case errors.Is(err, io.EOF):
+		t.eof++
+	case errors.Is(err, syscall.EIO):
+		t.eio++
+		if t.eioText == "" {
+			t.eioText = err.Error()
+		}
+	default:
+		t.other++
+		if t.other1 == "" {
+			t.other1 = fmt.Sprint(err)
+		}
+	}
+}
+
+func main() {
+	iterations := 200
+	if len(os.Args) > 1 {
+		iterations, _ = strconv.Atoi(os.Args[1])
+	}
+	var blocked, late tally
+	for i := 0; i < iterations; i++ {
+		master, slave := openPair()
+		done := make(chan error, 1)
+		go func() {
+			buf := make([]byte, 256)
+			_, err := slave.Read(buf)
+			done <- err
+		}()
+		time.Sleep(2 * time.Millisecond)
+		master.Close()
+		blocked.add(<-done)
+		slave.Close()
+
+		master, slave = openPair()
+		master.Close()
+		time.Sleep(5 * time.Millisecond)
+		buf := make([]byte, 256)
+		_, err := slave.Read(buf)
+		late.add(err)
+		slave.Close()
+	}
+	fmt.Printf("blocked: EOF=%d EIO=%d other=%d eio=%q other=%q\n",
+		blocked.eof, blocked.eio, blocked.other, blocked.eioText, blocked.other1)
+	fmt.Printf("late:    EOF=%d EIO=%d other=%d eio=%q other=%q\n",
+		late.eof, late.eio, late.other, late.eioText, late.other1)
+}

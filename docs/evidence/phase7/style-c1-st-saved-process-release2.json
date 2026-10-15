@@ -1,0 +1,78 @@
+{
+  "kind": "one bounded release2 actual process C1-ST saved-title control",
+  "candidate": {
+    "case": "ONE literal L-STYLE-1 saved title",
+    "input_text": "x\u001b]0;t\u2705y z",
+    "input_utf8_hex": "781b5d303b74e29c8579207a",
+    "dimensions": [
+      40,
+      20
+    ],
+    "binary": "/home/ajs/.cache/pb-phase7/candidates/release2/pb-normal",
+    "binary_sha256": "46fe76b23feb5bdf97f997d115c0c1fdf70f73ca3de98be854ed080691ce2776",
+    "process_effects_passed": true,
+    "failure": null,
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/v1/filters",
+        "params": {},
+        "body": "",
+        "headers": {
+          "x-api-key": "fixture-key",
+          "content-type": "application/json",
+          "user-agent": "Go-http-client/1.1",
+          "accept-encoding": "gzip",
+          "host": "127.0.0.1:43131"
+        },
+        "received": 995625.469460523,
+        "protocol": "HTTP/1.1",
+        "response_status": 200,
+        "response_preview": "[{\"filter_id\": \"saved-id\", \"filter_name\": \"x\\u001b]0;t\\u2705y z\", \"stream_name\": \"logs\", \"query\": {\"filter_type\": \"sql\", \"filter_query\": \"SELECT 1\"}}]",
+        "response_bytes": 150,
+        "done": true
+      }
+    ],
+    "checkpoint_byte_offset": 2255,
+    "returncode": 0,
+    "raw_stdout_path": "/home/ajs/.cache/pb-phase7/style-c1-st-cli/saved-title-1791984267061291496.stdout",
+    "raw_stdout_sha256": "607dfbcf7af97f4025cc415335f154bd20c1bd068229f02086aa18742e50710b",
+    "actual_read_chunks": [
+      [
+        0,
+        12
+      ],
+      [
+        12,
+        47
+      ],
+      [
+        47,
+        2255
+      ],
+      [
+        2255,
+        2312
+      ]
+    ],
+    "live_observer_unsupported": [],
+    "final_replay_unsupported": [
+      "incomplete terminal sequence: '\\x1b]0;t\\udce2\\udc9c\\x85y z\\x1b[0m                            \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m      \\x1b[38;2;126;126;138mSELECT 1\\x1b[0m                        \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m \\x1b[1;38;2;158;158;240m<a/enter>\\x1b[0m\\x1b[38;2;126;126;138m apply    \\x1b[0m\\x1b[1;38;2;158;158;240m<\u2191/\u2193>\\x1b[0m\\x1b[38;2;126;126;138m navigate    \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m \\x1b[0m\\x1b[1;38;2;158;158;240m<\u2192/\u2190>\\x1b[0m\\x1b[38;2;126;126;138m pages    \\x1b[0m\\x1b[1;38;2;158;158;240m<b/ctrl-c>\\x1b[0m\\x1b[38;2;126;126;138m quit\\x1b[0m       \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\\x1b[0m\\x1b[20;0H\\x1b[2K\\r\\x1b[?2004l\\x1b[?25h\\x1b[?1002l\\x1b[?1003l\\x1b[?1006l\\x1b[?1049l\\x1b[?25h'"
+    ],
+    "live_pending": "'\\x1b]0;t\\udce2\\udc9c\\x85y z\\x1b[0m                            \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m      \\x1b[38;2;126;126;138mSELECT 1\\x1b[0m                        \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m                                      \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m \\x1b[1;38;2;158;158;240m<a/enter>\\x1b[0m\\x1b[38;2;126;126;138m apply    \\x1b[0m\\x1b[1;38;2;158;158;240m<\u2191/\u2193>\\x1b[0m\\x1b[38;2;126;126;138m navigate    \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2502\\x1b[0m \\x1b[0m\\x1b[1;38;2;158;158;240m<\u2192/\u2190>\\x1b[0m\\x1b[38;2;126;126;138m pages    \\x1b[0m\\x1b[1;38;2;158;158;240m<b/ctrl-c>\\x1b[0m\\x1b[38;2;126;126;138m quit\\x1b[0m       \\x1b[38;2;73;73;92m\u2502\\x1b[0m\\r\\n\\x1b[38;2;73;73;92m\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\\x1b[0m\\x1b[20;0H\\x1b[2K\\r\\x1b[?2004l\\x1b[?25h\\x1b[?1002l\\x1b[?1003l\\x1b[?1006l\\x1b[?1049l\\x1b[?25h'",
+    "raw_partial_e29c_count": 1,
+    "raw_valid_checkmark_count": 0,
+    "raw_c285_count": 1,
+    "title_byte_contexts": [
+      {
+        "offset": 500,
+        "context_hex": "5b313b33383b323b35363b3138393b3234386d781b5d303b74e29cc28579207a1b5b306d202020202020202020202020202020202020202020202020202020201b5b33383b323b37333b37333b39326de294821b5b306d0d0a1b5b33383b323b37333b37333b39326de294821b5b306d2020202020201b5b"
+      }
+    ]
+  },
+  "oracle_evidence": "style-c1-st-saved-process-go.json",
+  "exact_title_byte_contexts_equal": true,
+  "counts_equal": true,
+  "final_styled_cell_equivalence": "unknown: observer rejects incomplete OSC in both outputs; no normalization or full-screen acceptance",
+  "script_sha256": "13b7144b0cbfe3924d89303048e6322f791705c005631cbae007b29d5363c239"
+}

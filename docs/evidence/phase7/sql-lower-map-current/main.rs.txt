@@ -1,0 +1,17 @@
+fn go_lower_rune(c: char) -> char {
+    match c {
+        '\u{130}' => return 'i',
+        // Lowercase mappings Rust's newer Unicode tables add but go1.25.4's
+        // unicode tables (Unicode 15.0) lack; Go leaves these runes unchanged.
+        // Exhaustive scalar probe: docs/evidence/phase7/sql-lower-map/.
+        '\u{a7cb}' | '\u{a7dc}' => return c,
+        _ => {}
+    }
+    let mut lower = c.to_lowercase();
+    match (lower.next(), lower.next()) {
+        (Some(single), None) => single,
+        _ => c,
+    }
+}
+
+fn main(){for code in 0..=0x10ffff{let Some(c)=char::from_u32(code) else {continue};let l=go_lower_rune(c);if c.len_utf8()!=l.len_utf8() || (l as u32)<128 {println!("{:x} {:x} {}",code,l as u32,l.len_utf8());}}}

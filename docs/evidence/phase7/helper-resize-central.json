@@ -1,0 +1,28 @@
+{
+  "command": [
+    "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "harness",
+    "-p",
+    "test_phase7.py",
+    "-v"
+  ],
+  "exit": 0,
+  "source_hashes": {
+    "docs/phase7-harness.md": "038eeacec10dfc11f14cc941ede3a4dd2371ad98c40b03dde5adc130c0fc5bbc",
+    "harness/phase7.py": "dc7574f058b9ff6ae7b77a912847fdbe02d8b68baab8728237d6ef040e6a44fa",
+    "harness/phase7_spawn.c": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4",
+    "harness/phase7_workloads.py": "54a9efb7767372c976b459c3e2dc59c590e0b9d6b47b4cc29e36ae81ff588d1c",
+    "harness/test_phase7.py": "97f19258eaf3a7d052d1f8b1ea7577ad4b3b5acc1d284dbd0162cdcace3080a5"
+  },
+  "source_unchanged": true,
+  "native_resize_optin": true,
+  "log": "/home/ajs/.cache/pb-phase7/helper-resize-central.log",
+  "log_sha256": "7dbab1adc8111355a4e2a59c5331bd6e37df515639c02e50c0e08105831ab364",
+  "tests_passed": 77,
+  "tests_skipped": 0,
+  "scope": "Full helper suite including actual own native resize control; source hashes unchanged, no Go/Rust candidate in unit suite"
+}

@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "source_frozen": true,
+  "files": {
+    "harness/phase7_bench.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_bench.py",
+      "size_bytes": 137115,
+      "sha256": "500d5c8d2b7ace145599b4d11d2dcc67c9ccb002611352a137bd4da47c4760c6"
+    },
+    "harness/test_phase7_bench.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7_bench.py",
+      "size_bytes": 97570,
+      "sha256": "187d4524eb961d9f82f5c936179316aa84c30cf191866f4f3f93a3cfcdaf3f42"
+    },
+    "harness/phase7_profile.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_profile.py",
+      "size_bytes": 43895,
+      "sha256": "85c9f5787a109a10d12bc99d1673b3cbb821ad202901ca6d540846a76ae47ab6"
+    },
+    "harness/test_phase7_profile.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7_profile.py",
+      "size_bytes": 37130,
+      "sha256": "75bb14229f18b212cd234e9d2d4af5ad8cef3eb290f2c483d45e6e1c2e6443dd"
+    },
+    "docs/phase7-measurement.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-measurement.md",
+      "size_bytes": 61569,
+      "sha256": "97a5de215d058fbd8ecf9e6662276d2d4b698cbc2aec19e0bf6b5b0e94e03d58"
+    },
+    "docs/phase7-profiling.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-profiling.md",
+      "size_bytes": 22233,
+      "sha256": "1434c5e9f3da04ef8d003b348b7537fbfe546f9c6a626ed1d27c7ad7949129a4"
+    },
+    "harness/contracts/phase7.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/contracts/phase7.md",
+      "size_bytes": 21459,
+      "sha256": "7bc21a1ac8760d4940b54543ed7368b102e0c386bb7bbaae95ce6aea9f66d1a0"
+    }
+  },
+  "consumed_shared_freeze": {
+    "path": "/home/ajs/.cache/pb-phase7/harness-resize-policy-r4/freeze.json",
+    "size_bytes": 8863,
+    "sha256": "8c1d8fe5661f4241619006dcda850e7ca6eb4f64ffac88a733a00b691db3edb5"
+  },
+  "consumed_shared_source": {
+    "docs/phase7-harness.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-harness.md",
+      "size_bytes": 52767,
+      "sha256": "038eeacec10dfc11f14cc941ede3a4dd2371ad98c40b03dde5adc130c0fc5bbc"
+    },
+    "harness/phase7.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7.py",
+      "size_bytes": 90070,
+      "sha256": "dc7574f058b9ff6ae7b77a912847fdbe02d8b68baab8728237d6ef040e6a44fa"
+    },
+    "harness/phase7_spawn.c": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_spawn.c",
+      "size_bytes": 9383,
+      "sha256": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4"
+    },
+    "harness/phase7_workloads.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_workloads.py",
+      "size_bytes": 41781,
+      "sha256": "54a9efb7767372c976b459c3e2dc59c590e0b9d6b47b4cc29e36ae81ff588d1c"
+    },
+    "harness/test_phase7.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7.py",
+      "size_bytes": 85821,
+      "sha256": "97f19258eaf3a7d052d1f8b1ea7577ad4b3b5acc1d284dbd0162cdcace3080a5"
+    }
+  },
+  "consumed_helper": {
+    "build_key": "d0592f15c157a359d3b1d7adf9ab0efb1cf39a3765205fe8ccde855157ed2fab",
+    "capability": {
+      "group_signal_flag": 4,
+      "method": "actual own-child pidfd group delivery + WNOWAIT reservation",
+      "probe_executable_sha256": "3b684c7b7632302725727fcc586a071c7818f43d704a8cbf4e1afc384e99f03e",
+      "protocol_version": 2,
+      "received": [
+        "LEADER",
+        "MEMBER"
+      ],
+      "reserved_state": "Z",
+      "signal": "SIGUSR1",
+      "status": 0
+    },
+    "compiler": "/usr/bin/gcc",
+    "compiler_sha256": "8aac907d6fbf40394b424b5fa4a2ad1aa291dac7d3a0315c5b415c1f5ace1287",
+    "compiler_version": "gcc (GCC) 16.2.1 20260810\nCopyright (C) 2026 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+    "flags": [
+      "-std=c11",
+      "-O2",
+      "-Wall",
+      "-Wextra",
+      "-Werror"
+    ],
+    "path": "/home/ajs/.cache/pb-phase7/tmp/phase7-spawn-d0592f15c157a359d3b1d7adf9ab0efb1cf39a3765205fe8ccde855157ed2fab",
+    "protocol_version": 2,
+    "provenance_path": "/home/ajs/.cache/pb-phase7/tmp/phase7-spawn-d0592f15c157a359d3b1d7adf9ab0efb1cf39a3765205fe8ccde855157ed2fab.json",
+    "provenance_sha256": "69e1067e728b7ce4cd67a288ea797d346d00b5403ae5c34368756770f0730394",
+    "sha256": "3b684c7b7632302725727fcc586a071c7818f43d704a8cbf4e1afc384e99f03e",
+    "source_sha256": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4"
+  },
+  "response": {
+    "path": "/home/ajs/.cache/pb-phase7/collector-r4-resize-integration/response.json",
+    "size_bytes": 13619,
+    "sha256": "5f019a47a60f6cdc3a6a368a455f11bef3f8c1a1e0167a3d632b96221679e4cb"
+  },
+  "command_matrix": {
+    "path": "/home/ajs/.cache/pb-phase7/collector-r4-resize-integration/command-matrix.json",
+    "size_bytes": 350640,
+    "sha256": "fe044872c191fe836e9ac717f2adf17f815aacb6d6646021cfe784167175250b"
+  },
+  "static_checks": {
+    "path": "/home/ajs/.cache/pb-phase7/collector-r4-resize-integration/static-checks.json",
+    "size_bytes": 5752,
+    "sha256": "d7a97a438e8243889b4038e89a9984b17cc40f72053060c7ce3b65e4d963a45a"
+  },
+  "tests": [
+    {
+      "suite": "bench pure/mock",
+      "count": 70,
+      "elapsed_seconds": 46.408,
+      "command": "export PATH=/home/ajs/.cargo/bin:$PATH TMPDIR=/home/ajs/.cache/pb-phase7/tmp GOTMPDIR=/home/ajs/.cache/pb-phase7/tmp CLAUDE_CODE_TMPDIR=/home/ajs/.cache/pb-phase7/tmp\nPYTHONDONTWRITEBYTECODE=1 /home/ajs/.cache/pb-phase7/harness-venv/bin/python -m unittest discover -s harness -p test_phase7_bench.py -v",
+      "log": {
+        "path": "/home/ajs/.cache/pb-phase7/collector-r4-resize-integration/bench-tests-1.log",
+        "size_bytes": 11702,
+        "sha256": "9df344d87593840cdab58fbc3266253707e2d86feaf7112c124dd17652ddccd0"
+      }
+    },
+    {
+      "suite": "profiler pure/mock",
+      "count": 23,
+      "elapsed_seconds": 1.531,
+      "excluded_native_fixture": "test_owned_analysis_child_leader_exits_and_group_child_is_killed_reaped",
+      "command": "export PATH=/home/ajs/.cargo/bin:$PATH TMPDIR=/home/ajs/.cache/pb-phase7/tmp GOTMPDIR=/home/ajs/.cache/pb-phase7/tmp CLAUDE_CODE_TMPDIR=/home/ajs/.cache/pb-phase7/tmp\nPYTHONDONTWRITEBYTECODE=1 /home/ajs/.cache/pb-phase7/harness-venv/bin/python - <<'PY'\nimport sys,unittest\nsys.path.insert(0,'harness')\nimport test_phase7_profile\nall_tests=unittest.defaultTestLoader.loadTestsFromModule(test_phase7_profile)\ndef flatten(suite):\n for item in suite:\n  if isinstance(item,unittest.TestSuite):yield from flatten(item)\n  else:yield item\nselected=[]\nfor test in flatten(all_tests):\n if test._testMethodName=='test_owned_analysis_child_leader_exits_and_group_child_is_killed_reaped':\n  print('NOT RUN: native analysis-child fixture outside current pure/mock scope',test.id())\n else:selected.append(test)\nresult=unittest.TextTestRunner(verbosity=2).run(unittest.TestSuite(selected))\nraise SystemExit(not result.wasSuccessful())\nPY",
+      "log": {
+        "path": "/home/ajs/.cache/pb-phase7/collector-r4-resize-integration/profile-pure-tests-1.log",
+        "size_bytes": 4175,
+        "sha256": "fe81fabefe84cfb9ffcecb2e4bc30539474a871b7457d801c2a1869f795a997d"
+      }
+    }
+  ],
+  "original_r4_response": {
+    "path": "/home/ajs/.cache/pb-phase7/collector-measurement-opus-r4-response.json",
+    "size_bytes": 20140,
+    "sha256": "587c05e81e40925358abddc97509a50fc0c4701e24c36e2e70f0cbd72dbe46fd"
+  },
+  "not_acceptance": true
+}

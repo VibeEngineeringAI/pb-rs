@@ -1,0 +1,29 @@
+{
+  "finding": "O1 vacuous historical guard loop",
+  "fix": "Retain separate promoted live guards, exercise nonempty historical definitions in guard regression",
+  "test_source_sha256": "0d6115259b95d3fb1342f4fd65af041a0a246e0c3ee8c955a6d2e377c3e5a34e",
+  "controls": [
+    {
+      "mode": "baseline",
+      "run": 1,
+      "failures": 0,
+      "errors": 0,
+      "successful": true
+    },
+    {
+      "mode": "empty-historical",
+      "run": 1,
+      "failures": 1,
+      "errors": 0,
+      "successful": false
+    },
+    {
+      "mode": "drop-network",
+      "run": 1,
+      "failures": 1,
+      "errors": 0,
+      "successful": false
+    }
+  ],
+  "source_mutated": false
+}

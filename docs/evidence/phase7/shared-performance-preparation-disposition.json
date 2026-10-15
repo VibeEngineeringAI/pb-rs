@@ -1,0 +1,24 @@
+{
+  "status": "root preparation disposition only, no performance admission",
+  "prior_baseline": "accepted Phase5 9bd38b9db4f4f8e76cd43384cb024dddd4d122c6bc109d29a8afa483ae0e2c6d",
+  "secondary_merged_prior": "optional separate comparison, not replacement",
+  "retained_method": "full15 cases in original order,3labels go/prior/rust,5warm30measured,seed2026; no restart-per-case schedule",
+  "proposal": "attempt entire unchanged suite under reviewed complete-span external bound; timeout sum cannot guarantee completion, but incomplete/failure remains unadmitted without subset or reduced controls",
+  "not_admitted": [
+    "shared runner observed reap-before-group-signal defect needs narrow correction/review",
+    "fresh quiet acknowledgement and source binding",
+    "actual complete-span supervisor review",
+    "actual complete valid report and end identities/cleanup"
+  ],
+  "gates": {
+    "wall_cpu": "retained >10% AND >1ms; retain actual bootstrap gate and point screening separately",
+    "rss": "retained >20% AND >2097152B",
+    "secondary_confirmation": "retain prior extra >5% point increase fresh isolated5warm30trial confirmation and fullratioCI>1.05, separately from main budgets; no primary/confirmation pooling"
+  },
+  "unknowns": [
+    "host load and resource accounting interpretation",
+    "actual complete-suite duration",
+    "same-Go noise controls"
+  ],
+  "no_change_to_tui_feasibility_rules": true
+}

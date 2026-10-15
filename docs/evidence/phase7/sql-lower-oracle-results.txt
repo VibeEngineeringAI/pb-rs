@@ -1,0 +1,11 @@
+=== RUN   TestLSQL4Oracle
+kelvin extract="m" extractPanic="" extractJSON="m" resolve="select 'K' as k from dataset limit 5" resolvePanic="" resolveJSON={"query":"select 'K' as k from dataset limit 5"}
+idot extract="dataset" extractPanic="" extractJSON="dataset" resolve="select 'İ' from'logs'" resolvePanic="" resolveJSON={"query":"select 'İ' from'logs'"}
+grow extract="ataset" extractPanic="" extractJSON="ataset" resolve="select 'Ⱥ' from dataset" resolvePanic="" resolveJSON={"query":"select 'Ⱥ' from dataset"}
+ascii extract="Dataset" extractPanic="" extractJSON="Dataset" resolve="SELECT * FROM 'logs'" resolvePanic="" resolveJSON={"query":"SELECT * FROM 'logs'"}
+midrune extract="\xb5\x8b试" extractPanic="" extractJSON="\ufffd\ufffd试" resolve="select 'Ⱥ' from 测试" resolvePanic="" resolveJSON={"query":"select 'Ⱥ' from 测试"}
+past extract="" extractPanic="runtime error: slice bounds out of range [18:17]" extractJSON="" resolve="" resolvePanic="runtime error: slice bounds out of range [18:17]" resolveJSON={"query":""}
+preflight-ok extract="ataset" extractPanic="" extractJSON="ataset" resolve="select 'Ⱥ' from dataset limit 1" resolvePanic="" resolveJSON={"query":"select 'Ⱥ' from dataset limit 1"}
+--- PASS: TestLSQL4Oracle (0.00s)
+PASS
+ok  	github.com/parseablehq/pb/pkg/model	0.018s

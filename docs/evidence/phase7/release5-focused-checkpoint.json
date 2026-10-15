@@ -1,0 +1,138 @@
+{
+  "status": "focused replay complete with one unresolved credential checkpoint; not phase acceptance",
+  "report": "/home/ajs/.cache/pb-phase7/release5-focused/report.json",
+  "report_sha256": "9fe7f94c6df028ae0e2df72ebeb01d9a5da4f8193b53faf2f3e7725c8eeeac11",
+  "checks": [
+    {
+      "label": "login",
+      "command": [
+        "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+        "docs/evidence/phase7/login-blink-process.py",
+        "--binary",
+        "/home/ajs/.cache/pb-phase7/candidates/release5/pb-normal",
+        "--role",
+        "candidate",
+        "--expect-sha256",
+        "9ad4f4fc9e732b4a790c0d2ea97dcc58f127ee7580d3df9bc26c8cee28edef21",
+        "--out",
+        "/home/ajs/.cache/pb-phase7/release5-focused/login"
+      ],
+      "exit": 0,
+      "log": "/home/ajs/.cache/pb-phase7/release5-focused/login.log",
+      "sha256": "bb27d9bd675520e09ab851d02b7e03f1522f6f8db49b625ffb8f542972d996b8"
+    },
+    {
+      "label": "credential-go-ac",
+      "command": [
+        "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+        "docs/evidence/phase7/credential-blink-process.py",
+        "--binary",
+        "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+        "--role",
+        "go",
+        "--expect-sha256",
+        "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+        "--cases",
+        "A",
+        "C",
+        "--retry-cause",
+        "Successor exact current-case controls: original A/C cases predated explicit password-focus readiness; old captures retained",
+        "--out",
+        "/home/ajs/.cache/pb-phase7/release5-focused/credential-go-ac"
+      ],
+      "exit": 0,
+      "log": "/home/ajs/.cache/pb-phase7/release5-focused/credential-go-ac.log",
+      "sha256": "06cf65addec75585ebefda85b4b8acb17c2d91902094964536be2777753c94bc"
+    },
+    {
+      "label": "credential-candidate-ac",
+      "command": [
+        "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+        "docs/evidence/phase7/credential-blink-process.py",
+        "--binary",
+        "/home/ajs/.cache/pb-phase7/candidates/release5/pb-normal",
+        "--role",
+        "candidate",
+        "--expect-sha256",
+        "9ad4f4fc9e732b4a790c0d2ea97dcc58f127ee7580d3df9bc26c8cee28edef21",
+        "--cases",
+        "A",
+        "C",
+        "--retry-cause",
+        "Successor replay paired with exact current-case Go A/C controls",
+        "--compare-go",
+        "/home/ajs/.cache/pb-phase7/release5-focused/credential-go-ac",
+        "--out",
+        "/home/ajs/.cache/pb-phase7/release5-focused/credential-candidate-ac"
+      ],
+      "exit": 0,
+      "log": "/home/ajs/.cache/pb-phase7/release5-focused/credential-candidate-ac.log",
+      "sha256": "06cf65addec75585ebefda85b4b8acb17c2d91902094964536be2777753c94bc",
+      "strict_differential_checks": [
+        {
+          "case": "A",
+          "issues": [
+            "checkpoint:cancel-ready"
+          ]
+        },
+        {
+          "case": "C",
+          "issues": []
+        }
+      ],
+      "strict_pass": false
+    },
+    {
+      "label": "credential-candidate-b",
+      "command": [
+        "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+        "docs/evidence/phase7/credential-blink-process.py",
+        "--binary",
+        "/home/ajs/.cache/pb-phase7/candidates/release5/pb-normal",
+        "--role",
+        "candidate",
+        "--expect-sha256",
+        "9ad4f4fc9e732b4a790c0d2ea97dcc58f127ee7580d3df9bc26c8cee28edef21",
+        "--cases",
+        "B",
+        "--retry-cause",
+        "Successor replay paired with retained current-case Go B retry",
+        "--compare-go",
+        "/home/ajs/.cache/pb-phase7/credential-blink-controls/go-r2",
+        "--out",
+        "/home/ajs/.cache/pb-phase7/release5-focused/credential-candidate-b"
+      ],
+      "exit": 0,
+      "log": "/home/ajs/.cache/pb-phase7/release5-focused/credential-candidate-b.log",
+      "sha256": "5eedb7823ba25706eecef025c41fa22477d42ba6c96c0414c323b0df35583e28",
+      "strict_differential_checks": [
+        {
+          "case": "B",
+          "issues": []
+        }
+      ],
+      "strict_pass": true
+    },
+    {
+      "label": "saved",
+      "command": [
+        "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+        "docs/evidence/phase7/opus-r4-saved-process.py",
+        "--binary",
+        "/home/ajs/.cache/pb-phase7/candidates/release5/pb-normal",
+        "--role",
+        "candidate",
+        "--expect-sha256",
+        "9ad4f4fc9e732b4a790c0d2ea97dcc58f127ee7580d3df9bc26c8cee28edef21",
+        "--out",
+        "/home/ajs/.cache/pb-phase7/release5-focused/saved"
+      ],
+      "exit": 0,
+      "log": "/home/ajs/.cache/pb-phase7/release5-focused/saved.log",
+      "sha256": "f630e8b9a946becbec96c0e23b596536b0a43969c5d0ea45fe5b85995bebdadc"
+    }
+  ],
+  "identities_unchanged": true,
+  "performance_claim": false,
+  "remaining": "A cancel-ready two cursor cells differ; strict intended blink checkpoints match; investigate causally without normalization. Full styled/device/retained and independent final review pending."
+}

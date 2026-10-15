@@ -1,0 +1,24 @@
+{
+  "kind": "evidence-only sealed checkpoint",
+  "report": {
+    "path": "/home/ajs/.cache/pb-phase7/release4-masked-investigation/report.json",
+    "sha256": "88e8f87dee78862c664dd190e7c8b7bf668c8c3652c2996c6ba4640bbeb358df"
+  },
+  "notes": {
+    "path": "/home/ajs/.cache/pb-phase7/release4-masked-investigation/observations.md",
+    "sha256": "de6c288da658cba429442ee345b8dea8e08a7804510d362eb896cefb99cf34e9"
+  },
+  "owned_sources_verified_unchanged": {
+    "harness/phase7.py": "26895f680be00ba1f65440a4e7097ee8d94027e15c64bd7fb317691700f7da0a",
+    "harness/test_phase7.py": "e25bd26ff4229e1487f2492647addf7f778e048f47bba3d19359adc10b535d37",
+    "harness/phase7_workloads.py": "54a9efb7767372c976b459c3e2dc59c590e0b9d6b47b4cc29e36ae81ff588d1c",
+    "harness/phase7_spawn.c": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4",
+    "docs/phase7-harness.md": "6c3c79dd0f159632d9983654a1c4f8e10ebc0032a67dd8a4ff7810f2c7d34882"
+  },
+  "new_Go_sessions": 2,
+  "candidate_sessions": 0,
+  "source_contract_comparator_edits": false,
+  "artifact_tests": 4,
+  "normalization_proposed": false,
+  "remaining": "parent/editor cursor-lifetime disposition; controlled candidate comparison not run"
+}

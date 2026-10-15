@@ -1,0 +1,113 @@
+{
+  "kind": "failed functional preflight; no subset admission",
+  "campaign": "under30-combined-a1-primary-dark-04",
+  "root_receipt": {
+    "path": "/home/ajs/.cache/pb-phase7/under30-combined-a1-retry04-preparation/coordination/receipt.json",
+    "sha256": "2f6765b8427e18eb0c9820a7361dace7829a3951a0ab701b649ecea29ea80b2b"
+  },
+  "actual_coordinator_exit": 1,
+  "actual_supervisor_exit": 2,
+  "start_utc": "2026-10-15T17:38:10.101407+00:00",
+  "final_receipt_utc": "2026-10-15T17:42:41.956214+00:00",
+  "elapsed_before_final_receipt": 271.8548139180057,
+  "valid_pairs": 11,
+  "total_pairs": 12,
+  "failure": "promql-dense-1000-sustained-120x40-dark candidate session timeout; signal9 and restoration failures",
+  "end_identities_unchanged": true,
+  "inventory_end_exact": true,
+  "supervisor_cleanup": {
+    "converged_before_reap_by": true,
+    "echild_verified": true,
+    "own_children_after": [],
+    "recorded_descendants": 0,
+    "recorded_unreaped": []
+  },
+  "coordinator_echild_verified": true,
+  "lock_reacquired_released": true,
+  "supplemental_post_scan": {
+    "scope": "supplemental same-effective-UID exact-known-path observations; never an owned-tree cleanup proof",
+    "status": "incomplete",
+    "reason": null,
+    "coverage_complete": false,
+    "enumeration_completed": true,
+    "same_uid_entries": 170,
+    "owner_unknown_entries": 1,
+    "matches": [],
+    "component_errors": [
+      {
+        "pid": 1222,
+        "stage": "exe",
+        "classification": "permission_denied",
+        "error": {
+          "type": "PermissionError",
+          "errno": 13,
+          "message": "Permission denied"
+        }
+      },
+      {
+        "pid": 1226,
+        "stage": "exe",
+        "classification": "permission_denied",
+        "error": {
+          "type": "PermissionError",
+          "errno": 13,
+          "message": "Permission denied"
+        }
+      },
+      {
+        "pid": 1685,
+        "stage": "exe",
+        "classification": "vanished",
+        "error": {
+          "type": "FileNotFoundError",
+          "errno": 2,
+          "message": "No such file or directory"
+        }
+      },
+      {
+        "pid": 1728763,
+        "stage": "exe",
+        "classification": "vanished",
+        "error": {
+          "type": "FileNotFoundError",
+          "errno": 2,
+          "message": "No such file or directory"
+        }
+      },
+      {
+        "pid": 4139540,
+        "stage": "uid",
+        "classification": "vanished",
+        "error": {
+          "type": "FileNotFoundError",
+          "errno": 2,
+          "message": "No such file or directory"
+        }
+      },
+      {
+        "pid": 4139540,
+        "stage": "exe",
+        "classification": "vanished",
+        "error": {
+          "type": "FileNotFoundError",
+          "errno": 2,
+          "message": "No such file or directory"
+        }
+      },
+      {
+        "pid": 4139540,
+        "stage": "cmdline",
+        "classification": "vanished",
+        "error": {
+          "type": "FileNotFoundError",
+          "errno": 2,
+          "message": "No such file or directory"
+        }
+      }
+    ],
+    "global_scan_empty_claimed": false,
+    "owned_cleanup_authority": "supervisor ECHILD and owned descendant ledger plus coordinator ECHILD"
+  },
+  "cleanup_release_sent": true,
+  "performance_claim": false
+}

@@ -1,0 +1,14 @@
+{
+  "kind": "fresh Opus collector R3 findings implementation assignments; not acceptance",
+  "report": "docs/phase7-review-measurement-opus-r3.md",
+  "report_sha256": "3fe4ad43f32b5620da0b21673aec81d6c13cfec5de19f3742ecc24ab2ecaf9da",
+  "tasks": {
+    "collector": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-collector-opus-r3-fixes",
+    "dispatch": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-harness-dispatch-origin-fix"
+  },
+  "policies": [
+    "Full resource-attribution preflight and 5+30 independent paired sessions for every CPU/RSS budget workload; primary optional observers stay disabled.",
+    "Add error path and sustained large-window scroll cases. External PTY stage breakdown remains unknown; never infer reducer/render/write durations.",
+    "No native campaign, profiler, quiet approval or source acceptance before successor freeze and fresh review."
+  ]
+}

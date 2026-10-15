@@ -1,0 +1,13 @@
+{
+  "review": "docs/phase7-review-bounded-execution-opus-r1.md",
+  "sha256": "c3527faa68f35838dc1d1f681af73ee5ae502c314fb4873daa8b13fe5c800b50",
+  "disposition": "not accepted for runtime; B1/B2 code + B3 documentation fixes assigned to original Opus implementation owner",
+  "also_assigned": [
+    "N1 anchor finite/plausible",
+    "N2 interrupt during exec confirmation",
+    "N5 end-check pending signal recording"
+  ],
+  "source_ownership_core": "independent review found no defect; no broad refactor authorized",
+  "limits": "No unconditional time bound against host suspend/stopped driver/D-state/SIGKILL; actual elapsed/process exit and cleanup evidence gate acceptance",
+  "next": "fresh narrow independent review after frozen corrections; no preflight started"
+}

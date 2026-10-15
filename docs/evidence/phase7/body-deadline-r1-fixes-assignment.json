@@ -1,0 +1,21 @@
+{
+  "task": "Phase7 scoped implementation: prepare correction for fresh Opus body-deadline R1 findings, OFF-TREE ONLY for shared source. Worktree /home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive only. Read docs/evidence/phase7/body-deadline-review-assignment.json (original full brief), docs/phase7-review-body-deadline-r1.md FULL, docs/phase7-body-deadline-proposal.md and all linked evidence/reduction; prior redirect R1/R2 reviews. Current proposed single exact entry body-stall-text -> failed to stream response body has source approval but F1 existing explicit negative must be deliberately reversed with source+tests one patch. Implement exact F1 requested tests plus meaningful existing captured data mutation controls. Preserve body-stall-json/other cases and wrong message negatives. F2 symmetric candidate acceptance explicitly document, F3 sibling unknowns, F4 replace assert-only hardcoded evidence successes with real computed checked results/failclosed under python -O, F5 supplemental original failing case+runner identity record (never overwrite original evidence), F6 wording. No broadening. A newly observed Phase6 p3-deadline-text-empty-array-lookahead bare prefix error is SEPARATE and NOT authorized in this patch; note separately pending review only. Shared harness/phase3.py and test_phase3.py MUST NOT EDIT because frozen real-deadline retained processes active. Build staged copies under /home/ajs/.cache/pb-phase7/body-deadline-r1-fixes, exact patch with before/after hashes. Can run pure shared phase3 suite against OFF-TREE runner/test using repo import/fixture dependencies; verify imported runner path is staged. No Go/CLI/Rust builds/process captures/timings/profilers/common lock. You may update only docs/phase7-body-deadline-proposal.md and docs/evidence/phase7/p3-body-deadline-reduction.py plus new uniquely named body-deadline-r1-fixes docs/evidence. Preserve old reports/manifests. Repo shared sources remain frozen until explicit parent 'body deadline edit window open'. TMPDIR/GOTMPDIR/CLAUDE_CODE_TMPDIR=/home/ajs/.cache/pb-phase7/tmp. Return concrete patch/tests/provenance and unresolved gaps, do not claim promoted or independently reviewed.",
+  "result": {
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-sol-body-deadline-r1-fixes",
+    "childThreadId": "thread:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-sol-body-deadline-r1-fixes",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A245f7194-2732-4b67-ac9f-f5e734b5da17%253Adelegate-task%253Aphase7-sol-body-deadline-r1-fixes:ordinal:1",
+    "childNodeId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-sol-body-deadline-r1-fixes",
+    "status": "running",
+    "workState": "working",
+    "hasPendingChildRuns": false,
+    "latestTerminalRunId": null,
+    "latestTerminalStatus": null,
+    "latestTerminalSummary": null,
+    "latestTerminalResultContextTransferId": null,
+    "providerInstanceId": "codex",
+    "model": "gpt-6.1-sol",
+    "summary": null,
+    "resultContextTransferId": null,
+    "waitTimedOut": false
+  }
+}

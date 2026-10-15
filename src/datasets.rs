@@ -48,18 +48,33 @@ fn decode(body: &[u8]) -> Result<gojson::OrderedDocument, CliError> {
 }
 
 #[derive(Default, Debug, Serialize)]
-struct Dataset {
-    title: String,
+pub(crate) struct Dataset {
+    pub(crate) title: String,
     #[serde(skip_serializing_if = "String::is_empty")]
     name: String,
     #[serde(rename = "datasetType")]
-    dataset_type: String,
+    pub(crate) dataset_type: String,
     #[serde(rename = "datasetFormat")]
     dataset_format: String,
     ingestion: bool,
 }
 
 async fn list(parsed: &ParsedInvocation, client: &ApiClient) -> Result<String, CliError> {
+    let items = fetch_home(client).await?;
+    // Go validates list/info output after fetching and decoding their responses.
+    if format(parsed)? {
+        Ok(render::json(&items, false))
+    } else {
+        Ok(items
+            .into_iter()
+            .map(|d| item_row(&d.title, &d.dataset_type))
+            .collect())
+    }
+}
+
+/// Shared Prism discovery decoder, including Go's title ordering and status
+/// policy. Workflow-specific filtering belongs to the caller.
+pub(crate) async fn fetch_home(client: &ApiClient) -> Result<Vec<Dataset>, CliError> {
     let response = client
         .prism(Method::GET, "home", None)
         .await
@@ -73,16 +88,7 @@ async fn list(parsed: &ParsedInvocation, client: &ApiClient) -> Result<String, C
         ));
     }
     let value = decode(&response.body)?;
-    let items = dataset_list(&value)?;
-    // Go validates list/info output after fetching and decoding their responses.
-    if format(parsed)? {
-        Ok(render::json(&items, false))
-    } else {
-        Ok(items
-            .into_iter()
-            .map(|d| item_row(&d.title, &d.dataset_type))
-            .collect())
-    }
+    dataset_list(&value)
 }
 fn dataset_list(value: &Node) -> Result<Vec<Dataset>, CliError> {
     let mut items = Vec::<Dataset>::new();

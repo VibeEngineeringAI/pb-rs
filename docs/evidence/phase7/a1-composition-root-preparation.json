@@ -1,0 +1,18 @@
+{
+  "freeze_entries_verified": 28,
+  "bench_ast_union_verified": true,
+  "changed_definitions": [
+    "dense_case",
+    "dense_table_geometry",
+    "editor_case",
+    "error_case",
+    "observation_issues",
+    "startup_fanout",
+    "startup_fanout_issues"
+  ],
+  "live_applied": false,
+  "page_step_adopted": false,
+  "native_control_pending": true,
+  "independent_composition_review_pending": true,
+  "source_patch_sha256": "eb9fe2fd9b5dceed18bef4059b009087dee052423ccde3c0bde652823576ff0e"
+}

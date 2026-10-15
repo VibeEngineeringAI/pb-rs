@@ -1,0 +1,367 @@
+{
+  "schema_version": 1,
+  "kind": "R7 IMPLEMENTATION response, not review/phase/performance acceptance",
+  "ownership": [
+    "harness/phase7_bench.py",
+    "harness/test_phase7_bench.py",
+    "harness/phase7_profile.py",
+    "harness/test_phase7_profile.py",
+    "docs/phase7-measurement.md",
+    "docs/phase7-profiling.md",
+    "harness/contracts/phase7.md"
+  ],
+  "findings": {
+    "R7-M1": {
+      "status": "approved DISPOSITION implemented, no new observer design",
+      "implementation": "ineligible inconclusive BOTH pass AND trigger; summaries independently retain descriptive paired-median >10ms AND >10% crossings as material potential regression requiring fresh-seed confirmation AND investigation; cannot dismiss observer artifact without further control; no accepted trigger/budgetpass",
+      "fields": "latency_decision.descriptive_crossing_requires_confirmation, material_potential_regression, paired median deltas, eligibility/scope/action, accepted_triggerFalse, budget_passNone",
+      "tests": [
+        "R7Tests.test_descriptive_crossing_inconclusive_eligible_and_unknown_no_zero"
+      ],
+      "limitations": "unknown/nonpositive reference relative crossing None; failed/incomplete summary None; no zero/drop substitution; screen coupled to latency; actual crossing/observer components unknown"
+    },
+    "R7-M2": {
+      "status": "cap/actual mismatch FIXED at source",
+      "implementation": "serialization CAP both structural ratio sides; actual bytes separately retained/enforced<=cap even failure; no overwrite of work cap with pilot actual",
+      "tests": [
+        "test_real_diagnostic_real_pilot_identical_sessions_ratio_one_cap_actual_separate",
+        "test_injected_wall_formula_fifty_eight_remaining_reserve704",
+        "test_actual_serialization_cap_excess_retains_bytes_and_failure"
+      ],
+      "causal_evidence": "real campaign_diagnostics + real pilot_allocation over identical synthetic sessions has ratio1 (allocation NOT mocked); injected W .1/1/2/10 yields174*W+704 for58remaining",
+      "limitations": "synthetic captures/artifacts/clock/approval, no actual pilot or feedrate calibration; all prior allocation/guard/fullvalidation/endbinding/incomplete rules remain"
+    },
+    "R7-L1": {
+      "status": "ROOT coordination rule declared in docs/matrix; no wrapper/flock-transfer refactor",
+      "rule": "ROOT: ALL preparation/cached_spawn/evidence prevalidation starts only inside exact agreed own window with common lock FREE for admission; never launch run while another phase is quiet. No wrapper/flock-transfer refactor; offline ownership unchanged.",
+      "limitations": "workflow obligation; run preparation remains before QuietWindow; no launch while another quiet; offline FunctionalOwnership unchanged"
+    },
+    "R7-L2": {
+      "status": "approved EXACT NINE chunks implemented, no obsolete seven fallback",
+      "counts": [
+        [
+          4,
+          0
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          0,
+          4
+        ],
+        [
+          0,
+          4
+        ],
+        [
+          0,
+          4
+        ],
+        [
+          0,
+          4
+        ],
+        [
+          0,
+          4
+        ],
+        [
+          0,
+          4
+        ],
+        [
+          0,
+          3
+        ]
+      ],
+      "implementation": "full spec index/count/seed table base+1009*i; analysis_seedbase+100000; options exact;5warm+30measured; max4pairs; case/source/preflight/helper/control/end/approval binding and independent unique samples retained; mixed1warm+3measured chunk covered",
+      "tests": [
+        "PoolTests.test_complete_predeclared_seeds_pool_exact_five_plus_thirty",
+        "test_pool_rejects_omitted_duplicate_seed_identity_raw_and_control_failures",
+        "test_pool_spec_needs_full_preflight_fit_with_unchanged_reserves",
+        "R7Tests.test_exact_nine_chunk_spec_and_zero_measured_warmup_only"
+      ],
+      "authorized_controls": "floor_sessions3, floors30s each, cleanup8s/role, finalization30+5pairs, launch60s unchanged; no reduction",
+      "formula": "2934+12*x at idle300; syntheticrole355.5->3600,355.6reject; remaining lifetime/guard admission separately required",
+      "limitations": "actual full-profile preflight/fit unknown; no real spec/campaign; pooled latency descriptive, no accepted subset"
+    },
+    "I3": {
+      "status": "per-role session replay-work distributions report max/p95",
+      "fields": "role_session_observer_work_distribution_ms",
+      "tests": [
+        "R7Tests.test_role_session_work_max_p95_descriptive_not_tail_bound"
+      ],
+      "limitations": "descriptive, no per-session or tail-bias bound; eligibility remains role median screen only"
+    },
+    "I4": {
+      "status": "disclosed bounded evidence validation not internally guard-interruptible everywhere; overrun detection after return; no hard real-time/syscall/fit claim"
+    },
+    "I5": {
+      "status": "FULL clarified as all workload variants for campaign profile/theme/size/longidle options, not automatically both themes52roles"
+    },
+    "warmup-only-diagnostics": {
+      "status": "4explicit NOT APPLICABLE no measured first pair; no executable plan/pilot/vacuous valid result",
+      "tests": [
+        "R7Tests.test_exact_nine_chunk_spec_and_zero_measured_warmup_only"
+      ],
+      "counts": "84nominal campaigns;24potential+60nominaloptional;80runnable=24potential+56optional;4omittedwarmonlyslots"
+    }
+  },
+  "counts": {
+    "functional_roles": 104,
+    "per_policy_workload_variants": 26,
+    "per_policy_pairs": 910,
+    "per_policy_cli_roles": 1820,
+    "per_policy_floor_controls": 504,
+    "per_policy_campaigns": 42,
+    "both_policy_children": 4648,
+    "actual_measured_role_sessions_replayed": 3120,
+    "separate_actual_session_diagnostic_windows": 80,
+    "decoder_repetitions_per_phase": 5,
+    "decoder_repetitions_are_independent_cli_samples": false,
+    "potential_primary_diagnostic_windows": 24,
+    "optional_descriptive_diagnostic_windows": 56,
+    "nominal_optional_diagnostic_slots": 60,
+    "planned_campaigns_both_policies": 84,
+    "warmup_only_nonapplicable_diagnostic_slots": 4
+  },
+  "matrix_identity": {
+    "path": "/home/ajs/.cache/pb-phase7/collector-r7-corrections/command-matrix.json",
+    "size_bytes": 629433,
+    "sha256": "5b99e77f33263962bd14a07c450d713f1c14f93353a0c23cb7b93c18bc68e0d4"
+  },
+  "tests": {
+    "environment": {
+      "PATH": "/home/ajs/.cargo/bin:$PATH",
+      "TMPDIR": "/home/ajs/.cache/pb-phase7/tmp",
+      "GOTMPDIR": "/home/ajs/.cache/pb-phase7/tmp",
+      "CLAUDE_CODE_TMPDIR": "/home/ajs/.cache/pb-phase7/tmp",
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "bench": {
+      "cwd": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive",
+      "argv": [
+        "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "harness",
+        "-p",
+        "test_phase7_bench.py"
+      ],
+      "tests": 99,
+      "seconds": 103.093,
+      "log": "bench-final1.log"
+    },
+    "profile": {
+      "cwd": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive",
+      "python": "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+      "selection": "loadTestsFromModule(test_phase7_profile), flatten, exclude ID ending test_owned_analysis_child_leader_exits_and_group_child_is_killed_reaped",
+      "tests": 23,
+      "seconds": 1.192,
+      "log": "profile-final1.log"
+    },
+    "targeted": {
+      "R7Tests": "6passed1.518s r7-work1.log; synthetic, no native calibration"
+    },
+    "static": "AST/whitespace/signature/shared-source/helper-file/HEAD plus build-matrix.py independently plans all84actual definitions; no resolver/probe/native/commonlock",
+    "matrix_script": {
+      "path": "/home/ajs/.cache/pb-phase7/collector-r7-corrections/build-matrix.py",
+      "size_bytes": 12025,
+      "sha256": "058c8c830a6cff0702f1ab095a9b8dd320025d9b0b884158dce9723b01118734"
+    },
+    "matrix_result": {
+      "path": "/home/ajs/.cache/pb-phase7/collector-r7-corrections/matrix-result.json",
+      "size_bytes": 204,
+      "sha256": "1d2910bf7ccff5497d5db1a21117567e96017103f392935027e9c738fed265fc"
+    }
+  },
+  "logs": {
+    "bench-final1.log": {
+      "path": "/home/ajs/.cache/pb-phase7/collector-r7-corrections/bench-final1.log",
+      "size_bytes": 200,
+      "sha256": "0477868200dd1f7dee0ad94e42e03fddd1f1691498eff98ee201006a39830e6b"
+    },
+    "profile-final1.log": {
+      "path": "/home/ajs/.cache/pb-phase7/collector-r7-corrections/profile-final1.log",
+      "size_bytes": 122,
+      "sha256": "bba1fd03a8160f50a94b688891565a00f8c96b4a9f28db946d44abe6eba41593"
+    },
+    "r7-work1.log": {
+      "path": "/home/ajs/.cache/pb-phase7/collector-r7-corrections/r7-work1.log",
+      "size_bytes": 104,
+      "sha256": "284b207dee9d9969ed433bcbfe110bf3e0a625a377433bdbbf62bb27a98941ae"
+    }
+  },
+  "reviews": {
+    "phase7-review-measurement-r1.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-review-measurement-r1.md",
+      "size_bytes": 17739,
+      "sha256": "00e4f83c40ac1d3c07cd066234d6612bcaf76cc328fd0485439176d3574ac407"
+    },
+    "phase7-review-measurement-interim-sol-r2.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-review-measurement-interim-sol-r2.md",
+      "size_bytes": 23418,
+      "sha256": "40f83e3e7dd253da29d3a8440303276b9f2376c135257eedc7c9fc4b2636cb9c"
+    },
+    "phase7-review-measurement-opus-r3.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-review-measurement-opus-r3.md",
+      "size_bytes": 19293,
+      "sha256": "3fe4ad43f32b5620da0b21673aec81d6c13cfec5de19f3742ecc24ab2ecaf9da"
+    },
+    "phase7-review-measurement-opus-r4.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-review-measurement-opus-r4.md",
+      "size_bytes": 22564,
+      "sha256": "d0b3d62609c6a0dc68d03775d6fedabf34dd65458a2c9b90a99d3137e39111ff"
+    },
+    "phase7-review-measurement-opus-r5.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-review-measurement-opus-r5.md",
+      "size_bytes": 22752,
+      "sha256": "f4ddadefe7a59169aa77501505bfbab3ec0cd764e6e6cdfbd4bc2038ecc5be51"
+    },
+    "phase7-review-measurement-opus-r6.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-review-measurement-opus-r6.md",
+      "size_bytes": 29538,
+      "sha256": "3ca9d31c1efa0f319facd0a6b76b1217ac4b63b3f11096ba2058159fd78f9ba3"
+    },
+    "phase7-review-measurement-opus-r7.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-review-measurement-opus-r7.md",
+      "size_bytes": 26434,
+      "sha256": "59ac06a4c0a07b2ff6f55797be281bc55a5c54a08ea18a79f34bf09f81ba9174"
+    }
+  },
+  "owned_files": {
+    "harness/phase7_bench.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_bench.py",
+      "size_bytes": 186731,
+      "sha256": "32f716505b38db5ed38f102691a13e1fe4ff18ca143eda2c0e5f8603ba0f2c23"
+    },
+    "harness/test_phase7_bench.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7_bench.py",
+      "size_bytes": 154034,
+      "sha256": "9c37392fb0d382e5ac8be0e266b7722a0420f55933c45a157daa0a245fd786b0"
+    },
+    "harness/phase7_profile.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_profile.py",
+      "size_bytes": 43899,
+      "sha256": "cd064da4a3f192a64c9e015a12d2ec5cbc6b305b3ca992d95f3641d83e5b2385"
+    },
+    "harness/test_phase7_profile.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7_profile.py",
+      "size_bytes": 37130,
+      "sha256": "75bb14229f18b212cd234e9d2d4af5ad8cef3eb290f2c483d45e6e1c2e6443dd"
+    },
+    "docs/phase7-measurement.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-measurement.md",
+      "size_bytes": 84200,
+      "sha256": "99a6356668cddc663b45fe9e5faed87df3e2657bbb47485451c5523a90038b9f"
+    },
+    "docs/phase7-profiling.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-profiling.md",
+      "size_bytes": 25604,
+      "sha256": "401b214080c5ee78332f090910331a9d537846667055b526fc6ad5b303a9a0a2"
+    },
+    "harness/contracts/phase7.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/contracts/phase7.md",
+      "size_bytes": 28805,
+      "sha256": "65c990cca9ae0c05911f64b78d2675d7cabc7f5a495ee812bef813c4d6f1f1fa"
+    }
+  },
+  "prior_R6_freeze": {
+    "path": "/home/ajs/.cache/pb-phase7/collector-r6-corrections/freeze.json",
+    "size_bytes": 7889,
+    "sha256": "d606e10f457c3037ce70377c5bf4c0d659c6f00a22540f15bddccf710b8caebd"
+  },
+  "prior_R6_response": {
+    "path": "/home/ajs/.cache/pb-phase7/collector-r6-corrections/response.json",
+    "size_bytes": 19860,
+    "sha256": "de99769309308c15e41447fe748b5a99c06b1d6200a74f5394b6167b4516b119"
+  },
+  "prior_evidence": "R1-R6 reviews/freezes/failedtests preserved, no overwrites",
+  "consumed_shared_freeze": {
+    "path": "/home/ajs/.cache/pb-phase7/harness-resize-policy-r4/freeze.json",
+    "size_bytes": 8863,
+    "sha256": "8c1d8fe5661f4241619006dcda850e7ca6eb4f64ffac88a733a00b691db3edb5"
+  },
+  "consumed_shared_phase7_py_sha256": "dc7574f058b9ff6ae7b77a912847fdbe02d8b68baab8728237d6ef040e6a44fa",
+  "consumed_shared_source": {
+    "docs/phase7-harness.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-harness.md",
+      "size_bytes": 52767,
+      "sha256": "038eeacec10dfc11f14cc941ede3a4dd2371ad98c40b03dde5adc130c0fc5bbc"
+    },
+    "harness/phase7.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7.py",
+      "size_bytes": 90070,
+      "sha256": "dc7574f058b9ff6ae7b77a912847fdbe02d8b68baab8728237d6ef040e6a44fa"
+    },
+    "harness/phase7_spawn.c": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_spawn.c",
+      "size_bytes": 9383,
+      "sha256": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4"
+    },
+    "harness/phase7_workloads.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_workloads.py",
+      "size_bytes": 41781,
+      "sha256": "54a9efb7767372c976b459c3e2dc59c590e0b9d6b47b4cc29e36ae81ff588d1c"
+    },
+    "harness/test_phase7.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7.py",
+      "size_bytes": 85821,
+      "sha256": "97f19258eaf3a7d052d1f8b1ea7577ad4b3b5acc1d284dbd0162cdcace3080a5"
+    }
+  },
+  "consumed_helper": {
+    "build_key": "d0592f15c157a359d3b1d7adf9ab0efb1cf39a3765205fe8ccde855157ed2fab",
+    "capability": {
+      "group_signal_flag": 4,
+      "method": "actual own-child pidfd group delivery + WNOWAIT reservation",
+      "probe_executable_sha256": "3b684c7b7632302725727fcc586a071c7818f43d704a8cbf4e1afc384e99f03e",
+      "protocol_version": 2,
+      "received": [
+        "LEADER",
+        "MEMBER"
+      ],
+      "reserved_state": "Z",
+      "signal": "SIGUSR1",
+      "status": 0
+    },
+    "compiler": "/usr/bin/gcc",
+    "compiler_sha256": "8aac907d6fbf40394b424b5fa4a2ad1aa291dac7d3a0315c5b415c1f5ace1287",
+    "compiler_version": "gcc (GCC) 16.2.1 20260810\nCopyright (C) 2026 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+    "flags": [
+      "-std=c11",
+      "-O2",
+      "-Wall",
+      "-Wextra",
+      "-Werror"
+    ],
+    "path": "/home/ajs/.cache/pb-phase7/tmp/phase7-spawn-d0592f15c157a359d3b1d7adf9ab0efb1cf39a3765205fe8ccde855157ed2fab",
+    "protocol_version": 2,
+    "provenance_path": "/home/ajs/.cache/pb-phase7/tmp/phase7-spawn-d0592f15c157a359d3b1d7adf9ab0efb1cf39a3765205fe8ccde855157ed2fab.json",
+    "provenance_sha256": "69e1067e728b7ce4cd67a288ea797d346d00b5403ae5c34368756770f0730394",
+    "sha256": "3b684c7b7632302725727fcc586a071c7818f43d704a8cbf4e1afc384e99f03e",
+    "source_sha256": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4"
+  },
+  "no_commit": {
+    "declared_by": "ROOT",
+    "scope": "COMPLETE preflight/capture/control/diagnostic/interpret/pool/profile program",
+    "head": "4a812d5b9bc4c40882ab10897a73c3ce1e715ce0",
+    "commit_allowed": false
+  },
+  "profile_source": "unchanged from R6, native analysis-child excluded",
+  "execution": "permitted pure/mock ONLY; no CLI/nativehelper/probe/compiler/build/profile/readelf/performance/commonlock/preflight/realpilot/spec/campaign",
+  "remaining_unknowns": [
+    "actual full matching preflight/layout",
+    "actual native/pilot/decoder wall/fit and remainingapproval admission",
+    "actual nine-chunk long-idle fit",
+    "real A/A/freshseed/observer controls",
+    "profiler symbol/FD/tool interoperability",
+    "native internal-stage instrumentation unimplemented/unknown",
+    "ordinary TOCTOU/uninterruptible bounded validation/host variability"
+  ],
+  "state": "all owned processes complete, seven source files frozen pending fresh parent R8 review"
+}

@@ -1,0 +1,188 @@
+{
+  "binary": "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+  "termination": {
+    "exit": 1
+  },
+  "failure": null,
+  "wall_ms": 60062.4479,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 0,
+  "stdout_normalized_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_elements": 0,
+  "first_stdout_ms": null,
+  "first_element_ms": null,
+  "last_stdout_ms": null,
+  "first_stderr_ms": 60053.43508,
+  "actions": [],
+  "resources": {
+    "source": "native_child_wait4",
+    "cpu_ms": 43.165,
+    "peak_rss_bytes": 50061312
+  },
+  "requests": [
+    {
+      "method": "POST",
+      "target": "/api/v1/query",
+      "headers": {
+        "accept-encoding": "gzip",
+        "authorization": "Basic aGFybmVzczpoYXJuZXNz",
+        "content-length": "98",
+        "content-type": "application/json"
+      },
+      "body_b64": "eyJxdWVyeSI6IlNFTEVDVCAxIExJTUlUIDUwMCIsInN0YXJ0VGltZSI6IjIwMjQtMDEtMDFUMDA6MDA6MDBaIiwiZW5kVGltZSI6IjIwMjQtMDEtMDFUMDA6MDE6MDBaIn0=",
+      "framing": "length",
+      "listener": "primary"
+    },
+    {
+      "method": "POST",
+      "target": "/v2/api/v1/query",
+      "headers": {
+        "accept-encoding": "gzip",
+        "authorization": "Basic aGFybmVzczpoYXJuZXNz",
+        "content-length": "98",
+        "content-type": "application/json"
+      },
+      "body_b64": "eyJxdWVyeSI6IlNFTEVDVCAxIExJTUlUIDUwMCIsInN0YXJ0VGltZSI6IjIwMjQtMDEtMDFUMDA6MDA6MDBaIiwiZW5kVGltZSI6IjIwMjQtMDEtMDFUMDA6MDE6MDBaIn0=",
+      "framing": "length",
+      "listener": "primary"
+    }
+  ],
+  "stderr_sha256": "485884ddc817cb30f2fd0c90a50639a0412a28e1ea5644212bcf66d025e58d23",
+  "stderr_raw_sha256": "c4e7b4a00ce03aae70b436c90cd4ca0a03d70401af81cfbbb13865d9ee94390a",
+  "trace_sha256": "a116ade55e2ee531741824bf87ea838758423eb160443ec6a8bdf80bf6a249e5",
+  "milestones_sha256": "b88d7a6750404c23d79b511c933f4e28840b506eb89731b10cd4ae28a0b7e03e",
+  "user_agents": [
+    "Go-http-client/1.1",
+    "Go-http-client/1.1"
+  ],
+  "fixture_milestones_relative_ms": [
+    {
+      "request": 0,
+      "received_ms": 30.267134,
+      "events": [
+        {
+          "name": "received",
+          "ms": 30.332583
+        },
+        {
+          "name": "headers",
+          "ms": 35030.506009
+        },
+        {
+          "name": "complete",
+          "ms": 35030.513501
+        }
+      ],
+      "body_bytes_sent": 0,
+      "wire_bytes_sent": 114
+    },
+    {
+      "request": 1,
+      "received_ms": 35030.774322,
+      "events": [
+        {
+          "name": "received",
+          "ms": 35030.837089
+        },
+        {
+          "name": "client-gone",
+          "ms": 60057.250724
+        }
+      ],
+      "body_bytes_sent": 0,
+      "wire_bytes_sent": 0
+    }
+  ],
+  "config_before": {
+    ".": {
+      "type": "directory",
+      "mode": "0o755"
+    },
+    "cache": {
+      "type": "directory",
+      "mode": "0o755"
+    },
+    "config": {
+      "type": "directory",
+      "mode": "0o755"
+    },
+    "config/pb": {
+      "type": "directory",
+      "mode": "0o755"
+    },
+    "config/pb/config.toml": {
+      "type": "file",
+      "mode": "0o600",
+      "raw_sha256": "27434bad82f44df5efe515f15ca9de5af2944a54683f2fffa139d0ff7c82d734",
+      "toml": {
+        "DefaultProfile": "fixture",
+        "Profiles": {
+          "fixture": {
+            "url": "http://<FIXTURE>",
+            "username": "harness",
+            "password": "harness",
+            "cloud": false
+          }
+        }
+      }
+    },
+    "data": {
+      "type": "directory",
+      "mode": "0o755"
+    },
+    "state": {
+      "type": "directory",
+      "mode": "0o755"
+    },
+    "tmp": {
+      "type": "directory",
+      "mode": "0o755"
+    }
+  },
+  "config_after": {
+    ".": {
+      "type": "directory",
+      "mode": "0o755"
+    },
+    "cache": {
+      "type": "directory",
+      "mode": "0o755"
+    },
+    "config": {
+      "type": "directory",
+      "mode": "0o755"
+    },
+    "config/pb": {
+      "type": "directory",
+      "mode": "0o755"
+    },
+    "config/pb/config.toml": {
+      "type": "file",
+      "mode": "0o600",
+      "raw_sha256": "27434bad82f44df5efe515f15ca9de5af2944a54683f2fffa139d0ff7c82d734",
+      "toml": {
+        "DefaultProfile": "fixture",
+        "Profiles": {
+          "fixture": {
+            "url": "http://<FIXTURE>",
+            "username": "harness",
+            "password": "harness",
+            "cloud": false
+          }
+        }
+      }
+    },
+    "data": {
+      "type": "directory",
+      "mode": "0o755"
+    },
+    "state": {
+      "type": "directory",
+      "mode": "0o755"
+    },
+    "tmp": {
+      "type": "directory",
+      "mode": "0o755"
+    }
+  }
+}

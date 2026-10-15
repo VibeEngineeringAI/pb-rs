@@ -1,0 +1,4 @@
+package main
+import("bufio";"fmt";"os";"strings";"strconv";"math";"sort")
+type item struct{value float64;id int}
+func main(){scan:=bufio.NewScanner(os.Stdin);for scan.Scan(){p:=strings.SplitN(scan.Text(),"\t",2);kind,text:=p[0],p[1];if kind=="F"{v,e:=strconv.ParseFloat(text,64);if e!=nil{fmt.Println("error")}else if math.IsNaN(v){fmt.Println("nan")}else{fmt.Printf("%016x\n",math.Float64bits(v))}}else{data:=[]item{};if text!=""{for i,x:=range strings.Split(text,","){v,_:=strconv.ParseFloat(x,64);data=append(data,item{v,i})}};if kind=="U"{sort.Slice(data,func(i,j int)bool{return data[i].value<data[j].value})}else{sort.SliceStable(data,func(i,j int)bool{if data[i].value==data[j].value{return data[i].id<data[j].id};return data[i].value>data[j].value})};v:=[]string{};for _,x:=range data{v=append(v,strconv.Itoa(x.id))};fmt.Println(strings.Join(v,","))}}}

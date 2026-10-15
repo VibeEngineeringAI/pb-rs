@@ -1,0 +1,11 @@
+{
+  "plan_sha256": "80164464e59eae01bac23a6f480d1b0a29f47fbbd10d4a47a998ea5c7b40296b",
+  "launcher_sha256": "d7e5fd4a58c8014f68eab71ae7f8fa3f4354e68ed3cad2d7375691310a4a7b0a",
+  "identities_verified": 66,
+  "production_inputs_verified": 64,
+  "inverse_launcher_substitution_exact": true,
+  "root_source_reviewed": true,
+  "runtime_acceptance": false,
+  "performance_acceptance": false,
+  "fresh_quiet_pending": true
+}

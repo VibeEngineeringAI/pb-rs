@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "status": "R7 SOURCE FROZEN; no acceptance, no edits/commit without coordination",
+  "files": {
+    "harness/phase7_bench.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_bench.py",
+      "size_bytes": 186731,
+      "sha256": "32f716505b38db5ed38f102691a13e1fe4ff18ca143eda2c0e5f8603ba0f2c23"
+    },
+    "harness/test_phase7_bench.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7_bench.py",
+      "size_bytes": 154034,
+      "sha256": "9c37392fb0d382e5ac8be0e266b7722a0420f55933c45a157daa0a245fd786b0"
+    },
+    "harness/phase7_profile.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_profile.py",
+      "size_bytes": 43899,
+      "sha256": "cd064da4a3f192a64c9e015a12d2ec5cbc6b305b3ca992d95f3641d83e5b2385"
+    },
+    "harness/test_phase7_profile.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7_profile.py",
+      "size_bytes": 37130,
+      "sha256": "75bb14229f18b212cd234e9d2d4af5ad8cef3eb290f2c483d45e6e1c2e6443dd"
+    },
+    "docs/phase7-measurement.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-measurement.md",
+      "size_bytes": 84200,
+      "sha256": "99a6356668cddc663b45fe9e5faed87df3e2657bbb47485451c5523a90038b9f"
+    },
+    "docs/phase7-profiling.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-profiling.md",
+      "size_bytes": 25604,
+      "sha256": "401b214080c5ee78332f090910331a9d537846667055b526fc6ad5b303a9a0a2"
+    },
+    "harness/contracts/phase7.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/contracts/phase7.md",
+      "size_bytes": 28805,
+      "sha256": "65c990cca9ae0c05911f64b78d2675d7cabc7f5a495ee812bef813c4d6f1f1fa"
+    }
+  },
+  "response": {
+    "path": "/home/ajs/.cache/pb-phase7/collector-r7-corrections/response.json",
+    "size_bytes": 17255,
+    "sha256": "1ff10d92596f0cd28fe811611f81d0c8c565b53770756701dadc439807fc33f1"
+  },
+  "matrix": {
+    "path": "/home/ajs/.cache/pb-phase7/collector-r7-corrections/command-matrix.json",
+    "size_bytes": 629433,
+    "sha256": "5b99e77f33263962bd14a07c450d713f1c14f93353a0c23cb7b93c18bc68e0d4"
+  },
+  "actual_checks": {
+    "path": "/home/ajs/.cache/pb-phase7/collector-r7-corrections/actual-checks.json",
+    "size_bytes": 1709,
+    "sha256": "7c90987960d80552df91009bc9eaa9affb46c331cdc2cc73b384e38e0810a587"
+  },
+  "source_snapshot": {
+    "path": "/home/ajs/.cache/pb-phase7/collector-r7-corrections/source-snapshot.json",
+    "size_bytes": 18643,
+    "sha256": "330a83e8de7fa753f105e56d624c232299f623f65122fc240e8ddc052d2ca72d"
+  },
+  "owned_diff": {
+    "path": "/home/ajs/.cache/pb-phase7/collector-r7-corrections/owned.diff",
+    "size_bytes": 49540,
+    "sha256": "988df5e86d5c783ffaff42569fb554ad6ad20965177f1c4eab4aab95e313329b"
+  },
+  "finalize_script": {
+    "path": "/home/ajs/.cache/pb-phase7/collector-r7-corrections/finalize.py",
+    "size_bytes": 11878,
+    "sha256": "24084221fafe6234fd83076aff5b2b6a058cb00a8379ff0ea44121d20e12b07f"
+  },
+  "matrix_script": {
+    "path": "/home/ajs/.cache/pb-phase7/collector-r7-corrections/build-matrix.py",
+    "size_bytes": 12025,
+    "sha256": "058c8c830a6cff0702f1ab095a9b8dd320025d9b0b884158dce9723b01118734"
+  },
+  "consumed_shared_freeze": {
+    "path": "/home/ajs/.cache/pb-phase7/harness-resize-policy-r4/freeze.json",
+    "size_bytes": 8863,
+    "sha256": "8c1d8fe5661f4241619006dcda850e7ca6eb4f64ffac88a733a00b691db3edb5"
+  },
+  "consumed_shared_phase7_py_sha256": "dc7574f058b9ff6ae7b77a912847fdbe02d8b68baab8728237d6ef040e6a44fa",
+  "consumed_helper": {
+    "build_key": "d0592f15c157a359d3b1d7adf9ab0efb1cf39a3765205fe8ccde855157ed2fab",
+    "capability": {
+      "group_signal_flag": 4,
+      "method": "actual own-child pidfd group delivery + WNOWAIT reservation",
+      "probe_executable_sha256": "3b684c7b7632302725727fcc586a071c7818f43d704a8cbf4e1afc384e99f03e",
+      "protocol_version": 2,
+      "received": [
+        "LEADER",
+        "MEMBER"
+      ],
+      "reserved_state": "Z",
+      "signal": "SIGUSR1",
+      "status": 0
+    },
+    "compiler": "/usr/bin/gcc",
+    "compiler_sha256": "8aac907d6fbf40394b424b5fa4a2ad1aa291dac7d3a0315c5b415c1f5ace1287",
+    "compiler_version": "gcc (GCC) 16.2.1 20260810\nCopyright (C) 2026 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+    "flags": [
+      "-std=c11",
+      "-O2",
+      "-Wall",
+      "-Wextra",
+      "-Werror"
+    ],
+    "path": "/home/ajs/.cache/pb-phase7/tmp/phase7-spawn-d0592f15c157a359d3b1d7adf9ab0efb1cf39a3765205fe8ccde855157ed2fab",
+    "protocol_version": 2,
+    "provenance_path": "/home/ajs/.cache/pb-phase7/tmp/phase7-spawn-d0592f15c157a359d3b1d7adf9ab0efb1cf39a3765205fe8ccde855157ed2fab.json",
+    "provenance_sha256": "69e1067e728b7ce4cd67a288ea797d346d00b5403ae5c34368756770f0730394",
+    "sha256": "3b684c7b7632302725727fcc586a071c7818f43d704a8cbf4e1afc384e99f03e",
+    "source_sha256": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4"
+  },
+  "no_commit_policy": {
+    "declared_by": "ROOT",
+    "scope": "COMPLETE preflight/capture/control/diagnostic/interpret/pool/profile program",
+    "head": "4a812d5b9bc4c40882ab10897a73c3ce1e715ce0",
+    "commit_allowed": false
+  },
+  "prior_R6_freeze": {
+    "path": "/home/ajs/.cache/pb-phase7/collector-r6-corrections/freeze.json",
+    "size_bytes": 7889,
+    "sha256": "d606e10f457c3037ce70377c5bf4c0d659c6f00a22540f15bddccf710b8caebd"
+  },
+  "logs": {
+    "bench-final1.log": {
+      "path": "/home/ajs/.cache/pb-phase7/collector-r7-corrections/bench-final1.log",
+      "size_bytes": 200,
+      "sha256": "0477868200dd1f7dee0ad94e42e03fddd1f1691498eff98ee201006a39830e6b"
+    },
+    "profile-final1.log": {
+      "path": "/home/ajs/.cache/pb-phase7/collector-r7-corrections/profile-final1.log",
+      "size_bytes": 122,
+      "sha256": "bba1fd03a8160f50a94b688891565a00f8c96b4a9f28db946d44abe6eba41593"
+    },
+    "r7-work1.log": {
+      "path": "/home/ajs/.cache/pb-phase7/collector-r7-corrections/r7-work1.log",
+      "size_bytes": 104,
+      "sha256": "284b207dee9d9969ed433bcbfe110bf3e0a625a377433bdbbf62bb27a98941ae"
+    }
+  },
+  "execution_state": "no owned processes remain"
+}

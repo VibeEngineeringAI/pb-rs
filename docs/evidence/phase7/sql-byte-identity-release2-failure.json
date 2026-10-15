@@ -1,0 +1,136 @@
+{
+  "kind": "bounded pre-fix release2 PTY identity regression probe",
+  "source_pin": "07af390",
+  "binary": "/home/ajs/.cache/pb-phase7/candidates/release2/pb-normal",
+  "binary_sha256": "46fe76b23feb5bdf97f997d115c0c1fdf70f73ca3de98be854ed080691ce2776",
+  "raw_dataset_hex": "b58be8af95",
+  "replacement_title": "\ufffd\ufffd\u8bd5",
+  "dimensions": [
+    120,
+    35
+  ],
+  "case": "late_dataset_list_after_empty_raw_schema",
+  "candidate_executed": true,
+  "rust_tests_executed": false,
+  "scope": "Candidate request identity against characterized Go expectation; no full styled-frame parity or timings",
+  "raw_schema_idle_frame_offset": 36589,
+  "passed": false,
+  "failure": "AssertionError(('missing request', '/api/v1/logstream/logs/schema', [{'method': 'GET', 'path': '/api/prism/v1/home', 'params': {}, 'body': '', 'headers': {'x-api-key': 'fixture-key', 'content-type': 'application/json', 'user-agent': 'Go-http-client/1.1', 'accept-encoding': 'gzip', 'host': '127.0.0.1:45495'}, 'received': 996192.277448846, 'protocol': 'HTTP/1.1', 'closed_before_response': False, 'response_status': 200, 'response_preview': '{\"datasets\": [{\"title\": \"logs\", \"datasetType\": \"logs\"}, {\"title\": \"\\\\ufffd\\\\ufffd\\\\u8bd5\", \"datasetType\": \"logs\"}]}', 'response_bytes': 112, 'done': True}, {'method': 'GET', 'path': '/api/v1/logstream/%B5%8B%E8%AF%95/schema', 'params': {}, 'body': '', 'headers': {'x-api-key': 'fixture-key', 'user-agent': 'Go-http-client/1.1', 'accept-encoding': 'gzip', 'host': '127.0.0.1:45495'}, 'received': 996192.333193652, 'protocol': 'HTTP/1.1', 'response_status': 200, 'response_preview': '{\"fields\": []}', 'response_bytes': 14, 'done': True}, {'method': 'POST', 'path': '/api/v1/query', 'params': {'fields': ['true']}, 'body': '{\"endTime\":\"2026-10-14T13:33:53Z\",\"query\":\"SELECT * FROM \\'\ufffd\ufffd\u8bd5\\' LIMIT 1\",\"startTime\":\"2000-01-01T00:00:00+00:00\"}', 'headers': {'x-api-key': 'fixture-key', 'content-type': 'application/json', 'user-agent': 'Go-http-client/1.1', 'accept-encoding': 'gzip', 'content-length': '118', 'host': '127.0.0.1:45495'}, 'received': 996192.33392137, 'protocol': 'HTTP/1.1', 'response_status': 200, 'response_preview': '{\"fields\": [], \"records\": []}', 'response_bytes': 29, 'done': True}, {'method': 'GET', 'path': '/api/v1/logstream/%B5%8B%E8%AF%95/schema', 'params': {}, 'body': '', 'headers': {'x-api-key': 'fixture-key', 'user-agent': 'Go-http-client/1.1', 'accept-encoding': 'gzip', 'host': '127.0.0.1:45495'}, 'received': 996192.338994579, 'protocol': 'HTTP/1.1', 'response_status': 200, 'response_preview': '{\"fields\": []}', 'response_bytes': 14, 'done': True}, {'method': 'POST', 'path': '/api/v1/query', 'params': {'fields': ['true']}, 'body': '{\"endTime\":\"2026-10-14T13:33:53Z\",\"query\":\"SELECT * FROM \\'\ufffd\ufffd\u8bd5\\' LIMIT 1\",\"startTime\":\"2000-01-01T00:00:00+00:00\"}', 'headers': {'x-api-key': 'fixture-key', 'content-type': 'application/json', 'user-agent': 'Go-http-client/1.1', 'accept-encoding': 'gzip', 'content-length': '118', 'host': '127.0.0.1:45495'}, 'received': 996192.339594041, 'protocol': 'HTTP/1.1', 'response_status': 200, 'response_preview': '{\"fields\": [], \"records\": []}', 'response_bytes': 29, 'done': True}]))",
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/prism/v1/home",
+      "params": {},
+      "body": "",
+      "headers": {
+        "x-api-key": "fixture-key",
+        "content-type": "application/json",
+        "user-agent": "Go-http-client/1.1",
+        "accept-encoding": "gzip",
+        "host": "127.0.0.1:45495"
+      },
+      "received": 996192.277448846,
+      "protocol": "HTTP/1.1",
+      "closed_before_response": false,
+      "response_status": 200,
+      "response_preview": "{\"datasets\": [{\"title\": \"logs\", \"datasetType\": \"logs\"}, {\"title\": \"\\ufffd\\ufffd\\u8bd5\", \"datasetType\": \"logs\"}]}",
+      "response_bytes": 112,
+      "done": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/logstream/%B5%8B%E8%AF%95/schema",
+      "params": {},
+      "body": "",
+      "headers": {
+        "x-api-key": "fixture-key",
+        "user-agent": "Go-http-client/1.1",
+        "accept-encoding": "gzip",
+        "host": "127.0.0.1:45495"
+      },
+      "received": 996192.333193652,
+      "protocol": "HTTP/1.1",
+      "response_status": 200,
+      "response_preview": "{\"fields\": []}",
+      "response_bytes": 14,
+      "done": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/query",
+      "params": {
+        "fields": [
+          "true"
+        ]
+      },
+      "body": "{\"endTime\":\"2026-10-14T13:33:53Z\",\"query\":\"SELECT * FROM '\ufffd\ufffd\u8bd5' LIMIT 1\",\"startTime\":\"2000-01-01T00:00:00+00:00\"}",
+      "headers": {
+        "x-api-key": "fixture-key",
+        "content-type": "application/json",
+        "user-agent": "Go-http-client/1.1",
+        "accept-encoding": "gzip",
+        "content-length": "118",
+        "host": "127.0.0.1:45495"
+      },
+      "received": 996192.33392137,
+      "protocol": "HTTP/1.1",
+      "response_status": 200,
+      "response_preview": "{\"fields\": [], \"records\": []}",
+      "response_bytes": 29,
+      "done": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/logstream/%B5%8B%E8%AF%95/schema",
+      "params": {},
+      "body": "",
+      "headers": {
+        "x-api-key": "fixture-key",
+        "user-agent": "Go-http-client/1.1",
+        "accept-encoding": "gzip",
+        "host": "127.0.0.1:45495"
+      },
+      "received": 996192.338994579,
+      "protocol": "HTTP/1.1",
+      "response_status": 200,
+      "response_preview": "{\"fields\": []}",
+      "response_bytes": 14,
+      "done": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/query",
+      "params": {
+        "fields": [
+          "true"
+        ]
+      },
+      "body": "{\"endTime\":\"2026-10-14T13:33:53Z\",\"query\":\"SELECT * FROM '\ufffd\ufffd\u8bd5' LIMIT 1\",\"startTime\":\"2000-01-01T00:00:00+00:00\"}",
+      "headers": {
+        "x-api-key": "fixture-key",
+        "content-type": "application/json",
+        "user-agent": "Go-http-client/1.1",
+        "accept-encoding": "gzip",
+        "content-length": "118",
+        "host": "127.0.0.1:45495"
+      },
+      "received": 996192.339594041,
+      "protocol": "HTTP/1.1",
+      "response_status": 200,
+      "response_preview": "{\"fields\": [], \"records\": []}",
+      "response_bytes": 29,
+      "done": true
+    }
+  ],
+  "returncode": null,
+  "stdout_sha256": "14a6ae9aff91172b82de418a4b2ceeaad2cc157c31a1b15bf86e3bd300a6f170",
+  "evidence_files": {
+    "preparation.json": "00d8b13c2ccbd84db8eaf613981c0075cc70a09689dd76c6a1a699f992105ff4",
+    "probe.py": "03c50ed660f92272e2cb7b2d923d45a290fc00b4ee83c37679eb373fa0a5a7fc",
+    "probe.log": "361199593b360ecf7512b33cb8545fd832743d9914633b949c705d129043ece2",
+    "candidate.stdout": "14a6ae9aff91172b82de418a4b2ceeaad2cc157c31a1b15bf86e3bd300a6f170",
+    "candidate.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "candidate-process.json": "c99926382ccf8b12e305286ae00bc3e429c46e4529963e03b03dd647d478315f"
+  },
+  "verdict": "Actual pre-fix release2 request-identity mismatch; expected logs schema, observed repeated invalid-byte schema. Process was closed after bounded missing-request assertion; graceful completion is not claimed."
+}

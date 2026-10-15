@@ -1,0 +1,25 @@
+#![allow(dead_code)]
+mod metrics {
+ pub(crate) fn has_dark_background() -> bool { true }
+ pub(crate) mod output { pub(crate) mod style {
+ #[derive(Clone,Copy,Debug,PartialEq,Eq)] pub(crate) enum Profile {TrueColor,Ansi256,Ansi,Ascii}
+ pub(crate) struct Terminal {pub(crate) profile:Profile}
+ impl Terminal {pub(crate) fn from_process()->Self {Self{profile:Profile::TrueColor}}}
+ }}
+}
+#[path="/home/ajs/.cache/pb-phase7/style-byte-probe/style-probe.rs"] mod style;
+use std::io::{self,BufRead};
+use style::{Style,Env,Profile,Color,Border};
+fn unhex(s:&str)->Vec<u8>{s.as_bytes().chunks_exact(2).map(|b|u8::from_str_radix(std::str::from_utf8(b).unwrap(),16).unwrap()).collect()}
+fn hex(s:&[u8])->String{s.iter().map(|b|format!("{b:02x}")).collect()}
+fn main(){
+let plain=Env{profile:Profile::Ascii,dark:true};let color=Env{profile:Profile::TrueColor,dark:true};
+for line in io::stdin().lock().lines(){let line=line.unwrap();let f:Vec<_>=line.split('\t').collect();let s=unhex(f[1]);let n:usize=f[2].parse().unwrap();let tail=unhex(f[3]);let bp=unhex(f[4]);
+let outputs=[style::truncate_bytes(&s,n,&tail),style::wrap_bytes(&s,n,&bp),style::ui_truncate_bytes(&s,n as isize).unwrap_or_else(|e|format!("panic:{e}").into_bytes()),
+Style::new().width(7).render_bytes_in(&s,plain),
+Style::new().bold(true).fg(Color::hex("#e3e3e7")).bg(Color::hex("#13131f")).width(9).height(3).padding(&[1,1]).margin_left(1).border(Border::NORMAL).border_fg(Color::hex("#49495c")).max_width(12).max_height(5).render_bytes_in(&s,color),
+Style::new().inline(true).fg(Color::hex("#e3e3e7")).max_width(7).render_bytes_in(&s,color),
+style::probe_underline().width(7).render_bytes_in(&s,color),
+style::join_horizontal_bytes(0.0,&[&s,b"AB\nC"]),style::join_horizontal_bytes(0.5,&[&s,b"AB\nC"]),style::join_vertical_bytes(1.0,&[&s,b"AB\nC"]),
+style::place_bytes(9,4,0.5,0.5,&s),style::place_bytes(9,4,0.25,0.75,&s)];
+print!("{}\t{}",f[0],style::width_bytes(&s));for o in outputs{print!("\t{}",hex(&o))}println!();}}

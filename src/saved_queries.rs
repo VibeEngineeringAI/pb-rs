@@ -1,4 +1,4 @@
-//! Saved SQL creation and projection, independent of the deferred picker.
+//! Saved SQL creation, projection, and the interactive menu's fetch policy.
 use crate::{
     ErrorCode, Outcome,
     api::ApiClient,
@@ -24,6 +24,118 @@ struct SavedSql {
     from: String,
     #[serde(skip_serializing_if = "String::is_empty")]
     to: String,
+}
+
+/// Owned menu result. `sql` is the saved description, never the dataset name.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub(crate) struct SavedSelection {
+    pub(crate) id: String,
+    pub(crate) title: String,
+    pub(crate) dataset: String,
+    pub(crate) sql: String,
+    pub(crate) from: String,
+    pub(crate) to: String,
+}
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) struct SavedApplication {
+    pub(crate) query: String,
+    pub(crate) from: String,
+    pub(crate) to: String,
+}
+impl SavedSelection {
+    /// The command only attempts application when an ID or nonblank SQL is
+    /// present. An all-empty menu item behaves like quit, without a message.
+    pub(crate) fn should_apply(&self) -> bool {
+        !self.id.is_empty() || !trim(&self.sql).is_empty()
+    }
+    /// An applied blank SQL selection has its own stdout message. This method
+    /// returns None for that case; menu quit is a separate outer Option.
+    pub(crate) fn application(&self) -> Option<SavedApplication> {
+        if trim(&self.sql).is_empty() {
+            return None;
+        }
+        Some(SavedApplication {
+            query: crate::sql::rewrite::quote_fields_with_dots(
+                &crate::sql::rewrite::quote_stream_names(&self.sql),
+            ),
+            from: default_time(&self.from, "1h").into(),
+            to: default_time(&self.to, "now").into(),
+        })
+    }
+}
+impl From<SavedSql> for SavedSelection {
+    fn from(saved: SavedSql) -> Self {
+        Self {
+            id: saved.id,
+            title: saved.title,
+            dataset: saved.stream,
+            sql: saved.desc,
+            from: saved.from,
+            to: saved.to,
+        }
+    }
+}
+
+/// Called after command preflight. Fetch is independent of any explicitly
+/// chosen application profile and finishes before acquiring the alt screen.
+pub(crate) fn select_menu(stderr: &mut dyn Write) -> Result<Option<SavedSelection>, CliError> {
+    let store = ProfileStore::from_env().map_err(|e| CliError::new(e.code, e.message))?;
+    // Go's ReadConfigFromFile returns an empty, non-nil Config on failure.
+    // The menu reports the reread failure and continues with that empty value.
+    let config = store.read().unwrap_or_else(|_| {
+        let _ = writeln!(stderr, "Error reading Default Profile");
+        Default::default()
+    });
+    let profile = config
+        .profiles
+        .get(&config.default_profile)
+        .cloned()
+        .unwrap_or_default();
+    let queries = match ApiClient::new(profile, store) {
+        Ok(client) => fetch_menu(&client, &runtime()?, stderr),
+        Err(error) => {
+            let _ = writeln!(stderr, "Error creating request: {error}");
+            Vec::new()
+        }
+    };
+    crate::tui::saved::select(queries)
+}
+
+/// The menu intentionally does NOT inspect HTTP status. It reports each
+/// failure stage on stderr and still opens an empty list, unlike `list -o`.
+fn fetch_menu(
+    client: &ApiClient,
+    runtime: &tokio::runtime::Runtime,
+    stderr: &mut dyn Write,
+) -> Vec<SavedSelection> {
+    let request = match client.prepare_standard(Method::GET, "filters", None) {
+        Ok(request) => request,
+        Err(error) => {
+            let _ = writeln!(stderr, "Error creating request: {error}");
+            return Vec::new();
+        }
+    };
+    let response = match runtime.block_on(client.send_streaming(request)) {
+        Ok(response) => response,
+        Err(error) => {
+            let _ = writeln!(stderr, "Error making request: {error}");
+            return Vec::new();
+        }
+    };
+    let response = match runtime.block_on(response.collect()) {
+        Ok(response) => response,
+        Err(error) => {
+            let _ = writeln!(stderr, "Error reading response body: {error}");
+            return Vec::new();
+        }
+    };
+    match decode(&response.body) {
+        Ok(queries) => queries.into_iter().map(SavedSelection::from).collect(),
+        Err(error) => {
+            let _ = writeln!(stderr, "Error unmarshalling response: {error}");
+            Vec::new()
+        }
+    }
 }
 
 fn error(message: impl Into<String>) -> CliError {
@@ -467,6 +579,75 @@ fn type_error(node: &Node, destination: String, first: &mut Option<String>) {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn menu_application_keeps_printed_query_separate_from_wire_limit() {
+        let selected = SavedSelection {
+            id: "id".into(),
+            dataset: "must-not-execute".into(),
+            sql: "select obj.key from app-logs".into(),
+            ..Default::default()
+        };
+        let application = selected.application().unwrap();
+        assert_eq!(application.query, "select \"obj.key\" from \"app-logs\"");
+        assert_eq!(
+            (application.from.as_str(), application.to.as_str()),
+            ("1h", "now")
+        );
+        assert_eq!(
+            crate::sql::rewrite::ensure_default_limit(&application.query),
+            "select \"obj.key\" from \"app-logs\" LIMIT 500"
+        );
+        assert!(
+            SavedSelection {
+                sql: " \t\n".into(),
+                id: "id".into(),
+                ..Default::default()
+            }
+            .application()
+            .is_none()
+        );
+    }
+    #[test]
+    fn menu_fetch_accepts_non_success_arrays_and_reports_decode_failure() {
+        use std::{
+            io::{Read, Write},
+            net::TcpListener,
+            thread,
+        };
+        for body in [br#"[{"filter_name":"Menu","stream_name":"wrong","query":{"filter_query":"select 1"}}]"#.as_slice(), b"oops".as_slice()] {
+            let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+            let client = ApiClient::new(crate::config::ProfileRecord {
+                url: format!("http://{}", listener.local_addr().unwrap()),
+                username: "u".into(), password: "p".into(), ..Default::default()
+            }, ProfileStore::new("/nonexistent/menu-test")).unwrap();
+            let body = body.to_vec();
+            let invalid = body == b"oops";
+            let server = thread::spawn(move || {
+                let (mut socket, _) = listener.accept().unwrap();
+                socket.set_read_timeout(Some(std::time::Duration::from_secs(2))).unwrap();
+                let mut head = Vec::new();
+                while !head.ends_with(b"\r\n\r\n") {
+                    let mut byte = [0]; socket.read_exact(&mut byte).unwrap(); head.push(byte[0]);
+                }
+                let head = String::from_utf8(head).unwrap();
+                assert!(head.starts_with("GET /api/v1/filters HTTP/1.1"));
+                write!(socket, "HTTP/1.1 500 Internal Server Error\r\nContent-Length: {}\r\nConnection: close\r\n\r\n", body.len()).unwrap();
+                socket.write_all(&body).unwrap();
+            });
+            let mut stderr = Vec::new();
+            let result = fetch_menu(&client, &runtime().unwrap(), &mut stderr);
+            server.join().unwrap();
+            if invalid {
+                assert!(result.is_empty());
+                assert_eq!(String::from_utf8(stderr).unwrap(), "Error unmarshalling response: invalid character 'o' looking for beginning of value\n");
+            } else {
+                assert_eq!(result.len(), 1);
+                assert_eq!(result[0].sql, "select 1");
+                assert_eq!(result[0].dataset, "wrong");
+                assert!(stderr.is_empty());
+            }
+        }
+    }
     #[test]
     fn projection_filters_only_null_sql_and_validates_builders() {
         let q = decode(br#"[{"query":{"filter_type":"builder","filter_query":""}},{"query":{}},{"query":{"filter_query":null}},{"query":{"filter_query":"select 1"},"time_filter":{"from":"then"}}]"#).unwrap();

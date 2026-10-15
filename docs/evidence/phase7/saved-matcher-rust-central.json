@@ -1,0 +1,28 @@
+{
+  "kind": "actual Rust matcher execution against retained actual Go controls",
+  "passed": 106,
+  "source_unchanged": {
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/saved.rs": "d25a3358cb60a78977d0ee9bddc239c7b83246fa8cf66d46afccf288ff032bf7",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/saved_fuzzy_unicode.rs": "3a88503ae1955216f7f2da881d3a1d41d7e112dcd9fa18e0aeb8163155e2e634",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/opus-r4-saved-go-oracle.json": "e2fd56f2cc191cd39e5f1dab20a6e8599e4d93f691c7caa1b2ae3e3ad4906a8a"
+  },
+  "compiler": "rustc 1.96.0 (ac68faa20 2026-05-25)\nbinary: rustc\ncommit-hash: ac68faa20c58cbccd01ee7208bf3b6e93a7d7f96\ncommit-date: 2026-05-25\nhost: x86_64-unknown-linux-gnu\nrelease: 1.96.0\nLLVM version: 22.1.2\n",
+  "compile_argv": [
+    "rustc",
+    "--edition=2024",
+    "-O",
+    "-C",
+    "overflow-checks=yes",
+    "/home/ajs/.cache/pb-phase7/saved-matcher-rust-central/main.rs",
+    "-o",
+    "/home/ajs/.cache/pb-phase7/saved-matcher-rust-central/matcher-probe"
+  ],
+  "extracted_source_sha256": "536a66534bd7175b44c5d1c90210ba82d184898b492a28e2714facf269320837",
+  "artifacts": {
+    "/home/ajs/.cache/pb-phase7/saved-matcher-rust-central/main.rs": "1b33c27f54973178ad451403b2adfec8ab830cf2f8a02f1ea685da90088e48c7",
+    "/home/ajs/.cache/pb-phase7/saved-matcher-rust-central/matcher-probe": "4b0094e33cf2521e548280ed30658d1fb49114621b3f5f8e40576fbe9de23652",
+    "/home/ajs/.cache/pb-phase7/saved-matcher-rust-central/compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/ajs/.cache/pb-phase7/saved-matcher-rust-central/run.log": "8441dfd8f04e7c477d37e5a519851637fe64718498e5ca5e4342050c8225bb31"
+  },
+  "limits": "Fault values, membership, exact scores and stable ranking only; matched indexes, CLI effects and performance not checked."
+}

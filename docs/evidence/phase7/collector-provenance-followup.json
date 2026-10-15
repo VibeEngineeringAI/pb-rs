@@ -1,0 +1,15 @@
+{
+  "kind": "source inspection and cross-phase coordination; not executed race proof",
+  "phase6_findings": [
+    "resolved fixture/meter identities but original symlink arguments executed",
+    "manifest JSON interpretation and hash from separate reads"
+  ],
+  "phase7_confirmed_source_sites": [
+    "bench artifact: metadata read_text then separate sha_file",
+    "profile load_artifacts: root config parse without bound root identity, symbolized metadata parse then separate hash",
+    "bench validate_preflight report parse then caller separate hash"
+  ],
+  "disposition": "active collector R2 implementation owner instructed to bind parsed JSON and SHA to one read_bytes snapshot, retain original identities and execute verified canonical paths; regression tests and fresh review pending",
+  "task_id": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-collector-r2-concrete-fixes",
+  "timing_admitted": false
+}

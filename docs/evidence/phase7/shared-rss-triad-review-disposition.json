@@ -1,0 +1,30 @@
+{
+  "review_sha256": "082ca754d1ac4836385dd3d2df1543d3883cd3d7025641ff8182351a436117b5",
+  "review_artifacts_verified": 27,
+  "scope": "complete full15 triad evidence integrity accepted; descriptive artifact-level RSS localization only",
+  "originals_unchanged": 24700,
+  "all_samples": 1575,
+  "comparison_cells": 135,
+  "reported_rss_median_percent_ranges": {
+    "phase6_vs_phase5": [
+      23.68339,
+      33.528951
+    ],
+    "phase7_vs_phase6": [
+      -10.609212,
+      -0.982615
+    ],
+    "phase7_vs_phase5": [
+      17.857143,
+      24.858044
+    ]
+  },
+  "all15_gap_already_present_phase6": true,
+  "all15_phase7_median_lower_than_phase6": true,
+  "accepted_phase5_regressions_remain_open": true,
+  "code_cause_or_physical_accounting_proven": false,
+  "estimator_correction": "Root brief incorrectly called retained independent marginal bootstrap paired. Exact prior independent estimator remains governing retained comparisons; newly computed paired estimator is separately labeled supplemental diagnostic only. No retrospective estimator substitution.",
+  "original_failed_version_capture_preserved": true,
+  "performance_acceptance": false,
+  "remaining": "15 confirmed RSS failures and unresolved original/new timing signals stay open"
+}

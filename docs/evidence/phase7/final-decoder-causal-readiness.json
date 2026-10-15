@@ -1,0 +1,2070 @@
+{
+  "kind": "targeted functional replay after request-graph causal fixture barrier",
+  "preserved_parent_failure_log": "/home/ajs/.cache/pb-phase7/integration-alltargets10.log",
+  "unchanged_assertions": "same rendered decoder rows and exact startup request counts",
+  "fixture_change": "wait and done for the asserted schema GET before Ctrl+C in new SQL decoder group",
+  "test_source_sha256": "5334d8471c2bbe2735afcfa2435c87c8af18f0b2012785d0bde924646ded8d76",
+  "debug_candidate_sha256_before_after": "5945c460e942629c7aaaa995715206ebc56be4eee8c5f27c6df9e268bc7aedd4",
+  "build": false,
+  "performance_claim": false,
+  "cases": [
+    {
+      "case": "promql_label_duplicate_array_reset",
+      "binary": "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+      "passed": true,
+      "capture_path": "/home/ajs/.cache/pb-phase7/final-decoder-causal-captures/promql_label_duplicate_array_reset-1791983475583869094.json",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/prometheus/api/v1/label/__name__/values",
+          "params": {
+            "stream": [
+              "metrics"
+            ]
+          },
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:36501",
+            "User-Agent": "Go-http-client/1.1",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994833.621755863,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"status\": \"success\", \"data\": [\"up\"]}",
+          "response_bytes": 37,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/api/prism/v1/home",
+          "params": {},
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:36501",
+            "User-Agent": "Go-http-client/1.1",
+            "Content-Type": "application/json",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994833.622185532,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"datasets\": []}",
+          "response_bytes": 16,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/prometheus/api/v1/labels",
+          "params": {
+            "stream": [
+              "metrics"
+            ],
+            "start": [
+              "2024-01-01T00:00:00Z"
+            ],
+            "end": [
+              "2024-01-01T00:10:00Z"
+            ],
+            "match[]": [
+              "up"
+            ]
+          },
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:36501",
+            "User-Agent": "Go-http-client/1.1",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994833.771556464,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"status\":\"success\",\"data\":[\"DISCARDED_LABEL\"],\"data\":[],\"data\":[null]}",
+          "response_bytes": 71,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/prometheus/api/v1/query_range",
+          "params": {
+            "end": [
+              "2024-01-01T00:10:00Z"
+            ],
+            "query": [
+              "up"
+            ],
+            "start": [
+              "2024-01-01T00:00:00Z"
+            ],
+            "step": [
+              "30s"
+            ],
+            "stream": [
+              "metrics"
+            ]
+          },
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:36501",
+            "User-Agent": "Go-http-client/1.1",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994833.88892934,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"status\": \"success\", \"data\": {\"resultType\": \"matrix\", \"result\": []}}",
+          "response_bytes": 69,
+          "done": true
+        }
+      ],
+      "stdout_sha256": "e9192c80905fe93c26591c0a41699f1c9f10f6c1fc33eee46fc1d172db790bd6"
+    },
+    {
+      "case": "promql_label_duplicate_array_reset",
+      "binary": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/target/debug/pb",
+      "passed": true,
+      "capture_path": "/home/ajs/.cache/pb-phase7/final-decoder-causal-captures/promql_label_duplicate_array_reset-1791983634580681286.json",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/prometheus/api/v1/label/__name__/values",
+          "params": {
+            "stream": [
+              "metrics"
+            ]
+          },
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:36999"
+          },
+          "received": 994992.80186164,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"status\": \"success\", \"data\": [\"up\"]}",
+          "response_bytes": 37,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/api/prism/v1/home",
+          "params": {},
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "content-type": "application/json",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:36999"
+          },
+          "received": 994992.802179936,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"datasets\": []}",
+          "response_bytes": 16,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/prometheus/api/v1/label/__name__/values",
+          "params": {
+            "stream": [
+              "metrics"
+            ]
+          },
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:36999"
+          },
+          "received": 994992.841369907,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"status\": \"success\", \"data\": [\"up\"]}",
+          "response_bytes": 37,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/prometheus/api/v1/labels",
+          "params": {
+            "stream": [
+              "metrics"
+            ],
+            "start": [
+              "2024-01-01T00:00:00Z"
+            ],
+            "end": [
+              "2024-01-01T00:10:00Z"
+            ],
+            "match[]": [
+              "up"
+            ]
+          },
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:36999"
+          },
+          "received": 994992.864431262,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"status\":\"success\",\"data\":[\"DISCARDED_LABEL\"],\"data\":[],\"data\":[null]}",
+          "response_bytes": 71,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/prometheus/api/v1/query_range",
+          "params": {
+            "end": [
+              "2024-01-01T00:10:00Z"
+            ],
+            "query": [
+              "up"
+            ],
+            "start": [
+              "2024-01-01T00:00:00Z"
+            ],
+            "step": [
+              "30s"
+            ],
+            "stream": [
+              "metrics"
+            ]
+          },
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:36999"
+          },
+          "received": 994992.941212438,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"status\": \"success\", \"data\": {\"resultType\": \"matrix\", \"result\": []}}",
+          "response_bytes": 69,
+          "done": true
+        }
+      ],
+      "stdout_sha256": "505ba267364509b892c6b8856fc9e116e9d3290de0f1eb8511c25a1870378069"
+    },
+    {
+      "case": "promql_label_duplicate_data_reuse",
+      "binary": "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+      "passed": true,
+      "capture_path": "/home/ajs/.cache/pb-phase7/final-decoder-causal-captures/promql_label_duplicate_data_reuse-1791983475802465603.json",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/prometheus/api/v1/label/__name__/values",
+          "params": {
+            "stream": [
+              "metrics"
+            ]
+          },
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:34549",
+            "User-Agent": "Go-http-client/1.1",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994833.60496942,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"status\": \"success\", \"data\": [\"up\"]}",
+          "response_bytes": 37,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/api/prism/v1/home",
+          "params": {},
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:34549",
+            "User-Agent": "Go-http-client/1.1",
+            "Content-Type": "application/json",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994833.605420163,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"datasets\": []}",
+          "response_bytes": 16,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/prometheus/api/v1/labels",
+          "params": {
+            "stream": [
+              "metrics"
+            ],
+            "start": [
+              "2024-01-01T00:00:00Z"
+            ],
+            "end": [
+              "2024-01-01T00:10:00Z"
+            ],
+            "match[]": [
+              "up"
+            ]
+          },
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:34549",
+            "User-Agent": "Go-http-client/1.1",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994833.754846031,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"status\":\"success\",\"data\":[\"F1_LABEL_A\",\"F1_LABEL_B\"],\"data\":[null]}",
+          "response_bytes": 69,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/prometheus/api/v1/label/F1_LABEL_A/values",
+          "params": {
+            "stream": [
+              "metrics"
+            ],
+            "start": [
+              "2024-01-01T00:00:00Z"
+            ],
+            "end": [
+              "2024-01-01T00:10:00Z"
+            ],
+            "match[]": [
+              "up"
+            ]
+          },
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:34549",
+            "User-Agent": "Go-http-client/1.1",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994833.871629259,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"status\": \"success\", \"data\": [\"F1_VALUE\"]}",
+          "response_bytes": 43,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/prometheus/api/v1/query_range",
+          "params": {
+            "end": [
+              "2024-01-01T00:10:00Z"
+            ],
+            "query": [
+              "up{F1_LABEL_A=\"F1_VALUE\"}"
+            ],
+            "start": [
+              "2024-01-01T00:00:00Z"
+            ],
+            "step": [
+              "30s"
+            ],
+            "stream": [
+              "metrics"
+            ]
+          },
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:34549",
+            "User-Agent": "Go-http-client/1.1",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994834.105583778,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"status\": \"success\", \"data\": {\"resultType\": \"matrix\", \"result\": []}}",
+          "response_bytes": 69,
+          "done": true
+        }
+      ],
+      "stdout_sha256": "7a6909a9d89abe89ff1568f8c7c81b3be93ac0fa23b052009319881b48f4621d"
+    },
+    {
+      "case": "promql_label_duplicate_data_reuse",
+      "binary": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/target/debug/pb",
+      "passed": true,
+      "capture_path": "/home/ajs/.cache/pb-phase7/final-decoder-causal-captures/promql_label_duplicate_data_reuse-1791983634775193358.json",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/prism/v1/home",
+          "params": {},
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "content-type": "application/json",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:46117"
+          },
+          "received": 994992.785067474,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"datasets\": []}",
+          "response_bytes": 16,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/prometheus/api/v1/label/__name__/values",
+          "params": {
+            "stream": [
+              "metrics"
+            ]
+          },
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:46117"
+          },
+          "received": 994992.785413967,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"status\": \"success\", \"data\": [\"up\"]}",
+          "response_bytes": 37,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/prometheus/api/v1/label/__name__/values",
+          "params": {
+            "stream": [
+              "metrics"
+            ]
+          },
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:46117"
+          },
+          "received": 994992.823610159,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"status\": \"success\", \"data\": [\"up\"]}",
+          "response_bytes": 37,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/prometheus/api/v1/labels",
+          "params": {
+            "stream": [
+              "metrics"
+            ],
+            "start": [
+              "2024-01-01T00:00:00Z"
+            ],
+            "end": [
+              "2024-01-01T00:10:00Z"
+            ],
+            "match[]": [
+              "up"
+            ]
+          },
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:46117"
+          },
+          "received": 994992.845940498,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"status\":\"success\",\"data\":[\"F1_LABEL_A\",\"F1_LABEL_B\"],\"data\":[null]}",
+          "response_bytes": 69,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/prometheus/api/v1/label/F1_LABEL_A/values",
+          "params": {
+            "stream": [
+              "metrics"
+            ],
+            "start": [
+              "2024-01-01T00:00:00Z"
+            ],
+            "end": [
+              "2024-01-01T00:10:00Z"
+            ],
+            "match[]": [
+              "up"
+            ]
+          },
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:46117"
+          },
+          "received": 994992.930533432,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"status\": \"success\", \"data\": [\"F1_VALUE\"]}",
+          "response_bytes": 43,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/prometheus/api/v1/query_range",
+          "params": {
+            "end": [
+              "2024-01-01T00:10:00Z"
+            ],
+            "query": [
+              "up{F1_LABEL_A=\"F1_VALUE\"}"
+            ],
+            "start": [
+              "2024-01-01T00:00:00Z"
+            ],
+            "step": [
+              "30s"
+            ],
+            "stream": [
+              "metrics"
+            ]
+          },
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:46117"
+          },
+          "received": 994993.127848722,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"status\": \"success\", \"data\": {\"resultType\": \"matrix\", \"result\": []}}",
+          "response_bytes": 69,
+          "done": true
+        }
+      ],
+      "stdout_sha256": "5f1ec37758b14270ac7b473a143c3eb7924d16648f966fb1ab7cdc94111fa4f5"
+    },
+    {
+      "case": "promql_label_duplicate_first_error",
+      "binary": "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+      "passed": true,
+      "capture_path": "/home/ajs/.cache/pb-phase7/final-decoder-causal-captures/promql_label_duplicate_first_error-1791983476762389214.json",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/prometheus/api/v1/label/__name__/values",
+          "params": {
+            "stream": [
+              "metrics"
+            ]
+          },
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:38441",
+            "User-Agent": "Go-http-client/1.1",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994834.800562854,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"status\": \"success\", \"data\": [\"up\"]}",
+          "response_bytes": 37,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/api/prism/v1/home",
+          "params": {},
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:38441",
+            "User-Agent": "Go-http-client/1.1",
+            "Content-Type": "application/json",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994834.801959394,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"datasets\": []}",
+          "response_bytes": 16,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/prometheus/api/v1/labels",
+          "params": {
+            "stream": [
+              "metrics"
+            ],
+            "start": [
+              "2024-01-01T00:00:00Z"
+            ],
+            "end": [
+              "2024-01-01T00:10:00Z"
+            ],
+            "match[]": [
+              "up"
+            ]
+          },
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:38441",
+            "User-Agent": "Go-http-client/1.1",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994834.950602681,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"status\":\"success\",\"data\":[1],\"data\":[\"MUST_NOT_RENDER\"]}",
+          "response_bytes": 58,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/prometheus/api/v1/query_range",
+          "params": {
+            "end": [
+              "2024-01-01T00:10:00Z"
+            ],
+            "query": [
+              "up"
+            ],
+            "start": [
+              "2024-01-01T00:00:00Z"
+            ],
+            "step": [
+              "30s"
+            ],
+            "stream": [
+              "metrics"
+            ]
+          },
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:38441",
+            "User-Agent": "Go-http-client/1.1",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994835.067824202,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"status\": \"success\", \"data\": {\"resultType\": \"matrix\", \"result\": []}}",
+          "response_bytes": 69,
+          "done": true
+        }
+      ],
+      "stdout_sha256": "66b35035299a8e66329aa668ce194cf20e3fd4712b4d1737d5308defcd614a56"
+    },
+    {
+      "case": "promql_label_duplicate_first_error",
+      "binary": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/target/debug/pb",
+      "passed": true,
+      "capture_path": "/home/ajs/.cache/pb-phase7/final-decoder-causal-captures/promql_label_duplicate_first_error-1791983635751767039.json",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/prism/v1/home",
+          "params": {},
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "content-type": "application/json",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:33777"
+          },
+          "received": 994993.966300046,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"datasets\": []}",
+          "response_bytes": 16,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/prometheus/api/v1/label/__name__/values",
+          "params": {
+            "stream": [
+              "metrics"
+            ]
+          },
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:33777"
+          },
+          "received": 994993.966613798,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"status\": \"success\", \"data\": [\"up\"]}",
+          "response_bytes": 37,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/prometheus/api/v1/label/__name__/values",
+          "params": {
+            "stream": [
+              "metrics"
+            ]
+          },
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:33777"
+          },
+          "received": 994994.007873348,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"status\": \"success\", \"data\": [\"up\"]}",
+          "response_bytes": 37,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/prometheus/api/v1/labels",
+          "params": {
+            "stream": [
+              "metrics"
+            ],
+            "start": [
+              "2024-01-01T00:00:00Z"
+            ],
+            "end": [
+              "2024-01-01T00:10:00Z"
+            ],
+            "match[]": [
+              "up"
+            ]
+          },
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:33777"
+          },
+          "received": 994994.035395057,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"status\":\"success\",\"data\":[1],\"data\":[\"MUST_NOT_RENDER\"]}",
+          "response_bytes": 58,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/prometheus/api/v1/query_range",
+          "params": {
+            "end": [
+              "2024-01-01T00:10:00Z"
+            ],
+            "query": [
+              "up"
+            ],
+            "start": [
+              "2024-01-01T00:00:00Z"
+            ],
+            "step": [
+              "30s"
+            ],
+            "stream": [
+              "metrics"
+            ]
+          },
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:33777"
+          },
+          "received": 994994.11207148,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"status\": \"success\", \"data\": {\"resultType\": \"matrix\", \"result\": []}}",
+          "response_bytes": 69,
+          "done": true
+        }
+      ],
+      "stdout_sha256": "a2f4eb75d60742d1d8060b5ce77fa89b4c9cc6f2772c33b58e9b113a7e24749e"
+    },
+    {
+      "case": "promql_unicode_decoder_error",
+      "binary": "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+      "passed": true,
+      "capture_path": "/home/ajs/.cache/pb-phase7/final-decoder-causal-captures/promql_unicode_decoder_error-1791983476422838485.json",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/prometheus/api/v1/query_range",
+          "params": {
+            "end": [
+              "2024-01-01T00:10:00Z"
+            ],
+            "query": [
+              "up"
+            ],
+            "start": [
+              "2024-01-01T00:00:00Z"
+            ],
+            "step": [
+              "30s"
+            ],
+            "stream": [
+              "metrics"
+            ]
+          },
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:36585",
+            "User-Agent": "Go-http-client/1.1",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994834.777412337,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"\u017ftatus\":\"error\",\"error\":\"F3_RESULT_ERROR\",\"errorType\":\"bad_data\"}",
+          "response_bytes": 68,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/prometheus/api/v1/label/__name__/values",
+          "params": {
+            "stream": [
+              "metrics"
+            ]
+          },
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:36585",
+            "User-Agent": "Go-http-client/1.1",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994834.777637373,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"status\": \"success\", \"data\": [\"up\"]}",
+          "response_bytes": 37,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/api/prism/v1/home",
+          "params": {},
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:36585",
+            "User-Agent": "Go-http-client/1.1",
+            "Content-Type": "application/json",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994834.778126207,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"datasets\": []}",
+          "response_bytes": 16,
+          "done": true
+        }
+      ],
+      "stdout_sha256": "4ffb4f8ae13dafd4e1a9e8a9940c7c681fbf2cd09345bbec9fbe5f83c61b90ca"
+    },
+    {
+      "case": "promql_unicode_decoder_error",
+      "binary": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/target/debug/pb",
+      "passed": true,
+      "capture_path": "/home/ajs/.cache/pb-phase7/final-decoder-causal-captures/promql_unicode_decoder_error-1791983635669717585.json",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/prometheus/api/v1/query_range",
+          "params": {
+            "end": [
+              "2024-01-01T00:10:00Z"
+            ],
+            "query": [
+              "up"
+            ],
+            "start": [
+              "2024-01-01T00:00:00Z"
+            ],
+            "step": [
+              "30s"
+            ],
+            "stream": [
+              "metrics"
+            ]
+          },
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:34271"
+          },
+          "received": 994993.993511776,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"\u017ftatus\":\"error\",\"error\":\"F3_RESULT_ERROR\",\"errorType\":\"bad_data\"}",
+          "response_bytes": 68,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/api/prism/v1/home",
+          "params": {},
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "content-type": "application/json",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:34271"
+          },
+          "received": 994993.993842934,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"datasets\": []}",
+          "response_bytes": 16,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/prometheus/api/v1/label/__name__/values",
+          "params": {
+            "stream": [
+              "metrics"
+            ]
+          },
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:34271"
+          },
+          "received": 994993.99407275,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"status\": \"success\", \"data\": [\"up\"]}",
+          "response_bytes": 37,
+          "done": true
+        }
+      ],
+      "stdout_sha256": "d501425022e3ff646c04388daea2784fe9f6330faccec85dcc85c7b1f5595e84"
+    },
+    {
+      "case": "sql_duplicate_fields_reuse",
+      "binary": "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+      "passed": true,
+      "capture_path": "/home/ajs/.cache/pb-phase7/final-decoder-causal-captures/sql_duplicate_fields_reuse-1791983473447126048.json",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/prism/v1/home",
+          "params": {},
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:39821",
+            "User-Agent": "Go-http-client/1.1",
+            "Content-Type": "application/json",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994831.799893215,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"datasets\": [{\"title\": \"logs\", \"datasetType\": \"logs\"}]}",
+          "response_bytes": 56,
+          "done": true
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/query",
+          "params": {
+            "fields": [
+              "true"
+            ]
+          },
+          "body": "{\"endTime\":\"2024-01-01T01:00:00Z\",\"query\":\"SELECT * FROM logs LIMIT 10 OFFSET 0\",\"startTime\":\"2024-01-01T00:00:00Z\"}",
+          "headers": {
+            "Host": "127.0.0.1:39821",
+            "User-Agent": "Go-http-client/1.1",
+            "Content-Length": "116",
+            "Content-Type": "application/json",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994831.800415649,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"fields\":[\"a\",\"b\"],\"fields\":[null,\"x\"],\"records\":[{\"a\":\"FIELD_A_REUSED\",\"x\":\"FIELD_X\"}]}",
+          "response_bytes": 89,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/logstream/logs/schema",
+          "params": {},
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:39821",
+            "User-Agent": "Go-http-client/1.1",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994831.804354062,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"fields\": [{\"name\": \"value\"}]}",
+          "response_bytes": 31,
+          "done": true
+        }
+      ],
+      "stdout_sha256": "975679541fdd186e646fa6b4d46ff01344836c2f5f586a23e29993bcec41c606"
+    },
+    {
+      "case": "sql_duplicate_fields_reuse",
+      "binary": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/target/debug/pb",
+      "passed": true,
+      "capture_path": "/home/ajs/.cache/pb-phase7/final-decoder-causal-captures/sql_duplicate_fields_reuse-1791983632645631669.json",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/v1/query",
+          "params": {
+            "fields": [
+              "true"
+            ]
+          },
+          "body": "{\"endTime\":\"2024-01-01T01:00:00Z\",\"query\":\"SELECT * FROM logs LIMIT 10 OFFSET 0\",\"startTime\":\"2024-01-01T00:00:00Z\"}",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "content-type": "application/json",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "content-length": "116",
+            "host": "127.0.0.1:42165"
+          },
+          "received": 994990.978343134,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"fields\":[\"a\",\"b\"],\"fields\":[null,\"x\"],\"records\":[{\"a\":\"FIELD_A_REUSED\",\"x\":\"FIELD_X\"}]}",
+          "response_bytes": 89,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/api/prism/v1/home",
+          "params": {},
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "content-type": "application/json",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:42165"
+          },
+          "received": 994990.978570068,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"datasets\": [{\"title\": \"logs\", \"datasetType\": \"logs\"}]}",
+          "response_bytes": 56,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/logstream/logs/schema",
+          "params": {},
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:42165"
+          },
+          "received": 994991.00061357,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"fields\": [{\"name\": \"value\"}]}",
+          "response_bytes": 31,
+          "done": true
+        }
+      ],
+      "stdout_sha256": "54f725e7dd9f0291fc4a96da948e6cd9f2b979fbd34fd77b025ed09a195a02d5"
+    },
+    {
+      "case": "sql_duplicate_first_error",
+      "binary": "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+      "passed": true,
+      "capture_path": "/home/ajs/.cache/pb-phase7/final-decoder-causal-captures/sql_duplicate_first_error-1791983474095303269.json",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/prism/v1/home",
+          "params": {},
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:35583",
+            "User-Agent": "Go-http-client/1.1",
+            "Content-Type": "application/json",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994832.450529437,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"datasets\": [{\"title\": \"logs\", \"datasetType\": \"logs\"}]}",
+          "response_bytes": 56,
+          "done": true
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/query",
+          "params": {
+            "fields": [
+              "true"
+            ]
+          },
+          "body": "{\"endTime\":\"2024-01-01T01:00:00Z\",\"query\":\"SELECT * FROM logs LIMIT 10 OFFSET 0\",\"startTime\":\"2024-01-01T00:00:00Z\"}",
+          "headers": {
+            "Host": "127.0.0.1:35583",
+            "User-Agent": "Go-http-client/1.1",
+            "Content-Length": "116",
+            "Content-Type": "application/json",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994832.450893154,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"fields\":[1],\"fields\":[\"a\"],\"records\":[{\"a\":\"MUST_NOT_RENDER\"}]}",
+          "response_bytes": 65,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/logstream/logs/schema",
+          "params": {},
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:35583",
+            "User-Agent": "Go-http-client/1.1",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994832.452671912,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"fields\": [{\"name\": \"value\"}]}",
+          "response_bytes": 31,
+          "done": true
+        }
+      ],
+      "stdout_sha256": "0a116ccbacac06f7bfcb5d5d980b18db708ccdd7226b2f71bbf10899a7167aa5"
+    },
+    {
+      "case": "sql_duplicate_first_error",
+      "binary": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/target/debug/pb",
+      "passed": true,
+      "capture_path": "/home/ajs/.cache/pb-phase7/final-decoder-causal-captures/sql_duplicate_first_error-1791983633296939302.json",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/v1/query",
+          "params": {
+            "fields": [
+              "true"
+            ]
+          },
+          "body": "{\"endTime\":\"2024-01-01T01:00:00Z\",\"query\":\"SELECT * FROM logs LIMIT 10 OFFSET 0\",\"startTime\":\"2024-01-01T00:00:00Z\"}",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "content-type": "application/json",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "content-length": "116",
+            "host": "127.0.0.1:35981"
+          },
+          "received": 994991.637484676,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"fields\":[1],\"fields\":[\"a\"],\"records\":[{\"a\":\"MUST_NOT_RENDER\"}]}",
+          "response_bytes": 65,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/api/prism/v1/home",
+          "params": {},
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "content-type": "application/json",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:35981"
+          },
+          "received": 994991.637761864,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"datasets\": [{\"title\": \"logs\", \"datasetType\": \"logs\"}]}",
+          "response_bytes": 56,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/logstream/logs/schema",
+          "params": {},
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:35981"
+          },
+          "received": 994991.654109754,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"fields\": [{\"name\": \"value\"}]}",
+          "response_bytes": 31,
+          "done": true
+        }
+      ],
+      "stdout_sha256": "5071dbd8113c345373efcf6087cdd88988172f260323fd77ab6d7b4e468bd870"
+    },
+    {
+      "case": "sql_duplicate_hidden_slots",
+      "binary": "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+      "passed": true,
+      "capture_path": "/home/ajs/.cache/pb-phase7/final-decoder-causal-captures/sql_duplicate_hidden_slots-1791983473474977865.json",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/prism/v1/home",
+          "params": {},
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:35299",
+            "User-Agent": "Go-http-client/1.1",
+            "Content-Type": "application/json",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994831.827862611,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"datasets\": [{\"title\": \"logs\", \"datasetType\": \"logs\"}]}",
+          "response_bytes": 56,
+          "done": true
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/query",
+          "params": {
+            "fields": [
+              "true"
+            ]
+          },
+          "body": "{\"endTime\":\"2024-01-01T01:00:00Z\",\"query\":\"SELECT * FROM logs LIMIT 10 OFFSET 0\",\"startTime\":\"2024-01-01T00:00:00Z\"}",
+          "headers": {
+            "Host": "127.0.0.1:35299",
+            "User-Agent": "Go-http-client/1.1",
+            "Content-Length": "116",
+            "Content-Type": "application/json",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994831.828384225,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"fields\":[\"a\",\"b\"],\"fields\":[null],\"fields\":[null,null],\"records\":[{\"a\":\"INITIAL_A\"},{\"b\":\"HIDDEN_B\"}],\"records\":[{\"a\":\"ACTIVE_A\"}],\"records\":[{}, {\"a\":\"RESTORED_A\"}]}",
+          "response_bytes": 168,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/logstream/logs/schema",
+          "params": {},
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:35299",
+            "User-Agent": "Go-http-client/1.1",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994831.831872793,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"fields\": [{\"name\": \"value\"}]}",
+          "response_bytes": 31,
+          "done": true
+        }
+      ],
+      "stdout_sha256": "5f428583c8940c77189641b2f6dd2ee2fd2d5a9279fa59aa8b126a0d1499d838"
+    },
+    {
+      "case": "sql_duplicate_hidden_slots",
+      "binary": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/target/debug/pb",
+      "passed": true,
+      "capture_path": "/home/ajs/.cache/pb-phase7/final-decoder-causal-captures/sql_duplicate_hidden_slots-1791983632636087607.json",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/v1/query",
+          "params": {
+            "fields": [
+              "true"
+            ]
+          },
+          "body": "{\"endTime\":\"2024-01-01T01:00:00Z\",\"query\":\"SELECT * FROM logs LIMIT 10 OFFSET 0\",\"startTime\":\"2024-01-01T00:00:00Z\"}",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "content-type": "application/json",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "content-length": "116",
+            "host": "127.0.0.1:37447"
+          },
+          "received": 994990.975943795,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"fields\":[\"a\",\"b\"],\"fields\":[null],\"fields\":[null,null],\"records\":[{\"a\":\"INITIAL_A\"},{\"b\":\"HIDDEN_B\"}],\"records\":[{\"a\":\"ACTIVE_A\"}],\"records\":[{}, {\"a\":\"RESTORED_A\"}]}",
+          "response_bytes": 168,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/api/prism/v1/home",
+          "params": {},
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "content-type": "application/json",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:37447"
+          },
+          "received": 994990.976262774,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"datasets\": [{\"title\": \"logs\", \"datasetType\": \"logs\"}]}",
+          "response_bytes": 56,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/logstream/logs/schema",
+          "params": {},
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:37447"
+          },
+          "received": 994990.993179843,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"fields\": [{\"name\": \"value\"}]}",
+          "response_bytes": 31,
+          "done": true
+        }
+      ],
+      "stdout_sha256": "bbcfd70d918c02b7db8226fe7b9d9b07ccf375941ae9ff3ce8b53351e4a3729a"
+    },
+    {
+      "case": "sql_duplicate_record_merge",
+      "binary": "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+      "passed": true,
+      "capture_path": "/home/ajs/.cache/pb-phase7/final-decoder-causal-captures/sql_duplicate_record_merge-1791983473446758053.json",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/prism/v1/home",
+          "params": {},
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:33225",
+            "User-Agent": "Go-http-client/1.1",
+            "Content-Type": "application/json",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994831.795923994,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"datasets\": [{\"title\": \"logs\", \"datasetType\": \"logs\"}]}",
+          "response_bytes": 56,
+          "done": true
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/query",
+          "params": {
+            "fields": [
+              "true"
+            ]
+          },
+          "body": "{\"endTime\":\"2024-01-01T01:00:00Z\",\"query\":\"SELECT * FROM logs LIMIT 10 OFFSET 0\",\"startTime\":\"2024-01-01T00:00:00Z\"}",
+          "headers": {
+            "Host": "127.0.0.1:33225",
+            "User-Agent": "Go-http-client/1.1",
+            "Content-Length": "116",
+            "Content-Type": "application/json",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994831.796331942,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"fields\":[\"a\",\"b\"],\"records\":[{\"a\":\"1\"}],\"records\":[{\"b\":\"2\"}]}",
+          "response_bytes": 64,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/logstream/logs/schema",
+          "params": {},
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:33225",
+            "User-Agent": "Go-http-client/1.1",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994831.800438206,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"fields\": [{\"name\": \"value\"}]}",
+          "response_bytes": 31,
+          "done": true
+        }
+      ],
+      "stdout_sha256": "51e457a9e64e2b46062893b666d40a02135c24ecf63504064a251709e45dfcf6"
+    },
+    {
+      "case": "sql_duplicate_record_merge",
+      "binary": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/target/debug/pb",
+      "passed": true,
+      "capture_path": "/home/ajs/.cache/pb-phase7/final-decoder-causal-captures/sql_duplicate_record_merge-1791983632638225999.json",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/v1/query",
+          "params": {
+            "fields": [
+              "true"
+            ]
+          },
+          "body": "{\"endTime\":\"2024-01-01T01:00:00Z\",\"query\":\"SELECT * FROM logs LIMIT 10 OFFSET 0\",\"startTime\":\"2024-01-01T00:00:00Z\"}",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "content-type": "application/json",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "content-length": "116",
+            "host": "127.0.0.1:38059"
+          },
+          "received": 994990.978050378,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"fields\":[\"a\",\"b\"],\"records\":[{\"a\":\"1\"}],\"records\":[{\"b\":\"2\"}]}",
+          "response_bytes": 64,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/api/prism/v1/home",
+          "params": {},
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "content-type": "application/json",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:38059"
+          },
+          "received": 994990.978317111,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"datasets\": [{\"title\": \"logs\", \"datasetType\": \"logs\"}]}",
+          "response_bytes": 56,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/logstream/logs/schema",
+          "params": {},
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:38059"
+          },
+          "received": 994990.995929258,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"fields\": [{\"name\": \"value\"}]}",
+          "response_bytes": 31,
+          "done": true
+        }
+      ],
+      "stdout_sha256": "e718cf481b8c1b5c1a78ff5f38af89fce1c61a3e855733bfc26c75ba8dc2ab43"
+    },
+    {
+      "case": "sql_duplicate_record_null_reset",
+      "binary": "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+      "passed": true,
+      "capture_path": "/home/ajs/.cache/pb-phase7/final-decoder-causal-captures/sql_duplicate_record_null_reset-1791983474119527465.json",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/prism/v1/home",
+          "params": {},
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:44301",
+            "User-Agent": "Go-http-client/1.1",
+            "Content-Type": "application/json",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994832.473370286,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"datasets\": [{\"title\": \"logs\", \"datasetType\": \"logs\"}]}",
+          "response_bytes": 56,
+          "done": true
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/query",
+          "params": {
+            "fields": [
+              "true"
+            ]
+          },
+          "body": "{\"endTime\":\"2024-01-01T01:00:00Z\",\"query\":\"SELECT * FROM logs LIMIT 10 OFFSET 0\",\"startTime\":\"2024-01-01T00:00:00Z\"}",
+          "headers": {
+            "Host": "127.0.0.1:44301",
+            "User-Agent": "Go-http-client/1.1",
+            "Content-Length": "116",
+            "Content-Type": "application/json",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994832.473781053,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"fields\":[\"a\",\"b\"],\"records\":[{\"a\":\"DISCARDED_A\"}],\"records\":[null],\"records\":[{\"b\":\"FINAL_B\"}]}",
+          "response_bytes": 97,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/logstream/logs/schema",
+          "params": {},
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:44301",
+            "User-Agent": "Go-http-client/1.1",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994832.475727648,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"fields\": [{\"name\": \"value\"}]}",
+          "response_bytes": 31,
+          "done": true
+        }
+      ],
+      "stdout_sha256": "a1b8a9911f4c10a9f58c2863eb021d39591a2b1318a59c2008ea88060f52d442"
+    },
+    {
+      "case": "sql_duplicate_record_null_reset",
+      "binary": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/target/debug/pb",
+      "passed": true,
+      "capture_path": "/home/ajs/.cache/pb-phase7/final-decoder-causal-captures/sql_duplicate_record_null_reset-1791983633317226967.json",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/v1/query",
+          "params": {
+            "fields": [
+              "true"
+            ]
+          },
+          "body": "{\"endTime\":\"2024-01-01T01:00:00Z\",\"query\":\"SELECT * FROM logs LIMIT 10 OFFSET 0\",\"startTime\":\"2024-01-01T00:00:00Z\"}",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "content-type": "application/json",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "content-length": "116",
+            "host": "127.0.0.1:33289"
+          },
+          "received": 994991.647398103,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"fields\":[\"a\",\"b\"],\"records\":[{\"a\":\"DISCARDED_A\"}],\"records\":[null],\"records\":[{\"b\":\"FINAL_B\"}]}",
+          "response_bytes": 97,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/api/prism/v1/home",
+          "params": {},
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "content-type": "application/json",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:33289"
+          },
+          "received": 994991.647660848,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"datasets\": [{\"title\": \"logs\", \"datasetType\": \"logs\"}]}",
+          "response_bytes": 56,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/logstream/logs/schema",
+          "params": {},
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:33289"
+          },
+          "received": 994991.671022124,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"fields\": [{\"name\": \"value\"}]}",
+          "response_bytes": 31,
+          "done": true
+        }
+      ],
+      "stdout_sha256": "e8e88fa5c7e236ffcb402f9e0fafa5d658812786972ec605aefdc12e9a3a6a0b"
+    },
+    {
+      "case": "sql_schema_duplicate_array_reset",
+      "binary": "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+      "passed": true,
+      "capture_path": "/home/ajs/.cache/pb-phase7/final-decoder-causal-captures/sql_schema_duplicate_array_reset-1791983480259628102.json",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/prism/v1/home",
+          "params": {},
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:34995",
+            "User-Agent": "Go-http-client/1.1",
+            "Content-Type": "application/json",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994838.61531386,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"datasets\": [{\"title\": \"logs\", \"datasetType\": \"logs\"}]}",
+          "response_bytes": 56,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/logstream/logs/schema",
+          "params": {},
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:34995",
+            "User-Agent": "Go-http-client/1.1",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994838.617949371,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"fields\":[{\"name\":\"DISCARDED_NAME\"}],\"fields\":[],\"fields\":[{}]}",
+          "response_bytes": 64,
+          "done": true
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/query",
+          "params": {
+            "fields": [
+              "true"
+            ]
+          },
+          "body": "{\"endTime\":\"2026-10-14T13:11:20Z\",\"query\":\"SELECT * FROM 'logs' LIMIT 1\",\"startTime\":\"2000-01-01T00:00:00+00:00\"}",
+          "headers": {
+            "Host": "127.0.0.1:34995",
+            "User-Agent": "Go-http-client/1.1",
+            "Content-Length": "113",
+            "Content-Type": "application/json",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994838.618545979,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"fields\": [\"FALLBACK_FIELD\"], \"records\": [{\"FALLBACK_FIELD\": \"FALLBACK_ROW\"}]}",
+          "response_bytes": 79,
+          "done": true
+        }
+      ],
+      "stdout_sha256": "bb63f6a56ca11d2aefa036d3badf53ff373155403eedf732ce1aca6eee822578"
+    },
+    {
+      "case": "sql_schema_duplicate_array_reset",
+      "binary": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/target/debug/pb",
+      "passed": true,
+      "capture_path": "/home/ajs/.cache/pb-phase7/final-decoder-causal-captures/sql_schema_duplicate_array_reset-1791983639454607075.json",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/prism/v1/home",
+          "params": {},
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "content-type": "application/json",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:40339"
+          },
+          "received": 994997.790820638,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"datasets\": [{\"title\": \"logs\", \"datasetType\": \"logs\"}]}",
+          "response_bytes": 56,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/logstream/logs/schema",
+          "params": {},
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:40339"
+          },
+          "received": 994997.805748763,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"fields\":[{\"name\":\"DISCARDED_NAME\"}],\"fields\":[],\"fields\":[{}]}",
+          "response_bytes": 64,
+          "done": true
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/query",
+          "params": {
+            "fields": [
+              "true"
+            ]
+          },
+          "body": "{\"endTime\":\"2026-10-14T13:13:59Z\",\"query\":\"SELECT * FROM 'logs' LIMIT 1\",\"startTime\":\"2000-01-01T00:00:00+00:00\"}",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "content-type": "application/json",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "content-length": "113",
+            "host": "127.0.0.1:40339"
+          },
+          "received": 994997.806841417,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"fields\": [\"FALLBACK_FIELD\"], \"records\": [{\"FALLBACK_FIELD\": \"FALLBACK_ROW\"}]}",
+          "response_bytes": 79,
+          "done": true
+        }
+      ],
+      "stdout_sha256": "da180bd80001b69adea52ba9cb23234fa9d12f824d4b90d9366b0962eddd38a3"
+    },
+    {
+      "case": "sql_schema_duplicate_struct_reuse",
+      "binary": "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+      "passed": true,
+      "capture_path": "/home/ajs/.cache/pb-phase7/final-decoder-causal-captures/sql_schema_duplicate_struct_reuse-1791983479113370938.json",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/prism/v1/home",
+          "params": {},
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:34645",
+            "User-Agent": "Go-http-client/1.1",
+            "Content-Type": "application/json",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994837.46627538,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"datasets\": [{\"title\": \"logs\", \"datasetType\": \"logs\"}]}",
+          "response_bytes": 56,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/logstream/logs/schema",
+          "params": {},
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:34645",
+            "User-Agent": "Go-http-client/1.1",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994837.46875092,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"fields\":[{\"name\":\"a\"}],\"fields\":[{}]}",
+          "response_bytes": 39,
+          "done": true
+        }
+      ],
+      "stdout_sha256": "a0da0d8182fef1572de51a62e82163da9dede47812183bf75ec271797f24b57f"
+    },
+    {
+      "case": "sql_schema_duplicate_struct_reuse",
+      "binary": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/target/debug/pb",
+      "passed": true,
+      "capture_path": "/home/ajs/.cache/pb-phase7/final-decoder-causal-captures/sql_schema_duplicate_struct_reuse-1791983638313908182.json",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/prism/v1/home",
+          "params": {},
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "content-type": "application/json",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:37669"
+          },
+          "received": 994996.660542415,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"datasets\": [{\"title\": \"logs\", \"datasetType\": \"logs\"}]}",
+          "response_bytes": 56,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/logstream/logs/schema",
+          "params": {},
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:37669"
+          },
+          "received": 994996.669370701,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"fields\":[{\"name\":\"a\"}],\"fields\":[{}]}",
+          "response_bytes": 39,
+          "done": true
+        }
+      ],
+      "stdout_sha256": "458898366103c7ed1d55fa0da43649e57bee2e4e6ba2841fb3ed18720249831a"
+    },
+    {
+      "case": "sql_unicode_decoder_keys",
+      "binary": "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+      "passed": true,
+      "capture_path": "/home/ajs/.cache/pb-phase7/final-decoder-causal-captures/sql_unicode_decoder_keys-1791983476425036049.json",
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/prism/v1/home",
+          "params": {},
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:42653",
+            "User-Agent": "Go-http-client/1.1",
+            "Content-Type": "application/json",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994834.777364124,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"datasets\": [{\"title\": \"logs\", \"datasetType\": \"logs\"}]}",
+          "response_bytes": 56,
+          "done": true
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/query",
+          "params": {
+            "fields": [
+              "true"
+            ]
+          },
+          "body": "{\"endTime\":\"2024-01-01T01:00:00Z\",\"query\":\"SELECT * FROM logs LIMIT 10 OFFSET 0\",\"startTime\":\"2024-01-01T00:00:00Z\"}",
+          "headers": {
+            "Host": "127.0.0.1:42653",
+            "User-Agent": "Go-http-client/1.1",
+            "Content-Length": "116",
+            "Content-Type": "application/json",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994834.777841984,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"field\u017f\":[\"F3_FIELD\"],\"record\u017f\":[{\"F3_FIELD\":\"F3_SQL_ROW\"}]}",
+          "response_bytes": 63,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/logstream/logs/schema",
+          "params": {},
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:42653",
+            "User-Agent": "Go-http-client/1.1",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 994834.780038813,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"fields\": [{\"name\": \"value\"}]}",
+          "response_bytes": 31,
+          "done": true
+        }
+      ],
+      "stdout_sha256": "e578151d7d1de5d5c3d492d5c0817c47bc20411f933b5dd74bc77412faf9bbc6"
+    },
+    {
+      "case": "sql_unicode_decoder_keys",
+      "binary": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/target/debug/pb",
+      "passed": true,
+      "capture_path": "/home/ajs/.cache/pb-phase7/final-decoder-causal-captures/sql_unicode_decoder_keys-1791983635598456248.json",
+      "requests": [
+        {
+          "method": "POST",
+          "path": "/api/v1/query",
+          "params": {
+            "fields": [
+              "true"
+            ]
+          },
+          "body": "{\"endTime\":\"2024-01-01T01:00:00Z\",\"query\":\"SELECT * FROM logs LIMIT 10 OFFSET 0\",\"startTime\":\"2024-01-01T00:00:00Z\"}",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "content-type": "application/json",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "content-length": "116",
+            "host": "127.0.0.1:36343"
+          },
+          "received": 994993.940524705,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"field\u017f\":[\"F3_FIELD\"],\"record\u017f\":[{\"F3_FIELD\":\"F3_SQL_ROW\"}]}",
+          "response_bytes": 63,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/api/prism/v1/home",
+          "params": {},
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "content-type": "application/json",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:36343"
+          },
+          "received": 994993.940749721,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"datasets\": [{\"title\": \"logs\", \"datasetType\": \"logs\"}]}",
+          "response_bytes": 56,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/logstream/logs/schema",
+          "params": {},
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:36343"
+          },
+          "received": 994993.957112172,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"fields\": [{\"name\": \"value\"}]}",
+          "response_bytes": 31,
+          "done": true
+        }
+      ],
+      "stdout_sha256": "bb08eae4d9dee19cdff6b45b0085d91c32ec848d5e7a120455d7e9629102561c"
+    }
+  ]
+}

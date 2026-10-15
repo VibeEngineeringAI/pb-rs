@@ -1,0 +1,50 @@
+{
+  "scope": "isolatedcachegitapplycheck+apply only; liveworktree unchanged; notauthorization",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "apply",
+        "--check",
+        "/home/ajs/.cache/pb-phase7/postidle-bracket-proposal/proposal.patch"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "apply",
+        "/home/ajs/.cache/pb-phase7/postidle-bracket-proposal/proposal.patch"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "live_frozen_files_checked": 11,
+  "exact_candidate_postimages": {
+    "docs/phase7-measurement.md": {
+      "path": "/home/ajs/.cache/pb-phase7/postidle-bracket-proposal/candidate/docs/phase7-measurement.md",
+      "size_bytes": 93556,
+      "sha256": "b7cf42f568aab801970fa03c484ce7553f900b5184eb4e0d24ea89a6c440543a"
+    },
+    "harness/contracts/phase7.md": {
+      "path": "/home/ajs/.cache/pb-phase7/postidle-bracket-proposal/candidate/harness/contracts/phase7.md",
+      "size_bytes": 34757,
+      "sha256": "56f61da40691414964f14d7c0f37852141d28e57093c579580b2bc705a34cfe4"
+    },
+    "harness/phase7_bench.py": {
+      "path": "/home/ajs/.cache/pb-phase7/postidle-bracket-proposal/candidate/harness/phase7_bench.py",
+      "size_bytes": 192294,
+      "sha256": "bf630d9ac4dd4e615f221e218cfce7cbb99438c2de1bf5cfdc388941eef013c2"
+    },
+    "harness/test_phase7_bench.py": {
+      "path": "/home/ajs/.cache/pb-phase7/postidle-bracket-proposal/candidate/harness/test_phase7_bench.py",
+      "size_bytes": 187694,
+      "sha256": "861e42bfe32202e9946717056e437c1f75ff8ed4a4ef9ecebc4f5eadf77d953f"
+    }
+  },
+  "patch_sha256": "d197c7038fb4bd25e9dba42eeb4db90a79f0bdbd85d3cb212600d3cfee08b47b"
+}

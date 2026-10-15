@@ -1,0 +1,492 @@
+{
+  "classifications": [
+    {
+      "Rune": "\u00aa",
+      "Lower": false,
+      "Upper": false,
+      "Canonical": 170
+    },
+    {
+      "Rune": "\u24b6",
+      "Lower": false,
+      "Upper": false,
+      "Canonical": 9398
+    },
+    {
+      "Rune": "\u2160",
+      "Lower": false,
+      "Upper": false,
+      "Canonical": 8544
+    },
+    {
+      "Rune": "\u1e9b",
+      "Lower": true,
+      "Upper": false,
+      "Canonical": 7776
+    },
+    {
+      "Rune": "\u1e61",
+      "Lower": true,
+      "Upper": false,
+      "Canonical": 7776
+    },
+    {
+      "Rune": "\u1c80",
+      "Lower": true,
+      "Upper": false,
+      "Canonical": 1042
+    },
+    {
+      "Rune": "\u0432",
+      "Lower": true,
+      "Upper": false,
+      "Canonical": 1042
+    },
+    {
+      "Rune": "a",
+      "Lower": true,
+      "Upper": false,
+      "Canonical": 65
+    },
+    {
+      "Rune": "A",
+      "Lower": false,
+      "Upper": true,
+      "Canonical": 65
+    },
+    {
+      "Rune": "\u0130",
+      "Lower": false,
+      "Upper": true,
+      "Canonical": 304
+    },
+    {
+      "Rune": "i",
+      "Lower": true,
+      "Upper": false,
+      "Canonical": 73
+    },
+    {
+      "Rune": "\u017f",
+      "Lower": true,
+      "Upper": false,
+      "Canonical": 83
+    },
+    {
+      "Rune": "S",
+      "Lower": false,
+      "Upper": true,
+      "Canonical": 83
+    }
+  ],
+  "controls": [
+    {
+      "Pattern": "\u1e61",
+      "Titles": [
+        "\u1e9b",
+        "no match"
+      ],
+      "Matches": [
+        {
+          "Str": "\u1e9b",
+          "Index": 0,
+          "MatchedIndexes": [
+            0
+          ],
+          "Score": 8
+        }
+      ],
+      "Ranks": [
+        {
+          "Index": 0,
+          "MatchedIndexes": [
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "Pattern": "\u0432",
+      "Titles": [
+        "\u1c80",
+        "no match"
+      ],
+      "Matches": [
+        {
+          "Str": "\u1c80",
+          "Index": 0,
+          "MatchedIndexes": [
+            0
+          ],
+          "Score": 8
+        }
+      ],
+      "Ranks": [
+        {
+          "Index": 0,
+          "MatchedIndexes": [
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "Pattern": "A",
+      "Titles": [
+        "\u00aaA",
+        "xA"
+      ],
+      "Matches": [
+        {
+          "Str": "\u00aaA",
+          "Index": 0,
+          "MatchedIndexes": [
+            2
+          ],
+          "Score": -12
+        },
+        {
+          "Str": "xA",
+          "Index": 1,
+          "MatchedIndexes": [
+            1
+          ],
+          "Score": 14
+        }
+      ],
+      "Ranks": [
+        {
+          "Index": 1,
+          "MatchedIndexes": [
+            1
+          ]
+        },
+        {
+          "Index": 0,
+          "MatchedIndexes": [
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "Pattern": "A",
+      "Titles": [
+        "\u00aaA",
+        "QA"
+      ],
+      "Matches": [
+        {
+          "Str": "\u00aaA",
+          "Index": 0,
+          "MatchedIndexes": [
+            2
+          ],
+          "Score": -12
+        },
+        {
+          "Str": "QA",
+          "Index": 1,
+          "MatchedIndexes": [
+            1
+          ],
+          "Score": -6
+        }
+      ],
+      "Ranks": [
+        {
+          "Index": 1,
+          "MatchedIndexes": [
+            1
+          ]
+        },
+        {
+          "Index": 0,
+          "MatchedIndexes": [
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "Pattern": "\u24b6",
+      "Titles": [
+        "x\u24b6",
+        "\u24b6"
+      ],
+      "Matches": [
+        {
+          "Str": "x\u24b6",
+          "Index": 0,
+          "MatchedIndexes": [
+            1
+          ],
+          "Score": -8
+        },
+        {
+          "Str": "\u24b6",
+          "Index": 1,
+          "MatchedIndexes": [
+            0
+          ],
+          "Score": 8
+        }
+      ],
+      "Ranks": [
+        {
+          "Index": 1,
+          "MatchedIndexes": [
+            0
+          ]
+        },
+        {
+          "Index": 0,
+          "MatchedIndexes": [
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "Pattern": "\u2160",
+      "Titles": [
+        "x\u2160",
+        "\u2160"
+      ],
+      "Matches": [
+        {
+          "Str": "x\u2160",
+          "Index": 0,
+          "MatchedIndexes": [
+            1
+          ],
+          "Score": -8
+        },
+        {
+          "Str": "\u2160",
+          "Index": 1,
+          "MatchedIndexes": [
+            0
+          ],
+          "Score": 8
+        }
+      ],
+      "Ranks": [
+        {
+          "Index": 1,
+          "MatchedIndexes": [
+            0
+          ]
+        },
+        {
+          "Index": 0,
+          "MatchedIndexes": [
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "Pattern": "lg",
+      "Titles": [
+        "Log Server",
+        "log"
+      ],
+      "Matches": [
+        {
+          "Str": "Log Server",
+          "Index": 0,
+          "MatchedIndexes": [
+            0,
+            2
+          ],
+          "Score": 2
+        },
+        {
+          "Str": "log",
+          "Index": 1,
+          "MatchedIndexes": [
+            0,
+            2
+          ],
+          "Score": 9
+        }
+      ],
+      "Ranks": [
+        {
+          "Index": 1,
+          "MatchedIndexes": [
+            0,
+            2
+          ]
+        },
+        {
+          "Index": 0,
+          "MatchedIndexes": [
+            0,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "Pattern": "L",
+      "Titles": [
+        "Logs",
+        "Logs"
+      ],
+      "Matches": [
+        {
+          "Str": "Logs",
+          "Index": 0,
+          "MatchedIndexes": [
+            0
+          ],
+          "Score": 7
+        },
+        {
+          "Str": "Logs",
+          "Index": 1,
+          "MatchedIndexes": [
+            0
+          ],
+          "Score": 7
+        }
+      ],
+      "Ranks": [
+        {
+          "Index": 0,
+          "MatchedIndexes": [
+            0
+          ]
+        },
+        {
+          "Index": 1,
+          "MatchedIndexes": [
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "Pattern": "\u03a3",
+      "Titles": [
+        "\u03c2",
+        "\u03c3",
+        "\u03a3"
+      ],
+      "Matches": [
+        {
+          "Str": "\u03c2",
+          "Index": 0,
+          "MatchedIndexes": [
+            0
+          ],
+          "Score": 9
+        },
+        {
+          "Str": "\u03c3",
+          "Index": 1,
+          "MatchedIndexes": [
+            0
+          ],
+          "Score": 9
+        },
+        {
+          "Str": "\u03a3",
+          "Index": 2,
+          "MatchedIndexes": [
+            0
+          ],
+          "Score": 9
+        }
+      ],
+      "Ranks": [
+        {
+          "Index": 0,
+          "MatchedIndexes": [
+            0
+          ]
+        },
+        {
+          "Index": 1,
+          "MatchedIndexes": [
+            0
+          ]
+        },
+        {
+          "Index": 2,
+          "MatchedIndexes": [
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "Pattern": "S",
+      "Titles": [
+        "\u017f",
+        "S"
+      ],
+      "Matches": [
+        {
+          "Str": "\u017f",
+          "Index": 0,
+          "MatchedIndexes": [
+            0
+          ],
+          "Score": 9
+        },
+        {
+          "Str": "S",
+          "Index": 1,
+          "MatchedIndexes": [
+            0
+          ],
+          "Score": 10
+        }
+      ],
+      "Ranks": [
+        {
+          "Index": 1,
+          "MatchedIndexes": [
+            0
+          ]
+        },
+        {
+          "Index": 0,
+          "MatchedIndexes": [
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "Pattern": "i",
+      "Titles": [
+        "\u0130",
+        "i"
+      ],
+      "Matches": [
+        {
+          "Str": "i",
+          "Index": 1,
+          "MatchedIndexes": [
+            0
+          ],
+          "Score": 10
+        }
+      ],
+      "Ranks": [
+        {
+          "Index": 1,
+          "MatchedIndexes": [
+            0
+          ]
+        }
+      ]
+    }
+  ],
+  "go_version": "go1.25.4",
+  "unicode_version": "15.0.0"
+}

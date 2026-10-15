@@ -442,28 +442,8 @@ fn logout_uses_sole_profile_but_refuses_ambiguous_missing_default() {
     assert_eq!(temp.store.read().unwrap(), config);
 }
 
-#[test]
-fn deferred_interaction_does_not_partially_modify_config() {
-    let temp = TemporaryConfig::new();
-    for name in ["a", "b", "c"] {
-        profile::save_login_profile(&temp.store, name, record(name)).unwrap();
-    }
-    let original = fs::read(temp.store.path()).unwrap();
-    for args in [
-        vec!["profile", "remove", "c"],
-        vec!["profile", "default"],
-        vec!["logout"],
-        vec!["profile", "add", "d", "relative"],
-    ] {
-        assert!(
-            invoke(&temp.store, &args)
-                .unwrap_err()
-                .message
-                .starts_with("interactive ")
-        );
-        assert_eq!(fs::read(temp.store.path()).unwrap(), original);
-    }
-}
+// Interactive cancellation/persistence is exercised in interactive_effects.rs
+// using isolated child processes with real PTYs.
 
 #[test]
 fn refresh_updates_only_matching_cloud_record() {

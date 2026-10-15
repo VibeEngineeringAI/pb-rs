@@ -1,8 +1,13 @@
 //! Buffered Prometheus operations with explicit invocation and transport policy.
 pub(crate) mod output;
+pub(crate) use output::go_float;
 mod raw_json;
 pub(crate) fn initialize_process_theme() {
     output::style::initialize_process_theme();
+}
+
+pub(crate) fn has_dark_background() -> bool {
+    output::style::process_dark()
 }
 
 use crate::{
@@ -204,7 +209,7 @@ pub(crate) fn execute(
         let format =
             crate::output_format(parsed).map_err(|e| CliError::new(ErrorCode::InvalidInput, e))?;
         if parsed.boolean("interactive") {
-            // Go validates the time range before constructing the deferred TUI.
+            // Go validates the time range before constructing the interactive session.
             time_compat::parse_time(parsed.text("to")).map_err(|e| {
                 CliError::new(ErrorCode::CommandFailed, format!("invalid --to: {e}"))
             })?;
@@ -216,13 +221,7 @@ pub(crate) fn execute(
             time_compat::parse_time(from).map_err(|e| {
                 CliError::new(ErrorCode::CommandFailed, format!("invalid --from: {e}"))
             })?;
-            return Err(CliError::new(
-                ErrorCode::CommandFailed,
-                format!(
-                    "command {} is not implemented in this Rust phase",
-                    crate::parser::quote(path)
-                ),
-            ));
+            return crate::tui::promql::execute(parsed, stdout, stderr);
         }
         let operation_request = invocation(parsed, operation)?;
         let request_result = (|| -> Result<Vec<u8>, CliError> {

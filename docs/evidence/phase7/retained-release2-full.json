@@ -1,0 +1,197 @@
+{
+  "kind": "pre-SQL-identity-fix release2 retained full functional replay, not final release3 acceptance",
+  "cases": 3268,
+  "remaining_historical_guards": 6,
+  "phase7_interactive_guards": "promoted separately, ordinary noninteractive cases retained",
+  "full60s": true,
+  "full120s": true,
+  "commands": [
+    {
+      "phase": 1,
+      "command": [
+        "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+        "harness/phase1.py",
+        "compare",
+        "--reference",
+        "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+        "--candidate",
+        "/home/ajs/.cache/pb-phase7/candidates/release2/pb-normal",
+        "--out",
+        "/home/ajs/.cache/pb-phase7/retained-release2-phase1"
+      ],
+      "exit": 0,
+      "elapsed_functional_seconds": 79.26156306266785
+    },
+    {
+      "phase": 2,
+      "command": [
+        "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+        "harness/phase2.py",
+        "compare",
+        "--reference",
+        "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+        "--candidate",
+        "/home/ajs/.cache/pb-phase7/candidates/release2/pb-normal",
+        "--out",
+        "/home/ajs/.cache/pb-phase7/retained-release2-phase2",
+        "--cloud-reference",
+        "/home/ajs/.cache/pb-phase7/baselines/pb-go-cloud",
+        "--cloud-candidate",
+        "/home/ajs/.cache/pb-phase7/candidates/release2/pb-cloud"
+      ],
+      "exit": 0,
+      "elapsed_functional_seconds": 29.344002962112427
+    },
+    {
+      "phase": 3,
+      "command": [
+        "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+        "harness/phase3.py",
+        "compare",
+        "--reference",
+        "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+        "--candidate",
+        "/home/ajs/.cache/pb-phase7/candidates/release2/pb-normal",
+        "--out",
+        "/home/ajs/.cache/pb-phase7/retained-release2-phase3",
+        "--cloud-reference",
+        "/home/ajs/.cache/pb-phase7/baselines/pb-go-cloud",
+        "--cloud-candidate",
+        "/home/ajs/.cache/pb-phase7/candidates/release2/pb-cloud",
+        "--include-full60s"
+      ],
+      "exit": 0,
+      "elapsed_functional_seconds": 1923.2187559604645
+    },
+    {
+      "phase": 4,
+      "command": [
+        "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+        "harness/phase4.py",
+        "compare",
+        "--reference",
+        "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+        "--candidate",
+        "/home/ajs/.cache/pb-phase7/candidates/release2/pb-normal",
+        "--out",
+        "/home/ajs/.cache/pb-phase7/retained-release2-phase4",
+        "--cloud-reference",
+        "/home/ajs/.cache/pb-phase7/baselines/pb-go-cloud",
+        "--cloud-candidate",
+        "/home/ajs/.cache/pb-phase7/candidates/release2/pb-cloud",
+        "--include-full120s"
+      ],
+      "exit": 0,
+      "elapsed_functional_seconds": 790.3736054897308
+    },
+    {
+      "phase": 5,
+      "command": [
+        "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+        "harness/phase5.py",
+        "compare",
+        "--reference",
+        "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+        "--candidate",
+        "/home/ajs/.cache/pb-phase7/candidates/release2/pb-normal",
+        "--out",
+        "/home/ajs/.cache/pb-phase7/retained-release2-phase5",
+        "--cloud-reference",
+        "/home/ajs/.cache/pb-phase7/baselines/pb-go-cloud",
+        "--cloud-candidate",
+        "/home/ajs/.cache/pb-phase7/candidates/release2/pb-cloud",
+        "--include-full60s"
+      ],
+      "exit": 0,
+      "elapsed_functional_seconds": 254.88273811340332
+    }
+  ],
+  "binary_postcheck": {
+    "normal": {
+      "path": "/home/ajs/.cache/pb-phase7/candidates/release2/pb-normal",
+      "sha256": "46fe76b23feb5bdf97f997d115c0c1fdf70f73ca3de98be854ed080691ce2776"
+    },
+    "cloud": {
+      "path": "/home/ajs/.cache/pb-phase7/candidates/release2/pb-cloud",
+      "sha256": "91b85f21bf0eb0bfd2766811734555fae17805485f8b68037acb493feb6e579a"
+    },
+    "login": {
+      "path": "/home/ajs/.cache/pb-phase7/candidates/release2/pb-login",
+      "sha256": "e4a5010b72ff4be900a036877469c56151c1617cc31f9c2f783e4b4f2b4d8a7c"
+    }
+  },
+  "reports": {
+    "1": {
+      "path": "/home/ajs/.cache/pb-phase7/retained-release2-phase1/report.json",
+      "sha256": "deeb75e632fa4057fb7a27624b642c77b1f7ff90c2ba2d5786f4c74b2c149a17",
+      "log_sha256": "ca53d70cb09a8cac084883f2d53047701b30688b483321d45a05dcee034b520d",
+      "case_count": 2018,
+      "runner_sha256": "26ca8380b608a49404da1f8bc7233e577b2d48044d5194cdba20186b38ffaca5",
+      "tiers": null,
+      "counts": null,
+      "passed": 2018,
+      "failed": null,
+      "boundaries_status": null
+    },
+    "2": {
+      "path": "/home/ajs/.cache/pb-phase7/retained-release2-phase2/report.json",
+      "sha256": "a76de4cacfa930259c9a8c44a6ca491ea4a8b2ef3394a3cfc408128089aa1b59",
+      "log_sha256": "19ee4eadc5a26c24b583b462a47ccb487ba6f8285762d8c9e7b5979d7d42a918",
+      "case_count": 219,
+      "runner_sha256": "66568cd9b0663011547763a258875f45949b21f5ed4c05fe9a695cebdc89cfbd",
+      "tiers": null,
+      "counts": {
+        "pass": 219
+      },
+      "passed": null,
+      "failed": null,
+      "boundaries_status": "promoted to phase7 PTY/effect gate"
+    },
+    "3": {
+      "path": "/home/ajs/.cache/pb-phase7/retained-release2-phase3/report.json",
+      "sha256": "4fea9951ad4f59fc76817065307f346d5566581fb94c5a59e0bb126a62b4e336",
+      "log_sha256": "8218ba9012f79790ea598a12e669855822819c9b35417fd7e653f3fa267b7f31",
+      "case_count": 684,
+      "runner_sha256": "39d16e2ba220aad27ec0e67646e04aacbcdd9a9c28d3013f3f04ddefec789099",
+      "tiers": null,
+      "counts": {
+        "pass": 684
+      },
+      "passed": null,
+      "failed": null,
+      "boundaries_status": "promoted to phase7 PTY/effect gate"
+    },
+    "4": {
+      "path": "/home/ajs/.cache/pb-phase7/retained-release2-phase4/report.json",
+      "sha256": "c8ac1f974c491bcca706686394031ebb9256fb1dbd4ccf3f7200b7d716b0bb09",
+      "log_sha256": "2b2b4c0da3e42ca23e3784051f9c4ea66127a351ad1d5e144dbd540fc461acdb",
+      "case_count": 161,
+      "runner_sha256": "e5105ae22b0c599901d8622adf4e2942abb05a8c38bd220e8f685cae58782213",
+      "tiers": [
+        "gate",
+        "full120s"
+      ],
+      "counts": null,
+      "passed": null,
+      "failed": 0,
+      "boundaries_status": null
+    },
+    "5": {
+      "path": "/home/ajs/.cache/pb-phase7/retained-release2-phase5/report.json",
+      "sha256": "51561a9f32204c6d5f573a35a34483fee679d0d6e9af70a3cb5a862f1f1c6de3",
+      "log_sha256": "fd883e80380a17aa23a5fbe75e547510b269b8eb058a568479a9571f7e276ee0",
+      "case_count": 186,
+      "runner_sha256": "2bd03937195ea26b07faffa9281d109013d0b785fe33c63fa10905ce262d4c85",
+      "tiers": [
+        "gate",
+        "full60s"
+      ],
+      "counts": null,
+      "passed": null,
+      "failed": 0,
+      "boundaries_status": "promoted to phase7 PTY/effect gate"
+    }
+  },
+  "source_limit": "release2 build manifest records production sources; no claim it equals current corrected release3 source",
+  "performance_claim": false
+}

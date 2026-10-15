@@ -1,0 +1,23 @@
+{
+  "base": "4a812d5b9bc4c40882ab10897a73c3ce1e715ce0",
+  "source_pin": "07af390ab09bda8ac9e427ffc6310077bace0125",
+  "before_sha256": {
+    "src/tui/saved.rs": "24d37551aa9a9498f4a67a6cb99ff5c308377ed54ab5bc1f6fe2139a25d68935",
+    "docs/phase7-admin-saved.md": "6f684ac69bc2c972a4e7d7a67bf7d7fd6ebf89591bb4caf3ca53cbdc3596a84a",
+    "docs/phase7-review-final-opus-r4.md": "82825b117dbf888d3bbdb3bac0492293051b7f2cd17ae1674cfcfe9b746ce504",
+    "tests/interactive_effects.rs": "afda9f2d98eb92adcc15fcf67697b39a60a0af593d7010a56281ac1157821cc3",
+    "pkg/model/savedQueries.go": "9d735306066020587fc247189523db1eae4429dc239f73a73b5f1022fc2deb8e",
+    "cmd/queryList.go": "2816db15700110464bf5ec812e5c474ccc2f7dd2d4a3b35f6b9cfb2062005701",
+    "go.mod": "90555a3ae88bee209ce16845ad259afa2e4c9b3c14890e0578a8a514c1350565",
+    "go.sum": "ae20b3abc13e58b529d7f5219d657f506df24c471aa873d9b72d3435954f92ac",
+    "/home/ajs/go/pkg/mod/github.com/sahilm/fuzzy@v0.1.1/fuzzy.go": "de103ddfed0e4fb2c0e2ef6eb3225ad93cfa7aee7162d0dd4476ea2f0a338afa",
+    "/home/ajs/go/pkg/mod/github.com/charmbracelet/bubbles@v0.20.0/list/list.go": "0915a08d18719a8afa0126dbf76042f56464f3065b8e0785e881c3b6bbf3c2ba",
+    "/home/ajs/go/pkg/mod/github.com/charmbracelet/bubbletea@v1.2.2/tea.go": "1efc7e49ea11fa50fc268cae7c9b7cbbfa732e586377160df6d00a0c9759928f",
+    "/home/ajs/.cache/pb-phase7/baselines/pb-go": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+    "/home/ajs/.cache/pb-phase7/candidates/release4/pb-normal": "fd1f91b608bbf76832fab183f02d9c63e658f7bc12ca4aabf57a811559a871c1"
+  },
+  "embedded_fixture_sha256": "a0dccd5b91416ec05268d61a9fe9080c50bc953f33781bf4cd8c384954093ae3",
+  "release4_source_snapshot_sha256": "71df47ccd92a445c2bb33667d729aafb61bf228d0806c1f1d6f6f2d68562862b",
+  "release4_source_map_matches": true,
+  "frozen_source": true
+}

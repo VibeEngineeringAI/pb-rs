@@ -1,0 +1,2 @@
+blocked: EOF=198 EIO=2 other=0 eio="read /dev/pts/16: input/output error" other=""
+late:    EOF=200 EIO=0 other=0 eio="" other=""

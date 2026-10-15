@@ -456,7 +456,7 @@ impl std::fmt::Display for GoAny {
 
 /// %v for float64: strconv 'g' with shortest digits, which switches to %e
 /// when the decimal exponent is below -4 or at least 6.
-fn go_float(value: f64) -> String {
+pub(crate) fn go_float(value: f64) -> String {
     if value == 0.0 {
         return if value.is_sign_negative() {
             "-0".into()

@@ -1,0 +1,29 @@
+{
+  "merged_head": "ea70f7ad7d501d59b26cf6397f6a0b1f28143fc4",
+  "scope": "combined source functional harness; no performance claim",
+  "full_python": {
+    "modules": 32,
+    "selected": 912,
+    "passed": 911,
+    "skipped": 1,
+    "exit": 0,
+    "log": "/home/ajs/.cache/pb-phase7/phase6-merged-integration/full-python.log",
+    "sha256": "daf2a6992795231548802ff62107753034ae9a5d0ddc3aaa507cb425662bcb39",
+    "skip": "opt-in native resize, executed separately"
+  },
+  "native_resize": {
+    "exit": 0,
+    "log": "/home/ajs/.cache/pb-phase7/phase6-merged-integration/resize-native.log",
+    "sha256": "d8c7325dd42b20e714731092bb48667e2decb2b29a8989756a27614bcefb12a9"
+  },
+  "integration_objection": {
+    "review": "docs/phase7-review-combined-integration-opus-r1.md",
+    "finding": "O1 vacuous historical boundary loop",
+    "fix_test_sha256": "0d6115259b95d3fb1342f4fd65af041a0a246e0c3ee8c955a6d2e377c3e5a34e",
+    "suite_passed": 29,
+    "log": "/home/ajs/.cache/pb-phase7/phase6-merged-integration/test-phase4-o1-fixed.log",
+    "log_sha256": "caa01ae510be20af48f7b289b77ca8c37d57c6a57a147d06de33386f377546fe",
+    "causal_controls": "docs/evidence/phase7/combined-integration-o1-closure.json"
+  },
+  "original_pre_fix_evidence_preserved": true
+}

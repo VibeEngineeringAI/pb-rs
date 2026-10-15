@@ -15,7 +15,7 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = { version = "1.0", features = ["preserve_order", "arbitrary_precision", "raw_value"] }
 zmij = "1.0.23"
 toml = { version = "0.9.11", features = ["preserve_order"] }
-tokio = { version = "1", features = ["rt", "time", "sync", "net", "io-util"] }
+tokio = { version = "1", features = ["rt", "time", "sync", "net", "io-util", "process", "macros"] }
 url = "2"
 base64 = "0.22"
 unicode-width = "0.2"
@@ -47,6 +47,9 @@ prost-types = { version = "0.14", default-features = false }
 
 [dev-dependencies]
 flate2 = "1"
+
+[target.'cfg(windows)'.dependencies]
+crossterm = "0.29"
 
 [target.'cfg(unix)'.dependencies]
 libc = "0.2"

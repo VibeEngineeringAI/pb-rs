@@ -1,0 +1,196 @@
+# Phase 7 review: final PromQL dense geometry patch and Go page-navigation runner (Opus R1)
+
+Scope: a fresh, independent review of the off-tree final patch `final/promql-geometry.patch` (`bbdd2227…c6a486`), `final/patched/`, `final/freeze-hashes.txt`, `promql_geometry.py`, `go_pagenav_runner.py` (`afd54e06…915f`) and the retained fixture/evidence in `/home/ajs/.cache/pb-phase7/promql-geometry-implementation-r1/`.
+
+I read these in full:
+- `docs/phase7-review-a1retry-promql-opus-r1.md` (`031c2b09…c5fc53`);
+- `docs/phase7-promql-geometry-implementation.md` (`1cd4dd79…d12b`).
+
+What I did not do:
+- I edited no live source, harness, test, contract or doc, and made no commit. The only outputs are this file and the new directory `/home/ajs/.cache/pb-phase7/promql-geometry-final-review-r1/`.
+- No CLI, native session, helper, PTY, socket, probe, compiler, build, lock, network or performance run was used. The runner was **not executed**; only its pure functions and a fully mocked `main()` were exercised.
+- I did not repeat the full suite, the exhaustive 5,397-prefix proof or the 12-mutant matrix. The run-2 evidence for those is preserved and was read, not regenerated.
+- I did not review the fanout patch. It is closed separately (`docs/evidence/phase7/a1-fanout-review-disposition.json`), and its file hash was only tracked as unchanged.
+
+## Verdict
+
+**There are no blocker or medium findings.** This is a scoped acceptance of the final geometry patch, as source plus selected pure evidence, for root composition. It is not native verification, not preflight acceptance and not a performance claim.
+
+**Runner.** `go_pagenav_runner.py` is safe and correct to hand to root for one bounded native execution, as written. It fails closed on every drift path I tested. Seven low-severity hardening and wording items follow; none blocks.
+
+**Page step.** Adopting any page step (15 or otherwise) still requires the actual Go navigation control, plus a separate review of its output. Nothing here approves the source-only 15.
+
+## Inputs verified (expected = actual, start and end of my run)
+
+| Input | sha256 |
+| --- | --- |
+| final patch | `bbdd22270629eb2c9db5b7f29aba87cf88232b0215f200fecc5fdefc27c6a486` |
+| `final/patched/harness/phase7_bench.py` | `4262df14091745d2893459e20d81bb2daf643369229b01e5d6ea61caefac00fe` |
+| `final/patched/harness/test_phase7_bench.py` | `a5eb4be8b722b2bcd7fc9949f27d8fbbf23bb54d9b9408d4658e9eca9b8fa689` |
+| `final/patched/harness/contracts/phase7.md` | `8c157103d0fe709e45f90cd3aebc6bb8a75a0dd08d7a1149290a75681a35b0f4` |
+| `final/patched/docs/phase7-measurement.md` | `67633576eacf0286b743bf8214d154051cc5831a157d5bcefb5516fb9f2c7729` |
+| `promql_geometry.py` | `a6b114324f0815a45e8f351f9d1379930d746b4074d4468ca8aab0cb95b08519` |
+| `go_pagenav_runner.py` | `afd54e06baa7f0531a7581d722c6537a30713f3b7d03f61758c2a969a457915f` |
+| fixture `a1retry-promql-retained.json.gz` | `12a14654697b1c7b10f328d998382eddf2fb0e67c662fbc62f37ff30ff267b6b` |
+| `guard.py` (copied verbatim) | `6b89ce4f05061d377ca29b521cc24df237b03b475c8230c0b22547aae9823845` |
+| A1-retry `report.json` | `1dcd24f6561568feabf83c5fc3c6cdfada4d30afcf3d56a9e23a5e2709678dd4` |
+| live `harness/phase7_bench.py` | `e03e1d2bfce45d7123b67a1870e8e3e38c7d5a6ae92c99881c513f4965846c01` |
+| live `harness/test_phase7_bench.py` | `244bd6e40432711a4e0c93c9144d9d2e8115cf5b2953815ead01af0e2b0a845c` |
+| live `harness/contracts/phase7.md` | `19f4412a206e33c93fb065b7a74b0d54ef85f21fea9b82767036ef8838883006` |
+| live `docs/phase7-measurement.md` | `b9c6b9915979c677c4b672940c5a9fcbf67a2be6e508f83f2cb8557f236a6313` |
+
+**Freeze list.** All 28 entries in `final/freeze-hashes.txt` were re-hashed and match: run-2 patch `a37516d1…`, run-2 build output `037a1a0d…`, `finalize.py` `f97432e9…`, `build_and_test.py` `39383904…`, and the rest.
+
+**Runner pins.** These were read-hashed only, never executed, and all match: Go `fae8411f…`, helper `3b684c7b…`, helper JSON `69e1067e…`, `phase7.py` `dc7574f0…`, workloads `04404c96…`, `phase7_spawn.c` `0279d5fb…`, `promql.go` `7332d30d…`.
+
+My run tracked 40 identities: the live files above, plus `phase1`–`3`, `promql.rs`, both docs, the fanout disposition, every impl artifact, both A1 reports, Go and the helper. All were unchanged from start to end.
+
+## Executed (one guarded run) vs source-only
+
+**Run:** `review.py` (`aab07b3d…6e72`), run once as `harness-venv/bin/python -E -s -B`.
+- `guard.py` is installed before any harness import.
+- The tests ran against the live bench with the predicate bound in memory, using the finalize approach.
+- **Result:** exit 0, empty stderr, 74.8 s, zero guard trips at start and end, and every tracked identity unchanged.
+- **Outputs:** `review-output.json` (`57624947…3653`) and `review-stdout.txt` (`8f4955ab…18ed`).
+- There was no retry, no EDQUOT and no moves.
+
+### 1. Patch provenance and scope [executed]
+- The patch text exactly equals the unified diff from live to `final/patched` for all 4 files, as regenerated by me.
+- **Bench AST:** only `dense_table_geometry` changes; every non-def statement is identical.
+- **Test AST:** only `R5ObserverTests` and the new `A1RetryPromqlGeometryTests` change. Inside R5, only `test_dense_partial_top_and_wrong_footer_rejected_before_full_target` changes.
+- `promql_geometry.dense_table_geometry` is source-identical to the patched bench function. The runner therefore swaps in exactly the reviewed predicate.
+- The fixture's hash-bound old predicate equals the live function.
+
+### 2. Selected tests with causal controls [executed]
+Each test was run once per predicate binding.
+
+| Predicate bound | R5 synthetic (D1-fixed) | actual-frame reconstruction | controls (8 roles) |
+| --- | --- | --- | --- |
+| **new (final patch)** | pass | pass | pass |
+| old (live) | fail | fail ×8 | fail ×8 (`old-H-6-layout`) |
+| hint as substring only | pass (survives) | pass | fail ×8 (`half-painted-hint-row`) |
+| no hint clause | fail | pass | fail ×16 (stale bar + half-painted) |
+| no prefix-space cell | pass | pass | fail ×8 (`prefix-11-vs-1`) |
+
+This independently confirms the author's finalize result:
+- D1 is fixed.
+- The old predicate and the no-hint mutant fail the R5 test.
+- The substring mutant survives the synthetic test but is killed by the actual half-painted control.
+
+I added the no-prefix-space mutant as a further control: the actual-frame `11 | N` control kills it.
+
+### 3. Bounded boundary window [executed; sampled, not exhaustive]
+For each of the 8 roles, I fed the stream incrementally over every code-point-complete prefix in a window from 300 bytes before the fixture's `complete_offset` up to EOF. That is 363 prefixes per role.
+
+**Every role:**
+- The new predicate first becomes true exactly at the fixture's `complete_offset` (63 bytes before EOF).
+- That first frame is cell-identical (with styles) to the final frame.
+- There are zero true→false flips afterwards.
+- There are no stub transients in the window.
+
+**Mutants in the same window:**
+- The substring mutant first passes **141 bytes earlier**, on an actually half-painted H−3: `  <t> Toggle chart/table       <ctrl-c> Quit…`. This independently reproduces the defect that the full-row match fixed.
+- The no-hint mutant is already true at the window start.
+
+The exhaustive run-2 proof (`run-2/build-output.json` `scan`) is preserved and is consistent with this window. It shows 5,397 boundaries per role, `first_frame_equals_final` true, 0 flips, `old_true_count` 0 and 1 stub transient per role.
+
+### 4. Runner [executed with mocks only; never ran a child, helper, probe or lock]
+
+**Case construction (`build_case`):**
+- The source case reconstructs to `b478e5cb…` (the A1-retry case hash).
+- The diagnostic case is `88247400fa9a3339d889d75fdcd26337644b7e9953350aa719fd5c411d9f54ba`, as documented.
+- The fixture's retained `table_wait` equals the reconstructed table-view wait.
+- The actions are the unchanged startup/`ctrl-q`/`shift-tab`/setup/`t`/table-view prefix, then six (key with `diag_baseline`, checkpoint with `diag_footer_changed`) pairs, then `ctrl-c`. That is 19 actions, a 45 s timeout and the `primary` policy.
+- Phase triggers point at the key action indices 6, 8, …, 16.
+
+**`navigation_footer`** parses all 8 actual final frames as page 1, cursor 1. The page counts 19, 1829 and 18286 all equal `(N−1)//14+1`, which matches render page size 14.
+
+**`NavigationReadiness` causal sequence**, on the actual dense-1 Go final frame:
+
+| Step | Result |
+| --- | --- |
+| baseline on the key action | accepted (one baseline recorded) |
+| no new bytes | rejected (`output_after_action`) |
+| **new bytes repainting an identical footer row** | **rejected** |
+| changed footer `2/19 … 16 \| 256 rows` with the bottom border not yet painted | rejected |
+| changed footer, complete frame | accepted (parsed cursor 16, page 2) |
+| stale chart hint bar | rejected |
+
+Run-2's `unchanged_rejected: false` stored the raw qualify value (false means rejected). It only exercised the no-new-bytes path. The new-bytes/unchanged-footer row above is the control that actually isolates the footer comparison.
+
+**`main()` control flow, mocked:**
+- An unpinned `--go` is refused, and so is a missing `--out`.
+- `--plan` returns 0 and creates no directory.
+- An existing `--out` raises `FileExistsError` and is never reused.
+- **Mocked session timeout:**
+  - The lock is entered on `pb-rs-performance.lock` and exited.
+  - Inside `p7.sample`, the predicate swap and `NavigationReadiness` are active, and `execute_fn` is a `bench.Capture` writing to `<out>/reference/execute` with a 45 s case timeout.
+  - The report has `valid=false` with the error retained, and the exit code is 1.
+  - The live `dense_table_geometry` and `Readiness` are restored afterwards.
+- **Mocked post-sample binding failure:** `capture_failure` is retained, the `ValueError` is recorded, the exit code is 1 and the swap is restored. However, `summary` and `pins_after` are absent (see L4).
+
+### Source-only (not executed)
+- Native behaviour of Go `pgdown`/`end`/`pgup`/`home` in PromQL table focus.
+- The real lock, helper probe, `cached_spawn` resolution, `p7.execute`/`sample` I/O, `check_binding`/`check_sample_helper` on a real result, and `p7.validate` on a real capture.
+- Composition with Sol's fanout patch; the full suite.
+
+## Findings
+
+No blocker or medium findings. Lows, ordered by impact:
+
+- **L1 — sequencing: the runner is pinned to the current, unpatched tree.**
+  - **What:** `PINS` includes the live bench `e03e1d2b…`, and `SOURCE_CASE_SHA256` is the A1-retry dense-1 hash. Applying the geometry patch changes the bench hash. Composing Sol's fanout metadata, which touches `dense_case`, also changes the dense-1 case hash.
+  - **Effect:** after composition, the runner refuses to start. This is fail-closed, but it means root must run the Go control **before** applying the composed patch, or obtain a reviewed re-pin.
+  - **Why the unpatched tree is fine:** the in-memory predicate is source-identical to the patch, and the diagnostic does not depend on fanout ordering. The dense case has no `initial_fanout_count`, and this is a single-role run with no comparator.
+- **L2 — the helper actually used is not bound to the pinned file.**
+  - **What:** `cached_spawn(probe=True)` returns a dict that contains `path` and `sha256` (`phase7.py:443-444`). The runner records it, but never compares it with `HELPER`/`PINS[HELPER]`. The pinned helper file can match while the resolver selects another build key.
+  - **Suggested fix:** assert that `Path(helper['path']).resolve() == HELPER` and `helper['sha256'] == PINS[HELPER]`, inside the lock.
+- **L3 — imported harness modules are not pinned.**
+  - **What:** `phase1`, `phase2` and `phase3` are imported (confirmed in `sys.modules`) and used for `binary_identity`, `seed`, `isolated_env` and `substitute`. They carry uncommitted modifications in this worktree.
+  - **Suggested fix:** add them to `PINS`. Alternatively, root can record their hashes in its receipt.
+- **L4 — no end receipt on post-sample failure.**
+  - **What:** if `check_binding`, `check_sample_helper` or `validate` raises, `pins_after`, `summary` and the session/stdout hashes are not written. The mock confirmed this.
+  - **Mitigation today:** raw `reference/session.json`/`stdout.bin` from `p7.sample` survive.
+  - **Suggested fix:** compute `pins_after` (and the hashes, when the files exist) in a nested `finally` while still inside the lock.
+- **L5 — the pyte stub transient is only handled in the test, not in the live path.**
+  - **What:** the boundary test catches `IndexError` from `p7.useful` (`terminal.text()`) and treats it as not ready. Live `p7.execute` catches only `NativeProtocolError`. A live read that ends exactly on the transient prefix would therefore propagate the error. The child is still killed in `finally`, but no raw evidence is archived.
+  - **Scope:** this is pre-existing and affects any dense table-view wait, including root's preflight. It is not a regression of the patch. Its probability is low: one prefix in about 5,400 per role, and no actual A1 read hit it.
+  - **Wording fix:** the patch's measurement text "A pyte wide-char stub transient counts as not ready" should say *in the pure replay test*.
+- **L6 — the 120-column assumption is not enforced.**
+  - **What:** the predicate hard-codes a 4-row bottom bar (footer H−8, hint row H−3), which is valid at 120 columns. `Options` admit 80–240 columns, and at other widths the KeyGrid row count may differ. This fails closed (a timeout, never a false pass). The docstring says "120-col", but the contract and measurement text do not.
+  - **Suggested fix:** add either an explicit width guard with a clear error, or a contract sentence.
+- **L7 — wording precision.**
+  - **Contract text:** the patched contract paragraph says the hint `<t> Toggle chart/table` is on H−3. The code requires the *complete* table-focus hint row, as a full match; the text should say so.
+  - **Measurement doc:** the earlier paragraph "PromQL `dense_table_geometry` is unchanged" is left in place. Only the contract explicitly marks it superseded. The contract's historical line 284 (H−6) is likewise superseded only additively, which is consistent with repo convention.
+  - **Evidence label:** run-2's `unchanged_rejected` label is misleading (see §4).
+
+**Notes (not findings):**
+- Running the runner without `-B` writes bytecode into the ignored `harness/__pycache__` and the impl directory. Adding `-B` to root's argv keeps those directories untouched.
+- Root should verify the runner's `plan.runner_sha256` against `afd54e06…` before execution, because the runner hashes itself but cannot self-pin.
+- A key that does not move the cursor ends the run at that checkpoint with an explicit 45 s timeout. This is acceptable, because it does not predict a value.
+
+## Runner suitability for root's later bounded native execution
+
+The runner is suitable as written (L2–L4 are optional hardening). It:
+- holds the existing nonblocking lock across helper resolution, capture and end checks;
+- spawns exactly one pinned-Go child with a 45 s timeout, inside a 90 s functional guard. The total is well under 1800 s;
+- reuses the frozen `p7.sample`/`execute`/`Capture` path, whose `finally` kills the process group and checks survivors;
+- writes only to a new `--out`;
+- dispatches each key only after a complete table frame, and admits each checkpoint only after new output, a complete-frame footer row that differs from the pre-key baseline, and 80 ms styled stability;
+- reports observed footer, page, cursor and first-row values without predicting any value.
+
+**Prerequisites:**
+- Run it on the current, unpatched tree (L1), with the lock free and no other phase-7 process active.
+- Use the planned argv plus `-B`.
+- The output is diagnostic only; any page-step adoption needs its own review.
+
+## Pending (not established here)
+
+- Root-owned serial composition of this patch with Sol's fanout patch (`2d97ed82…`), followed by a fresh review of the composition. The geometry patch alone leaves case hashes unchanged; with fanout, dense hashes change.
+- A root full suite on the composed tree. Under the guard, the known baseline is 18 failures and 1 error from the forbidden flock. **No clean full-suite claim exists**: after D1, only the focused tests were re-run (by the author and again here).
+- Actual root 24-role preflight with matching Go/Rust dense table-view. All source and replay evidence here is pure.
+- The actual Go page-navigation control (this runner), then review of the observed step. Until then, `dense-1000-sustained` remains expected to fail at `series-forward-1` under the bench's step of 16, by source inference.
+
+## Processes
+
+My one script exited normally. A `ps` check after the run found no review, Go, helper or harness process from this task. There were **zero active processes** at hand-off.

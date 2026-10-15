@@ -1,0 +1,187 @@
+{
+  "kind": "complete release3 retained full functional replay; new schema-clock source finding remains unresolved",
+  "cases": 3268,
+  "remaining_historical_guards": 6,
+  "full60s": true,
+  "full120s": true,
+  "identities": {
+    "artifacts": {
+      "/home/ajs/.cache/pb-phase7/candidates/release3/pb-normal": "aceb58bd412e8fbf34f603d247c68e87e69897356cefd5aad19ab6a92484db28",
+      "/home/ajs/.cache/pb-phase7/candidates/release3/pb-cloud": "d1e678b5296f25a2dd7b97114ddfa3076e2b5046888d27bdf8886257fbf96911",
+      "/home/ajs/.cache/pb-phase7/candidates/release3/pb-login": "688088973e7569f18c91519e2cfebeef8c5c8f426ec18ef5d2edbe7eb39600e8",
+      "/home/ajs/.cache/pb-phase7/baselines/pb-go": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "/home/ajs/.cache/pb-phase7/baselines/pb-go-cloud": "622d4144b7e354c0ee4036244ba719cbbaf8357710804b1d733cd421a0dc227e"
+    },
+    "runner_hashes": {
+      "harness/phase1.py": "26ca8380b608a49404da1f8bc7233e577b2d48044d5194cdba20186b38ffaca5",
+      "harness/phase2.py": "66568cd9b0663011547763a258875f45949b21f5ed4c05fe9a695cebdc89cfbd",
+      "harness/phase3.py": "39d16e2ba220aad27ec0e67646e04aacbcdd9a9c28d3013f3f04ddefec789099",
+      "harness/phase4.py": "e5105ae22b0c599901d8622adf4e2942abb05a8c38bd220e8f685cae58782213",
+      "harness/phase5.py": "2bd03937195ea26b07faffa9281d109013d0b785fe33c63fa10905ce262d4c85",
+      "harness/run.py": "b280d1295a4b351e6f2d838c56acaac58b2247bb77fc9881587bb7bbe849a076",
+      "bin/pb-fixture": "fa8b4711ce6c901fc2b277318337268b45953e9868d4bc1b24407b274cc9ec5c"
+    },
+    "verified_before_after_each_phase": true,
+    "candidate_build_manifest_sha256": "8835fa831b671ac3137b4e67f0170604e3afaa226f0062711ddf30d4108b84b2",
+    "results": [
+      {
+        "phase": 1,
+        "command": [
+          "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+          "harness/phase1.py",
+          "compare",
+          "--reference",
+          "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+          "--candidate",
+          "/home/ajs/.cache/pb-phase7/candidates/release3/pb-normal",
+          "--out",
+          "/home/ajs/.cache/pb-phase7/retained-release3-phase1"
+        ],
+        "exit": 0,
+        "elapsed_functional_seconds": 70.84336042404175
+      },
+      {
+        "phase": 2,
+        "command": [
+          "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+          "harness/phase2.py",
+          "compare",
+          "--reference",
+          "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+          "--candidate",
+          "/home/ajs/.cache/pb-phase7/candidates/release3/pb-normal",
+          "--out",
+          "/home/ajs/.cache/pb-phase7/retained-release3-phase2",
+          "--cloud-reference",
+          "/home/ajs/.cache/pb-phase7/baselines/pb-go-cloud",
+          "--cloud-candidate",
+          "/home/ajs/.cache/pb-phase7/candidates/release3/pb-cloud"
+        ],
+        "exit": 0,
+        "elapsed_functional_seconds": 27.640875339508057
+      },
+      {
+        "phase": 3,
+        "command": [
+          "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+          "harness/phase3.py",
+          "compare",
+          "--reference",
+          "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+          "--candidate",
+          "/home/ajs/.cache/pb-phase7/candidates/release3/pb-normal",
+          "--out",
+          "/home/ajs/.cache/pb-phase7/retained-release3-phase3",
+          "--cloud-reference",
+          "/home/ajs/.cache/pb-phase7/baselines/pb-go-cloud",
+          "--cloud-candidate",
+          "/home/ajs/.cache/pb-phase7/candidates/release3/pb-cloud",
+          "--include-full60s"
+        ],
+        "exit": 0,
+        "elapsed_functional_seconds": 1909.275720357895
+      },
+      {
+        "phase": 4,
+        "command": [
+          "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+          "harness/phase4.py",
+          "compare",
+          "--reference",
+          "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+          "--candidate",
+          "/home/ajs/.cache/pb-phase7/candidates/release3/pb-normal",
+          "--out",
+          "/home/ajs/.cache/pb-phase7/retained-release3-phase4",
+          "--cloud-reference",
+          "/home/ajs/.cache/pb-phase7/baselines/pb-go-cloud",
+          "--cloud-candidate",
+          "/home/ajs/.cache/pb-phase7/candidates/release3/pb-cloud",
+          "--include-full120s"
+        ],
+        "exit": 0,
+        "elapsed_functional_seconds": 788.5184288024902
+      },
+      {
+        "phase": 5,
+        "command": [
+          "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+          "harness/phase5.py",
+          "compare",
+          "--reference",
+          "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+          "--candidate",
+          "/home/ajs/.cache/pb-phase7/candidates/release3/pb-normal",
+          "--out",
+          "/home/ajs/.cache/pb-phase7/retained-release3-phase5",
+          "--cloud-reference",
+          "/home/ajs/.cache/pb-phase7/baselines/pb-go-cloud",
+          "--cloud-candidate",
+          "/home/ajs/.cache/pb-phase7/candidates/release3/pb-cloud",
+          "--include-full60s"
+        ],
+        "exit": 0,
+        "elapsed_functional_seconds": 257.37562322616577
+      }
+    ]
+  },
+  "reports": {
+    "1": {
+      "path": "/home/ajs/.cache/pb-phase7/retained-release3-phase1/report.json",
+      "sha256": "653a8a41fd127cde3857e748ec281a75d64fe7311a186e6590a442820dc7b752",
+      "case_count": 2018,
+      "runner_sha256": "26ca8380b608a49404da1f8bc7233e577b2d48044d5194cdba20186b38ffaca5",
+      "tiers": null,
+      "counts": null,
+      "failed": null
+    },
+    "2": {
+      "path": "/home/ajs/.cache/pb-phase7/retained-release3-phase2/report.json",
+      "sha256": "f51415ac4a75e40cd3bb1433d5e629db7572d1c6f89fd9cfed6a6f9d7749cc97",
+      "case_count": 219,
+      "runner_sha256": "66568cd9b0663011547763a258875f45949b21f5ed4c05fe9a695cebdc89cfbd",
+      "tiers": null,
+      "counts": {
+        "pass": 219
+      },
+      "failed": null
+    },
+    "3": {
+      "path": "/home/ajs/.cache/pb-phase7/retained-release3-phase3/report.json",
+      "sha256": "6dfbf545e1363b71e13383583359c099facb529f3c17e353c8a444f93d9cfe25",
+      "case_count": 684,
+      "runner_sha256": "39d16e2ba220aad27ec0e67646e04aacbcdd9a9c28d3013f3f04ddefec789099",
+      "tiers": null,
+      "counts": {
+        "pass": 684
+      },
+      "failed": null
+    },
+    "4": {
+      "path": "/home/ajs/.cache/pb-phase7/retained-release3-phase4/report.json",
+      "sha256": "f22dc9f5ce5b1247215ec4df1bdc539dc0fba5cc7cc998a92a2c7f35b51cd170",
+      "case_count": 161,
+      "runner_sha256": "e5105ae22b0c599901d8622adf4e2942abb05a8c38bd220e8f685cae58782213",
+      "tiers": [
+        "gate",
+        "full120s"
+      ],
+      "counts": null,
+      "failed": 0
+    },
+    "5": {
+      "path": "/home/ajs/.cache/pb-phase7/retained-release3-phase5/report.json",
+      "sha256": "b8c3fdbaa39cf90d663ccb36d330c54e28ecbdefaacdfe2e65fe89ed665a97ac",
+      "case_count": 186,
+      "runner_sha256": "2bd03937195ea26b07faffa9281d109013d0b785fe33c63fa10905ce262d4c85",
+      "tiers": [
+        "gate",
+        "full60s"
+      ],
+      "counts": null,
+      "failed": 0
+    }
+  },
+  "performance_claim": false,
+  "source_acceptance_limit": "recorded release3 source only; successor required after clock correction"
+}

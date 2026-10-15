@@ -1,0 +1,15 @@
+{
+  "kind": "root independent pure in-memory successor verification",
+  "tests": [
+    "constructed history-default exact frame",
+    "historical line defaults preserved",
+    "same subsequent feed gives exact frame",
+    "clone mutation leaves original frame unchanged"
+  ],
+  "passed": true,
+  "native_or_cli_run": false,
+  "production_mismatch_claim": false,
+  "bench_sha256": "db1d7ee6633be4d8e4d061ba6bd0892908e272d3d0f610c6965665688343d1ca",
+  "original_evidence": "docs/evidence/phase7/replay-clone-history-default-root.json",
+  "scope": "Constructed pyte direct-screen mode state only; not Go/Rust wire evidence or final replay admission."
+}

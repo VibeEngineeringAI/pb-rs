@@ -30,7 +30,7 @@ pub fn parse_time_with(
 
 // time.Parse's fallback accepts one-digit hours, comma fractions and offsets
 // with hour 24/minute 60. Keep those quirks without accepting leap seconds.
-fn parse_rfc3339(value: &str) -> Option<DateTime<Utc>> {
+pub(crate) fn parse_rfc3339(value: &str) -> Option<DateTime<Utc>> {
     use chrono::{NaiveDate, NaiveTime};
     let (date, rest) = value.split_once('T')?;
     if !date.is_ascii() || !rest.is_ascii() {

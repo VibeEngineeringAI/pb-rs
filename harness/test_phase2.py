@@ -162,7 +162,8 @@ class ScopeTests(unittest.TestCase):
             phase2.benchmark_suite([escaped])
 
     def test_boundaries_watch_network_and_every_writable_location(self):
-        checks = phase2.deferred_boundaries()
+        self.assertEqual([], phase2.deferred_boundaries())
+        checks = phase2.historical_deferred_boundaries()
         self.assertEqual({name.replace("p2-", "p2-boundary-", 1) for name in FUTURE}, {c["name"] for c in checks})
         for check in checks:
             source = by_name()[check["source_case"]]
@@ -470,7 +471,7 @@ class BoundaryTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             binary = self.fake(folder, behavior)
             return {check["source_case"]: phase2.boundary_issues(check, phase2.sample([binary], check, None))
-                    for check in phase2.deferred_boundaries()}
+                    for check in phase2.historical_deferred_boundaries()}
 
     def test_explicit_effect_free_stub_passes_every_boundary(self):
         self.assertEqual({name: [] for name in FUTURE}, self.outcomes("stub"))
@@ -501,7 +502,7 @@ class BoundaryTests(unittest.TestCase):
                                   "--out", str(out), "--fixture", "", *extra])
         return status, json.loads((out / "report.json").read_text()), (out / "report.md").read_text()
 
-    def test_compare_reports_exclusion_and_gates_on_boundaries(self):
+    def test_compare_reports_promotion_and_retains_ordinary_gate(self):
         with tempfile.TemporaryDirectory() as folder:
             stub = self.fake(folder, "stub")
             # The stub differs from go-tty on p2-plain; isolate scope/boundary behavior via the opt-in run.
@@ -509,15 +510,11 @@ class BoundaryTests(unittest.TestCase):
             self.assertEqual(["p2-plain"], [c["name"] for c in report["cases"]])
             self.assertEqual(["p2-login-without-terminal-no-config"], [f["name"] for f in report["scope"]["future_terminal"]])
             self.assertFalse(report["scope"]["future_terminal_included"])
-            self.assertEqual("run", report["boundaries_status"])
-            self.assertEqual([("p2-boundary-login-without-terminal-no-config", "pass")],
-                             [(b["name"], b["status"]) for b in report["boundaries"]])
+            self.assertEqual("promoted to phase7 PTY/effect gate", report["boundaries_status"])
+            self.assertEqual([], report["boundaries"])
             self.assertIn("EXCLUDED as future terminal", text)
-            self.assertIn("Deferred boundary checks: 1/1 passed", text)
+            self.assertIn("promoted to phase7 PTY/effect gate", text)
             self.assertEqual(1, status)  # p2-plain still fails: excluded cases never mask real differences
-            status, report, text = self.run_compare(folder, self.fake(folder, "cache"))
-            self.assertEqual("fail", report["boundaries"][0]["status"])
-            self.assertIn("BOUNDARY FAIL", text)
             status, report, text = self.run_compare(folder, stub, "--include-future-terminal")
             self.assertEqual(["p2-plain", "p2-login-without-terminal-no-config"], [c["name"] for c in report["cases"]])
             self.assertEqual("fail", report["cases"][1]["status"])  # opt-in runs the real Go comparison
@@ -525,7 +522,7 @@ class BoundaryTests(unittest.TestCase):
             status, report, _ = self.run_compare(folder, stub, "--case", "p2-plain")
             self.assertEqual("not run (case/group filter)", report["boundaries_status"])
 
-    def test_passing_gate_requires_passing_boundaries(self):
+    def test_ordinary_gate_no_longer_requires_interactive_stubs(self):
         with tempfile.TemporaryDirectory() as folder:
             def gate(candidate):
                 case = {"name": "p2-ok", "group": "phase2-t", "build": "standard", "requires": [], "config": None,
@@ -537,7 +534,7 @@ class BoundaryTests(unittest.TestCase):
                     return phase2.main(["compare", "--reference", str(self.fake(folder, "go-tty")), "--candidate", str(candidate),
                                         "--out", str(out), "--fixture", ""])
             self.assertEqual(0, gate(self.fake(folder, "stub")))
-            self.assertEqual(1, gate(self.fake(folder, "prompt")))
+            self.assertEqual(0, gate(self.fake(folder, "prompt")))
 
 
 @unittest.skipUnless(GO.exists() and FIXTURE.exists(), "Go oracle and fixture not built")
@@ -557,7 +554,7 @@ class GoOracleTests(unittest.TestCase):
                 self.check(name)
 
     def test_future_terminal_definitions_still_hold_for_go_and_fail_boundaries(self):
-        checks = {c["source_case"]: c for c in phase2.deferred_boundaries()}
+        checks = {c["source_case"]: c for c in phase2.historical_deferred_boundaries()}
         for name in sorted(FUTURE):
             with self.subTest(name=name):
                 self.check(name)

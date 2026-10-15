@@ -1,0 +1,310 @@
+[
+  {
+    "lane": "terminal",
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-terminal-r1",
+    "childThreadId": "thread:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-terminal-r1",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A245f7194-2732-4b67-ac9f-f5e734b5da17%253Adelegate-task%253Aphase7-opus-terminal-r1:ordinal:1",
+    "childNodeId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-terminal-r1",
+    "status": "running",
+    "workState": "working",
+    "hasPendingChildRuns": false,
+    "latestTerminalRunId": null,
+    "latestTerminalStatus": null,
+    "latestTerminalSummary": null,
+    "latestTerminalResultContextTransferId": null,
+    "providerInstanceId": "claudeAgent",
+    "model": "claude-opus-5-5",
+    "summary": null,
+    "resultContextTransferId": null,
+    "waitTimedOut": false
+  },
+  {
+    "lane": "sql",
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-sql-r1",
+    "childThreadId": "thread:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-sql-r1",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A245f7194-2732-4b67-ac9f-f5e734b5da17%253Adelegate-task%253Aphase7-opus-sql-r1:ordinal:1",
+    "childNodeId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-sql-r1",
+    "status": "running",
+    "workState": "working",
+    "hasPendingChildRuns": false,
+    "latestTerminalRunId": null,
+    "latestTerminalStatus": null,
+    "latestTerminalSummary": null,
+    "latestTerminalResultContextTransferId": null,
+    "providerInstanceId": "claudeAgent",
+    "model": "claude-opus-5-5",
+    "summary": null,
+    "resultContextTransferId": null,
+    "waitTimedOut": false
+  },
+  {
+    "lane": "promql",
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-promql-r1",
+    "childThreadId": "thread:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-promql-r1",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A245f7194-2732-4b67-ac9f-f5e734b5da17%253Adelegate-task%253Aphase7-opus-promql-r1:ordinal:1",
+    "childNodeId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-promql-r1",
+    "status": "running",
+    "workState": "working",
+    "hasPendingChildRuns": false,
+    "latestTerminalRunId": null,
+    "latestTerminalStatus": null,
+    "latestTerminalSummary": null,
+    "latestTerminalResultContextTransferId": null,
+    "providerInstanceId": "claudeAgent",
+    "model": "claude-opus-5-5",
+    "summary": null,
+    "resultContextTransferId": null,
+    "waitTimedOut": false,
+    "followupTaskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-promql-central-validation"
+  },
+  {
+    "lane": "auth",
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-auth-r1",
+    "childThreadId": "thread:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-auth-r1",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A245f7194-2732-4b67-ac9f-f5e734b5da17%253Adelegate-task%253Aphase7-opus-auth-r1:ordinal:1",
+    "childNodeId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-auth-r1",
+    "status": "running",
+    "workState": "working",
+    "hasPendingChildRuns": false,
+    "latestTerminalRunId": null,
+    "latestTerminalStatus": null,
+    "latestTerminalSummary": null,
+    "latestTerminalResultContextTransferId": null,
+    "providerInstanceId": "claudeAgent",
+    "model": "claude-opus-5-5",
+    "summary": null,
+    "resultContextTransferId": null,
+    "waitTimedOut": false,
+    "followupTaskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-auth-integration-r2",
+    "initial_result": "Implementation delivered; candidate compile/tests pending; unaccepted empty-picker panic-to-error change identified for correction"
+  },
+  {
+    "lane": "harness",
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-sol-harness-r1",
+    "childThreadId": "thread:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-sol-harness-r1",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A245f7194-2732-4b67-ac9f-f5e734b5da17%253Adelegate-task%253Aphase7-sol-harness-r1:ordinal:1",
+    "childNodeId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-sol-harness-r1",
+    "status": "running",
+    "workState": "working",
+    "hasPendingChildRuns": false,
+    "latestTerminalRunId": null,
+    "latestTerminalStatus": null,
+    "latestTerminalSummary": null,
+    "latestTerminalResultContextTransferId": null,
+    "providerInstanceId": "codex",
+    "model": "gpt-6.1-sol",
+    "summary": null,
+    "resultContextTransferId": null,
+    "waitTimedOut": false
+  },
+  {
+    "lane": "services",
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-sol-services-r1",
+    "childThreadId": "thread:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-sol-services-r1",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A245f7194-2732-4b67-ac9f-f5e734b5da17%253Adelegate-task%253Aphase7-sol-services-r1:ordinal:1",
+    "childNodeId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-sol-services-r1",
+    "status": "running",
+    "workState": "working",
+    "hasPendingChildRuns": false,
+    "latestTerminalRunId": null,
+    "latestTerminalStatus": null,
+    "latestTerminalSummary": null,
+    "latestTerminalResultContextTransferId": null,
+    "providerInstanceId": "codex",
+    "model": "gpt-6.1-sol",
+    "summary": null,
+    "resultContextTransferId": null,
+    "waitTimedOut": false
+  },
+  {
+    "lane": "effects",
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-sol-effects-r1",
+    "childThreadId": "thread:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-sol-effects-r1",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A245f7194-2732-4b67-ac9f-f5e734b5da17%253Adelegate-task%253Aphase7-sol-effects-r1:ordinal:1",
+    "childNodeId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-sol-effects-r1",
+    "status": "running",
+    "workState": "working",
+    "hasPendingChildRuns": false,
+    "latestTerminalRunId": null,
+    "latestTerminalStatus": null,
+    "latestTerminalSummary": null,
+    "latestTerminalResultContextTransferId": null,
+    "providerInstanceId": "codex",
+    "model": "gpt-6.1-sol",
+    "summary": null,
+    "resultContextTransferId": null,
+    "waitTimedOut": false,
+    "initial_result": "22 cases, 44 Go invocations passed; candidate pending",
+    "followupTaskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-effects-remaining-state-cases"
+  },
+  {
+    "lane": "editor",
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-editor-r1",
+    "childThreadId": "thread:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-editor-r1",
+    "providerInstanceId": "claudeAgent",
+    "model": "claude-opus-5-5",
+    "status": "running"
+  },
+  {
+    "lane": "style",
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-style-r1",
+    "childThreadId": "thread:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-style-r1",
+    "providerInstanceId": "claudeAgent",
+    "model": "claude-opus-5-5",
+    "status": "running"
+  },
+  {
+    "lane": "service-review-r1",
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-service-review-r1",
+    "providerInstanceId": "claudeAgent",
+    "model": "claude-opus-5-5",
+    "status": "running",
+    "scope": "independent shared-service review; not final phase acceptance"
+  },
+  {
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-opus-auth-r1-integration-check2",
+    "kind": "implementation continuation"
+  },
+  {
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-sol-services-r1-integration-check2",
+    "kind": "implementation continuation"
+  },
+  {
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-style-oracle-corrections",
+    "kind": "implementation continuation"
+  },
+  {
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-terminal-unit-integration",
+    "kind": "implementation continuation"
+  },
+  {
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-editor-build-warnings",
+    "kind": "implementation continuation"
+  },
+  {
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-terminal-sigquit-compat",
+    "kind": "implementation continuation"
+  },
+  {
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-auth-pty-fault-confirm",
+    "kind": "implementation continuation"
+  },
+  {
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-opus-sql-r1-effect6fail",
+    "kind": "implementation continuation"
+  },
+  {
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-opus-promql-r1-effect6fail",
+    "kind": "implementation continuation"
+  },
+  {
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-opus-editor-r1-clippy1",
+    "kind": "implementation continuation"
+  },
+  {
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-opus-terminal-r1-clippy1",
+    "kind": "implementation continuation"
+  },
+  {
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-opus-auth-r1-clippy1",
+    "kind": "implementation continuation"
+  },
+  {
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-sol-services-r1-clippy1",
+    "kind": "implementation continuation"
+  },
+  {
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-lifecycle-review-r1",
+    "kind": "independent focused lifecycle review",
+    "providerInstanceId": "claudeAgent",
+    "model": "claude-opus-5-5"
+  },
+  {
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-sol-measurement-collector",
+    "kind": "scoped implementation continuation"
+  },
+  {
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-terminal-stamped-events",
+    "kind": "scoped implementation continuation"
+  },
+  {
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-promql-inbox-bound-objection",
+    "kind": "scoped implementation continuation"
+  },
+  {
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-sql-completion-bound-objection",
+    "kind": "scoped implementation continuation"
+  },
+  {
+    "lane": "phase7-terminal-review-n1n7",
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-terminal-review-n1n7",
+    "purpose": "Implementation/test continuation; see task result and workflow docs",
+    "status": "tracked; final acceptance pending"
+  },
+  {
+    "lane": "phase7-opus-sql-r1-lifecycle-review-fixes",
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-opus-sql-r1-lifecycle-review-fixes",
+    "purpose": "Implementation/test continuation; see task result and workflow docs",
+    "status": "tracked; final acceptance pending"
+  },
+  {
+    "lane": "phase7-opus-auth-r1-lifecycle-review-fixes",
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-opus-auth-r1-lifecycle-review-fixes",
+    "purpose": "Implementation/test continuation; see task result and workflow docs",
+    "status": "tracked; final acceptance pending"
+  },
+  {
+    "lane": "phase7-sql-background-panic-contract",
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-sql-background-panic-contract",
+    "purpose": "Implementation/test continuation; see task result and workflow docs",
+    "status": "tracked; final acceptance pending"
+  },
+  {
+    "lane": "phase7-device-poll-task-panic",
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-device-poll-task-panic",
+    "purpose": "Implementation/test continuation; see task result and workflow docs",
+    "status": "tracked; final acceptance pending"
+  },
+  {
+    "lane": "phase7-promql-style-result-integration",
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-promql-style-result-integration",
+    "purpose": "Implementation/test continuation; see task result and workflow docs",
+    "status": "tracked; final acceptance pending"
+  },
+  {
+    "lane": "phase7-editor-exact-width-integration",
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-editor-exact-width-integration",
+    "purpose": "Implementation/test continuation; see task result and workflow docs",
+    "status": "tracked; final acceptance pending"
+  },
+  {
+    "lane": "phase7-style-oracle2-validation",
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-style-oracle2-validation",
+    "purpose": "Implementation/test continuation; see task result and workflow docs",
+    "status": "tracked; final acceptance pending"
+  },
+  {
+    "lane": "phase7-effects-remaining-state-cases",
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-effects-remaining-state-cases",
+    "purpose": "Implementation/test continuation; see task result and workflow docs",
+    "status": "tracked; final acceptance pending"
+  },
+  {
+    "lane": "service-review-r2",
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-service-review-r2",
+    "providerInstanceId": "claudeAgent",
+    "model": "claude-opus-5-5",
+    "purpose": "Fresh independent service review after S1-S6 corrections",
+    "status": "running"
+  },
+  {
+    "lane": "phase7-effects-schema-refresh-scope",
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-effects-schema-refresh-scope",
+    "status": "completed; integrated acceptance pending"
+  },
+  {
+    "lane": "phase7-style-compile-lifetime",
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-style-compile-lifetime",
+    "status": "completed; integrated acceptance pending"
+  }
+]

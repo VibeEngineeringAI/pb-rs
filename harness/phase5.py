@@ -1496,6 +1496,11 @@ def signature(case, result):
 
 
 def deferred_boundaries():
+    """Role/dataset prompts graduated to the phase-seven PTY/effect gate."""
+    return []
+
+
+def historical_deferred_boundaries():
     """Candidate-only: interactive entry paths stay explicit stubs with no request or HOME change."""
     checks = []
     for label, argv in [('role-add', ['role', 'add', 'newrole']), ('dataset-add-picker', ['dataset', 'add', 'new']),
@@ -1623,6 +1628,7 @@ def main(argv=None):
             print(case['name'] + ': ' + '; '.join(issues), file=sys.stderr)
     if args.command == 'compare' and not args.self_check and not report['partial']:
         report['boundaries'] = []
+        report['boundaries_status'] = 'promoted to phase7 PTY/effect gate'
         for check in deferred_boundaries():
             result = p3.sample(Path(args.candidate).resolve(), check, out / check['name'], args.timeout)
             issues = p3.boundary_issues(check, result)

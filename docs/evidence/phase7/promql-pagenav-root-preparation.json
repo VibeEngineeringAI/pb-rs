@@ -1,0 +1,13 @@
+{
+  "plan_sha256": "2e379878b2fe2dd3be889335328d2be0cf1fb67448e6171193d7ef154d16d518",
+  "launcher_sha256": "71c312ea739cf76c911a6e994a5ae3e86f33e79cbe1fa5cacdb4c9b05a8a9adb",
+  "identities_verified": 95,
+  "root_read_full_launcher_and_reviewed_runner": true,
+  "outer_limit_seconds": 180,
+  "child_timeout_seconds": 45,
+  "runner_functional_guard_seconds": 90,
+  "runtime_started": false,
+  "performance_claim": false,
+  "page_step_adopted": false,
+  "fresh_ack_pending": true
+}

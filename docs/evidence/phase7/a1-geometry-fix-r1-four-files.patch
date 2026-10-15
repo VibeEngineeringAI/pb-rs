@@ -1,0 +1,286 @@
+--- a/harness/phase7_bench.py
++++ b/harness/phase7_bench.py
+@@ -523,18 +523,26 @@
+ 
+ 
+ def sql_resize_geometry(frame, wait):
+-    """Closed-drawer SQL source layout: footer H-6, right text end W-3."""
++    """Default open drawer: resultsW=max(30,W-sidebarW-1), footer H-6."""
+     width, height = frame['columns'], frame['rows']
++    # query.go QueryModel.View / sql.rs view: the unchanged script never
++    # toggles the default-open columns drawer (ctrl+l).
++    sidebar_width = 34 + (3 if width >= 140 else 0)
++    results_width = max(30, width - sidebar_width - 1)
+     footer = next((token for token in wait.get('contains', []) if token.startswith('rows ')), None)
+     marker = next((token for token in wait.get('contains', []) if token.startswith('bench-row-')), None)
+-    if footer is None or marker is None or height < 30:
++    if (footer is None or marker is None or height < 30 or results_width + 1 >= width or
++            len(frame['cells']) != height or any(len(row) != width for row in frame['cells'])):
+         return False
+     lines = [''.join(cell[0] for cell in row) for row in frame['cells']]
+-    row = frame['cells'][height - 6]
+-    column = width - 3 - len(footer)
+-    return (column >= 0 and lines[height - 6][column:width - 3] == footer and
+-            row[0][0] == row[-1][0] == '│' and
+-            marker in lines[16] and frame['cells'][16][0][0] == frame['cells'][16][-1][0] == '│')
++    end = results_width - 3
++    column = end - len(footer)
++    def pane_edges(row):
++        return (row[0][0] == row[results_width - 1][0] == row[results_width + 1][0] == row[-1][0] == '│'
++                and row[results_width][0] == ' ')
++    return (column >= 0 and lines[height - 6][column:end] == footer and
++            pane_edges(frame['cells'][height - 6]) and
++            marker in lines[16][1:results_width - 1] and pane_edges(frame['cells'][16]))
+ 
+ 
+ def dense_table_geometry(frame, wait):
+@@ -1653,6 +1661,10 @@
+                 role_started = time.monotonic_ns()
+                 row['samples'][role]['scheduling_started_monotonic_ns'] = role_started
+                 result = p7.sample(identities[role]['path'], case, path, execute_fn=adapter)
++                # Informational raw outcome survives a later binding exception;
++                # validation order, abort behavior and admission stay unchanged.
++                row['samples'][role]['capture_failure'] = result.get('failure')
++                row['samples'][role]['termination'] = copy.deepcopy(result.get('termination'))
+                 sample_finished = time.monotonic_ns()
+                 row['samples'][role]['sample_finished_monotonic_ns'] = sample_finished
+                 row['samples'][role]['capture_and_sample_wall_ms'] = (sample_finished - role_started) / 1e6
+--- a/harness/test_phase7_bench.py
++++ b/harness/test_phase7_bench.py
+@@ -266,6 +266,172 @@
+             self.assertTrue(ready(terminal, wait, [request(0)] * 2, {}, 1, 1100000000))
+ 
+ 
++class A1GeometryTests(unittest.TestCase):
++    @classmethod
++    def setUpClass(cls):
++        import gzip
++        import hashlib
++        path = bench.ROOT / 'docs/evidence/phase7/a1-geometry-retained-go.json.gz'
++        data = path.read_bytes()
++        assert hashlib.sha256(data).hexdigest() == 'c713340e3df43b3d2cc96ade055a8f8da535ff855b75c3ec2ca75b247e59ae2c'
++        cls.retained = json.loads(gzip.decompress(data))
++        assert cls.retained['origins']['session']['sha256'] == 'b0a6919c04a9c157d15101dfabaff64f2e546364e5c841a4d5149aaf1029ce6b'
++        assert cls.retained['origins']['stdout']['sha256'] == '2524289b1f62556ade81159f34fb528b18f8b0c12a912dc51357b1f81c9af0fa'
++        assert cls.retained['origins']['bench']['sha256'] == 'bf630d9ac4dd4e615f221e218cfce7cbb99438c2de1bf5cfdc388941eef013c2'
++        cls.raw = bytes.fromhex(cls.retained['stdout_hex'])
++        assert hashlib.sha256(cls.raw).hexdigest() == cls.retained['origins']['stdout']['sha256']
++        for key, value in cls.retained['frames'].items():
++            assert bench.p7.digest(value) == cls.retained['frame_sha256'][key]
++        old = cls.retained['old_predicate_source']
++        assert hashlib.sha256(old.encode()).hexdigest() == 'd1344041d774524473d03811bab9009e7fcbe115c34450dd484858001a214fde'
++        namespace = {}
++        exec(compile(old, '<hash-bound-original-A1-predicate>', 'exec'), namespace)
++        cls.old_predicate = staticmethod(namespace['sql_resize_geometry'])
++
++    def terminal(self, large=False):
++        terminal = bench.p7.Terminal(120, 40)
++        offset = self.retained['resize_byte_offset']
++        terminal.feed(self.raw[:offset])
++        if large:
++            terminal.resize(140, 45)
++            terminal.feed(self.raw[offset:])
++        return terminal
++
++    def test_actual_frames_reconstruct_exactly_and_kill_compiled_old_predicate(self):
++        for large, key, end in ((False, '120x40', 82), (True, '140x45', 99)):
++            with self.subTest(size=key):
++                terminal = self.terminal(large)
++                actual = terminal.frame()
++                self.assertEqual(actual, self.retained['frames'][key])
++                wait = bench.target(0, 500)
++                self.assertEqual(bench.frame_text(actual).splitlines()[actual['rows'] - 6].find('rows 1/500') + 10, end)
++                self.assertTrue(bench.sql_resize_geometry(actual, wait))
++                self.assertFalse(self.old_predicate(actual, wait))
++                with mock.patch.object(bench, 'sql_resize_geometry', self.old_predicate):
++                    with self.assertRaises(AssertionError):
++                        self.assertTrue(bench.sql_resize_geometry(actual, wait))
++
++    def test_actual_frame_mutations_reject_wrong_columns_rows_marker_borders_and_gap(self):
++        for key, original in self.retained['frames'].items():
++            w, h = original['columns'], original['rows']
++            r = 85 if w == 120 else 102  # Independently observed retained pane widths.
++            footer, marker = 'rows 1/500', 'bench-row-000000'
++            def blank_token(value, y, token):
++                line = ''.join(cell[0] for cell in value['cells'][y])
++                start = line.index(token)
++                for x in range(start, start + len(token)): value['cells'][y][x][0] = ' '
++            def token(value, y, x, text):
++                for i, c in enumerate(text): value['cells'][y][x + i][0] = c
++            controls = []
++            for delta in (-1, 1):
++                bad = copy.deepcopy(original); blank_token(bad, h - 6, footer)
++                token(bad, h - 6, r - 3 - len(footer) + delta, footer)
++                controls.append(('footer-column-' + str(delta), bad))
++            bad = copy.deepcopy(original); blank_token(bad, h - 6, footer)
++            token(bad, h - 7, r - 3 - len(footer), footer); controls.append(('footer-row', bad))
++            bad = copy.deepcopy(original); blank_token(bad, 16, marker)
++            token(bad, 17, 13, marker); controls.append(('marker-row', bad))
++            bad = copy.deepcopy(original); blank_token(bad, 16, marker)
++            token(bad, 16, r + 2, marker); controls.append(('marker-only-in-sidebar', bad))
++            for y in (16, h - 6):
++                for x in (0, r - 1, r, r + 1, w - 1):
++                    bad = copy.deepcopy(original); bad['cells'][y][x][0] = 'X'
++                    controls.append((f'border-or-gap-{y}-{x}', bad))
++            for label, bad in controls:
++                with self.subTest(size=key, control=label):
++                    self.assertFalse(bench.sql_resize_geometry(bad, bench.target(0, 500)))
++            # The original regression's synthetic full-width closed drawer
++            # passes the compiled old predicate and must fail the fixed one.
++            closed = frame('', w, h)
++            for y in (16, h - 6):
++                closed['cells'][y][0][0] = closed['cells'][y][-1][0] = '│'
++            token(closed, 16, 13, marker); token(closed, h - 6, w - 3 - len(footer), footer)
++            self.assertTrue(self.old_predicate(closed, bench.target(0, 500)))
++            self.assertFalse(bench.sql_resize_geometry(closed, bench.target(0, 500)))
++            malformed = copy.deepcopy(original); malformed['cells'][0].pop()
++            self.assertFalse(bench.sql_resize_geometry(malformed, bench.target(0, 500)))
++
++    def test_actual_growth_and_shrink_reject_old_frame_and_partial_repaint_before_full_target(self):
++        tty = {'canonical': False, 'echo': False, 'signals': False}
++        trace = [{'path': '/api/v1/query'}]
++        for shrink in (False, True):
++            terminal = self.terminal(large=shrink)
++            w, h = size = (120, 40) if shrink else (140, 45)
++            ready = bench.Readiness()
++            self.assertTrue(ready(terminal, {'snapshot_resize': list(size)}, trace, tty, 1, 1))
++            terminal.resize(*size)
++            wait = {**bench.target(0, 500), 'dimensions': list(size), 'sql_resize_geometry': True,
++                    'right_edge_corner': True, 'output_after_action': True, 'resize_rerender': True}
++            self.assertFalse(ready(terminal, wait, trace, tty, 2, 2))
++            terminal.feed(b'\x1b[1;1H' + ('┌' + '─' * (w - 2) + '┐').encode())
++            self.assertFalse(ready(terminal, wait, trace, tty, 2, 3))
++            expected = self.retained['frames'][f'{w}x{h}']
++            terminal.feed(b'\x1b[17;1H' + ''.join(c[0] for c in expected['cells'][16]).encode())
++            self.assertFalse(ready(terminal, wait, trace, tty, 2, 4))
++            offset = self.retained['resize_byte_offset']
++            terminal.feed(self.raw[:offset] if shrink else self.raw[offset:])
++            self.assertTrue(ready(terminal, wait, trace, tty, 2, 5))
++            # Keep the existing actual-dimensions gate causal even when the
++            # retained target and all other clauses qualify.
++            self.assertFalse(ready(terminal, {**wait, 'dimensions': [w + 1, h]}, trace, tty, 2, 6))
++
++
++class A1CaptureOutcomeTests(unittest.TestCase):
++    def test_timeout_retained_before_real_downstream_binding_exception_and_abort(self):
++        with tempfile.TemporaryDirectory(dir=bench.p7.TMP) as folder:
++            root = Path(folder)
++            binary = root / 'binary'; binary.write_bytes(b'not executed'); binary.chmod(0o700)
++            identity = bench.p7.phase1.binary_identity(binary)
++            case = bench.campaign_cases(options(case_filters=('sql-scroll-500-*',)))[0]
++            resize_index = next(i for i, a in enumerate(case['actions']) if 'resize' in a)
++            captured = {'binary': identity, 'case': case, 'failure': 'session timeout',
++                        'termination': {'signal': 9}, 'resize_signal_policy': bench.RESIZE_SIGNAL_POLICY,
++                        'actions': [{'index': resize_index, 'resize': [140, 45], 'resize_signal_source': 'ioctl-only'}]}
++            helper = {'source_sha256': 'a' * 64, 'sha256': 'b' * 64}
++            with mock.patch.object(bench, 'require_seams'), \
++                 mock.patch.object(bench, 'cached_spawn', return_value=helper), \
++                 mock.patch.object(bench, 'source_snapshot', return_value={}), \
++                 mock.patch.object(bench, 'campaign_cases', return_value=[case]), \
++                 mock.patch.object(bench.p7, 'sample', return_value=captured) as sample, \
++                 mock.patch.object(bench, 'check_binding', wraps=bench.check_binding) as binding, \
++                 mock.patch.object(bench, 'observation_issues', side_effect=AssertionError('validation reordered')) as observations, \
++                 mock.patch.object(bench.p7, 'compare', side_effect=AssertionError('continued after binding failure')) as compare:
++                report = bench._functional_preflight(binary, binary, root / 'out', options())
++            self.assertFalse(report['valid'])
++            self.assertFalse(report['cases'][0]['valid'])
++            self.assertEqual(sample.call_count, 1)  # Candidate remains unrun.
++            binding.assert_called_once_with(captured, identity, case)
++            observations.assert_not_called(); compare.assert_not_called()
++            self.assertEqual(report['errors'], ["ValueError('captured resize sequence differs from declared script')"])
++            role = report['cases'][0]['samples']['reference']
++            self.assertEqual(role['capture_failure'], 'session timeout')
++            self.assertEqual(role['termination'], {'signal': 9})
++            self.assertEqual(role['issues'], ['not completed'])
++            self.assertNotIn('candidate', report['cases'][0]['samples'])
++            self.assertEqual(json.loads((root / 'out/report.json').read_text()), bench.public_value(report))
++            # Remove just the informational assignments from the compiled
++            # original function: the same binding error remains, diagnostics vanish.
++            source = inspect.getsource(bench._functional_preflight)
++            for line in ("                row['samples'][role]['capture_failure'] = result.get('failure')\n",
++                         "                row['samples'][role]['termination'] = copy.deepcopy(result.get('termination'))\n"):
++                self.assertEqual(source.count(line), 1)
++                source = source.replace(line, '')
++            namespace = dict(vars(bench))
++            exec(compile(source, '<drop-A1-outcome-reporting>', 'exec'), namespace)
++            with mock.patch.object(bench, 'require_seams'), \
++                 mock.patch.object(bench, 'cached_spawn', return_value=helper), \
++                 mock.patch.object(bench, 'source_snapshot', return_value={}), \
++                 mock.patch.object(bench, 'campaign_cases', return_value=[case]), \
++                 mock.patch.object(bench.p7, 'sample', return_value=captured):
++                # Compiled function globals must see the same mocked seams.
++                namespace.update({k: getattr(bench, k) for k in ('require_seams', 'cached_spawn', 'source_snapshot', 'campaign_cases')})
++                control = namespace['_functional_preflight'](binary, binary, root / 'control', options())
++            self.assertEqual(control['errors'], report['errors'])
++            self.assertFalse(control['valid'])
++            self.assertNotIn('capture_failure', control['cases'][0]['samples']['reference'])
++            self.assertNotIn('termination', control['cases'][0]['samples']['reference'])
++
++
+ class R4Tests(unittest.TestCase):
+     def test_top_border_first_stale_footer_rejected_growth_shrink_and_identical_row_repaint(self):
+         for initial, resized in (((120, 40), (140, 45)), ((140, 45), (120, 40))):
+@@ -273,9 +439,13 @@
+                 terminal = bench.p7.Terminal(*initial)
+                 footer, marker = 'rows 1/20000', 'bench-row-000000'
+                 def line(width, text):
+-                    return ('│' + text.ljust(width - 2) + '│').encode()
++                    results = max(30, width - (37 if width >= 140 else 34) - 1)
++                    return ('│' + text.ljust(results - 2) + '│ │' + ' ' * (width - results - 3) + '│').encode()
++                def footer_text(width):
++                    results = max(30, width - (37 if width >= 140 else 34) - 1)
++                    return ' ' * (results - 4 - len(footer)) + footer
+                 terminal.feed(b'\x1b[?1049h\x1b[17;1H' + line(initial[0], marker) +
+-                    f'\x1b[{initial[1]-5};1H'.encode() + line(initial[0], ' ' * (initial[0]-3-len(footer)-1)+footer))
++                    f'\x1b[{initial[1]-5};1H'.encode() + line(initial[0], footer_text(initial[0])))
+                 ready = bench.Readiness()
+                 ready(terminal, {'snapshot_resize': list(resized)}, [], {'iflag': 0, 'lflag': 0}, 1, 1)
+                 terminal.resize(*resized)
+@@ -287,7 +457,7 @@
+                     self.assertFalse(ready(terminal, wait, [], tty, 2, 3))
+                     terminal.feed(b'\x1b[17;1H' + line(resized[0], marker))
+                     self.assertFalse(ready(terminal, wait, [], tty, 2, 4))
+-                    terminal.feed(f'\x1b[{resized[1]-5};1H'.encode()+line(resized[0], ' '*(resized[0]-3-len(footer)-1)+footer))
++                    terminal.feed(f'\x1b[{resized[1]-5};1H'.encode()+line(resized[0], footer_text(resized[0])))
+                     self.assertTrue(ready(terminal, wait, [], tty, 2, 5))
+ 
+     def test_raw_offset_includes_partial_csi_and_utf8_and_prefix_retains_resize_state(self):
+--- a/docs/phase7-measurement.md
++++ b/docs/phase7-measurement.md
+@@ -282,7 +282,7 @@
+ 
+ Dense sustained uses the existing1000x256 matrix (256,000 table rows). After the stable setup/table toggle it selects the first32 and last32 series, then home/chart/idle/quit. Each target binds the visible series marker AND exact selected-row footer `<row+1> |256000rows`; each phase proves one causal range request and the entire session forbids refetch. Forward/reverse bursts cover many selections; it does not claim that every one of1000series was scrolled. Native event/reducer/render/write-stage instrumentation remains unimplemented/unknown and no full-plan performance acceptance can claim it.
+ 
+-Resize readiness uses closed-drawer SQL source geometry: footer at zero-based H-6, right text ending at W-3, outer body borders at0/W-1, and the selected row-zero marker on its source-derived row16 with its newly sized outer border. A changed top border alone cannot qualify. Data text may legitimately remain identical; it need not differ just to prove new geometry. Grow/shrink/cursor-only/partial-footer negatives are tested in real pyte. Full styled80ms stability remains unchanged. CLI incidence/final oracle preflight is unmeasured here.
++Historical R4 resize readiness assumed closed-drawer SQL geometry (footer ending at W-3). The actual A1 failure disproved that premise: the unchanged workload leaves the default columns drawer open. The A1 correction below supersedes that geometry assumption. A changed top border alone cannot qualify; full styled80ms stability remains unchanged.
+ 
+ The shared legacy resize emits ioctl plus explicit WINCH. Parent mechanism evidence is `docs/evidence/phase7/resize-signal-control.json`; serialized deliveries are demonstrated, actual repaint/coalescing is unknown. No shared edit here. Proposed keyword `resize_signal_policy="legacy"` with `"ioctl-only-changed"` would validate geometries before acquisition, reject no-op sizes, and use only ioctl for actual changes, with recorded policy/source. A separately declared unchanged-size refresh would need separate policy/measurement. The native owner/root must authorize and execute exact-driver delivery/restoration/cleanup controls before consumption. Until then **legacy resize phase latency triggers are non-interpretable**, although functional stable-frame evidence can still validate.
+ 
+@@ -451,3 +451,15 @@
+ Rebind **all52 case identities**, every decision/descriptive ledger row and every matrix, pool-spec, plan and preflight expectation reference to the actual selected argv/parser-typed profile. Supplied60/2/300timing values are floats while omitted defaults retain frozen integer types. All52 integer-literal baseline hashes differ from the selected execution-typed baseline; historical generator hashes cannot substitute for execution-typed hashes. Exactly two attribution-long definitions change semantically WITHIN either fixed typing profile; routes/fixtures/latency phase sets remain unchanged. Compute campaign_cases directly from EACH argv's own actual Options, including all2preflight/84campaign/4pool-plan records. The86preflight/campaign records use raw parsed Options unchanged; the4pool-plan records retain raw parsed Options and execute the exact existing pool_definition base-Options assignment AST before campaign_cases(base), matching its actual execution without a guessed normalization or validation bypass. Compare same-case definitions with the declaration's ledger templates and expected preflight case_hashes. No actual collector preflight exists yet: equality with future retained preflight case_hashes is still required, and the pending matrix path substitution remains provisional. Regenerate all source/preflight/spec bindings prospectively; no old declaration or source-bound preflight authorizes this successor.
+ 
+ The reviewed four-file remedy was applied in root's explicit post-idle edit window, then its integer-duration test gained250.0 and a compiled type-guard-removal control. Stage1 exact reviewed postimages and successor hashes/checks are retained separately under `/home/ajs/.cache/pb-phase7/postidle-bracket-applied`; the entire off-tree proposal remains immutable. No full bench suite or native/CLI/lock work ran in this scoped window. Central full checks, protocol R3 adjudication, final matrix freeze and actual matching functional preflights remain pending. The anchor's raw checkpoint/offset/session JSON is retained but per-evaluation latency history/replay/metrics are excluded; whole-session/serialization work remains real. Neither the delay nor its retained consistency check proves actual brackets or kernel accounting provenance.
++
++## A1 SQL geometry correction (implementation; acceptance pending)
++
++The first actual combined A1 preflight failed in the Go reference at `sql-scroll-500-120x40-dark`: `resize-large` repainted 140×45, but the closed-drawer footer predicate never qualified. The 62s session timeout prevented `resize-original` and the Rust capture. The resulting missing resize event then raised `captured resize sequence differs from declared script`. The original report, sessions, raw bytes and independent diagnosis remain unchanged; see `docs/phase7-review-a1-functional-failure-opus-r1.md`.
++
++The collector now follows the default **open** columns drawer without changing any case, action, key, count, seed, wait definition or fixture. Go `pkg/model/query.go` initializes `columnsDrawerOpen: true` and its `View` computes `sidebarW=34` (`sqlControlsMinWidth`), adding 3 at W≥140, then `editorW=max(30,W−sidebarW−1)`. With full-height controls, `resultsW=editorW`. Rust `src/tui/sql.rs` initializes the same state and mirrors those calculations. Thus the footer on zero-based row H−6 must end exclusively at `resultsW−3`: 82 at 120×40 and 99 at 140×45. On both that row and selected-marker row 16, readiness requires results borders at 0/resultsW−1, the blank one-column gap at resultsW, and sidebar borders at resultsW+1/W−1. The marker must lie inside the results pane. Existing actual-dimensions, post-action output, changed-frame, corner and 80ms styled stability checks remain in force.
++
++Functional preflight records per-role `capture_failure` and `termination` immediately after `sample` returns, before artifact/binding validation. They describe the returned capture only; they grant no validity. The existing binding exception still aborts before subsequent validation/comparison or the candidate role, leaves the report invalid, and is retained alongside the original timeout. There is no catch-and-continue or subset admission.
++
++`docs/evidence/phase7/a1-geometry-retained-go.json.gz` contains hash-bound 120×40 `return-first` and 140×45 final Go frames, their original raw stream, exact resize offset, source identities and the original compiled-predicate control. Pure tests reconstruct both full styled frames exactly, reject wrong footer columns/rows, closed-drawer full-width geometry, misplaced markers, broken pane/sidebar/outer borders and gaps, and partial old frames during grow/shrink. The original predicate rejects both actual targets while accepting its synthetic closed-drawer control. Refeeding the retained 120×40 bytes after a shrink is a pure emulator control, not an observed native shrink. A mock timeout plus the real downstream binding exception proves that both diagnostics survive and the candidate remains unrun; compiled removal of the new reporting assignments removes only those diagnostics.
++
++PromQL `dense_table_geometry` is unchanged. Source inference: Go `pkg/model/promql.go` computes `resultsInnerW=m.width−4` and renders the results pane with `m.width`; Rust `src/tui/promql.rs` computes its inner width from `self.width` and passes `self.width` to `results_pane`. Its results span the full terminal width, so SQL's drawer correction does not transfer. No actual PromQL capture or successful matching preflight is established here. Fresh independent review and root's actual Go/Rust preflight remain required; this implementation is not acceptance or a performance claim.
+--- a/harness/contracts/phase7.md
++++ b/harness/contracts/phase7.md
+@@ -330,3 +330,9 @@
+ Rebind **all52 case identities**, every decision/descriptive ledger row and every matrix, pool-spec, plan and preflight expectation reference to the actual selected argv/parser-typed profile. Supplied60/2/300timing values are floats while omitted defaults retain frozen integer types. All52 integer-literal baseline hashes differ from the selected execution-typed baseline; historical generator hashes cannot substitute for execution-typed hashes. Exactly two attribution-long definitions change semantically WITHIN either fixed typing profile; routes/fixtures/latency phase sets remain unchanged. Compute campaign_cases directly from EACH argv's own actual Options, including all2preflight/84campaign/4pool-plan records. The86preflight/campaign records use raw parsed Options unchanged; the4pool-plan records retain raw parsed Options and execute the exact existing pool_definition base-Options assignment AST before campaign_cases(base), matching its actual execution without a guessed normalization or validation bypass. Compare same-case definitions with the declaration's ledger templates and expected preflight case_hashes. No actual collector preflight exists yet: equality with future retained preflight case_hashes is still required, and the pending matrix path substitution remains provisional. Regenerate all source/preflight/spec bindings prospectively; no old declaration or source-bound preflight authorizes this successor.
+ 
+ The reviewed four-file remedy was applied in root's explicit post-idle edit window, then its integer-duration test gained250.0 and a compiled type-guard-removal control. Stage1 exact reviewed postimages and successor hashes/checks are retained separately under `/home/ajs/.cache/pb-phase7/postidle-bracket-applied`; the entire off-tree proposal remains immutable. No full bench suite or native/CLI/lock work ran in this scoped window. Central full checks, protocol R3 adjudication, final matrix freeze and actual matching functional preflights remain pending. The anchor's raw checkpoint/offset/session JSON is retained but per-evaluation latency history/replay/metrics are excluded; whole-session/serialization work remains real. Neither the delay nor its retained consistency check proves actual brackets or kernel accounting provenance.
++
++## A1 default-open SQL collector correction
++
++The unchanged SQL measurement actions preserve the default open columns drawer. Its source-derived results width is `max(30,W−(34+(3 if W≥140 else 0))−1)`. SQL resize readiness requires the exact footer on zero-based H−6 ending exclusively at resultsW−3, the row-zero marker inside the results pane on row 16, and results borders 0/resultsW−1, blank gap resultsW, sidebar borders resultsW+1/W−1 on both rows. Actual dimensions and all existing output/rerender/corner/stability/validation gates remain required. No ctrl+l action, case/hash/count/seed/fixture change or footer-anywhere fallback is introduced. This supersedes historical closed-drawer W−3 SQL assumptions only; full-width PromQL geometry stays unchanged and its actual preflight remains pending.
++
++Before any post-sample binding check, functional preflight retains informational `capture_failure` and `termination` from the returned role capture. A subsequent binding exception still aborts, retains its own error and leaves the report invalid; the original timeout remains visible. No later role, comparison or subset is admitted after that failure. Hash-bound actual Go frames/raw replay and compiled-old-predicate/reporting-removal controls are owned pure tests, not native acceptance. Original failed evidence is immutable. See the A1 correction in `docs/phase7-measurement.md` and `docs/evidence/phase7/a1-geometry-fix-r1.md`; fresh independent review and actual matching root preflight are separate prerequisites.

@@ -1,0 +1,36 @@
+{
+  "kind": "root scoped acceptance of Linux-only generated shared-runner adaptation, not measurements",
+  "review": "docs/phase7-review-shared-linux-adapter-opus-r1.md",
+  "review_sha256": "35235df33699a6fd5d6ce4d9bc624d936eef7fac5f62f1f059233eb8082f4028",
+  "runner": {
+    "path": "/home/ajs/.cache/pb-phase7/shared-runner-owned-cleanup-r2/recipe-generated/run.py",
+    "sha256": "d65cf16df8ba26f0b3b99efe8f0ed408d1c7bfaee1dd1a16d19fd6c4723a2f5e"
+  },
+  "live_run_unchanged": "b280d1295a4b351e6f2d838c56acaac58b2247bb77fc9881587bb7bbe849a076",
+  "independent_checks": {
+    "author_pure": 39,
+    "review_model": 17,
+    "mutants_killed": 9,
+    "own_native_children": 9,
+    "own_native_remaining": 0
+  },
+  "nonblocking_dispositions": {
+    "N1": "latent active-except plus spool_output failure unreachable in this exact suite; no wider reuse approved, no silent fix",
+    "N2": "author scope-final log actually retains failing static check; independent static-check script/log is accepted evidence for claims, original mislabeled artifact preserved",
+    "N3": "flock no-fork descriptor inherited by meter/client for all labels; environment difference retained, passive postlock detects surviving lock holder; no equality claim to historical wrapper environment",
+    "N4": "use flock --conflict-exit-code73; absent/invalid report always fails regardlessexit",
+    "N5": "no -I/-P on generated runner, require PYTHONPATH/PYTHONHOME/PYTHONSAFEPATH unset; explicit absolute runner/cases and all binarypaths",
+    "N6": "1575 meterchildren +1050 fixturechildren +1575CLIgrandchildren +one uname-p; separate supervisor owncapabilityprobe children not workload counts",
+    "N7": "only pinnedPython3.14.7 qualified, generation3.11+ field nottestedclaim",
+    "N8": "only finalauthor andindependentnative traces prove no testcleanupassistance",
+    "N9": "exact15suite no phase4 paths, all explicit suite/fixture/meter paths"
+  },
+  "next_admission": [
+    "fresh full-input binding",
+    "explicit ownlane/companion quiet",
+    "commonNB lock and bounded supervisor strict<1800",
+    "actual complete valid full15report/all1350measured+225warmups, exactnative mapping/output gates/endhashes/cleanup",
+    "same-Go noise evaluation before comparisons"
+  ],
+  "performance_claim": false
+}

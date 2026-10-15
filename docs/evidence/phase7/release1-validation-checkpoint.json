@@ -1,0 +1,75 @@
+{
+  "status": "intermediate candidate; acceptance pending further contract fixes",
+  "unit": {
+    "command": "cargo test --lib --locked -- --test-threads=1",
+    "passed": 380,
+    "failed": 0,
+    "log": "/home/ajs/.cache/pb-phase7/integration-unit5.log"
+  },
+  "lint": {
+    "command": "cargo clippy --all-targets --locked -- -D warnings",
+    "exit": 0,
+    "log": "/home/ajs/.cache/pb-phase7/clippy5.log"
+  },
+  "python": {
+    "command": "python -m unittest discover -s harness -p test_*.py -v",
+    "passed": 317,
+    "skipped": 0,
+    "log": "/home/ajs/.cache/pb-phase7/python-all-release1.log"
+  },
+  "oauth_effects": {
+    "passed": 4,
+    "oracle_and_candidate": true,
+    "log": "/home/ajs/.cache/pb-phase7/oauth-release1.log"
+  },
+  "pending": [
+    "corrected source unit/lint and immutable rebuild",
+    "190-case final styled replay",
+    "final revision effects/device and retained phase1-5 gates",
+    "performance collector review fixes and functional preflight",
+    "performance/profiling after explicit quiet agreement",
+    "independent final phase-wide acceptance"
+  ],
+  "ordinary_effects": {
+    "passed": 34,
+    "failed": 0,
+    "deferred": 8,
+    "deferred_executed_separately": true
+  },
+  "real_deadlines": {
+    "passed": 4,
+    "failed": 0,
+    "seconds": [
+      15,
+      30,
+      50,
+      120
+    ]
+  },
+  "device": {
+    "passed": 17,
+    "failed": 0
+  },
+  "styled": {
+    "gate_passed": 145,
+    "gate_failed": 3,
+    "documentary_compared": 30,
+    "documentary_mismatches": 0,
+    "total": 178,
+    "remaining": [
+      "SQL CJK clipping in both themes",
+      "SQL pending spinner phase; Go variance confirmed"
+    ],
+    "original_report_preserved": true,
+    "after_narrow_spinner_normalization": {
+      "gate_passed": 146,
+      "gate_failed": 2,
+      "documentary_compared": 30,
+      "documentary_mismatches": 0,
+      "remaining": [
+        "SQL CJK clipping dark/light"
+      ],
+      "source": "styled-release1-reduced-spinner1/report.json"
+    }
+  }
+}

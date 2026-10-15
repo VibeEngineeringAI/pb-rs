@@ -1,0 +1,116 @@
+{
+  "kind": "bounded actual pinned-Go PTY identity characterization",
+  "source_pin": "07af390",
+  "binary": "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+  "binary_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+  "raw_dataset_hex": "b58be8af95",
+  "replacement_title": "\ufffd\ufffd\u8bd5",
+  "dimensions": [
+    120,
+    35
+  ],
+  "case": "late_dataset_list_after_empty_raw_schema",
+  "candidate_executed": false,
+  "rust_tests_executed": false,
+  "scope": "Go request identity and causal completion only; no full styled-frame parity or timings",
+  "raw_schema_idle_frame_offset": 26505,
+  "logs_schema_frame_offset": 30220,
+  "passed": true,
+  "terminal_restored": true,
+  "config_unchanged": true,
+  "byte_identity_selected": "logs",
+  "source_unchanged_during_process": true,
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/api/prism/v1/home",
+      "params": {},
+      "body": "",
+      "headers": {
+        "Host": "127.0.0.1:42489",
+        "User-Agent": "Go-http-client/1.1",
+        "Content-Type": "application/json",
+        "X-Api-Key": "fixture-key",
+        "Accept-Encoding": "gzip"
+      },
+      "received": 996030.764910343,
+      "protocol": "HTTP/1.1",
+      "closed_before_response": false,
+      "response_status": 200,
+      "response_preview": "{\"datasets\": [{\"title\": \"logs\", \"datasetType\": \"logs\"}, {\"title\": \"\\ufffd\\ufffd\\u8bd5\", \"datasetType\": \"logs\"}]}",
+      "response_bytes": 112,
+      "done": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/logstream/%B5%8B%E8%AF%95/schema",
+      "params": {},
+      "body": "",
+      "headers": {
+        "Host": "127.0.0.1:42489",
+        "User-Agent": "Go-http-client/1.1",
+        "X-Api-Key": "fixture-key",
+        "Accept-Encoding": "gzip"
+      },
+      "received": 996030.963745796,
+      "protocol": "HTTP/1.1",
+      "response_status": 200,
+      "response_preview": "{\"fields\": []}",
+      "response_bytes": 14,
+      "done": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/query",
+      "params": {
+        "fields": [
+          "true"
+        ]
+      },
+      "body": "{\"endTime\":\"2026-10-14T13:31:12Z\",\"query\":\"SELECT * FROM '\\ufffd\\ufffd\u8bd5' LIMIT 1\",\"startTime\":\"2000-01-01T00:00:00+00:00\"}",
+      "headers": {
+        "Host": "127.0.0.1:42489",
+        "User-Agent": "Go-http-client/1.1",
+        "Content-Length": "124",
+        "Content-Type": "application/json",
+        "X-Api-Key": "fixture-key",
+        "Accept-Encoding": "gzip"
+      },
+      "received": 996030.964491945,
+      "protocol": "HTTP/1.1",
+      "response_status": 200,
+      "response_preview": "{\"fields\": [], \"records\": []}",
+      "response_bytes": 29,
+      "done": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/logstream/logs/schema",
+      "params": {},
+      "body": "",
+      "headers": {
+        "Host": "127.0.0.1:42489",
+        "User-Agent": "Go-http-client/1.1",
+        "X-Api-Key": "fixture-key",
+        "Accept-Encoding": "gzip"
+      },
+      "received": 996031.031241015,
+      "protocol": "HTTP/1.1",
+      "response_status": 200,
+      "response_preview": "{\"fields\": [{\"name\": \"LOGS_SELECTED_SCHEMA\"}]}",
+      "response_bytes": 46,
+      "done": true
+    }
+  ],
+  "returncode": 0,
+  "stdout_sha256": "472e0efcfa22f394a16f9bec2f1366d2370506ed18e2e851e0fd816002ffc198",
+  "query_source_sha256": "e902816d2c78163cfcdb6a5d272ae750f5beae533c1d01fa50e13eb9715c781d",
+  "query_source_matches_git_pin": true,
+  "query_source_refs": [
+    "pkg/model/query.go:495-507",
+    "pkg/model/query.go:873-895",
+    "pkg/model/query.go:940-958"
+  ],
+  "characterization_runner": "/home/ajs/.cache/pb-phase7/sql-byte-identity/go_characterization.py",
+  "durable_successor_runner": "docs/evidence/phase7/sql-byte-identity-process.py"
+}

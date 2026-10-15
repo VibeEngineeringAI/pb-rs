@@ -1,0 +1,17 @@
+{
+  "status": "exact independently accepted header-only normalization applied after all16 original retained partitions exited; successor replay pending",
+  "patch_sha256": "387aedec115abd651f9764506672dfe0dbfa5dc5e356b5216dec3921809cebe6",
+  "preimages": {
+    "harness/phase3.py": "33be7605b2e3ea44712a8118b8909b129d00ef3f46c7f4d3932a522351e2b7bd",
+    "harness/test_phase3.py": "ef1a47dc263d18ed94fac7577a7e2597699973e74a4b42d3cbdc598cca9fab59"
+  },
+  "postimages": {
+    "harness/phase3.py": "d13285950a2213faa6adebacffa037b7ad63327012acfa474b0657cc6499d5c0",
+    "harness/test_phase3.py": "ce2f56dbe41415fcc2a7bd6a2e4918cba30057d0efd968af44cebb8145fe06c7"
+  },
+  "original_execution_sha256": "1c4b5d8db89b6a78f699669c87cf442a0d61a24aa4347fc5f02b558873c83a91",
+  "original_failed_report_sha256": "2918475d79c127da2fa5473d3e32155ea2c0f84a4514a170688acae59d01ddb3",
+  "review_sha256": "347f08f75d220523551b2727a6fa210a2c099069392bb40678c063c5c483e937",
+  "output": "/home/ajs/.cache/pb-phase7/combined-header-deadline-applied",
+  "production_unchanged": true
+}

@@ -1,0 +1,30 @@
+{
+  "optimize": 1,
+  "version": "3.14.7 (main, Aug 10 2026, 07:46:56) [GCC 16.1.1 20260728]",
+  "checks": [
+    {
+      "injected_fault": "overbroad_normalization",
+      "error": "negative changed or canonical: bare_canceled",
+      "expected_rejection": true,
+      "no_success_record": true
+    },
+    {
+      "injected_fault": "expectations_silently_pass",
+      "error": "exit_zero not rejected by 'termination ': []",
+      "expected_rejection": true,
+      "no_success_record": true
+    },
+    {
+      "injected_fault": "differential_silently_pass",
+      "error": "request_body not rejected by 'requests differ': []",
+      "expected_rejection": true,
+      "no_success_record": true
+    },
+    {
+      "injected_fault": "missing_campaign",
+      "error": "both exact retained campaigns are required once each",
+      "expected_rejection": true,
+      "no_success_record": true
+    }
+  ]
+}

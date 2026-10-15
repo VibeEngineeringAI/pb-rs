@@ -1,0 +1,43 @@
+{
+  "status": "Owner tests complete; root verified source identities and retained log outcomes. Final protocol/matrix/review pending.",
+  "owner_evidence": {
+    "path": "/home/ajs/.cache/pb-phase7/collector-r8-corrections/final-checks.json",
+    "sha256": "b087da6f1b36fa249c5f3199e78c34e23403e420537e37d55726522ff4879402",
+    "size_bytes": 1691
+  },
+  "source_after": {
+    "harness/phase7_bench.py": {
+      "size_bytes": 190969,
+      "sha256": "b59cf46e346bfa94cba2cdc08040e1335a218713794051e73c321dd6d97c6b3c"
+    },
+    "harness/test_phase7_bench.py": {
+      "size_bytes": 167954,
+      "sha256": "66520ee052e810e8d58f64f25855d7b884b6e5cf1745b4227fa22d577ab2e00f"
+    },
+    "harness/phase7_profile.py": {
+      "size_bytes": 43899,
+      "sha256": "cd064da4a3f192a64c9e015a12d2ec5cbc6b305b3ca992d95f3641d83e5b2385"
+    },
+    "harness/test_phase7_profile.py": {
+      "size_bytes": 37130,
+      "sha256": "75bb14229f18b212cd234e9d2d4af5ad8cef3eb290f2c483d45e6e1c2e6443dd"
+    }
+  },
+  "logs": [
+    {
+      "path": "/home/ajs/.cache/pb-phase7/collector-r8-corrections/bench-final4.log",
+      "sha256": "d0cb4b4f536603d7a9450b6fa3fe1b85341d1e967e25245e4f1965eb98e21381",
+      "size_bytes": 208,
+      "verified_test_count": 106
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/collector-r8-corrections/profile-final2.log",
+      "sha256": "95ea55cce2dd38d166efa723c9131610a52a690fe0661460df40bc9058d5ab2b",
+      "size_bytes": 226,
+      "verified_test_count": 23
+    }
+  ],
+  "root_execution": "No suite rerun; source and log validation only.",
+  "native_analysis_child": "Excluded from this23-test run; prior unchanged profile source24-test central run separate.",
+  "no_measurement_admission": true
+}

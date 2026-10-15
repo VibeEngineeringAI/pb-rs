@@ -1,0 +1,11 @@
+{
+  "unicode_scalars_checked": 1112064,
+  "rows_with_width_change_or_ascii_result": 153,
+  "go_only": [],
+  "rust_only": [
+    "a7cb 264 2",
+    "a7dc 19b 2"
+  ],
+  "helper_sha256": "fdd36b33f66ae7e10053321a07df9a4bc321b06950e33d8bbda35b885e27de69",
+  "scope": "all scalar lowercase mappings relevant to original-byte offsets or ASCII needle matches; same-width non-ASCII differences cannot change these offsets"
+}

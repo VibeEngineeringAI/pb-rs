@@ -1,0 +1,65 @@
+--- a/harness/phase3.py
++++ b/harness/phase3.py
+@@ -1481,6 +1481,12 @@
+     if bare_context is not None and data == b"Error: " + bare_context + b": context deadline exceeded\n":
+         return (b"Error: " + bare_context + b": <CLIENT-TIMEOUT> "
+                 b"(Client.Timeout or context cancellation while reading body)\n")
++    # cloudRefreshTransport is unknown to net/http: its context deadline may
++    # beat setRequestCancel's timer/atomic flag. Observed in real 60s Go runs;
++    # keep this exception at the exact second-hop error, not arbitrary URLs.
++    if (case["name"] == "p3-deadline-spans-redirects" and data ==
++            b'Error: request execution failed: Post "http://<FIXTURE>/v2/api/v1/query": context deadline exceeded\n'):
++        data = data[:-1] + b" (Client.Timeout exceeded while awaiting headers)\n"
+     return TIMEOUT_CAUSE.sub(rb"<CLIENT-TIMEOUT> (\1)", data)
+ 
+ 
+--- a/harness/test_phase3.py
++++ b/harness/test_phase3.py
+@@ -369,6 +369,47 @@
+             for other in ("p3-deadline-body-stall-text", "p3-deadline-body-stall-json", "p3-text-empty"):
+                 self.assertEqual(phase3.compare_stderr(by_name()[other], bare), bare)
+ 
++    def test_redirect_bare_deadline_has_an_exact_case_and_error_boundary(self):
++        case = by_name()["p3-deadline-spans-redirects"]
++        bare = b'Error: request execution failed: Post "http://<FIXTURE>/v2/api/v1/query": context deadline exceeded\n'
++        suffixed = bare[:-1] + b" (Client.Timeout exceeded while awaiting headers)\n"
++        canceled = suffixed.replace(b"context deadline exceeded", b"net/http: request canceled")
++        canonical = phase3.compare_stderr(case, suffixed)
++        for value in (bare, suffixed, canceled):
++            self.assertEqual(phase3.compare_stderr(case, value), canonical)
++        for value in (bare.replace(b"/v2/", b"/"), bare.replace(b"<FIXTURE>", b"other"),
++                      bare.replace(b"Post", b"Get"), bare.replace(b"context deadline exceeded", b"net/http: request canceled"),
++                      bare[:-1], bare[:-1] + b"\r\n", bare + b"extra\n",
++                      bare[:-1] + b" (Client.Timeout or context cancellation while reading body)\n",
++                      json.dumps({"error": bare.decode()}).encode()):
++            self.assertNotEqual(phase3.compare_stderr(case, value), canonical)
++        for other in ("p3-deadline-header-stall-text", "p3-deadline-header-stall-json",
++                      "p3-deadline-spans-refresh", "p3-text-empty"):
++            self.assertEqual(phase3.compare_stderr(by_name()[other], bare), bare)
++        disabled = copy.deepcopy(case)
++        disabled["compare"]["timeout_cause"] = False
++        self.assertEqual(phase3.compare_stderr(disabled, bare), bare)
++
++    def test_redirect_normalization_keeps_exit_request_and_duration_gates(self):
++        case = by_name()["p3-deadline-spans-redirects"]
++        bare = b'Error: request execution failed: Post "http://<FIXTURE>/v2/api/v1/query": context deadline exceeded\n'
++        reference = fake_result(bare, b"", {"exit": 1})
++        reference.update(wall_ms=60050, requests=[
++            {"method": "POST", "target": "/api/v1/query"},
++            {"method": "POST", "target": "/v2/api/v1/query"}])
++        reference["trace"] = [{"method": r["method"], "path": r["target"], "unexpected": False}
++                              for r in reference["requests"]]
++        self.assertEqual(phase3.expectation_issues(case, reference), [])
++        candidate = copy.deepcopy(reference)
++        candidate["stderr"] = candidate["stderr_normalized"] = bare[:-1] + b" (Client.Timeout exceeded while awaiting headers)\n"
++        self.assertEqual(phase3.differences(case, reference, candidate), [])
++        for field, value in (("wall_ms", 1000), ("wall_ms", 71000),
++                             ("termination", {"exit": 0}), ("trace", reference["trace"][:1]),
++                             ("trace", list(reversed(reference["trace"])))):
++            wrong = copy.deepcopy(reference)
++            wrong[field] = value
++            self.assertTrue(phase3.expectation_issues(case, wrong), (field, value))
++
+     def test_paced_chunk_prefix_allowance_and_wall_bounds(self):
+         case = by_name()["p3-deadline-not-reset-per-chunk"]
+         stderr = b"Error: failed to stream response body: context deadline exceeded (Client.Timeout or context cancellation while reading body)\n"

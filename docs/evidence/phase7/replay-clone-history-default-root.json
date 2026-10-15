@@ -1,0 +1,30 @@
+{
+  "kind": "root pure in-memory clone-state characterization",
+  "native_or_cli_run": false,
+  "production_mismatch_claim": false,
+  "source_under_edit": "harness/phase7_bench.py clone_terminal line_copy",
+  "reproducer": [
+    "x = phase7.Terminal(10, 3, \"dark\")",
+    "x.feed(b\"one\\r\\ntwo\\r\\nthree\\r\\nfour\\r\\n\")",
+    "x.main.set_mode(5, private=True)",
+    "y = phase7_bench.clone_terminal(x)"
+  ],
+  "observed": {
+    "history_lines": 2,
+    "frame_equal": false,
+    "history_default_reverse": [
+      [
+        false,
+        true
+      ],
+      [
+        false,
+        true
+      ]
+    ]
+  },
+  "initial_control": "Using Terminal.feed(ESC[?5h) instead of direct main.set_mode did not reproduce; no claim that shared wire handling reaches this state.",
+  "cause": "Rebuilt StaticDefaultDict lines use current target default rather than each historical source line.default.",
+  "requested_fix": "Preserve copied source line.default for buffer/history and test exact frame, subsequent feeds and clone isolation.",
+  "status": "sent implementation owner; not yet fixed or reviewed"
+}

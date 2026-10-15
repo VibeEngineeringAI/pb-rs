@@ -104,6 +104,8 @@ pub enum ApiError {
         body: bool,
     },
     BodyCanceled,
+    /// A caller context expired before the HTTP client's own deadline.
+    ContextDeadline,
     HttpStatus {
         status: u16,
         reason: String,
@@ -141,7 +143,7 @@ impl ApiError {
     }
     pub fn is_timeout(&self) -> bool {
         match self {
-            Self::Timeout { .. } | Self::BodyCanceled => true,
+            Self::Timeout { .. } | Self::BodyCanceled | Self::ContextDeadline => true,
             Self::Network(e) => e.is_timeout(),
             Self::Refresh(e)
             | Self::Request { source: e, .. }
@@ -170,6 +172,7 @@ impl fmt::Display for ApiError {
             Self::Context { message, source } => write!(f, "{message}: {source}"),
             Self::Timeout { body: true, .. } => f.write_str("context deadline exceeded (Client.Timeout or context cancellation while reading body)"),
             Self::BodyCanceled => f.write_str("net/http: request canceled (Client.Timeout or context cancellation while reading body)"),
+            Self::ContextDeadline => f.write_str("context deadline exceeded"),
             Self::Timeout { method, url, .. } => write!(f, "{} {:?}: context deadline exceeded (Client.Timeout exceeded while awaiting headers)", go_method(method), redact_url_password(url)),
             Self::HttpStatus { status, reason, body, context } => {
                 if context.is_empty() { write!(f, "HTTP {status}: {}", body.trim()) }
@@ -343,9 +346,11 @@ impl StreamingResponse {
 /// One command/session owns a client; concurrent requests share only token state
 /// and the refresh gate. Construction creates no runtime and starts no requests.
 pub struct ApiClient {
-    transport: Client,
+    transport: std::sync::Arc<Client>,
     metrics_transport: std::sync::OnceLock<Client>,
     profile: Mutex<ProfileRecord>,
+    initial_profile: ProfileRecord,
+    refresh_uses_request_transport: bool,
     store: ProfileStore,
     refresh_gate: AsyncMutex<()>,
     orchestrator_token: String,
@@ -365,8 +370,10 @@ impl ApiClient {
         token: impl Into<String>,
     ) -> Result<Self, ApiError> {
         Ok(Self {
-            transport: transport()?,
+            transport: std::sync::Arc::new(transport()?),
             metrics_transport: std::sync::OnceLock::new(),
+            initial_profile: profile.clone(),
+            refresh_uses_request_transport: false,
             profile: Mutex::new(profile),
             store,
             refresh_gate: AsyncMutex::new(()),
@@ -375,6 +382,23 @@ impl ApiClient {
     }
     pub fn profile(&self) -> ProfileRecord {
         self.profile.lock().expect("profile mutex poisoned").clone()
+    }
+
+    /// Interactive effects each receive Go's session-start profile copy. Token
+    /// refresh is local to that effect, while persistence remains CAS-guarded.
+    /// The ordinary transport can share connections; a metrics effect creates
+    /// its own custom transport just as its Go client construction does.
+    pub(crate) fn effect_scope(&self) -> Self {
+        Self {
+            transport: self.transport.clone(),
+            metrics_transport: std::sync::OnceLock::new(),
+            profile: Mutex::new(self.initial_profile.clone()),
+            initial_profile: self.initial_profile.clone(),
+            refresh_uses_request_transport: true,
+            store: self.store.clone(),
+            refresh_gate: AsyncMutex::new(()),
+            orchestrator_token: self.orchestrator_token.clone(),
+        }
     }
 
     pub async fn standard(
@@ -414,6 +438,21 @@ impl ApiClient {
     ) -> Result<PreparedRequest, ApiError> {
         self.prepare_with_policy(method, &["api/v1/", path], body, STANDARD_TIMEOUT, true)
     }
+    /// SQL's interactive service uses NewRequest followed by URL.Query().Set,
+    /// retaining the standard headers while choosing its own total deadline.
+    pub(crate) fn prepare_standard_query(
+        &self,
+        method: Method,
+        path: &str,
+        query: &[(&str, &str)],
+        body: Option<Vec<u8>>,
+        timeout: Duration,
+    ) -> Result<PreparedRequest, ApiError> {
+        let mut request =
+            self.prepare_with_policy(method, &["api/v1/", path], body, timeout, true)?;
+        request.raw_endpoint = set_query_values(&request.raw_endpoint, query);
+        Ok(request)
+    }
     pub fn prepare(
         &self,
         method: Method,
@@ -444,6 +483,30 @@ impl ApiClient {
             body: None,
             timeout: METRICS_TIMEOUT,
             metrics: true,
+        })
+    }
+    /// Interactive builder requests use an already assembled URL, auth-only
+    /// headers, and the ordinary transport with a 30-second total deadline.
+    /// In particular they do not inherit the result client's HTTP/1 policy.
+    pub(crate) fn prepare_builder_get(
+        &self,
+        raw_endpoint: String,
+    ) -> Result<PreparedRequest, ApiError> {
+        self.prepare_auth_get(raw_endpoint, Duration::from_secs(30))
+    }
+    /// Auth-only GET for schema and builder endpoints assembled by the caller.
+    pub(crate) fn prepare_auth_get(
+        &self,
+        raw_endpoint: String,
+        timeout: Duration,
+    ) -> Result<PreparedRequest, ApiError> {
+        Ok(PreparedRequest {
+            method: Method::GET,
+            raw_endpoint,
+            headers: Auth::resolve(&self.profile())?.headers()?,
+            body: None,
+            timeout,
+            metrics: false,
         })
     }
     fn prepare_with_policy(
@@ -670,9 +733,16 @@ impl ApiClient {
             .and_then(session_cookie)
             .unwrap_or_default();
         if request_token == profile.session_token {
-            self.refresh(&profile)
-                .await
-                .map_err(|error| ApiError::Refresh(Box::new(error)))?;
+            self.refresh(
+                &profile,
+                if self.refresh_uses_request_transport {
+                    transport
+                } else {
+                    &self.transport
+                },
+            )
+            .await
+            .map_err(|error| ApiError::Refresh(Box::new(error)))?;
         }
         let mut response = response;
         while response.chunk().await?.is_some() {}
@@ -683,7 +753,7 @@ impl ApiClient {
         send_raw(transport, method, endpoint, &retry_headers, body).await
     }
 
-    async fn refresh(&self, profile: &ProfileRecord) -> Result<(), ApiError> {
+    async fn refresh(&self, profile: &ProfileRecord, transport: &Client) -> Result<(), ApiError> {
         let raw_endpoint =
             append_url_string(&profile.orchestrator_url, &["api/v1/cli/oauth/token"])?;
         let mut headers = orchestrator_headers(&self.orchestrator_token)?;
@@ -692,7 +762,7 @@ impl ApiClient {
         headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/json"));
         let payload = serde_json::to_vec(&serde_json::json!({"grant_type":"refresh_token","refresh_token":profile.refresh_token})).expect("string payload serializes");
         let response = send_raw(
-            &self.transport,
+            transport,
             &Method::POST,
             &endpoint,
             &headers,
@@ -888,7 +958,19 @@ fn checked_http_url(raw: &str) -> Result<Endpoint, ApiError> {
     }
     Endpoint::new(raw)
 }
-fn append_url_string(base: &str, paths: &[&str]) -> Result<String, ApiError> {
+pub(crate) fn append_url_string(base: &str, paths: &[&str]) -> Result<String, ApiError> {
+    append_url_parts(base, paths.iter().map(|path| path.as_bytes()))
+}
+
+/// Join Go path strings that may contain invalid UTF-8, without replacing bytes.
+pub(crate) fn append_url_bytes(base: &str, paths: &[&[u8]]) -> Result<String, ApiError> {
+    append_url_parts(base, paths.iter().copied())
+}
+
+fn append_url_parts<'a>(
+    base: &str,
+    paths: impl IntoIterator<Item = &'a [u8]>,
+) -> Result<String, ApiError> {
     let parse_error = |message: String| ApiError::InvalidUrl(format!("parse {base:?}: {message}"));
     if base.bytes().any(|b| b < 32 || b == 127) {
         return Err(parse_error(
@@ -996,14 +1078,14 @@ fn append_url_string(base: &str, paths: &[&str]) -> Result<String, ApiError> {
         }
     }
     let absolute_path = original_path.starts_with('/');
-    let mut combined = original_path.to_owned();
+    let mut combined = original_path.as_bytes().to_vec();
     for path in paths {
-        combined.push('/');
-        combined.push_str(path);
+        combined.push(b'/');
+        combined.extend_from_slice(path);
     }
     // JoinPath ignores setPath's failure for an invalid escape introduced by
     // an element, retaining the original URL instead of the appended path.
-    let bytes = combined.as_bytes();
+    let bytes = &combined;
     if (0..bytes.len()).any(|index| {
         bytes[index] == b'%'
             && (bytes.get(index + 1).is_none_or(|b| !b.is_ascii_hexdigit())
@@ -1011,24 +1093,29 @@ fn append_url_string(base: &str, paths: &[&str]) -> Result<String, ApiError> {
     }) {
         return Ok(base.into());
     }
-    let trailing = combined.ends_with('/');
+    let trailing = combined.ends_with(b"/");
     let mut clean = Vec::new();
-    for part in combined.split('/') {
+    for part in combined.split(|byte| *byte == b'/') {
         match part {
-            "" | "." => {}
-            ".." => {
+            b"" | b"." => {}
+            b".." => {
                 clean.pop();
             }
             _ => clean.push(part),
         }
     }
-    let mut path = format!(
-        "{}{}",
-        if absolute_path { "/" } else { "" },
-        clean.join("/")
-    );
-    if trailing && !path.ends_with('/') {
-        path.push('/');
+    let mut path = Vec::with_capacity(combined.len());
+    if absolute_path {
+        path.push(b'/');
+    }
+    for (index, part) in clean.iter().enumerate() {
+        if index > 0 {
+            path.push(b'/');
+        }
+        path.extend_from_slice(part);
+    }
+    if trailing && !path.ends_with(b"/") {
+        path.push(b'/');
     }
     fn valid_raw_byte(byte: u8) -> bool {
         byte.is_ascii_alphanumeric()
@@ -1056,16 +1143,20 @@ fn append_url_string(base: &str, paths: &[&str]) -> Result<String, ApiError> {
                     | b']'
             )
     }
-    let valid_raw = path.bytes().all(valid_raw_byte);
+    let valid_raw = path.iter().copied().all(valid_raw_byte);
     let mut decoded = Vec::new();
     if !valid_raw {
-        let bytes = path.as_bytes();
+        let bytes = &path;
         let mut index = 0;
         while index < bytes.len() {
             if bytes[index] == b'%' {
                 decoded.push(
-                    u8::from_str_radix(&path[index + 1..index + 3], 16)
-                        .expect("percent escapes were validated"),
+                    u8::from_str_radix(
+                        std::str::from_utf8(&path[index + 1..index + 3])
+                            .expect("validated ASCII hex"),
+                        16,
+                    )
+                    .expect("percent escapes were validated"),
                 );
                 index += 3;
             } else {
@@ -1075,7 +1166,7 @@ fn append_url_string(base: &str, paths: &[&str]) -> Result<String, ApiError> {
         }
     }
     let mut encoded = String::new();
-    for byte in if valid_raw { path.as_bytes() } else { &decoded } {
+    for byte in if valid_raw { &path } else { &decoded } {
         let byte = *byte;
         if (valid_raw && valid_raw_byte(byte))
             || (!valid_raw
@@ -1167,6 +1258,76 @@ impl CloudAuthClient {
             transport: transport()?,
             token: token.into(),
         })
+    }
+    /// Device authorization uses a replayable JSON POST and an optional
+    /// authorization expiry in addition to the client's per-request timeout.
+    /// OAuth/status interpretation is owned by the device workflow.
+    pub(crate) async fn post_json(
+        &self,
+        orchestrator_url: &str,
+        path: &str,
+        payload: Vec<u8>,
+        timeout: Duration,
+        context_deadline: Option<Instant>,
+    ) -> Result<ApiResponse, ApiError> {
+        let raw =
+            append_url_string(orchestrator_url, &[path]).map_err(|source| ApiError::Context {
+                message: "invalid orchestrator URL".into(),
+                source: Box::new(source),
+            })?;
+        let mut headers = orchestrator_headers(&self.token)?;
+        headers.insert(ACCEPT, HeaderValue::from_static("application/json"));
+        headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/json"));
+        let endpoint = checked_http_url(&raw).map_err(|source| ApiError::Request {
+            method: Method::POST,
+            url: raw.clone(),
+            source: Box::new(source),
+        })?;
+        let timeout_url = Mutex::new(raw.clone());
+        let client_deadline = Instant::now() + timeout;
+        let context_first = context_deadline.is_some_and(|end| end <= client_deadline);
+        let deadline = context_deadline.map_or(client_deadline, |end| end.min(client_deadline));
+        let expired = |body: bool| {
+            if context_first {
+                if body {
+                    ApiError::ContextDeadline
+                } else {
+                    ApiError::Request {
+                        method: Method::POST,
+                        url: timeout_url
+                            .lock()
+                            .expect("timeout URL mutex poisoned")
+                            .clone(),
+                        source: Box::new(ApiError::ContextDeadline),
+                    }
+                }
+            } else {
+                ApiError::Timeout {
+                    method: Method::POST,
+                    url: timeout_url
+                        .lock()
+                        .expect("timeout URL mutex poisoned")
+                        .clone(),
+                    body,
+                }
+            }
+        };
+        let response = timeout_at(
+            deadline,
+            send_cloud_request(
+                &self.transport,
+                &endpoint,
+                &headers,
+                Method::POST,
+                Some(payload),
+                Some(&timeout_url),
+            ),
+        )
+        .await
+        .map_err(|_| expired(false))??;
+        timeout_at(deadline, buffer_response(response))
+            .await
+            .map_err(|_| expired(true))?
     }
     pub async fn validate_api_key(
         &self,
@@ -1379,18 +1540,41 @@ async fn send_cloud_redirects(
     endpoint: &Endpoint,
     headers: &HeaderMap,
 ) -> Result<RawResponse, ApiError> {
+    send_cloud_request(client, endpoint, headers, Method::GET, None, None).await
+}
+
+async fn send_cloud_request(
+    client: &Client,
+    endpoint: &Endpoint,
+    headers: &HeaderMap,
+    method: Method,
+    body: Option<Vec<u8>>,
+    timeout_url: Option<&Mutex<String>>,
+) -> Result<RawResponse, ApiError> {
     let mut current = endpoint.clone();
+    let mut current_method = method.clone();
+    let mut current_body = body;
     let mut current_headers = headers.clone();
     let mut stripped = false;
     for hop in 0..10 {
-        let response = send_raw(client, &Method::GET, &current, &current_headers, &None)
-            .await
-            .map_err(|source| ApiError::Request {
-                method: Method::GET,
-                url: current.to_string(),
-                source: Box::new(source),
-            })?;
-        if !matches!(response.status().as_u16(), 301 | 302 | 303 | 307 | 308)
+        if let Some(url) = timeout_url {
+            *url.lock().expect("timeout URL mutex poisoned") = current.to_string();
+        }
+        let response = send_raw(
+            client,
+            &current_method,
+            &current,
+            &current_headers,
+            &current_body,
+        )
+        .await
+        .map_err(|source| ApiError::Request {
+            method: method.clone(),
+            url: current.to_string(),
+            source: Box::new(source),
+        })?;
+        let status = response.status().as_u16();
+        if !matches!(status, 301 | 302 | 303 | 307 | 308)
             || response.headers().get(LOCATION).is_none()
         {
             return Ok(response);
@@ -1400,7 +1584,7 @@ async fn send_cloud_redirects(
             return Ok(response);
         }
         let next = current.join(&location).map_err(|e| ApiError::Request {
-            method: Method::GET,
+            method: method.clone(),
             url: current.to_string(),
             source: Box::new(ApiError::InvalidUrl(format!(
                 "failed to parse Location header {location:?}: {e}"
@@ -1408,12 +1592,23 @@ async fn send_cloud_redirects(
         })?;
         if hop == 9 {
             return Err(ApiError::Request {
-                method: Method::GET,
+                method: method.clone(),
                 url: location,
                 source: Box::new(ApiError::Redirect("stopped after 10 redirects".into())),
             });
         }
+        // Go constructs the next request before draining this response. A
+        // deadline during that drain therefore names the next hop as well.
+        if let Some(url) = timeout_url {
+            *url.lock().expect("timeout URL mutex poisoned") = next.to_string();
+        }
         drain_redirect(response).await;
+        if matches!(status, 301..=303) {
+            if current_method != Method::GET && current_method != Method::HEAD {
+                current_method = Method::GET;
+            }
+            current_body = None;
+        }
         stripped |= !redirect_credentials_allowed(endpoint, &next);
         current_headers = headers.clone();
         if stripped {
@@ -1429,29 +1624,98 @@ async fn send_cloud_redirects(
     unreachable!("redirect loop always returns")
 }
 
-/// Go QueryEscape leaves tilde alone and preserves repeated-value insertion order.
-pub fn encode_query_pairs(pairs: &[(String, String)]) -> String {
-    fn escape(value: &str) -> String {
-        let mut out = String::new();
-        for byte in value.bytes() {
-            match byte {
-                b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'-' | b'_' | b'.' | b'~' => {
-                    out.push(byte as char)
+/// net/url.ParseQuery retains valid pairs after malformed escapes/semicolons
+/// and treats decoded values as bytes, including invalid UTF-8.
+fn set_query_values(raw: &str, updates: &[(&str, &str)]) -> String {
+    use std::collections::BTreeMap;
+    fn decode(raw: &str) -> Option<Vec<u8>> {
+        let mut result = Vec::with_capacity(raw.len());
+        let mut bytes = raw.bytes();
+        while let Some(byte) = bytes.next() {
+            result.push(match byte {
+                b'+' => b' ',
+                b'%' => {
+                    let high = (bytes.next()? as char).to_digit(16)?;
+                    let low = (bytes.next()? as char).to_digit(16)?;
+                    (high * 16 + low) as u8
                 }
-                b' ' => out.push('+'),
-                _ => {
-                    use std::fmt::Write;
-                    write!(out, "%{byte:02X}").unwrap();
-                }
+                byte => byte,
+            });
+        }
+        Some(result)
+    }
+    let (before_fragment, fragment) = raw.split_once('#').unwrap_or((raw, ""));
+    let (base, query) = before_fragment
+        .split_once('?')
+        .unwrap_or((before_fragment, ""));
+    let mut values: BTreeMap<Vec<u8>, Vec<Vec<u8>>> = BTreeMap::new();
+    for pair in query
+        .split('&')
+        .filter(|pair| !pair.is_empty() && !pair.contains(';'))
+    {
+        let (key, value) = pair.split_once('=').unwrap_or((pair, ""));
+        if let (Some(key), Some(value)) = (decode(key), decode(value)) {
+            values.entry(key).or_default().push(value);
+        }
+    }
+    for (key, value) in updates {
+        values.insert(key.as_bytes().to_vec(), vec![value.as_bytes().to_vec()]);
+    }
+    let encoded = values
+        .into_iter()
+        .flat_map(|(key, values)| {
+            values.into_iter().map(move |value| {
+                format!(
+                    "{}={}",
+                    query_escape_bytes(&key),
+                    query_escape_bytes(&value)
+                )
+            })
+        })
+        .collect::<Vec<_>>()
+        .join("&");
+    let mut result = base.to_owned();
+    if !encoded.is_empty() {
+        result.push('?');
+        result.push_str(&encoded);
+    }
+    if raw.contains('#') {
+        result.push('#');
+        result.push_str(fragment);
+    }
+    result
+}
+
+fn query_escape_bytes(value: &[u8]) -> String {
+    let mut out = String::new();
+    for &byte in value {
+        match byte {
+            b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'-' | b'_' | b'.' | b'~' => {
+                out.push(byte as char)
+            }
+            b' ' => out.push('+'),
+            _ => {
+                use std::fmt::Write;
+                write!(out, "%{byte:02X}").unwrap();
             }
         }
-        out
     }
+    out
+}
+
+/// Go QueryEscape leaves tilde alone and preserves repeated-value insertion order.
+pub fn encode_query_pairs(pairs: &[(String, String)]) -> String {
     let mut sorted: Vec<_> = pairs.iter().collect();
     sorted.sort_by(|a, b| a.0.cmp(&b.0));
     sorted
         .into_iter()
-        .map(|(k, v)| format!("{}={}", escape(k), escape(v)))
+        .map(|(k, v)| {
+            format!(
+                "{}={}",
+                query_escape_bytes(k.as_bytes()),
+                query_escape_bytes(v.as_bytes())
+            )
+        })
         .collect::<Vec<_>>()
         .join("&")
 }
@@ -1523,6 +1787,197 @@ mod tests {
         }
     }
     type Captured = Arc<Mutex<Vec<String>>>;
+
+    #[test]
+    fn sql_query_parameters_preserve_go_parsequery_bytes() {
+        assert_eq!(
+            set_query_values(
+                "http://fixture/query?z=last&a=one+two&a=%FF&bad=%xy&semi=x;y&fields=false#frag",
+                &[("fields", "true")],
+            ),
+            "http://fixture/query?a=one+two&a=%FF&fields=true&z=last#frag"
+        );
+    }
+
+    #[test]
+    fn device_posts_preserve_headers_and_redirect_method_policy() {
+        for (status, method, replay) in [(302, "GET", false), (307, "POST", true)] {
+            let mut redirect = Reply::new(status, "");
+            redirect.location = Some("/token".into());
+            let (endpoint, requests, worker) = server(vec![
+                redirect,
+                Reply::new(401, "{\"error\":\"authorization_pending\"}"),
+            ]);
+            let response = runtime()
+                .block_on(
+                    CloudAuthClient::with_token("fixture-orchestrator")
+                        .unwrap()
+                        .post_json(
+                            &endpoint,
+                            "api/v1/cli/device/code",
+                            b"{\"client_id\":\"pb-cli\"}".to_vec(),
+                            Duration::from_secs(2),
+                            None,
+                        ),
+                )
+                .unwrap();
+            assert_eq!(response.status, 401, "OAuth status belongs to the workflow");
+            worker.join().unwrap();
+            let requests = requests.lock().unwrap();
+            assert!(requests[0].starts_with("POST /api/v1/cli/device/code HTTP/1.1\r\n"));
+            assert!(requests[1].starts_with(&format!("{method} /token HTTP/1.1\r\n")));
+            for request in requests.iter() {
+                let lower = request.to_ascii_lowercase();
+                assert!(lower.contains("authorization: bearer fixture-orchestrator\r\n"));
+                assert!(lower.contains("accept: application/json\r\n"));
+                assert!(lower.contains("content-type: application/json\r\n"));
+            }
+            assert_eq!(requests[1].ends_with("{\"client_id\":\"pb-cli\"}"), replay);
+        }
+    }
+
+    #[test]
+    fn device_context_deadline_has_no_client_timeout_suffix() {
+        let mut reply = Reply::new(200, "{}");
+        reply.delay = Duration::from_millis(100);
+        let (endpoint, _, worker) = server(vec![reply]);
+        let result = runtime().block_on(async {
+            CloudAuthClient::with_token("fixture-orchestrator")
+                .unwrap()
+                .post_json(
+                    &endpoint,
+                    "api/v1/cli/oauth/token",
+                    b"{}".to_vec(),
+                    Duration::from_secs(2),
+                    Some(Instant::now() + Duration::from_millis(20)),
+                )
+                .await
+        });
+        let error = result.unwrap_err();
+        assert!(error.is_timeout());
+        assert_eq!(
+            error.to_string(),
+            format!("Post \"{endpoint}/api/v1/cli/oauth/token\": context deadline exceeded")
+        );
+        // The fixture tolerates the timed-out client closing its socket.
+        worker.join().unwrap();
+    }
+
+    #[test]
+    fn device_validation_orders_auth_before_scheme_and_wraps_request_errors() {
+        let result = runtime().block_on(async {
+            CloudAuthClient::with_token("")
+                .unwrap()
+                .post_json(
+                    "ftp://fixture",
+                    "api/v1/cli/device/code",
+                    b"{}".to_vec(),
+                    Duration::from_secs(1),
+                    None,
+                )
+                .await
+        });
+        assert_eq!(
+            result.unwrap_err().to_string(),
+            "cloud orchestrator auth token is not configured"
+        );
+        let result = runtime().block_on(async {
+            CloudAuthClient::with_token("fixture")
+                .unwrap()
+                .post_json(
+                    "ftp://fixture",
+                    "api/v1/cli/device/code",
+                    b"{}".to_vec(),
+                    Duration::from_secs(1),
+                    None,
+                )
+                .await
+        });
+        assert_eq!(
+            result.unwrap_err().to_string(),
+            "Post \"ftp://fixture/api/v1/cli/device/code\": unsupported protocol scheme \"ftp\""
+        );
+    }
+
+    #[test]
+    fn device_deadlines_name_the_current_redirect_hop() {
+        for context in [false, true] {
+            let mut redirect = Reply::new(307, "");
+            redirect.location = Some("/slow".into());
+            let mut slow = Reply::new(200, "{}");
+            slow.delay = Duration::from_millis(150);
+            let (endpoint, _, worker) = server(vec![redirect, slow]);
+            let result = runtime().block_on(async {
+                CloudAuthClient::with_token("fixture")
+                    .unwrap()
+                    .post_json(
+                        &endpoint,
+                        "api/v1/cli/device/code",
+                        b"{}".to_vec(),
+                        if context {
+                            Duration::from_secs(2)
+                        } else {
+                            Duration::from_millis(50)
+                        },
+                        context.then(|| Instant::now() + Duration::from_millis(50)),
+                    )
+                    .await
+            });
+            let suffix = if context {
+                ""
+            } else {
+                " (Client.Timeout exceeded while awaiting headers)"
+            };
+            assert_eq!(
+                result.unwrap_err().to_string(),
+                format!("Post \"{endpoint}/slow\": context deadline exceeded{suffix}")
+            );
+            worker.join().unwrap();
+        }
+    }
+
+    #[test]
+    fn device_deadline_during_redirect_drain_names_the_next_hop() {
+        for context in [false, true] {
+            let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+            let endpoint = format!("http://{}", listener.local_addr().unwrap());
+            let (release, wait) = std::sync::mpsc::channel();
+            let worker = thread::spawn(move || {
+                let (mut stream, _) = listener.accept().unwrap();
+                read_test_headers(&mut stream);
+                stream.write_all(b"HTTP/1.1 307 Temporary Redirect\r\nLocation: /next\r\nContent-Length: 100\r\nConnection: close\r\n\r\n0123456789").unwrap();
+                // Keep the redirect body incomplete until the client returns.
+                let _ = wait.recv_timeout(Duration::from_secs(2));
+            });
+            let result = runtime().block_on(async {
+                CloudAuthClient::with_token("fixture")
+                    .unwrap()
+                    .post_json(
+                        &endpoint,
+                        "api/v1/cli/device/code",
+                        b"{}".to_vec(),
+                        if context {
+                            Duration::from_secs(2)
+                        } else {
+                            Duration::from_millis(50)
+                        },
+                        context.then(|| Instant::now() + Duration::from_millis(50)),
+                    )
+                    .await
+            });
+            let _ = release.send(());
+            worker.join().unwrap();
+            let suffix = if context {
+                ""
+            } else {
+                " (Client.Timeout exceeded while awaiting headers)"
+            };
+            assert_eq!(
+                result.unwrap_err().to_string(),
+                format!("Post \"{endpoint}/next\": context deadline exceeded{suffix}")
+            );
+        }
+    }
 
     #[test]
     fn redirects_preserve_wire_path_segments_and_raw_utf8() {

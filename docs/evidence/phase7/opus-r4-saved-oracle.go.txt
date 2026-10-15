@@ -1,0 +1,68 @@
+// Bounded characterization only; never part of the product build.
+package main
+
+import (
+    "encoding/json"
+    "fmt"
+    "os"
+    "runtime"
+    "strings"
+
+    "github.com/charmbracelet/bubbles/list"
+    "github.com/sahilm/fuzzy"
+)
+
+type result struct {
+    Name string
+    Pattern string
+    Titles []string
+    Matches fuzzy.Matches
+    Ranks []list.Rank
+    Panic string `json:",omitempty"`
+    Trace interface{} `json:",omitempty"`
+}
+
+func run(name, pattern string, titles []string) (out result) {
+    out.Name, out.Pattern, out.Titles = name, pattern, titles
+    // PROBE_RESET
+    defer func() {
+        // PROBE_CAPTURE_ON_PANIC
+        if value := recover(); value != nil { out.Panic = fmt.Sprint(value) }
+    }()
+    out.Matches = fuzzy.FindNoSort(pattern, titles)
+    // PROBE_CAPTURE
+    out.Ranks = list.DefaultFilter(pattern, titles)
+    return
+}
+
+func main() {
+    if runtime.Version() != "go1.25.4" { panic("requires pinned Go 1.25.4") }
+    var records []result
+    for _, input := range []struct { name, pattern string; titles []string }{
+        {"nul_early_exhaustion", "a", []string{"a\x00b"}},
+        {"nul_trailing_exhaustion", "a", []string{"a\x00"}},
+        {"nul_two_rune_exhaustion", "ab", []string{"ab\x00x"}},
+        {"nul_stale_membership", "ab", []string{"a\x00x"}},
+        {"nul_repeated_stale", "abc", []string{"a\x00x\x00y"}},
+        {"nul_before_first_match", "a", []string{"x\x00a"}},
+        {"no_nul_no_stale", "ab", []string{"ax"}},
+        {"ascii_adjacent", "lo", []string{"logs", "lOgs", "l_ogs"}},
+        {"ascii_rank", "lg", []string{"Log Server", "log"}},
+        {"ascii_tie", "L", []string{"Logs", "Logs"}},
+        {"unicode_orbit", "ṡ", []string{"other", "ẛ"}},
+        {"unicode_category", "A", []string{"ªA", "QA"}},
+    } {
+        records = append(records, run(input.name,input.pattern,input.titles))
+    }
+    for n:=1; n<=64; n++ {
+        pattern:=strings.Repeat("a",n)
+        records = append(records, run(fmt.Sprintf("contiguous_%02d",n),pattern,[]string{pattern}))
+        if n>=35 {
+            records=append(records,run(fmt.Sprintf("ranking_%02d",n),pattern,[]string{
+                pattern,strings.Repeat("a",n-1)+"_a", "_"+pattern, pattern+"a"}))
+        }
+    }
+    json.NewEncoder(os.Stdout).Encode(map[string]interface{}{
+        "go_version":runtime.Version(),"int_bits":32<<(^uint(0)>>63),"results":records,
+    })
+}
