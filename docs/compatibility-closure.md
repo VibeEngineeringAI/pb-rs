@@ -9,19 +9,19 @@ reports do not establish results for the binary being changed here.
 | Area | Completed work | Still required | Owner |
 | --- | --- | --- | --- |
 | Shell completion | Four generators/protocol implemented; broad Go comparisons and Bash round-trip pass; two review findings corrected and regression tests pass | Final release replay; native shell runtime coverage | Sol 6.1 |
-| Windows compatibility | Native CF_UNICODETEXT reader and owned-window fixture implemented; seven fake-API tests pass; native CI workflow added; correct Win32 unlock handling fixes the pinned Go bug intentionally | Native build/runtime execution, including successful real clipboard paste | Opus 5.5 + Sol 6.1 review |
-| macOS compatibility | Select-based cancellation and high-descriptor fail-closed behavior implemented; all 32 terminal tests pass in parallel on Linux; two test synchronization races corrected | Native macOS execution | Opus 5.5 + Sol 6.1 review |
-| Non-UTF-8 arguments | Byte parser, raw sidecars and filesystem/URL/JSON/config consumers implemented; all noninteractive Opus findings fixed with 17 loopback network cases; raw SQL case promoted to the required phase-three gate with unchanged Go expectations | Interactive regressions, second Opus audit and final integrated validation | Sol 6.1 |
+| Windows compatibility | Native build and Clippy pass; CF_UNICODETEXT reader and owned-window fixture implemented; seven fake-API tests pass; correct Win32 unlock handling fixes the pinned Go bug intentionally | Native TUI run failed one Linux-specific errno assertion; correct it and run the real clipboard test, previously skipped after failure | Opus 5.5 + Sol 6.1 review |
+| macOS compatibility | Native build and Clippy pass; select-based cancellation and high-descriptor fail-closed behavior implemented; Linux terminal tests pass | Native TUI run failed six tests: platform errno text, kernel-generated PENDIN, and terminal revoke after session-leader exit; corrections underway | Opus 5.5 + Sol 6.1 review |
+| Non-UTF-8 arguments | Both Opus reviews cleared original blockers; 19 loopback network cases and two real PTY oracle tests pass; final saved-query time ordering finding fixed; raw SQL promoted to required gate with unchanged expectations | Final integrated replay; malformed-byte terminal dataset display is not established by request-only PTY checks | Sol 6.1 |
 | Flight byte order | Implemented; 68 session tests pass; all three Opus findings corrected, including a real overlapping FlatBuffer regression; second Opus static review approved; unknown endian enum initialization also corrected and tested | Final release replay; native big-endian hardware remains untested | Sol 6.1 + Opus 5.5 review |
 | Root help styling | Implemented; 48 exact pinned-Go cases pass across terminals, themes, disabled/forced colors and redirection | Repeat on final release binary | Primary agent |
 | Final compatibility replay | Retained phase suites and pinned Go binaries located | Freeze final binary; replay CLI, Flight, interactive, and device-login suites together | Primary agent |
 | Live self-hosted SQL/HTTP2 and Flight | Current debug binary successfully lists five datasets, executes SQL, and receives seven Flight records; HTTPS HTTP/2 SQL independently returns 200 | Repeat with frozen final release artifacts | Primary agent |
 | Real Cloud browser authentication | User clarified self-hosted focus | Out of scope; retain Cloud device fixture replay separately | — |
 
-The retained Python harness unit suites passed across all 32 modules. This tests
+The retained Python harness unit suites passed 956 tests across all 33 modules. This tests
 the harness itself and does not substitute for replay against the final binaries.
-The new replay coordinator additionally passes four tests proving failures,
-partial runs and changed inputs cannot be reported as complete passes. Strict
+The new replay coordinator additionally passes five tests proving failures,
+partial runs, changed inputs and newly added source files cannot be reported as complete passes. Strict
 Rust clippy checks pass for all targets and features in the integrated tree.
 
 ### Explicit implementation differences
@@ -44,7 +44,8 @@ public harness-token Cloud and loopback device-login configurations from the
 same hashed sources. `build-manifest.json` binds each executable to its build
 configuration. Any source change during the build invalidates that attempt.
 The first attempt was invalidated while review corrections were landing and
-is not acceptance evidence.
+is not acceptance evidence. Subsequent source corrections similarly supersede
+any incomplete build; the final evidence names only a completed source manifest.
 
 `harness/final_replay.py` requires that completed build manifest and explicit
 paths to the retained reference binaries, HTTP fixture, Flight fixtures, meter

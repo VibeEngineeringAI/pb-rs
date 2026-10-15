@@ -79,19 +79,24 @@ impl std::error::Error for SessionError {}
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) struct Closed;
 
-/// Go's syscall.Errno text: strerror without the Rust " (os error N)" suffix
-/// and with a lowercase first letter (matches Linux and macOS tables for the
-/// errors seen here).
+/// Go syscall.Errno text without Rust's " (os error N)" suffix. Unix uses
+/// lowercase strerror tables; Go syscall_windows.go Errno.error preserves
+/// FormatMessage's capitalization and punctuation.
 pub(crate) fn go_errno(error: &std::io::Error) -> String {
     let text = error.to_string();
-    let mut message = text
+    let message = text
         .split(" (os error ")
         .next()
         .unwrap_or(&text)
         .to_string();
-    if let Some(first) = message.get_mut(..1) {
-        first.make_ascii_lowercase();
-    }
+    #[cfg(unix)]
+    let message = {
+        let mut message = message;
+        if let Some(first) = message.get_mut(..1) {
+            first.make_ascii_lowercase();
+        }
+        message
+    };
     message
 }
 
@@ -2000,9 +2005,17 @@ mod tests {
 
     #[test]
     fn errno_text_matches_go() {
+        // Go1.25.4 syscall/zerrors_darwin_arm64.go errno 6 differs from
+        // Linux; Windows Errno.error keeps the English FormatMessage text.
         assert_eq!(
             go_errno(&std::io::Error::from_raw_os_error(enxio())),
-            "no such device or address"
+            if cfg!(windows) {
+                "The handle is invalid."
+            } else if cfg!(target_os = "macos") {
+                "device not configured"
+            } else {
+                "no such device or address"
+            }
         );
     }
 
@@ -2281,12 +2294,35 @@ mod tests {
                 libc::tcflag_t,
                 libc::tcflag_t,
             ) {
+                Self::flags_at(self.slave())
+            }
+
+            fn flags_at(
+                fd: RawFd,
+            ) -> (
+                libc::tcflag_t,
+                libc::tcflag_t,
+                libc::tcflag_t,
+                libc::tcflag_t,
+            ) {
                 let mut termios = std::mem::MaybeUninit::<libc::termios>::uninit();
                 // SAFETY: written by tcgetattr on success.
                 unsafe {
-                    assert_eq!(libc::tcgetattr(self.slave(), termios.as_mut_ptr()), 0);
+                    assert_eq!(
+                        libc::tcgetattr(fd, termios.as_mut_ptr()),
+                        0,
+                        "{}",
+                        std::io::Error::last_os_error()
+                    );
                     let t = termios.assume_init();
-                    (t.c_iflag, t.c_oflag, t.c_cflag, t.c_lflag)
+                    // XNU tty.c TIOCSETA sets PENDIN when restoring ICANON and
+                    // ORs it into c_lflag. It tracks queued-input reprocessing,
+                    // not the saved configuration; all other bits must match.
+                    #[cfg(target_os = "macos")]
+                    let lflag = t.c_lflag & !libc::PENDIN;
+                    #[cfg(not(target_os = "macos"))]
+                    let lflag = t.c_lflag;
+                    (t.c_iflag, t.c_oflag, t.c_cflag, lflag)
                 }
             }
         }
@@ -2793,13 +2829,20 @@ mod tests {
             if std::env::var_os(DEV_TTY_CHILD).is_none() {
                 return;
             }
+            let tty = std::fs::File::open("/dev/tty").unwrap();
+            let before = Pty::flags_at(tty.as_raw_fd());
             let mut session = TerminalSession::open(Screen::Inline).unwrap();
             assert_eq!(wait(&mut session), Event::Key(Key::runes("x")));
             let started = Instant::now();
             session.close("").unwrap();
             let elapsed = started.elapsed();
             assert!(elapsed < Duration::from_secs(2), "close took {elapsed:?}");
-            eprintln!("dev-tty-child: closed in {elapsed:?}");
+            assert_eq!(
+                Pty::flags_at(tty.as_raw_fd()),
+                before,
+                "restored before session-leader exit"
+            );
+            eprintln!("dev-tty-child: closed in {elapsed:?}; flags restored");
         }
 
         /// The real /dev/tty input path (Go opens it when stdin is not a
@@ -2810,7 +2853,6 @@ mod tests {
         fn process_input_from_dev_tty_reads_and_cancels() {
             use std::os::unix::process::CommandExt;
             let pty = Pty::new(40, 10);
-            let before = pty.flags();
             let path = pty.path.clone();
             let mut command = std::process::Command::new(std::env::current_exe().unwrap());
             command
@@ -2875,7 +2917,10 @@ mod tests {
                 "stderr: {stderr}"
             );
             assert!(stdout.contains("1 passed"), "stdout: {stdout}");
-            assert_eq!(pty.flags(), before);
+            // Darwin kern_exit.c revokes the controlling tty when the
+            // session leader exits. The child therefore checks restoration
+            // while its descriptor is still live, before that kernel revoke.
+            assert!(stderr.contains("flags restored"), "stderr: {stderr}");
         }
 
         /// Closing the master races two kernel states on Linux: pty_close sets

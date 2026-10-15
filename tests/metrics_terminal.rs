@@ -20,7 +20,16 @@ fn terminal_attributes(fd: RawFd) -> libc::termios {
     unsafe {
         let mut attributes = std::mem::MaybeUninit::uninit();
         assert_eq!(libc::tcgetattr(fd, attributes.as_mut_ptr()), 0);
-        attributes.assume_init()
+        let attributes = attributes.assume_init();
+        #[cfg(target_os = "macos")]
+        let attributes = {
+            let mut attributes = attributes;
+            // XNU tty.c restores ICANON with kernel-generated PENDIN. Compare
+            // the configured flags, not this pending-input processing marker.
+            attributes.c_lflag &= !libc::PENDIN;
+            attributes
+        };
+        attributes
     }
 }
 
@@ -63,6 +72,8 @@ fn process_probe_colors_bypasses_timeout_and_termios_restore() {
         std::fs::write(root.join("config/pb/config.toml"), format!(
             "DefaultProfile = \"fixture\"\n[Profiles.fixture]\nurl = \"http://127.0.0.1:{port}\"\nusername = \"u\"\npassword = \"p\"\ncloud = false\n"
         )).unwrap();
+        let (request_ready, request_seen) = std::sync::mpsc::channel();
+        let (restore_checked, wait_for_check) = std::sync::mpsc::channel();
         let server = thread::spawn(move || {
             let (mut socket, _) = listener.accept().unwrap();
             socket
@@ -75,6 +86,13 @@ fn process_probe_colors_bypasses_timeout_and_termios_restore() {
                 headers.push(byte[0]);
             }
             assert!(headers.starts_with(b"GET /prometheus/api/v1/labels"));
+            // Theme probing and restoration finish before the HTTP request.
+            // Hold the process alive here: Darwin revokes its controlling tty
+            // when the session leader exits, invalidating the parent's slave.
+            request_ready.send(()).unwrap();
+            wait_for_check
+                .recv_timeout(Duration::from_secs(10))
+                .unwrap();
             let body = br#"{"status":"success","data":["up"]}"#;
             socket
                 .write_all(
@@ -134,7 +152,12 @@ fn process_probe_colors_bypasses_timeout_and_termios_restore() {
         let mut child = command.spawn().unwrap();
         let mut output = Vec::new();
         let mut replied = false;
+        let mut restored = None;
         loop {
+            if restored.is_none() && request_seen.try_recv().is_ok() {
+                restored = Some(terminal_attributes(slave_fd));
+                restore_checked.send(()).unwrap();
+            }
             assert!(
                 started.elapsed() < Duration::from_secs(9),
                 "{name}: process stalled"
@@ -147,7 +170,14 @@ fn process_probe_colors_bypasses_timeout_and_termios_restore() {
             let ready = unsafe { libc::poll(&mut descriptor, 1, 25) };
             if ready > 0 && descriptor.revents & libc::POLLIN != 0 {
                 let mut bytes = [0; 4096];
-                let count = master.read(&mut bytes).unwrap();
+                let count = match master.read(&mut bytes) {
+                    // PTY hangup is EOF or EIO depending on the kernel. The
+                    // child's exit status and complete output are checked below.
+                    Ok(0) => break,
+                    Ok(count) => count,
+                    Err(error) if error.raw_os_error() == Some(libc::EIO) => break,
+                    Err(error) => panic!("{name}: PTY read failed: {error}"),
+                };
                 output.extend_from_slice(&bytes[..count]);
                 if !replied
                     && output.windows(QUERY.len()).any(|w| w == QUERY)
@@ -184,13 +214,14 @@ fn process_probe_colors_bypasses_timeout_and_termios_restore() {
         if *name == "silent" {
             assert!(started.elapsed() >= Duration::from_millis(4900));
         }
-        let after = terminal_attributes(slave_fd);
+        let after = restored.expect("terminal restoration was checked while the process was alive");
         assert_eq!(
             before.c_lflag, after.c_lflag,
             "{name}: terminal flags not restored"
         );
         assert_eq!(before.c_iflag, after.c_iflag);
         assert_eq!(before.c_oflag, after.c_oflag);
+        assert_eq!(before.c_cflag, after.c_cflag);
         assert_eq!(before.c_cc, after.c_cc);
         std::fs::remove_dir_all(root).unwrap();
     }
