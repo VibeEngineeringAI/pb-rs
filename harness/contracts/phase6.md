@@ -345,7 +345,7 @@ refrozen and no generic JSON or endpoint normalization is added.
 ```sh
 export TMPDIR=/home/ajs/.cache/pb-phase6/tmp
 export GOTMPDIR="$TMPDIR" CLAUDE_CODE_TMPDIR="$TMPDIR"
-python -m unittest discover -s harness -p 'test_phase6*.py' -v
+python harness/run_tests.py
 python harness/phase6_blocked_writer.py \
   --go /home/ajs/.cache/pb-phase6/baselines/pb-go \
   --candidate /home/ajs/.cache/pb-phase6/candidate-review-r5/pb \

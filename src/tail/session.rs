@@ -372,8 +372,14 @@ struct Decoder {
     /// Utf8/LargeUtf8 rewritten to Binary/LargeBinary; see [`wire_schema`].
     /// The renderer keeps the original schema's plan.
     wire: SchemaRef,
-    /// Go's post-order memo: the last compatible occurrence owns each ID's
-    /// value layout. This lookup includes IDs nested only in earlier fields.
+    /// The value layout for every dictionary ID Go's memo registers. An ID
+    /// reachable from the columns keeps the last compatible column-path
+    /// occurrence (Go's post-order memo), which also supplies the nested IDs
+    /// bound at record time; this includes IDs nested only in earlier fields.
+    /// An ID declared only under a leaf field (see [`ipc_dictionary_ids`])
+    /// takes its layout from those fields. Go-compatible occurrences of one
+    /// ID decode identically once canonicalized (see [`wire_schema`]); they
+    /// differ only in nested IDs, which Go binds through column paths alone.
     dictionary_types: HashMap<i64, DictionaryType>,
     /// Validated values with nested dictionaries still represented by their
     /// integer keys. Binding is deferred until a record, as in Go's memo.
@@ -384,8 +390,11 @@ struct Decoder {
     renderer: BatchRenderer,
     /// Unique dictionary IDs declared by the IPC schema.
     ids: BTreeSet<i64>,
-    /// First use in schema order, for Go's record-time dictionary errors.
+    /// IDs reachable from the columns, by first use in schema order: the
+    /// dictionaries Go resolves for a record, in its error order.
     dictionary_order: Vec<i64>,
+    /// Whether a reachable dictionary has nested dictionaries to bind.
+    nested: bool,
     /// Dictionaries Go requires before the first record (`ids.len()`).
     expected: usize,
     /// Initial dictionaries not yet read.
@@ -415,29 +424,39 @@ impl Decoder {
         let decode_error = |e: &dyn std::fmt::Display| {
             format!("arrow/ipc: could not decode schema from message schema: {e}")
         };
-        let (ids, dictionary_order) = ipc_dictionary_ids(&schema);
+        let (ids, orphans) = ipc_dictionary_ids(&schema);
         validation::ipc_schema(&schema)?;
         // Arrow's low-level decoder reads buffers in native byte order and
         // never consults the schema's endianness, so a big-endian stream
         // would render silently wrong numbers. Go byte-swaps such streams;
         // rejecting them here is a declared capability limitation.
-        if schema.endianness() != NATIVE_ENDIAN {
+        let endianness = schema.endianness();
+        if endianness != NATIVE_ENDIAN {
             return Err(NON_NATIVE_ENDIAN.into());
         }
         let schema =
             Arc::new(arrow_ipc::convert::try_fb_to_schema(schema).map_err(|e| decode_error(&e))?);
+        let orphans = orphan_schema(&orphans, endianness).map_err(|e| decode_error(&e))?;
         validation::schema_types(schema.fields()).map_err(|e| decode_error(&e))?;
+        validation::schema_types(orphans.fields()).map_err(|e| decode_error(&e))?;
         // Go rejects types it cannot represent while decoding the schema.
         let renderer = BatchRenderer::new(&schema).map_err(|e| decode_error(&e))?;
         let expected = ids.len();
         let too_deep = validation::nesting(schema.fields()) > validation::GO_MAX_NESTING;
         let wire = Arc::new(wire_schema(&schema));
-        let dictionary_types = dictionary_types(wire.fields());
+        let orphan_types = dictionary_types(wire_schema(&orphans).fields());
+        let mut dictionary_types = dictionary_types(wire.fields());
+        let dictionary_order = dictionary_order(wire.fields());
+        let nested = dictionary_types.values().any(|t| t.nested);
+        for (id, layout) in orphan_types {
+            dictionary_types.entry(id).or_insert(layout);
+        }
         Ok(Self {
             wire,
             dictionary_types,
             ids,
             dictionary_order,
+            nested,
             dictionaries: HashMap::new(),
             nested_deltas: HashMap::new(),
             renderer,
@@ -512,10 +531,12 @@ impl Decoder {
                         &self.wire,
                     ))));
                 }
-                // Go resolves every declared dictionary even for zero rows
-                // and all-null keys. Arrow's flat path instead substitutes
-                // empty values for absent IDs. Check in schema order so the
-                // first missing or unresolved ID also has Go's diagnostic.
+                // Go resolves every dictionary reachable from the columns,
+                // even for zero rows and all-null keys. Arrow's flat path
+                // instead substitutes empty values for absent IDs. Check in
+                // schema order so the first missing or unresolved ID also has
+                // Go's diagnostic. IDs declared only under leaf fields are
+                // never resolved, so they may be absent or unresolvable.
                 for id in &self.dictionary_order {
                     if self.nested_deltas.contains_key(id) {
                         return Err(format!(
@@ -532,7 +553,7 @@ impl Decoder {
                 // dictionaries, replacements and deltas have arrived. Flat
                 // dictionaries retain the direct Arrow path.
                 let resolved;
-                let dictionaries = if self.dictionary_types.values().any(|t| t.nested) {
+                let dictionaries = if self.nested {
                     resolved = self.resolve_dictionaries()?;
                     &resolved
                 } else {
@@ -645,7 +666,7 @@ impl Decoder {
     fn resolve_dictionaries(&self) -> Result<HashMap<i64, ArrayRef>, String> {
         let mut resolved = HashMap::new();
         let mut visiting = BTreeSet::new();
-        for id in &self.ids {
+        for id in &self.dictionary_order {
             self.resolve_dictionary(*id, &mut resolved, &mut visiting)?;
         }
         Ok(resolved)
@@ -1022,23 +1043,288 @@ fn header_name(header: MessageHeader) -> String {
 /// the flatbuffer fields directly, where every dictionary-encoded field
 /// (including ones nested in dictionary values) carries its own encoding,
 /// rather than the converted Arrow fields.
-fn ipc_dictionary_ids(schema: &arrow_ipc::Schema<'_>) -> (BTreeSet<i64>, Vec<i64>) {
-    fn walk(field: arrow_ipc::Field<'_>, ids: &mut BTreeSet<i64>, order: &mut Vec<i64>) {
-        if let Some(dictionary) = field.dictionary()
-            && ids.insert(dictionary.id())
-        {
-            order.push(dictionary.id());
+///
+/// Also returns the orphan fields: children of a field whose type has no
+/// children. Go converts them, registering their dictionary IDs, value types
+/// and conflicts, and then drops them from the field's type, as arrow-rs's
+/// conversion does. Their dictionaries count towards the initial messages
+/// and load like any other, but no record ever reaches them. An orphan's own
+/// orphans are listed separately, so each field belongs to one conversion.
+fn ipc_dictionary_ids<'a>(
+    schema: &arrow_ipc::Schema<'a>,
+) -> (BTreeSet<i64>, Vec<arrow_ipc::Field<'a>>) {
+    fn walk<'a>(
+        field: arrow_ipc::Field<'a>,
+        ids: &mut BTreeSet<i64>,
+        orphans: &mut Vec<arrow_ipc::Field<'a>>,
+    ) {
+        if let Some(dictionary) = field.dictionary() {
+            ids.insert(dictionary.id());
         }
+        let keeps = keeps_children(field.type_type());
         for child in field.children().into_iter().flatten() {
-            walk(child, ids, order);
+            if !keeps {
+                orphans.push(child);
+            }
+            walk(child, ids, orphans);
         }
     }
     let mut ids = BTreeSet::new();
-    let mut order = Vec::new();
+    let mut orphans = Vec::new();
     for field in schema.fields().into_iter().flatten() {
-        walk(field, &mut ids, &mut order);
+        walk(field, &mut ids, &mut orphans);
     }
-    (ids, order)
+    (ids, orphans)
+}
+
+/// Types whose conversion uses the field's children, in Go and arrow-rs
+/// alike; every other type ignores them.
+fn keeps_children(kind: arrow_ipc::Type) -> bool {
+    use arrow_ipc::Type;
+    matches!(
+        kind,
+        Type::List
+            | Type::LargeList
+            | Type::ListView
+            | Type::LargeListView
+            | Type::FixedSizeList
+            | Type::Struct_
+            | Type::Union
+            | Type::Map
+            | Type::RunEndEncoded
+    )
+}
+
+/// IDs reachable from the columns, by first use in schema order. Go resolves
+/// each column pre-order: a dictionary, then the dictionaries nested in its
+/// values (at the column's own paths), then its children.
+#[allow(deprecated)]
+fn dictionary_order(fields: &Fields) -> Vec<i64> {
+    fn walk(field: &Field, seen: &mut BTreeSet<i64>, order: &mut Vec<i64>) {
+        if let DataType::Dictionary(_, _) = field.data_type()
+            && let Some(id) = field.dict_id()
+            && seen.insert(id)
+        {
+            order.push(id);
+        }
+        for child in type_fields(field.data_type()) {
+            walk(child, seen, order);
+        }
+    }
+    let mut seen = BTreeSet::new();
+    let mut order = Vec::new();
+    for field in fields {
+        walk(field, &mut seen, &mut order);
+    }
+    order
+}
+
+/// Convert orphan fields with arrow-rs's own schema conversion, so their
+/// types, errors and canonical wire form match column fields exactly. The
+/// conversion takes a schema table, so each orphan subtree is copied into a
+/// new one. Only what the conversion reads is copied; metadata is not, since
+/// nothing under an orphan is rendered and dictionary values drop it anyway.
+/// Copying children only for [`keeps_children`] types visits each schema
+/// field at most once.
+fn orphan_schema(
+    orphans: &[arrow_ipc::Field<'_>],
+    endianness: arrow_ipc::Endianness,
+) -> Result<Schema, String> {
+    if orphans.is_empty() {
+        return Ok(Schema::empty());
+    }
+    let mut fbb = flatbuffers::FlatBufferBuilder::new();
+    let fields = orphans
+        .iter()
+        .map(|field| copy_field(&mut fbb, *field))
+        .collect::<Result<Vec<_>, _>>()?;
+    let fields = fbb.create_vector(&fields);
+    let schema = arrow_ipc::Schema::create(
+        &mut fbb,
+        &arrow_ipc::SchemaArgs {
+            endianness,
+            fields: Some(fields),
+            ..Default::default()
+        },
+    );
+    fbb.finish(schema, None);
+    let options = flatbuffers::VerifierOptions {
+        max_depth: VERIFIER_MAX_DEPTH,
+        ..Default::default()
+    };
+    let schema = arrow_ipc::root_as_schema_with_opts(&options, fbb.finished_data())
+        .map_err(|e| e.to_string())?;
+    arrow_ipc::convert::try_fb_to_schema(schema).map_err(|e| e.to_string())
+}
+
+fn copy_field<'b>(
+    fbb: &mut flatbuffers::FlatBufferBuilder<'b>,
+    field: arrow_ipc::Field<'_>,
+) -> Result<flatbuffers::WIPOffset<arrow_ipc::Field<'b>>, String> {
+    let children = match field.children() {
+        Some(children) if keeps_children(field.type_type()) => {
+            let children = children
+                .iter()
+                .map(|child| copy_field(fbb, child))
+                .collect::<Result<Vec<_>, _>>()?;
+            Some(fbb.create_vector(&children))
+        }
+        _ => None,
+    };
+    let type_ = copy_type(fbb, field)?;
+    let dictionary = field.dictionary().map(|dictionary| {
+        let index_type = dictionary.indexType().map(|int| {
+            arrow_ipc::Int::create(
+                fbb,
+                &arrow_ipc::IntArgs {
+                    bitWidth: int.bitWidth(),
+                    is_signed: int.is_signed(),
+                },
+            )
+        });
+        arrow_ipc::DictionaryEncoding::create(
+            fbb,
+            &arrow_ipc::DictionaryEncodingArgs {
+                id: dictionary.id(),
+                indexType: index_type,
+                isOrdered: dictionary.isOrdered(),
+                dictionaryKind: dictionary.dictionaryKind(),
+            },
+        )
+    });
+    let name = field.name().map(|name| fbb.create_string(name));
+    Ok(arrow_ipc::Field::create(
+        fbb,
+        &arrow_ipc::FieldArgs {
+            name,
+            nullable: field.nullable(),
+            type_type: field.type_type(),
+            type_: Some(type_),
+            dictionary,
+            children,
+            custom_metadata: None,
+        },
+    ))
+}
+
+/// The type table of every type [`validation::ipc_schema`] admits.
+fn copy_type<'b>(
+    fbb: &mut flatbuffers::FlatBufferBuilder<'b>,
+    field: arrow_ipc::Field<'_>,
+) -> Result<flatbuffers::WIPOffset<flatbuffers::UnionWIPOffset>, String> {
+    use arrow_ipc::Type;
+    let kind = field.type_type();
+    let missing = || format!("IPC schema field is missing its {kind:?} type");
+    Ok(match kind {
+        // Tables without fields.
+        Type::Null
+        | Type::Bool
+        | Type::Binary
+        | Type::LargeBinary
+        | Type::Utf8
+        | Type::LargeUtf8
+        | Type::List
+        | Type::LargeList
+        | Type::Struct_
+        | Type::RunEndEncoded => {
+            let start = fbb.start_table();
+            fbb.end_table(start).as_union_value()
+        }
+        Type::Int => {
+            let int = field.type_as_int().ok_or_else(missing)?;
+            let args = arrow_ipc::IntArgs {
+                bitWidth: int.bitWidth(),
+                is_signed: int.is_signed(),
+            };
+            arrow_ipc::Int::create(fbb, &args).as_union_value()
+        }
+        Type::FloatingPoint => {
+            let float = field.type_as_floating_point().ok_or_else(missing)?;
+            let args = arrow_ipc::FloatingPointArgs {
+                precision: float.precision(),
+            };
+            arrow_ipc::FloatingPoint::create(fbb, &args).as_union_value()
+        }
+        Type::Decimal => {
+            let decimal = field.type_as_decimal().ok_or_else(missing)?;
+            let args = arrow_ipc::DecimalArgs {
+                precision: decimal.precision(),
+                scale: decimal.scale(),
+                bitWidth: decimal.bitWidth(),
+            };
+            arrow_ipc::Decimal::create(fbb, &args).as_union_value()
+        }
+        Type::FixedSizeBinary => {
+            let binary = field.type_as_fixed_size_binary().ok_or_else(missing)?;
+            let args = arrow_ipc::FixedSizeBinaryArgs {
+                byteWidth: binary.byteWidth(),
+            };
+            arrow_ipc::FixedSizeBinary::create(fbb, &args).as_union_value()
+        }
+        Type::FixedSizeList => {
+            let list = field.type_as_fixed_size_list().ok_or_else(missing)?;
+            let args = arrow_ipc::FixedSizeListArgs {
+                listSize: list.listSize(),
+            };
+            arrow_ipc::FixedSizeList::create(fbb, &args).as_union_value()
+        }
+        Type::Map => {
+            let map = field.type_as_map().ok_or_else(missing)?;
+            let args = arrow_ipc::MapArgs {
+                keysSorted: map.keysSorted(),
+            };
+            arrow_ipc::Map::create(fbb, &args).as_union_value()
+        }
+        Type::Union => {
+            let union = field.type_as_union().ok_or_else(missing)?;
+            let ids = union.typeIds().map(|ids| {
+                let ids: Vec<i32> = ids.iter().collect();
+                fbb.create_vector(&ids)
+            });
+            let args = arrow_ipc::UnionArgs {
+                mode: union.mode(),
+                typeIds: ids,
+            };
+            arrow_ipc::Union::create(fbb, &args).as_union_value()
+        }
+        Type::Date => {
+            let date = field.type_as_date().ok_or_else(missing)?;
+            let args = arrow_ipc::DateArgs { unit: date.unit() };
+            arrow_ipc::Date::create(fbb, &args).as_union_value()
+        }
+        Type::Time => {
+            let time = field.type_as_time().ok_or_else(missing)?;
+            let args = arrow_ipc::TimeArgs {
+                unit: time.unit(),
+                bitWidth: time.bitWidth(),
+            };
+            arrow_ipc::Time::create(fbb, &args).as_union_value()
+        }
+        Type::Timestamp => {
+            let timestamp = field.type_as_timestamp().ok_or_else(missing)?;
+            let timezone = timestamp.timezone().map(|tz| fbb.create_string(tz));
+            let args = arrow_ipc::TimestampArgs {
+                unit: timestamp.unit(),
+                timezone,
+            };
+            arrow_ipc::Timestamp::create(fbb, &args).as_union_value()
+        }
+        Type::Interval => {
+            let interval = field.type_as_interval().ok_or_else(missing)?;
+            let args = arrow_ipc::IntervalArgs {
+                unit: interval.unit(),
+            };
+            arrow_ipc::Interval::create(fbb, &args).as_union_value()
+        }
+        Type::Duration => {
+            let duration = field.type_as_duration().ok_or_else(missing)?;
+            let args = arrow_ipc::DurationArgs {
+                unit: duration.unit(),
+            };
+            arrow_ipc::Duration::create(fbb, &args).as_union_value()
+        }
+        other => return Err(format!("Type {other:?} not supported")),
+    })
 }
 
 /// Owns decoding, rendering and both process streams. Write failures are

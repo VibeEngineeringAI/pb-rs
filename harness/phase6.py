@@ -263,6 +263,7 @@ def execute(command, env, cwd, case, fixture, out):
     proc = None
     selector = selectors.DefaultSelector()
     status = None
+    child_exited = False
     failure = None
     started = time.monotonic_ns()
     state = dict(stdout_bytes=0, stderr_bytes=0, stdout_rows=0, stdout_batches=0,
@@ -300,18 +301,20 @@ def execute(command, env, cwd, case, fixture, out):
             deadline = started + int(case.get('timeout', 10) * 1e9)
             while True:
                 now = time.monotonic_ns()
-                if status is None:
-                    pid, raw, _ = os.wait4(proc.pid, os.WNOHANG)
-                    if pid:
-                        status = raw
-                        proc.returncode = os.waitstatus_to_exitcode(raw)
-                if status is None and now >= deadline and failure is None:
+                if not child_exited:
+                    # Keep the exited leader waitable until group cleanup. Its
+                    # unreaped PID reserves the PGID while descendant-held pipes
+                    # drain, so cleanup cannot signal a newly recycled group.
+                    observed = os.waitid(os.P_PID, proc.pid,
+                                         os.WEXITED | os.WNOHANG | os.WNOWAIT)
+                    child_exited = observed is not None
+                if not child_exited and now >= deadline and failure is None:
                     failure = 'timeout'
                     run.kill_group(proc, signal.SIGKILL)
                 if pending and now >= poll_at and fixture:
                     events = fixture.events()
                     poll_at = now + 10_000_000
-                if pipe_probe and paused and status is None and 'stdout' in endpoints:
+                if pipe_probe and paused and not child_exited and 'stdout' in endpoints:
                     state['pipe_blocked'] = False
                     available = array.array('i', [0])
                     fcntl.ioctl(endpoints['stdout'], 0x541B, available, True)  # Linux FIONREAD.
@@ -351,7 +354,7 @@ def execute(command, env, cwd, case, fixture, out):
                     action = pending[0]
                     if action_ready(action['when'], state, events):
                         action['met'] = True
-                    elif status is not None or now - state['armed_ns'] > action.get('within_ms', 5000) * 1e6:
+                    elif child_exited or now - state['armed_ns'] > action.get('within_ms', 5000) * 1e6:
                         action['met'] = False
                         failure = failure or 'missed-action'
                     else:
@@ -363,7 +366,7 @@ def execute(command, env, cwd, case, fixture, out):
                     action['t_ns'] = now
                     todo = action['do']
                     if 'signal' in todo:
-                        if status is None:
+                        if not child_exited:
                             os.kill(proc.pid, getattr(signal, 'SIG' + todo['signal']))
                         else:
                             action['met'] = False
@@ -381,7 +384,7 @@ def execute(command, env, cwd, case, fixture, out):
                             action['error'] = 'HTTP/2 connection ended while stdout was paused'
                             failure = failure or 'HTTP2-progress-failed'
                     elif 'assert_running' in todo:
-                        if status is not None:
+                        if child_exited:
                             action['error'] = 'child exited before the declared hold ended'
                             failure = failure or 'early-exit-during-hold'
                     elif 'assert_not_blocked' in todo:
@@ -397,7 +400,7 @@ def execute(command, env, cwd, case, fixture, out):
                             failure = failure or 'blocked-writer-proof-lost'
                     else:
                         raise ValueError(f'unknown action: {todo}')
-                if status is not None:
+                if child_exited:
                     if paused and 'stdout' in endpoints:
                         selector.register(endpoints['stdout'], selectors.EVENT_READ, 'stdout')
                         paused = False
@@ -446,10 +449,12 @@ def execute(command, env, cwd, case, fixture, out):
             for fd in children:
                 os.close(fd)
             if proc:
-                if status is None:
-                    run.kill_group(proc, signal.SIGKILL)
-                    _, status, _ = os.wait4(proc.pid, 0)
-                    proc.returncode = os.waitstatus_to_exitcode(status)
+                # Descendants may outlive a successful leader, even after
+                # redirecting their stdio so all capture endpoints reach EOF.
+                # Signal before reaping the leader to retain group ownership.
+                run.kill_group(proc, signal.SIGKILL)
+                _, status, _ = os.wait4(proc.pid, 0)
+                proc.returncode = os.waitstatus_to_exitcode(status)
             for name in list(endpoints):
                 close(name)
             selector.close()
@@ -968,6 +973,11 @@ def is_doget(event):
 
 
 def sample(binary, fixture_binary, case, out):
+    # Attribute the capture to the inputs present before either child starts.
+    # Reading only after execute() can mislabel an unpinned running executable
+    # when its pathname is replaced with the pinned binary during the sample.
+    binary_hash = run.digest(Path(binary).read_bytes())
+    fixture_hash = run.digest(Path(fixture_binary).read_bytes())
     out = Path(out)
     out.mkdir(parents=True, exist_ok=False)
     TMP.mkdir(parents=True, exist_ok=True)
@@ -1041,8 +1051,12 @@ def sample(binary, fixture_binary, case, out):
             # deliberately retained. Hashes above are always the untouched bytes.
             stderr = (out / 'stderr.bin').read_bytes()
             result['stderr_contract_b64'] = base64.b64encode(run.normalize(stderr, diagnostic_replacements)).decode()
-            result['binary_sha256'] = run.digest(Path(binary).read_bytes())
-            result['fixture_sha256'] = run.digest(Path(fixture_binary).read_bytes())
+            result['binary_sha256'] = binary_hash
+            result['fixture_sha256'] = fixture_hash
+            if run.digest(Path(binary).read_bytes()) != binary_hash:
+                raise ValueError('executable changed during sample: ' + str(binary))
+            if run.digest(Path(fixture_binary).read_bytes()) != fixture_hash:
+                raise ValueError('fixture executable changed during sample: ' + str(fixture_binary))
             run.write_json(out / 'result.json', result)
             return result
         finally:
@@ -1263,6 +1277,12 @@ def main(argv=None):
         if args.command == 'compare':
             frozen = json.loads(Path(args.reference).read_text())
             validate_frozen(frozen, cases, args.fixture)
+        # Reject an unpinned oracle before it can contribute any observations.
+        for build in {c['build'] for c in selected}:
+            representative = next(c for c in selected if c['build'] == build)
+            path = binary_for(representative, args, 'go')
+            if run.digest(path.read_bytes()) != ORACLE_HASHES[build]:
+                raise ValueError('Go executable differs from pinned baseline hash: ' + str(path))
         report = dict(schema_version=SCHEMA_VERSION, oracle_revision='07af390', complete=False,
                       mode=args.command, partial=len(selected) != len(cases), failed=0, parity_passed=0,
                       payload_auth_passed=0, wire_ua_divergent=0, diagnostic_divergent=0, cases={},

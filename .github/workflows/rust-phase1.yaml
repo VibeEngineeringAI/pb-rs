@@ -51,7 +51,7 @@ jobs:
           PB_PHASE3_FIXTURE: ${{ github.workspace }}/bin/pb-fixture
         run: |
           make -f harness/Makefile rust-test CARGO='cargo +1.96.0'
-          python3 -m unittest discover -s harness -p 'test_*.py' -v
+          python3 harness/run_tests.py
       - name: Compare phase-one behavior
         run: make -f harness/Makefile phase1-check OUT=harness/results/phase1-ci
       - name: Record startup measurements

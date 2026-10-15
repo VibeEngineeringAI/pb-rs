@@ -29,7 +29,7 @@ self-check:
 
 test:
 	cd $(ROOT) && $(GO) test ./harness/fixture
-	$(PYTHON) -m unittest discover -s $(ROOT)/harness -p 'test_*.py' -v
+	$(PYTHON) $(ROOT)/harness/run_tests.py
 
 # Keep candidate binaries separate from the Go reference and installed CLI.
 rust-build:

@@ -2788,6 +2788,480 @@ fn unknown_union_modes_use_go_panic_text() {
     );
 }
 
+/// An Int32 field whose flatbuffer carries `children`, which Go converts
+/// (registering their dictionaries) and then discards with the leaf type.
+fn int32_with<'a>(
+    fbb: &mut fbx::Build<'a>,
+    name: &str,
+    children: &[fbx::Node<'a>],
+    dictionary: Option<i64>,
+) -> fbx::Node<'a> {
+    let mut int = arrow_ipc::IntBuilder::new(fbb);
+    int.add_bitWidth(32);
+    int.add_is_signed(true);
+    let table = int.finish().as_union_value();
+    fbx::node(
+        fbb,
+        name,
+        true,
+        arrow_ipc::Type::Int,
+        table,
+        children,
+        dictionary,
+    )
+}
+
+/// The same dictionary record under another ID and delta flag.
+fn dictionary_as(source: &FlightData, id: i64, delta: bool) -> FlightData {
+    let message = ipc_message(&source.data_header).unwrap();
+    let record = message
+        .header_as_dictionary_batch()
+        .unwrap()
+        .data()
+        .unwrap();
+    assert!(record.compression().is_none());
+    let nodes: Vec<_> = record.nodes().unwrap().iter().copied().collect();
+    let buffers: Vec<_> = record.buffers().unwrap().iter().copied().collect();
+    let mut fbb = flatbuffers::FlatBufferBuilder::new();
+    let nodes = fbb.create_vector(&nodes);
+    let buffers = fbb.create_vector(&buffers);
+    let data = arrow_ipc::RecordBatch::create(
+        &mut fbb,
+        &arrow_ipc::RecordBatchArgs {
+            length: record.length(),
+            nodes: Some(nodes),
+            buffers: Some(buffers),
+            ..Default::default()
+        },
+    );
+    let batch = arrow_ipc::DictionaryBatch::create(
+        &mut fbb,
+        &arrow_ipc::DictionaryBatchArgs {
+            id,
+            data: Some(data),
+            isDelta: delta,
+        },
+    );
+    let header = arrow_ipc::Message::create(
+        &mut fbb,
+        &arrow_ipc::MessageArgs {
+            version: message.version(),
+            header_type: MessageHeader::DictionaryBatch,
+            header: Some(batch.as_union_value()),
+            bodyLength: message.bodyLength(),
+            custom_metadata: None,
+        },
+    );
+    fbb.finish(header, None);
+    FlightData {
+        data_header: Bytes::copy_from_slice(fbb.finished_data()),
+        data_body: source.data_body.clone(),
+        ..Default::default()
+    }
+}
+
+fn dictionary_id(data: &FlightData) -> i64 {
+    ipc_message(&data.data_header)
+        .unwrap()
+        .header_as_dictionary_batch()
+        .unwrap()
+        .id()
+}
+
+/// A Utf8 dictionary message (ID 0) holding `values`.
+fn utf8_dictionary(values: Vec<Option<&str>>) -> FlightData {
+    use arrow_array::Array;
+    let column =
+        DictionaryArray::<Int32Type>::new(vec![0].into(), Arc::new(StringArray::from(values)));
+    let schema = Arc::new(Schema::new(vec![Field::new(
+        "c",
+        column.data_type().clone(),
+        true,
+    )]));
+    let batch = RecordBatch::try_new(Arc::clone(&schema), vec![Arc::new(column)]).unwrap();
+    let data = flight_stream(&schema, [&batch]);
+    assert_eq!(dictionary_id(&data[1]), 0);
+    data[1].clone()
+}
+
+/// The record message of one Int32 column `a` = [1, 2].
+fn int32_record() -> FlightData {
+    use arrow_array::Int32Array;
+    let schema = Arc::new(Schema::new(vec![Field::new("a", DataType::Int32, true)]));
+    let column = Arc::new(Int32Array::from(vec![1, 2]));
+    let batch = RecordBatch::try_new(Arc::clone(&schema), vec![column]).unwrap();
+    flight_stream(&schema, [&batch])[1].clone()
+}
+
+/// Arrow-written p: Dictionary<Struct<x: Dictionary<Utf8>>> (child Q is ID 0
+/// = ["a", "b"], parent P is ID 1 with x keys [0, 1], p keys [0, 0]) and
+/// a: Int32 = [1, 2]: schema, Q, P, record.
+fn nested_parent_stream() -> Vec<FlightData> {
+    use arrow_array::{Array, Int32Array, StructArray};
+    let q = DictionaryArray::<Int32Type>::new(
+        vec![0, 1].into(),
+        Arc::new(StringArray::from(vec!["a", "b"])),
+    );
+    let x = Arc::new(Field::new("x", q.data_type().clone(), true));
+    let p_values = StructArray::from(vec![(x, Arc::new(q) as ArrayRef)]);
+    let p = DictionaryArray::<Int32Type>::new(vec![0, 0].into(), Arc::new(p_values));
+    let schema = Arc::new(Schema::new(vec![
+        Field::new("p", p.data_type().clone(), true),
+        Field::new("a", DataType::Int32, true),
+    ]));
+    let batch = RecordBatch::try_new(
+        Arc::clone(&schema),
+        vec![Arc::new(p), Arc::new(Int32Array::from(vec![1, 2]))],
+    )
+    .unwrap();
+    let data = flight_stream(&schema, [&batch]);
+    assert_eq!(data.len(), 4);
+    assert_eq!((dictionary_id(&data[1]), dictionary_id(&data[2])), (0, 1));
+    data
+}
+
+/// Go's flatbuffer field for p: Struct<x: Utf8 dictionary `child`>, itself
+/// dictionary 1.
+fn parent_field<'a>(fbb: &mut fbx::Build<'a>, name: &str, child: i64) -> fbx::Node<'a> {
+    let x = fbx::leaf(fbb, "x", fbx::Leaf::Utf8, true, Some(child));
+    fbx::structure(fbb, name, &[x], Some(1))
+}
+
+fn rendered(data: Vec<FlightData>) -> (Result<(), String>, String) {
+    let (mut stdout, mut stderr) = (Vec::new(), Vec::new());
+    let result = session(true, ok(data), &mut stdout, &mut stderr);
+    assert!(stderr.is_empty());
+    (result, String::from_utf8(stdout).unwrap())
+}
+
+/// PR #4 decoder review o1/o2 and the Go-contract follow-up, all probed with
+/// the Go v13 decoder oracle (harness/decoder-oracle, Go 1.25.4): Go converts
+/// a leaf field's flatbuffer children, so their dictionary IDs count towards
+/// the initial dictionaries and their messages load, but no record resolves
+/// them. Each case ends in EOF with exit 0 in Go.
+#[test]
+fn leaf_child_dictionaries_load_but_records_never_resolve_them() {
+    const ROWS: &str = "{\"a\":1}\n{\"a\":2}\n\n";
+    // o1 control: no child.
+    let mut fbb = fbx::Build::new();
+    let a = int32_with(&mut fbb, "a", &[], None);
+    let control = fbx::schema(fbb, &[a], NATIVE_ENDIAN);
+    assert_eq!(
+        rendered(vec![control, int32_record()]),
+        (Ok(()), ROWS.into())
+    );
+    // o1: a's child c is dictionary 0, which only a dictionary message uses.
+    let mut fbb = fbx::Build::new();
+    let c = fbx::leaf(&mut fbb, "c", fbx::Leaf::Utf8, true, Some(0));
+    let a = int32_with(&mut fbb, "a", &[c], None);
+    let schema = fbx::schema(fbb, &[a], NATIVE_ENDIAN);
+    let decoder = initialize(&schema).unwrap();
+    assert_eq!((decoder.expected, decoder.dictionary_order.len()), (1, 0));
+    let x = utf8_dictionary(vec![Some("x")]);
+    assert_eq!(
+        rendered(vec![schema, x.clone(), int32_record()]),
+        (Ok(()), ROWS.into())
+    );
+
+    // o2 and its control: a column d with dictionary 0 = ["x"].
+    let two = {
+        use arrow_array::Array;
+        let column = DictionaryArray::<Int32Type>::new(
+            vec![0, 0].into(),
+            Arc::new(StringArray::from(vec!["x"])),
+        );
+        let schema = Arc::new(Schema::new(vec![
+            Field::new("a", DataType::Int32, true),
+            Field::new("d", column.data_type().clone(), true),
+        ]));
+        let a = Arc::new(arrow_array::Int32Array::from(vec![1, 2]));
+        let batch = RecordBatch::try_new(Arc::clone(&schema), vec![a, Arc::new(column)]).unwrap();
+        flight_stream(&schema, [&batch])
+    };
+    const TWO: &str = "{\"a\":1,\"d\":\"x\"}\n{\"a\":2,\"d\":\"x\"}\n\n";
+    let mut fbb = fbx::Build::new();
+    let a = int32_with(&mut fbb, "a", &[], None);
+    let d = fbx::leaf(&mut fbb, "d", fbx::Leaf::Utf8, true, Some(0));
+    let control = fbx::schema(fbb, &[a, d], NATIVE_ENDIAN);
+    assert_eq!(
+        rendered(vec![control, two[1].clone(), two[2].clone()]),
+        (Ok(()), TWO.into())
+    );
+    // o2: a's child c is dictionary 1 and is never sent. Two messages for
+    // dictionary 0 meet the initial count of two.
+    let mut fbb = fbx::Build::new();
+    let c = fbx::leaf(&mut fbb, "c", fbx::Leaf::Utf8, true, Some(1));
+    let a = int32_with(&mut fbb, "a", &[c], None);
+    let d = fbx::leaf(&mut fbb, "d", fbx::Leaf::Utf8, true, Some(0));
+    let schema = fbx::schema(fbb, &[a, d], NATIVE_ENDIAN);
+    let decoder = initialize(&schema).unwrap();
+    assert_eq!(decoder.expected, 2);
+    assert_eq!(decoder.dictionary_order, [0]);
+    let data = vec![schema, two[1].clone(), two[1].clone(), two[2].clone()];
+    assert_eq!(rendered(data), (Ok(()), TWO.into()));
+
+    // orphan_nested_unsent_child: a's child is P = Struct<x: Q0>, dictionary
+    // 1. P arrives twice, Q never; a nested layout elsewhere must not make
+    // the record resolve P or Q.
+    let nested = nested_parent_stream();
+    let mut fbb = fbx::Build::new();
+    let p = parent_field(&mut fbb, "p", 0);
+    let a = int32_with(&mut fbb, "a", &[p], None);
+    let schema = fbx::schema(fbb, &[a], NATIVE_ENDIAN);
+    let decoder = initialize(&schema).unwrap();
+    assert_eq!(decoder.expected, 2);
+    assert!(decoder.dictionary_types[&1].nested && !decoder.nested);
+    let data = vec![schema, nested[2].clone(), nested[2].clone(), int32_record()];
+    assert_eq!(rendered(data), (Ok(()), ROWS.into()));
+
+    // orphan_type_conflict: an orphan still takes part in Go's conflict check.
+    let mut fbb = fbx::Build::new();
+    let x = fbx::leaf(&mut fbb, "x", fbx::Leaf::Utf8, true, Some(0));
+    let a = int32_with(&mut fbb, "a", &[x], None);
+    let b = int32_with(&mut fbb, "b", &[], Some(0));
+    assert_eq!(
+        init_error(fbx::schema(fbb, &[a, b], NATIVE_ENDIAN)),
+        format!(
+            "{SCHEMA_DECODE}arrow/ipc: could not convert field 1 from flatbuf: arrow/ipc: \
+             could not convert field type: arrow/ipc: conflicting dictionary types for id 0"
+        )
+    );
+}
+
+const SCHEMA_DECODE: &str = "arrow/flight: could not create flight reader: arrow/ipc: could not decode schema from message schema: ";
+
+/// orphan_parent_last_live_binding (Go v13 oracle): column p is P (ID 1) =
+/// Struct<x: Q0>; a later leaf child is a compatible P whose x is Q2. Go's
+/// memo loads P with the last raw type, but binds P's child through column
+/// p's own path, so x is Q0 = ["a", "b"], never Q2 = ["x", "y"]. Both cases
+/// end in EOF with exit 0 in Go.
+#[test]
+fn orphan_occurrences_never_change_nested_binding() {
+    let nested = nested_parent_stream();
+    let mut fbb = fbx::Build::new();
+    let p = parent_field(&mut fbb, "p", 0);
+    let orphan = parent_field(&mut fbb, "o", 2);
+    let a = int32_with(&mut fbb, "a", &[orphan], None);
+    let schema = fbx::schema(fbb, &[p, a], NATIVE_ENDIAN);
+    let decoder = initialize(&schema).unwrap();
+    assert_eq!(decoder.expected, 3);
+    assert_eq!(decoder.dictionary_order, [1, 0]);
+    let xy = dictionary_as(&utf8_dictionary(vec![Some("x"), Some("y")]), 2, false);
+    let data = vec![
+        schema,
+        nested[1].clone(),
+        xy,
+        nested[2].clone(),
+        nested[3].clone(),
+    ];
+    const ROWS: &str = "{\"a\":1,\"p\":{\"x\":\"a\"}}\n{\"a\":2,\"p\":{\"x\":\"a\"}}\n\n";
+    assert_eq!(rendered(data), (Ok(()), ROWS.into()));
+
+    // Binding the nested column resolves only what it reaches: orphan ID 2
+    // is never sent, and a repeated Q meets the initial count of three.
+    let mut fbb = fbx::Build::new();
+    let p = parent_field(&mut fbb, "p", 0);
+    let c = fbx::leaf(&mut fbb, "c", fbx::Leaf::Utf8, true, Some(2));
+    let a = int32_with(&mut fbb, "a", &[c], None);
+    let schema = fbx::schema(fbb, &[p, a], NATIVE_ENDIAN);
+    let data = vec![
+        schema,
+        nested[1].clone(),
+        nested[2].clone(),
+        nested[1].clone(),
+        nested[3].clone(),
+    ];
+    assert_eq!(rendered(data), (Ok(()), ROWS.into()));
+}
+
+/// Go accepts deltas and replacements for orphan dictionaries and, since no
+/// record reifies them, never concatenates them; a nested delta (which Go
+/// cannot reify) is harmless too. Orphans of orphans count as well. A delta
+/// before any dictionary for its ID still fails, as Go's AddDelta panics.
+/// Go v13 oracle: rows, EOF, exit 0; and the recovered delta panic.
+#[test]
+fn orphan_dictionary_deltas_and_nested_orphans_follow_go() {
+    const ROWS: &str = "{\"a\":1}\n{\"a\":2}\n\n";
+    let nested = nested_parent_stream();
+    let schema = || {
+        let mut fbb = fbx::Build::new();
+        let p = parent_field(&mut fbb, "p", 0);
+        let c = fbx::leaf(&mut fbb, "c", fbx::Leaf::Utf8, true, Some(2));
+        let b = int32_with(&mut fbb, "b", &[c], None);
+        let a = int32_with(&mut fbb, "a", &[p, b], None);
+        fbx::schema(fbb, &[a], NATIVE_ENDIAN)
+    };
+    let decoder = initialize(&schema()).unwrap();
+    assert_eq!(decoder.ids, BTreeSet::from([0, 1, 2]));
+    assert!(decoder.dictionary_order.is_empty());
+    let q = nested[1].clone();
+    let p = nested[2].clone();
+    let c = dictionary_as(&utf8_dictionary(vec![Some("x")]), 2, false);
+    let c_delta = dictionary_as(&c, 2, true);
+    let p_delta = dictionary_as(&p, 1, true);
+    let data = vec![
+        schema(),
+        q,
+        p.clone(),
+        c,
+        p_delta.clone(),
+        c_delta.clone(),
+        int32_record(),
+        p_delta,
+        c_delta.clone(),
+        p,
+        int32_record(),
+    ];
+    assert_eq!(rendered(data), (Ok(()), format!("{ROWS}{ROWS}")));
+
+    let data = vec![schema(), c_delta, int32_record()];
+    assert_eq!(
+        rendered(data),
+        (
+            Err(format!(
+                "{UNKNOWN_READ}arrow/ipc: adding delta to non-existing id=2"
+            )),
+            String::new()
+        )
+    );
+}
+
+/// Orphan dictionary messages get the same safety checks as any other: an
+/// empty validity bitmap under a null would otherwise trip an arrow assert.
+/// The Go v13 oracle renders this stream, since no record reads the orphan;
+/// rejecting it is the declared malformed-data divergence, as for a column
+/// dictionary's unreferenced entries.
+#[test]
+fn orphan_dictionary_messages_are_validated() {
+    let mut fbb = fbx::Build::new();
+    let c = fbx::leaf(&mut fbb, "c", fbx::Leaf::Utf8, true, Some(0));
+    let a = int32_with(&mut fbb, "a", &[c], None);
+    let schema = fbx::schema(fbb, &[a], NATIVE_ENDIAN);
+    let mut values = utf8_dictionary(vec![Some("a"), None]);
+    patch(&mut values, Slot::BufferLength(0), 0);
+    rejected(
+        vec![schema, values, int32_record()],
+        "validity bitmap is shorter than 2 rows",
+    );
+}
+
+/// Orphans go through arrow-rs's own field conversion via a copied schema
+/// table, so every type Go admits converts to exactly the column type, and
+/// conversion errors stay initialization errors.
+#[test]
+#[allow(deprecated)]
+fn orphan_conversion_matches_column_conversion_for_every_type() {
+    use arrow_schema::{IntervalUnit, TimeUnit, UnionFields, UnionMode};
+    let dictionary = |values| DataType::Dictionary(Box::new(DataType::Int16), Box::new(values));
+    let item = |data_type| Arc::new(Field::new("item", data_type, true));
+    let entries = Field::new(
+        "entries",
+        DataType::Struct(
+            vec![
+                Field::new("key", DataType::Utf8, false),
+                Field::new("value", dictionary(DataType::LargeUtf8), true),
+            ]
+            .into(),
+        ),
+        false,
+    );
+    let types = vec![
+        DataType::Null,
+        DataType::Boolean,
+        DataType::Int8,
+        DataType::UInt64,
+        DataType::Float16,
+        DataType::Float64,
+        DataType::Utf8,
+        DataType::LargeUtf8,
+        DataType::Binary,
+        DataType::LargeBinary,
+        DataType::FixedSizeBinary(3),
+        DataType::Decimal128(38, -2),
+        DataType::Decimal256(76, 10),
+        DataType::Date32,
+        DataType::Date64,
+        DataType::Time32(TimeUnit::Millisecond),
+        DataType::Time64(TimeUnit::Nanosecond),
+        DataType::Timestamp(TimeUnit::Microsecond, None),
+        DataType::Timestamp(TimeUnit::Second, Some("+01:00".into())),
+        DataType::Interval(IntervalUnit::YearMonth),
+        DataType::Interval(IntervalUnit::DayTime),
+        DataType::Interval(IntervalUnit::MonthDayNano),
+        DataType::Duration(TimeUnit::Second),
+        DataType::List(item(dictionary(DataType::Utf8))),
+        DataType::LargeList(item(DataType::Int32)),
+        DataType::FixedSizeList(item(DataType::Int64), 2),
+        DataType::Map(Arc::new(entries), true),
+        DataType::Struct(
+            vec![
+                Field::new("s", DataType::Utf8, false),
+                Field::new("t", dictionary(DataType::Int64), true),
+            ]
+            .into(),
+        ),
+        DataType::Union(
+            UnionFields::try_new(
+                vec![3, 7],
+                vec![
+                    Field::new("u", DataType::Int32, true),
+                    Field::new("v", DataType::Utf8, true),
+                ],
+            )
+            .unwrap(),
+            UnionMode::Dense,
+        ),
+        DataType::Union(
+            UnionFields::try_new(vec![0], vec![Field::new("w", DataType::Int8, true)]).unwrap(),
+            UnionMode::Sparse,
+        ),
+        DataType::RunEndEncoded(
+            Arc::new(Field::new("run_ends", DataType::Int32, false)),
+            Arc::new(Field::new("values", DataType::Utf8, true)),
+        ),
+        dictionary(DataType::Struct(
+            vec![Field::new("x", dictionary(DataType::Utf8), true)].into(),
+        )),
+    ];
+    let fields: Vec<_> = types
+        .into_iter()
+        .enumerate()
+        .map(|(index, data_type)| Field::new(format!("f{index}"), data_type, index % 2 == 0))
+        .collect();
+    let header = schema_header(&Schema::new(fields));
+    let message = ipc_message(&header).unwrap();
+    let schema = message.header_as_schema().unwrap();
+    let columns = arrow_ipc::convert::try_fb_to_schema(schema).unwrap();
+    let raw: Vec<_> = schema.fields().unwrap().iter().collect();
+    let orphans = orphan_schema(&raw, schema.endianness()).unwrap();
+    assert_eq!(orphans.fields().len(), columns.fields().len());
+    for (orphan, column) in orphans.fields().iter().zip(columns.fields()) {
+        assert_eq!(orphan, column);
+        assert_eq!(orphan.dict_id(), column.dict_id());
+    }
+
+    // An orphan's time unit is checked when the schema is read, as Go does
+    // (oracle: "Duration type with 9 unit not implemented"); the text is
+    // arrow's, as for column fields.
+    let mut fbb = fbx::Build::new();
+    let mut duration = arrow_ipc::DurationBuilder::new(&mut fbb);
+    duration.add_unit(arrow_ipc::TimeUnit(9));
+    let table = duration.finish().as_union_value();
+    let t = fbx::node(
+        &mut fbb,
+        "t",
+        true,
+        arrow_ipc::Type::Duration,
+        table,
+        &[],
+        None,
+    );
+    let a = int32_with(&mut fbb, "a", &[t], None);
+    let error = init_error(fbx::schema(fbb, &[a], NATIVE_ENDIAN));
+    assert!(error.starts_with(SCHEMA_DECODE), "{error}");
+    assert!(error.contains("Duration type with unit"), "{error}");
+}
+
 /// The diagnostics in-flight guard spans the real Open handoff: it is held
 /// while the worker is inside schema initialization and released by the
 /// acknowledgement. The counter is process-global, so this test reruns

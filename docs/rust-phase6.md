@@ -5,6 +5,33 @@ Finite and short live-mode evidence is complete, with comparative metrics withhe
 under the predeclared gates. Long-term stability and cross-platform readiness are
 not established. See [current measurements](phase6-measurements.md).
 
+## PR #4 follow-up corrections
+
+The reviewed decoder edge now loads dictionary IDs declared below primitive
+fields while resolving records only through reachable column paths. Compatible
+orphan occurrences cannot override a live column's nested dictionary bindings.
+Five new Rust tests cover the reported failures, nested/shared-ID cases,
+conversion equivalence and safety checks. Fourteen full Flight comparisons of
+the corrected release against pinned Go match stdout, stderr and exit status in
+text and JSON modes. Malformed dictionary buffers, including unused orphan
+values, remain subject to Rust's safety validation. Schema-time safety checks
+also apply to leaf-child subtrees, even when Go would never render them.
+
+The finite harness checks the Go oracle identity before sampling and records
+pre-execution input hashes, rejecting changes detected afterward. These are
+path-based checkpoints; they do not detect a replacement restored between
+checks. Capture cleanup retains the waitable leader until its process group is
+terminated, then reaps its original exit status. Descendants that deliberately
+leave that group remain outside the ownership contract. Nine Python regressions
+cover identity replacement, early rejection, descendant cleanup and raw status.
+
+CI and the harness Makefile now run each Python test module in a fresh
+interpreter, preserving the profiling suites' process-wide safety guards and
+source-admission inventory. Four runner tests cover discovery, environment
+inheritance and failure propagation. Historical R6 artifacts and acceptance
+limits remain unchanged; these corrections do not establish new performance,
+soak or cross-platform acceptance.
+
 ## Implementation review status — R6
 
 Immutable R6 normal/Cloud candidates pass central checks: 367 normal tests
