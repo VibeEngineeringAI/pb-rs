@@ -488,8 +488,14 @@ def spawn_helper(build=True, *, probe=True):
         TMP.mkdir(parents=True, exist_ok=True)
         with tempfile.TemporaryDirectory(prefix='phase7-spawn-build-', dir=TMP) as folder:
             staged = Path(folder) / 'spawn'
-            subprocess.run([compiler, *flags, str(source), '-o', str(staged)], check=True,
-                           stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=30)
+            try:
+                subprocess.run([compiler, *flags, str(source), '-o', str(staged)], check=True,
+                               stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=30)
+            except subprocess.CalledProcessError as error:
+                stdout = (error.stdout or b'').decode('utf-8', errors='replace')
+                stderr = (error.stderr or b'').decode('utf-8', errors='replace')
+                raise RuntimeError(f'phase7 native helper compilation failed: {error}\n'
+                                   f'compiler stdout:\n{stdout}\ncompiler stderr:\n{stderr}') from error
             manifest = {'schema_version': 1, **identity, 'build_key': key, 'path': str(binary),
                         'sha256': hashlib.sha256(staged.read_bytes()).hexdigest(), 'protocol_version': 2}
             staged_provenance = Path(folder) / 'manifest.json'

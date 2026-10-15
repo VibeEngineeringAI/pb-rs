@@ -576,6 +576,25 @@ class ResolverTests(unittest.TestCase):
         self.assertEqual(result['compiler'], str((self.root / 'cc').resolve()))
         self.assertEqual(p7.spawn_helper(build=False, probe=False), result)
 
+    def test_compile_failure_exposes_diagnostics_and_never_publishes_cache(self):
+        self.binary.unlink()
+        self.manifest.unlink()
+        before = self.snapshot()
+        failure = p7.subprocess.CalledProcessError(1, [self.identity['compiler'], *self.identity['flags']],
+            output=b'compiler note\n', stderr=b'phase7_spawn.c:98: error: unused write result\n')
+        with mock.patch.object(p7.subprocess, 'run', side_effect=failure):
+            with self.assertRaisesRegex(RuntimeError, 'native helper compilation failed') as rejected:
+                p7.spawn_helper(build=True, probe=False)
+        message = str(rejected.exception)
+        self.assertIn(self.identity['compiler'], message)
+        self.assertIn('exit status 1', message)
+        self.assertIn('compiler stdout:\ncompiler note', message)
+        self.assertIn('compiler stderr:\nphase7_spawn.c:98: error: unused write result', message)
+        self.assertIs(rejected.exception.__cause__, failure)
+        self.assertEqual(self.snapshot(), before)
+        self.assertFalse(self.binary.exists())
+        self.assertFalse(self.manifest.exists())
+
 
 @unittest.skipUnless(os.environ.get('PB_PHASE7_RUN_RESIZE_NATIVE') == '1',
                      'requires the root-authorized native execution window')

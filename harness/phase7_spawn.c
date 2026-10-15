@@ -94,9 +94,13 @@ static void child_signals(int error_fd) {
 static volatile sig_atomic_t probe_hit, probe_member;
 static void probe_signal(int number) {
     (void)number;
+    int saved_errno = errno;
     const char *text = probe_member ? "MEMBER\n" : "LEADER\n";
-    write(1, text, 7);
+    ssize_t count;
+    do { count = write(1, text, 7); } while (count < 0 && errno == EINTR);
+    if (count != 7) _exit(125);
     probe_hit = 1;
+    errno = saved_errno;
 }
 static int group_probe(void) {
     struct sigaction action = {0};
