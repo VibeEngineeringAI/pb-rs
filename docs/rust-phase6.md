@@ -32,6 +32,12 @@ inheritance and failure propagation. Historical R6 artifacts and acceptance
 limits remain unchanged; these corrections do not establish new performance,
 soak or cross-platform acceptance.
 
+The CI follow-up derives test scratch/cache roots and shared lock defaults from
+the current user's home instead of requiring `/home/ajs`. Go fixture and oracle
+sources satisfy the pinned formatting/lint checks; the generated oracle corpus
+bytes remain unchanged. Historical source identities still describe their
+original builds.
+
 ## Implementation review status — R6
 
 Immutable R6 normal/Cloud candidates pass central checks: 367 normal tests

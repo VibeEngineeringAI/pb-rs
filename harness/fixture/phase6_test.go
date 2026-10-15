@@ -198,7 +198,8 @@ func wantCode(t *testing.T, err error, code codes.Code, message string) {
 
 func TestPhase6FiniteBatchesSummaryAndEvents(t *testing.T) {
 	h := startPhase6(t, &p6Config{ExpectedOutput: true, Streams: map[string]*p6Stream{
-		"logs": {Subscriptions: ops(p6Op{Op: "batch", Rows: 3, Count: 2}, p6Op{Op: "batch", Rows: 0})}}})
+		"logs": {Subscriptions: ops(p6Op{Op: "batch", Rows: 3, Count: 2}, p6Op{Op: "batch", Rows: 0})},
+	}})
 	got := h.subscribe(t, "logs")
 	if got.initErr != nil || got.batches != 3 {
 		t.Fatalf("read = %+v", got)
@@ -299,8 +300,10 @@ func TestPhase6SchemaKindsRoundTripThroughGoReader(t *testing.T) {
 func TestPhase6DictionaryModes(t *testing.T) {
 	streams := map[string]*p6Stream{}
 	for _, mode := range []string{"stable", "replace", "delta"} {
-		streams[mode] = &p6Stream{Schema: "dictionary", Compression: "lz4", Dictionary: &p6Dictionary{Cardinality: 3, Mode: mode, ValueBytes: 4096, MaxEntries: 6},
-			Subscriptions: ops(p6Op{Op: "batch", Rows: 4, Count: 3})}
+		streams[mode] = &p6Stream{
+			Schema: "dictionary", Compression: "lz4", Dictionary: &p6Dictionary{Cardinality: 3, Mode: mode, ValueBytes: 4096, MaxEntries: 6},
+			Subscriptions: ops(p6Op{Op: "batch", Rows: 4, Count: 3}),
+		}
 	}
 	h := startPhase6(t, &p6Config{Streams: streams})
 	want := map[string][]float64{"stable": {1, 0, 0}, "replace": {1, 1, 1}, "delta": {1, 1, 0}}
@@ -363,8 +366,10 @@ func TestPhase6MessageSizeBoundaryAgainstGoDefaultReceiveCap(t *testing.T) {
 }
 
 func TestPhase6FlightAuthAndMetadataLedger(t *testing.T) {
-	h := startPhase6(t, &p6Config{FlightAuth: map[string]string{"x-api-key": "k", "x-p-tenant": "t"},
-		Streams: map[string]*p6Stream{"logs": {Subscriptions: []p6Subscription{{Repeat: 2, Ops: []p6Op{{Op: "schema"}, {Op: "eof"}}}}}}})
+	h := startPhase6(t, &p6Config{
+		FlightAuth: map[string]string{"x-api-key": "k", "x-p-tenant": "t"},
+		Streams:    map[string]*p6Stream{"logs": {Subscriptions: []p6Subscription{{Repeat: 2, Ops: []p6Op{{Op: "schema"}, {Op: "eof"}}}}}},
+	})
 	wantCode(t, h.subscribe(t, "logs", "x-api-key", "wrong", "x-p-tenant", "t").initErr, codes.Unauthenticated, "fixture: incorrect authentication")
 	if r := h.subscribe(t, "logs", "x-api-key", "k", "x-p-tenant", "t", "cookie", "session=raw value,x"); r.initErr != nil || r.readErr != io.EOF {
 		t.Fatalf("authorized = %+v", r)
@@ -458,9 +463,11 @@ func TestPhase6ConditionalRoutesForOAuthRefresh(t *testing.T) {
 	cfg := &p6Config{HTTP: []*p6Route{
 		{Method: "GET", Path: "/api/v1/about", Responses: []*p6Response{
 			{Require: map[string]string{"cookie": "session=new"}, Body: `{"grpcPort":{{grpc_port}}}`},
-			{Status: 401, Body: "expired"}}},
+			{Status: 401, Body: "expired"},
+		}},
 		{Method: "POST", Path: "/api/v1/cli/oauth/token", Responses: []*p6Response{
-			{Require: map[string]string{"authorization": "Bearer orchestrator"}, Times: 1, Body: `{"access_token":"new","refresh_token":"r2"}`}}},
+			{Require: map[string]string{"authorization": "Bearer orchestrator"}, Times: 1, Body: `{"access_token":"new","refresh_token":"r2"}`},
+		}},
 	}}
 	p, err := newPhase6(cfg)
 	if err != nil {
@@ -537,8 +544,10 @@ func TestPhase6CorruptionAndMetadataOnlyAreClientErrorsNotFixtureCrashes(t *test
 }
 
 func TestPhase6LiveScheduleAndBoundedEvents(t *testing.T) {
-	h := startPhase6(t, &p6Config{EventLimit: 5, EventHardLimit: 8, BatchEventSample: 10, EventSample: 1000,
-		Streams: map[string]*p6Stream{"logs": {Subscriptions: ops(p6Op{Op: "live", RowsPerBatch: 1, Batches: 40, IntervalMS: 1})}}})
+	h := startPhase6(t, &p6Config{
+		EventLimit: 5, EventHardLimit: 8, BatchEventSample: 10, EventSample: 1000,
+		Streams: map[string]*p6Stream{"logs": {Subscriptions: ops(p6Op{Op: "live", RowsPerBatch: 1, Batches: 40, IntervalMS: 1})}},
+	})
 	start := time.Now()
 	r := h.subscribe(t, "logs")
 	if r.batches != 40 || time.Since(start) < 39*time.Millisecond {
@@ -593,8 +602,14 @@ func dialDoGet(t *testing.T, addr, stream string) *h2Probe {
 	framer := http2.NewFramer(conn, conn)
 	var block bytes.Buffer
 	enc := hpack.NewEncoder(&block)
-	for _, kv := range [][2]string{{":method", "POST"}, {":scheme", "http"}, {":path", "/arrow.flight.protocol.FlightService/DoGet"},
-		{":authority", addr}, {"content-type", "application/grpc"}, {"te", "trailers"}} {
+	for _, kv := range [][2]string{
+		{":method", "POST"},
+		{":scheme", "http"},
+		{":path", "/arrow.flight.protocol.FlightService/DoGet"},
+		{":authority", addr},
+		{"content-type", "application/grpc"},
+		{"te", "trailers"},
+	} {
 		_ = enc.WriteField(hpack.HeaderField{Name: kv[0], Value: kv[1]})
 	}
 	ticket, _ := json.Marshal(map[string]string{"stream": stream})
@@ -650,8 +665,10 @@ func (p *h2Probe) run(t *testing.T, until time.Time, ack bool) bool {
 
 func TestPhase6ServerKeepaliveRequiresClientPingProgress(t *testing.T) {
 	// grpc-go clamps server keepalive time to at least one second.
-	h := startPhase6(t, &p6Config{Keepalive: &p6Keepalive{TimeMS: 1000, TimeoutMS: 300},
-		Streams: map[string]*p6Stream{"idle": {Subscriptions: []p6Subscription{{Repeat: 2, Ops: []p6Op{{Op: "gate", Name: "never"}}}}}}})
+	h := startPhase6(t, &p6Config{
+		Keepalive: &p6Keepalive{TimeMS: 1000, TimeoutMS: 300},
+		Streams:   map[string]*p6Stream{"idle": {Subscriptions: []p6Subscription{{Repeat: 2, Ops: []p6Op{{Op: "gate", Name: "never"}}}}}},
+	})
 	addr := net.JoinHostPort("127.0.0.1", strconv.Itoa(h.f.grpcPort))
 
 	responsive := dialDoGet(t, addr, "idle")
@@ -682,9 +699,11 @@ func TestPhase6ServerKeepaliveRequiresClientPingProgress(t *testing.T) {
 func TestPhase6HTTPSDiscoveryAndNoALPNFlight(t *testing.T) {
 	caPath := filepath.Join(t.TempDir(), "ca.pem")
 	// The Go tail client's TLS policy: minimum 1.2, profile hostname as ServerName.
-	h := startPhase6(t, &p6Config{TLS: &p6TLS{GRPC: true, HTTP: true, NoALPN: true, CAPath: caPath, MaxVersion: "1.2"},
+	h := startPhase6(t, &p6Config{
+		TLS:     &p6TLS{GRPC: true, HTTP: true, NoALPN: true, CAPath: caPath, MaxVersion: "1.2"},
 		HTTP:    []*p6Route{{Method: "GET", Path: "/api/v1/about", Responses: []*p6Response{{Body: `{"grpcPort":{{grpc_port}}}`}}}},
-		Streams: map[string]*p6Stream{"logs": {Subscriptions: ops(p6Op{Op: "schema"}, p6Op{Op: "eof"})}}},
+		Streams: map[string]*p6Stream{"logs": {Subscriptions: ops(p6Op{Op: "schema"}, p6Op{Op: "eof"})}},
+	},
 		tlsDial("127.0.0.1"))
 	pem, err := os.ReadFile(caPath)
 	pool := x509.NewCertPool()
@@ -834,10 +853,15 @@ func TestPhase6OversizedTrailers(t *testing.T) {
 
 func TestPhase6ProtocolMismatchEndpoints(t *testing.T) {
 	caPath := filepath.Join(t.TempDir(), "ca.pem")
-	h := startPhase6(t, &p6Config{TLS: &p6TLS{CAPath: caPath},
-		Endpoints: []*p6Endpoint{{Name: "bh", Kind: "blackhole", HoldMS: 3000}, {Name: "bhtls", Kind: "blackhole", TLS: true, HoldMS: 3000},
-			{Name: "html", Kind: "http_status", Status: 502, ContentType: "text/html", Body: "<html>bad gateway</html>"}},
-		HTTP: []*p6Route{{Method: "GET", Path: "/api/v1/about", Responses: []*p6Response{{Body: `{"grpcPort":{{port:bh}}}`}}}}})
+	h := startPhase6(t, &p6Config{
+		TLS: &p6TLS{CAPath: caPath},
+		Endpoints: []*p6Endpoint{
+			{Name: "bh", Kind: "blackhole", HoldMS: 3000},
+			{Name: "bhtls", Kind: "blackhole", TLS: true, HoldMS: 3000},
+			{Name: "html", Kind: "http_status", Status: 502, ContentType: "text/html", Body: "<html>bad gateway</html>"},
+		},
+		HTTP: []*p6Route{{Method: "GET", Path: "/api/v1/about", Responses: []*p6Response{{Body: `{"grpcPort":{{port:bh}}}`}}}},
+	})
 	ports := h.banner["endpoints"].(map[string]int)
 	resp, err := http.Get(h.httpURL + "/api/v1/about")
 	if err != nil {
@@ -893,11 +917,14 @@ func TestPhase6ProtocolMismatchEndpoints(t *testing.T) {
 
 func TestPhase6ExactSummaryCountersSurviveEventSampling(t *testing.T) {
 	const cycles = 40
-	h := startPhase6(t, &p6Config{EventLimit: 4, EventHardLimit: 6, EventSample: 1000, BatchEventSample: 1000,
+	h := startPhase6(t, &p6Config{
+		EventLimit: 4, EventHardLimit: 6, EventSample: 1000, BatchEventSample: 1000,
 		FlightAuth: map[string]string{"x-api-key": "k"},
 		HTTP:       []*p6Route{{Method: "GET", Path: "/api/v1/about", Responses: []*p6Response{{Body: `{"grpcPort":{{grpc_port}}}`}}}},
 		Streams: map[string]*p6Stream{"logs": {Subscriptions: []p6Subscription{
-			{Repeat: cycles, Ops: []p6Op{{Op: "batch", Rows: 0}, {Op: "batch", Rows: 1}, {Op: "eof"}}}}}}})
+			{Repeat: cycles, Ops: []p6Op{{Op: "batch", Rows: 0}, {Op: "batch", Rows: 1}, {Op: "eof"}}},
+		}}},
+	})
 	auth := []string{"x-api-key", "k"}
 	// One DoGet before discovery completes; it is rejected and consumes no subscription.
 	if r := h.subscribe(t, "logs"); status.Code(r.initErr) != codes.Unauthenticated {
@@ -957,8 +984,10 @@ func TestPhase6ExactSummaryCountersSurviveEventSampling(t *testing.T) {
 func TestPhase6ResetInvalidTLSHandshake(t *testing.T) {
 	for _, reset := range []bool{false, true} {
 		caPath := filepath.Join(t.TempDir(), "ca.pem")
-		h := startPhase6(t, &p6Config{TLS: &p6TLS{GRPC: true, CAPath: caPath, ResetInvalidHandshake: reset},
-			Streams: map[string]*p6Stream{"logs": {Subscriptions: ops(p6Op{Op: "eof"})}}})
+		h := startPhase6(t, &p6Config{
+			TLS:     &p6TLS{GRPC: true, CAPath: caPath, ResetInvalidHandshake: reset},
+			Streams: map[string]*p6Stream{"logs": {Subscriptions: ops(p6Op{Op: "eof"})}},
+		})
 		addr := net.JoinHostPort("127.0.0.1", strconv.Itoa(h.f.grpcPort))
 		for i := 0; i < 20 && reset; i++ {
 			// A plaintext HTTP/2 client: send the preface and wait for the server's reaction.
@@ -1018,44 +1047,103 @@ func TestPhase6RawH2GoOracle(t *testing.T) {
 		acts [][]p6Act
 		want []want
 	}{
-		{"details_trailers_only", [][]p6Act{{{Act: "headers", EndStream: true, Fields: with(ok, gstatus("0"), [2]string{"grpc-status-details-bin", "!!"})}}},
-			[]want{{init: true, code: codes.Internal, message: "transport: malformed grpc-status-details-bin: illegal base64 data at input byte 0"}}},
-		{"details_after_batch", [][]p6Act{{{Act: "headers", Fields: ok}, {Act: "batch", Rows: 2}, trailers(gstatus("0"), [2]string{"grpc-status-details-bin", "!!"})}},
-			[]want{{batches: 1, code: codes.Internal, message: "transport: malformed grpc-status-details-bin: illegal base64 data at input byte 0"}}},
-		{"message_ff_ok", [][]p6Act{{{Act: "headers", Fields: ok}, {Act: "batch", Rows: 1}, trailers(gstatus("0"), [2]string{"grpc-message", "%FF"})}},
-			[]want{{batches: 1, code: codes.OK}}},
-		{"message_ff_unavailable", [][]p6Act{{{Act: "headers", Fields: ok}, {Act: "batch", Rows: 1}, trailers(gstatus("14"), [2]string{"grpc-message", "%FF"})}},
-			[]want{{batches: 1, code: codes.Unavailable, message: "\xff"}}},
-		{"message_ff_canceled", [][]p6Act{{{Act: "headers", Fields: ok}, {Act: "batch", Rows: 1}, trailers(gstatus("1"), [2]string{"grpc-message", "%FF"})}},
-			[]want{{batches: 1, code: codes.Canceled, message: "\xff"}}},
-		{"message_ff_invalid_argument", [][]p6Act{{{Act: "headers", Fields: ok}, {Act: "batch", Rows: 1}, trailers(gstatus("3"), [2]string{"grpc-message", "a%E9b"})}},
-			[]want{{batches: 1, code: codes.InvalidArgument, message: "a\xe9b"}}},
-		{"remote_unknown_tonic_text", [][]p6Act{{{Act: "headers", Fields: ok}, {Act: "batch", Rows: 1}, trailers(gstatus("2"), [2]string{"grpc-message", tonicText})}},
-			[]want{{batches: 1, code: codes.Unknown, message: tonicText}}},
-		{"end_stream_without_trailers", [][]p6Act{{{Act: "headers", Fields: ok}, {Act: "batch", Rows: 1}, {Act: "end_stream"}}},
-			[]want{{batches: 1, code: codes.Internal, message: "server closed the stream without sending trailers"}}},
-		{"trailers_without_status", [][]p6Act{{{Act: "headers", Fields: ok}, {Act: "batch", Rows: 1}, trailers([2]string{"x-other", "1"})}},
-			[]want{{batches: 1, code: codes.Unknown}}},
-		{"rst_no_error_before_schema", [][]p6Act{{{Act: "headers", Fields: ok}, {Act: "rst", Code: 0}}},
-			[]want{{init: true, code: codes.Internal, message: "stream terminated by RST_STREAM with error code: NO_ERROR"}}},
-		{"rst_no_error_after_batch", [][]p6Act{{{Act: "headers", Fields: ok}, {Act: "batch", Rows: 1}, {Act: "rst", Code: 0}}},
-			[]want{{batches: 1, code: codes.Internal, message: "stream terminated by RST_STREAM with error code: NO_ERROR"}}},
-		{"goaway_below_then_next", [][]p6Act{
-			{{Act: "headers", Fields: ok}, {Act: "batch", Rows: 1}, {Act: "goaway", Last: json.RawMessage(`"below"`)}, {Act: "close"}},
-			{{Act: "headers", Fields: ok}, {Act: "batch", Rows: 1}, trailers(gstatus("3"), [2]string{"grpc-message", "next subscription"})}},
-			[]want{{batches: 1, code: codes.Unavailable, message: "the connection is draining"}, {batches: 1, code: codes.InvalidArgument, message: "next subscription"}}},
-		{"goaway_ours_then_trailers", [][]p6Act{{{Act: "headers", Fields: ok}, {Act: "batch", Rows: 1}, {Act: "goaway", Last: json.RawMessage(`"ours"`)},
-			{Act: "batch", Rows: 1}, trailers(gstatus("3"), [2]string{"grpc-message", "after goaway"})}},
-			[]want{{batches: 2, code: codes.InvalidArgument, message: "after goaway"}}},
-		{"http_200_html", [][]p6Act{{{Act: "headers", Fields: [][2]string{{":status", "200"}, {"content-type", "text/html"}}},
-			{Act: "data", B64: base64.StdEncoding.EncodeToString([]byte("<html>bad</html>")), EndStream: true}}},
-			[]want{{init: true, code: codes.Unknown, message: `transport: received unexpected content-type "text/html"`}}},
-		{"http_404_grpc", [][]p6Act{{{Act: "headers", EndStream: true, Fields: [][2]string{{":status", "404"}, {"content-type", "application/grpc"}}}}},
-			[]want{{init: true, code: codes.Unimplemented, message: "unexpected HTTP status code received from server: 404 (Not Found)"}}},
-		{"http_503_empty", [][]p6Act{{{Act: "headers", EndStream: true, Fields: [][2]string{{":status", "503"}}}}},
-			[]want{{init: true, code: codes.Unavailable, message: "unexpected HTTP status code received from server: 503 (Service Unavailable); malformed header: missing HTTP content-type"}}},
-		{"http_599_no_text", [][]p6Act{{{Act: "headers", EndStream: true, Fields: [][2]string{{":status", "599"}, {"content-type", "text/plain"}}}}},
-			[]want{{init: true, code: codes.Unknown, message: `unexpected HTTP status code received from server: 599 (); transport: received unexpected content-type "text/plain"`}}},
+		{
+			"details_trailers_only",
+			[][]p6Act{{{Act: "headers", EndStream: true, Fields: with(ok, gstatus("0"), [2]string{"grpc-status-details-bin", "!!"})}}},
+			[]want{{init: true, code: codes.Internal, message: "transport: malformed grpc-status-details-bin: illegal base64 data at input byte 0"}},
+		},
+		{
+			"details_after_batch",
+			[][]p6Act{{{Act: "headers", Fields: ok}, {Act: "batch", Rows: 2}, trailers(gstatus("0"), [2]string{"grpc-status-details-bin", "!!"})}},
+			[]want{{batches: 1, code: codes.Internal, message: "transport: malformed grpc-status-details-bin: illegal base64 data at input byte 0"}},
+		},
+		{
+			"message_ff_ok",
+			[][]p6Act{{{Act: "headers", Fields: ok}, {Act: "batch", Rows: 1}, trailers(gstatus("0"), [2]string{"grpc-message", "%FF"})}},
+			[]want{{batches: 1, code: codes.OK}},
+		},
+		{
+			"message_ff_unavailable",
+			[][]p6Act{{{Act: "headers", Fields: ok}, {Act: "batch", Rows: 1}, trailers(gstatus("14"), [2]string{"grpc-message", "%FF"})}},
+			[]want{{batches: 1, code: codes.Unavailable, message: "\xff"}},
+		},
+		{
+			"message_ff_canceled",
+			[][]p6Act{{{Act: "headers", Fields: ok}, {Act: "batch", Rows: 1}, trailers(gstatus("1"), [2]string{"grpc-message", "%FF"})}},
+			[]want{{batches: 1, code: codes.Canceled, message: "\xff"}},
+		},
+		{
+			"message_ff_invalid_argument",
+			[][]p6Act{{{Act: "headers", Fields: ok}, {Act: "batch", Rows: 1}, trailers(gstatus("3"), [2]string{"grpc-message", "a%E9b"})}},
+			[]want{{batches: 1, code: codes.InvalidArgument, message: "a\xe9b"}},
+		},
+		{
+			"remote_unknown_tonic_text",
+			[][]p6Act{{{Act: "headers", Fields: ok}, {Act: "batch", Rows: 1}, trailers(gstatus("2"), [2]string{"grpc-message", tonicText})}},
+			[]want{{batches: 1, code: codes.Unknown, message: tonicText}},
+		},
+		{
+			"end_stream_without_trailers",
+			[][]p6Act{{{Act: "headers", Fields: ok}, {Act: "batch", Rows: 1}, {Act: "end_stream"}}},
+			[]want{{batches: 1, code: codes.Internal, message: "server closed the stream without sending trailers"}},
+		},
+		{
+			"trailers_without_status",
+			[][]p6Act{{{Act: "headers", Fields: ok}, {Act: "batch", Rows: 1}, trailers([2]string{"x-other", "1"})}},
+			[]want{{batches: 1, code: codes.Unknown}},
+		},
+		{
+			"rst_no_error_before_schema",
+			[][]p6Act{{{Act: "headers", Fields: ok}, {Act: "rst", Code: 0}}},
+			[]want{{init: true, code: codes.Internal, message: "stream terminated by RST_STREAM with error code: NO_ERROR"}},
+		},
+		{
+			"rst_no_error_after_batch",
+			[][]p6Act{{{Act: "headers", Fields: ok}, {Act: "batch", Rows: 1}, {Act: "rst", Code: 0}}},
+			[]want{{batches: 1, code: codes.Internal, message: "stream terminated by RST_STREAM with error code: NO_ERROR"}},
+		},
+		{
+			"goaway_below_then_next",
+			[][]p6Act{
+				{{Act: "headers", Fields: ok}, {Act: "batch", Rows: 1}, {Act: "goaway", Last: json.RawMessage(`"below"`)}, {Act: "close"}},
+				{{Act: "headers", Fields: ok}, {Act: "batch", Rows: 1}, trailers(gstatus("3"), [2]string{"grpc-message", "next subscription"})},
+			},
+			[]want{{batches: 1, code: codes.Unavailable, message: "the connection is draining"}, {batches: 1, code: codes.InvalidArgument, message: "next subscription"}},
+		},
+		{
+			"goaway_ours_then_trailers",
+			[][]p6Act{{
+				{Act: "headers", Fields: ok},
+				{Act: "batch", Rows: 1},
+				{Act: "goaway", Last: json.RawMessage(`"ours"`)},
+				{Act: "batch", Rows: 1},
+				trailers(gstatus("3"), [2]string{"grpc-message", "after goaway"}),
+			}},
+			[]want{{batches: 2, code: codes.InvalidArgument, message: "after goaway"}},
+		},
+		{
+			"http_200_html",
+			[][]p6Act{{
+				{Act: "headers", Fields: [][2]string{{":status", "200"}, {"content-type", "text/html"}}},
+				{Act: "data", B64: base64.StdEncoding.EncodeToString([]byte("<html>bad</html>")), EndStream: true},
+			}},
+			[]want{{init: true, code: codes.Unknown, message: `transport: received unexpected content-type "text/html"`}},
+		},
+		{
+			"http_404_grpc",
+			[][]p6Act{{{Act: "headers", EndStream: true, Fields: [][2]string{{":status", "404"}, {"content-type", "application/grpc"}}}}},
+			[]want{{init: true, code: codes.Unimplemented, message: "unexpected HTTP status code received from server: 404 (Not Found)"}},
+		},
+		{
+			"http_503_empty",
+			[][]p6Act{{{Act: "headers", EndStream: true, Fields: [][2]string{{":status", "503"}}}}},
+			[]want{{init: true, code: codes.Unavailable, message: "unexpected HTTP status code received from server: 503 (Service Unavailable); malformed header: missing HTTP content-type"}},
+		},
+		{
+			"http_599_no_text",
+			[][]p6Act{{{Act: "headers", EndStream: true, Fields: [][2]string{{":status", "599"}, {"content-type", "text/plain"}}}}},
+			[]want{{init: true, code: codes.Unknown, message: `unexpected HTTP status code received from server: 599 (); transport: received unexpected content-type "text/plain"`}},
+		},
 	}
 	var endpoints []*p6Endpoint
 	for _, c := range cases {
@@ -1127,7 +1215,7 @@ type p6SendMock struct {
 
 func (m *p6SendMock) Send(fd *flight.FlightData) error { return m.send(fd) }
 
-func mockPhase6Run(t *testing.T, spec *p6Stream, ctx context.Context, send func(*flight.FlightData) error) *p6Run {
+func mockPhase6Run(ctx context.Context, t *testing.T, spec *p6Stream, send func(*flight.FlightData) error) *p6Run {
 	t.Helper()
 	p, err := newPhase6(&p6Config{ExpectedOutput: true, Streams: map[string]*p6Stream{"mock": spec}})
 	if err != nil {
@@ -1149,7 +1237,7 @@ func mockPhase6Run(t *testing.T, spec *p6Stream, ctx context.Context, send func(
 }
 
 func TestPhase6LiveScheduleAccounting(t *testing.T) {
-	r := mockPhase6Run(t, &p6Stream{}, context.Background(), func(*flight.FlightData) error { return nil })
+	r := mockPhase6Run(context.Background(), t, &p6Stream{}, func(*flight.FlightData) error { return nil })
 	start := monotonicNS()
 	for _, n := range []int{10, 5} {
 		if err := r.live(&p6Op{Batches: n, RowsPerBatch: 1}); err != nil {
@@ -1190,7 +1278,7 @@ func TestPhase6LiveScheduleAccounting(t *testing.T) {
 func TestPhase6LiveDeadlineCutByCausalSendGate(t *testing.T) {
 	entered, release := make(chan struct{}), make(chan struct{})
 	calls := 0
-	r := mockPhase6Run(t, &p6Stream{}, context.Background(), func(*flight.FlightData) error {
+	r := mockPhase6Run(context.Background(), t, &p6Stream{}, func(*flight.FlightData) error {
 		calls++
 		if calls == 2 {
 			close(entered)
@@ -1234,7 +1322,7 @@ func TestPhase6LiveCancellationAndFailedSend(t *testing.T) {
 			defer cancel()
 			entered := make(chan struct{})
 			calls := 0
-			r := mockPhase6Run(t, &p6Stream{}, ctx, func(*flight.FlightData) error {
+			r := mockPhase6Run(ctx, t, &p6Stream{}, func(*flight.FlightData) error {
 				calls++
 				if calls == 2 {
 					close(entered)
@@ -1268,7 +1356,7 @@ func TestPhase6LiveCancellationAndFailedSend(t *testing.T) {
 func TestPhase6LiveLatenessIncludesSchemaPreparation(t *testing.T) {
 	entered, release := make(chan struct{}), make(chan struct{})
 	calls := 0
-	r := mockPhase6Run(t, &p6Stream{}, context.Background(), func(*flight.FlightData) error {
+	r := mockPhase6Run(context.Background(), t, &p6Stream{}, func(*flight.FlightData) error {
 		calls++
 		if calls == 1 {
 			close(entered)
@@ -1291,7 +1379,7 @@ func TestPhase6LiveLatenessIncludesSchemaPreparation(t *testing.T) {
 }
 
 func TestPhase6LiveUnboundedSchedulePersistsAcrossOps(t *testing.T) {
-	r := mockPhase6Run(t, &p6Stream{}, context.Background(), func(*flight.FlightData) error { return nil })
+	r := mockPhase6Run(context.Background(), t, &p6Stream{}, func(*flight.FlightData) error { return nil })
 	for _, op := range []p6Op{{Batches: 2}, {Batches: 2, DurationMS: 10000}, {Batches: 2}} {
 		if err := r.live(&op); err != nil {
 			t.Fatal(err)
@@ -1304,10 +1392,14 @@ func TestPhase6LiveUnboundedSchedulePersistsAcrossOps(t *testing.T) {
 }
 
 func TestPhase6CycleDictionaryChurnSurvivesEventDrops(t *testing.T) {
-	h := startPhase6(t, &p6Config{EventLimit: 3, EventHardLimit: 5, EventSample: 1000, BatchEventSample: 1000, ExpectedOutput: true,
-		Streams: map[string]*p6Stream{"dict": {Schema: "dictionary", Compression: "zstd", SummaryBucketMS: 60000,
+	h := startPhase6(t, &p6Config{
+		EventLimit: 3, EventHardLimit: 5, EventSample: 1000, BatchEventSample: 1000, ExpectedOutput: true,
+		Streams: map[string]*p6Stream{"dict": {
+			Schema: "dictionary", Compression: "zstd", SummaryBucketMS: 60000,
 			Dictionary:    &p6Dictionary{Mode: "cycle", Cardinality: 4, MaxEntries: 12, ValueBytes: 64},
-			Subscriptions: []p6Subscription{{Repeat: 2, Ops: []p6Op{{Op: "live", RowsPerBatch: 6, Batches: 10, IntervalMS: 1}, {Op: "eof"}}}}}}})
+			Subscriptions: []p6Subscription{{Repeat: 2, Ops: []p6Op{{Op: "live", RowsPerBatch: 6, Batches: 10, IntervalMS: 1}, {Op: "eof"}}}},
+		}},
+	})
 	var out bytes.Buffer
 	for i := 0; i < 2; i++ {
 		r := h.subscribe(t, "dict")
@@ -1357,7 +1449,7 @@ func TestPhase6CycleDictionaryChurnSurvivesEventDrops(t *testing.T) {
 }
 
 func TestPhase6SummaryBucketsBoundariesAndOverflow(t *testing.T) {
-	r := mockPhase6Run(t, &p6Stream{SummaryBucketMS: 1}, context.Background(), func(*flight.FlightData) error { return nil })
+	r := mockPhase6Run(context.Background(), t, &p6Stream{SummaryBucketMS: 1}, func(*flight.FlightData) error { return nil })
 	origin := *r.p.streams[r.name].FirstDoGetNS
 	r.p.mu.Lock()
 	for _, i := range []int64{0, 2, 511} {
@@ -1388,7 +1480,7 @@ func TestPhase6SummaryBucketsBoundariesAndOverflow(t *testing.T) {
 
 func TestPhase6DictionarySendCountSurvivesRecordFailure(t *testing.T) {
 	calls := 0
-	r := mockPhase6Run(t, &p6Stream{Schema: "dictionary", Dictionary: &p6Dictionary{Mode: "cycle", Cardinality: 2, MaxEntries: 4}}, context.Background(), func(*flight.FlightData) error {
+	r := mockPhase6Run(context.Background(), t, &p6Stream{Schema: "dictionary", Dictionary: &p6Dictionary{Mode: "cycle", Cardinality: 2, MaxEntries: 4}}, func(*flight.FlightData) error {
 		calls++
 		if calls == 3 {
 			return errors.New("record send failed")
@@ -1442,7 +1534,7 @@ func TestPhase6StartupSummaryHasCPUAndStart(t *testing.T) {
 		t.Fatalf("terminal snapshot = %+v startup=%+v", terminal, s)
 	}
 	// Expected output preparation is separately totaled at the root.
-	r := mockPhase6Run(t, &p6Stream{}, context.Background(), func(*flight.FlightData) error { return nil })
+	r := mockPhase6Run(context.Background(), t, &p6Stream{}, func(*flight.FlightData) error { return nil })
 	if err := r.batch(1, 0, 0, nil); err != nil {
 		t.Fatal(err)
 	}
@@ -1457,5 +1549,4 @@ func TestPhase6StartupSummaryHasCPUAndStart(t *testing.T) {
 	if rendered.ExpectedOutputNS != rendered.Streams[r.name].ExpectedOutputNS || rendered.ExpectedOutputNS <= 0 {
 		t.Fatalf("expected output total = %+v", rendered)
 	}
-
 }

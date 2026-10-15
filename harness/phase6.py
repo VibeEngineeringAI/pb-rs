@@ -35,7 +35,7 @@ import phase3 as p3
 import run
 
 SCHEMA_VERSION = 1
-TMP = Path('/home/ajs/.cache/pb-phase6/tmp')
+TMP = Path.home() / '.cache/pb-phase6/tmp'
 REFERENCE = Path(__file__).with_name('contracts') / 'phase6-reference.json'
 STDOUT_CAP = 32 * 1024 * 1024
 STDERR_CAP = 1024 * 1024

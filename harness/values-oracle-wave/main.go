@@ -210,7 +210,7 @@ func main() {
 	// More V1 ties, from the review's mismatch examples: a negative f64 tie,
 	// a scientific-notation f64 tie, ties inside a struct, and f16 ties inside a list.
 	g64 := array.NewFloat64Builder(mem)
-	g64.AppendValues([]float64{math.Float64frombits(0xc24804fc47d09200), math.Float64frombits(0x431d8d54407f74e1), 2.5e21, -0.0}, nil)
+	g64.AppendValues([]float64{math.Float64frombits(0xc24804fc47d09200), math.Float64frombits(0x431d8d54407f74e1), 2.5e21, 0}, nil)
 	g32 := array.NewFloat32Builder(mem)
 	g32.AppendValues([]float32{math.Float32frombits(0x4729d710), -453943.625, 3e-7, 1e21}, nil)
 	h16 := array.NewFloat16Builder(mem)

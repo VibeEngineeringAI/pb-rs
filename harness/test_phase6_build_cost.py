@@ -105,7 +105,7 @@ class Clock:
 
 class BuildCostTests(unittest.TestCase):
     def setUp(self):
-        test_cache = Path('/home/ajs/.cache/pb-phase6/build-cost-preparation-v1/r5-corrections/mock-fixtures')
+        test_cache = b.CACHE / 'r5-corrections/mock-fixtures'
         test_cache.mkdir(parents=True, exist_ok=True)
         self.tmp = tempfile.TemporaryDirectory(prefix='test-', dir=test_cache)
         self.addCleanup(self.tmp.cleanup)

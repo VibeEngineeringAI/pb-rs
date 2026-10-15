@@ -33,7 +33,7 @@ for _name in dir(os):
 import fcntl
 
 fcntl.flock = fcntl.lockf = _blocked
-SCRATCH = '/home/ajs/.cache/pb-phase6/duration-gate-v1'
+SCRATCH = os.path.expanduser('~/.cache/pb-phase6/duration-gate-v1')
 _outputs = set()
 
 

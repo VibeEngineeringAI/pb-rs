@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "starting_head": "ca3ce22acf0377869ce35b5766ad4bd4313cd544",
+  "failed_ci_runs": {
+    "CLI harness": 38669377914,
+    "Go Build and Test": 38669377930
+  },
+  "source_sha256": {
+    "harness/phase6.py": "8ece3c3b2bec80f922263a2b11a97e6f297ac516196fe0d24e84a5ab3c265f6d",
+    "harness/phase6_workloads.py": "b361cbcc62a1c080890f7f825473a5642ece4f7c1be10e13782b53fd50e530b3",
+    "harness/phase6_build_cost.py": "7b7b2d3e066292cd3283a52d1dff6f5239e0b228bf614c1098f20ca4efc1ccea",
+    "harness/phase6_duration_gate.py": "4b2b6c362c1a14a230efbeab13e80aa63bb59fbb32a4d8275c6864512c40b455",
+    "harness/test_phase6_build_cost.py": "5056122534e6871f51e150ee9a7558348575407f9e5c1f10f7895771143a8e22",
+    "harness/test_phase6_process_cleanup.py": "603540ece0c13b52bb4bcad148b42549ef91086ca9e2a42054e4955a369347a7",
+    "harness/test_phase6_paths.py": "f54c38cfa7fc1e02cc0ba63447ff8b31972cfc73e0e2e21fef387c3580c532e5",
+    "harness/fixture/phase6.go": "eed6d370d3b7fdd847f6f5c8469e226cfa097d16b0143d4b2d42d3d2ea4c970d",
+    "harness/fixture/phase6_test.go": "b0d320df10ee49aadd692295ebabe6af29f72681ce17370bc65030ad0e5c2e80",
+    "harness/values-oracle/main.go": "db8f4388ac0469130fc701d533977b3f036a05bc809cbf68b530e9b76364ceba",
+    "harness/values-oracle-wave/main.go": "364db3b590d1378beb7c98f212e058f381b08d8ea38a90da5bf7310118a47a29",
+    "docs/rust-phase6.md": "e7b9a551cffe17c55071b536d10de1084dcc20f74afe7cc9bad0615b081a9e91"
+  },
+  "python_alternate_home": {
+    "modules": 28,
+    "tests": 692,
+    "passed": 692,
+    "module_test_counts": [
+      14,
+      13,
+      49,
+      6,
+      7,
+      19,
+      29,
+      37,
+      28,
+      9,
+      36,
+      36,
+      36,
+      4,
+      106,
+      10,
+      19,
+      7,
+      1,
+      5,
+      66,
+      5,
+      4,
+      35,
+      5,
+      94,
+      8,
+      4
+    ],
+    "failure_summaries": [],
+    "skips": [],
+    "exit_code": 0
+  },
+  "checks": {
+    "gofumpt": "v0.7.0 clean",
+    "golangci_lint": "v2.11.4: 0 issues",
+    "go_test": "Go1.25.4 go test ./... passed",
+    "go_vet": "Go1.25.4 go vet ./... passed",
+    "oracle_outputs": "212 non-manifest corpus files identical before/after and to historical corpus",
+    "profiles_optimized": "66 passed under alternate HOME"
+  },
+  "review": "Independent Sol 6.1 source review accepted; full rerun clears its retained initial validation failure.",
+  "limits": [
+    "Historical evidence and source identities were not rewritten.",
+    "Rust production sources and corrected release binary are unchanged.",
+    "No performance, soak or cross-platform acceptance is claimed."
+  ],
+  "reports_sha256": {
+    "ci-portability-report.md": "2bb9bdf2b3f5413367fda8a257932a274c30f337b1200b94c33a2464a6eb33e6",
+    "go-format-report.md": "894db9a4f53345c7ebe41bd5578f3a07784501c8064d6f657c6a1a41e59a3f0f",
+    "ci-fixes-review.md": "c4fa42356bd63b8c16357b68a11543191b94b2252143e7fb31d8abb637d88123"
+  }
+}

@@ -62,7 +62,7 @@ class ProcessCleanupTests(unittest.TestCase):
     def descendant_running(identity):
         try:
             stat = Path(f'/proc/{identity["pid"]}/stat').read_text().rsplit(')', 1)[1].split()
-        except FileNotFoundError:
+        except (FileNotFoundError, ProcessLookupError):
             return False
         # Treat a zombie as terminated; this process does not own the orphan's
         # wait status. The start time keeps test cleanup away from reused PIDs.

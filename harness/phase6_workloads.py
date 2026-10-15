@@ -24,8 +24,8 @@ import urllib.request
 
 import run
 
-TMP = Path('/home/ajs/.cache/pb-phase6/tmp')
-PERFORMANCE_LOCK = Path('/home/ajs/.cache/pb-rs-performance.lock')
+TMP = Path.home() / '.cache/pb-phase6/tmp'
+PERFORMANCE_LOCK = Path.home() / '.cache/pb-rs-performance.lock'
 PREDECLARED_BUDGETS = Path(__file__).resolve().parent.parent / 'docs/evidence/phase6/performance-budgets.json'
 WINDOW_CLEANUP_RESERVE_S = 30
 SCHEMA_VERSION = 2
@@ -1170,7 +1170,7 @@ def summarize_campaign(results, report, seed):
 
 def campaign(args):
     if safe_path(args.lock) != PERFORMANCE_LOCK:
-        raise ValueError('campaign must use the shared /home/ajs/.cache/pb-rs-performance.lock')
+        raise ValueError(f'campaign must use the shared {PERFORMANCE_LOCK}')
     out = safe_path(args.out)
     out.mkdir(parents=True, exist_ok=False)
     TMP.mkdir(parents=True, exist_ok=True)

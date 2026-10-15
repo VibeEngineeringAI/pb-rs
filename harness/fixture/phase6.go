@@ -28,7 +28,6 @@ import (
 	"net"
 	"net/http"
 	"os"
-	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -245,11 +244,15 @@ type p6Op struct {
 	CloseAfterMS       int    `json:"close_after_ms"`
 }
 
-var p6Kinds = map[string]bool{"basic": true, "wide": true, "values": true, "dup": true, "nan": true, "dictionary": true,
-	"empty": true, "union": true, "ree": true, "invalid_utf8": true}
+var p6Kinds = map[string]bool{
+	"basic": true, "wide": true, "values": true, "dup": true, "nan": true, "dictionary": true,
+	"empty": true, "union": true, "ree": true, "invalid_utf8": true,
+}
 
-var p6CorruptKinds = map[string]bool{"garbage_header": true, "truncated_body": true, "empty_message": true, "foreign_batch": true,
-	"dictionary_before_schema": true, "missing_dictionary": true, "dictionary_only": true}
+var p6CorruptKinds = map[string]bool{
+	"garbage_header": true, "truncated_body": true, "empty_message": true, "foreign_batch": true,
+	"dictionary_before_schema": true, "missing_dictionary": true, "dictionary_only": true,
+}
 
 func (c *p6Config) validate() error {
 	if c.TLS != nil && (c.TLS.GRPC || c.TLS.HTTP) && c.TLS.CAPath == "" {
@@ -308,14 +311,14 @@ func (c *p6Config) validate() error {
 				return fmt.Errorf("stream %q: negative cycle dictionary option", name)
 			}
 			if s.Dictionary.Mode == "cycle" {
-				card, cap := s.Dictionary.Cardinality, s.Dictionary.MaxEntries
+				card, maxEntries := s.Dictionary.Cardinality, s.Dictionary.MaxEntries
 				if card == 0 {
 					card = 16
 				}
-				if cap == 0 {
-					cap = 4096
+				if maxEntries == 0 {
+					maxEntries = 4096
 				}
-				if card > cap {
+				if card > maxEntries {
 					return fmt.Errorf("stream %q: cycle cardinality exceeds max_entries", name)
 				}
 			}
@@ -499,9 +502,11 @@ func newPhase6(cfg *p6Config) (*phase6, error) {
 	if cfg.TraceLimit <= 0 {
 		cfg.TraceLimit = 4096
 	}
-	p := &phase6{startNS: monotonicNS(), cfg: cfg, kinds: map[string]int64{}, waits: map[string]*p6Counter{}, changed: make(chan struct{}),
+	p := &phase6{
+		startNS: monotonicNS(), cfg: cfg, kinds: map[string]int64{}, waits: map[string]*p6Counter{}, changed: make(chan struct{}),
 		gates: map[string]*p6Gate{}, streams: map[string]*p6StreamStats{}, stop: make(chan struct{}),
-		conns: map[string]*p6Conn{}, ports: map[string]int{}}
+		conns: map[string]*p6Conn{}, ports: map[string]int{},
+	}
 	for name, spec := range cfg.Streams {
 		p.streams[name] = p.newStats()
 		if spec.Schema == "dictionary" {
@@ -783,11 +788,13 @@ func (p *phase6) summary() ([]byte, error) {
 	for name, g := range p.gates {
 		gates[name] = map[string]int64{"waiting": g.waiting, "released": g.released, "tokens": g.tokens}
 	}
-	return json.Marshal(p6Summary{HTTPRequests: p.httpRequests, AboutRequests: p.aboutRequests, FirstAboutNS: p.firstAbout,
+	return json.Marshal(p6Summary{
+		HTTPRequests: p.httpRequests, AboutRequests: p.aboutRequests, FirstAboutNS: p.firstAbout,
 		LastAboutNS: p.lastAbout, AboutCompletedNS: p.aboutCompleted, Streams: p.streams, DoGets: p.dogets, EventsTotal: p.seq, EventsWritten: p.written,
 		EventsDropped: p.dropped, EventKinds: p.kinds, TraceDropped: p.traceDropped.Load(), Gates: gates,
 		FixtureCPUUserNS: usage.Utime.Nano(), FixtureCPUSysNS: usage.Stime.Nano(), MonotonicNS: monotonicNS(),
-		FixtureStartNS: p.startNS, ExpectedOutputNS: expectedNS})
+		FixtureStartNS: p.startNS, ExpectedOutputNS: expectedNS,
+	})
 }
 
 func (p *phase6) writeSummary() {
@@ -1011,8 +1018,10 @@ func (p *phase6) serveRoute(f *fixture, w http.ResponseWriter, r *http.Request, 
 
 // Flight DoGet.
 
-type p6RPCKey struct{}
-type p6ConnKey struct{}
+type (
+	p6RPCKey  struct{}
+	p6ConnKey struct{}
+)
 
 type p6RPC struct{ wire atomic.Int64 }
 
@@ -1075,8 +1084,10 @@ func (p *phase6) doGet(f *fixture, ticket *flight.Ticket, stream flight.FlightSe
 			contract[h] = strings.Join(values, ",")
 		}
 	}
-	f.record(request{Protocol: "flight", Method: "DoGet", Path: "/arrow.flight.protocol.FlightService/DoGet", Headers: contract,
-		Body: string(ticket.Ticket), TimeUnixNS: time.Now().UnixNano(), Unexpected: spec == nil})
+	f.record(request{
+		Protocol: "flight", Method: "DoGet", Path: "/arrow.flight.protocol.FlightService/DoGet", Headers: contract,
+		Body: string(ticket.Ticket), TimeUnixNS: time.Now().UnixNano(), Unexpected: spec == nil,
+	})
 	authorized := f.authorized(contract)
 	if p.cfg.FlightAuth != nil {
 		authorized = true
@@ -1095,8 +1106,10 @@ func (p *phase6) doGet(f *fixture, ticket *flight.Ticket, stream flight.FlightSe
 	if pr, ok := peer.FromContext(ctx); ok {
 		remote = pr.Addr.String()
 		if info, ok := pr.AuthInfo.(credentials.TLSInfo); ok {
-			tlsInfo = map[string]any{"server_name": info.State.ServerName, "alpn": info.State.NegotiatedProtocol,
-				"version": tls.VersionName(info.State.Version)}
+			tlsInfo = map[string]any{
+				"server_name": info.State.ServerName, "alpn": info.State.NegotiatedProtocol,
+				"version": tls.VersionName(info.State.Version),
+			}
 		}
 	}
 	expected := []byte(nil)
@@ -1157,9 +1170,11 @@ func (p *phase6) doGet(f *fixture, ticket *flight.Ticket, stream flight.FlightSe
 		stats.Authorities["<other>"]++
 	}
 	p.mu.Unlock()
-	p.emit(received, "doget", p6Fields{"ticket_matches": bytes.Equal(ticket.Ticket, expected), "stream": name, "sub": sub, "doget": doget, "ticket": string(ticket.Ticket),
+	p.emit(received, "doget", p6Fields{
+		"ticket_matches": bytes.Equal(ticket.Ticket, expected), "stream": name, "sub": sub, "doget": doget, "ticket": string(ticket.Ticket),
 		"ticket_b64": base64.StdEncoding.EncodeToString(ticket.Ticket), "metadata": all, "authorized": authorized,
-		"unexpected": spec == nil, "tls": tlsInfo, "peer": remote, "authority": authority})
+		"unexpected": spec == nil, "tls": tlsInfo, "peer": remote, "authority": authority,
+	})
 	rpc, _ := ctx.Value(p6RPCKey{}).(*p6RPC)
 	run := &p6Run{p: p, name: key, sub: sub, doget: doget, stream: stream, ctx: ctx, rpc: rpc, spec: spec, remote: remote}
 	if !authorized {
@@ -1533,14 +1548,17 @@ func (r *p6Run) recordLive(op *p6Op, emitted int64, reason string, startNS int64
 	}
 	if scheduled != nil {
 		missing := max(*scheduled-emitted, 0)
-		if reason == "deadline" {
+		switch reason {
+		case "deadline":
 			l.OmittedByDeadline += missing
-		} else if reason == "termination" {
+		case "termination":
 			l.OmittedByTermination += missing
 		}
 	}
-	l.Last = &p6LiveLast{Scheduled: scheduled, Emitted: emitted, StopReason: reason, StartedNS: startNS, DeadlineNS: deadline,
-		EndedNS: ended, IntervalMS: op.IntervalMS, DurationMS: op.DurationMS, Batches: op.Batches}
+	l.Last = &p6LiveLast{
+		Scheduled: scheduled, Emitted: emitted, StopReason: reason, StartedNS: startNS, DeadlineNS: deadline,
+		EndedNS: ended, IntervalMS: op.IntervalMS, DurationMS: op.DurationMS, Batches: op.Batches,
+	}
 }
 
 // p6Agg is an exact count/sum/max aggregate of nanosecond values.
@@ -1685,8 +1703,10 @@ func (r *p6Run) batch(rows, payload, target int, schedule *p6BatchSchedule) erro
 		}
 	}
 	decoded := recordBytes(rec)
-	common := p6Fields{"batch": ordinal, "sub_batch": r.subBatch, "rows": rows, "seq_start": seqStart, "messages": len(msgs),
-		"dictionary_messages": dictMessages, "encoded_bytes": encoded, "max_message_bytes": maxMessage, "decoded_bytes": decoded}
+	common := p6Fields{
+		"batch": ordinal, "sub_batch": r.subBatch, "rows": rows, "seq_start": seqStart, "messages": len(msgs),
+		"dictionary_messages": dictMessages, "encoded_bytes": encoded, "max_message_bytes": maxMessage, "decoded_bytes": decoded,
+	}
 	if schedule != nil {
 		common["lateness_ns"] = schedule.latenessNS
 	}
@@ -2008,12 +2028,18 @@ func p6Schema(kind string) *arrow.Schema {
 	case "empty":
 		fields = []arrow.Field{}
 	case "union":
-		fields = []arrow.Field{{Name: "sequence", Type: arrow.PrimitiveTypes.Int64},
-			{Name: "choice", Type: arrow.DenseUnionOf([]arrow.Field{{Name: "i", Type: arrow.PrimitiveTypes.Int32, Nullable: true},
-				{Name: "s", Type: arrow.BinaryTypes.String, Nullable: true}}, []arrow.UnionTypeCode{0, 1})}}
+		fields = []arrow.Field{
+			{Name: "sequence", Type: arrow.PrimitiveTypes.Int64},
+			{Name: "choice", Type: arrow.DenseUnionOf([]arrow.Field{
+				{Name: "i", Type: arrow.PrimitiveTypes.Int32, Nullable: true},
+				{Name: "s", Type: arrow.BinaryTypes.String, Nullable: true},
+			}, []arrow.UnionTypeCode{0, 1})},
+		}
 	case "ree":
-		fields = []arrow.Field{{Name: "sequence", Type: arrow.PrimitiveTypes.Int64},
-			{Name: "run", Type: arrow.RunEndEncodedOf(arrow.PrimitiveTypes.Int32, arrow.BinaryTypes.String)}}
+		fields = []arrow.Field{
+			{Name: "sequence", Type: arrow.PrimitiveTypes.Int64},
+			{Name: "run", Type: arrow.RunEndEncodedOf(arrow.PrimitiveTypes.Int32, arrow.BinaryTypes.String)},
+		}
 	case "invalid_utf8":
 		fields = []arrow.Field{{Name: "sequence", Type: arrow.PrimitiveTypes.Int64}, {Name: "text", Type: arrow.BinaryTypes.String}}
 	default:
@@ -2288,7 +2314,7 @@ func buildValueColumns() []p6Column {
 		table("uint16", arrow.PrimitiveTypes.Uint16, uint16(math.MaxUint16), uint16(1), nil),
 		table("uint32", arrow.PrimitiveTypes.Uint32, uint32(math.MaxUint32), uint32(2), nil),
 		table("uint64", arrow.PrimitiveTypes.Uint64, uint64(math.MaxUint64), uint64(9007199254740993), uint64(0), nil),
-		table("float16", arrow.FixedWidthTypes.Float16, float16.New(1.5), float16.New(-0.0), float16.New(65504), float16.New(0.1), nil),
+		table("float16", arrow.FixedWidthTypes.Float16, float16.New(1.5), float16.New(0), float16.New(65504), float16.New(0.1), nil),
 		table("float32", arrow.PrimitiveTypes.Float32, float32(0.1), float32(math.MaxFloat32), float32(1e-7), float32(negZero), float32(16777217), float32(1e21), float32(1e20), nil),
 		table("float64", arrow.PrimitiveTypes.Float64, 0.1, 1e20, 1e21, 1e-6, 1e-7, negZero, 123456789.123, math.MaxFloat64, math.SmallestNonzeroFloat64, 9007199254740993.0, nil),
 		table("utf8", arrow.BinaryTypes.String, "", "plain", "<html>&'\"", "  ", "control\x01\t\n\\/", "café 日志 😀", nil),
@@ -2466,9 +2492,11 @@ func (p *phase6) generateTLS() error {
 		return err
 	}
 	now := time.Now()
-	ca := &x509.Certificate{SerialNumber: big.NewInt(1), Subject: pkix.Name{CommonName: "pb-fixture phase6 CA"},
+	ca := &x509.Certificate{
+		SerialNumber: big.NewInt(1), Subject: pkix.Name{CommonName: "pb-fixture phase6 CA"},
 		NotBefore: now.Add(-time.Hour), NotAfter: now.Add(24 * time.Hour), IsCA: true, BasicConstraintsValid: true,
-		KeyUsage: x509.KeyUsageCertSign | x509.KeyUsageDigitalSignature}
+		KeyUsage: x509.KeyUsageCertSign | x509.KeyUsageDigitalSignature,
+	}
 	caDER, err := x509.CreateCertificate(rand.Reader, ca, ca, &caKey.PublicKey, caKey)
 	if err != nil {
 		return err
@@ -2481,9 +2509,11 @@ func (p *phase6) generateTLS() error {
 	if err != nil {
 		return err
 	}
-	leaf := &x509.Certificate{SerialNumber: big.NewInt(2), Subject: pkix.Name{CommonName: "pb-fixture"},
+	leaf := &x509.Certificate{
+		SerialNumber: big.NewInt(2), Subject: pkix.Name{CommonName: "pb-fixture"},
 		NotBefore: now.Add(-time.Hour), NotAfter: now.Add(24 * time.Hour), KeyUsage: x509.KeyUsageDigitalSignature,
-		ExtKeyUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth}}
+		ExtKeyUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
+	}
 	names := p.cfg.TLS.Names
 	if len(names) == 0 {
 		names = []string{"localhost", "127.0.0.1", "::1"}
@@ -2519,8 +2549,10 @@ func tlsVersion(name string, fallback uint16) uint16 {
 }
 
 func (p *phase6) tlsConfig(alpn []string) *tls.Config {
-	cfg := &tls.Config{Certificates: []tls.Certificate{*p.tlsCert},
-		MinVersion: tlsVersion(p.cfg.TLS.MinVersion, tls.VersionTLS10), MaxVersion: tlsVersion(p.cfg.TLS.MaxVersion, tls.VersionTLS13)}
+	cfg := &tls.Config{
+		Certificates: []tls.Certificate{*p.tlsCert},
+		MinVersion:   tlsVersion(p.cfg.TLS.MinVersion, tls.VersionTLS10), MaxVersion: tlsVersion(p.cfg.TLS.MaxVersion, tls.VersionTLS13),
+	}
 	if !p.cfg.TLS.NoALPN {
 		cfg.NextProtos = alpn
 	}
@@ -2576,6 +2608,7 @@ func (c *p6Creds) ServerHandshake(raw net.Conn) (net.Conn, credentials.AuthInfo,
 func (c *p6Creds) Info() credentials.ProtocolInfo {
 	return credentials.ProtocolInfo{SecurityProtocol: "tls", SecurityVersion: "1.2"}
 }
+
 func (c *p6Creds) Clone() credentials.TransportCredentials {
 	return &p6Creds{p: c.p, cfg: c.cfg.Clone()}
 }
@@ -2596,16 +2629,6 @@ func (l *p6TLSListener) Accept() (net.Conn, error) {
 	// tls.Conn serializes handshakes, so net/http's own read reuses this result.
 	go func() { l.p.handshakeEvent("http", conn, conn.Handshake()) }()
 	return conn, nil
-}
-
-// sortedKeys is used by tests and docs to keep the op catalog stable.
-func sortedKeys(m map[string]bool) []string {
-	out := make([]string, 0, len(m))
-	for k := range m {
-		out = append(out, k)
-	}
-	sort.Strings(out)
-	return out
 }
 
 // Connection registry for transport-loss ops. p6Conn serializes writes so a
@@ -2728,8 +2751,10 @@ func (p *phase6) startEndpoints(f *fixture) (map[string]int, error) {
 			go p.rawH2(f, e, l)
 		case "http_status":
 			handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				p.emit(monotonicNS(), "endpoint_request", p6Fields{"name": e.Name, "method": r.Method, "path": r.URL.Path,
-					"proto": r.Proto, "content_type": r.Header.Get("Content-Type"), "authority": r.Host})
+				p.emit(monotonicNS(), "endpoint_request", p6Fields{
+					"name": e.Name, "method": r.Method, "path": r.URL.Path,
+					"proto": r.Proto, "content_type": r.Header.Get("Content-Type"), "authority": r.Host,
+				})
 				if e.ContentType != "" {
 					w.Header().Set("Content-Type", e.ContentType)
 				}
@@ -3055,7 +3080,6 @@ func (c *p6RawConn) serve(id uint32, md map[string][]string, received int64, bod
 	}
 	if stats.FirstDoGetNS == nil {
 		stats.FirstDoGetNS = &received
-
 	}
 	last := received
 	stats.LastDoGetNS = &last
@@ -3082,9 +3106,11 @@ func (c *p6RawConn) serve(id uint32, md map[string][]string, received int64, bod
 		stats.Subscriptions++
 	}
 	p.mu.Unlock()
-	fields := p6Fields{"name": e.Name, "stream": key, "ordinal": ordinal, "sub": ordinal, "doget": doget, "stream_id": id,
+	fields := p6Fields{
+		"name": e.Name, "stream": key, "ordinal": ordinal, "sub": ordinal, "doget": doget, "stream_id": id,
 		"ticket": string(ticket), "ticket_b64": base64.StdEncoding.EncodeToString(ticket), "ticket_matches": bytes.Equal(ticket, expected),
-		"metadata": md, "authority": authority, "authorized": authorized, "peer": c.remote, "unexpected": acts == nil}
+		"metadata": md, "authority": authority, "authorized": authorized, "peer": c.remote, "unexpected": acts == nil,
+	}
 	p.emit(received, "raw_h2_stream", fields)
 	run := &p6Run{p: p, spec: &p6Stream{Schema: e.Schema, Seed: 1}, name: key, sub: ordinal, doget: doget}
 	finish := func(code, message, reason string) {
@@ -3097,8 +3123,12 @@ func (c *p6RawConn) serve(id uint32, md map[string][]string, received int64, bod
 		p.writeSummary()
 	}
 	if acts == nil {
-		_ = c.headers(id, [][2]string{{":status", "200"}, {"content-type", "application/grpc"}, {"grpc-status", "3"},
-			{"grpc-message", "fixture subscriptions exhausted"}}, true)
+		_ = c.headers(id, [][2]string{
+			{":status", "200"},
+			{"content-type", "application/grpc"},
+			{"grpc-status", "3"},
+			{"grpc-message", "fixture subscriptions exhausted"},
+		}, true)
 		finish("InvalidArgument", "fixture subscriptions exhausted", "exhausted")
 		return
 	}

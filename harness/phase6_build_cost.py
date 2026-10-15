@@ -25,9 +25,9 @@ import time
 import tomllib
 
 BASE = '4a812d5b9bc4c40882ab10897a73c3ce1e715ce0'
-CACHE = Path('/home/ajs/.cache/pb-phase6/build-cost-preparation-v1')
-TMP = Path('/home/ajs/.cache/pb-phase6/tmp')
-LOCK = Path('/home/ajs/.cache/pb-rs-performance.lock')
+CACHE = Path.home() / '.cache/pb-phase6/build-cost-preparation-v1'
+TMP = Path.home() / '.cache/pb-phase6/tmp'
+LOCK = Path.home() / '.cache/pb-rs-performance.lock'
 REGISTRY = 'registry+https://github.com/rust-lang/crates.io-index'
 REGISTRY_DIR = 'index.crates.io-1949cf8c6b5b557f'
 TOOLCHAIN = Path('/home/ajs/.rustup/toolchains/1.96.0-x86_64-unknown-linux-gnu')

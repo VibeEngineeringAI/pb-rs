@@ -209,8 +209,8 @@ func writeManifest(dir string) {
 		data, err := os.ReadFile(filepath.Join(dir, name))
 		must(err)
 		manifest.Files = append(manifest.Files, file{Name: name, Bytes: len(data), SHA256: sha(data)})
-		if case_, ok := strings.CutSuffix(name, ".arrows"); ok {
-			manifest.Cases = append(manifest.Cases, case_)
+		if caseName, ok := strings.CutSuffix(name, ".arrows"); ok {
+			manifest.Cases = append(manifest.Cases, caseName)
 		}
 	}
 	sort.Strings(manifest.Cases)
@@ -258,9 +258,18 @@ func main() {
 		u64.AppendValues([]uint64{0, math.MaxUint64, 1}, []bool{true, true, false})
 		bb := array.NewBooleanBuilder(mem)
 		bb.AppendValues([]bool{true, false, false}, []bool{true, true, false})
-		return []col{{"i8", b8.NewArray()}, {"i16", b16.NewArray()}, {"i32", b32.NewArray()}, {"i64", b64.NewArray()},
-			{"u8", u8.NewArray()}, {"u16", u16.NewArray()}, {"u32", u32.NewArray()}, {"u64", u64.NewArray()},
-			{"bool", bb.NewArray()}, {"null", array.NewNull(3)}}
+		return []col{
+			{"i8", b8.NewArray()},
+			{"i16", b16.NewArray()},
+			{"i32", b32.NewArray()},
+			{"i64", b64.NewArray()},
+			{"u8", u8.NewArray()},
+			{"u16", u16.NewArray()},
+			{"u32", u32.NewArray()},
+			{"u64", u64.NewArray()},
+			{"bool", bb.NewArray()},
+			{"null", array.NewNull(3)},
+		}
 	}
 	write(dir, "ints", []arrow.Record{rec(ints()...)})
 
@@ -271,7 +280,7 @@ func main() {
 			1e-45, math.MaxFloat32, 16777217, -2.5e-8, 100, 3.4e38)},
 		col{"f16", func() arrow.Array {
 			b := array.NewFloat16Builder(mem)
-			for _, v := range []float32{0, -0.0, 1, 1.5, 0.1, 1.0 / 3, 65504, 6e-8, 6.1e-5, 0.0001, 2, 3, 0.5, 1e4, -7, 0.25, 100, 1000} {
+			for _, v := range []float32{0, 0, 1, 1.5, 0.1, 1.0 / 3, 65504, 6e-8, 6.1e-5, 0.0001, 2, 3, 0.5, 1e4, -7, 0.25, 100, 1000} {
 				b.Append(float16.New(v))
 			}
 			return b.NewArray()
@@ -299,9 +308,11 @@ func main() {
 
 	write(dir, "strings", []arrow.Record{rec(col{"s", func() arrow.Array {
 		b := array.NewStringBuilder(mem)
-		for _, v := range []string{"", "plain", "<a&b>", "\"\\/", "\n\r\t\b\f\x00\x01\x1f\x7f",
+		for _, v := range []string{
+			"", "plain", "<a&b>", "\"\\/", "\n\r\t\b\f\x00\x01\x1f\x7f",
 			"  ", "é😀", "\xff", "a\xffb", "\xe2\x82", "\xe2\x82A", "\xed\xa0\x80", "\xc0\xaf",
-			"\xf4\x90\x80\x80", "\xf0\x9f\x98", "12345678<abcdefgh", "abcdefghijk\xff"} {
+			"\xf4\x90\x80\x80", "\xf0\x9f\x98", "12345678<abcdefgh", "abcdefghijk\xff",
+		} {
 			b.Append(v)
 		}
 		b.AppendNull()
@@ -576,7 +587,7 @@ func main() {
 		must(err)
 		return u
 	}
-	nullStrs := func(n int, valid []bool, vals ...string) arrow.Array {
+	nullStrs := func(_ int, valid []bool, vals ...string) arrow.Array {
 		b := array.NewStringBuilder(mem)
 		b.AppendValues(vals, valid)
 		return b.NewArray()
