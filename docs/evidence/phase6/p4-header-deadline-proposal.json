@@ -1,0 +1,2061 @@
+{
+  "status": "implementation proposal only; unpromoted; fresh independent Opus review required before promotion",
+  "scope": "pure guarded tests and reduction of actual R4/R5/R6 archives; no native replay/probe/build/fixture",
+  "source_root": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail",
+  "case": {
+    "name": "p4-deadline-header",
+    "group": "deadline",
+    "tier": "full120s",
+    "build": "standard",
+    "requires": [],
+    "argv": [
+      "promql",
+      "labels"
+    ],
+    "config": {
+      "auth": "basic"
+    },
+    "location": "xdg",
+    "fixture": {
+      "headers": {
+        "authorization": "Basic aGFybmVzczpoYXJuZXNz"
+      },
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/prometheus/api/v1/labels",
+          "body": "null",
+          "header_stall": true
+        }
+      ]
+    },
+    "env": {},
+    "unset": [],
+    "expect": {
+      "termination": {
+        "exit": 1
+      },
+      "requests": [
+        "GET /prometheus/api/v1/labels"
+      ],
+      "stdout_exact": "",
+      "stderr_has": [
+        "Client.Timeout"
+      ],
+      "min_wall_ms": 119000,
+      "max_wall_ms": 130000
+    },
+    "compare": {
+      "spinner": true,
+      "timeout_cause": true
+    },
+    "timeout": 135,
+    "targets": [
+      "/prometheus/api/v1/labels?stream=select-dataset"
+    ]
+  },
+  "source_rationale": {
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/cmd/promql.go": {
+      "sha256": "b8064a45215191d841466211d7423f93f6570b1599293c92baff9923be363178",
+      "oracle_commit": "07af390ab09bda8ac9e427ffc6310077bace0125",
+      "verified_against_git_object": true
+    },
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/pkg/http/http.go": {
+      "sha256": "47b59e5e3d434886ff5aec8ead5a578cc9ffeb690f5d0562c15ea997427244c0",
+      "oracle_commit": "07af390ab09bda8ac9e427ffc6310077bace0125",
+      "verified_against_git_object": true
+    },
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/pkg/http/refresh.go": {
+      "sha256": "39f767a8fe9e74b142337af07fe46d9df2f2cf258df90095bd3afba24415fc78",
+      "oracle_commit": "07af390ab09bda8ac9e427ffc6310077bace0125",
+      "verified_against_git_object": true
+    },
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/main.go": {
+      "sha256": "9e540da1614d0cbf4a29049b1295143530f6b2b18dc80b9dbfa52c3c3cb5f70a",
+      "oracle_commit": "07af390ab09bda8ac9e427ffc6310077bace0125",
+      "verified_against_git_object": true
+    },
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/go.mod": {
+      "sha256": "90555a3ae88bee209ce16845ad259afa2e4c9b3c14890e0578a8a514c1350565",
+      "oracle_commit": "07af390ab09bda8ac9e427ffc6310077bace0125",
+      "verified_against_git_object": true
+    },
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/go.sum": {
+      "sha256": "ae20b3abc13e58b529d7f5219d657f506df24c471aa873d9b72d3435954f92ac",
+      "oracle_commit": "07af390ab09bda8ac9e427ffc6310077bace0125",
+      "verified_against_git_object": true
+    },
+    "/home/ajs/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.4.linux-amd64/src/net/http/client.go": {
+      "sha256": "0ef2c2f5dc3c3d88eba684227340c153b6fce6d49298e19aa3086b9c5eb98595",
+      "toolchain": "go1.25.4"
+    },
+    "/home/ajs/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.4.linux-amd64/src/net/http/transport.go": {
+      "sha256": "8b84f3c0774c9fcccc2973858b9a53adc8ea1d43c4f127687b0b56f215a7ba8d",
+      "toolchain": "go1.25.4"
+    },
+    "/home/ajs/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.4.linux-amd64/VERSION": {
+      "sha256": "6a9c019e68916fea57fb97b855ce069fe38bc8916b2f58c1e33abf3d60024946",
+      "toolchain": "go1.25.4"
+    }
+  },
+  "base_hashes": {
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/phase3.py": "7f8deaf00185b94cd5934fbe6542e0393ded5f25aadd918012bd2f072d222f9d",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/test_phase4.py": "377824659f5522a891f6f46a6045a515661dd9f0268ee484cbe11e55778d5658",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/phase4.py": "748f2702a30f9727df53b8f0cd7abfe9f06f3effb8e80d7255c7b335824a9327",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/phase1.py": "e0216062f0980168e8ea9708f819e773c68e4452a7750f689f9ca29e8c5dc6a6",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/phase2.py": "e1f8626b68b05f20edce19c8f6ee9dddff9c4d9fa9989ef94c891a745345562a",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/run.py": "b280d1295a4b351e6f2d838c56acaac58b2247bb77fc9881587bb7bbe849a076",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/test_phase3.py": "f11f07cd571fe9d8b3c364c20a93aaf6cbd81b999dc077b2126374c5488deb59",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/contracts/phase4-reference.json": "d8e4afddca0f23abe0590bc3793557e1ba391b9a97f3626765754af1b398f87e"
+  },
+  "artifacts": {
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/prepare.py": "d482260e1f8220ee8c0f6d8e1502f890195dcc86080e4f00fc50bb74d28dd289",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/new-tests.py": "3ce8f64fcd7713df41ac32d199791862a0a3dc13fdeed636f71dc364747170f5",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/proposal.patch": "b1b2c279e18a442c1c8edb50d93295fb2a9db5a83a9bdc1d51e6e4e3ed95bcb8",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/phase3.before.py": "7f8deaf00185b94cd5934fbe6542e0393ded5f25aadd918012bd2f072d222f9d",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/phase3.proposed.py": "ca32ffa8cf9eb466a7e4bdc76667383fa0ace2a6b345946b17b6515875f5a325",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/test_phase4.before.py": "377824659f5522a891f6f46a6045a515661dd9f0268ee484cbe11e55778d5658",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/test_phase4.proposed.py": "aa76f28a96668da494ccae7fcbe00804d0c7c148328518d65afb51dfcf874be5",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/tests.log": "55c96e86663baf76197942d658fd9f301bda81d8a35ed8103f5c9b69e8b211f0",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/git-preparation.json": "41efc9c09c385cd85d68f576114210620b73ddc625a8a037624a535309033430",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/original-file-hashes.json": "30da307bfa1ef85f8115830c4e7481d30b1b8327358b9c5394c57c781f1ac781",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/preparation-tests-initial-failure.log": "ece38f18eeebed718b8345c4d7b467dab10686a1312318a6a9e68b74ae6fec48",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/preservation-first-run-start.json": "18fdeda66cbe528558d2ce2d3a2d1d9fb3e45d61c992615d4ce8ba4d7392b69e",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/concurrent-document-drift.json": "8716dc14a50811f7622c1110fe500a1895f35fb166ef0f25215105e44ccc835a",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/documentation.md.in": "4ae04c3099ea69935605332290681c7455a7aca5bec7343f7254f7c551e5d300",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/disabled-rule.py": "7f8deaf00185b94cd5934fbe6542e0393ded5f25aadd918012bd2f072d222f9d",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/disabled-rule.log": "28579a043134f2596deacd3e73ea3738150293d6822f715d680fe20cc18da62d",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/case-agnostic.py": "3defb02bec529e08318198e7859cc0e55c450e22307377e738f05ddebf816e24",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/case-agnostic.log": "b6fafb165fb5f9b50ae949e82643218951c2eeb643db26a9b46a4bb78c246dd0",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/pooled-header-body.py": "9eaead5607d9837b7a697f4c0aaf34c5fda9ba00bb4f08d4d165e1a1af6fcd01",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/pooled-header-body.log": "174e0525ec1827565187e9e4f808038faa97add5d188febbdefe6b30bf2d0d0c",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/prefix-only.py": "4fdfdce5d36f53a7eda02402c3df6874eecc5bcf45b531b4c45437cbb16b74ab",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/prefix-only.log": "be028c3bae26a3c6b33bf70fe3f3f8ae0c6999966fef8ca4c30c4e45dde9e538",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/substring-only.py": "7dedccd5b4da52c0b60b517769c9e98275173d9b1af282081df716bde69b865a",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/substring-only.log": "39ca179c3dffc9ce15ef67ec294fb310aa171ed6cc9c699cf56b37e057963357",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/newline-lax.py": "e292780833828dec8e425de63aa4a284bee0091f36d05c8bd5b61592d8767be1",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/newline-lax.log": "dab1b2eb4dff036e89d39ef91689ac2a41e05c2a816076777922e47de1f498d7",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/bare-canceled.py": "08351d4e27b87ec687970ec7dbf245ceb153ce1a37f70b4a1b98e2a44c69da07",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/bare-canceled.log": "74b0fe1f9467e243f25075482d69e417a852c6b78f6c3b8cbcb6a96a72559f73",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/opt-in-bypass.py": "78f20f8735e6d4848dc7a55cf25d31151dcf4326760e4c43a7091f5887ab4708",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/opt-in-bypass.log": "e605ed0c935061bc62ff7f0a1a25f540362207f40c40f3b09fcb8cf89c6185b2",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/legacy-fallthrough.py": "99afcd1fa1c848345a0890147f1c33789d2309e31159d7f6b5c53e9adef65ae4",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/legacy-fallthrough.log": "88c52f6acd372733e78163b0ffd7a6416181c487fcc959cd961c5416bd6d0f66",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/drop-usage.py": "475f6d734e79e81642a49a18dc8c9b5171e10c450cdaba23174f0c8d2a24c4b3",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/drop-usage.log": "38318a116b38f431e049035cedf082fd7bff2237b7801e167650b9cc64b31f9c",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/disable-independent-exit.py": "d15aaa1309f497651abb7ece9b05adcc2451f60db2048cd7d50a3e99f46e6f76",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/disable-independent-exit.log": "7e0f7bc4bed96c01282aca24ec9bad1cdd57bf9bbad87fb708cf42a8f33e7bad",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/disable-independent-stdout.py": "723f2c613c368a9eced58fa99fe49f14e31efaba8f633cc35c19a1af68257558",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/disable-independent-stdout.log": "a7671cac2fab307104d45bfbc6c91ee25cf1413dd8ff314158d417e8a6cca854",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/disable-independent-requests.py": "5d02fa00e30eaaba76c210ae8c9ae677f3743fad65805975797c459d4fd880c0",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/disable-independent-requests.log": "4f31e5a8c2c851308f0691122688e498696be02396f44486a2496e250ca1e284",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/disable-independent-duration.py": "f345baabc92ff22775275f7882b19ee555c28bf1822c21509b1aca043efea437",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/disable-independent-duration.log": "aae2c1be1e2460a82bb376e65acee087d286dbf75f734598d3e521d66542b731",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/disable-differential-requests.py": "d9013e1ba33aec0ab51ced3c365a7eb8a23388c6cc0086e0762d6c044685c6f3",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/disable-differential-requests.log": "6ed64f51810bbe0038a6b388671b24c6c61ac4144f3f3548f1751b551a92c5ee",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/disable-differential-config.py": "39227af22c39c0123aae48cc19d0f46e8659517bbdd3299557b8847952287d53",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/disable-differential-config.log": "52e98a92de9c6989a42f7999dda543c86a49e6cd28b8fab67a8ac435d998baa4",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/disable-deferred-stub.py": "6b0da294d85c884403b1fa085806235baf2e96877c17cf633773b2b16393b12c",
+    "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/disable-deferred-stub.log": "4b2fd60fdf3fd2a7c64fbe115da73c4224a45a323a72a6a4b30aa8de1b2cf589"
+  },
+  "git_preparation": [
+    {
+      "argv": [
+        "git",
+        "show",
+        "07af390ab09bda8ac9e427ffc6310077bace0125:cmd/promql.go"
+      ],
+      "exit": 0,
+      "stderr": "",
+      "stdout_sha256": "b8064a45215191d841466211d7423f93f6570b1599293c92baff9923be363178"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "07af390ab09bda8ac9e427ffc6310077bace0125:pkg/http/http.go"
+      ],
+      "exit": 0,
+      "stderr": "",
+      "stdout_sha256": "47b59e5e3d434886ff5aec8ead5a578cc9ffeb690f5d0562c15ea997427244c0"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "07af390ab09bda8ac9e427ffc6310077bace0125:pkg/http/refresh.go"
+      ],
+      "exit": 0,
+      "stderr": "",
+      "stdout_sha256": "39f767a8fe9e74b142337af07fe46d9df2f2cf258df90095bd3afba24415fc78"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "07af390ab09bda8ac9e427ffc6310077bace0125:main.go"
+      ],
+      "exit": 0,
+      "stderr": "",
+      "stdout_sha256": "9e540da1614d0cbf4a29049b1295143530f6b2b18dc80b9dbfa52c3c3cb5f70a"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "07af390ab09bda8ac9e427ffc6310077bace0125:go.mod"
+      ],
+      "exit": 0,
+      "stderr": "",
+      "stdout_sha256": "90555a3ae88bee209ce16845ad259afa2e4c9b3c14890e0578a8a514c1350565"
+    },
+    {
+      "argv": [
+        "git",
+        "show",
+        "07af390ab09bda8ac9e427ffc6310077bace0125:go.sum"
+      ],
+      "exit": 0,
+      "stderr": "",
+      "stdout_sha256": "ae20b3abc13e58b529d7f5219d657f506df24c471aa873d9b72d3435954f92ac"
+    },
+    {
+      "argv": [
+        "git",
+        "apply",
+        "--check",
+        "--unsafe-paths",
+        "--directory=/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/apply-tree",
+        "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/proposal.patch"
+      ],
+      "exit": 0,
+      "stderr": "",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "git",
+        "apply",
+        "--unsafe-paths",
+        "--directory=/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/apply-tree",
+        "/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/proposal.patch"
+      ],
+      "exit": 0,
+      "stderr": "",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "exact_apply_byte_equality": true,
+  "lf_only_diff_splitter_control": true,
+  "tests": {
+    "run": 32,
+    "failures": [],
+    "errors": [],
+    "skipped": [],
+    "successful": true
+  },
+  "mutations": {
+    "disabled-rule": {
+      "source_sha256": "7f8deaf00185b94cd5934fbe6542e0393ded5f25aadd918012bd2f072d222f9d",
+      "run": 7,
+      "failures": [
+        {
+          "test": "test_differential_body_headers_status_output_and_config_gates (p4proposaltests.HeaderDeadlineNormalizationTests.test_differential_body_headers_status_output_and_config_gates)",
+          "traceback": "Traceback (most recent call last):\n  File \"/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/test_phase4.proposed.py\", line 326, in test_differential_body_headers_status_output_and_config_gates\n    self.assertEqual(phase4.p3.differences(case, ref, cand), [])\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Lists differ: ['stderr differs at byte 78: candidate 566 bytes, reference 526 bytes'] != []\n\nFirst list contains 1 additional elements.\nFirst extra element 0:\n'stderr differs at byte 78: candidate 566 bytes, reference 526 bytes'\n\n- ['stderr differs at byte 78: candidate 566 bytes, reference 526 bytes']\n+ []\n"
+        },
+        {
+          "test": "test_every_single_byte_change_is_unchanged (p4proposaltests.HeaderDeadlineNormalizationTests.test_every_single_byte_change_is_unchanged)",
+          "traceback": "Traceback (most recent call last):\n  File \"/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/test_phase4.proposed.py\", line 260, in test_every_single_byte_change_is_unchanged\n    self.assertEqual(phase4.p3.normalize_timeout(self.case(), wrong), wrong, index)\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: b'Drr[70 chars]et\": <CLIENT-TIMEOUT> (Client.Timeout exceeded[458 chars]\\n\\n' != b'Drr[70 chars]et\": context deadline exceeded (Client.Timeout[467 chars]\\n\\n' : 0\n"
+        },
+        {
+          "test": "test_independent_exit_stdout_request_and_duration_gates (p4proposaltests.HeaderDeadlineNormalizationTests.test_independent_exit_stdout_request_and_duration_gates)",
+          "traceback": "Traceback (most recent call last):\n  File \"/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/test_phase4.proposed.py\", line 304, in test_independent_exit_stdout_request_and_duration_gates\n    self.assertEqual(phase4.expectation_issues(case, good), [])\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Lists differ: [\"stderr lacks b'Client.Timeout'\"] != []\n\nFirst list contains 1 additional elements.\nFirst extra element 0:\n\"stderr lacks b'Client.Timeout'\"\n\n- [\"stderr lacks b'Client.Timeout'\"]\n+ []\n"
+        },
+        {
+          "test": "test_three_observed_forms_and_exact_usage (p4proposaltests.HeaderDeadlineNormalizationTests.test_three_observed_forms_and_exact_usage)",
+          "traceback": "Traceback (most recent call last):\n  File \"/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/test_phase4.proposed.py\", line 244, in test_three_observed_forms_and_exact_usage\n    self.assertEqual(phase4.p3.normalize_timeout(self.case(), data), self.canonical())\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: b'Err[70 chars]et\": context deadline exceeded\\nUsage:\\n  pb p[418 chars]\\n\\n' != b'Err[70 chars]et\": <CLIENT-TIMEOUT> (Client.Timeout exceeded[458 chars]\\n\\n'\n"
+        },
+        {
+          "test": "test_unknown_cause_and_whole_stream_boundaries_are_unchanged (p4proposaltests.HeaderDeadlineNormalizationTests.test_unknown_cause_and_whole_stream_boundaries_are_unchanged)",
+          "traceback": "Traceback (most recent call last):\n  File \"/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/test_phase4.proposed.py\", line 269, in test_unknown_cause_and_whole_stream_boundaries_are_unchanged\n    self.assertEqual(phase4.p3.normalize_timeout(self.case(), wrong), wrong)\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: b'Err[70 chars]et\": <CLIENT-TIMEOUT> (Client.Timeout or conte[469 chars]\\n\\n' != b'Err[70 chars]et\": context deadline exceeded (Client.Timeout[478 chars]\\n\\n'\n"
+        }
+      ],
+      "errors": [],
+      "skipped": [],
+      "successful": false
+    },
+    "case-agnostic": {
+      "source_sha256": "3defb02bec529e08318198e7859cc0e55c450e22307377e738f05ddebf816e24",
+      "run": 7,
+      "failures": [
+        {
+          "test": "test_wrong_case_bare_input_and_opt_out_are_unchanged (p4proposaltests.HeaderDeadlineNormalizationTests.test_wrong_case_bare_input_and_opt_out_are_unchanged)",
+          "traceback": "Traceback (most recent call last):\n  File \"/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/test_phase4.proposed.py\", line 288, in test_wrong_case_bare_input_and_opt_out_are_unchanged\n    self.assertEqual(phase4.p3.normalize_timeout(case, bare), bare, case['name'])\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: b'Err[70 chars]et\": <CLIENT-TIMEOUT> (Client.Timeout exceeded[458 chars]\\n\\n' != b'Err[70 chars]et\": context deadline exceeded\\nUsage:\\n  pb p[418 chars]\\n\\n' : p4-deadline-body\n"
+        }
+      ],
+      "errors": [],
+      "skipped": [],
+      "successful": false
+    },
+    "pooled-header-body": {
+      "source_sha256": "9eaead5607d9837b7a697f4c0aaf34c5fda9ba00bb4f08d4d165e1a1af6fcd01",
+      "run": 7,
+      "failures": [
+        {
+          "test": "test_wrong_case_bare_input_and_opt_out_are_unchanged (p4proposaltests.HeaderDeadlineNormalizationTests.test_wrong_case_bare_input_and_opt_out_are_unchanged)",
+          "traceback": "Traceback (most recent call last):\n  File \"/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/test_phase4.proposed.py\", line 288, in test_wrong_case_bare_input_and_opt_out_are_unchanged\n    self.assertEqual(phase4.p3.normalize_timeout(case, bare), bare, case['name'])\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: b'Err[70 chars]et\": <CLIENT-TIMEOUT> (Client.Timeout exceeded[458 chars]\\n\\n' != b'Err[70 chars]et\": context deadline exceeded\\nUsage:\\n  pb p[418 chars]\\n\\n' : p4-deadline-body\n"
+        }
+      ],
+      "errors": [],
+      "skipped": [],
+      "successful": false
+    },
+    "prefix-only": {
+      "source_sha256": "4fdfdce5d36f53a7eda02402c3df6874eecc5bcf45b531b4c45437cbb16b74ab",
+      "run": 7,
+      "failures": [
+        {
+          "test": "test_every_single_byte_change_is_unchanged (p4proposaltests.HeaderDeadlineNormalizationTests.test_every_single_byte_change_is_unchanged)",
+          "traceback": "Traceback (most recent call last):\n  File \"/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/test_phase4.proposed.py\", line 260, in test_every_single_byte_change_is_unchanged\n    self.assertEqual(phase4.p3.normalize_timeout(self.case(), wrong), wrong, index)\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: b'Err[70 chars]et\": <CLIENT-TIMEOUT> (Client.Timeout exceeded[458 chars]\\n\\n' != b'Err[70 chars]et\": context deadline exceeded\\nTsage:\\n  pb p[418 chars]\\n\\n' : 104\n"
+        },
+        {
+          "test": "test_unknown_cause_and_whole_stream_boundaries_are_unchanged (p4proposaltests.HeaderDeadlineNormalizationTests.test_unknown_cause_and_whole_stream_boundaries_are_unchanged)",
+          "traceback": "Traceback (most recent call last):\n  File \"/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/test_phase4.proposed.py\", line 282, in test_unknown_cause_and_whole_stream_boundaries_are_unchanged\n    self.assertEqual(phase4.p3.normalize_timeout(self.case(), wrong), wrong)\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: b'Err[70 chars]et\": <CLIENT-TIMEOUT> (Client.Timeout exceeded[458 chars]\\n\\n' != b'Err[70 chars]et\": context deadline exceeded\\nUsage:\\n  pb p[416 chars]l)\\n'\n"
+        }
+      ],
+      "errors": [],
+      "skipped": [],
+      "successful": false
+    },
+    "substring-only": {
+      "source_sha256": "7dedccd5b4da52c0b60b517769c9e98275173d9b1af282081df716bde69b865a",
+      "run": 7,
+      "failures": [
+        {
+          "test": "test_unknown_cause_and_whole_stream_boundaries_are_unchanged (p4proposaltests.HeaderDeadlineNormalizationTests.test_unknown_cause_and_whole_stream_boundaries_are_unchanged)",
+          "traceback": "Traceback (most recent call last):\n  File \"/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/test_phase4.proposed.py\", line 282, in test_unknown_cause_and_whole_stream_boundaries_are_unchanged\n    self.assertEqual(phase4.p3.normalize_timeout(self.case(), wrong), wrong)\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: b'Error: Get \"http://<FIXTURE>/prometheus/a[536 chars]\\n\\n' != b'prefix\\nError: Get \"http://<FIXTURE>/prom[504 chars]\\n\\n'\n"
+        }
+      ],
+      "errors": [],
+      "skipped": [],
+      "successful": false
+    },
+    "newline-lax": {
+      "source_sha256": "e292780833828dec8e425de63aa4a284bee0091f36d05c8bd5b61592d8767be1",
+      "run": 7,
+      "failures": [
+        {
+          "test": "test_unknown_cause_and_whole_stream_boundaries_are_unchanged (p4proposaltests.HeaderDeadlineNormalizationTests.test_unknown_cause_and_whole_stream_boundaries_are_unchanged)",
+          "traceback": "Traceback (most recent call last):\n  File \"/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/test_phase4.proposed.py\", line 282, in test_unknown_cause_and_whole_stream_boundaries_are_unchanged\n    self.assertEqual(phase4.p3.normalize_timeout(self.case(), wrong), wrong)\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: b'Err[70 chars]et\": <CLIENT-TIMEOUT> (Client.Timeout exceeded[458 chars]\\n\\n' != b'Err[70 chars]et\": context deadline exceeded\\nUsage:\\n  pb p[416 chars]l)\\n'\n"
+        }
+      ],
+      "errors": [],
+      "skipped": [],
+      "successful": false
+    },
+    "bare-canceled": {
+      "source_sha256": "08351d4e27b87ec687970ec7dbf245ceb153ce1a37f70b4a1b98e2a44c69da07",
+      "run": 7,
+      "failures": [
+        {
+          "test": "test_unknown_cause_and_whole_stream_boundaries_are_unchanged (p4proposaltests.HeaderDeadlineNormalizationTests.test_unknown_cause_and_whole_stream_boundaries_are_unchanged)",
+          "traceback": "Traceback (most recent call last):\n  File \"/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/test_phase4.proposed.py\", line 269, in test_unknown_cause_and_whole_stream_boundaries_are_unchanged\n    self.assertEqual(phase4.p3.normalize_timeout(self.case(), wrong), wrong)\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: b'Err[70 chars]et\": <CLIENT-TIMEOUT> (Client.Timeout exceeded[458 chars]\\n\\n' != b'Err[70 chars]et\": net/http: request canceled\\nUsage:\\n  pb [419 chars]\\n\\n'\n"
+        }
+      ],
+      "errors": [],
+      "skipped": [],
+      "successful": false
+    },
+    "opt-in-bypass": {
+      "source_sha256": "78f20f8735e6d4848dc7a55cf25d31151dcf4326760e4c43a7091f5887ab4708",
+      "run": 7,
+      "failures": [
+        {
+          "test": "test_wrong_case_bare_input_and_opt_out_are_unchanged (p4proposaltests.HeaderDeadlineNormalizationTests.test_wrong_case_bare_input_and_opt_out_are_unchanged)",
+          "traceback": "Traceback (most recent call last):\n  File \"/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/test_phase4.proposed.py\", line 297, in test_wrong_case_bare_input_and_opt_out_are_unchanged\n    self.assertEqual(phase4.p3.normalize_timeout(case, data), data)\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: b'Err[70 chars]et\": <CLIENT-TIMEOUT> (Client.Timeout exceeded[458 chars]\\n\\n' != b'Err[70 chars]et\": context deadline exceeded\\nUsage:\\n  pb p[418 chars]\\n\\n'\n"
+        }
+      ],
+      "errors": [],
+      "skipped": [],
+      "successful": false
+    },
+    "legacy-fallthrough": {
+      "source_sha256": "99afcd1fa1c848345a0890147f1c33789d2309e31159d7f6b5c53e9adef65ae4",
+      "run": 7,
+      "failures": [
+        {
+          "test": "test_every_single_byte_change_is_unchanged (p4proposaltests.HeaderDeadlineNormalizationTests.test_every_single_byte_change_is_unchanged)",
+          "traceback": "Traceback (most recent call last):\n  File \"/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/test_phase4.proposed.py\", line 260, in test_every_single_byte_change_is_unchanged\n    self.assertEqual(phase4.p3.normalize_timeout(self.case(), wrong), wrong, index)\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: b'Drr[70 chars]et\": <CLIENT-TIMEOUT> (Client.Timeout exceeded[458 chars]\\n\\n' != b'Drr[70 chars]et\": context deadline exceeded (Client.Timeout[467 chars]\\n\\n' : 0\n"
+        },
+        {
+          "test": "test_unknown_cause_and_whole_stream_boundaries_are_unchanged (p4proposaltests.HeaderDeadlineNormalizationTests.test_unknown_cause_and_whole_stream_boundaries_are_unchanged)",
+          "traceback": "Traceback (most recent call last):\n  File \"/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/test_phase4.proposed.py\", line 269, in test_unknown_cause_and_whole_stream_boundaries_are_unchanged\n    self.assertEqual(phase4.p3.normalize_timeout(self.case(), wrong), wrong)\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: b'Err[70 chars]et\": <CLIENT-TIMEOUT> (Client.Timeout or conte[469 chars]\\n\\n' != b'Err[70 chars]et\": context deadline exceeded (Client.Timeout[478 chars]\\n\\n'\n"
+        }
+      ],
+      "errors": [],
+      "skipped": [],
+      "successful": false
+    },
+    "drop-usage": {
+      "source_sha256": "475f6d734e79e81642a49a18dc8c9b5171e10c450cdaba23174f0c8d2a24c4b3",
+      "run": 7,
+      "failures": [
+        {
+          "test": "test_three_observed_forms_and_exact_usage (p4proposaltests.HeaderDeadlineNormalizationTests.test_three_observed_forms_and_exact_usage)",
+          "traceback": "Traceback (most recent call last):\n  File \"/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/test_phase4.proposed.py\", line 244, in test_three_observed_forms_and_exact_usage\n    self.assertEqual(phase4.p3.normalize_timeout(self.case(), data), self.canonical())\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: b'Err[137 chars]rs)\\n' != b'Err[137 chars]rs)\\nUsage:\\n  pb promql labels [stream] [flag[391 chars]\\n\\n'\n"
+        }
+      ],
+      "errors": [],
+      "skipped": [],
+      "successful": false
+    },
+    "disable-independent-exit": {
+      "source_sha256": "d15aaa1309f497651abb7ece9b05adcc2451f60db2048cd7d50a3e99f46e6f76",
+      "run": 7,
+      "failures": [
+        {
+          "test": "test_independent_exit_stdout_request_and_duration_gates (p4proposaltests.HeaderDeadlineNormalizationTests.test_independent_exit_stdout_request_and_duration_gates)",
+          "traceback": "Traceback (most recent call last):\n  File \"/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/test_phase4.proposed.py\", line 317, in test_independent_exit_stdout_request_and_duration_gates\n    self.assertTrue(any(needle in i for i in phase4.expectation_issues(case, bad)), (change, needle))\n    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: False is not true : ({'termination': {'exit': 0}}, 'termination')\n"
+        }
+      ],
+      "errors": [],
+      "skipped": [],
+      "successful": false
+    },
+    "disable-independent-stdout": {
+      "source_sha256": "723f2c613c368a9eced58fa99fe49f14e31efaba8f633cc35c19a1af68257558",
+      "run": 7,
+      "failures": [
+        {
+          "test": "test_independent_exit_stdout_request_and_duration_gates (p4proposaltests.HeaderDeadlineNormalizationTests.test_independent_exit_stdout_request_and_duration_gates)",
+          "traceback": "Traceback (most recent call last):\n  File \"/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/test_phase4.proposed.py\", line 317, in test_independent_exit_stdout_request_and_duration_gates\n    self.assertTrue(any(needle in i for i in phase4.expectation_issues(case, bad)), (change, needle))\n    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: False is not true : ({'stdout': b'x', 'stdout_normalized': b'x', 'stdout_bytes': 1, 'stdout_normalized_sha256': '2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881'}, 'stdout')\n"
+        }
+      ],
+      "errors": [],
+      "skipped": [],
+      "successful": false
+    },
+    "disable-independent-requests": {
+      "source_sha256": "5d02fa00e30eaaba76c210ae8c9ae677f3743fad65805975797c459d4fd880c0",
+      "run": 7,
+      "failures": [
+        {
+          "test": "test_independent_exit_stdout_request_and_duration_gates (p4proposaltests.HeaderDeadlineNormalizationTests.test_independent_exit_stdout_request_and_duration_gates)",
+          "traceback": "Traceback (most recent call last):\n  File \"/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/test_phase4.proposed.py\", line 317, in test_independent_exit_stdout_request_and_duration_gates\n    self.assertTrue(any(needle in i for i in phase4.expectation_issues(case, bad)), (change, needle))\n    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: False is not true : ({'trace': [], 'requests': []}, 'requests')\n"
+        }
+      ],
+      "errors": [],
+      "skipped": [],
+      "successful": false
+    },
+    "disable-independent-duration": {
+      "source_sha256": "f345baabc92ff22775275f7882b19ee555c28bf1822c21509b1aca043efea437",
+      "run": 7,
+      "failures": [
+        {
+          "test": "test_independent_exit_stdout_request_and_duration_gates (p4proposaltests.HeaderDeadlineNormalizationTests.test_independent_exit_stdout_request_and_duration_gates)",
+          "traceback": "Traceback (most recent call last):\n  File \"/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/test_phase4.proposed.py\", line 317, in test_independent_exit_stdout_request_and_duration_gates\n    self.assertTrue(any(needle in i for i in phase4.expectation_issues(case, bad)), (change, needle))\n    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: False is not true : ({'wall_ms': 118999}, 'below')\n"
+        }
+      ],
+      "errors": [],
+      "skipped": [],
+      "successful": false
+    },
+    "disable-differential-requests": {
+      "source_sha256": "d9013e1ba33aec0ab51ced3c365a7eb8a23388c6cc0086e0762d6c044685c6f3",
+      "run": 7,
+      "failures": [
+        {
+          "test": "test_differential_body_headers_status_output_and_config_gates (p4proposaltests.HeaderDeadlineNormalizationTests.test_differential_body_headers_status_output_and_config_gates)",
+          "traceback": "Traceback (most recent call last):\n  File \"/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/test_phase4.proposed.py\", line 337, in test_differential_body_headers_status_output_and_config_gates\n    self.assertTrue(any('requests differ' in i for i in phase4.p3.differences(case, ref, bad)))\n    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: False is not true\n"
+        }
+      ],
+      "errors": [],
+      "skipped": [],
+      "successful": false
+    },
+    "disable-differential-config": {
+      "source_sha256": "39227af22c39c0123aae48cc19d0f46e8659517bbdd3299557b8847952287d53",
+      "run": 7,
+      "failures": [
+        {
+          "test": "test_differential_body_headers_status_output_and_config_gates (p4proposaltests.HeaderDeadlineNormalizationTests.test_differential_body_headers_status_output_and_config_gates)",
+          "traceback": "Traceback (most recent call last):\n  File \"/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/test_phase4.proposed.py\", line 345, in test_differential_body_headers_status_output_and_config_gates\n    self.assertTrue(any(field.replace('_', ' ') in i for i in phase4.p3.differences(case, ref, bad)))\n    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: False is not true\n"
+        }
+      ],
+      "errors": [],
+      "skipped": [],
+      "successful": false
+    },
+    "disable-deferred-stub": {
+      "source_sha256": "6b0da294d85c884403b1fa085806235baf2e96877c17cf633773b2b16393b12c",
+      "run": 7,
+      "failures": [
+        {
+          "test": "test_deferred_stub_guard_remains_active (p4proposaltests.HeaderDeadlineNormalizationTests.test_deferred_stub_guard_remains_active)",
+          "traceback": "Traceback (most recent call last):\n  File \"/home/ajs/.cache/pb-phase6/p4-header-deadline-proposal/test_phase4.proposed.py\", line 354, in test_deferred_stub_guard_remains_active\n    self.assertTrue(any('deferred-operation stub' in i for i in phase4.p3.differences(case, ref, bad)))\n    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: False is not true\n"
+        }
+      ],
+      "errors": [],
+      "skipped": [],
+      "successful": false
+    }
+  },
+  "archived_reports": {
+    "r4": {
+      "path": "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase4/report.json",
+      "sha256": "acd53a28badf43f643d97a6f84160cc727b87d58fe4fbc37a291b6539db71db6",
+      "mode": "compare",
+      "failed": 0,
+      "tiers": [
+        "gate",
+        "full120s"
+      ],
+      "partial": false,
+      "runner_sha256": "748f2702a30f9727df53b8f0cd7abfe9f06f3effb8e80d7255c7b335824a9327",
+      "corpus_sha256": "e57adb313c8b385639533c68c6562cfe508c56b46c88840a13d2d3508badb07a",
+      "binaries": {
+        "reference": {
+          "path": "/home/ajs/.cache/pb-phase6/baselines/pb-go",
+          "bytes": 71807160,
+          "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314"
+        },
+        "candidate": {
+          "path": "/home/ajs/.cache/pb-phase6/candidate-review-r4/pb",
+          "bytes": 10671312,
+          "sha256": "fe26926a98cba5e00774e26c5eab33c7c35ebd570ddaec7ceb38ddef663ecc43"
+        },
+        "cloud_reference": {
+          "path": "/home/ajs/.cache/pb-phase6/baselines/pb-go-cloud",
+          "bytes": 71807160,
+          "sha256": "622d4144b7e354c0ee4036244ba719cbbaf8357710804b1d733cd421a0dc227e"
+        },
+        "cloud_candidate": {
+          "path": "/home/ajs/.cache/pb-phase6/candidate-review-r4/pb-cloud",
+          "bytes": 10671640,
+          "sha256": "1820a1fd6f2d96354778a2e63a47ad55d24bb8c1e3b911bfe236b4082e41bace"
+        }
+      },
+      "case_entry": {
+        "name": "p4-deadline-header",
+        "signature": {
+          "stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr": "4ffde8c0fd5b969bad33c58999014fc28b94d5a400faf0f4fbb36157ac4f0201",
+          "termination": {
+            "exit": 1
+          },
+          "requests": [
+            {
+              "method": "GET",
+              "target": "/prometheus/api/v1/labels?stream=select-dataset",
+              "headers": {
+                "accept-encoding": "gzip",
+                "authorization": "Basic aGFybmVzczpoYXJuZXNz"
+              },
+              "body_b64": "",
+              "framing": "none",
+              "listener": "primary"
+            }
+          ],
+          "config": {
+            ".": {
+              "type": "directory",
+              "mode": "0o755"
+            },
+            "cache": {
+              "type": "directory",
+              "mode": "0o755"
+            },
+            "config": {
+              "type": "directory",
+              "mode": "0o755"
+            },
+            "config/pb": {
+              "type": "directory",
+              "mode": "0o755"
+            },
+            "config/pb/config.toml": {
+              "type": "file",
+              "mode": "0o600",
+              "raw_sha256": "1d4fe927e34275da36b581bc8f231bd40a952b34c97cae4fc5983b64ce858bc0",
+              "toml": {
+                "DefaultProfile": "fixture",
+                "Profiles": {
+                  "fixture": {
+                    "url": "http://<FIXTURE>",
+                    "username": "harness",
+                    "password": "harness",
+                    "cloud": false
+                  }
+                }
+              }
+            },
+            "data": {
+              "type": "directory",
+              "mode": "0o755"
+            },
+            "state": {
+              "type": "directory",
+              "mode": "0o755"
+            },
+            "tmp": {
+              "type": "directory",
+              "mode": "0o755"
+            }
+          },
+          "stderr_raw": "f2ac93d94c700a2b5fbf6d40deb56a020a1d4b2490254e9bf53f0a73d2484292",
+          "trace": "808a2ed727ed1ea03ccd3fd38f91657c7228b06a15e063148c9e4fe5fd84fd02"
+        },
+        "issues": []
+      },
+      "all_case_issues": [],
+      "boundary_issues": [
+        {
+          "name": "p4-boundary-interactive",
+          "issues": []
+        },
+        {
+          "name": "p4-boundary-interactive-json",
+          "issues": []
+        },
+        {
+          "name": "p4-boundary-picker",
+          "issues": []
+        },
+        {
+          "name": "p4-boundary-picker-empty",
+          "issues": []
+        }
+      ],
+      "recomputed_original_issues": [],
+      "original_reference_repeat_differences": [],
+      "original_reference_candidate_differences": [],
+      "original_repeat_independent_issues_not_called_by_runner": [],
+      "proposed_reduced_case_issues": []
+    },
+    "r5": {
+      "path": "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase4/report.json",
+      "sha256": "7035750e110887c52e1419e15121cbae103b57e26479ec8fa7dfc02ef766bb9c",
+      "mode": "compare",
+      "failed": 0,
+      "tiers": [
+        "gate",
+        "full120s"
+      ],
+      "partial": false,
+      "runner_sha256": "748f2702a30f9727df53b8f0cd7abfe9f06f3effb8e80d7255c7b335824a9327",
+      "corpus_sha256": "e57adb313c8b385639533c68c6562cfe508c56b46c88840a13d2d3508badb07a",
+      "binaries": {
+        "reference": {
+          "path": "/home/ajs/.cache/pb-phase6/baselines/pb-go",
+          "bytes": 71807160,
+          "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314"
+        },
+        "candidate": {
+          "path": "/home/ajs/.cache/pb-phase6/candidate-review-r5/pb",
+          "bytes": 10703832,
+          "sha256": "0a5877073979ee43e518b40908ae7274286144a9799137202d71a4310b68e825"
+        },
+        "cloud_reference": {
+          "path": "/home/ajs/.cache/pb-phase6/baselines/pb-go-cloud",
+          "bytes": 71807160,
+          "sha256": "622d4144b7e354c0ee4036244ba719cbbaf8357710804b1d733cd421a0dc227e"
+        },
+        "cloud_candidate": {
+          "path": "/home/ajs/.cache/pb-phase6/candidate-review-r5/pb-cloud",
+          "bytes": 10704288,
+          "sha256": "db7139ecf8a44933c3a453b5f0c356b0c791fb2e50f8fdc8f67f96e7187bfd44"
+        }
+      },
+      "case_entry": {
+        "name": "p4-deadline-header",
+        "signature": {
+          "stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr": "4ffde8c0fd5b969bad33c58999014fc28b94d5a400faf0f4fbb36157ac4f0201",
+          "termination": {
+            "exit": 1
+          },
+          "requests": [
+            {
+              "method": "GET",
+              "target": "/prometheus/api/v1/labels?stream=select-dataset",
+              "headers": {
+                "accept-encoding": "gzip",
+                "authorization": "Basic aGFybmVzczpoYXJuZXNz"
+              },
+              "body_b64": "",
+              "framing": "none",
+              "listener": "primary"
+            }
+          ],
+          "config": {
+            ".": {
+              "type": "directory",
+              "mode": "0o755"
+            },
+            "cache": {
+              "type": "directory",
+              "mode": "0o755"
+            },
+            "config": {
+              "type": "directory",
+              "mode": "0o755"
+            },
+            "config/pb": {
+              "type": "directory",
+              "mode": "0o755"
+            },
+            "config/pb/config.toml": {
+              "type": "file",
+              "mode": "0o600",
+              "raw_sha256": "ba736878241493471955260e2878a188da02d6b66bb73ef102519ed2e972ae58",
+              "toml": {
+                "DefaultProfile": "fixture",
+                "Profiles": {
+                  "fixture": {
+                    "url": "http://<FIXTURE>",
+                    "username": "harness",
+                    "password": "harness",
+                    "cloud": false
+                  }
+                }
+              }
+            },
+            "data": {
+              "type": "directory",
+              "mode": "0o755"
+            },
+            "state": {
+              "type": "directory",
+              "mode": "0o755"
+            },
+            "tmp": {
+              "type": "directory",
+              "mode": "0o755"
+            }
+          },
+          "stderr_raw": "d45e7a0808c02b8017da974a3eadbe0278defe8ca67c1ef7667f6119ec0b1c85",
+          "trace": "e00f88cec236cf005a76fdf4acc3b1b3221fb27264f427654137813b0208a1da"
+        },
+        "issues": []
+      },
+      "all_case_issues": [],
+      "boundary_issues": [
+        {
+          "name": "p4-boundary-interactive",
+          "issues": []
+        },
+        {
+          "name": "p4-boundary-interactive-json",
+          "issues": []
+        },
+        {
+          "name": "p4-boundary-picker",
+          "issues": []
+        },
+        {
+          "name": "p4-boundary-picker-empty",
+          "issues": []
+        }
+      ],
+      "recomputed_original_issues": [],
+      "original_reference_repeat_differences": [],
+      "original_reference_candidate_differences": [],
+      "original_repeat_independent_issues_not_called_by_runner": [],
+      "proposed_reduced_case_issues": []
+    },
+    "r6": {
+      "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/report.json",
+      "sha256": "5851790bc84a6fbf6cac6f796c4eab659c564138e267d0ad80cbb59f9ca265bd",
+      "mode": "compare",
+      "failed": 1,
+      "tiers": [
+        "gate",
+        "full120s"
+      ],
+      "partial": false,
+      "runner_sha256": "748f2702a30f9727df53b8f0cd7abfe9f06f3effb8e80d7255c7b335824a9327",
+      "corpus_sha256": "e57adb313c8b385639533c68c6562cfe508c56b46c88840a13d2d3508badb07a",
+      "binaries": {
+        "reference": {
+          "path": "/home/ajs/.cache/pb-phase6/baselines/pb-go",
+          "bytes": 71807160,
+          "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314"
+        },
+        "candidate": {
+          "path": "/home/ajs/.cache/pb-phase6/candidate-review-r6/pb",
+          "bytes": 10712616,
+          "sha256": "f1fb7a9e294a8f96bd9835de4c6f32318b0adf01bb164db648c4fb9c0ad5140f"
+        },
+        "cloud_reference": {
+          "path": "/home/ajs/.cache/pb-phase6/baselines/pb-go-cloud",
+          "bytes": 71807160,
+          "sha256": "622d4144b7e354c0ee4036244ba719cbbaf8357710804b1d733cd421a0dc227e"
+        },
+        "cloud_candidate": {
+          "path": "/home/ajs/.cache/pb-phase6/candidate-review-r6/pb-cloud",
+          "bytes": 10712944,
+          "sha256": "36096c89100fac562545a5d72f45a2cd8aae4770715e0b424327711386e31af6"
+        }
+      },
+      "case_entry": {
+        "name": "p4-deadline-header",
+        "signature": {
+          "stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderr": "4ffde8c0fd5b969bad33c58999014fc28b94d5a400faf0f4fbb36157ac4f0201",
+          "termination": {
+            "exit": 1
+          },
+          "requests": [
+            {
+              "method": "GET",
+              "target": "/prometheus/api/v1/labels?stream=select-dataset",
+              "headers": {
+                "accept-encoding": "gzip",
+                "authorization": "Basic aGFybmVzczpoYXJuZXNz"
+              },
+              "body_b64": "",
+              "framing": "none",
+              "listener": "primary"
+            }
+          ],
+          "config": {
+            ".": {
+              "type": "directory",
+              "mode": "0o755"
+            },
+            "cache": {
+              "type": "directory",
+              "mode": "0o755"
+            },
+            "config": {
+              "type": "directory",
+              "mode": "0o755"
+            },
+            "config/pb": {
+              "type": "directory",
+              "mode": "0o755"
+            },
+            "config/pb/config.toml": {
+              "type": "file",
+              "mode": "0o600",
+              "raw_sha256": "e5567402bcfe43e9d0fc2b3b8d24331faead08469dec254949945dbee26a2871",
+              "toml": {
+                "DefaultProfile": "fixture",
+                "Profiles": {
+                  "fixture": {
+                    "url": "http://<FIXTURE>",
+                    "username": "harness",
+                    "password": "harness",
+                    "cloud": false
+                  }
+                }
+              }
+            },
+            "data": {
+              "type": "directory",
+              "mode": "0o755"
+            },
+            "state": {
+              "type": "directory",
+              "mode": "0o755"
+            },
+            "tmp": {
+              "type": "directory",
+              "mode": "0o755"
+            }
+          },
+          "stderr_raw": "8dea13b2ce8e695cfcf7f74a660151c6a828227607a9602bbde225d06fa5d674",
+          "trace": "03cd814dae2022f965d270be58033838fc94aaeefe12c6c150d95335470a6fe8"
+        },
+        "issues": [
+          "stderr differs at byte 78: candidate 526 bytes, reference 566 bytes"
+        ]
+      },
+      "all_case_issues": [
+        {
+          "name": "p4-deadline-header",
+          "issues": [
+            "stderr differs at byte 78: candidate 526 bytes, reference 566 bytes"
+          ]
+        }
+      ],
+      "boundary_issues": [
+        {
+          "name": "p4-boundary-interactive",
+          "issues": []
+        },
+        {
+          "name": "p4-boundary-interactive-json",
+          "issues": []
+        },
+        {
+          "name": "p4-boundary-picker",
+          "issues": []
+        },
+        {
+          "name": "p4-boundary-picker-empty",
+          "issues": []
+        }
+      ],
+      "recomputed_original_issues": [
+        "stderr differs at byte 78: candidate 526 bytes, reference 566 bytes"
+      ],
+      "original_reference_repeat_differences": [
+        "stderr differs at byte 78: candidate 526 bytes, reference 566 bytes"
+      ],
+      "original_reference_candidate_differences": [],
+      "original_repeat_independent_issues_not_called_by_runner": [
+        "stderr lacks b'Client.Timeout'"
+      ],
+      "proposed_reduced_case_issues": []
+    }
+  },
+  "verified_current_archived_binary_identities": {
+    "/home/ajs/.cache/pb-phase6/baselines/pb-go": {
+      "path": "/home/ajs/.cache/pb-phase6/baselines/pb-go",
+      "bytes": 71807160,
+      "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314"
+    },
+    "/home/ajs/.cache/pb-phase6/candidate-review-r4/pb": {
+      "path": "/home/ajs/.cache/pb-phase6/candidate-review-r4/pb",
+      "bytes": 10671312,
+      "sha256": "fe26926a98cba5e00774e26c5eab33c7c35ebd570ddaec7ceb38ddef663ecc43"
+    },
+    "/home/ajs/.cache/pb-phase6/candidate-review-r5/pb": {
+      "path": "/home/ajs/.cache/pb-phase6/candidate-review-r5/pb",
+      "bytes": 10703832,
+      "sha256": "0a5877073979ee43e518b40908ae7274286144a9799137202d71a4310b68e825"
+    },
+    "/home/ajs/.cache/pb-phase6/candidate-review-r6/pb": {
+      "path": "/home/ajs/.cache/pb-phase6/candidate-review-r6/pb",
+      "bytes": 10712616,
+      "sha256": "f1fb7a9e294a8f96bd9835de4c6f32318b0adf01bb164db648c4fb9c0ad5140f"
+    }
+  },
+  "reduced_captures": {
+    "r4/reference": {
+      "folder": "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase4/p4-deadline-header/reference",
+      "kind": "actual archived capture; pure reduced evidence, no replay",
+      "artifacts": {
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase4/p4-deadline-header/reference/config-after.toml": "1d4fe927e34275da36b581bc8f231bd40a952b34c97cae4fc5983b64ce858bc0",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase4/p4-deadline-header/reference/milestones.json": "f3436038cdb6ef9332f6b06b46e7053a40bba46347c4657aa46b805ef8c4c618",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase4/p4-deadline-header/reference/result.json": "50f2916ecc8a00f2da8056551a883012dab4d90aaa9025e079b76598ca900718",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase4/p4-deadline-header/reference/stderr.bin": "f2ac93d94c700a2b5fbf6d40deb56a020a1d4b2490254e9bf53f0a73d2484292",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase4/p4-deadline-header/reference/stderr.normalized": "a7c85779a4fa3a43303076380d93327ba5685b8b77d74c3a86d6d8553cbabadf",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase4/p4-deadline-header/reference/stdout.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase4/p4-deadline-header/reference/stdout.normalized": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase4/p4-deadline-header/reference/trace.json": "50bd7f9fc0d283fd8c860c02d4ebd2a6368516138b0f932fb730f910c268f18a"
+      },
+      "stderr_normalized": "Error: Get \"http://<FIXTURE>/prometheus/api/v1/labels?stream=select-dataset\": net/http: request canceled (Client.Timeout exceeded while awaiting headers)\nUsage:\n  pb promql labels [stream] [flags]\n\nExamples:\n  pb promql labels otel_metrics\n  pb promql labels --dataset otel_metrics\n\nFlags:\n  -d, --dataset string   Metrics dataset (default \"select-dataset\")\n  -f, --from string      Start time filter (optional)\n  -h, --help             help for labels\n  -o, --output string    Output format: text or json (default \"text\")\n  -t, --to string        End time filter (optional)\n\n",
+      "stderr_raw": "Error: Get \"http://127.0.0.1:33011/prometheus/api/v1/labels?stream=select-dataset\": net/http: request canceled (Client.Timeout exceeded while awaiting headers)\nUsage:\n  pb promql labels [stream] [flags]\n\nExamples:\n  pb promql labels otel_metrics\n  pb promql labels --dataset otel_metrics\n\nFlags:\n  -d, --dataset string   Metrics dataset (default \"select-dataset\")\n  -f, --from string      Start time filter (optional)\n  -h, --help             help for labels\n  -o, --output string    Output format: text or json (default \"text\")\n  -t, --to string        End time filter (optional)\n\n",
+      "termination": {
+        "exit": 1
+      },
+      "wall_ms": 120028.892361,
+      "stdout_bytes": 0,
+      "requests": [
+        {
+          "method": "GET",
+          "target": "/prometheus/api/v1/labels?stream=select-dataset",
+          "headers": {
+            "accept-encoding": "gzip",
+            "authorization": "Basic aGFybmVzczpoYXJuZXNz"
+          },
+          "body_b64": "",
+          "framing": "none",
+          "listener": "primary"
+        }
+      ],
+      "trace": [
+        {
+          "protocol": "http",
+          "method": "GET",
+          "path": "/prometheus/api/v1/labels?stream=select-dataset",
+          "headers": {
+            "authorization": "Basic aGFybmVzczpoYXJuZXNz",
+            "accept-encoding": "gzip"
+          },
+          "user_agent": "Go-http-client/1.1",
+          "header_names": [
+            "Host",
+            "User-Agent",
+            "Authorization",
+            "Accept-Encoding"
+          ],
+          "body": "",
+          "body_b64": "",
+          "framing": "none",
+          "listener": "primary",
+          "connection": 1,
+          "time_unix_ns": 1791984544668674557,
+          "unexpected": false,
+          "route": 0
+        }
+      ],
+      "independent_issues": [],
+      "comparison_stderr_sha256": "4ffde8c0fd5b969bad33c58999014fc28b94d5a400faf0f4fbb36157ac4f0201",
+      "usage_sha256": "1a6aa3de25f1cc3f521c9559e28d9f3d77d2a15deee9cb0f954eefe06d182f45"
+    },
+    "r4/repeat": {
+      "folder": "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase4/p4-deadline-header/repeat",
+      "kind": "actual archived capture; pure reduced evidence, no replay",
+      "artifacts": {
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase4/p4-deadline-header/repeat/config-after.toml": "f88b881533050007c3598e708b9a1d24a7dc8c89807fcfbbe0443d3d83422196",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase4/p4-deadline-header/repeat/milestones.json": "cedad36dde8162d42e05da1070a9e6734e9c3edadd1775a93ef37fdd0681d779",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase4/p4-deadline-header/repeat/result.json": "36d85ed40e229630984d400b92fac888f93cf71be92f90b26996ddb5354d46ed",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase4/p4-deadline-header/repeat/stderr.bin": "d6d5cd1b6145b93377c0a58d28909cae1373fea82adf425474f798b7223b440a",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase4/p4-deadline-header/repeat/stderr.normalized": "ef4d17ea4258eb31d1ffe422496be2326394f25709d99392f3704caf73259d92",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase4/p4-deadline-header/repeat/stdout.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase4/p4-deadline-header/repeat/stdout.normalized": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase4/p4-deadline-header/repeat/trace.json": "45e75b57acdaa927825d2f80fdd722a6366999d776cb77b010c3faa6405c5053"
+      },
+      "stderr_normalized": "Error: Get \"http://<FIXTURE>/prometheus/api/v1/labels?stream=select-dataset\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)\nUsage:\n  pb promql labels [stream] [flags]\n\nExamples:\n  pb promql labels otel_metrics\n  pb promql labels --dataset otel_metrics\n\nFlags:\n  -d, --dataset string   Metrics dataset (default \"select-dataset\")\n  -f, --from string      Start time filter (optional)\n  -h, --help             help for labels\n  -o, --output string    Output format: text or json (default \"text\")\n  -t, --to string        End time filter (optional)\n\n",
+      "stderr_raw": "Error: Get \"http://127.0.0.1:39501/prometheus/api/v1/labels?stream=select-dataset\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)\nUsage:\n  pb promql labels [stream] [flags]\n\nExamples:\n  pb promql labels otel_metrics\n  pb promql labels --dataset otel_metrics\n\nFlags:\n  -d, --dataset string   Metrics dataset (default \"select-dataset\")\n  -f, --from string      Start time filter (optional)\n  -h, --help             help for labels\n  -o, --output string    Output format: text or json (default \"text\")\n  -t, --to string        End time filter (optional)\n\n",
+      "termination": {
+        "exit": 1
+      },
+      "wall_ms": 120033.739933,
+      "stdout_bytes": 0,
+      "requests": [
+        {
+          "method": "GET",
+          "target": "/prometheus/api/v1/labels?stream=select-dataset",
+          "headers": {
+            "accept-encoding": "gzip",
+            "authorization": "Basic aGFybmVzczpoYXJuZXNz"
+          },
+          "body_b64": "",
+          "framing": "none",
+          "listener": "primary"
+        }
+      ],
+      "trace": [
+        {
+          "protocol": "http",
+          "method": "GET",
+          "path": "/prometheus/api/v1/labels?stream=select-dataset",
+          "headers": {
+            "authorization": "Basic aGFybmVzczpoYXJuZXNz",
+            "accept-encoding": "gzip"
+          },
+          "user_agent": "Go-http-client/1.1",
+          "header_names": [
+            "Host",
+            "User-Agent",
+            "Authorization",
+            "Accept-Encoding"
+          ],
+          "body": "",
+          "body_b64": "",
+          "framing": "none",
+          "listener": "primary",
+          "connection": 1,
+          "time_unix_ns": 1791984664813979375,
+          "unexpected": false,
+          "route": 0
+        }
+      ],
+      "independent_issues": [],
+      "comparison_stderr_sha256": "4ffde8c0fd5b969bad33c58999014fc28b94d5a400faf0f4fbb36157ac4f0201",
+      "usage_sha256": "1a6aa3de25f1cc3f521c9559e28d9f3d77d2a15deee9cb0f954eefe06d182f45"
+    },
+    "r4/candidate": {
+      "folder": "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase4/p4-deadline-header/candidate",
+      "kind": "actual archived capture; pure reduced evidence, no replay",
+      "artifacts": {
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase4/p4-deadline-header/candidate/config-after.toml": "fa5166ff272a4e575e1cb90db5a917ee5ddc1a274c94a06d6243712e5c16d491",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase4/p4-deadline-header/candidate/milestones.json": "37a280eda23287208fde7a5bb6681c1c2fae95ec9ae1dd50b0e1a0f335b62cac",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase4/p4-deadline-header/candidate/result.json": "939435cff67c62bcf9d16708d4287432c3ba7bba0fff3e38906dd8098d3caad7",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase4/p4-deadline-header/candidate/stderr.bin": "9d9c218d72393801fa1e46087626f29653d4b2c4d78ccdb80b7eea6ab25ec95b",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase4/p4-deadline-header/candidate/stderr.normalized": "ef4d17ea4258eb31d1ffe422496be2326394f25709d99392f3704caf73259d92",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase4/p4-deadline-header/candidate/stdout.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase4/p4-deadline-header/candidate/stdout.normalized": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase4/p4-deadline-header/candidate/trace.json": "b4a0f9453878f70298b2405907aae4793b80a5cbf414aa109e5cab380ea71e7d"
+      },
+      "stderr_normalized": "Error: Get \"http://<FIXTURE>/prometheus/api/v1/labels?stream=select-dataset\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)\nUsage:\n  pb promql labels [stream] [flags]\n\nExamples:\n  pb promql labels otel_metrics\n  pb promql labels --dataset otel_metrics\n\nFlags:\n  -d, --dataset string   Metrics dataset (default \"select-dataset\")\n  -f, --from string      Start time filter (optional)\n  -h, --help             help for labels\n  -o, --output string    Output format: text or json (default \"text\")\n  -t, --to string        End time filter (optional)\n\n",
+      "stderr_raw": "Error: Get \"http://127.0.0.1:42573/prometheus/api/v1/labels?stream=select-dataset\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)\nUsage:\n  pb promql labels [stream] [flags]\n\nExamples:\n  pb promql labels otel_metrics\n  pb promql labels --dataset otel_metrics\n\nFlags:\n  -d, --dataset string   Metrics dataset (default \"select-dataset\")\n  -f, --from string      Start time filter (optional)\n  -h, --help             help for labels\n  -o, --output string    Output format: text or json (default \"text\")\n  -t, --to string        End time filter (optional)\n\n",
+      "termination": {
+        "exit": 1
+      },
+      "wall_ms": 120003.028218,
+      "stdout_bytes": 0,
+      "requests": [
+        {
+          "method": "GET",
+          "target": "/prometheus/api/v1/labels?stream=select-dataset",
+          "headers": {
+            "accept-encoding": "gzip",
+            "authorization": "Basic aGFybmVzczpoYXJuZXNz"
+          },
+          "body_b64": "",
+          "framing": "none",
+          "listener": "primary"
+        }
+      ],
+      "trace": [
+        {
+          "protocol": "http",
+          "method": "GET",
+          "path": "/prometheus/api/v1/labels?stream=select-dataset",
+          "headers": {
+            "authorization": "Basic aGFybmVzczpoYXJuZXNz",
+            "accept-encoding": "gzip"
+          },
+          "user_agent": "Go-http-client/1.1",
+          "header_names": [
+            "authorization",
+            "user-agent",
+            "accept-encoding",
+            "host"
+          ],
+          "body": "",
+          "body_b64": "",
+          "framing": "none",
+          "listener": "primary",
+          "connection": 1,
+          "time_unix_ns": 1791984784950167886,
+          "unexpected": false,
+          "route": 0
+        }
+      ],
+      "independent_issues": [],
+      "comparison_stderr_sha256": "4ffde8c0fd5b969bad33c58999014fc28b94d5a400faf0f4fbb36157ac4f0201",
+      "usage_sha256": "1a6aa3de25f1cc3f521c9559e28d9f3d77d2a15deee9cb0f954eefe06d182f45"
+    },
+    "r5/reference": {
+      "folder": "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase4/p4-deadline-header/reference",
+      "kind": "actual archived capture; pure reduced evidence, no replay",
+      "artifacts": {
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase4/p4-deadline-header/reference/config-after.toml": "ba736878241493471955260e2878a188da02d6b66bb73ef102519ed2e972ae58",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase4/p4-deadline-header/reference/milestones.json": "5c08ba16f28e1e311443e6a7aae5d438bd6c15bc05c685d95bfab228e5e905fe",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase4/p4-deadline-header/reference/result.json": "1e15c75e5da880b3adaf3d7e1f702d4ddc335204233acd1ccaa821a0deaccbe6",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase4/p4-deadline-header/reference/stderr.bin": "d45e7a0808c02b8017da974a3eadbe0278defe8ca67c1ef7667f6119ec0b1c85",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase4/p4-deadline-header/reference/stderr.normalized": "a7c85779a4fa3a43303076380d93327ba5685b8b77d74c3a86d6d8553cbabadf",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase4/p4-deadline-header/reference/stdout.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase4/p4-deadline-header/reference/stdout.normalized": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase4/p4-deadline-header/reference/trace.json": "7d688310d9acd66cfab52e2aca89095254c5d188064a773fe47eb7fc657e492d"
+      },
+      "stderr_normalized": "Error: Get \"http://<FIXTURE>/prometheus/api/v1/labels?stream=select-dataset\": net/http: request canceled (Client.Timeout exceeded while awaiting headers)\nUsage:\n  pb promql labels [stream] [flags]\n\nExamples:\n  pb promql labels otel_metrics\n  pb promql labels --dataset otel_metrics\n\nFlags:\n  -d, --dataset string   Metrics dataset (default \"select-dataset\")\n  -f, --from string      Start time filter (optional)\n  -h, --help             help for labels\n  -o, --output string    Output format: text or json (default \"text\")\n  -t, --to string        End time filter (optional)\n\n",
+      "stderr_raw": "Error: Get \"http://127.0.0.1:45553/prometheus/api/v1/labels?stream=select-dataset\": net/http: request canceled (Client.Timeout exceeded while awaiting headers)\nUsage:\n  pb promql labels [stream] [flags]\n\nExamples:\n  pb promql labels otel_metrics\n  pb promql labels --dataset otel_metrics\n\nFlags:\n  -d, --dataset string   Metrics dataset (default \"select-dataset\")\n  -f, --from string      Start time filter (optional)\n  -h, --help             help for labels\n  -o, --output string    Output format: text or json (default \"text\")\n  -t, --to string        End time filter (optional)\n\n",
+      "termination": {
+        "exit": 1
+      },
+      "wall_ms": 120031.635366,
+      "stdout_bytes": 0,
+      "requests": [
+        {
+          "method": "GET",
+          "target": "/prometheus/api/v1/labels?stream=select-dataset",
+          "headers": {
+            "accept-encoding": "gzip",
+            "authorization": "Basic aGFybmVzczpoYXJuZXNz"
+          },
+          "body_b64": "",
+          "framing": "none",
+          "listener": "primary"
+        }
+      ],
+      "trace": [
+        {
+          "protocol": "http",
+          "method": "GET",
+          "path": "/prometheus/api/v1/labels?stream=select-dataset",
+          "headers": {
+            "authorization": "Basic aGFybmVzczpoYXJuZXNz",
+            "accept-encoding": "gzip"
+          },
+          "user_agent": "Go-http-client/1.1",
+          "header_names": [
+            "Host",
+            "User-Agent",
+            "Authorization",
+            "Accept-Encoding"
+          ],
+          "body": "",
+          "body_b64": "",
+          "framing": "none",
+          "listener": "primary",
+          "connection": 1,
+          "time_unix_ns": 1791991061991432688,
+          "unexpected": false,
+          "route": 0
+        }
+      ],
+      "independent_issues": [],
+      "comparison_stderr_sha256": "4ffde8c0fd5b969bad33c58999014fc28b94d5a400faf0f4fbb36157ac4f0201",
+      "usage_sha256": "1a6aa3de25f1cc3f521c9559e28d9f3d77d2a15deee9cb0f954eefe06d182f45"
+    },
+    "r5/repeat": {
+      "folder": "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase4/p4-deadline-header/repeat",
+      "kind": "actual archived capture; pure reduced evidence, no replay",
+      "artifacts": {
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase4/p4-deadline-header/repeat/config-after.toml": "42b91babab56c6d4b1533f76e79c9db066e41ca4370761708b95a40a2fead6d4",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase4/p4-deadline-header/repeat/milestones.json": "da3110a9f8bafa7cd6b38494190987de5f68d6c4dcc074e9fa4618911c323c74",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase4/p4-deadline-header/repeat/result.json": "0ad85c004fe39bf3e51ae345a10090ae97ec83afe2e35b33cd46e966e17c06fc",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase4/p4-deadline-header/repeat/stderr.bin": "71c1c963cca231c9a2500974a87ab8c33ef4f6c82770b127c486b8eab15f5ace",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase4/p4-deadline-header/repeat/stderr.normalized": "a7c85779a4fa3a43303076380d93327ba5685b8b77d74c3a86d6d8553cbabadf",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase4/p4-deadline-header/repeat/stdout.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase4/p4-deadline-header/repeat/stdout.normalized": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase4/p4-deadline-header/repeat/trace.json": "a291dbbcd485ec79b3f0f4310036ca0274e644307d6d2dbc235b111a4cc423d1"
+      },
+      "stderr_normalized": "Error: Get \"http://<FIXTURE>/prometheus/api/v1/labels?stream=select-dataset\": net/http: request canceled (Client.Timeout exceeded while awaiting headers)\nUsage:\n  pb promql labels [stream] [flags]\n\nExamples:\n  pb promql labels otel_metrics\n  pb promql labels --dataset otel_metrics\n\nFlags:\n  -d, --dataset string   Metrics dataset (default \"select-dataset\")\n  -f, --from string      Start time filter (optional)\n  -h, --help             help for labels\n  -o, --output string    Output format: text or json (default \"text\")\n  -t, --to string        End time filter (optional)\n\n",
+      "stderr_raw": "Error: Get \"http://127.0.0.1:35745/prometheus/api/v1/labels?stream=select-dataset\": net/http: request canceled (Client.Timeout exceeded while awaiting headers)\nUsage:\n  pb promql labels [stream] [flags]\n\nExamples:\n  pb promql labels otel_metrics\n  pb promql labels --dataset otel_metrics\n\nFlags:\n  -d, --dataset string   Metrics dataset (default \"select-dataset\")\n  -f, --from string      Start time filter (optional)\n  -h, --help             help for labels\n  -o, --output string    Output format: text or json (default \"text\")\n  -t, --to string        End time filter (optional)\n\n",
+      "termination": {
+        "exit": 1
+      },
+      "wall_ms": 120040.378997,
+      "stdout_bytes": 0,
+      "requests": [
+        {
+          "method": "GET",
+          "target": "/prometheus/api/v1/labels?stream=select-dataset",
+          "headers": {
+            "accept-encoding": "gzip",
+            "authorization": "Basic aGFybmVzczpoYXJuZXNz"
+          },
+          "body_b64": "",
+          "framing": "none",
+          "listener": "primary"
+        }
+      ],
+      "trace": [
+        {
+          "protocol": "http",
+          "method": "GET",
+          "path": "/prometheus/api/v1/labels?stream=select-dataset",
+          "headers": {
+            "authorization": "Basic aGFybmVzczpoYXJuZXNz",
+            "accept-encoding": "gzip"
+          },
+          "user_agent": "Go-http-client/1.1",
+          "header_names": [
+            "Host",
+            "User-Agent",
+            "Authorization",
+            "Accept-Encoding"
+          ],
+          "body": "",
+          "body_b64": "",
+          "framing": "none",
+          "listener": "primary",
+          "connection": 1,
+          "time_unix_ns": 1791991182175636653,
+          "unexpected": false,
+          "route": 0
+        }
+      ],
+      "independent_issues": [],
+      "comparison_stderr_sha256": "4ffde8c0fd5b969bad33c58999014fc28b94d5a400faf0f4fbb36157ac4f0201",
+      "usage_sha256": "1a6aa3de25f1cc3f521c9559e28d9f3d77d2a15deee9cb0f954eefe06d182f45"
+    },
+    "r5/candidate": {
+      "folder": "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase4/p4-deadline-header/candidate",
+      "kind": "actual archived capture; pure reduced evidence, no replay",
+      "artifacts": {
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase4/p4-deadline-header/candidate/config-after.toml": "8eff917beeae8f86cb0d4fd80f337b95cdf5c97f12ddaaaa188eb0c2286d8483",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase4/p4-deadline-header/candidate/milestones.json": "3928154069142a68d0e7009d6c316b646406a29c7e0a1b651f2849412dd41c9e",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase4/p4-deadline-header/candidate/result.json": "d99953fafb43c44cfb734669183d7f2eda875640bb9ff020d0754afe1079ac74",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase4/p4-deadline-header/candidate/stderr.bin": "771bfc7b488be96466d55727ca33f8f1c389ca0e9c7fe1e07ff4d81b28da960b",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase4/p4-deadline-header/candidate/stderr.normalized": "ef4d17ea4258eb31d1ffe422496be2326394f25709d99392f3704caf73259d92",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase4/p4-deadline-header/candidate/stdout.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase4/p4-deadline-header/candidate/stdout.normalized": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase4/p4-deadline-header/candidate/trace.json": "15ab30872cd676244837bdf77e5cbcbeec563639c63164580a69fc125e3ce6cf"
+      },
+      "stderr_normalized": "Error: Get \"http://<FIXTURE>/prometheus/api/v1/labels?stream=select-dataset\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)\nUsage:\n  pb promql labels [stream] [flags]\n\nExamples:\n  pb promql labels otel_metrics\n  pb promql labels --dataset otel_metrics\n\nFlags:\n  -d, --dataset string   Metrics dataset (default \"select-dataset\")\n  -f, --from string      Start time filter (optional)\n  -h, --help             help for labels\n  -o, --output string    Output format: text or json (default \"text\")\n  -t, --to string        End time filter (optional)\n\n",
+      "stderr_raw": "Error: Get \"http://127.0.0.1:34605/prometheus/api/v1/labels?stream=select-dataset\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)\nUsage:\n  pb promql labels [stream] [flags]\n\nExamples:\n  pb promql labels otel_metrics\n  pb promql labels --dataset otel_metrics\n\nFlags:\n  -d, --dataset string   Metrics dataset (default \"select-dataset\")\n  -f, --from string      Start time filter (optional)\n  -h, --help             help for labels\n  -o, --output string    Output format: text or json (default \"text\")\n  -t, --to string        End time filter (optional)\n\n",
+      "termination": {
+        "exit": 1
+      },
+      "wall_ms": 120002.444354,
+      "stdout_bytes": 0,
+      "requests": [
+        {
+          "method": "GET",
+          "target": "/prometheus/api/v1/labels?stream=select-dataset",
+          "headers": {
+            "accept-encoding": "gzip",
+            "authorization": "Basic aGFybmVzczpoYXJuZXNz"
+          },
+          "body_b64": "",
+          "framing": "none",
+          "listener": "primary"
+        }
+      ],
+      "trace": [
+        {
+          "protocol": "http",
+          "method": "GET",
+          "path": "/prometheus/api/v1/labels?stream=select-dataset",
+          "headers": {
+            "authorization": "Basic aGFybmVzczpoYXJuZXNz",
+            "accept-encoding": "gzip"
+          },
+          "user_agent": "Go-http-client/1.1",
+          "header_names": [
+            "authorization",
+            "user-agent",
+            "accept-encoding",
+            "host"
+          ],
+          "body": "",
+          "body_b64": "",
+          "framing": "none",
+          "listener": "primary",
+          "connection": 1,
+          "time_unix_ns": 1791991302283213649,
+          "unexpected": false,
+          "route": 0
+        }
+      ],
+      "independent_issues": [],
+      "comparison_stderr_sha256": "4ffde8c0fd5b969bad33c58999014fc28b94d5a400faf0f4fbb36157ac4f0201",
+      "usage_sha256": "1a6aa3de25f1cc3f521c9559e28d9f3d77d2a15deee9cb0f954eefe06d182f45"
+    },
+    "r6/reference": {
+      "folder": "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/reference",
+      "kind": "actual archived capture; pure reduced evidence, no replay",
+      "artifacts": {
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/reference/config-after.toml": "e5567402bcfe43e9d0fc2b3b8d24331faead08469dec254949945dbee26a2871",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/reference/milestones.json": "cf0748d25888af6750d0a37e6e73773434d4ec1d6f07feb726f7c5d2ce547685",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/reference/result.json": "1b3bf38623dc89f452e50b219eaab286512b3ea2f890335707e21f6c0f1a95a5",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/reference/stderr.bin": "8dea13b2ce8e695cfcf7f74a660151c6a828227607a9602bbde225d06fa5d674",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/reference/stderr.normalized": "ef4d17ea4258eb31d1ffe422496be2326394f25709d99392f3704caf73259d92",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/reference/stdout.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/reference/stdout.normalized": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/reference/trace.json": "f74e4cea761c3bde2ce77a5919c8f919c82da9049c842794b46b0d5c59d7ae03"
+      },
+      "stderr_normalized": "Error: Get \"http://<FIXTURE>/prometheus/api/v1/labels?stream=select-dataset\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)\nUsage:\n  pb promql labels [stream] [flags]\n\nExamples:\n  pb promql labels otel_metrics\n  pb promql labels --dataset otel_metrics\n\nFlags:\n  -d, --dataset string   Metrics dataset (default \"select-dataset\")\n  -f, --from string      Start time filter (optional)\n  -h, --help             help for labels\n  -o, --output string    Output format: text or json (default \"text\")\n  -t, --to string        End time filter (optional)\n\n",
+      "stderr_raw": "Error: Get \"http://127.0.0.1:42053/prometheus/api/v1/labels?stream=select-dataset\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)\nUsage:\n  pb promql labels [stream] [flags]\n\nExamples:\n  pb promql labels otel_metrics\n  pb promql labels --dataset otel_metrics\n\nFlags:\n  -d, --dataset string   Metrics dataset (default \"select-dataset\")\n  -f, --from string      Start time filter (optional)\n  -h, --help             help for labels\n  -o, --output string    Output format: text or json (default \"text\")\n  -t, --to string        End time filter (optional)\n\n",
+      "termination": {
+        "exit": 1
+      },
+      "wall_ms": 120028.246423,
+      "stdout_bytes": 0,
+      "requests": [
+        {
+          "method": "GET",
+          "target": "/prometheus/api/v1/labels?stream=select-dataset",
+          "headers": {
+            "accept-encoding": "gzip",
+            "authorization": "Basic aGFybmVzczpoYXJuZXNz"
+          },
+          "body_b64": "",
+          "framing": "none",
+          "listener": "primary"
+        }
+      ],
+      "trace": [
+        {
+          "protocol": "http",
+          "method": "GET",
+          "path": "/prometheus/api/v1/labels?stream=select-dataset",
+          "headers": {
+            "authorization": "Basic aGFybmVzczpoYXJuZXNz",
+            "accept-encoding": "gzip"
+          },
+          "user_agent": "Go-http-client/1.1",
+          "header_names": [
+            "Host",
+            "User-Agent",
+            "Authorization",
+            "Accept-Encoding"
+          ],
+          "body": "",
+          "body_b64": "",
+          "framing": "none",
+          "listener": "primary",
+          "connection": 1,
+          "time_unix_ns": 1791993772765336870,
+          "unexpected": false,
+          "route": 0
+        }
+      ],
+      "independent_issues": [],
+      "comparison_stderr_sha256": "4ffde8c0fd5b969bad33c58999014fc28b94d5a400faf0f4fbb36157ac4f0201",
+      "usage_sha256": "1a6aa3de25f1cc3f521c9559e28d9f3d77d2a15deee9cb0f954eefe06d182f45"
+    },
+    "r6/repeat": {
+      "folder": "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/repeat",
+      "kind": "actual archived capture; pure reduced evidence, no replay",
+      "artifacts": {
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/repeat/config-after.toml": "c464c76b5b31f7866a8baa3f93323f1b403146ff962cffa7e759bfac2e9e19b0",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/repeat/milestones.json": "8e604d213930a73c33b76f54ef10162ce08d150e3b317ed2d6fb9a3b05d94269",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/repeat/result.json": "415174eb28ffabb8c2d122350ea2eb8da9e084204cd419f9c7493c58a5dd620e",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/repeat/stderr.bin": "481b36a70a891016d48764b55e03e1794cdceb99a6331f22dca567386b8afe04",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/repeat/stderr.normalized": "231ec10ad7247acdf69e1efb7e3ab442e081cdd02f61be04eaae86c9a1e60e76",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/repeat/stdout.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/repeat/stdout.normalized": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/repeat/trace.json": "c621f3a21b2fea84452baf069bd02b11aac0eaeffe8f94eeb1313a06f86ed613"
+      },
+      "stderr_normalized": "Error: Get \"http://<FIXTURE>/prometheus/api/v1/labels?stream=select-dataset\": context deadline exceeded\nUsage:\n  pb promql labels [stream] [flags]\n\nExamples:\n  pb promql labels otel_metrics\n  pb promql labels --dataset otel_metrics\n\nFlags:\n  -d, --dataset string   Metrics dataset (default \"select-dataset\")\n  -f, --from string      Start time filter (optional)\n  -h, --help             help for labels\n  -o, --output string    Output format: text or json (default \"text\")\n  -t, --to string        End time filter (optional)\n\n",
+      "stderr_raw": "Error: Get \"http://127.0.0.1:42715/prometheus/api/v1/labels?stream=select-dataset\": context deadline exceeded\nUsage:\n  pb promql labels [stream] [flags]\n\nExamples:\n  pb promql labels otel_metrics\n  pb promql labels --dataset otel_metrics\n\nFlags:\n  -d, --dataset string   Metrics dataset (default \"select-dataset\")\n  -f, --from string      Start time filter (optional)\n  -h, --help             help for labels\n  -o, --output string    Output format: text or json (default \"text\")\n  -t, --to string        End time filter (optional)\n\n",
+      "termination": {
+        "exit": 1
+      },
+      "wall_ms": 120030.371876,
+      "stdout_bytes": 0,
+      "requests": [
+        {
+          "method": "GET",
+          "target": "/prometheus/api/v1/labels?stream=select-dataset",
+          "headers": {
+            "accept-encoding": "gzip",
+            "authorization": "Basic aGFybmVzczpoYXJuZXNz"
+          },
+          "body_b64": "",
+          "framing": "none",
+          "listener": "primary"
+        }
+      ],
+      "trace": [
+        {
+          "protocol": "http",
+          "method": "GET",
+          "path": "/prometheus/api/v1/labels?stream=select-dataset",
+          "headers": {
+            "authorization": "Basic aGFybmVzczpoYXJuZXNz",
+            "accept-encoding": "gzip"
+          },
+          "user_agent": "Go-http-client/1.1",
+          "header_names": [
+            "Host",
+            "User-Agent",
+            "Authorization",
+            "Accept-Encoding"
+          ],
+          "body": "",
+          "body_b64": "",
+          "framing": "none",
+          "listener": "primary",
+          "connection": 1,
+          "time_unix_ns": 1791993892907296124,
+          "unexpected": false,
+          "route": 0
+        }
+      ],
+      "independent_issues": [],
+      "comparison_stderr_sha256": "4ffde8c0fd5b969bad33c58999014fc28b94d5a400faf0f4fbb36157ac4f0201",
+      "usage_sha256": "1a6aa3de25f1cc3f521c9559e28d9f3d77d2a15deee9cb0f954eefe06d182f45"
+    },
+    "r6/candidate": {
+      "folder": "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/candidate",
+      "kind": "actual archived capture; pure reduced evidence, no replay",
+      "artifacts": {
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/candidate/config-after.toml": "94127aa1a50927435e189875e59dee7b64949269873c42e094c2b21aa50457d8",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/candidate/milestones.json": "e6f9e33d7d419fdc84fe062d69d105452b9a1ad139874a9ecb1daa1ef26723dc",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/candidate/result.json": "5c501f463c9eb8a601db3515531c4813bd5be1d93ba2c545f80cf62bfc8e72d6",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/candidate/stderr.bin": "7dba483aa02badf47dba04d8d8fd93242cbdb74280725ab90b78a5eff0bc7bde",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/candidate/stderr.normalized": "ef4d17ea4258eb31d1ffe422496be2326394f25709d99392f3704caf73259d92",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/candidate/stdout.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/candidate/stdout.normalized": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/candidate/trace.json": "4628fbcb7057d9a9aafb98443de4b9893b4ace0614216781f1ce11a6969af410"
+      },
+      "stderr_normalized": "Error: Get \"http://<FIXTURE>/prometheus/api/v1/labels?stream=select-dataset\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)\nUsage:\n  pb promql labels [stream] [flags]\n\nExamples:\n  pb promql labels otel_metrics\n  pb promql labels --dataset otel_metrics\n\nFlags:\n  -d, --dataset string   Metrics dataset (default \"select-dataset\")\n  -f, --from string      Start time filter (optional)\n  -h, --help             help for labels\n  -o, --output string    Output format: text or json (default \"text\")\n  -t, --to string        End time filter (optional)\n\n",
+      "stderr_raw": "Error: Get \"http://127.0.0.1:41991/prometheus/api/v1/labels?stream=select-dataset\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)\nUsage:\n  pb promql labels [stream] [flags]\n\nExamples:\n  pb promql labels otel_metrics\n  pb promql labels --dataset otel_metrics\n\nFlags:\n  -d, --dataset string   Metrics dataset (default \"select-dataset\")\n  -f, --from string      Start time filter (optional)\n  -h, --help             help for labels\n  -o, --output string    Output format: text or json (default \"text\")\n  -t, --to string        End time filter (optional)\n\n",
+      "termination": {
+        "exit": 1
+      },
+      "wall_ms": 120003.95614,
+      "stdout_bytes": 0,
+      "requests": [
+        {
+          "method": "GET",
+          "target": "/prometheus/api/v1/labels?stream=select-dataset",
+          "headers": {
+            "accept-encoding": "gzip",
+            "authorization": "Basic aGFybmVzczpoYXJuZXNz"
+          },
+          "body_b64": "",
+          "framing": "none",
+          "listener": "primary"
+        }
+      ],
+      "trace": [
+        {
+          "protocol": "http",
+          "method": "GET",
+          "path": "/prometheus/api/v1/labels?stream=select-dataset",
+          "headers": {
+            "authorization": "Basic aGFybmVzczpoYXJuZXNz",
+            "accept-encoding": "gzip"
+          },
+          "user_agent": "Go-http-client/1.1",
+          "header_names": [
+            "authorization",
+            "user-agent",
+            "accept-encoding",
+            "host"
+          ],
+          "body": "",
+          "body_b64": "",
+          "framing": "none",
+          "listener": "primary",
+          "connection": 1,
+          "time_unix_ns": 1791994013019844859,
+          "unexpected": false,
+          "route": 0
+        }
+      ],
+      "independent_issues": [],
+      "comparison_stderr_sha256": "4ffde8c0fd5b969bad33c58999014fc28b94d5a400faf0f4fbb36157ac4f0201",
+      "usage_sha256": "1a6aa3de25f1cc3f521c9559e28d9f3d77d2a15deee9cb0f954eefe06d182f45"
+    }
+  },
+  "all_ordered_capture_pairs": [
+    {
+      "left": "r4/reference",
+      "right": "r4/reference",
+      "issues": []
+    },
+    {
+      "left": "r4/reference",
+      "right": "r4/repeat",
+      "issues": []
+    },
+    {
+      "left": "r4/reference",
+      "right": "r4/candidate",
+      "issues": []
+    },
+    {
+      "left": "r4/reference",
+      "right": "r5/reference",
+      "issues": []
+    },
+    {
+      "left": "r4/reference",
+      "right": "r5/repeat",
+      "issues": []
+    },
+    {
+      "left": "r4/reference",
+      "right": "r5/candidate",
+      "issues": []
+    },
+    {
+      "left": "r4/reference",
+      "right": "r6/reference",
+      "issues": []
+    },
+    {
+      "left": "r4/reference",
+      "right": "r6/repeat",
+      "issues": []
+    },
+    {
+      "left": "r4/reference",
+      "right": "r6/candidate",
+      "issues": []
+    },
+    {
+      "left": "r4/repeat",
+      "right": "r4/reference",
+      "issues": []
+    },
+    {
+      "left": "r4/repeat",
+      "right": "r4/repeat",
+      "issues": []
+    },
+    {
+      "left": "r4/repeat",
+      "right": "r4/candidate",
+      "issues": []
+    },
+    {
+      "left": "r4/repeat",
+      "right": "r5/reference",
+      "issues": []
+    },
+    {
+      "left": "r4/repeat",
+      "right": "r5/repeat",
+      "issues": []
+    },
+    {
+      "left": "r4/repeat",
+      "right": "r5/candidate",
+      "issues": []
+    },
+    {
+      "left": "r4/repeat",
+      "right": "r6/reference",
+      "issues": []
+    },
+    {
+      "left": "r4/repeat",
+      "right": "r6/repeat",
+      "issues": []
+    },
+    {
+      "left": "r4/repeat",
+      "right": "r6/candidate",
+      "issues": []
+    },
+    {
+      "left": "r4/candidate",
+      "right": "r4/reference",
+      "issues": []
+    },
+    {
+      "left": "r4/candidate",
+      "right": "r4/repeat",
+      "issues": []
+    },
+    {
+      "left": "r4/candidate",
+      "right": "r4/candidate",
+      "issues": []
+    },
+    {
+      "left": "r4/candidate",
+      "right": "r5/reference",
+      "issues": []
+    },
+    {
+      "left": "r4/candidate",
+      "right": "r5/repeat",
+      "issues": []
+    },
+    {
+      "left": "r4/candidate",
+      "right": "r5/candidate",
+      "issues": []
+    },
+    {
+      "left": "r4/candidate",
+      "right": "r6/reference",
+      "issues": []
+    },
+    {
+      "left": "r4/candidate",
+      "right": "r6/repeat",
+      "issues": []
+    },
+    {
+      "left": "r4/candidate",
+      "right": "r6/candidate",
+      "issues": []
+    },
+    {
+      "left": "r5/reference",
+      "right": "r4/reference",
+      "issues": []
+    },
+    {
+      "left": "r5/reference",
+      "right": "r4/repeat",
+      "issues": []
+    },
+    {
+      "left": "r5/reference",
+      "right": "r4/candidate",
+      "issues": []
+    },
+    {
+      "left": "r5/reference",
+      "right": "r5/reference",
+      "issues": []
+    },
+    {
+      "left": "r5/reference",
+      "right": "r5/repeat",
+      "issues": []
+    },
+    {
+      "left": "r5/reference",
+      "right": "r5/candidate",
+      "issues": []
+    },
+    {
+      "left": "r5/reference",
+      "right": "r6/reference",
+      "issues": []
+    },
+    {
+      "left": "r5/reference",
+      "right": "r6/repeat",
+      "issues": []
+    },
+    {
+      "left": "r5/reference",
+      "right": "r6/candidate",
+      "issues": []
+    },
+    {
+      "left": "r5/repeat",
+      "right": "r4/reference",
+      "issues": []
+    },
+    {
+      "left": "r5/repeat",
+      "right": "r4/repeat",
+      "issues": []
+    },
+    {
+      "left": "r5/repeat",
+      "right": "r4/candidate",
+      "issues": []
+    },
+    {
+      "left": "r5/repeat",
+      "right": "r5/reference",
+      "issues": []
+    },
+    {
+      "left": "r5/repeat",
+      "right": "r5/repeat",
+      "issues": []
+    },
+    {
+      "left": "r5/repeat",
+      "right": "r5/candidate",
+      "issues": []
+    },
+    {
+      "left": "r5/repeat",
+      "right": "r6/reference",
+      "issues": []
+    },
+    {
+      "left": "r5/repeat",
+      "right": "r6/repeat",
+      "issues": []
+    },
+    {
+      "left": "r5/repeat",
+      "right": "r6/candidate",
+      "issues": []
+    },
+    {
+      "left": "r5/candidate",
+      "right": "r4/reference",
+      "issues": []
+    },
+    {
+      "left": "r5/candidate",
+      "right": "r4/repeat",
+      "issues": []
+    },
+    {
+      "left": "r5/candidate",
+      "right": "r4/candidate",
+      "issues": []
+    },
+    {
+      "left": "r5/candidate",
+      "right": "r5/reference",
+      "issues": []
+    },
+    {
+      "left": "r5/candidate",
+      "right": "r5/repeat",
+      "issues": []
+    },
+    {
+      "left": "r5/candidate",
+      "right": "r5/candidate",
+      "issues": []
+    },
+    {
+      "left": "r5/candidate",
+      "right": "r6/reference",
+      "issues": []
+    },
+    {
+      "left": "r5/candidate",
+      "right": "r6/repeat",
+      "issues": []
+    },
+    {
+      "left": "r5/candidate",
+      "right": "r6/candidate",
+      "issues": []
+    },
+    {
+      "left": "r6/reference",
+      "right": "r4/reference",
+      "issues": []
+    },
+    {
+      "left": "r6/reference",
+      "right": "r4/repeat",
+      "issues": []
+    },
+    {
+      "left": "r6/reference",
+      "right": "r4/candidate",
+      "issues": []
+    },
+    {
+      "left": "r6/reference",
+      "right": "r5/reference",
+      "issues": []
+    },
+    {
+      "left": "r6/reference",
+      "right": "r5/repeat",
+      "issues": []
+    },
+    {
+      "left": "r6/reference",
+      "right": "r5/candidate",
+      "issues": []
+    },
+    {
+      "left": "r6/reference",
+      "right": "r6/reference",
+      "issues": []
+    },
+    {
+      "left": "r6/reference",
+      "right": "r6/repeat",
+      "issues": []
+    },
+    {
+      "left": "r6/reference",
+      "right": "r6/candidate",
+      "issues": []
+    },
+    {
+      "left": "r6/repeat",
+      "right": "r4/reference",
+      "issues": []
+    },
+    {
+      "left": "r6/repeat",
+      "right": "r4/repeat",
+      "issues": []
+    },
+    {
+      "left": "r6/repeat",
+      "right": "r4/candidate",
+      "issues": []
+    },
+    {
+      "left": "r6/repeat",
+      "right": "r5/reference",
+      "issues": []
+    },
+    {
+      "left": "r6/repeat",
+      "right": "r5/repeat",
+      "issues": []
+    },
+    {
+      "left": "r6/repeat",
+      "right": "r5/candidate",
+      "issues": []
+    },
+    {
+      "left": "r6/repeat",
+      "right": "r6/reference",
+      "issues": []
+    },
+    {
+      "left": "r6/repeat",
+      "right": "r6/repeat",
+      "issues": []
+    },
+    {
+      "left": "r6/repeat",
+      "right": "r6/candidate",
+      "issues": []
+    },
+    {
+      "left": "r6/candidate",
+      "right": "r4/reference",
+      "issues": []
+    },
+    {
+      "left": "r6/candidate",
+      "right": "r4/repeat",
+      "issues": []
+    },
+    {
+      "left": "r6/candidate",
+      "right": "r4/candidate",
+      "issues": []
+    },
+    {
+      "left": "r6/candidate",
+      "right": "r5/reference",
+      "issues": []
+    },
+    {
+      "left": "r6/candidate",
+      "right": "r5/repeat",
+      "issues": []
+    },
+    {
+      "left": "r6/candidate",
+      "right": "r5/candidate",
+      "issues": []
+    },
+    {
+      "left": "r6/candidate",
+      "right": "r6/reference",
+      "issues": []
+    },
+    {
+      "left": "r6/candidate",
+      "right": "r6/repeat",
+      "issues": []
+    },
+    {
+      "left": "r6/candidate",
+      "right": "r6/candidate",
+      "issues": []
+    }
+  ],
+  "other_case_legacy_equivalence_checks": 3428,
+  "unchanged_function_hashes": {
+    "mono_ns": "4a038f8768f14ee879f6429cb785167430c1f1d024bf8993c2e86433095991e3",
+    "B": "1f0ba0cdbfad59e150730e9eb6b9591d3af5fa834e195b1cf338ccf64915edcb",
+    "as_bytes": "c6640425902c2afd6b99a554dad35ee629fa40c50b6b1bd70341c6c7cf109f5b",
+    "decode_rune": "bba8a82cd4c913eb7ddd32d10bcadba5f23997b76ec9ab06c6beef359a47a419",
+    "decode_last_rune": "cfb9a54f2434d1f207b349730808e6453e46b9a21352b9939ab5e7bcd0c95d13",
+    "go_trim_space": "12444fb081d1d474a2b5b0312dd37537aead50d3baf515c203d81e63d99cba07",
+    "equal_fold_ascii": "a06ef9a0c3f18c1f07938009f018bc3a58cc709c003967b56de4f019b449c85a",
+    "ident_start": "73a831b3a4f27dc21255b04ad18bc46572a298903687115dc125acb34b212d39",
+    "ident_char": "b6ef261159ac0650fcdb6d47b319c6c82f3e79099896a9b9d5b7372bcafb89f9",
+    "_copy_quoted": "cb815c884865c0ed363c7dccc14cf71cf2e4e1a078c762ac1a4639f5089dca38",
+    "_keyword_at": "6348ea1bd6d4dbcbac136e8f6b242fe08b4dcd0f3e78d1d3648de8d1d72e3936",
+    "_should_quote_table": "b43d569920d432221fbada59a279b8ff7e5f423f98c38a5b1758045a86a4dd8a",
+    "quote_stream_names": "2d11d290753456719e5bd0dd4e5e73c0c12bf9ca3a9a4ef77b4d37fc9e43c966",
+    "_next_non_space": "2694e6ba53effd4f71c0e04d265a211ae6694fd68696c478335218321edffdf9",
+    "_has_mixed_case": "fe94620e9fd2f05ddd539afe48069d260fb2cf37b8b09fe7121f4bbc9864bc0f",
+    "quote_fields_with_dots": "7468e2adfef9e87e3e3a44ce6667f0415d9eeb4ea09f61add584761152adeadd",
+    "has_top_level_limit": "14a8bb51f9ecdcad623ef0c8e7bbe1dc028925eccac59e01126050be6af5f94a",
+    "ends_in_line_comment": "8eb43f70060f9c17de8a859a6c9c717d14446f60730418d5954ecdcce2e977c8",
+    "ensure_default_limit": "21f0123f202fb6a29200337176eec4ba14364165ae278a7bf5c7b9c151e3c7b9",
+    "rewrite_sql": "03c60dc493e38fe8516e134fbba00aef0f8082da90d9cf3366ff96b7649f8237",
+    "_escape": "f3e3d409388e5731c4b427bb33f9b6776fddfa923efbc5c393e825180b434954",
+    "go_json_string": "165d4b4d0e58eeaad5457dfeed1957f68ee9fe3b6f4ab1eda5940159ff4e066b",
+    "request_body": "13b0d2154abf3b69ffd64a02cb45bce66d8245aa716f35a785475ee26c629561",
+    "go_float": "aab01fd78c1c5df5ed9f7fbf3317620ec5a4a83b5e53cc3246488c817748b219",
+    "go_decode_utf8": "2a797524e5b0b86a7e19550ec3945f118be8752bd18fc770e3eb339788e56eaf",
+    "_fix_surrogates": "956d5a9a3cc1dad2febaef6884aded40b8b535a22363ca115ea71235cf6fc6e6",
+    "go_decode_array": "549e6aead8c3dbd76fadeb2e7f739506b46b466c43afc548fbd74cea4d0d9661",
+    "go_encode": "61f7811254912f7ab4995e00331ffe1756e375d4bfed0166703478ff2703ce73",
+    "pretty_array": "809b6032039185a57f57154da09f0e05288f3b804a05f6482efbe659038a50f3",
+    "_body_empty": "69495b7121b50328edf0767060ee7445af59360545aa29d86db534d2416d380b",
+    "json_output": "fec011e6796fb52e887f91533a9f8259219083b85006aa5d603e24592ee998b2",
+    "text_output": "f00bb6278ce6cfebca4a33d93327b519acc1e8fe84a3d26e67fecd7314c1822f",
+    "error_preview": "fe6dce137e2e31a8f362ac2a81220f8db4fe9ea9533903092e2e63901d07779d",
+    "expand_generate": "29b30c6fe97b140906e5ebbae84ee955604cc58d8e4f89891717129c96176b0a",
+    "route_body": "04bde8abd6d525e51d4bdd775d0bca4b7d9badc4618b056dc7c53e69d6c60f0d",
+    "FixtureServer": "bac2e758451525f43c6bd8e30dcaa389b86734d6a4b0845e00278bfe4f8d0f9f",
+    "serve": "d285c4cc49b4e93d59c4a1637322614aba1b42de0147b65f5b82ef6aa326afb3",
+    "alias_available": "2972ddac4e081daefbd117ff3d351d031f722025dcdd1f06bd23a58c2474251e",
+    "Fixture": "01aa44ed3b2722b602f56ca5d43dba32b5cdaab56bcd4cf467f676c871d2a098",
+    "ElementCounter": "3e864e09262f57c9ba2e55e42ded271d91c63ed7fd1abe6314e4feedb6a0c0e5",
+    "_condition_met": "867d28f9d676fdb163548a087d00e0f65036406e4fc2b53a592e34a8428c324e",
+    "execute": "2dfe18310c3ab97224ed2e1328cb38aaff2f9914d3e221b3741516bb89716b1e",
+    "requirement_skip": "5b376692c446e2ab2c739579815ff43a5616ffa16ed584686806cee10061a5cb",
+    "replacements_for": "7bfbd9dda25364014d84afc3baa4054c157028d99bd76f6576f706986ce22543",
+    "substitute": "f73619683f7b86049ab3284689e8ba3519d3c8e4498a9d6bc222e68d490956c0",
+    "request_contract": "b992a936b72151fa71bb7d27c2f98c46d934db9f5f605fc1bfff7a5a5b7c8fb5",
+    "sample": "60be7f8df9c5c30d9393df30f0ed20e84ecb91996c60133657477a189500c777",
+    "compare_stderr": "d792c3d212cf35c0c20f98dcb5964cfc15b1124397531a3bc68a6043529a612c",
+    "spinner_issues": "6c8fc8f55819574c45a43e1aa77abe5da953217e6e7058245b1166f32f726008",
+    "public": "7ca59d36a4ae73be8f843abd801e9c1c40edb5860c634d90eaf71b2a0e528498",
+    "relative_milestones": "853be32b58f675dc630f158c7541236bc1dab29194bc0da3401abcf46b976069",
+    "blocked_bytes": "4756389049cb69f683bd4a1fbfc37462cd8420490bbc7ca1dcd4d805dfd1d115",
+    "manifest_entry": "9650291424c79b7f9fb75511114caac082fad15b6bc123cee245c8f574f633c8",
+    "expectation_issues": "16253ad062cad713184f833c1caa9f8f83c0868aebfc6a8b42898880d558b41b",
+    "causal_issues": "7d57b7d9398e1828131a6cbe7f7cea18979b8dd281486266737e4fb079484baa",
+    "differences": "b90155c98043659318fd1b5ca9718680cd544595912cc0102bae2a2d6ac8afd4",
+    "request_lines": "61785e51460ed799e6226eaa626aae3f64bd8426010b0b8a9aeb61e53ae4f00c",
+    "advisories": "3d0e9c52451798ee18cc548a7bae93ee052267da07883e42e0a024c003f75a8a",
+    "http_code": "3c466928d68b7e326275dca0ba32ed097e2f7777ea1dced19f23b59df5fe7545",
+    "pin": "a66e2e00ec33ef25076325faaee9a140e073e49722de4b030c6661b30e5244b5",
+    "route": "14e199d89ca6116ea48b9c81634eb7e935b67bae4fe93605f7646973863ccb2f",
+    "sql": "58942c8c7ce05e71ef9b8ecf4f67cbd4e2ff5f2b6c4c7da17310b81d87afa934",
+    "expect": "93f45dc14b56782b2d85d1cf88da815a9f6ecd3f5296eab39ca7f8a9c0b85344",
+    "text_error": "aa5bee0f0adda5f0ed31c57b6e6e125423a550837816ceef2ab1d3777b016f43",
+    "status_message": "4405b02cf6e8ec2f5edbfa2b0b0efdd478ec07e00561cc5563360325a8b0a234",
+    "corpus": "49a04e11f689b2bfcee80b2295b319132191c27197bfe3a7cfae65aabf7b1ada",
+    "classify": "be00e93e1a74daf3a41da0f529a32dbb663eb724ac0df55e08beff24cf0c01a3",
+    "_build_corpus": "a35d0e2e4d7aa914505f6ede8388302305f8c165f41554d7c61cba1ef65ca3f0",
+    "paced_lengths": "e9e39f291d1132450a92784ce0213d98e8d8941f1ca7c6fc9bfc0b1be8b9e541",
+    "rows_spec": "88d5710cc9a9cd56777c25b9ba50eabfa02ecc532977f74559ec3eb2e2523f90",
+    "rows_body": "2d032706af12ba867f6a07dbebe93b4fdd56eae644d177234bc1a0244e1292c2",
+    "model_digest": "d801d884cf187b6f7134a5472437363fd2ed0f46a5a5a02253b017141cacca06",
+    "rendered": "3f14ef2582d10fed4cd58bdb73221c3e56696116ebc5f2348c99fc81df73e881",
+    "gen_tokens": "eb6db529f6f05a480077f93df96604078421623792ba98ff37d29967bb0644ec",
+    "gen_array": "0f3dcac75f4366e4ec037529f45dbb0865bd9f8326500668c2d845f9089ced12",
+    "mutate": "52662bb2458b41d080e770a3ceab9016bc675e5bcd281341172d812802f27bf7",
+    "seeded_cases": "4560a5a43ee25a5a6d32310b0e9f2467ed81b9048fd2be4fee9f1c74769e4db8",
+    "deferred_boundaries": "61d5a050e57da71b23ca3782a47e2a57134b9b65eeeae005d14a6fa3298322f8",
+    "boundary_issues": "3ee3d03ed0cc6fa48c80bd2d98d26a5c8992b808a800d7e57db2613934b4a1bd",
+    "benchmark_suite": "935f6d081a1bc7b065a5b2aee4ad9672865e7daaabd6aa7d0320211a23ec248f",
+    "check_fixture_capabilities": "8c2a493c55b7e3dc0b3c5ed54bf00c6792834570e561827d9f7e264ab267fa30",
+    "select": "26c9f0b9b68100d5585b006467c21f3c55e2913c471e7d4a9d3308ad33e0d2b9",
+    "scope_summary": "99a06faf5f19a289e0d12ec643365751f46b52624a189084d0a42a79600a1070",
+    "check_version": "bf5a8910d2db6f77168dcee8dd3899772117ad807b430d2328c0ea8139fed601",
+    "platform_id": "69b9ec32a36557d30509cd967b3969f3f01f497c7fd35950f93f2bd7a47c82a8",
+    "load_manifest": "600535074222ba40dff3c708b4d25a07c1efba5d956a675e11fb41095100d921",
+    "manifest_issues": "6ebe41b0be8c543797a970a01e8f2fed8beb395f809fdeab8d01b4ed92243937",
+    "run_cases": "37ca855d328838dbd1b0681b7c98273cfcc29a15ae18ba835334d18f0d4c9d08",
+    "tiers_sha256": "cfe8628ae95b813aa03d2436af597bc93c02e89d41bec77a9ea1a2337df959e6",
+    "baseline_issues": "efc1819a8b4ab3229ad131207bc2020c970692515aa38f844db97ef732eea4f0",
+    "stored_issues": "40090a759f76c5360913e711a3536df8c7dd894d0509fdaeb25ae0fc8a4b05d5",
+    "load_stored": "ccd02a782d80bc3ad751993f27159f58960a94f5855b4066fd08e8d0dc3dd257",
+    "write_report": "d35ae483670464a3c9fa55597d4582b87bd065884669f52d5d9f00f28137da06",
+    "freeze": "2cf3ba37539da12c5bfd4cfcc4f8e6e075484a1e8ba8672eca1321b5724a657b",
+    "main": "a7c40b49237daac029ad30f038f1c774298dc25c49d632ffc84e3e9152ff86af"
+  },
+  "corpus_sha256_unchanged": "e57adb313c8b385639533c68c6562cfe508c56b46c88840a13d2d3508badb07a",
+  "original_file_count_verified_unchanged": 1096,
+  "concurrent_document_drift_this_run": {},
+  "new_original_files_this_run": [
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/docs/evidence/phase6/resource-summary-r1-author-corrections.json",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/tests/fixtures/phase6-resource-summary/go-idle.json",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/tests/fixtures/phase6-resource-summary/go-one-row.json",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/tests/fixtures/phase6-resource-summary/manifest.json"
+  ],
+  "preparation_history": [
+    "initial tests had two assertion setup defects: unordered-lines legacy comparison and deferred trace/envelope setup; corrected only owned added tests",
+    "first passing guarded run aborted broad finalization on external document drift; preserved hashes and paths in concurrent-document-drift.json"
+  ],
+  "guard_calls": {},
+  "optimization": 0,
+  "review": {
+    "fresh_independent_opus": "pending; not invoked because this assignment prohibits agents and cross-thread messages",
+    "promotion": "not authorized or performed"
+  },
+  "gates": {
+    "independent": [
+      "exit 1",
+      "empty stdout",
+      "exact ordered GET trace and target/query; no unexpected request",
+      "119000 <= wall_ms <= 130000",
+      "config_before == config_after"
+    ],
+    "differential": [
+      "request contract headers and body (no independent pins)",
+      "framing/listener",
+      "stdout digest",
+      "termination",
+      "semantic config_before/config_after across captures",
+      "candidate duration bounds",
+      "whole exact stderr including unchanged Usage"
+    ],
+    "stderr_expectation": "Client.Timeout substring remains unchanged; only exact accepted forms supply it after normalization",
+    "http_response_status": "not an independent result status pin for this pre-header stall; no response status was observed"
+  },
+  "limits": [
+    "bare context captured once, R6 Go repeat; source causality supports it, no native replication claim",
+    "only exact captured fixture-normalized origin/path/query and Usage accepted",
+    "generic legacy suffix normalization for other cases remains unchanged",
+    "invalid target-case suffixed streams now bypass legacy regex; deliberate tightening",
+    "selected pure tests exclude existing native/socket fixture controls",
+    "no full retained gate rerun, combined phase3 proposal apply, or phase6 acceptance"
+  ],
+  "documentation": {
+    "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/docs/phase6-p4-header-deadline-proposal.md",
+    "sha256": "389b03e887f82e6f5244ac040a9c5bbd36fed1073b47665f427298903e57828f"
+  }
+}

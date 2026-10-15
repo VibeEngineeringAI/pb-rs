@@ -1,0 +1,373 @@
+// Preserved verbatim from the decoder review r3 scratch copy
+// (~/.cache/pbrs-r3/probe/src/tail/session/tests.rs, sha256
+// 664b9a96bba5c794232a9906ea9bd26450fc808bb026740d3ef9740ef3581c24).
+// This is the Rust generator that dumped the 30
+// tests/fixtures/arrow-go-v13-decoder-r3/*.arrows streams: run the scratch
+// tests `r3_probes`, `r3_probes_b` and `r3_probes_c` with R3_STREAMS=<dir>. It is
+// NOT compiled here. It relies on the session test module's helpers (copied
+// below from lines 88-116, 590-601 and 822-851 of that file), its imports
+// (including `session`, `ok`, `Int64Array`, `StringArray`, `ListArray`), and a
+// scratch-only `flatbuffers = "=25.12.19"` dev-dependency for the hand-built
+// union schema headers. The committed .arrows bytes, not this source, are the
+// fixtures; the manifest pins their SHA-256 values.
+
+// ---- helpers (session/tests.rs) ----
+fn flight_stream<'a>(
+    schema: &Schema,
+    batches: impl IntoIterator<Item = &'a RecordBatch>,
+) -> Vec<FlightData> {
+    flight_stream_with(IpcWriteOptions::default(), schema, batches)
+}
+
+fn flight_stream_with<'a>(
+    options: IpcWriteOptions,
+    schema: &Schema,
+    batches: impl IntoIterator<Item = &'a RecordBatch>,
+) -> Vec<FlightData> {
+    let generator = IpcDataGenerator::default();
+    let mut tracker = DictionaryTracker::new(false);
+    let mut context = IpcWriteContext::default();
+    let mut data = vec![
+        generator
+            .schema_to_bytes_with_dictionary_tracker(schema, &mut tracker, &options)
+            .into(),
+    ];
+    for batch in batches {
+        let (dictionaries, encoded) = generator
+            .encode(batch, &mut tracker, &options, &mut context)
+            .unwrap();
+        data.extend(dictionaries.into_iter().map(FlightData::from));
+        data.push(encoded.into());
+    }
+    data
+}
+
+fn declared_as(declared: &Schema, batch: &RecordBatch) -> Vec<FlightData> {
+    let mut data = flight_stream(&batch.schema(), [batch]);
+    let mut tracker = DictionaryTracker::new(false);
+    data[0] = IpcDataGenerator::default()
+        .schema_to_bytes_with_dictionary_tracker(
+            declared,
+            &mut tracker,
+            &IpcWriteOptions::default(),
+        )
+        .into();
+    data
+}
+
+#[derive(Clone, Copy)]
+enum Slot {
+    NodeLength(usize),
+    NodeNulls(usize),
+    BufferOffset(usize),
+    BufferLength(usize),
+}
+
+/// Rewrite one i64 of a node or buffer entry in place. FieldNode and Buffer
+/// are 16-byte flatbuffer structs stored inline, so the header stays valid.
+fn patch(data: &mut FlightData, slot: Slot, value: i64) {
+    let mut header = data.data_header.to_vec();
+    let position = {
+        let message = arrow_ipc::root_as_message(&header).unwrap();
+        let batch = message
+            .header_as_record_batch()
+            .or_else(|| message.header_as_dictionary_batch().and_then(|d| d.data()))
+            .unwrap();
+        let (bytes, index, half) = match slot {
+            Slot::NodeLength(i) => (batch.nodes().unwrap().bytes(), i, 0),
+            Slot::NodeNulls(i) => (batch.nodes().unwrap().bytes(), i, 1),
+            Slot::BufferOffset(i) => (batch.buffers().unwrap().bytes(), i, 0),
+            Slot::BufferLength(i) => (batch.buffers().unwrap().bytes(), i, 1),
+        };
+        bytes.as_ptr() as usize - header.as_ptr() as usize + index * 16 + half * 8
+    };
+    header[position..position + 8].copy_from_slice(&value.to_le_bytes());
+    data.data_header = Bytes::from(header);
+}
+
+
+// ---- mod r3 (session/tests.rs lines 1552-1835) ----
+mod r3 {
+    use super::*;
+    use arrow_array::{Array, FixedSizeListArray, Int8Array, Int32Array};
+
+    fn dump(name: &str, data: &[FlightData]) {
+        let Ok(dir) = std::env::var("R3_STREAMS") else { return };
+        let mut out = Vec::new();
+        for m in data {
+            let mut h = m.data_header.to_vec();
+            while h.len() % 8 != 0 {
+                h.push(0);
+            }
+            out.extend(0xFFFF_FFFFu32.to_le_bytes());
+            out.extend((h.len() as i32).to_le_bytes());
+            out.extend(&h);
+            out.extend(&m.data_body[..]);
+        }
+        out.extend(0xFFFF_FFFFu32.to_le_bytes());
+        out.extend(0i32.to_le_bytes());
+        std::fs::write(std::path::Path::new(&dir).join(format!("{name}.arrows")), out).unwrap();
+    }
+
+    /// Patch the record batch length (node 0 is moved aside temporarily so the
+    /// only remaining i64 equal to `old` is the batch length).
+    fn set_batch_length(data: &mut FlightData, old: i64, new: i64) {
+        patch(data, Slot::NodeLength(0), 0x5a5a_5a5a_5a5a);
+        let mut header = data.data_header.to_vec();
+        let mut hits = vec![];
+        for s in 0..header.len() - 7 {
+            if header[s..s + 8] == old.to_le_bytes() {
+                hits.push(s);
+            }
+        }
+        assert_eq!(hits.len(), 1, "batch length occurrences");
+        header[hits[0]..hits[0] + 8].copy_from_slice(&new.to_le_bytes());
+        data.data_header = Bytes::from(header);
+        patch(data, Slot::NodeLength(0), old);
+    }
+
+    fn run(name: &str, data: Vec<FlightData>) {
+        dump(name, &data);
+        let r = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            let (mut o, mut e) = (Vec::new(), Vec::new());
+            let r = session(true, ok(data), &mut o, &mut e);
+            (r, String::from_utf8_lossy(&o).into_owned())
+        }));
+        match r {
+            Ok((r, o)) => eprintln!("R3 {name}: result={r:?} stdout={o:?}"),
+            Err(p) => eprintln!(
+                "R3 {name}: PANIC {:?}",
+                p.downcast_ref::<String>().cloned().or_else(|| p.downcast_ref::<&str>().map(|s| s.to_string()))
+            ),
+        }
+    }
+
+    fn fsl(size: i32, values: Vec<i8>) -> (Arc<Schema>, RecordBatch) {
+        let column = FixedSizeListArray::new(
+            Arc::new(Field::new_list_field(DataType::Int8, true)),
+            size,
+            Arc::new(Int8Array::from(values)),
+            None,
+        );
+        let schema = Arc::new(Schema::new(vec![Field::new("f", column.data_type().clone(), true)]));
+        let batch = RecordBatch::try_new(Arc::clone(&schema), vec![Arc::new(column)]).unwrap();
+        (schema, batch)
+    }
+
+    #[test]
+    fn r3_probes() {
+        // g0 control: Int64 seven values.
+        let schema = Arc::new(Schema::new(vec![Field::new("n", DataType::Int64, true)]));
+        let batch = RecordBatch::try_new(
+            Arc::clone(&schema),
+            vec![Arc::new(Int64Array::from_iter_values(101..108))],
+        )
+        .unwrap();
+        let base = flight_stream(&schema, [&batch]);
+        run("g0_int_control", base.clone());
+        // g1: node length 7 > batch length 5.
+        let mut d = base.clone();
+        set_batch_length(&mut d[1], 7, 5);
+        run("g1_int_node_gt_rows", d);
+        // g2: batch length 9 > node length 7.
+        let mut d = base.clone();
+        set_batch_length(&mut d[1], 7, 9);
+        run("g2_int_node_lt_rows", d);
+        // g3: negative batch length -1 with valid nodes.
+        let mut d = base.clone();
+        set_batch_length(&mut d[1], 7, -1);
+        run("g3_int_negative_batch_valid_nodes", d);
+        // g3b: batch length 0 with seven-row node.
+        let mut d = base.clone();
+        set_batch_length(&mut d[1], 7, 0);
+        run("g3b_int_zero_batch_valid_nodes", d);
+        // g4: FSL size 2 node length i64::MAX, batch 1 (non-overflowing).
+        let (s, b) = fsl(2, vec![1, 2]);
+        let mut d = flight_stream(&s, [&b]);
+        run("g4_fsl2_control", d.clone());
+        patch(&mut d[1], Slot::NodeLength(0), i64::MAX);
+        run("g4_fsl2_node_max", d);
+        // g5: FSL size 2, two rows (4 values), batch length 1.
+        let (s, b) = fsl(2, vec![1, 2, 3, 4]);
+        let mut d = flight_stream(&s, [&b]);
+        set_batch_length(&mut d[1], 2, 1);
+        run("g5_fsl2_node2_rows1", d);
+        // g6: FSL size -1 declared, size-1 body.
+        let (_, b) = fsl(1, vec![9]);
+        let declared = Schema::new(vec![Field::new(
+            "f",
+            DataType::FixedSizeList(Arc::new(Field::new_list_field(DataType::Int8, true)), -1),
+            true,
+        )]);
+        run("g6_fsl_negative_size", declared_as(&declared, &b));
+        // g7: REE with run_ends declared nullable.
+        let ree = arrow_array::RunArray::<Int32Type>::try_new(
+            &Int32Array::from(vec![2, 3]),
+            &Int64Array::from(vec![5, 6]),
+        )
+        .unwrap();
+        let schema = Arc::new(Schema::new(vec![Field::new("r", ree.data_type().clone(), true)]));
+        let batch = RecordBatch::try_new(Arc::clone(&schema), vec![Arc::new(ree)]).unwrap();
+        run("g7_ree_control", flight_stream(&schema, [&batch]));
+        let declared = Schema::new(vec![Field::new(
+            "r",
+            DataType::RunEndEncoded(
+                Arc::new(Field::new("run_ends", DataType::Int32, true)),
+                Arc::new(Field::new("values", DataType::Int64, true)),
+            ),
+            true,
+        )]);
+        run("g7_ree_nullable_run_ends", declared_as(&declared, &batch));
+        // g8: Map<Utf8,Int64> with a null key (data only; schema keys non-null).
+        let keys = StringArray::from(vec![Some("a"), None]);
+        let values = Int64Array::from(vec![1, 2]);
+        let kf = Arc::new(Field::new("key", DataType::Utf8, true));
+        let vf = Arc::new(Field::new("value", DataType::Int64, true));
+        let entries = arrow_array::StructArray::new(
+            vec![kf, vf].into(),
+            vec![Arc::new(keys) as ArrayRef, Arc::new(values)],
+            None,
+        );
+        let entries_field = Arc::new(Field::new("entries", entries.data_type().clone(), true));
+        let list = ListArray::new(
+            Arc::clone(&entries_field),
+            arrow_buffer::OffsetBuffer::new(vec![0i32, 2].into()),
+            Arc::new(entries),
+            None,
+        );
+        let schema = Arc::new(Schema::new(vec![Field::new("m", list.data_type().clone(), true)]));
+        let batch = RecordBatch::try_new(Arc::clone(&schema), vec![Arc::new(list)]).unwrap();
+        let declared = Schema::new(vec![Field::new(
+            "m",
+            DataType::Map(
+                Arc::new(Field::new(
+                    "entries",
+                    DataType::Struct(
+                        vec![
+                            Field::new("key", DataType::Utf8, false),
+                            Field::new("value", DataType::Int64, true),
+                        ]
+                        .into(),
+                    ),
+                    false,
+                )),
+                false,
+            ),
+            true,
+        )]);
+        run("g8_map_null_key", declared_as(&declared, &batch));
+    }
+
+    fn union_schema(type_ids: Option<Vec<i32>>) -> Bytes {
+        let mut fbb = flatbuffers::FlatBufferBuilder::new();
+        let name = fbb.create_string("c0");
+        let mut ib = arrow_ipc::IntBuilder::new(&mut fbb);
+        ib.add_bitWidth(8);
+        ib.add_is_signed(true);
+        let int = ib.finish();
+        let empty = fbb.create_vector::<flatbuffers::WIPOffset<arrow_ipc::Field>>(&[]);
+        let mut b = arrow_ipc::FieldBuilder::new(&mut fbb);
+        b.add_name(name);
+        b.add_nullable(true);
+        b.add_type_type(arrow_ipc::Type::Int);
+        b.add_type_(int.as_union_value());
+        b.add_children(empty);
+        let kid = b.finish();
+        let kids = fbb.create_vector(&[kid]);
+        let ids = type_ids.map(|ids| fbb.create_vector(&ids));
+        let mut u = arrow_ipc::UnionBuilder::new(&mut fbb);
+        u.add_mode(arrow_ipc::UnionMode::Sparse);
+        if let Some(ids) = ids {
+            u.add_typeIds(ids);
+        }
+        let u = u.finish();
+        let name = fbb.create_string("u");
+        let mut b = arrow_ipc::FieldBuilder::new(&mut fbb);
+        b.add_name(name);
+        b.add_nullable(true);
+        b.add_type_type(arrow_ipc::Type::Union);
+        b.add_type_(u.as_union_value());
+        b.add_children(kids);
+        let field = b.finish();
+        let fields = fbb.create_vector(&[field]);
+        let mut s = arrow_ipc::SchemaBuilder::new(&mut fbb);
+        s.add_fields(fields);
+        let schema = s.finish();
+        let mut m = arrow_ipc::MessageBuilder::new(&mut fbb);
+        m.add_version(arrow_ipc::MetadataVersion::V5);
+        m.add_header_type(MessageHeader::Schema);
+        m.add_header(schema.as_union_value());
+        let m = m.finish();
+        fbb.finish(m, None);
+        Bytes::copy_from_slice(fbb.finished_data())
+    }
+
+    #[test]
+    fn r3_probes_b() {
+        use arrow_array::UnionArray;
+        use arrow_schema::UnionFields;
+        // g6b: FSL(-1) schema only.
+        let fsl_schema = |n: i32| Schema::new(vec![Field::new(
+            "f",
+            DataType::FixedSizeList(Arc::new(Field::new_list_field(DataType::Int8, true)), n),
+            true,
+        )]);
+        let (_, b1) = fsl(1, vec![9]);
+        run("g6b_fsl_negative_schema_only", vec![declared_as(&fsl_schema(-1), &b1)[0].clone()]);
+        run("g9_fsl_zero_size", declared_as(&fsl_schema(0), &b1));
+        run("g9b_fsl_zero_schema_only", vec![declared_as(&fsl_schema(0), &b1)[0].clone()]);
+        // g10: union typeIds [256] vs [0].
+        let fields = UnionFields::try_new(vec![0], vec![Field::new("c0", DataType::Int8, true)]).unwrap();
+        let union = UnionArray::try_new(fields, vec![0_i8].into(), None, vec![Arc::new(Int8Array::from(vec![7])) as ArrayRef]).unwrap();
+        let schema = Arc::new(Schema::new(vec![Field::new("u", union.data_type().clone(), true)]));
+        let batch = RecordBatch::try_new(Arc::clone(&schema), vec![Arc::new(union)]).unwrap();
+        let base = flight_stream(&schema, [&batch]);
+        for (name, ids) in [("g10_union_ids_0", Some(vec![0])), ("g10_union_ids_256", Some(vec![256])), ("g10_union_ids_none", None)] {
+            let mut d = base.clone();
+            d[0] = FlightData { data_header: union_schema(ids), ..Default::default() };
+            run(name, d);
+        }
+        // g11: nested lists.
+        for depth in [16usize, 24, 31, 32, 40, 63, 64, 65] {
+            let mut array: ArrayRef = Arc::new(Int64Array::from(vec![1]));
+            for _ in 0..depth {
+                let field = Arc::new(Field::new_list_field(array.data_type().clone(), true));
+                array = Arc::new(ListArray::new(field, arrow_buffer::OffsetBuffer::new(vec![0i32, 1].into()), array, None));
+            }
+            let schema = Arc::new(Schema::new(vec![Field::new("l", array.data_type().clone(), true)]));
+            let batch = RecordBatch::try_new(Arc::clone(&schema), vec![array]).unwrap();
+            run(&format!("g11_list_depth_{depth}"), flight_stream(&schema, [&batch]));
+        }
+    }
+
+    #[test]
+    fn r3_probes_c() {
+        use arrow_array::StructArray;
+        for depth in 41usize..=62 {
+            let mut array: ArrayRef = Arc::new(Int64Array::from(vec![1]));
+            for _ in 0..depth {
+                let field = Arc::new(Field::new_list_field(array.data_type().clone(), true));
+                array = Arc::new(ListArray::new(field, arrow_buffer::OffsetBuffer::new(vec![0i32, 1].into()), array, None));
+            }
+            let schema = Arc::new(Schema::new(vec![Field::new("l", array.data_type().clone(), true)]));
+            let batch = RecordBatch::try_new(Arc::clone(&schema), vec![array]).unwrap();
+            let (mut o, mut e) = (Vec::new(), Vec::new());
+            let r = session(true, ok(flight_stream(&schema, [&batch])), &mut o, &mut e);
+            eprintln!("R3C list depth {depth}: ok={} {:?}", r.is_ok(), r.err().map(|m| m.chars().take(60).collect::<String>()));
+        }
+        for depth in [30usize, 31, 32, 33] {
+            let mut array: ArrayRef = Arc::new(Int64Array::from(vec![1]));
+            for _ in 0..depth {
+                let field = Arc::new(Field::new("s", array.data_type().clone(), true));
+                array = Arc::new(StructArray::new(vec![field].into(), vec![array], None));
+            }
+            let schema = Arc::new(Schema::new(vec![Field::new("s", array.data_type().clone(), true)]));
+            let batch = RecordBatch::try_new(Arc::clone(&schema), vec![array]).unwrap();
+            let data = flight_stream(&schema, [&batch]);
+            dump(&format!("g12_struct_depth_{depth}"), &data);
+            let (mut o, mut e) = (Vec::new(), Vec::new());
+            let r = session(true, ok(data), &mut o, &mut e);
+            eprintln!("R3C struct depth {depth}: ok={} {:?}", r.is_ok(), r.err().map(|m| m.chars().take(60).collect::<String>()));
+        }
+    }
+}

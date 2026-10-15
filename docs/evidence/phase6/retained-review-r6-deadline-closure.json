@@ -1,0 +1,144 @@
+{
+  "kind": "focused native retained-deadline closure",
+  "passed": true,
+  "scope": "Original full retained inventory plus three fresh exact-case Go A/A and R6 replays; not a new full-suite execution or performance comparison",
+  "original_inventory": {
+    "path": "docs/evidence/phase6/retained-review-r6-original-complete.json",
+    "sha256": "8123e3f571ef70fa182bf810e135794d8d45fed0872f72c3d61e3f7a32ff3884",
+    "passed_cases": 3266,
+    "cases": 3268,
+    "passed_guards": 30,
+    "reports_preserved": true
+  },
+  "cases": [
+    {
+      "name": "p3-deadline-body-stall-text",
+      "report": "/home/ajs/.cache/pb-phase6/retained-review-r6-deadline-closure/p3-deadline-body-stall-text/report.json",
+      "report_sha256": "bb6b00d94f85cb11dc9e1122dfe7bc0725aafa0a31be4e57b43061aafb3c356e",
+      "issues": [],
+      "captures": [
+        {
+          "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-deadline-closure/p3-deadline-body-stall-text/cases/p3-deadline-body-stall-text/candidate/result.json",
+          "sha256": "5d0f56b165f5e79058aef5715fa9acb1a396627bccce4d1c527a6bba0869f44b",
+          "termination": {
+            "exit": 1
+          },
+          "wall_ms": 60004.4638,
+          "stdout_bytes": 34,
+          "request_count": 1
+        },
+        {
+          "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-deadline-closure/p3-deadline-body-stall-text/cases/p3-deadline-body-stall-text/reference/result.json",
+          "sha256": "3853eaa67b572a49c4944d9ce745adcd192af550a054b274b8b19fc15b270985",
+          "termination": {
+            "exit": 1
+          },
+          "wall_ms": 60026.626941,
+          "stdout_bytes": 34,
+          "request_count": 1
+        },
+        {
+          "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-deadline-closure/p3-deadline-body-stall-text/cases/p3-deadline-body-stall-text/reference-repeat-1/result.json",
+          "sha256": "950f06704834c67b5a4eb2347870979e355499713675c02ca327ea5f7f073bf9",
+          "termination": {
+            "exit": 1
+          },
+          "wall_ms": 60030.261488,
+          "stdout_bytes": 34,
+          "request_count": 1
+        }
+      ]
+    },
+    {
+      "name": "p3-deadline-text-empty-array-lookahead",
+      "report": "/home/ajs/.cache/pb-phase6/retained-review-r6-deadline-closure/p3-deadline-text-empty-array-lookahead/report.json",
+      "report_sha256": "47169b8ddadc90b5316ef82bde8d91a095b957f419f546da1258c7b2f785269b",
+      "issues": [],
+      "captures": [
+        {
+          "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-deadline-closure/p3-deadline-text-empty-array-lookahead/cases/p3-deadline-text-empty-array-lookahead/candidate/result.json",
+          "sha256": "03b6447d68da04541d9b15343403ada8a980302ab40a010358bf76a92c66affb",
+          "termination": {
+            "exit": 1
+          },
+          "wall_ms": 60003.308644,
+          "stdout_bytes": 0,
+          "request_count": 1
+        },
+        {
+          "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-deadline-closure/p3-deadline-text-empty-array-lookahead/cases/p3-deadline-text-empty-array-lookahead/reference/result.json",
+          "sha256": "f596b49d717db0ce5e5343958fc38890a628e139bbe57fe43ba294c38a25ae0b",
+          "termination": {
+            "exit": 1
+          },
+          "wall_ms": 60027.99379,
+          "stdout_bytes": 0,
+          "request_count": 1
+        },
+        {
+          "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-deadline-closure/p3-deadline-text-empty-array-lookahead/cases/p3-deadline-text-empty-array-lookahead/reference-repeat-1/result.json",
+          "sha256": "fb54ed7160057d33b8f4f41466f7c0934b8f90fdf07654b79f0183434daac987",
+          "termination": {
+            "exit": 1
+          },
+          "wall_ms": 60096.463069,
+          "stdout_bytes": 0,
+          "request_count": 1
+        }
+      ]
+    },
+    {
+      "name": "p4-deadline-header",
+      "report": "/home/ajs/.cache/pb-phase6/retained-review-r6-header-closure-v2/p4-deadline-header/report.json",
+      "report_sha256": "94e14abb0ce689d6508061e5decd888221eb7d0990d75589b5cfd52d5558bc30",
+      "issues": [],
+      "captures": [
+        {
+          "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-header-closure-v2/p4-deadline-header/p4-deadline-header/candidate/result.json",
+          "sha256": "7c66e5f607756d7cafd4cfdd05b34c37e67982201244896fbd1b7ee1a6cf807f",
+          "termination": {
+            "exit": 1
+          },
+          "wall_ms": 120003.093875,
+          "stdout_bytes": 0,
+          "request_count": 1
+        },
+        {
+          "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-header-closure-v2/p4-deadline-header/p4-deadline-header/reference/result.json",
+          "sha256": "6cccd1a1486775dfe289c82d0d71d3abd35e0f645d1db1a7de27c206fe15be82",
+          "termination": {
+            "exit": 1
+          },
+          "wall_ms": 120029.465838,
+          "stdout_bytes": 0,
+          "request_count": 1
+        },
+        {
+          "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-header-closure-v2/p4-deadline-header/p4-deadline-header/repeat/result.json",
+          "sha256": "23886a714c4fb229bf1052dd8753618ee9e0daea34c7e522217bcd92e40eb298",
+          "termination": {
+            "exit": 1
+          },
+          "wall_ms": 120027.148815,
+          "stdout_bytes": 0,
+          "request_count": 1
+        }
+      ]
+    }
+  ],
+  "launch_correction": {
+    "original_status": "/home/ajs/.cache/pb-phase6/retained-review-r6-deadline-closure/status.json",
+    "sha256": "20d5623aaa9e8edd56a043d7d686b26852fbe0868c6b7baed1bbad2ba2fb1f75",
+    "phase4_argument_error_exit": 2,
+    "client_started": false,
+    "corrected_status": "/home/ajs/.cache/pb-phase6/retained-review-r6-header-closure-v2/status.json",
+    "corrected_sha256": "c322e9eb2367e4dc76b171e82d956adddf487eb7d87345ba2b17ad432c04665c"
+  },
+  "application": "docs/evidence/phase6/composed-deadlines-applied.json",
+  "reviews": [
+    "docs/phase6-composed-deadline-review-opus-r3.md",
+    "docs/phase6-composed-deadline-review-sol-r3.md"
+  ],
+  "end_identities_unchanged": true,
+  "performance_claim": false
+}

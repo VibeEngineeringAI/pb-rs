@@ -1,0 +1,32 @@
+{
+  "scope": "25 ia1 native Flight process regressions; no timing claims",
+  "report": "/home/ajs/.cache/pb-phase6/tmp/harness-dictionary-ia1-r5-v1/report.json",
+  "report_sha256": "99738961e29f8c4e34f997e6782d5f54e7ac29c35f31d78a250c18d54f4df7a9",
+  "complete": true,
+  "identities": {
+    "go": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+    "candidate": "0a5877073979ee43e518b40908ae7274286144a9799137202d71a4310b68e825",
+    "fixture": "c85f63f9f01a1be6eaa66e6802dae0c3f08409be2ad538d358a7e70f2f5ce314"
+  },
+  "sources": {
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/phase6_dictionary_cases.py": "ebc49d7724dd8a12b1b1ee0dd861eee709b69d0a54490fa478e9490f0ffce8ea",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/phase6.py": "ebac90cb357e186fe7d8992fa2bc811e9d5ed6a2e7ec5fe9294efe201d136a53",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/tests/fixtures/arrow-go-v13-decoder-ia1/manifest.json": "d0b41729affb0dcf7580c45d7817419d14f494559e68c01cdec226a3087fe251"
+  },
+  "failures": 0,
+  "strict_parity_passed": 0,
+  "remaining_contract_passed": 25,
+  "wire_ua_divergent": 25,
+  "end_identities": {
+    "go": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+    "candidate": "0a5877073979ee43e518b40908ae7274286144a9799137202d71a4310b68e825",
+    "fixture": "c85f63f9f01a1be6eaa66e6802dae0c3f08409be2ad538d358a7e70f2f5ce314"
+  },
+  "end_sources": {
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/phase6_dictionary_cases.py": "ebc49d7724dd8a12b1b1ee0dd861eee709b69d0a54490fa478e9490f0ffce8ea",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/phase6.py": "ebac90cb357e186fe7d8992fa2bc811e9d5ed6a2e7ec5fe9294efe201d136a53",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/tests/fixtures/arrow-go-v13-decoder-ia1/manifest.json": "d0b41729affb0dcf7580c45d7817419d14f494559e68c01cdec226a3087fe251"
+  },
+  "identities_unchanged": true,
+  "passed": true
+}

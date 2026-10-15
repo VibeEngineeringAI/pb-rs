@@ -1,0 +1,1094 @@
+{
+  "scope": "First finite same-Go A/A and matching reduced-parser observer control. No Rust timing, comparative speed, relative budget, live throughput or soak acceptance.",
+  "parent_manifest_sha256": "a47093f4a3ea785a310f7ca1baa92444deaf7e21db5ba7db72dc897ddc3d047b",
+  "campaigns": [
+    {
+      "campaign": "campaign-r6-timing-aa-full-01",
+      "identities": {
+        "report.json": {
+          "path": "/home/ajs/.cache/pb-phase6/campaign-r6-timing-aa-full-01/report.json",
+          "sha256": "9165e4a8af9f67bc33bdf12670184b210dd0d572208196394203ef4a1f3fa500",
+          "bytes": 118542
+        },
+        "samples.jsonl": {
+          "path": "/home/ajs/.cache/pb-phase6/campaign-r6-timing-aa-full-01/samples.jsonl",
+          "sha256": "66870f29834405ad883b8ddc785d669029f3625f9356ff3ad3c10ad6f0be3c77",
+          "bytes": 1076823
+        },
+        "manifest.json": {
+          "path": "/home/ajs/.cache/pb-phase6/campaign-r6-timing-aa-full-01/manifest.json",
+          "sha256": "d79cd3ba0c4628ce05e09d668a650a4e3ad48d86267ae2ce3681cbc233fd3401",
+          "bytes": 106873
+        },
+        "go-aa.json": {
+          "path": "/home/ajs/.cache/pb-phase6/campaign-r6-timing-aa-full-01/go-aa.json",
+          "sha256": "8a153f9bb463dd995a2f5c00bbf9b17e1ce3fb4e023ad519c0672ce859f11e60",
+          "bytes": 20104
+        },
+        "resources-offline.json": {
+          "path": "/home/ajs/.cache/pb-phase6/campaign-r6-timing-aa-full-01/resources-offline.json",
+          "sha256": "b2ff57c6c70d84ca6da7567c221fab8610b5989a73a2630238f6af31ee6a5774",
+          "bytes": 98251
+        }
+      },
+      "execution": {
+        "campaign_id": "campaign-r6-timing-aa-full-01",
+        "manifest_sha256": "a47093f4a3ea785a310f7ca1baa92444deaf7e21db5ba7db72dc897ddc3d047b",
+        "quiet_ack_token": "phase7-quiet-phase6-samego-aa-20261014T173040Z",
+        "ack_utc": "2026-10-14T17:30:40Z",
+        "start_deadline_utc": "2026-10-14T17:32:40Z",
+        "actual_launch_utc": "2026-10-14T17:31:16.076852+00:00",
+        "max_seconds": 900,
+        "absolute_hard_end_utc": "2026-10-14T17:47:40Z",
+        "pid": 3755667,
+        "argv": [
+          "python3",
+          "harness/phase6_workloads.py",
+          "run",
+          "--go",
+          "/home/ajs/.cache/pb-phase6/baselines/pb-go",
+          "--candidate",
+          "/home/ajs/.cache/pb-phase6/candidate-review-r6/pb",
+          "--fixture",
+          "/home/ajs/.cache/pb-phase6/tmp/fx/pb-fixture-r5",
+          "--meter",
+          "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/bin/pb-meter",
+          "--manifest",
+          "/home/ajs/.cache/pb-phase6/campaign-prepared-r6-v1/manifest.json",
+          "--tier",
+          "finite",
+          "--workload",
+          "one-row",
+          "--workload",
+          "many-small",
+          "--timing-aa",
+          "--warmups",
+          "5",
+          "--repetitions",
+          "30",
+          "--seed",
+          "2026",
+          "--collector-mode",
+          "full",
+          "--window-budget-s",
+          "900",
+          "--out",
+          "/home/ajs/.cache/pb-phase6/campaign-r6-timing-aa-full-01",
+          "--quiet-window-token",
+          "phase7-quiet-phase6-samego-aa-20261014T173040Z"
+        ],
+        "kind": "same-Go A/A; no candidate ranking",
+        "exit": 0,
+        "actual_end_utc": "2026-10-14T17:31:24.783970+00:00"
+      },
+      "counts": {
+        "measured": 120,
+        "warmups": 20,
+        "contract_controls": 2
+      },
+      "summaries": {
+        "one-row": {
+          "go-a": {
+            "wall_ms": {
+              "n": 30,
+              "median": 30.197321000000002,
+              "minimum": 26.406167,
+              "maximum": 39.453959,
+              "stdev": 2.789296921655248
+            },
+            "first_complete_record_ms": {
+              "n": 30,
+              "median": 28.4799165,
+              "minimum": 26.241276,
+              "maximum": 36.745152,
+              "stdev": 2.4031739280503066
+            },
+            "fixture_to_first_complete_record_ms": {
+              "n": 30,
+              "median": 0.3433005,
+              "minimum": 0.213809,
+              "maximum": 0.687871,
+              "stdev": 0.08844150605820594
+            },
+            "cpu_ms": {
+              "n": 30,
+              "median": 38.669,
+              "minimum": 34.605000000000004,
+              "maximum": 44.66,
+              "stdev": 2.607667325055272
+            },
+            "cpu_us_per_row": {
+              "n": 30,
+              "median": 38669.0,
+              "minimum": 34605.00000000001,
+              "maximum": 44660.0,
+              "stdev": 2607.667325055272
+            },
+            "peak_rss_bytes": {
+              "n": 30,
+              "median": 50532352.0,
+              "minimum": 49733632,
+              "maximum": 51249152,
+              "stdev": 423628.99019386206
+            },
+            "rows_per_second": {
+              "n": 30,
+              "median": 33.11553798045368,
+              "minimum": 25.34599886414441,
+              "maximum": 37.86994151782801,
+              "stdev": 2.7538738798338005
+            },
+            "output_bytes_per_second": {
+              "n": 30,
+              "median": 5364.717152833497,
+              "minimum": 4106.0518159913945,
+              "maximum": 6134.930525888138,
+              "stdev": 446.1275685330756
+            },
+            "first_record_observed_after_native_exit": 0
+          },
+          "go-b": {
+            "wall_ms": {
+              "n": 30,
+              "median": 31.525672999999998,
+              "minimum": 25.874907,
+              "maximum": 42.099469,
+              "stdev": 3.734472490391578
+            },
+            "first_complete_record_ms": {
+              "n": 30,
+              "median": 29.3703885,
+              "minimum": 25.456393,
+              "maximum": 39.997157,
+              "stdev": 3.3947481466854708
+            },
+            "fixture_to_first_complete_record_ms": {
+              "n": 30,
+              "median": 0.3280945,
+              "minimum": 0.241788,
+              "maximum": 0.423599,
+              "stdev": 0.055878884225494405
+            },
+            "cpu_ms": {
+              "n": 30,
+              "median": 40.5145,
+              "minimum": 34.364000000000004,
+              "maximum": 48.494,
+              "stdev": 3.7600774472336878
+            },
+            "cpu_us_per_row": {
+              "n": 30,
+              "median": 40514.5,
+              "minimum": 34364.00000000001,
+              "maximum": 48494.0,
+              "stdev": 3760.077447233687
+            },
+            "peak_rss_bytes": {
+              "n": 30,
+              "median": 50550784.0,
+              "minimum": 49537024,
+              "maximum": 52092928,
+              "stdev": 481917.03780622495
+            },
+            "rows_per_second": {
+              "n": 30,
+              "median": 31.721500514561512,
+              "minimum": 23.75326871699973,
+              "maximum": 38.647481902060555,
+              "stdev": 3.6066152030937815
+            },
+            "output_bytes_per_second": {
+              "n": 30,
+              "median": 5138.8830833589645,
+              "minimum": 3848.0295321539566,
+              "maximum": 6260.89206813381,
+              "stdev": 584.2716629011926
+            },
+            "first_record_observed_after_native_exit": 0
+          },
+          "contract_comparison": {
+            "comparable": true,
+            "reasons": [],
+            "differing_fields": [],
+            "checked_fields": [
+              "stdout_sha256",
+              "stdout_bytes",
+              "rendered_rows",
+              "batches",
+              "stderr_sha256",
+              "termination",
+              "requests",
+              "ticket_sha256",
+              "request_validation",
+              "workload_sha256",
+              "sink",
+              "tls",
+              "config_before",
+              "config_after"
+            ],
+            "samples": 60
+          },
+          "candidate_over_go": {
+            "wall_ms": null,
+            "first_complete_record_ms": null,
+            "fixture_to_first_complete_record_ms": null,
+            "cpu_ms": null,
+            "cpu_us_per_row": null,
+            "peak_rss_bytes": null,
+            "rows_per_second": null,
+            "output_bytes_per_second": null
+          },
+          "ratio_quarantine": [
+            "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+          ],
+          "metric_quarantine": {
+            "wall_ms": [
+              "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+            ],
+            "first_complete_record_ms": [
+              "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+            ],
+            "fixture_to_first_complete_record_ms": [
+              "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+            ],
+            "cpu_ms": [
+              "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+            ],
+            "cpu_us_per_row": [
+              "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+            ],
+            "peak_rss_bytes": [
+              "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+            ],
+            "rows_per_second": [
+              "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+              "fixture/observer ceiling or producer schedule prevents throughput attribution"
+            ],
+            "output_bytes_per_second": [
+              "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+              "fixture/observer ceiling or producer schedule prevents throughput attribution"
+            ]
+          },
+          "metric_scope": {}
+        },
+        "many-small": {
+          "go-a": {
+            "wall_ms": {
+              "n": 30,
+              "median": 38.676548,
+              "minimum": 33.307864,
+              "maximum": 46.849267,
+              "stdev": 3.3766581082596088
+            },
+            "first_complete_record_ms": {
+              "n": 30,
+              "median": 29.311409,
+              "minimum": 24.908212,
+              "maximum": 35.726917,
+              "stdev": 2.6289555808792433
+            },
+            "fixture_to_first_complete_record_ms": {
+              "n": 30,
+              "median": 0.373373,
+              "minimum": 0.27795,
+              "maximum": 0.913708,
+              "stdev": 0.13636207128699007
+            },
+            "cpu_ms": {
+              "n": 30,
+              "median": 44.72,
+              "minimum": 37.914,
+              "maximum": 54.766000000000005,
+              "stdev": 3.4253315261982773
+            },
+            "cpu_us_per_row": {
+              "n": 30,
+              "median": 349.375,
+              "minimum": 296.203125,
+              "maximum": 427.85937500000006,
+              "stdev": 26.760402548424043
+            },
+            "peak_rss_bytes": {
+              "n": 30,
+              "median": 51288064.0,
+              "minimum": 50847744,
+              "maximum": 52420608,
+              "stdev": 374240.0317432036
+            },
+            "rows_per_second": {
+              "n": 30,
+              "median": 3309.5255721534495,
+              "minimum": 2732.166545956845,
+              "maximum": 3842.936310776338,
+              "stdev": 286.06580130287034
+            },
+            "output_bytes_per_second": {
+              "n": 30,
+              "median": 571461.9859041839,
+              "minimum": 471768.32030264207,
+              "maximum": 663567.018287333,
+              "stdev": 49395.51828434406
+            },
+            "first_record_observed_after_native_exit": 0
+          },
+          "go-b": {
+            "wall_ms": {
+              "n": 30,
+              "median": 39.0456115,
+              "minimum": 33.293256,
+              "maximum": 53.303925,
+              "stdev": 4.1214611493022035
+            },
+            "first_complete_record_ms": {
+              "n": 30,
+              "median": 29.158589,
+              "minimum": 26.396981,
+              "maximum": 40.240925,
+              "stdev": 3.532357618633488
+            },
+            "fixture_to_first_complete_record_ms": {
+              "n": 30,
+              "median": 0.3386985,
+              "minimum": 0.236078,
+              "maximum": 0.745401,
+              "stdev": 0.11929984831567758
+            },
+            "cpu_ms": {
+              "n": 30,
+              "median": 44.325500000000005,
+              "minimum": 40.474000000000004,
+              "maximum": 52.374,
+              "stdev": 3.2692948067333005
+            },
+            "cpu_us_per_row": {
+              "n": 30,
+              "median": 346.29296875,
+              "minimum": 316.20312500000006,
+              "maximum": 409.171875,
+              "stdev": 25.54136567760391
+            },
+            "peak_rss_bytes": {
+              "n": 30,
+              "median": 51161088.0,
+              "minimum": 50655232,
+              "maximum": 51765248,
+              "stdev": 279447.631765896
+            },
+            "rows_per_second": {
+              "n": 30,
+              "median": 3280.413416543721,
+              "minimum": 2401.324105119839,
+              "maximum": 3844.622466483903,
+              "stdev": 309.4947895951746
+            },
+            "output_bytes_per_second": {
+              "n": 30,
+              "median": 566435.1354097603,
+              "minimum": 414641.1357137396,
+              "maximum": 663858.1699549002,
+              "stdev": 53441.0456221293
+            },
+            "first_record_observed_after_native_exit": 0
+          },
+          "contract_comparison": {
+            "comparable": true,
+            "reasons": [],
+            "differing_fields": [],
+            "checked_fields": [
+              "stdout_sha256",
+              "stdout_bytes",
+              "rendered_rows",
+              "batches",
+              "stderr_sha256",
+              "termination",
+              "requests",
+              "ticket_sha256",
+              "request_validation",
+              "workload_sha256",
+              "sink",
+              "tls",
+              "config_before",
+              "config_after"
+            ],
+            "samples": 60
+          },
+          "candidate_over_go": {
+            "wall_ms": null,
+            "first_complete_record_ms": null,
+            "fixture_to_first_complete_record_ms": null,
+            "cpu_ms": null,
+            "cpu_us_per_row": null,
+            "peak_rss_bytes": null,
+            "rows_per_second": null,
+            "output_bytes_per_second": null
+          },
+          "ratio_quarantine": [
+            "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+          ],
+          "metric_quarantine": {
+            "wall_ms": [
+              "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+            ],
+            "first_complete_record_ms": [
+              "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+            ],
+            "fixture_to_first_complete_record_ms": [
+              "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+            ],
+            "cpu_ms": [
+              "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+            ],
+            "cpu_us_per_row": [
+              "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+            ],
+            "peak_rss_bytes": [
+              "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+            ],
+            "rows_per_second": [
+              "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+              "fixture/observer ceiling or producer schedule prevents throughput attribution"
+            ],
+            "output_bytes_per_second": [
+              "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+              "fixture/observer ceiling or producer schedule prevents throughput attribution"
+            ]
+          },
+          "metric_scope": {}
+        }
+      },
+      "cpu_status_counts": {
+        "resolution_limited": 120
+      },
+      "descriptive_observer_fixture": {
+        "one-row/go-a": {
+          "observer_cpu_ms": {
+            "median": 0.8025000000000393,
+            "minimum": 0.6320000000000006,
+            "maximum": 1.3340000000000019,
+            "n": 30
+          },
+          "fixture_cpu_ms": {
+            "median": 2.4065000000000003,
+            "minimum": 1.912,
+            "maximum": 3.2159999999999997,
+            "n": 30
+          },
+          "json_parse_attempts": {
+            "median": 1.0,
+            "minimum": 1,
+            "maximum": 1,
+            "n": 30
+          }
+        },
+        "one-row/go-b": {
+          "observer_cpu_ms": {
+            "median": 0.7644999999999458,
+            "minimum": 0.6760000000000099,
+            "maximum": 1.3430000000000524,
+            "n": 30
+          },
+          "fixture_cpu_ms": {
+            "median": 2.4130000000000003,
+            "minimum": 1.857,
+            "maximum": 2.8310000000000004,
+            "n": 30
+          },
+          "json_parse_attempts": {
+            "median": 1.0,
+            "minimum": 1,
+            "maximum": 1,
+            "n": 30
+          }
+        },
+        "many-small/go-a": {
+          "observer_cpu_ms": {
+            "median": 4.558499999999965,
+            "minimum": 3.847999999999907,
+            "maximum": 6.125000000000103,
+            "n": 30
+          },
+          "fixture_cpu_ms": {
+            "median": 13.814,
+            "minimum": 12.036,
+            "maximum": 18.529,
+            "n": 30
+          },
+          "json_parse_attempts": {
+            "median": 128.0,
+            "minimum": 128,
+            "maximum": 128,
+            "n": 30
+          }
+        },
+        "many-small/go-b": {
+          "observer_cpu_ms": {
+            "median": 4.924499999999984,
+            "minimum": 2.4720000000000297,
+            "maximum": 14.101999999999975,
+            "n": 30
+          },
+          "fixture_cpu_ms": {
+            "median": 15.536,
+            "minimum": 11.914,
+            "maximum": 19.375,
+            "n": 30
+          },
+          "json_parse_attempts": {
+            "median": 128.0,
+            "minimum": 128,
+            "maximum": 128,
+            "n": 30
+          }
+        }
+      }
+    },
+    {
+      "campaign": "campaign-r6-timing-aa-hash-01",
+      "identities": {
+        "report.json": {
+          "path": "/home/ajs/.cache/pb-phase6/campaign-r6-timing-aa-hash-01/report.json",
+          "sha256": "b197e2d261057ef3d97fba0cc7ebc210c82da8dc1bf550f9f78fe8d01db0fc90",
+          "bytes": 118481
+        },
+        "samples.jsonl": {
+          "path": "/home/ajs/.cache/pb-phase6/campaign-r6-timing-aa-hash-01/samples.jsonl",
+          "sha256": "9509c717c72ffcdb3170579c0ab927c4bd51b89acd4fb6443a881bb2ed6df697",
+          "bytes": 1088185
+        },
+        "manifest.json": {
+          "path": "/home/ajs/.cache/pb-phase6/campaign-r6-timing-aa-hash-01/manifest.json",
+          "sha256": "d47c9c4d5ce70cf2fab23da77db2a99c4b570b4f23caca9f80861ed08fed4300",
+          "bytes": 106885
+        },
+        "go-aa.json": {
+          "path": "/home/ajs/.cache/pb-phase6/campaign-r6-timing-aa-hash-01/go-aa.json",
+          "sha256": "d2a2bba482de46ad9d38e4fcacb8b90c3c97697ae03f64dc94c224a6c368a69b",
+          "bytes": 20283
+        },
+        "resources-offline.json": {
+          "path": "/home/ajs/.cache/pb-phase6/campaign-r6-timing-aa-hash-01/resources-offline.json",
+          "sha256": "f5f79325f574858db8c886692d0b0b77d6fb736d3f01d889b0a2065a0d5a21e7",
+          "bytes": 98212
+        }
+      },
+      "execution": {
+        "campaign_id": "campaign-r6-timing-aa-hash-01",
+        "manifest_sha256": "a47093f4a3ea785a310f7ca1baa92444deaf7e21db5ba7db72dc897ddc3d047b",
+        "quiet_ack_token": "phase7-quiet-phase6-aa-hash-20261014T173242Z",
+        "ack_utc": "2026-10-14T17:32:42Z",
+        "actual_launch_utc": "2026-10-14T17:33:18.936599+00:00",
+        "start_deadline_utc": "2026-10-14T17:34:42Z",
+        "max_seconds": 900,
+        "absolute_hard_end_utc": "2026-10-14T17:49:42Z",
+        "pid": 21577,
+        "argv": [
+          "python3",
+          "harness/phase6_workloads.py",
+          "run",
+          "--go",
+          "/home/ajs/.cache/pb-phase6/baselines/pb-go",
+          "--candidate",
+          "/home/ajs/.cache/pb-phase6/candidate-review-r6/pb",
+          "--fixture",
+          "/home/ajs/.cache/pb-phase6/tmp/fx/pb-fixture-r5",
+          "--meter",
+          "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/bin/pb-meter",
+          "--manifest",
+          "/home/ajs/.cache/pb-phase6/campaign-prepared-r6-v1/manifest.json",
+          "--tier",
+          "finite",
+          "--workload",
+          "one-row",
+          "--workload",
+          "many-small",
+          "--timing-aa",
+          "--warmups",
+          "5",
+          "--repetitions",
+          "30",
+          "--seed",
+          "2026",
+          "--collector-mode",
+          "hash-framing",
+          "--window-budget-s",
+          "900",
+          "--out",
+          "/home/ajs/.cache/pb-phase6/campaign-r6-timing-aa-hash-01",
+          "--quiet-window-token",
+          "phase7-quiet-phase6-aa-hash-20261014T173242Z"
+        ],
+        "exit": 0,
+        "actual_end_utc": "2026-10-14T17:33:27.741985+00:00"
+      },
+      "counts": {
+        "measured": 120,
+        "warmups": 20,
+        "contract_controls": 2
+      },
+      "summaries": {
+        "one-row": {
+          "go-a": {
+            "wall_ms": {
+              "n": 30,
+              "median": 31.398785,
+              "minimum": 26.227006,
+              "maximum": 39.641364,
+              "stdev": 3.012875393870322
+            },
+            "first_complete_record_ms": {
+              "n": 30,
+              "median": 29.32224,
+              "minimum": 25.154639,
+              "maximum": 38.87129,
+              "stdev": 2.9266872820965877
+            },
+            "fixture_to_first_complete_record_ms": {
+              "n": 30,
+              "median": 0.349676,
+              "minimum": 0.239909,
+              "maximum": 0.450223,
+              "stdev": 0.05751004938770146
+            },
+            "cpu_ms": {
+              "n": 30,
+              "median": 40.3465,
+              "minimum": 33.407,
+              "maximum": 47.308,
+              "stdev": 3.0102193834970925
+            },
+            "cpu_us_per_row": {
+              "n": 30,
+              "median": 40346.5,
+              "minimum": 33407.0,
+              "maximum": 47308.0,
+              "stdev": 3010.2193834970917
+            },
+            "peak_rss_bytes": {
+              "n": 30,
+              "median": 50708480.0,
+              "minimum": 49795072,
+              "maximum": 56479744,
+              "stdev": 1431620.0158410107
+            },
+            "rows_per_second": {
+              "n": 30,
+              "median": 31.851115767265316,
+              "minimum": 25.22617536571143,
+              "maximum": 38.1286373290188,
+              "stdev": 2.9894203639370116
+            },
+            "output_bytes_per_second": {
+              "n": 30,
+              "median": 5159.880754296981,
+              "minimum": 4086.6404092452512,
+              "maximum": 6176.839247301045,
+              "stdev": 484.28609895779584
+            },
+            "first_record_observed_after_native_exit": 0
+          },
+          "go-b": {
+            "wall_ms": {
+              "n": 30,
+              "median": 31.2597775,
+              "minimum": 25.823314,
+              "maximum": 39.311639,
+              "stdev": 3.568198193733633
+            },
+            "first_complete_record_ms": {
+              "n": 30,
+              "median": 29.255487,
+              "minimum": 25.603078,
+              "maximum": 37.568283,
+              "stdev": 3.2096997565876157
+            },
+            "fixture_to_first_complete_record_ms": {
+              "n": 30,
+              "median": 0.33579,
+              "minimum": 0.202304,
+              "maximum": 0.680462,
+              "stdev": 0.10611602408272955
+            },
+            "cpu_ms": {
+              "n": 30,
+              "median": 40.2375,
+              "minimum": 32.995000000000005,
+              "maximum": 48.797,
+              "stdev": 3.5644525979438275
+            },
+            "cpu_us_per_row": {
+              "n": 30,
+              "median": 40237.5,
+              "minimum": 32995.00000000001,
+              "maximum": 48797.0,
+              "stdev": 3564.452597943828
+            },
+            "peak_rss_bytes": {
+              "n": 30,
+              "median": 50753536.0,
+              "minimum": 49479680,
+              "maximum": 54575104,
+              "stdev": 842447.2047367771
+            },
+            "rows_per_second": {
+              "n": 30,
+              "median": 31.994256108559235,
+              "minimum": 25.437759031110353,
+              "maximum": 38.72469660555574,
+              "stdev": 3.5042884004507155
+            },
+            "output_bytes_per_second": {
+              "n": 30,
+              "median": 5183.069489586596,
+              "minimum": 4120.916963039877,
+              "maximum": 6273.40085010003,
+              "stdev": 567.6947208730159
+            },
+            "first_record_observed_after_native_exit": 0
+          },
+          "contract_comparison": {
+            "comparable": true,
+            "reasons": [],
+            "differing_fields": [],
+            "checked_fields": [
+              "stdout_sha256",
+              "stdout_bytes",
+              "rendered_rows",
+              "batches",
+              "stderr_sha256",
+              "termination",
+              "requests",
+              "ticket_sha256",
+              "request_validation",
+              "workload_sha256",
+              "sink",
+              "tls",
+              "config_before",
+              "config_after"
+            ],
+            "samples": 60
+          },
+          "candidate_over_go": {
+            "wall_ms": null,
+            "first_complete_record_ms": null,
+            "fixture_to_first_complete_record_ms": null,
+            "cpu_ms": null,
+            "cpu_us_per_row": null,
+            "peak_rss_bytes": null,
+            "rows_per_second": null,
+            "output_bytes_per_second": null
+          },
+          "ratio_quarantine": [
+            "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+          ],
+          "metric_quarantine": {
+            "wall_ms": [
+              "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+            ],
+            "first_complete_record_ms": [
+              "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+            ],
+            "fixture_to_first_complete_record_ms": [
+              "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+            ],
+            "cpu_ms": [
+              "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+            ],
+            "cpu_us_per_row": [
+              "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+            ],
+            "peak_rss_bytes": [
+              "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+            ],
+            "rows_per_second": [
+              "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+              "fixture/observer ceiling or producer schedule prevents throughput attribution"
+            ],
+            "output_bytes_per_second": [
+              "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+              "fixture/observer ceiling or producer schedule prevents throughput attribution"
+            ]
+          },
+          "metric_scope": {}
+        },
+        "many-small": {
+          "go-a": {
+            "wall_ms": {
+              "n": 30,
+              "median": 38.221227999999996,
+              "minimum": 32.205785,
+              "maximum": 44.956347,
+              "stdev": 3.0908307563558517
+            },
+            "first_complete_record_ms": {
+              "n": 30,
+              "median": 29.9993515,
+              "minimum": 24.816325,
+              "maximum": 36.227518,
+              "stdev": 2.648060724560384
+            },
+            "fixture_to_first_complete_record_ms": {
+              "n": 30,
+              "median": 0.34736449999999996,
+              "minimum": 0.226823,
+              "maximum": 0.508869,
+              "stdev": 0.07302209601421474
+            },
+            "cpu_ms": {
+              "n": 30,
+              "median": 45.836,
+              "minimum": 37.342,
+              "maximum": 55.92,
+              "stdev": 3.8186522928034883
+            },
+            "cpu_us_per_row": {
+              "n": 30,
+              "median": 358.09375,
+              "minimum": 291.734375,
+              "maximum": 436.875,
+              "stdev": 29.83322103752725
+            },
+            "peak_rss_bytes": {
+              "n": 30,
+              "median": 51132416.0,
+              "minimum": 50290688,
+              "maximum": 57176064,
+              "stdev": 1558486.7127976376
+            },
+            "rows_per_second": {
+              "n": 30,
+              "median": 3348.924406446151,
+              "minimum": 2847.206424489961,
+              "maximum": 3974.441237808673,
+              "stdev": 265.51881326160446
+            },
+            "output_bytes_per_second": {
+              "n": 30,
+              "median": 578265.056494319,
+              "minimum": 491632.4718287275,
+              "maximum": 686274.2206097444,
+              "stdev": 45847.6313336561
+            },
+            "first_record_observed_after_native_exit": 0
+          },
+          "go-b": {
+            "wall_ms": {
+              "n": 30,
+              "median": 38.300966,
+              "minimum": 32.267011,
+              "maximum": 45.827437,
+              "stdev": 3.143663678206192
+            },
+            "first_complete_record_ms": {
+              "n": 30,
+              "median": 29.25907,
+              "minimum": 25.582824,
+              "maximum": 34.853761,
+              "stdev": 2.678171663938362
+            },
+            "fixture_to_first_complete_record_ms": {
+              "n": 30,
+              "median": 0.353441,
+              "minimum": 0.258929,
+              "maximum": 0.92052,
+              "stdev": 0.1160453236846529
+            },
+            "cpu_ms": {
+              "n": 30,
+              "median": 43.972500000000004,
+              "minimum": 39.678,
+              "maximum": 52.695,
+              "stdev": 3.279845538134835
+            },
+            "cpu_us_per_row": {
+              "n": 30,
+              "median": 343.53515625,
+              "minimum": 309.984375,
+              "maximum": 411.6796875,
+              "stdev": 25.6237932666784
+            },
+            "peak_rss_bytes": {
+              "n": 30,
+              "median": 51226624.0,
+              "minimum": 50524160,
+              "maximum": 56803328,
+              "stdev": 1210045.184949814
+            },
+            "rows_per_second": {
+              "n": 30,
+              "median": 3342.0655880966824,
+              "minimum": 2793.0865957003,
+              "maximum": 3966.89981603812,
+              "stdev": 272.50185891597783
+            },
+            "output_bytes_per_second": {
+              "n": 30,
+              "median": 577080.7314696319,
+              "minimum": 482287.4995169378,
+              "maximum": 684972.0291724573,
+              "stdev": 47053.406920007365
+            },
+            "first_record_observed_after_native_exit": 0
+          },
+          "contract_comparison": {
+            "comparable": true,
+            "reasons": [],
+            "differing_fields": [],
+            "checked_fields": [
+              "stdout_sha256",
+              "stdout_bytes",
+              "rendered_rows",
+              "batches",
+              "stderr_sha256",
+              "termination",
+              "requests",
+              "ticket_sha256",
+              "request_validation",
+              "workload_sha256",
+              "sink",
+              "tls",
+              "config_before",
+              "config_after"
+            ],
+            "samples": 60
+          },
+          "candidate_over_go": {
+            "wall_ms": null,
+            "first_complete_record_ms": null,
+            "fixture_to_first_complete_record_ms": null,
+            "cpu_ms": null,
+            "cpu_us_per_row": null,
+            "peak_rss_bytes": null,
+            "rows_per_second": null,
+            "output_bytes_per_second": null
+          },
+          "ratio_quarantine": [
+            "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+          ],
+          "metric_quarantine": {
+            "wall_ms": [
+              "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+            ],
+            "first_complete_record_ms": [
+              "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+            ],
+            "fixture_to_first_complete_record_ms": [
+              "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+            ],
+            "cpu_ms": [
+              "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+            ],
+            "cpu_us_per_row": [
+              "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+            ],
+            "peak_rss_bytes": [
+              "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+            ],
+            "rows_per_second": [
+              "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+              "fixture/observer ceiling or producer schedule prevents throughput attribution"
+            ],
+            "output_bytes_per_second": [
+              "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+              "fixture/observer ceiling or producer schedule prevents throughput attribution"
+            ]
+          },
+          "metric_scope": {}
+        }
+      },
+      "cpu_status_counts": {
+        "resolution_limited": 120
+      },
+      "descriptive_observer_fixture": {
+        "one-row/go-a": {
+          "observer_cpu_ms": {
+            "median": 0.8205000000000364,
+            "minimum": 0.6970000000000032,
+            "maximum": 1.2659999999999894,
+            "n": 30
+          },
+          "fixture_cpu_ms": {
+            "median": 2.387,
+            "minimum": 1.899,
+            "maximum": 2.991,
+            "n": 30
+          },
+          "json_parse_attempts": {
+            "median": 1.0,
+            "minimum": 1,
+            "maximum": 1,
+            "n": 30
+          }
+        },
+        "one-row/go-b": {
+          "observer_cpu_ms": {
+            "median": 0.8190000000000558,
+            "minimum": 0.650999999999971,
+            "maximum": 1.3610000000000289,
+            "n": 30
+          },
+          "fixture_cpu_ms": {
+            "median": 2.4045,
+            "minimum": 1.873,
+            "maximum": 5.179,
+            "n": 30
+          },
+          "json_parse_attempts": {
+            "median": 1.0,
+            "minimum": 1,
+            "maximum": 1,
+            "n": 30
+          }
+        },
+        "many-small/go-a": {
+          "observer_cpu_ms": {
+            "median": 3.1954999999999623,
+            "minimum": 2.5490000000001345,
+            "maximum": 4.854999999999999,
+            "n": 30
+          },
+          "fixture_cpu_ms": {
+            "median": 14.0295,
+            "minimum": 11.215,
+            "maximum": 19.311,
+            "n": 30
+          },
+          "json_parse_attempts": {
+            "median": 1.0,
+            "minimum": 1,
+            "maximum": 1,
+            "n": 30
+          }
+        },
+        "many-small/go-b": {
+          "observer_cpu_ms": {
+            "median": 3.2455000000000123,
+            "minimum": 2.3860000000001658,
+            "maximum": 14.171999999999962,
+            "n": 30
+          },
+          "fixture_cpu_ms": {
+            "median": 14.4745,
+            "minimum": 12.109,
+            "maximum": 18.768,
+            "n": 30
+          },
+          "json_parse_attempts": {
+            "median": 1.0,
+            "minimum": 1,
+            "maximum": 1,
+            "n": 30
+          }
+        }
+      }
+    }
+  ],
+  "independent_review": {
+    "path": "docs/phase6-first-aa-review-sol.md",
+    "sha256": "444d90d679031c8ecd698f23a7f434cf4b5e866455b8ac0f9ee46e0494300af9",
+    "task_id": "node:delegated-task:command%3Amcp%3A571f5f1b-fd16-4f3c-9fca-38da427496ae%3Adelegate-task%3Ap6-sol-first-aa-data-review",
+    "decision": "Accepted scoped evidence integrity; no defect; no speed/equivalence/budget acceptance",
+    "checks": 122900,
+    "inputs_unchanged": 4301,
+    "analysis_sha256": "d77085a2c38b26f9cbe7c5cf905b5f69899953fed7f5d481f07954b7491e5bbc"
+  }
+}

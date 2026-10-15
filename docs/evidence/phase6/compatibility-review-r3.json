@@ -1,0 +1,67 @@
+{
+  "scope": "Intermediate immutable review-r3; decoder round4 fixes and final acceptance pending",
+  "cases": 291,
+  "strict": 36,
+  "wire_ua_divergent": 255,
+  "diagnostic_divergent": 1,
+  "reports": {
+    "full": {
+      "report": "/home/ajs/.cache/pb-phase6/tmp/harness-review-r3-full-v1/report.json",
+      "sha256": "4770133aba6657f28589494299aed373efb648bbf5474008075185eb07f3aa10",
+      "schema_version": 1,
+      "oracle_revision": "07af390",
+      "complete": true,
+      "mode": "compare",
+      "partial": false,
+      "failed": 0,
+      "parity_passed": 36,
+      "payload_auth_passed": 219,
+      "wire_ua_divergent": 183,
+      "diagnostic_divergent": 1,
+      "fixture_sha256": "8237e34ee15b4a7d773945d3c30280752b2b780f1be3626d547b76cdea2ed4f0",
+      "corpus_sha256": "d7a06741a59b813a5eaaced7b1f536a13ff7a81813bb1643605af9f2680fdc0b",
+      "candidate_sha256": {
+        "cloud": "0f82900fd19ed4b28798f3a0762ef0c5d34a20a978e90b0737bfd69378974653",
+        "standard": "90932a37560eda457dd469496b312f742d166a547b63e5023c76a05fce103578"
+      }
+    },
+    "review3": {
+      "report": "/home/ajs/.cache/pb-phase6/tmp/harness-review-r3-review3-v1/report.json",
+      "sha256": "b8e25664959297ffa4cb7956bc351d3b0b206870dc4c5e55bb3e33ebe1ee2c61",
+      "schema_version": 1,
+      "oracle_revision": "07af390",
+      "complete": true,
+      "mode": "compare",
+      "partial": false,
+      "failed": 0,
+      "parity_passed": 0,
+      "payload_auth_passed": 56,
+      "wire_ua_divergent": 56,
+      "diagnostic_divergent": 0,
+      "fixture_sha256": "8237e34ee15b4a7d773945d3c30280752b2b780f1be3626d547b76cdea2ed4f0",
+      "corpus_sha256": "0b5a64727fc96f2cc4cd360828fd96e80f44604e29af197d8e0feb8bb34c3754",
+      "candidate_sha256": {
+        "standard": "90932a37560eda457dd469496b312f742d166a547b63e5023c76a05fce103578"
+      }
+    },
+    "trailer": {
+      "report": "/home/ajs/.cache/pb-phase6/tmp/harness-review-r3-trailer-v1/report.json",
+      "sha256": "2726e976e43175ccd584454c830a24bb0198a2931d49d3866a0ca90c1265f493",
+      "schema_version": 1,
+      "oracle_revision": "07af390",
+      "complete": true,
+      "mode": "compare",
+      "partial": false,
+      "failed": 0,
+      "parity_passed": 0,
+      "payload_auth_passed": 16,
+      "wire_ua_divergent": 16,
+      "diagnostic_divergent": 0,
+      "fixture_sha256": "8237e34ee15b4a7d773945d3c30280752b2b780f1be3626d547b76cdea2ed4f0",
+      "corpus_sha256": "a4385c77e80e09a467905fa4d288d8c666f19af4476cf15d3ac4414498421374",
+      "candidate_sha256": {
+        "standard": "90932a37560eda457dd469496b312f742d166a547b63e5023c76a05fce103578"
+      }
+    }
+  }
+}

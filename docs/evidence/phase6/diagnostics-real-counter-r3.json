@@ -1,0 +1,170 @@
+{
+  "scope": "debug_diagnostics_functional_only",
+  "results": [
+    {
+      "name": "one-row",
+      "valid": true,
+      "owners": {
+        "subscriptions_started": 1,
+        "flight_messages_received": 4,
+        "batches_decoded": 3,
+        "rows_decoded": 24,
+        "max_flight_payload_bytes": 1032,
+        "max_dictionary_buffer_bytes": 0,
+        "max_batch_buffer_bytes": 5760,
+        "max_staging_length_bytes": 1368,
+        "max_staging_capacity_bytes": 2048,
+        "last_staging_capacity_bytes": 2048,
+        "max_application_messages_inflight": 1,
+        "max_renderer_scratch_capacity_bytes": 0,
+        "last_renderer_scratch_capacity_bytes": 0,
+        "semantics": "owner-reported maxima, not simultaneous totals, unique heap or RSS; shared Arrow buffers may be counted by several owners; Flight payload excludes protobuf/framing and transport read-ahead; rows count decoded rows before rendering truncation; capacities are Rust Vec capacities"
+      }
+    },
+    {
+      "name": "compressed-lz4",
+      "valid": true,
+      "owners": {
+        "subscriptions_started": 1,
+        "flight_messages_received": 4,
+        "batches_decoded": 3,
+        "rows_decoded": 24,
+        "max_flight_payload_bytes": 944,
+        "max_dictionary_buffer_bytes": 0,
+        "max_batch_buffer_bytes": 1192,
+        "max_staging_length_bytes": 1368,
+        "max_staging_capacity_bytes": 2048,
+        "last_staging_capacity_bytes": 2048,
+        "max_application_messages_inflight": 1,
+        "max_renderer_scratch_capacity_bytes": 0,
+        "last_renderer_scratch_capacity_bytes": 0,
+        "semantics": "owner-reported maxima, not simultaneous totals, unique heap or RSS; shared Arrow buffers may be counted by several owners; Flight payload excludes protobuf/framing and transport read-ahead; rows count decoded rows before rendering truncation; capacities are Rust Vec capacities"
+      }
+    },
+    {
+      "name": "compressed-zstd",
+      "valid": true,
+      "owners": {
+        "subscriptions_started": 1,
+        "flight_messages_received": 4,
+        "batches_decoded": 3,
+        "rows_decoded": 24,
+        "max_flight_payload_bytes": 888,
+        "max_dictionary_buffer_bytes": 0,
+        "max_batch_buffer_bytes": 1128,
+        "max_staging_length_bytes": 1368,
+        "max_staging_capacity_bytes": 2048,
+        "last_staging_capacity_bytes": 2048,
+        "max_application_messages_inflight": 1,
+        "max_renderer_scratch_capacity_bytes": 0,
+        "last_renderer_scratch_capacity_bytes": 0,
+        "semantics": "owner-reported maxima, not simultaneous totals, unique heap or RSS; shared Arrow buffers may be counted by several owners; Flight payload excludes protobuf/framing and transport read-ahead; rows count decoded rows before rendering truncation; capacities are Rust Vec capacities"
+      }
+    },
+    {
+      "name": "dictionary-finite",
+      "valid": true,
+      "owners": {
+        "subscriptions_started": 1,
+        "flight_messages_received": 7,
+        "batches_decoded": 3,
+        "rows_decoded": 24,
+        "max_flight_payload_bytes": 1264,
+        "max_dictionary_buffer_bytes": 2304,
+        "max_batch_buffer_bytes": 2688,
+        "max_staging_length_bytes": 667,
+        "max_staging_capacity_bytes": 1184,
+        "last_staging_capacity_bytes": 1184,
+        "max_application_messages_inflight": 1,
+        "max_renderer_scratch_capacity_bytes": 0,
+        "last_renderer_scratch_capacity_bytes": 0,
+        "semantics": "owner-reported maxima, not simultaneous totals, unique heap or RSS; shared Arrow buffers may be counted by several owners; Flight payload excludes protobuf/framing and transport read-ahead; rows count decoded rows before rendering truncation; capacities are Rust Vec capacities"
+      }
+    },
+    {
+      "name": "dictionary-stable",
+      "valid": true,
+      "owners": {
+        "subscriptions_started": 1,
+        "flight_messages_received": 5,
+        "batches_decoded": 3,
+        "rows_decoded": 24,
+        "max_flight_payload_bytes": 1264,
+        "max_dictionary_buffer_bytes": 2304,
+        "max_batch_buffer_bytes": 2688,
+        "max_staging_length_bytes": 667,
+        "max_staging_capacity_bytes": 1184,
+        "last_staging_capacity_bytes": 1184,
+        "max_application_messages_inflight": 1,
+        "max_renderer_scratch_capacity_bytes": 0,
+        "last_renderer_scratch_capacity_bytes": 0,
+        "semantics": "owner-reported maxima, not simultaneous totals, unique heap or RSS; shared Arrow buffers may be counted by several owners; Flight payload excludes protobuf/framing and transport read-ahead; rows count decoded rows before rendering truncation; capacities are Rust Vec capacities"
+      }
+    },
+    {
+      "name": "dictionary-replace",
+      "valid": true,
+      "owners": {
+        "subscriptions_started": 1,
+        "flight_messages_received": 7,
+        "batches_decoded": 3,
+        "rows_decoded": 24,
+        "max_flight_payload_bytes": 1264,
+        "max_dictionary_buffer_bytes": 2304,
+        "max_batch_buffer_bytes": 2688,
+        "max_staging_length_bytes": 667,
+        "max_staging_capacity_bytes": 1184,
+        "last_staging_capacity_bytes": 1184,
+        "max_application_messages_inflight": 1,
+        "max_renderer_scratch_capacity_bytes": 0,
+        "last_renderer_scratch_capacity_bytes": 0,
+        "semantics": "owner-reported maxima, not simultaneous totals, unique heap or RSS; shared Arrow buffers may be counted by several owners; Flight payload excludes protobuf/framing and transport read-ahead; rows count decoded rows before rendering truncation; capacities are Rust Vec capacities"
+      }
+    },
+    {
+      "name": "dictionary-delta",
+      "valid": true,
+      "owners": {
+        "subscriptions_started": 1,
+        "flight_messages_received": 7,
+        "batches_decoded": 3,
+        "rows_decoded": 24,
+        "max_flight_payload_bytes": 1272,
+        "max_dictionary_buffer_bytes": 3268,
+        "max_batch_buffer_bytes": 3652,
+        "max_staging_length_bytes": 667,
+        "max_staging_capacity_bytes": 1184,
+        "last_staging_capacity_bytes": 1184,
+        "max_application_messages_inflight": 1,
+        "max_renderer_scratch_capacity_bytes": 0,
+        "last_renderer_scratch_capacity_bytes": 0,
+        "semantics": "owner-reported maxima, not simultaneous totals, unique heap or RSS; shared Arrow buffers may be counted by several owners; Flight payload excludes protobuf/framing and transport read-ahead; rows count decoded rows before rendering truncation; capacities are Rust Vec capacities"
+      }
+    },
+    {
+      "name": "list-values",
+      "valid": true,
+      "owners": {
+        "subscriptions_started": 1,
+        "flight_messages_received": 7,
+        "batches_decoded": 3,
+        "rows_decoded": 24,
+        "max_flight_payload_bytes": 6176,
+        "max_dictionary_buffer_bytes": 128,
+        "max_batch_buffer_bytes": 366592,
+        "max_staging_length_bytes": 8970,
+        "max_staging_capacity_bytes": 16384,
+        "last_staging_capacity_bytes": 16384,
+        "max_application_messages_inflight": 1,
+        "max_renderer_scratch_capacity_bytes": 104,
+        "last_renderer_scratch_capacity_bytes": 104,
+        "semantics": "owner-reported maxima, not simultaneous totals, unique heap or RSS; shared Arrow buffers may be counted by several owners; Flight payload excludes protobuf/framing and transport read-ahead; rows count decoded rows before rendering truncation; capacities are Rust Vec capacities"
+      }
+    }
+  ],
+  "artifact_root": "/home/ajs/.cache/pb-phase6/tmp/diagnostics-functional-1791981779826633101",
+  "functional_report_sha256": "28c0a15e55470398fb99713e13ff2c1dcf504d834c5fd7a7a1f15c6f3f4488cd",
+  "binary_manifest": "docs/evidence/phase6/diagnostics-review-r3-binary.json",
+  "counter_semantics": "Actual atomic RAII outstanding handoff counter, unlike historical construction marker; peak observations do not alone prove ack-span lifetime or absence of all transport read-ahead",
+  "performance_campaign": false
+}

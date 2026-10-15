@@ -1,0 +1,44 @@
+{
+  "scope": "Root correction of fresh Opus W-1/W-2: dictionary presence and schema-order diagnostics. Source-only acceptance pending fresh review and successor native process replay.",
+  "review": "docs/phase6-review-wave-decoder-opus.md",
+  "review_sha256": "975e886e430617b2b84e68e154de074bb0df150ae837a00d046ed6a409249582",
+  "sources": {
+    "src/tail/session.rs": "2d793026cf4e920a5d821a98855a32f7dee918fadc338e2368e0df5134d58a1e",
+    "src/tail/session/tests.rs": "67e56654d64eaa0fc496946629825678acf6639dd5376043783f6990700b540d",
+    "src/tail/validation.rs": "65ebd8fab90a99937b343955affe8deca50c702aa37f72edef6f980f9425d3f6"
+  },
+  "probe_manifest": {
+    "path": "tests/fixtures/arrow-go-v13-decoder-wave/manifest.json",
+    "sha256": "8575e5d1407e2f842591b3722489fd39c18682fe3a115ff43d3b22f8fd51db71"
+  },
+  "go_regeneration": "11/11 streams stdout/stderr/status byte-identical to independent reviewer captures; pinnedGo probe identity recorded in manifest",
+  "before_fix_native": "/home/ajs/.cache/pb-phase6/tmp/wave-missing-native-before-r5",
+  "checks": [
+    {
+      "check": "normal_tail_102",
+      "exit": 0,
+      "path": "/home/ajs/.cache/pb-phase6/tmp/wave-dictionary-fix-tests.log",
+      "sha256": "a2b59d0dc9ffe866d0c4aea384c88478fc0ca36d49f9ea59699458d7d78ad9aa"
+    },
+    {
+      "check": "diagnostics_tail_104",
+      "exit": 0,
+      "path": "/home/ajs/.cache/pb-phase6/tmp/wave-dictionary-fix-diag-tests.log",
+      "sha256": "fa1fd528855eadf10296cdaccf799c3441c6d0fa9ac193f29161ba5e670cef24"
+    },
+    {
+      "check": "fmt",
+      "exit": 0,
+      "path": "/home/ajs/.cache/pb-phase6/tmp/wave-dictionary-fix-fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "check": "clippy_all_targets_diagnostics",
+      "exit": 0,
+      "path": "/home/ajs/.cache/pb-phase6/tmp/wave-dictionary-fix-clippy.log",
+      "sha256": "b549653cc643fbf4c2d4032cfda1c72c2b7dd36faa4a45b3d9cf7f2774041d23"
+    }
+  ],
+  "candidate": "R5 is pre-fix; successor required",
+  "performance_campaign": false
+}

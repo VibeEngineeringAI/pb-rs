@@ -1,0 +1,659 @@
+{
+  "scope": "Process-free re-reduction of preserved owner Go/debug captures; not successor release validation",
+  "cases": {
+    "flag1-gzip-init": {
+      "issues": [],
+      "wire_differences": [
+        "Flight user-agent differs from pinned grpc-go",
+        "flight_user_agents differs"
+      ],
+      "remaining_contract_passed": true,
+      "strict_parity_passed": false,
+      "capture_identities": {
+        "go": {
+          "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-gzip-init/go/result.json",
+          "sha256": "f2c41bb9d76aadc2eaa6f95b8b8bf3a7d6cf551dc6efad6bd493e2a39367c6f3",
+          "raw_files": {
+            "stdout.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-gzip-init/go/stdout.bin",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            },
+            "stderr.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-gzip-init/go/stderr.bin",
+              "sha256": "1270c6ee7575176a4a24771324b4f0a309c7037f9c7869bde05f69d3ddaf3d35",
+              "bytes": 194
+            }
+          }
+        },
+        "candidate": {
+          "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-gzip-init/candidate/result.json",
+          "sha256": "e3ac5e9ae29dec2e3d23c76d832688a5dd4716a02e85e8ec9bda60d3bf784aab",
+          "raw_files": {
+            "stdout.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-gzip-init/candidate/stdout.bin",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            },
+            "stderr.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-gzip-init/candidate/stderr.bin",
+              "sha256": "1270c6ee7575176a4a24771324b4f0a309c7037f9c7869bde05f69d3ddaf3d35",
+              "bytes": 194
+            }
+          }
+        }
+      }
+    },
+    "flag1-identity-init": {
+      "issues": [],
+      "wire_differences": [
+        "Flight user-agent differs from pinned grpc-go",
+        "flight_user_agents differs"
+      ],
+      "remaining_contract_passed": true,
+      "strict_parity_passed": false,
+      "capture_identities": {
+        "go": {
+          "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-identity-init/go/result.json",
+          "sha256": "c156b2940b6fa571082780194ad7aa179f1f9e0e1057a81de4bae7de0c154183",
+          "raw_files": {
+            "stdout.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-identity-init/go/stdout.bin",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            },
+            "stderr.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-identity-init/go/stderr.bin",
+              "sha256": "736cbec3f9b26a7a6081032bddbf1f80b49eb9b0fbf0b01f7032ec3a203bac1a",
+              "bytes": 184
+            }
+          }
+        },
+        "candidate": {
+          "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-identity-init/candidate/result.json",
+          "sha256": "0e81e8545d00228d2a303ba6aaaada5992e5896cfc70f69e2aaf1463a6a5990e",
+          "raw_files": {
+            "stdout.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-identity-init/candidate/stdout.bin",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            },
+            "stderr.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-identity-init/candidate/stderr.bin",
+              "sha256": "736cbec3f9b26a7a6081032bddbf1f80b49eb9b0fbf0b01f7032ec3a203bac1a",
+              "bytes": 184
+            }
+          }
+        }
+      }
+    },
+    "flag1-none-init": {
+      "issues": [],
+      "wire_differences": [
+        "Flight user-agent differs from pinned grpc-go",
+        "flight_user_agents differs"
+      ],
+      "remaining_contract_passed": true,
+      "strict_parity_passed": false,
+      "capture_identities": {
+        "go": {
+          "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-none-init/go/result.json",
+          "sha256": "b9806911e6288c643b3b006db553207cfada7e9df7518a5199cabffba49a78ac",
+          "raw_files": {
+            "stdout.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-none-init/go/stdout.bin",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            },
+            "stderr.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-none-init/go/stderr.bin",
+              "sha256": "736cbec3f9b26a7a6081032bddbf1f80b49eb9b0fbf0b01f7032ec3a203bac1a",
+              "bytes": 184
+            }
+          }
+        },
+        "candidate": {
+          "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-none-init/candidate/result.json",
+          "sha256": "1d862ca6aaf49429f8f57bc3f4c1459cf528cdc43cda6227ae1eb15b9ea53eb0",
+          "raw_files": {
+            "stdout.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-none-init/candidate/stdout.bin",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            },
+            "stderr.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-none-init/candidate/stderr.bin",
+              "sha256": "736cbec3f9b26a7a6081032bddbf1f80b49eb9b0fbf0b01f7032ec3a203bac1a",
+              "bytes": 184
+            }
+          }
+        }
+      }
+    },
+    "flag2-gzip-init": {
+      "issues": [],
+      "wire_differences": [
+        "Flight user-agent differs from pinned grpc-go",
+        "flight_user_agents differs"
+      ],
+      "remaining_contract_passed": true,
+      "strict_parity_passed": false,
+      "capture_identities": {
+        "go": {
+          "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag2-gzip-init/go/result.json",
+          "sha256": "46bcf786f6c2806528eff5b2466fd1eb770d41769eea1e8a468493f71a6cddb9",
+          "raw_files": {
+            "stdout.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag2-gzip-init/go/stdout.bin",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            },
+            "stderr.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag2-gzip-init/go/stderr.bin",
+              "sha256": "d3b599b80c460d318fcfe1127b642cf43b5881ec3c80e9fc9ffec25c258bf8e4",
+              "bytes": 169
+            }
+          }
+        },
+        "candidate": {
+          "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag2-gzip-init/candidate/result.json",
+          "sha256": "173d8d6e12c5849e04548b8e0ee0c4a9ef5f661e326f398f4019315aaa176420",
+          "raw_files": {
+            "stdout.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag2-gzip-init/candidate/stdout.bin",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            },
+            "stderr.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag2-gzip-init/candidate/stderr.bin",
+              "sha256": "d3b599b80c460d318fcfe1127b642cf43b5881ec3c80e9fc9ffec25c258bf8e4",
+              "bytes": 169
+            }
+          }
+        }
+      }
+    },
+    "flag1-empty-body-init": {
+      "issues": [],
+      "wire_differences": [
+        "Flight user-agent differs from pinned grpc-go",
+        "flight_user_agents differs"
+      ],
+      "remaining_contract_passed": true,
+      "strict_parity_passed": false,
+      "capture_identities": {
+        "go": {
+          "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-empty-body-init/go/result.json",
+          "sha256": "0090656b60eeb271d5aa96c1dfb884f170274a3fc19d0b3cdc77b762586da915",
+          "raw_files": {
+            "stdout.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-empty-body-init/go/stdout.bin",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            },
+            "stderr.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-empty-body-init/go/stderr.bin",
+              "sha256": "1270c6ee7575176a4a24771324b4f0a309c7037f9c7869bde05f69d3ddaf3d35",
+              "bytes": 194
+            }
+          }
+        },
+        "candidate": {
+          "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-empty-body-init/candidate/result.json",
+          "sha256": "2b78cb53e82729e615b5281ce0c544c66376c1720a03bfa1dc1ff0ced1173daa",
+          "raw_files": {
+            "stdout.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-empty-body-init/candidate/stdout.bin",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            },
+            "stderr.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-empty-body-init/candidate/stderr.bin",
+              "sha256": "1270c6ee7575176a4a24771324b4f0a309c7037f9c7869bde05f69d3ddaf3d35",
+              "bytes": 194
+            }
+          }
+        }
+      }
+    },
+    "flag1-overlimit-init": {
+      "issues": [],
+      "wire_differences": [
+        "Flight user-agent differs from pinned grpc-go",
+        "flight_user_agents differs"
+      ],
+      "remaining_contract_passed": true,
+      "strict_parity_passed": false,
+      "capture_identities": {
+        "go": {
+          "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-overlimit-init/go/result.json",
+          "sha256": "0dfbf5ae2dae22f77dd30a608294172e465b327213050b68d20fc991fe750332",
+          "raw_files": {
+            "stdout.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-overlimit-init/go/stdout.bin",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            },
+            "stderr.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-overlimit-init/go/stderr.bin",
+              "sha256": "c54c70e0f7d0eb11035c708cf05fa60d09f4c60c8e070fd771a8baa6091f196e",
+              "bytes": 196
+            }
+          }
+        },
+        "candidate": {
+          "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-overlimit-init/candidate/result.json",
+          "sha256": "3b762d6a2c5982117bf2a7930741e0acd954841ab548b1ee9bc0702b3c5339c1",
+          "raw_files": {
+            "stdout.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-overlimit-init/candidate/stdout.bin",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            },
+            "stderr.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-overlimit-init/candidate/stderr.bin",
+              "sha256": "c54c70e0f7d0eb11035c708cf05fa60d09f4c60c8e070fd771a8baa6091f196e",
+              "bytes": 196
+            }
+          }
+        }
+      }
+    },
+    "flag0-overlimit-init": {
+      "issues": [],
+      "wire_differences": [
+        "Flight user-agent differs from pinned grpc-go",
+        "flight_user_agents differs"
+      ],
+      "remaining_contract_passed": true,
+      "strict_parity_passed": false,
+      "capture_identities": {
+        "go": {
+          "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag0-overlimit-init/go/result.json",
+          "sha256": "2f174fc51b6c1a5ffd3dee56dda3f50181bc88dd50a8f8759692ac722504f9aa",
+          "raw_files": {
+            "stdout.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag0-overlimit-init/go/stdout.bin",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            },
+            "stderr.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag0-overlimit-init/go/stderr.bin",
+              "sha256": "c54c70e0f7d0eb11035c708cf05fa60d09f4c60c8e070fd771a8baa6091f196e",
+              "bytes": 196
+            }
+          }
+        },
+        "candidate": {
+          "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag0-overlimit-init/candidate/result.json",
+          "sha256": "bb4d492caf9d508513061768ec208d0189074ecb8d43ad592ab4680399c2bb65",
+          "raw_files": {
+            "stdout.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag0-overlimit-init/candidate/stdout.bin",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            },
+            "stderr.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag0-overlimit-init/candidate/stderr.bin",
+              "sha256": "c54c70e0f7d0eb11035c708cf05fa60d09f4c60c8e070fd771a8baa6091f196e",
+              "bytes": 196
+            }
+          }
+        }
+      }
+    },
+    "flag1-partial-body-init": {
+      "issues": [],
+      "wire_differences": [
+        "Flight user-agent differs from pinned grpc-go",
+        "flight_user_agents differs"
+      ],
+      "remaining_contract_passed": true,
+      "strict_parity_passed": false,
+      "capture_identities": {
+        "go": {
+          "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-partial-body-init/go/result.json",
+          "sha256": "64ef0c0cde73f3d8c07b3d2be4c5b6e52beb3c44d991bad3db2c3d421f36a898",
+          "raw_files": {
+            "stdout.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-partial-body-init/go/stdout.bin",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            },
+            "stderr.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-partial-body-init/go/stderr.bin",
+              "sha256": "cc9d6e9f86752e4d557f888da975ae1df9cbb4baf1491fac2c589e59e7d98441",
+              "bytes": 141
+            }
+          }
+        },
+        "candidate": {
+          "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-partial-body-init/candidate/result.json",
+          "sha256": "f86c1d7ce722aa304b0d97ed1e50c0cea70b333644b80f46b586084e2066b42c",
+          "raw_files": {
+            "stdout.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-partial-body-init/candidate/stdout.bin",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            },
+            "stderr.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-partial-body-init/candidate/stderr.bin",
+              "sha256": "cc9d6e9f86752e4d557f888da975ae1df9cbb4baf1491fac2c589e59e7d98441",
+              "bytes": 141
+            }
+          }
+        }
+      }
+    },
+    "flag1-partial-prefix-init": {
+      "issues": [],
+      "wire_differences": [
+        "Flight user-agent differs from pinned grpc-go",
+        "flight_user_agents differs"
+      ],
+      "remaining_contract_passed": true,
+      "strict_parity_passed": false,
+      "capture_identities": {
+        "go": {
+          "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-partial-prefix-init/go/result.json",
+          "sha256": "c775992540bff0f8167b3d9d8fc7004b62d6eb5d8297164d59ddba729d8e277c",
+          "raw_files": {
+            "stdout.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-partial-prefix-init/go/stdout.bin",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            },
+            "stderr.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-partial-prefix-init/go/stderr.bin",
+              "sha256": "cc9d6e9f86752e4d557f888da975ae1df9cbb4baf1491fac2c589e59e7d98441",
+              "bytes": 141
+            }
+          }
+        },
+        "candidate": {
+          "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-partial-prefix-init/candidate/result.json",
+          "sha256": "3566ce191256c7098a5cc5d835d2f0ef2ecf9f7e0f92649cc7c86697dc6fdf9d",
+          "raw_files": {
+            "stdout.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-partial-prefix-init/candidate/stdout.bin",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            },
+            "stderr.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-partial-prefix-init/candidate/stderr.bin",
+              "sha256": "cc9d6e9f86752e4d557f888da975ae1df9cbb4baf1491fac2c589e59e7d98441",
+              "bytes": 141
+            }
+          }
+        }
+      }
+    },
+    "flag1-gzip-batch": {
+      "issues": [],
+      "wire_differences": [
+        "Flight user-agent differs from pinned grpc-go",
+        "flight_user_agents differs"
+      ],
+      "remaining_contract_passed": true,
+      "strict_parity_passed": false,
+      "capture_identities": {
+        "go": {
+          "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-gzip-batch/go/result.json",
+          "sha256": "214c6c298cfd40d7e054b8607c7c1a57ccf9436ed710e4c55d4724d0d9f87cc3",
+          "raw_files": {
+            "stdout.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-gzip-batch/go/stdout.bin",
+              "sha256": "50f93c839dfdd227382e2ecd88ab7be87e83ce8855794437fcfb781c780d04a9",
+              "bytes": 162
+            },
+            "stderr.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-gzip-batch/go/stderr.bin",
+              "sha256": "1270c6ee7575176a4a24771324b4f0a309c7037f9c7869bde05f69d3ddaf3d35",
+              "bytes": 194
+            }
+          }
+        },
+        "candidate": {
+          "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-gzip-batch/candidate/result.json",
+          "sha256": "82e2ed6b36cd1e0cbcc5ac6000fb9c6b79967e49092b7711c6e13bc0b6813d1f",
+          "raw_files": {
+            "stdout.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-gzip-batch/candidate/stdout.bin",
+              "sha256": "50f93c839dfdd227382e2ecd88ab7be87e83ce8855794437fcfb781c780d04a9",
+              "bytes": 162
+            },
+            "stderr.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-gzip-batch/candidate/stderr.bin",
+              "sha256": "1270c6ee7575176a4a24771324b4f0a309c7037f9c7869bde05f69d3ddaf3d35",
+              "bytes": 194
+            }
+          }
+        }
+      }
+    },
+    "flag0-gzip-batch": {
+      "issues": [],
+      "wire_differences": [
+        "Flight user-agent differs from pinned grpc-go",
+        "flight_user_agents differs"
+      ],
+      "remaining_contract_passed": true,
+      "strict_parity_passed": false,
+      "capture_identities": {
+        "go": {
+          "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag0-gzip-batch/go/result.json",
+          "sha256": "b0c7d71b884b2e31f356414fe538d395e6c46944fbef2d12f19e5cb611b36b44",
+          "raw_files": {
+            "stdout.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag0-gzip-batch/go/stdout.bin",
+              "sha256": "50f93c839dfdd227382e2ecd88ab7be87e83ce8855794437fcfb781c780d04a9",
+              "bytes": 162
+            },
+            "stderr.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag0-gzip-batch/go/stderr.bin",
+              "sha256": "60de32332a61125a59a72b9682c5c8b6fcf537a17edb8069380fc0a8b3e60deb",
+              "bytes": 154
+            }
+          }
+        },
+        "candidate": {
+          "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag0-gzip-batch/candidate/result.json",
+          "sha256": "e2bfd20921ceeeb698ed8ae2287969c137c9218b2f4fc6d2ede0291365e20ce4",
+          "raw_files": {
+            "stdout.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag0-gzip-batch/candidate/stdout.bin",
+              "sha256": "50f93c839dfdd227382e2ecd88ab7be87e83ce8855794437fcfb781c780d04a9",
+              "bytes": 162
+            },
+            "stderr.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag0-gzip-batch/candidate/stderr.bin",
+              "sha256": "60de32332a61125a59a72b9682c5c8b6fcf537a17edb8069380fc0a8b3e60deb",
+              "bytes": 154
+            }
+          }
+        }
+      }
+    },
+    "flag1-split-init": {
+      "issues": [],
+      "wire_differences": [
+        "Flight user-agent differs from pinned grpc-go",
+        "flight_user_agents differs"
+      ],
+      "remaining_contract_passed": true,
+      "strict_parity_passed": false,
+      "capture_identities": {
+        "go": {
+          "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-split-init/go/result.json",
+          "sha256": "69c89263e02194626d0204828b742cdf5f702d298ba61a9837c47d7dd7a88dec",
+          "raw_files": {
+            "stdout.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-split-init/go/stdout.bin",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            },
+            "stderr.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-split-init/go/stderr.bin",
+              "sha256": "1270c6ee7575176a4a24771324b4f0a309c7037f9c7869bde05f69d3ddaf3d35",
+              "bytes": 194
+            }
+          }
+        },
+        "candidate": {
+          "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-split-init/candidate/result.json",
+          "sha256": "f915735cbc7de0887065c735358b5d203da5ee0c8df50c8c1f0f05b9c5b43304",
+          "raw_files": {
+            "stdout.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-split-init/candidate/stdout.bin",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "bytes": 0
+            },
+            "stderr.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/flag1-split-init/candidate/stderr.bin",
+              "sha256": "1270c6ee7575176a4a24771324b4f0a309c7037f9c7869bde05f69d3ddaf3d35",
+              "bytes": 194
+            }
+          }
+        }
+      }
+    },
+    "empty-data-101": {
+      "issues": [],
+      "wire_differences": [
+        "Flight user-agent differs from pinned grpc-go",
+        "flight_user_agents differs"
+      ],
+      "remaining_contract_passed": true,
+      "strict_parity_passed": false,
+      "capture_identities": {
+        "go": {
+          "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/empty-data-101/go/result.json",
+          "sha256": "589847599fc95cbece053c5f90832a67d1e62b92e93b1c05526d9203008d7f84",
+          "raw_files": {
+            "stdout.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/empty-data-101/go/stdout.bin",
+              "sha256": "6317abb06018ef0f95fd535aa0d60ac42a7688ef35303fc115efa21e987c1415",
+              "bytes": 333
+            },
+            "stderr.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/empty-data-101/go/stderr.bin",
+              "sha256": "60de32332a61125a59a72b9682c5c8b6fcf537a17edb8069380fc0a8b3e60deb",
+              "bytes": 154
+            }
+          }
+        },
+        "candidate": {
+          "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/empty-data-101/candidate/result.json",
+          "sha256": "e6d3faea6577755afbb662355544597d5780322c5c72bf54bdde0c66f9519751",
+          "raw_files": {
+            "stdout.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/empty-data-101/candidate/stdout.bin",
+              "sha256": "6317abb06018ef0f95fd535aa0d60ac42a7688ef35303fc115efa21e987c1415",
+              "bytes": 333
+            },
+            "stderr.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/empty-data-101/candidate/stderr.bin",
+              "sha256": "60de32332a61125a59a72b9682c5c8b6fcf537a17edb8069380fc0a8b3e60deb",
+              "bytes": 154
+            }
+          }
+        }
+      }
+    },
+    "empty-data-60x2-across-reconnect": {
+      "issues": [],
+      "wire_differences": [
+        "Flight user-agent differs from pinned grpc-go",
+        "Flight user-agent differs from pinned grpc-go",
+        "flight_user_agents differs"
+      ],
+      "remaining_contract_passed": true,
+      "strict_parity_passed": false,
+      "capture_identities": {
+        "go": {
+          "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/empty-data-60x2-across-reconnect/go/result.json",
+          "sha256": "d086267e4559f1c1aeabe7fa400174f0de2345dfe2db7e2df641eba827cee43d",
+          "raw_files": {
+            "stdout.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/empty-data-60x2-across-reconnect/go/stdout.bin",
+              "sha256": "f9bfa6fcfce793db646d5a4dd51834adb3a5deec81332a5d9af380c1a989668c",
+              "bytes": 504
+            },
+            "stderr.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/empty-data-60x2-across-reconnect/go/stderr.bin",
+              "sha256": "60de32332a61125a59a72b9682c5c8b6fcf537a17edb8069380fc0a8b3e60deb",
+              "bytes": 154
+            }
+          }
+        },
+        "candidate": {
+          "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/empty-data-60x2-across-reconnect/candidate/result.json",
+          "sha256": "38fac55c0d0b8f9f7fdf4c121dc23257bf95bb4bc29fdbab163cf362ecae5518",
+          "raw_files": {
+            "stdout.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/empty-data-60x2-across-reconnect/candidate/stdout.bin",
+              "sha256": "f9bfa6fcfce793db646d5a4dd51834adb3a5deec81332a5d9af380c1a989668c",
+              "bytes": 504
+            },
+            "stderr.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/empty-data-60x2-across-reconnect/candidate/stderr.bin",
+              "sha256": "60de32332a61125a59a72b9682c5c8b6fcf537a17edb8069380fc0a8b3e60deb",
+              "bytes": 154
+            }
+          }
+        }
+      }
+    },
+    "goaway-after-headers-then-reconnect": {
+      "issues": [],
+      "wire_differences": [
+        "Flight user-agent differs from pinned grpc-go",
+        "Flight user-agent differs from pinned grpc-go",
+        "Flight user-agent differs from pinned grpc-go",
+        "flight_user_agents differs"
+      ],
+      "remaining_contract_passed": true,
+      "strict_parity_passed": false,
+      "capture_identities": {
+        "go": {
+          "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/goaway-after-headers-then-reconnect/go/result.json",
+          "sha256": "b7285914094b41b81db8bf3f4f831831ee7643087b9ceb961e5e835e2061ddfa",
+          "raw_files": {
+            "stdout.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/goaway-after-headers-then-reconnect/go/stdout.bin",
+              "sha256": "70227ef8a2c6cdf7a76ba7c93b9fedd5452fce3df9293f777d2ce35ed6c12bab",
+              "bytes": 334
+            },
+            "stderr.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/goaway-after-headers-then-reconnect/go/stderr.bin",
+              "sha256": "60de32332a61125a59a72b9682c5c8b6fcf537a17edb8069380fc0a8b3e60deb",
+              "bytes": 154
+            }
+          }
+        },
+        "candidate": {
+          "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/goaway-after-headers-then-reconnect/candidate/result.json",
+          "sha256": "97619d28a9a880313f0e445b7c2dfda39cda5c94324823d39f7bcc692d804be7",
+          "raw_files": {
+            "stdout.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/goaway-after-headers-then-reconnect/candidate/stdout.bin",
+              "sha256": "70227ef8a2c6cdf7a76ba7c93b9fedd5452fce3df9293f777d2ce35ed6c12bab",
+              "bytes": 334
+            },
+            "stderr.bin": {
+              "path": "/home/ajs/.cache/pb-phase6/tmp/transport/probe/runs/cand-v1/goaway-after-headers-then-reconnect/candidate/stderr.bin",
+              "sha256": "60de32332a61125a59a72b9682c5c8b6fcf537a17edb8069380fc0a8b3e60deb",
+              "bytes": 154
+            }
+          }
+        }
+      }
+    }
+  },
+  "sources": {
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/phase6_transport_wave.py": "7b2afebee528d353eb5d1ad1c4592b7ed47c68e3ae77d3cc63dc919a47e53a87",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/phase6.py": "444ac8853cc4d03b02d6ee6f24cedfe4b89f2c690d1b285c03f2b33752f81147"
+  },
+  "failures": 0,
+  "complete": true
+}

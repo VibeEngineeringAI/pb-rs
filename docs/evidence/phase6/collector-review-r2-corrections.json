@@ -1,0 +1,121 @@
+{
+  "scope": "Author implementation claims and scoped pure/mock test evidence; hashes independently reverified by parent; fresh independent review r3 pending",
+  "resolution": {
+    "kind": "implementation_followup_no_native_execution",
+    "source_status": "SOURCE SETTLED",
+    "review": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/docs/phase6-measurement-review-r2.md",
+      "sha256": "ffc0652b68edbd99b2a7301a9a4845223b0472b51c21b90245f9995036f17819",
+      "size_bytes": 27610
+    },
+    "files": {
+      "harness/phase6_workloads.py": {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/phase6_workloads.py",
+        "sha256": "348cbbf0b054e6f0c1827b6f171974c2dc394285fd1188c2716e85a9b2a5dfae",
+        "size_bytes": 80705
+      },
+      "harness/test_phase6_workloads.py": {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/test_phase6_workloads.py",
+        "sha256": "dcb16ae9d0af98fc35947b153a52ac7ee33f980902f07b5bacab594eb63b1492",
+        "size_bytes": 68769
+      },
+      "docs/phase6-measurement-plan.md": {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/docs/phase6-measurement-plan.md",
+        "sha256": "4a1a25f139b218d0e91dffdfe4a3d7a190850fc4d92a23ad62b76a3b383043a0",
+        "size_bytes": 49644
+      }
+    },
+    "budget": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/docs/evidence/phase6/performance-budgets.json",
+      "sha256": "76a57ecacf2fba39b1f278e385f1cf4ee410c49f29d2d0e7e7dd2e2713b5ae93",
+      "size_bytes": 5631
+    },
+    "findings": {
+      "N1": {
+        "status": "resolved_scoped",
+        "implementation": "bind_selected_roles before lock: baselines.pb-go/candidate normal release/meter paths and hashes. Exact normal_release argv/features/cloud checks and candidate_manifest builds.pb equality. Timing-AA only Go+meter. Content-identical copies deliberately allowed and both paths retained.",
+        "tests": [
+          "test_each_selected_role_mismatch_rejected_before_lock",
+          "test_normal_candidate_flags_features_kind_and_build_chain_required",
+          "test_content_identical_copies_bound_and_both_paths_tracked",
+          "test_timing_aa_does_not_select_candidate_and_binds_both_to_go"
+        ]
+      },
+      "N2": {
+        "status": "resolved_scoped",
+        "implementation": "All bound runner objects, fixture toolchain, fixture snapshots, selected and declared role executables and selected candidate build manifest retained for deduplicated resolved-path end rehash. Reuse initially verified identity hashes rather than silently rebinding a later reread.",
+        "tests": [
+          "test_one_extra_bound_runner_change_alone_invalidates",
+          "test_all_bound_runner_toolchain_build_manifest_changes_quarantine",
+          "test_content_identical_copies_bound_and_both_paths_tracked"
+        ]
+      },
+      "N3": {
+        "status": "resolved_scoped",
+        "implementation": "Atomically persist completed capture.json and sample.json before all later validators. Merge post-capture/cleanup errors into observed fields, valid=false, contract_validated=false; campaign fallback reloads saved sample/capture. Invalid exceptions leave complete=false report with ratios quarantined.",
+        "tests": [
+          "test_post_capture_typeerror_retains_all_completed_observations",
+          "test_exception_wrapper_merges_saved_capture_instead_of_overwriting"
+        ]
+      },
+      "N4": {
+        "status": "resolved_scoped",
+        "implementation": "Explicit boolean TLS in campaign manifest/report and aggregate identity/output. Missing, nonboolean and mixed TLS conditions rejected.",
+        "tests": [
+          "test_tls_condition_required_and_mixed_reports_rejected"
+        ]
+      },
+      "N5": {
+        "status": "resolved_scoped",
+        "implementation": "Replication prose same scenario seed/new indices, new-seed investigations separate. r3 mutable-debug reproduction explicitly historical text/do-not-execute. Direct Go functional example uses immutable r5.",
+        "tests": [
+          "test_current_examples_keep_replication_seed_and_frozen_fixture"
+        ]
+      }
+    },
+    "required_schema": {
+      "go": "baselines.pb-go {path,sha256}",
+      "candidate": "build_flags.candidate.pb {path,sha256,build_kind:normal_release,features:[],cloud_synthetic_token_enabled:false,argv:exact}",
+      "normal_release_argv": [
+        "cargo",
+        "build",
+        "--locked",
+        "--offline",
+        "--release",
+        "--bin",
+        "pb"
+      ],
+      "candidate_build_manifest": "candidate_manifest {path,sha256}; referenced builds.pb exactly equals candidate entry",
+      "meter": "meter {path,sha256}",
+      "timing_aa": "Go identity binds both measured labels; candidate not selected",
+      "copy_policy": "Content-identical copies allowed by SHA256 with actual/declared paths recorded and both end-rehashed"
+    },
+    "validation": {
+      "scoped_pure_mock_tests": 81,
+      "log": {
+        "path": "/home/ajs/.cache/pb-phase6/tmp/r2-source-settled-tests-final.log",
+        "sha256": "cc3988e6ac40f7385287fcc231d1ceec6123f07c909eed396a6aadd10e409097",
+        "size_bytes": 11940
+      },
+      "native_test_classes_not_run": [
+        "ObserverNative",
+        "NativeMeter"
+      ],
+      "guarded": [
+        "fcntl.flock",
+        "subprocess.Popen",
+        "run.spawn_measured",
+        "os.posix_spawn"
+      ],
+      "host_metadata": "mocked to prevent helper processes",
+      "campaign": false,
+      "pressure": false,
+      "agents": false,
+      "commits": false
+    },
+    "limitations": [
+      "Historical r4 functional/diagnostic evidence was not rerun and does not establish current release acceptance.",
+      "Existing short/unaligned CPU ratio quarantine, no last dictionary-owner telemetry, partial-banner trust limitation remain unchanged."
+    ]
+  }
+}

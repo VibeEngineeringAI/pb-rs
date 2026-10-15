@@ -1,0 +1,27 @@
+{
+  "scope": "Independent pinned Go regeneration plus production worker replay of nine value-wave cases, both output modes; no native release replay or performance claim",
+  "sources": {
+    "src/tail/values.rs": "e02d7e63aec6c9cf6f53f31a927a2cda5855a648adf3e7e05735d09d10354fd5",
+    "harness/values-oracle-wave/main.go": "5525f5e722ee4d743ef0ce44943f694e265f90aa1f2a4af818cea22916027f12",
+    "tests/fixtures/arrow-go-v13-values-wave/manifest.json": "0ad9b21acb566b53b79e5d88ebe33d1637509d69df78a700c0e399c73d507cd3",
+    "src/tail/session/tests.rs": "cb9bb45eb5a0a403e7ba469203884f3c5e18c17128132cccecf07d4a974fd076"
+  },
+  "cases": 9,
+  "artifact_files": 36,
+  "regeneration_manifest_equal": true,
+  "regeneration_directory": "/home/ajs/.cache/pb-phase6/tmp/values-wave-parent-regeneration",
+  "pinned_go": "go1.25.4",
+  "tests": {
+    "worker_log": {
+      "path": "/home/ajs/.cache/pb-phase6/tmp/value-wave-worker-test.log",
+      "sha256": "8ec7f64f09b7165cace4e1fdca0341c3620cfafab0cfbe0246646536b22c7b3f"
+    },
+    "worker_result": "one production-path test passed; nine cases in JSON and text",
+    "adapter_log": {
+      "path": "/home/ajs/.cache/pb-phase6/tmp/wave-adapter-tests.log",
+      "sha256": "a1ec99f659e7a15fa651224f930fc9db802f5fbaee64cf4d09054a0616a14649"
+    },
+    "adapter_result": "11 focused dictionary/value and transport-adapter tests passed"
+  },
+  "limitation": "Worker log predates final header-block transport change; immutable R6 central manifests will bind full tested tree. Original corpus stays unchanged."
+}

@@ -1,0 +1,41 @@
+{
+  "scope": "Author correction checkpoint, not independent acceptance; two root test portability/isolation corrections pending",
+  "author_results": {
+    "path": "/home/ajs/.cache/pb-phase6/resource-summary/r1-corrections-v1/correction-results.json",
+    "sha256": "1b79695ab445e6324eebad1fdab068ad7876d2ea86e81dbb3fe5e6ff7c2085bb"
+  },
+  "tests": {
+    "run": 35,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "success": true,
+    "log": {
+      "path": "/home/ajs/.cache/pb-phase6/resource-summary/r1-corrections-v1/guarded-tests.log",
+      "size_bytes": 5665,
+      "sha256": "a4f4d1e4e761628bb24f7e221b2751a7c6dad47f0bba41a6eb00274f4dc840f9"
+    }
+  },
+  "probe_replay_cases": {
+    "C1-primary-finite-one-row": "OK",
+    "C2-primary-finite-empty-batch": "OK",
+    "C3-functional-idle": "OK",
+    "C4-functional-steady": "OK",
+    "C5-timing-aa": "OK",
+    "C6-observer-control": "OK",
+    "C7-collector-exception": "OK",
+    "C8-window-stop": "OK",
+    "C9-finalization-failure": "REFUSED: ValueError: expected measured count mismatch",
+    "C10-lock-contention": "REFUSED: ValueError: missing retained samples.jsonl; campaign has no retained journal",
+    "C11-invalid-negative-uncaptured": "OK",
+    "C12-invalid-no-first-record": "OK",
+    "C13-noncanonical-declared-path": "OK"
+  },
+  "implementation_sha256": "061ef1c3473f8326d3c7d169334269d87702c85c3ebe239361be9fe0b9f925c4",
+  "remaining_root_objections": [
+    "Move two retained real-shape sample dependencies from host cache into repository fixtures with manifest hashes",
+    "Use user cache root and avoid import-time persistent process/lock/environment guards during unittest discovery"
+  ],
+  "fresh_independent_review_started": false,
+  "collector_and_budget_changed": false
+}

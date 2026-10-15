@@ -1,0 +1,351 @@
+{
+  "kind": "functional_only",
+  "fixture_manifest": "/home/ajs/.cache/pb-phase6/tmp/fx/pb-fixture-r5.manifest.json",
+  "large": [
+    {
+      "workload": "dictionary-large-lz4",
+      "client": "go",
+      "artifact_dir": "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/dictionary-large-lz4-go",
+      "checks": {
+        "valid": true,
+        "full_hash_oracle": true,
+        "full_bytes_oracle": true,
+        "exact_dictionary": true,
+        "exact_buckets": true,
+        "compressed_wire_below_4MiB": true,
+        "decoded_64MiB_cap_visited": true,
+        "prefix_bounded": true
+      },
+      "errors": [],
+      "binary_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "stdout_sha256": "3ab3830e286d3c63776291df3cfd4f2381708c7ef782257758b3b0050b2ed06f",
+      "stdout_bytes": 32506837,
+      "max_message_bytes": 72896,
+      "dictionary": {
+        "messages": 9,
+        "initial": 1,
+        "deltas": 6,
+        "replacements": 2,
+        "resets": 2,
+        "max_size": 64
+      }
+    },
+    {
+      "workload": "dictionary-large-lz4",
+      "client": "rust-r4",
+      "artifact_dir": "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/dictionary-large-lz4-rust-r4",
+      "checks": {
+        "valid": true,
+        "full_hash_oracle": true,
+        "full_bytes_oracle": true,
+        "exact_dictionary": true,
+        "exact_buckets": true,
+        "compressed_wire_below_4MiB": true,
+        "decoded_64MiB_cap_visited": true,
+        "prefix_bounded": true
+      },
+      "errors": [],
+      "binary_sha256": "fe26926a98cba5e00774e26c5eab33c7c35ebd570ddaec7ceb38ddef663ecc43",
+      "stdout_sha256": "3ab3830e286d3c63776291df3cfd4f2381708c7ef782257758b3b0050b2ed06f",
+      "stdout_bytes": 32506837,
+      "max_message_bytes": 72896,
+      "dictionary": {
+        "messages": 9,
+        "initial": 1,
+        "deltas": 6,
+        "replacements": 2,
+        "resets": 2,
+        "max_size": 64
+      }
+    },
+    {
+      "workload": "dictionary-large-zstd",
+      "client": "go",
+      "artifact_dir": "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/dictionary-large-zstd-go",
+      "checks": {
+        "valid": true,
+        "full_hash_oracle": true,
+        "full_bytes_oracle": true,
+        "exact_dictionary": true,
+        "exact_buckets": true,
+        "compressed_wire_below_4MiB": true,
+        "decoded_64MiB_cap_visited": true,
+        "prefix_bounded": true
+      },
+      "errors": [],
+      "binary_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "stdout_sha256": "3ab3830e286d3c63776291df3cfd4f2381708c7ef782257758b3b0050b2ed06f",
+      "stdout_bytes": 32506837,
+      "max_message_bytes": 2191,
+      "dictionary": {
+        "messages": 9,
+        "initial": 1,
+        "deltas": 6,
+        "replacements": 2,
+        "resets": 2,
+        "max_size": 64
+      }
+    },
+    {
+      "workload": "dictionary-large-zstd",
+      "client": "rust-r4",
+      "artifact_dir": "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/dictionary-large-zstd-rust-r4",
+      "checks": {
+        "valid": true,
+        "full_hash_oracle": true,
+        "full_bytes_oracle": true,
+        "exact_dictionary": true,
+        "exact_buckets": true,
+        "compressed_wire_below_4MiB": true,
+        "decoded_64MiB_cap_visited": true,
+        "prefix_bounded": true
+      },
+      "errors": [],
+      "binary_sha256": "fe26926a98cba5e00774e26c5eab33c7c35ebd570ddaec7ceb38ddef663ecc43",
+      "stdout_sha256": "3ab3830e286d3c63776291df3cfd4f2381708c7ef782257758b3b0050b2ed06f",
+      "stdout_bytes": 32506837,
+      "max_message_bytes": 2191,
+      "dictionary": {
+        "messages": 9,
+        "initial": 1,
+        "deltas": 6,
+        "replacements": 2,
+        "resets": 2,
+        "max_size": 64
+      }
+    }
+  ],
+  "compatibility": [
+    {
+      "case": "p6-schema-dictionary",
+      "r4_vs_r5_differences": []
+    },
+    {
+      "case": "p6-dictionary-replace",
+      "r4_vs_r5_differences": []
+    },
+    {
+      "case": "p6-dictionary-delta",
+      "r4_vs_r5_differences": []
+    }
+  ],
+  "small_cycle": [
+    {
+      "client": "go",
+      "artifact_dir": "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/cycle-eventdrops-go",
+      "checks": {
+        "valid": true,
+        "hash_oracle": true,
+        "bytes_oracle": true,
+        "events_dropped": true,
+        "exact_dictionary": true,
+        "live_complete": true
+      },
+      "errors": []
+    },
+    {
+      "client": "rust-r4",
+      "artifact_dir": "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/cycle-eventdrops-rust-r4",
+      "checks": {
+        "valid": true,
+        "hash_oracle": true,
+        "bytes_oracle": true,
+        "events_dropped": true,
+        "exact_dictionary": true,
+        "live_complete": true
+      },
+      "errors": []
+    }
+  ],
+  "passed": true,
+  "parent_verification": {
+    "scope": "Read actual six sample JSON/native termination/final fixture output hashes and counts, prefix bounds; four large dictionary exact counters and <4MiB encoded cap. No timing claim and no rerun of active collector.",
+    "artifacts": {
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/dictionary-large-lz4-go/scenario.json": {
+        "sha256": "71c5b18bbf28e91bc6d3f335e3f8c24728d82150c673d590d71d57fc48bd9827",
+        "bytes": 1412
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/dictionary-large-lz4-go/sample.json": {
+        "sha256": "651b75e58a959bb8b1fbfba74e21871c02d6e40662cbe3d1c1cde0f9aa7e055b",
+        "bytes": 9513
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/dictionary-large-lz4-go/meter.json": {
+        "sha256": "f5578e51061c541c94622bfe908445dbab8cd14aaa15ffee9798adde74191aae",
+        "bytes": 712
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/dictionary-large-lz4-go/fixture-baseline-summary.json": {
+        "sha256": "d5c15bc20bfc53acf2faf61a58ec6ddbc3b6c6dfeba658214c822b3119697db4",
+        "bytes": 1889
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/dictionary-large-lz4-go/fixture-final-summary.json": {
+        "sha256": "c7eee558447c2667a4254318dbe750e3c8a9307118ef4281bc67d2f740f5ad77",
+        "bytes": 2752
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/dictionary-large-lz4-go/fixture.events.jsonl": {
+        "sha256": "6da54aca70a2110a64ff13bde5779ad06ac26fbed93f3f512f65598ed1480b28",
+        "bytes": 5866
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/dictionary-large-lz4-go/resources.jsonl": {
+        "sha256": "f5216821dd309e0fd1ab1fe48e57a011c545bc97a19aa28a72d3b7992a398fce",
+        "bytes": 711
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/dictionary-large-lz4-rust-r4/scenario.json": {
+        "sha256": "8e6cb9ef90878378480f2f5c08a839b1829ed012d0631f58c56eaf584c9d948a",
+        "bytes": 1422
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/dictionary-large-lz4-rust-r4/sample.json": {
+        "sha256": "1c2fbb1abfeb85463cbee11e663f74f2ce6136c4fb97cefbda5b63966229af49",
+        "bytes": 9523
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/dictionary-large-lz4-rust-r4/meter.json": {
+        "sha256": "e9dd9ffbb61ce7dc93b0d06a04113a3d8542b740bfa2a69183de4ce443fa122d",
+        "bytes": 708
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/dictionary-large-lz4-rust-r4/fixture-baseline-summary.json": {
+        "sha256": "f23b22520ebd17e71f0f828870ae000bdb245b6708bcd21465f98a75e71b1253",
+        "bytes": 1888
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/dictionary-large-lz4-rust-r4/fixture-final-summary.json": {
+        "sha256": "1e9ed35dca2f577fe8f7b06d4d125c74e566358dfad0007e434f4fa8058449ad",
+        "bytes": 2752
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/dictionary-large-lz4-rust-r4/fixture.events.jsonl": {
+        "sha256": "d8cc069cab68ba95e9448123c3381d8f1c963795d755c4d4ac808f184ed09f10",
+        "bytes": 5863
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/dictionary-large-lz4-rust-r4/resources.jsonl": {
+        "sha256": "d44b618a58e37d61f2b7daa4f5ab381ed87442c9ad67bf434bc7064681901cec",
+        "bytes": 701
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/dictionary-large-zstd-go/scenario.json": {
+        "sha256": "f7b7d13175bb7577ea266539f93d84d6424992bf9688dc880df6d16ee7806953",
+        "bytes": 1415
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/dictionary-large-zstd-go/sample.json": {
+        "sha256": "8050337b944e9ba9f346458ce4f4fdb979c49458cd3502f57720d85993928d66",
+        "bytes": 9553
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/dictionary-large-zstd-go/meter.json": {
+        "sha256": "9934bfebe2d985385504e4e702de1145de5e613917d8bb4c3e4d92a676fc633c",
+        "bytes": 712
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/dictionary-large-zstd-go/fixture-baseline-summary.json": {
+        "sha256": "959bdaf3de454d104a103586475e52202ce3ab1803d749bf7b8dbc49bc49acb7",
+        "bytes": 1889
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/dictionary-large-zstd-go/fixture-final-summary.json": {
+        "sha256": "50b23c2e0021a76148756432489abc7bcc1dd52401d678f562a9c35376ef86cb",
+        "bytes": 2748
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/dictionary-large-zstd-go/fixture.events.jsonl": {
+        "sha256": "5c51c514ab57f6b6ddf7b33d1a60535484dbba1b0a0282ed971d3d8ae582b28b",
+        "bytes": 5821
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/dictionary-large-zstd-go/resources.jsonl": {
+        "sha256": "06acb06184c1dc081a2a9f77f6e893b8a13bdbea705b281f29558fc38ddd6204",
+        "bytes": 888
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/dictionary-large-zstd-rust-r4/scenario.json": {
+        "sha256": "6f75a29cbcc9d7d4f98c0bb5607c2f5294844ab9a5ae22d2fad12cc543dfaad6",
+        "bytes": 1425
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/dictionary-large-zstd-rust-r4/sample.json": {
+        "sha256": "daaa5ad50261b5014702da4e5c7d00a3edb59db18a75cc21a873d9f998b1faa7",
+        "bytes": 9519
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/dictionary-large-zstd-rust-r4/meter.json": {
+        "sha256": "2fbea57f8749ac5c9675d7f6a0ca06e5a1b35573aac1a8bd674f0857344c1a68",
+        "bytes": 707
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/dictionary-large-zstd-rust-r4/fixture-baseline-summary.json": {
+        "sha256": "9b5a0345178e2724ddc830cbebaa4fa016bf90e1bcf0060415e773a821da3230",
+        "bytes": 1888
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/dictionary-large-zstd-rust-r4/fixture-final-summary.json": {
+        "sha256": "88a88c7123d03358816fa26f810e6c6b579abaca27e5b9a7209dddbed0588074",
+        "bytes": 2748
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/dictionary-large-zstd-rust-r4/fixture.events.jsonl": {
+        "sha256": "e4c71b1ce10ee74471943b720fbd4a6488d4577c6150cd21283faf104afae958",
+        "bytes": 5819
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/dictionary-large-zstd-rust-r4/resources.jsonl": {
+        "sha256": "bb41482592b50a5e445b1c223417d4a24ccef8395d650d1dc79fba25bbe949d0",
+        "bytes": 699
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/cycle-eventdrops-go/scenario.json": {
+        "sha256": "6c39a030ac08a2e28c1fb26eb424ac6a3d3f3e4dd3d6bb8720dcab13d5c0f2d6",
+        "bytes": 1374
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/cycle-eventdrops-go/sample.json": {
+        "sha256": "979869f16c1a440da424342a48fe1778ba055ed9c14880a762431f5e43154efd",
+        "bytes": 10069
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/cycle-eventdrops-go/meter.json": {
+        "sha256": "9c3ea74130ba2ef95f345f7a0ee6d03e70bc728d14d92cd1f7968a43776d386d",
+        "bytes": 702
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/cycle-eventdrops-go/fixture-baseline-summary.json": {
+        "sha256": "50bac9f412ff3cbf901a4c410227db9c2844e8d0dea7a67a79b6ce82a4dba8f5",
+        "bytes": 1883
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/cycle-eventdrops-go/fixture-final-summary.json": {
+        "sha256": "562e3a50608c905f944554dd46d514319b021e725f5ba203a9d69b15b155361a",
+        "bytes": 3525
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/cycle-eventdrops-go/fixture.events.jsonl": {
+        "sha256": "8a593445663b9491e79da056b2f0092d1eac4a8f9242b8e890edb969d0aea5a6",
+        "bytes": 188
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/cycle-eventdrops-go/resources.jsonl": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/cycle-eventdrops-rust-r4/scenario.json": {
+        "sha256": "ab9773e010d933092e18b5e97e33f402dad8095e6b9ea7ba4bb35e505bcca45f",
+        "bytes": 1384
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/cycle-eventdrops-rust-r4/sample.json": {
+        "sha256": "723d23b70fbed1eb95f51b8417171d3d9e135cbcf9d524eded572aa8e1c27808",
+        "bytes": 10037
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/cycle-eventdrops-rust-r4/meter.json": {
+        "sha256": "15ac4e7ad0c317daca67a1750ed25babd3a080cae87d98a4c20cedbc744c96e6",
+        "bytes": 694
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/cycle-eventdrops-rust-r4/fixture-baseline-summary.json": {
+        "sha256": "7636c481810fdd477072af2da05d0cad582a7f036214695b5054f72525789d73",
+        "bytes": 1883
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/cycle-eventdrops-rust-r4/fixture-final-summary.json": {
+        "sha256": "6d3bf4f9ed93283adebe3aede24be49f65853cf517888ee834d2e8d601bdf091",
+        "bytes": 3528
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/cycle-eventdrops-rust-r4/fixture.events.jsonl": {
+        "sha256": "e5dad8c04a1808f965f3b6eb3e24cf57a699968a3c56175bffc5c56b8cd54dbb",
+        "bytes": 188
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/cycle-eventdrops-rust-r4/resources.jsonl": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/test.log": {
+        "sha256": "ebabf62574adb6f1bf090b365e559f8e92c4fd68f32526364e7e4b9c224d26d1",
+        "bytes": 10868
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/race.log": {
+        "sha256": "fad463318fc9807f1e6e59f668dcca5568e665d03e0e3efebf231569ccc0126c",
+        "bytes": 10869
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/vet.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/fx/r5-logs/gofmt.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    },
+    "collector_note": "Collector corrections still integrating; final source review and admission revalidation remain required."
+  }
+}

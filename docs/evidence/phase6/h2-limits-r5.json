@@ -1,0 +1,30 @@
+{
+  "scope": "Exact H2-CL-1 content-length mismatch / H2-CL-2 connection-specific response header limits. No empty-DATA/compression/retry exemption. Finalsuccessor replay required.",
+  "report": "/home/ajs/.cache/pb-phase6/tmp/harness-h2-limits-r5-v1/report.json",
+  "report_sha256": "1af5d72079dc4e26c3f7224f41407a3fa7b2d2c1e10e1010212bcc4085517828",
+  "strict_parity_passed": 0,
+  "wire_ua_divergent": 6,
+  "complete": true,
+  "full_parity_passed": false,
+  "identities": {
+    "go": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+    "candidate": "0a5877073979ee43e518b40908ae7274286144a9799137202d71a4310b68e825",
+    "fixture": "c85f63f9f01a1be6eaa66e6802dae0c3f08409be2ad538d358a7e70f2f5ce314"
+  },
+  "sources": {
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/phase6_h2_limits.py": "3c8c5326ea1983dfbef59037f4d1488ae5ce8d1d60159a7183bc85c6560e4829",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/phase6.py": "444ac8853cc4d03b02d6ee6f24cedfe4b89f2c690d1b285c03f2b33752f81147",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/phase6_protocol_limits.py": "9b3ae577d45be14a000b834a1d9b84fc6cb9d9840958c63cf6555c9b00b1c90c"
+  },
+  "corpus_sha256": "2d40259e07066310f5d918c5e3708a29c1ad75f4e560867a4f275cb056f85bbd",
+  "failures": 0,
+  "control_remaining_contract_passed": 2,
+  "declared_limitation_verified": 4,
+  "excluded_from_full_parity": 4,
+  "identities_unchanged": true,
+  "unit_tests": {
+    "path": "/home/ajs/.cache/pb-phase6/tmp/h2-dictionary-adapter-tests.log",
+    "sha256": "cb3fd07e7f50a9787716a4b65ffa4a84db741e4e4cd3ae9d67d625d61ccda7be",
+    "result": "4H2limit +4dictionaryadapter tests pass"
+  }
+}

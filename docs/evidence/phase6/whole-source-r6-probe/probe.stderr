@@ -1,0 +1,9 @@
+empty=3 two=3 three=3 messages
+== control (3 messages)
+stream end (reconnect): EOF
+== zero-row-record-before-dictionary (4 messages)
+fatal: arrow/ipc: unknown error while reading: arrow/ipc: field metadata out of bound
+== zero-row-record-then-eof (2 messages)
+fatal: arrow/ipc: unknown error while reading: arrow/ipc: field metadata out of bound
+== three-row-record-before-dictionary (4 messages)
+fatal: arrow/ipc: no dictionary type found with id: 3

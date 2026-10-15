@@ -19,6 +19,7 @@ mod saved_queries;
 pub mod spec;
 mod sql;
 mod status;
+mod tail;
 mod time_compat;
 mod transport;
 mod url_reference;
@@ -244,6 +245,9 @@ pub fn run_with_writers(
             structured,
             false,
         );
+    }
+    if path == "pb tail" {
+        return tail::execute(&parsed, command, &path, structured, stdout, stderr);
     }
     if path == "pb sql run" {
         return sql::execute(

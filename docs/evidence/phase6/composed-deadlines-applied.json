@@ -1,0 +1,44 @@
+{
+  "utc": "2026-10-14T17:21:29.079856+00:00",
+  "patch_sha256": "458036a6bf391ba758a641c8eafe2893bebc168aedd2c1a31e4967e8afde1ba8",
+  "before": {
+    "harness/phase3.py": "7f8deaf00185b94cd5934fbe6542e0393ded5f25aadd918012bd2f072d222f9d",
+    "harness/test_phase3.py": "f11f07cd571fe9d8b3c364c20a93aaf6cbd81b999dc077b2126374c5488deb59",
+    "harness/test_phase4.py": "377824659f5522a891f6f46a6045a515661dd9f0268ee484cbe11e55778d5658"
+  },
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "apply",
+        "--check",
+        "--verbose",
+        "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase6/combined.patch"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "Checking patch harness/phase3.py...\nChecking patch harness/test_phase3.py...\nChecking patch harness/test_phase4.py...\n"
+    },
+    {
+      "argv": [
+        "git",
+        "apply",
+        "--verbose",
+        "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase6/combined.patch"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "Checking patch harness/phase3.py...\nChecking patch harness/test_phase3.py...\nChecking patch harness/test_phase4.py...\nApplied patch harness/phase3.py cleanly.\nApplied patch harness/test_phase3.py cleanly.\nApplied patch harness/test_phase4.py cleanly.\n"
+    }
+  ],
+  "reviews": [
+    "docs/phase6-composed-deadline-review-opus-r3.md",
+    "docs/phase6-composed-deadline-review-sol-r3.md"
+  ],
+  "after": {
+    "harness/phase3.py": "01668670868218625371c386820ea18107c29b24a667b684ed1783be3f18eadd",
+    "harness/test_phase3.py": "812e96091659d8f8e4fabdf4bdeae537d4f2dc153f41a2cb0faa59289bf2e434",
+    "harness/test_phase4.py": "94f2d11cd3a1a6a5a815bb0f1676f9c800c4cd804299136957244cbea8a2eaa1"
+  },
+  "applied_exactly": true
+}

@@ -1,0 +1,113 @@
+{
+  "scope": "Fresh independent Opus whole-source R6 review; bounded production/source readiness for measurement, not phase/performance/live/platform completion",
+  "review": {
+    "path": "docs/phase6-whole-source-review-opus-r6.md",
+    "sha256": "ab5b6813b7e3e217ec77a8e59cfb40d96d04a78e38db6ad8121712196d85cd9e"
+  },
+  "candidate_manifest": {
+    "path": "docs/evidence/phase6/candidate-review-r6.json",
+    "sha256": "a90917f86241c7df045015250ee69cc4d8090264285be46672bd0b865441fb3e"
+  },
+  "source_hashes": {
+    "Cargo.toml": "eb55b298c3158cf32c51a9876f53d3ebe220adbd7eaa51fd1af8fe4d1dc0c83c",
+    "Cargo.lock": "aa35f338bd6b6b803c5e970f021d59f54d2e7435823f75a5baee018d7a1ebb44",
+    "src/LICENSE-Go.txt": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+    "src/admin.rs": "cdf03778b97c57cc90a53fb4d4e14c4a0f2360c6d78039c84c75f8544dffc9eb",
+    "src/admin_datasets.rs": "67f9a877c60d45d8f8ad6b6759a425b9de1db8d7fe4c8a83cf804a686fa8a938",
+    "src/admin_inventory/style.rs": "f1014435db977fa0aca1275860114432d411df648c474ee4739abcbc656eed39",
+    "src/admin_inventory/tests.rs": "7fad3b542b124a3f3cc50dcd98931cae3324551243c1a64febd795a0e498c2c8",
+    "src/admin_inventory/wire.rs": "bbd610ebbe4880bc94a4241ff5c5d8c108a6c1e764b4b1c4a365dc5709ce7106",
+    "src/admin_inventory.rs": "bf3687e67bd1b2f191613cbf3b8ad10784d0900a7af30fdadda76957d837f6a4",
+    "src/api.rs": "3195a29ef68b485025eb540f3dba0ada718db4de39f01c3bbe2ecc38dfaafe92",
+    "src/auth.rs": "fe0623db3305abefb2cf1689bc99dd9e7edad2de6eb3722b152572099a4f10ce",
+    "src/catalog.json": "be81e4157b714d50f7529a5c7e773fb2432ac0463e67f70291bf4094c5616b24",
+    "src/config.rs": "0cf2ef32c8f7e4ec0a7dcaf3e0f9011c683fadaf40f26b124b03af4f450b3a98",
+    "src/datasets.rs": "6ff7d34a140110eb7a9fe501b8e01094541023038dc66957bebb593c1224612d",
+    "src/diagnostics.rs": "2117c675cdead8fb14294def2dada41139bebc7fe889f5448b3b2d4816147189",
+    "src/error.rs": "e2ee65175d1764ab6e7c829b59e5a0bfac1275689b8a45cda5fe612ce59a75c0",
+    "src/gojson.rs": "9b153fe9cbe0ab9d91f076fd5701718ae1c432c201080d649478e12ae6739aad",
+    "src/lib.rs": "638a9e0edce26ce60c8dba6398c1671c1da92cb2af6d5e29cca2657e623dea05",
+    "src/main.rs": "68f04d772c2a51d13df15fec98a0a364f45cd83745f4d6a07990603439b34ab2",
+    "src/metrics/mod.rs": "f732bd27c0fc575082fc4f1b66c06252c9a8b145b3caa12f6bc01896aa5dffc8",
+    "src/metrics/output.rs": "0ac752817b03135bdb80e1ab3d7edc61a2e4a1dec59f368a1001f38cf1982192",
+    "src/metrics/raw_json.rs": "bb534e827211540d9b4ab69300794794f3dc6a5e2237ca6c7c4b44c29fcce5c4",
+    "src/metrics/style.rs": "b7146bbc91733a1136058cbc8a61d87676126e083aa44db1289c30c6ce8ec9c8",
+    "src/metrics/style_tests.rs": "90c726826a3e05bbb8fb1cb303620fb429b1147913140db3d93bf35f452d8bea",
+    "src/metrics/text_stream.rs": "755cb78f66e799cad462bc6401712caf560f51728083598b9932a2353ba5963b",
+    "src/parser.rs": "9a411d9639980eec15e56b13969aaa57c523640ed7dd8c053f1690131495aef6",
+    "src/printable.rs": "a8b4519f95e3e9e647bc406aa2dac79f18ef1f9f99b3bcbda4f8e9f875c78e27",
+    "src/profile.rs": "17a66c17cc76eb3231b9883f3f9ec4634fd2544d9a85b6ce42335742bc252520",
+    "src/render.rs": "348f1640b9630a64bf8d071db1bf26e769784fedf2b47702768df08558ff9abb",
+    "src/saved_queries.rs": "505461346a1423aebd1f54f36c1f6bcc27e76eb41d2d58f10a52293d71b8ed14",
+    "src/spec.json": "9a977cc2ae4304d5d5d336ca914669e786f22ad8977d0ded280cc0901cbc8317",
+    "src/spec.rs": "a856c4ea98e4538de3bf4cee594922dd0695740b89479435dc3905494386cddc",
+    "src/sql/mod.rs": "e46142ba87ec8e77f7829ab7d5aa0f9d0643c709cd37aa25dc1bc9b5979b21dc",
+    "src/sql/output.rs": "288c02248a27b6b6cb685c3c06e8d7797e1a501dfc4ef9f51f7af6ebd162396a",
+    "src/sql/rewrite.rs": "718992e87487818d58a0017a1c977ae78cfe41e4cb9a4d644b5e0aa5ebaef584",
+    "src/sql/scan.rs": "5e823ae0880f4cdd2774641abe23bbe26f774a0e1ba5a9a7da06676f2ef88c44",
+    "src/status.rs": "4352731b8b0473d1a84e407bf10f092d813d472dd70b0c9d04a42e33781996bd",
+    "src/tail/mod.rs": "0fd7102d65f863c4fd079c893c51627553e0cb15c3506dba37e42de62fa3c0c7",
+    "src/tail/resources.rs": "8210efe689760620dd3536e2825a738acad28a51c5f17ac078933e3829d5473b",
+    "src/tail/session/tests.rs": "cb9bb45eb5a0a403e7ba469203884f3c5e18c17128132cccecf07d4a974fd076",
+    "src/tail/session.rs": "2d793026cf4e920a5d821a98855a32f7dee918fadc338e2368e0df5134d58a1e",
+    "src/tail/transport.rs": "f08a0c73afa112216365b4d39f9dc682a2c27a24b18b711a34c0111217a89845",
+    "src/tail/validation.rs": "65ebd8fab90a99937b343955affe8deca50c702aa37f72edef6f980f9425d3f6",
+    "src/tail/values.rs": "e02d7e63aec6c9cf6f53f31a927a2cda5855a648adf3e7e05735d09d10354fd5",
+    "src/time_compat.rs": "b26bfe888bfbaac4917bf5563198d0c11d611af3be152538c181f307c96952ac",
+    "src/transport.rs": "d4b9d521eb726bb24601749b50369f1708d0027b9699874b518b5e7faa49dd7c",
+    "src/url_reference.rs": "b228c8885c77f967c31153aefd36e1800e2076d38030e3c90a21f206be9b9df2"
+  },
+  "new_blocker_high_medium_production_findings": 0,
+  "low_findings_and_parent_decisions": {
+    "L-1": {
+      "severity": "low",
+      "disposition": "declared malformed-producer diagnostic difference",
+      "evidence": "Reviewer executed Go reader-loop probe, Rust outcome source-inspected; no exact-stream Rust process test claimed",
+      "ledger": "docs/phase6-values-notes.md"
+    },
+    "L-2": {
+      "severity": "low",
+      "disposition": "keep existing reference-counted aligned buffer policy; explicitly account for pinned backing receive allocations as unmeasured retained owners",
+      "evidence": "source-derived mechanism; no measured alignment frequency or capacity; diagnostic buffer slices are not unique heap or RSS",
+      "ledger": "docs/phase6-resource-interpretation.md"
+    },
+    "L-3": {
+      "severity": "low/informational",
+      "disposition": "source-derived host unescaping edge, unprobed; no outcome parity or guaranteed failure claimed",
+      "ledger": "docs/phase6-transport-notes.md"
+    }
+  },
+  "probe_artifacts": {
+    "docs/evidence/phase6/whole-source-r6-probe/main.go.txt": {
+      "sha256": "2db5ec26ef380338cab8fd019c42ea532c642b1e199717bf133d841ad30c6134",
+      "bytes": 3358
+    },
+    "docs/evidence/phase6/whole-source-r6-probe/probe.stdout": {
+      "sha256": "939fe6af595e4f055287d1e998aafcb8cbbaa6f03cb60484c22f61e86409eef7",
+      "bytes": 147
+    },
+    "docs/evidence/phase6/whole-source-r6-probe/probe.stderr": {
+      "sha256": "87f98111fa0928b04b1b0934facf0d4bee2dc65a907e59a25bbfc1fd8512cf19",
+      "bytes": 451
+    }
+  },
+  "reviewer_ran": [
+    "read-only source/hash audit",
+    "bounded pinned Go1.25.4 reader-loop build/run"
+  ],
+  "reviewer_did_not_run": [
+    "Rust build or tests",
+    "native pb/fixture comparison",
+    "profiling",
+    "timing",
+    "pressure",
+    "soak"
+  ],
+  "remaining_admission": [
+    "adapter correction independent review and fixed-adapter bounded smoke",
+    "full R6 retained gates",
+    "fresh Opus measurement-tooling review",
+    "frozen campaign inputs and explicit companion quiet handshake/common lock"
+  ],
+  "production_source_unchanged": true
+}

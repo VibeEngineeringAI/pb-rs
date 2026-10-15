@@ -1,0 +1,53 @@
+{
+  "scope": "IA-2 informational Flight response capability limitation; separately excluded from parity; R4 candidate, immutable r5 fixture; no timing claim",
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "harness",
+    "-p",
+    "test_phase6_protocol_limits.py",
+    "-v"
+  ],
+  "exit_code": 0,
+  "log": {
+    "path": "/home/ajs/.cache/pb-phase6/tmp/protocol-limits-central-tests.log",
+    "bytes": 992,
+    "sha256": "a50e08f84e147b62bb96ff2f1830e2b1b8e84b270003427961329db096cb39f9"
+  },
+  "sources": {
+    "harness/phase6_protocol_limits.py": "9b3ae577d45be14a000b834a1d9b84fc6cb9d9840958c63cf6555c9b00b1c90c",
+    "harness/test_phase6_protocol_limits.py": "15ab3f8767b9ece7ffaa3744d58a7d642d43573dc0a3f89ec11c20159afc4231",
+    "docs/phase6-protocol-limits.md": "671911a3727c80381db6c9769a916e4e0eefff71a23ec686f16ddfa892d60d08"
+  },
+  "reports": [
+    {
+      "path": "/home/ajs/.cache/pb-phase6/tmp/harness-protocol-limits-r4-v1/report.json",
+      "bytes": 26617,
+      "sha256": "e49a4c5127869ba1cc24f11b556e6112eda5635e09fc0260b35a99427479cdb5",
+      "counts": {
+        "strict_parity_passed": 0,
+        "control_remaining_contract_passed": 2,
+        "declared_limitation_verified": 2,
+        "excluded_from_full_parity": 2,
+        "wire_ua_divergent": 4,
+        "unaccepted_failures": 0
+      }
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase6/tmp/harness-protocol-limits-r4-cached-v1/report.json",
+      "bytes": 26645,
+      "sha256": "6fe14b4abadf4566d589a6536d661f54ace698ed5597c198e0a21c762d7ecee7",
+      "counts": {
+        "strict_parity_passed": 0,
+        "control_remaining_contract_passed": 2,
+        "declared_limitation_verified": 2,
+        "excluded_from_full_parity": 2,
+        "wire_ua_divergent": 4,
+        "unaccepted_failures": 0
+      }
+    }
+  ]
+}

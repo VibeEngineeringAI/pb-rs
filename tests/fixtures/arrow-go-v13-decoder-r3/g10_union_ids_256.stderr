@@ -1,0 +1,1 @@
+init error: arrow/ipc: could not decode schema from message schema: arrow/ipc: could not convert field 0 from flatbuf: arrow/ipc: could not convert field type: union type id out of bounds

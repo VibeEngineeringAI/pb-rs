@@ -1,0 +1,12 @@
+NumRows=1
+panic: runtime error: slice bounds out of range [:-1]
+
+goroutine 1 [running]:
+github.com/apache/arrow/go/v13/arrow/array.(*FixedSizeBinary).Value(...)
+	github.com/apache/arrow/go/v13@v13.0.0/arrow/array/fixedsize_binary.go:53
+github.com/apache/arrow/go/v13/arrow/array.(*FixedSizeBinary).GetOneForMarshal(0x417514?, 0x47f94a?)
+	github.com/apache/arrow/go/v13@v13.0.0/arrow/array/fixedsize_binary.go:94 +0xd1
+github.com/apache/arrow/go/v13/arrow/array.RecordToJSON({0x71cb60, 0xc0000a6b70}, {0x719a20?, 0xc0000a6ba0?})
+	github.com/apache/arrow/go/v13@v13.0.0/arrow/array/util.go:234 +0x182
+main.main()
+	github.com/parseablehq/pb/harness/decoder-oracle/main.go:32 +0x20f

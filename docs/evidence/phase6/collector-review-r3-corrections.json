@@ -1,0 +1,95 @@
+{
+  "scope": "Author narrow race corrections and84 pure/mock tests; hashes independently reverified by parent; fresh review4 pending",
+  "resolution": {
+    "kind": "narrow_r3_races_pure_mock_only",
+    "source_status": "SOURCE SETTLED",
+    "files": {
+      "harness/phase6_workloads.py": {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/phase6_workloads.py",
+        "sha256": "e2e83fa118c58a96ff55700be88f95f9b8b6479a289a8c59f447f836389fde51",
+        "size_bytes": 81217
+      },
+      "harness/test_phase6_workloads.py": {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/test_phase6_workloads.py",
+        "sha256": "ac7f43fba1efd9e4a7e993ec9b20aaa498538a31f5cc40ece5d501ced336c322",
+        "size_bytes": 72824
+      },
+      "docs/phase6-measurement-plan.md": {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/docs/phase6-measurement-plan.md",
+        "sha256": "8d7bf088a1d62ec304a822a5dea952314f8c5c35e926a180b542bdfd66b313e1",
+        "size_bytes": 51921
+      }
+    },
+    "reviewed": [
+      {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/docs/phase6-measurement-review-r3.md",
+        "sha256": "51ae9f99dfb392253b41fec16086515842da1e11b4773af0d8c334d91dce8e24",
+        "size_bytes": 16177
+      },
+      {
+        "path": "/home/ajs/.cache/pb-phase6/measurement-review-r3/probes.py",
+        "sha256": "771ba4a0722d50f1d28debcb357cf478a05162f267d17d088830ccec7b560b91",
+        "size_bytes": 11348
+      },
+      {
+        "path": "/home/ajs/.cache/pb-phase6/measurement-review-r3/race_controls.py",
+        "sha256": "39807f0223a126f3ac95e965fa3c3a37250b6c6cabe35b38d3bf27d4dfd00ba4",
+        "size_bytes": 3189
+      }
+    ],
+    "findings": {
+      "R3-A": {
+        "status": "resolved_scoped",
+        "change": "sample wrapper passes fixture['path'] and meter['path'] from verified resolved binary identities, matching clients; originally supplied symlinks no longer used for invocation",
+        "test": "test_fixture_and_meter_symlink_repoints_never_change_invoked_bound_paths",
+        "causality": "Repoint both cache-only symlinks to different content at mocked lock entry; all8 invocations retain verified originals; report/end identity remain coherent. No native execution."
+      },
+      "R3-B": {
+        "status": "resolved_scoped",
+        "change": "read_json_with_identity resolves parent once and derives parsed object, SHA256 and size from same bounded read bytes; retained initial parent identity used in report/end checks",
+        "tests": [
+          "test_parent_atomic_replacement_after_read_does_not_rebase_initial_identity",
+          "test_parent_identity_uses_exact_read_bytes_and_resolved_path"
+        ],
+        "causality": "Atomic parent replacement after parsed bytes retains original embedded object and initial byte identity. End hash detects changed path; failed/incomplete report and all ratios quarantined. Unchanged/raw-whitespace positive and reader bound pass."
+      }
+    },
+    "validation": {
+      "scoped_pure_mock_tests": 84,
+      "log": {
+        "path": "/home/ajs/.cache/pb-phase6/tmp/r3-scoped-tests.log",
+        "sha256": "42616b4b5b909d2e500d71d91739839bd03625fbb82420bca95e7372ad6f753e",
+        "size_bytes": 12478
+      },
+      "native_test_classes_not_run": [
+        "ObserverNative",
+        "NativeMeter"
+      ],
+      "guarded": [
+        "fcntl.flock",
+        "subprocess.Popen",
+        "run.spawn_measured",
+        "os.posix_spawn",
+        "os.posix_spawnp",
+        "os.fork",
+        "os.system"
+      ],
+      "host_metadata": "mocked",
+      "native": false,
+      "pressure": false,
+      "campaign": false,
+      "real_quiet_token": false,
+      "real_flock": false,
+      "agents": false,
+      "commits": false
+    },
+    "prerequisites_changed": false,
+    "manifest_schema_changed": false,
+    "scope": "Owned collector/tests/docs and cache only; no generalized transaction redesign; N1-N5 retained.",
+    "limitations": [
+      "Resolved execution path binding does not claim prevention of replacement of an actual frozen executable.",
+      "Parent changes after read are quarantined by existing end check; this is not a transactional filesystem snapshot.",
+      "Production R5 nested dictionary correction and release acceptance remain separately owned."
+    ]
+  }
+}

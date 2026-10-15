@@ -1,0 +1,74 @@
+{
+  "scope": "Original R6 retained phases1-3 attempt failed on Go A/A exact timeout diagnostic; not waived, not overwritten. Phases4-5 continue separately.",
+  "complete": false,
+  "passed": false,
+  "original_status": {
+    "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-full/status.json",
+    "sha256": "5c2cd1057b1b7e48a12e5fa2d1154a0f7eb57fa7e2026ee05a38d846c62435b6"
+  },
+  "phase3_report": {
+    "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-full/phase3/report.json",
+    "sha256": "51183fb78d406fe33f2cfeeb3b7bb67dc1888b6eceaf5a49d12bfe37d9067509",
+    "counts": {
+      "pass": 683,
+      "fail": 1
+    }
+  },
+  "failed_case": {
+    "name": "p3-deadline-text-empty-array-lookahead",
+    "issues": [
+      "reference unstable: stderr differs at byte 37: candidate 114 bytes, reference 63 bytes",
+      "stderr differs at byte 37: candidate 114 bytes, reference 63 bytes"
+    ]
+  },
+  "binary_identities": {
+    "/home/ajs/.cache/pb-phase6/baselines/pb-go": {
+      "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "bytes": 71807160
+    },
+    "/home/ajs/.cache/pb-phase6/baselines/pb-go-cloud": {
+      "sha256": "622d4144b7e354c0ee4036244ba719cbbaf8357710804b1d733cd421a0dc227e",
+      "bytes": 71807160
+    },
+    "/home/ajs/.cache/pb-phase6/candidate-review-r6/pb": {
+      "sha256": "f1fb7a9e294a8f96bd9835de4c6f32318b0adf01bb164db648c4fb9c0ad5140f",
+      "bytes": 10712616
+    },
+    "/home/ajs/.cache/pb-phase6/candidate-review-r6/pb-cloud": {
+      "sha256": "36096c89100fac562545a5d72f45a2cd8aae4770715e0b424327711386e31af6",
+      "bytes": 10712944
+    },
+    "/home/ajs/.cache/pb-phase6/candidate-review-r6/manifest.json": {
+      "sha256": "a90917f86241c7df045015250ee69cc4d8090264285be46672bd0b865441fb3e",
+      "bytes": 5834
+    },
+    "/home/ajs/.cache/pb-phase6/tmp/fx/pb-fixture-r4": {
+      "sha256": "8237e34ee15b4a7d773945d3c30280752b2b780f1be3626d547b76cdea2ed4f0",
+      "bytes": 24491201
+    },
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/bin/pb-meter": {
+      "sha256": "17c3b73491b2a31e465f58eda9f210000b5cd886a4ba9fc0764dc3576899127c",
+      "bytes": 17232
+    }
+  },
+  "runner_identities": {
+    "harness/run.py": "b280d1295a4b351e6f2d838c56acaac58b2247bb77fc9881587bb7bbe849a076",
+    "harness/meter.c": "5d7ce9dc2fa65b1ec7018fb863d36fd78d8b8535762acadaefc3f2f4e0f070e9",
+    "harness/phase1.py": "e0216062f0980168e8ea9708f819e773c68e4452a7750f689f9ca29e8c5dc6a6",
+    "harness/phase2.py": "e1f8626b68b05f20edce19c8f6ee9dddff9c4d9fa9989ef94c891a745345562a",
+    "harness/phase3.py": "7f8deaf00185b94cd5934fbe6542e0393ded5f25aadd918012bd2f072d222f9d",
+    "harness/phase4.py": "748f2702a30f9727df53b8f0cd7abfe9f06f3effb8e80d7255c7b335824a9327",
+    "harness/phase5.py": "abcf687f772897cefdf0346982701a725e0165b3b55c0fe3f6997a494cce8b90",
+    "harness/contracts/phase3.md": "31907b6b5cf132a064ec3b905f25f699551a8857e922c9945f24742a1d8c47d0",
+    "harness/contracts/phase4-reference.json": "d8e4afddca0f23abe0590bc3793557e1ba391b9a97f3626765754af1b398f87e",
+    "harness/contracts/phase4.md": "b5860c0d584b591a2f02eb39418770fab3daec08dd95b28b0670b90cb6c5d335",
+    "harness/contracts/phase5-reference.json": "435a71357d6c1319bae78a56dee6bebffdaea670fe2c71b7e0d0a27298118352",
+    "harness/contracts/phase5.md": "c57d210430e1e4cba96eb434782883b88ee5b9f10d66a72dc371182ecae8e9b4",
+    "harness/contracts/phase1-surface.json": "07721e5e289ddafbeb5a94df43e238a7ad5c953dc4fcbd3fc0412cba8b2cfb7b",
+    "harness/contracts/phase2.md": "f396983e1d5d6a6d1333c07d95778d891e1076ec6ba78c1d2d6d2b9201e71774",
+    "harness/contracts/phase3-reference.json": "b4ed9880c62ae9ece00250d783af55eda87b603c77f4c23f8653c264c0f1448e"
+  },
+  "continuation": "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/status.json",
+  "proposal": "lookahead-deadline-proposal.json",
+  "independent_review_pending": true
+}

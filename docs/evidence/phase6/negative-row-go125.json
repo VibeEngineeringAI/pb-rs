@@ -1,0 +1,97 @@
+{
+  "go_version": "go version go1.25.4 linux/amd64",
+  "go_build_info": "/home/ajs/.cache/pb-phase6/tmp/tail-negative-go125: go1.25.4\n\tpath\tgithub.com/parseablehq/pb/harness/tail-negative-oracle\n\tmod\tgithub.com/parseablehq/pb\t(devel)\t\n\tdep\tgithub.com/apache/arrow/go/v13\tv13.0.0\th1:kELrvDQuKZo8csdWYqBQfyi431x6Zs/YJTEgUuSVcWk=\n\tdep\tgithub.com/goccy/go-json\tv0.10.0\th1:mXKd9Qw4NuzShiRlOXKews24ufknHO7gx30lsDyokKA=\n\tdep\tgithub.com/google/flatbuffers\tv23.1.21+incompatible\th1:bUqzx/MXCDxuS0hRJL2EfjyZL3uQrPbMocUa8zGqsTA=\n\tdep\tgithub.com/klauspost/compress\tv1.16.7\th1:2mk3MPGNzKyxErAw8YaohYh69+pa4sIQSC0fPGCFR9I=\n\tdep\tgithub.com/klauspost/cpuid/v2\tv2.2.3\th1:sxCkb+qR91z4vsqw4vGGZlDgPz3G7gjaLyK3V8y70BU=\n\tdep\tgithub.com/pierrec/lz4/v4\tv4.1.17\th1:kV4Ip+/hUBC+8T6+2EgburRtkE9ef4nbY3f4dFhGjMc=\n\tdep\tgithub.com/zeebo/xxh3\tv1.0.2\th1:xZmwmqxHZA8AI603jOQ0tMqmBr9lPeFwGg6d+xy9DC0=\n\tdep\tgolang.org/x/sys\tv0.27.0\th1:wBqf8DvsY9Y/2P8gAfPDEYNuS30J4lPHJxXSb/nJZ+s=\n\tdep\tgolang.org/x/xerrors\tv0.0.0-20220907171357-04be3eba64a2\th1:H2TDz8ibqkAF6YGhCdN3jS9O0/s90v0rJh3X/OLHEUk=\n\tbuild\t-buildmode=exe\n\tbuild\t-compiler=gc\n\tbuild\tCGO_ENABLED=1\n\tbuild\tCGO_CFLAGS=\n\tbuild\tCGO_CPPFLAGS=\n\tbuild\tCGO_CXXFLAGS=\n\tbuild\tCGO_LDFLAGS=\n\tbuild\tGOARCH=amd64\n\tbuild\tGOOS=linux\n\tbuild\tGOAMD64=v1\n",
+  "generator": "harness/tail-negative-oracle/main.go",
+  "generator_sha256": "9fafc02c6b79dc7c0d503520cac77470acedddeb62353e93450fc4ff2eadf2cc",
+  "binary_sha256": "089f244e3d81a8c670cf077f2bbb85da28bad7d4c833d66f18b89c1c4a5de468",
+  "oracle_revision": "07af390ab09bda8ac9e427ffc6310077bace0125",
+  "limits": {
+    "timeout_seconds": 10,
+    "address_space_bytes": 4294967296,
+    "output_file_bytes": 1048576
+  },
+  "note": "Probe prints Read error and exits0; actual tail makes non-EOF decode errors fatal. No production CLI invocation or timing claim.",
+  "cases": [
+    {
+      "kind": "null",
+      "patched_length": 77,
+      "probe_exit": 0,
+      "stdout_bytes": 848,
+      "stdout_sha256": "f1bcab0066e423ba1ad32a9feeb114f4c94a289d011137d7d567f9b35f753b51",
+      "stderr": "patched 3 occurrences\nNumRows=77\nread end: EOF\n",
+      "tail_classification": "batch then EOF/reconnect"
+    },
+    {
+      "kind": "null",
+      "patched_length": -1,
+      "probe_exit": 0,
+      "stdout_bytes": 1,
+      "stdout_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "stderr": "patched 3 occurrences\nNumRows=-1\nread end: EOF\n",
+      "tail_classification": "batch then EOF/reconnect"
+    },
+    {
+      "kind": "null",
+      "patched_length": -5,
+      "probe_exit": 0,
+      "stdout_bytes": 1,
+      "stdout_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "stderr": "patched 3 occurrences\nNumRows=-5\nread end: EOF\n",
+      "tail_classification": "batch then EOF/reconnect"
+    },
+    {
+      "kind": "struct",
+      "patched_length": 77,
+      "probe_exit": 0,
+      "stdout_bytes": 694,
+      "stdout_sha256": "7a28438335dcf71237caf71233af8750d6b76319156f4756ac755e69e6e197a8",
+      "stderr": "patched 2 occurrences\nNumRows=77\nread end: EOF\n",
+      "tail_classification": "batch then EOF/reconnect"
+    },
+    {
+      "kind": "struct",
+      "patched_length": -1,
+      "probe_exit": 0,
+      "stdout_bytes": 1,
+      "stdout_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "stderr": "patched 2 occurrences\nNumRows=-1\nread end: EOF\n",
+      "tail_classification": "batch then EOF/reconnect"
+    },
+    {
+      "kind": "struct",
+      "patched_length": -5,
+      "probe_exit": 0,
+      "stdout_bytes": 1,
+      "stdout_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "stderr": "patched 2 occurrences\nNumRows=-5\nread end: EOF\n",
+      "tail_classification": "batch then EOF/reconnect"
+    },
+    {
+      "kind": "int64",
+      "patched_length": 77,
+      "probe_exit": 0,
+      "stdout_bytes": 848,
+      "stdout_sha256": "6117d40ecb3ecf35aec2afd644409d16d5358b57bfc8c1ae0b57a808035ce742",
+      "stderr": "patched 2 occurrences\nNumRows=77\nread end: EOF\n",
+      "tail_classification": "batch then EOF/reconnect"
+    },
+    {
+      "kind": "int64",
+      "patched_length": -1,
+      "probe_exit": 0,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": "patched 2 occurrences\nread end: arrow/ipc: unknown error while reading: runtime error: slice bounds out of range [:-1]\n",
+      "tail_classification": "fatal decode error"
+    },
+    {
+      "kind": "int64",
+      "patched_length": -5,
+      "probe_exit": 0,
+      "stdout_bytes": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": "patched 2 occurrences\nread end: arrow/ipc: unknown error while reading: runtime error: slice bounds out of range [:-5]\n",
+      "tail_classification": "fatal decode error"
+    }
+  ]
+}

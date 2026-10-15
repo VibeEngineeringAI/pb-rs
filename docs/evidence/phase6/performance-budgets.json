@@ -1,0 +1,90 @@
+{
+  "declared_before_candidate_timing": true,
+  "decision_policy": "Investigation thresholds, not permission to relax compatibility. Correctness and sample admission precede all comparisons. Report absolute deltas and exploratory intervals; no universal speed or non-inferiority claim.",
+  "finite_latency": {
+    "metrics": [
+      "wall_ms",
+      "first_complete_record_ms"
+    ],
+    "material_increase": "both >10% and >2 ms versus Go; shared implemented commands also compare accepted prior Rust",
+    "primary_workloads": [
+      "one-row",
+      "many-small",
+      "large"
+    ]
+  },
+  "cpu": {
+    "metrics": [
+      "cpu_ms",
+      "cpu_us_per_row"
+    ],
+    "material_increase": "both >15% and >2 ms total client CPU versus Go; normalized CPU/row must use identical complete row counts"
+  },
+  "peak_rss": {
+    "metric": "peak_rss_bytes",
+    "material_increase": "both >25% and >8 MiB versus Go; report unconditional absolute RSS as well"
+  },
+  "throughput": {
+    "metrics": [
+      "rows_per_second",
+      "output_bytes_per_second"
+    ],
+    "material_decrease": ">10% with identical full output/counts and primary/control observer evidence; investigate fixture and sink ceiling before attribution"
+  },
+  "stream_resources": {
+    "rss": "After warmup, inspect raw traces and regression slope. Sustained >256 KiB/min growth in bounded steady/idle/dictionary conditions triggers investigation/repetition; no extrapolation from short samples. Dictionary delta growth is separately explained.",
+    "fd": "Any monotonic growth beyond transient connection replacements triggers investigation; inspect counts, not only fitted slope.",
+    "threads": "Unexplained upward trend after initialization triggers investigation."
+  },
+  "statistics": {
+    "finite_warmups": 5,
+    "finite_repetitions": 30,
+    "order": "seeded randomized sequential",
+    "intervals": "existing pointwise independent bootstrap; exploratory, no simultaneous or paired inference",
+    "soak_first_tier": "one independent 30-minute session per implementation and mode; descriptive screening only",
+    "soak_replicated_tier": "three sessions per implementation/mode subject to separate quiet windows; repeat material regressions using a new seed and retain both runs"
+  },
+  "controls": [
+    "Go A/A",
+    "separate full versus hash-framing collector reports",
+    "fixture CPU and expected-output encoding wall time annotated",
+    "profiles/diagnostics/build cost excluded from native release timings"
+  ],
+  "prior_rust": "Only previously implemented shared commands; no prior Rust Flight baseline",
+  "quiet_window": "Common nonblocking /home/ajs/.cache/pb-rs-performance.lock plus explicit companion pause acknowledgement; bounded campaign deadline and cleanup reserve; release between modes.",
+  "schema_version": 2,
+  "pre_campaign_review_change": "Added observer/interference/admission controls after independent measurement review r1, before any native timing campaign; original practical regression thresholds unchanged.",
+  "campaign_controls": {
+    "cpu_ceiling_screen": {
+      "observer_busy_fraction": 0.8,
+      "fixture_busy_fraction": 0.8,
+      "minimum_observation_ms": 100,
+      "meaning": "CPU seconds divided by native client elapsed seconds, not percentage of all host cores. Threshold flags potential fixture/observer limits; it is not causal proof of saturation. Suppress throughput ratios when flagged, retain absolute values and raw CPU deltas."
+    },
+    "interference_screen": {
+      "max_unattributed_busy_cores": 0.5,
+      "minimum_observation_ms": 100,
+      "meaning": "System busy CPU delta minus separately observed client, fixture and collector CPU, divided by elapsed observation seconds. Record raw components; clamp only derived negative residual to zero. Below minimum duration report resolution_limited, not clean. A flag invalidates comparative timing admission; quiet handshake and A/A controls remain required."
+    },
+    "intervals": {
+      "finite_minimum_samples_per_label": 20,
+      "duration_tiers": "No bootstrap confidence intervals. Report per-session values and range; n<=3 is descriptive only.",
+      "finite_method": "Existing pointwise exploratory bootstrap only; no simultaneous or non-inferiority inference."
+    },
+    "duration_first_tier_repetitions": 1,
+    "duration_order": "Explicit alternating AB/BA by session index; record chosen order, derive workload seed from stable workload identity.",
+    "quiet_window": "Require full scheduled duration partition including contract A/A controls and conservative timeout/cleanup reserves to fit before acquiring lock.",
+    "budgets_binding": "Parent manifest budget content must equal this file; record SHA256 and verify identity at window end.",
+    "timing_aa": "Separate finite Go-versus-same-Go 5 warmups and30 measured samples per label before practical regression interpretation; not pooled with candidate comparisons.",
+    "metric_scope": "Keep sink_gated or schedule_bound metrics absolute only; exclude their ratios and practical budget classification."
+  },
+  "resource_pressure_workloads": {
+    "names": [
+      "dictionary-large-lz4",
+      "dictionary-large-zstd"
+    ],
+    "dictionary_expanded_bytes": "16/32/48/64 MiB cycles with16MiB reset;9 batches then500ms open-stream hold",
+    "purpose": "Observe large dictionary ownership, decompression expansion and post-burst RSS with bounded collection; not primary latency or a universal throughput claim.",
+    "wire_gate": "Actual encoded Flight message must remain within4194304-byte cap; verify functional Go/Rust output before timed admission."
+  }
+}

@@ -1,0 +1,332 @@
+{
+  "probe": "harness/decoder-oracle/main.go",
+  "probe_sha256": "ed80a49121c32222f9909a0837d900d98323070ae77c7fb7b9a3d642a28609d9",
+  "stream_generator": "harness/decoder-oracle/r4_stream_dump.rs.txt (Rust, from a review scratch copy; not compiled)",
+  "go_toolchain": "go1.25.4",
+  "modules": {
+    "github.com/apache/arrow/go/v13": "v13.0.0",
+    "github.com/goccy/go-json": "v0.10.0"
+  },
+  "bounds": "ulimit -v 4194304 (4 GiB), ulimit -f 16384 (at most 16 MiB per output file), timeout 10 s; disk-backed TMPDIR/GOTMPDIR outside /tmp",
+  "regenerate": "GO=<go1.25.4>/bin/go harness/decoder-oracle/run.sh <fixture-dir> harness/decoder-oracle/r4_stream_dump.rs.txt",
+  "note": "stderr of a Go panic includes goroutine traces whose addresses can vary between builds; compare the first line and the exit status.",
+  "cases": [
+    "r4_be_dict",
+    "r4_be_int64",
+    "r4_be_int64_lz4",
+    "r4_be_int64_schema_only",
+    "r4_be_utf8",
+    "r4_dict_child_before_parent",
+    "r4_dict_int32_utf8",
+    "r4_dict_list_item_names",
+    "r4_dict_list_item_nullability",
+    "r4_dict_nested_conflict",
+    "r4_dict_same_utf8",
+    "r4_dict_struct_field_names",
+    "r4_dict_utf8_binary",
+    "r4_dict_utf8_nullability",
+    "r4_le_int64"
+  ],
+  "files": [
+    {
+      "name": "r4_be_dict.arrows",
+      "bytes": 808,
+      "sha256": "5d5fb7a7da00bc56ba3d8360029ad30a27b5f95286e3adb0128f0b3f4a8d2ebb"
+    },
+    {
+      "name": "r4_be_dict.status",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "name": "r4_be_dict.stderr",
+      "bytes": 24,
+      "sha256": "f26332a4e4652013bbc20b8f579e00a9ed08d799f2f4e2c961ebb1aeaf1172bd"
+    },
+    {
+      "name": "r4_be_dict.stdout",
+      "bytes": 33,
+      "sha256": "df25eaf980226dff4386126fb4b770fa9873e6abaf4909c2f51bc59e356749e6"
+    },
+    {
+      "name": "r4_be_int64.arrows",
+      "bytes": 416,
+      "sha256": "0bfccf0b932e4d87ade745b7f889a96e6b548e17769740db3ded23223d2f43cf"
+    },
+    {
+      "name": "r4_be_int64.status",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "name": "r4_be_int64.stderr",
+      "bytes": 24,
+      "sha256": "f26332a4e4652013bbc20b8f579e00a9ed08d799f2f4e2c961ebb1aeaf1172bd"
+    },
+    {
+      "name": "r4_be_int64.stdout",
+      "bytes": 28,
+      "sha256": "82a39cecca23b637685331f99684176b940bdafeacbaa49363e3101943f970af"
+    },
+    {
+      "name": "r4_be_int64_lz4.arrows",
+      "bytes": 424,
+      "sha256": "db238c74b4b49c6284150b89aed3bceed7fde41ab52c8c15c29aeaebd9339611"
+    },
+    {
+      "name": "r4_be_int64_lz4.status",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "name": "r4_be_int64_lz4.stderr",
+      "bytes": 24,
+      "sha256": "f26332a4e4652013bbc20b8f579e00a9ed08d799f2f4e2c961ebb1aeaf1172bd"
+    },
+    {
+      "name": "r4_be_int64_lz4.stdout",
+      "bytes": 28,
+      "sha256": "82a39cecca23b637685331f99684176b940bdafeacbaa49363e3101943f970af"
+    },
+    {
+      "name": "r4_be_int64_schema_only.arrows",
+      "bytes": 144,
+      "sha256": "9ef41f37d4953509eeb98189e8a96809f233c6b456f51d8583e795797199d243"
+    },
+    {
+      "name": "r4_be_int64_schema_only.status",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "name": "r4_be_int64_schema_only.stderr",
+      "bytes": 14,
+      "sha256": "b67dad383f8f2141eacde2a230a12b77b984c635efc982179c4ef87277a732bc"
+    },
+    {
+      "name": "r4_be_int64_schema_only.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "r4_be_utf8.arrows",
+      "bytes": 480,
+      "sha256": "c93d1b211403a2f1268e93b044b8ca74df840c3cfc3bffdf937949d9099e6459"
+    },
+    {
+      "name": "r4_be_utf8.status",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "name": "r4_be_utf8.stderr",
+      "bytes": 24,
+      "sha256": "204175c0bf5a932c172e34ccd96f7bf124d28a81fa58fbad80c3db22853f8482"
+    },
+    {
+      "name": "r4_be_utf8.stdout",
+      "bytes": 24,
+      "sha256": "d0720777138875a0f125369bbe88df589f6edfc364217765ded13fe16c4733c0"
+    },
+    {
+      "name": "r4_dict_child_before_parent.arrows",
+      "bytes": 224,
+      "sha256": "66d1b9cae42f37586a0d9a93a07b628b6ce679321409402ee9409274dccd87f3"
+    },
+    {
+      "name": "r4_dict_child_before_parent.status",
+      "bytes": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "name": "r4_dict_child_before_parent.stderr",
+      "bytes": 209,
+      "sha256": "0017dffccdec836c6c60aa8f9e1c7d6671108bbc595c019ca8475648a50eff3c"
+    },
+    {
+      "name": "r4_dict_child_before_parent.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "r4_dict_int32_utf8.arrows",
+      "bytes": 232,
+      "sha256": "3f19ee9b8847daaf7d4c05d73b3899192229488b3849d58b954e0525dac7a810"
+    },
+    {
+      "name": "r4_dict_int32_utf8.status",
+      "bytes": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "name": "r4_dict_int32_utf8.stderr",
+      "bytes": 209,
+      "sha256": "0a92988567b15bcc0da5b8e1c523b488a9420f41f0b23c086ce51277097073bd"
+    },
+    {
+      "name": "r4_dict_int32_utf8.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "r4_dict_list_item_names.arrows",
+      "bytes": 344,
+      "sha256": "7cc42ac819f3a4e933ed0c95547a6fa096ac15396ec2e8456a5668fcda10f154"
+    },
+    {
+      "name": "r4_dict_list_item_names.status",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "name": "r4_dict_list_item_names.stderr",
+      "bytes": 14,
+      "sha256": "b67dad383f8f2141eacde2a230a12b77b984c635efc982179c4ef87277a732bc"
+    },
+    {
+      "name": "r4_dict_list_item_names.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "r4_dict_list_item_nullability.arrows",
+      "bytes": 360,
+      "sha256": "ecfde23b87fe546d6235a834394a393629801905ba4f4085a5562039a794ce6a"
+    },
+    {
+      "name": "r4_dict_list_item_nullability.status",
+      "bytes": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "name": "r4_dict_list_item_nullability.stderr",
+      "bytes": 209,
+      "sha256": "0a92988567b15bcc0da5b8e1c523b488a9420f41f0b23c086ce51277097073bd"
+    },
+    {
+      "name": "r4_dict_list_item_nullability.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "r4_dict_nested_conflict.arrows",
+      "bytes": 336,
+      "sha256": "c1afc5128ae22f3abafc45e08f82d160b5e1c3485d5b827089ee89455ee730de"
+    },
+    {
+      "name": "r4_dict_nested_conflict.status",
+      "bytes": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "name": "r4_dict_nested_conflict.stderr",
+      "bytes": 253,
+      "sha256": "fd29360746161f524fcfa93a1e86c1f9cd4f8a7f23dd7d50f6c689be4ef25abf"
+    },
+    {
+      "name": "r4_dict_nested_conflict.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "r4_dict_same_utf8.arrows",
+      "bytes": 224,
+      "sha256": "1fb961c4b053cf45a26d640c3cda88a18e9e8d85d67501cc0c7dcba03e52a074"
+    },
+    {
+      "name": "r4_dict_same_utf8.status",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "name": "r4_dict_same_utf8.stderr",
+      "bytes": 14,
+      "sha256": "b67dad383f8f2141eacde2a230a12b77b984c635efc982179c4ef87277a732bc"
+    },
+    {
+      "name": "r4_dict_same_utf8.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "r4_dict_struct_field_names.arrows",
+      "bytes": 336,
+      "sha256": "98031838065926739b785256cf6c3a4cbae70fe83b038f2d663bc37f34b79acb"
+    },
+    {
+      "name": "r4_dict_struct_field_names.status",
+      "bytes": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "name": "r4_dict_struct_field_names.stderr",
+      "bytes": 209,
+      "sha256": "0a92988567b15bcc0da5b8e1c523b488a9420f41f0b23c086ce51277097073bd"
+    },
+    {
+      "name": "r4_dict_struct_field_names.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "r4_dict_utf8_binary.arrows",
+      "bytes": 224,
+      "sha256": "0c41ba3e90e86ce47d867b6745bea70de98be81931e6d7f1df46b68a6b5fb346"
+    },
+    {
+      "name": "r4_dict_utf8_binary.status",
+      "bytes": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "name": "r4_dict_utf8_binary.stderr",
+      "bytes": 209,
+      "sha256": "0a92988567b15bcc0da5b8e1c523b488a9420f41f0b23c086ce51277097073bd"
+    },
+    {
+      "name": "r4_dict_utf8_binary.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "r4_dict_utf8_nullability.arrows",
+      "bytes": 240,
+      "sha256": "6def9675bca84b04cff2408e1d1f75856a56e17fa198cb28d7696a84fc5895bb"
+    },
+    {
+      "name": "r4_dict_utf8_nullability.status",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "name": "r4_dict_utf8_nullability.stderr",
+      "bytes": 14,
+      "sha256": "b67dad383f8f2141eacde2a230a12b77b984c635efc982179c4ef87277a732bc"
+    },
+    {
+      "name": "r4_dict_utf8_nullability.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "r4_le_int64.arrows",
+      "bytes": 408,
+      "sha256": "57305424eea1432a7a785aaf36e1374cd7947ef12ca7ab14f143d22198977af6"
+    },
+    {
+      "name": "r4_le_int64.status",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "name": "r4_le_int64.stderr",
+      "bytes": 24,
+      "sha256": "f26332a4e4652013bbc20b8f579e00a9ed08d799f2f4e2c961ebb1aeaf1172bd"
+    },
+    {
+      "name": "r4_le_int64.stdout",
+      "bytes": 28,
+      "sha256": "82a39cecca23b637685331f99684176b940bdafeacbaa49363e3101943f970af"
+    }
+  ]
+}

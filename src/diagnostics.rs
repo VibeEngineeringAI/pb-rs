@@ -524,6 +524,7 @@ impl Session {
         let directory = std::env::var_os("PB_DIAGNOSTICS_DIR")
             .filter(|v| !v.is_empty())
             .map(PathBuf::from);
+        crate::tail::resources::reset(directory.is_some());
         if directory.is_some() {
             let _ = REPORTS.get_or_init(|| Mutex::new(Vec::new()));
             ALLOCATIONS.store(
@@ -587,6 +588,8 @@ impl Session {
             exit_code: i32,
             measurement: Measurement,
             threads: &'a [ThreadReport],
+            #[serde(skip_serializing_if = "Option::is_none")]
+            tail_resources: Option<crate::tail::resources::Snapshot>,
         }
         let allocations_enabled = reports.iter().any(|r| r.allocations.is_some());
         let report = Report {
@@ -623,6 +626,7 @@ impl Session {
                 unregistered_threads: "spinner and library-created helper threads are excluded; process CPU must be measured externally",
             },
             threads: &reports,
+            tail_resources: crate::tail::resources::finish(),
         };
         let _ = (|| -> io::Result<()> {
             fs::create_dir_all(&directory)?;

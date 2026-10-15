@@ -1,0 +1,259 @@
+{
+  "scope": "Owner correction evidence verified for file hashes; fresh independent Sol round2 active; successor native replay required",
+  "source_manifest": "/home/ajs/.cache/pb-phase6/tmp/impl-cw-final-evidence.json",
+  "source_manifest_sha256": "d45140ec7291c85f3be13cb25bb1bdfd2b9d9ad49ae8057d9dcbbf686ba67099",
+  "files": {
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/phase6.py": "444ac8853cc4d03b02d6ee6f24cedfe4b89f2c690d1b285c03f2b33752f81147",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/test_phase6.py": "3b7051d5fa2691ca2218465f02c7f64820dad64fe9b9cf07a1dcb2e0fddf465b",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/contracts/phase6.md": "682daff27dc7a945aea1be2a64826784270beec19e5fa1af7ae4d219a1583b4c",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/phase6_blocked_writer.py": "09d01c6c0cb6d59a5506307541da3b100513dbc9fdce7ea09d72d9b3b2540989",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/test_phase6_blocked_writer.py": "560d28cfd0518f73b9762d172d61642a15708163f2666d88812438637f9e0e27"
+  },
+  "tests": {
+    "passed": 143,
+    "log": "/home/ajs/.cache/pb-phase6/tmp/impl-cw-tests2.log"
+  },
+  "focused_report": {
+    "path": "/home/ajs/.cache/pb-phase6/tmp/harness-cw-followup-r5-v2/report.json",
+    "sha256": "774697980c76321a90e3371a30a00ef6c3e624a00ec0bf329924c2d5e82f2151",
+    "complete": true,
+    "failed": 0,
+    "remaining_contract_passed": 6,
+    "strict_parity_passed": 0,
+    "wire_ua_divergent": 6,
+    "candidate_sha256": "0a5877073979ee43e518b40908ae7274286144a9799137202d71a4310b68e825",
+    "fixture_sha256": "c85f63f9f01a1be6eaa66e6802dae0c3f08409be2ad538d358a7e70f2f5ce314"
+  },
+  "pipe_proofs": {
+    "p6-causal-writer-below-capacity": {
+      "go": {
+        "requested_capacity": 4096,
+        "capacity": 4096,
+        "expected_output_bytes": 157,
+        "max_pending_bytes": 157,
+        "observations": 7,
+        "full_since_ns": null,
+        "blocked_proven": false,
+        "proof": null,
+        "negative_control_rejected": true
+      },
+      "candidate": {
+        "requested_capacity": 4096,
+        "capacity": 4096,
+        "expected_output_bytes": 157,
+        "max_pending_bytes": 157,
+        "observations": 2,
+        "full_since_ns": null,
+        "blocked_proven": false,
+        "proof": null,
+        "negative_control_rejected": true
+      }
+    },
+    "p6-causal-writer-http2-progress": {
+      "go": {
+        "requested_capacity": 4096,
+        "capacity": 4096,
+        "expected_output_bytes": 16413,
+        "max_pending_bytes": 4096,
+        "observations": 328,
+        "full_since_ns": 1000885891598400,
+        "blocked_proven": true,
+        "proof": {
+          "t_ns": 1000885995393144,
+          "pending_bytes": 4096,
+          "drained_bytes": 0,
+          "pipe_write_tids": [
+            2746669
+          ],
+          "writer_waits": [
+            {
+              "tid": 2746669,
+              "wchan": "anon_pipe_write",
+              "syscall": 1,
+              "fd": 1
+            }
+          ],
+          "full_since_ns": 1000885891598400
+        },
+        "negative_control_rejected": false
+      },
+      "candidate": {
+        "requested_capacity": 4096,
+        "capacity": 4096,
+        "expected_output_bytes": 16413,
+        "max_pending_bytes": 4096,
+        "observations": 339,
+        "full_since_ns": 1000887911186655,
+        "blocked_proven": true,
+        "proof": {
+          "t_ns": 1000888015030158,
+          "pending_bytes": 4096,
+          "drained_bytes": 0,
+          "pipe_write_tids": [
+            2755140
+          ],
+          "writer_waits": [
+            {
+              "tid": 2755140,
+              "wchan": "anon_pipe_write",
+              "syscall": 1,
+              "fd": 1
+            }
+          ],
+          "full_since_ns": 1000887911186655
+        },
+        "negative_control_rejected": false
+      }
+    },
+    "p6-causal-writer-signal-int": {
+      "go": {
+        "requested_capacity": 4096,
+        "capacity": 4096,
+        "expected_output_bytes": 16413,
+        "max_pending_bytes": 4096,
+        "observations": 26,
+        "full_since_ns": 1000889889292284,
+        "blocked_proven": true,
+        "proof": {
+          "t_ns": 1000889993202910,
+          "pending_bytes": 4096,
+          "drained_bytes": 0,
+          "pipe_write_tids": [
+            2763206
+          ],
+          "writer_waits": [
+            {
+              "tid": 2763206,
+              "wchan": "anon_pipe_write",
+              "syscall": 1,
+              "fd": 1
+            }
+          ],
+          "full_since_ns": 1000889889292284
+        },
+        "negative_control_rejected": false
+      },
+      "candidate": {
+        "requested_capacity": 4096,
+        "capacity": 4096,
+        "expected_output_bytes": 16413,
+        "max_pending_bytes": 4096,
+        "observations": 21,
+        "full_since_ns": 1000890106151592,
+        "blocked_proven": true,
+        "proof": {
+          "t_ns": 1000890209469053,
+          "pending_bytes": 4096,
+          "drained_bytes": 0,
+          "pipe_write_tids": [
+            2764158
+          ],
+          "writer_waits": [
+            {
+              "tid": 2764158,
+              "wchan": "anon_pipe_write",
+              "syscall": 1,
+              "fd": 1
+            }
+          ],
+          "full_since_ns": 1000890106151592
+        },
+        "negative_control_rejected": false
+      }
+    },
+    "p6-causal-writer-signal-term": {
+      "go": {
+        "requested_capacity": 4096,
+        "capacity": 4096,
+        "expected_output_bytes": 16413,
+        "max_pending_bytes": 4096,
+        "observations": 26,
+        "full_since_ns": 1000890285024153,
+        "blocked_proven": true,
+        "proof": {
+          "t_ns": 1000890389100729,
+          "pending_bytes": 4096,
+          "drained_bytes": 0,
+          "pipe_write_tids": [
+            2764853
+          ],
+          "writer_waits": [
+            {
+              "tid": 2764853,
+              "wchan": "anon_pipe_write",
+              "syscall": 1,
+              "fd": 1
+            }
+          ],
+          "full_since_ns": 1000890285024153
+        },
+        "negative_control_rejected": false
+      },
+      "candidate": {
+        "requested_capacity": 4096,
+        "capacity": 4096,
+        "expected_output_bytes": 16413,
+        "max_pending_bytes": 4096,
+        "observations": 21,
+        "full_since_ns": 1000890500101560,
+        "blocked_proven": true,
+        "proof": {
+          "t_ns": 1000890605111220,
+          "pending_bytes": 4096,
+          "drained_bytes": 0,
+          "pipe_write_tids": [
+            2765838
+          ],
+          "writer_waits": [
+            {
+              "tid": 2765838,
+              "wchan": "anon_pipe_write",
+              "syscall": 1,
+              "fd": 1
+            }
+          ],
+          "full_since_ns": 1000890500101560
+        },
+        "negative_control_rejected": false
+      }
+    }
+  },
+  "saved_reduction": {
+    "cases": 291,
+    "unaccepted_failures": 0,
+    "cw2_remaining_contract_passed": 291,
+    "cw3_independent_authority_validated": 0,
+    "historical_reports": {
+      "/home/ajs/.cache/pb-phase6/tmp/harness-review-r5-campaign-v1/main/report.json": "034da982151d53c9babdb76da3e9e45960529b513452d0f9de37eba4b44c9087",
+      "/home/ajs/.cache/pb-phase6/tmp/harness-review-r5-campaign-v1/review3-followup/report.json": "de1d0dcc58a6b3f1adf918a33f0840c293e39a0398f4300a4348b40b398b620a",
+      "/home/ajs/.cache/pb-phase6/tmp/harness-review-r5-campaign-v1/trailer-followup/report.json": "5695a2192e2d83779f3ce4e195a91d1ce602189bf22cbdaf7e8e98c1c8c65154"
+    },
+    "authority_limit": "Archived captures have no banner/discovery-port provenance; old normalized signatures are retained, not newly certified.",
+    "full_parity_passed": false
+  },
+  "cw2_mutations_rejected": {
+    "extra_lf": true,
+    "compact_json": true,
+    "extra_outer_field": true
+  },
+  "frozen_references_unchanged": {
+    "main": true,
+    "review3-followup": true,
+    "trailer-followup": true
+  },
+  "inventory_hashes": {
+    "main": "d7a06741a59b813a5eaaced7b1f536a13ff7a81813bb1643605af9f2680fdc0b",
+    "review3-followup": "0b5a64727fc96f2cc4cd360828fd96e80f44604e29af197d8e0feb8bb34c3754",
+    "trailer-followup": "a4385c77e80e09a467905fa4d288d8c666f19af4476cf15d3ac4414498421374"
+  },
+  "cw3_wrong_port_controls": {
+    "p6-auth-basic": [
+      true,
+      true
+    ],
+    "p6-raw-message-ff-3": [
+      true,
+      true
+    ]
+  }
+}

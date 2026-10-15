@@ -1,0 +1,56 @@
+Phase 6 Arrow Flight tail: source-derived compatibility helpers
+
+These notices apply to the narrow modified helpers listed below, not to a
+translation of an upstream transport, Arrow reader or ownership model.
+The surrounding Rust services, state machines and ownership are native Rust.
+See docs/phase6-source-notices.md for the detailed mapping and provenance.
+
+Go standard library 1.25.4
+Copyright 2009 The Go Authors. All rights reserved.
+Copyright 2010 The Go Authors. All rights reserved.
+Copyright 2015 The Go Authors. All rights reserved.
+
+Modified algorithms in src/tail/values.rs:
+  time/time.go: absolute-seconds/date/clock calculations;
+  math/pow10.go: power tables and index/rounding behavior;
+  math/big/decimal.go and math/big/ftoa.go: decimal rounding/format layout.
+Modified algorithms in src/tail/transport.rs:
+  encoding/base64/base64.go: error-index decision tree;
+  net/dial.go: partial deadlines and fallback/error selection.
+Full BSD license: ../../src/LICENSE-Go.txt (relative to this directory).
+
+Apache Arrow Go v13.0.0
+Modified algorithms:
+  arrow/float16/float16.go -> values.rs go_f16_to_f32;
+  arrow/compare.go -> validation.rs Go type equality.
+The Rust representations and error boundaries differ from upstream Go.
+Source notice: ArrowGo-source-notice.txt
+Applicable project notice: ArrowGo-NOTICE.txt
+License: Apache-2.0.txt
+
+Copyright 2020 gRPC authors.
+grpc-go v1.65.0 internal/status/status.go NewWithProto -> modified Rust
+final_status in src/tail/transport.rs, using prost and reduced prototext.
+Project notice: grpc-go-NOTICE.txt
+License: Apache-2.0.txt
+
+Copyright (c) 2020 Masaaki Goshima
+goccy/go-json v0.10.0 internal/encoder/{string,decode_rune,encoder}.go:
+modified values.rs string/UTF-8 helpers and float layout. Rust match/range
+logic replaces lookup tables; no Go unsafe word-scan implementation is used.
+Shortest float digits are provided by the independent Rust zmij dependency.
+License: goccy-go-json-MIT.txt
+
+Copyright (c) 2018 The Go Authors. All rights reserved.
+protobuf-go v1.35.1 internal/encoding/text/encode.go:
+modified Rust prototext quoting/layout in src/tail/transport.rs. The reduced
+implementation omits Any expansion and fixes the measured binary's spacing.
+License: protobuf-go-BSD.txt
+
+Howard Hinnant, chrono-Compatible Low-Level Date Algorithms:
+values.rs civil_from_days follows the published formula with i128 and Rust
+Euclidean division. The implementer wrote it from memory; an exact historical
+text/version consulted during implementation is not known.
+The author's publication states: "Consider these donated to the public domain."
+Primary publication: https://howardhinnant.github.io/date_algorithms.html
+Attribution is retained without assigning an unrelated library's license.

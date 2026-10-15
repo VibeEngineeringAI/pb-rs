@@ -1,0 +1,99 @@
+{
+  "scope": "test-only portability/isolation correction; functional fixtures, not performance evidence",
+  "import_isolation_probe": {
+    "process_lock_api_identities_unchanged": true,
+    "subprocess_popen_identity_unchanged": true,
+    "environment_unchanged": true,
+    "bytecode_setting_unchanged": true,
+    "lazy_imports_not_run": true,
+    "default_cache": "/home/ajs/.cache/pb-phase6/resource-summary"
+  },
+  "blocked_original_access_attempts": [],
+  "tests": {
+    "run": 35,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "success": true,
+    "log": {
+      "path": "/home/ajs/.cache/pb-phase6/resource-summary/portability-v1/guarded-tests.log",
+      "size_bytes": 5595,
+      "sha256": "c422a2fd33b56c37a64c9527517c182154198db36435bdd5afdfa36c8307a8f4"
+    },
+    "forbidden_calls": {}
+  },
+  "setup_failure_cleanup_probe": {
+    "run": 0,
+    "expected_setup_errors": 1,
+    "process_lock_apis_restored": true,
+    "environment_restored": true,
+    "log": {
+      "path": "/home/ajs/.cache/pb-phase6/resource-summary/portability-v1/setup-cleanup-probe.log",
+      "size_bytes": 632,
+      "sha256": "66aa5f539e4a48ae293703d793b1e9f99f7b5550b1fa5503eff6d03dd2c1f3b9"
+    }
+  },
+  "fixture_corruption_negative_controls": [
+    {
+      "fixture": "go-one-row.json",
+      "changed_copy": {
+        "path": "/home/ajs/.cache/pb-phase6/resource-summary/portability-v1/corrupt-go-one-row/go-one-row.json",
+        "size_bytes": 8745,
+        "sha256": "6ba0a6bffaf87d26ff2ebc202e490677e26233e61aa3885f76af3b3fd8269a72"
+      },
+      "refusal": "functional fixture identity mismatch: go-one-row.json"
+    },
+    {
+      "fixture": "go-idle.json",
+      "changed_copy": {
+        "path": "/home/ajs/.cache/pb-phase6/resource-summary/portability-v1/corrupt-go-idle/go-idle.json",
+        "size_bytes": 8820,
+        "sha256": "678972193b4b0353513f367a2d505a89c3827722c331d43da4a20b1671cf143d"
+      },
+      "refusal": "functional fixture identity mismatch: go-idle.json"
+    }
+  ],
+  "execution_cleanup": {
+    "process_lock_api_identities_restored": true,
+    "environment_restored": true
+  },
+  "artifacts": [
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/phase6_resource_summary.py",
+      "size_bytes": 29612,
+      "sha256": "061ef1c3473f8326d3c7d169334269d87702c85c3ebe239361be9fe0b9f925c4"
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/test_phase6_resource_summary.py",
+      "size_bytes": 40252,
+      "sha256": "f8d970c0417c83b7bd64d45dee9d7cdcde3bc046c2e6bed30b321e2b690290dd"
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/docs/phase6-resource-summary.md",
+      "size_bytes": 19520,
+      "sha256": "10b1d94a58db9da3cb8267bbb40fc8a97b17c6646cfa441984e07e5dde1fc82e"
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/tests/fixtures/phase6-resource-summary/go-one-row.json",
+      "size_bytes": 8744,
+      "sha256": "7c8cf496caf6f0fc0f9a9eaa1e477fe49be5dba5498e3e45fe515b73da8dfa69"
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/tests/fixtures/phase6-resource-summary/go-idle.json",
+      "size_bytes": 8819,
+      "sha256": "4e969fa151113ad9a36b486c6b4e8ebf75222df3d64dae7c5ce9715a183db889"
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/tests/fixtures/phase6-resource-summary/manifest.json",
+      "size_bytes": 836,
+      "sha256": "f599a85108ff691166e76ebd6600dc7c1f0da6bcf787c11e9be62ce381aaf8a6"
+    }
+  ],
+  "protected_inputs_unchanged": true,
+  "author_record": {
+    "path": "/home/ajs/.cache/pb-phase6/resource-summary/portability-v1/portability-results.json",
+    "sha256": "118feb29dbb7aa924250fab709e9ad435748e1c3e4bd89fe3fe756cb49f9cc09"
+  },
+  "independent_acceptance": false,
+  "next_gate": "fresh Opus resource-summary review R2 active"
+}

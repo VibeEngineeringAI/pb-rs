@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "scope": "Retained local R5 functional-only sample shapes; not timing or performance evidence.",
+  "local_provenance": "Verbatim copies of saved local loopback-fixture functional sample artifacts, used only as mocked collector/finalizer regression inputs.",
+  "fixtures": {
+    "go-one-row.json": {
+      "original_sha256": "7c8cf496caf6f0fc0f9a9eaa1e477fe49be5dba5498e3e45fe515b73da8dfa69",
+      "size_bytes": 8744,
+      "source_artifact": "/home/ajs/.cache/pb-phase6/tmp/review-r5-small-1791983701170602345/go-one-row/sample.json"
+    },
+    "go-idle.json": {
+      "original_sha256": "4e969fa151113ad9a36b486c6b4e8ebf75222df3d64dae7c5ce9715a183db889",
+      "size_bytes": 8819,
+      "source_artifact": "/home/ajs/.cache/pb-phase6/tmp/review-r5-small-1791983701170602345/go-idle/sample.json"
+    }
+  }
+}

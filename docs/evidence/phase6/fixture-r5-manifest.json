@@ -1,0 +1,206 @@
+{
+  "binary": {
+    "path": "/home/ajs/.cache/pb-phase6/tmp/fx/pb-fixture-r5",
+    "sha256": "c85f63f9f01a1be6eaa66e6802dae0c3f08409be2ad538d358a7e70f2f5ce314",
+    "size_bytes": 24426260
+  },
+  "build_argv": [
+    "/home/ajs/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.4.linux-amd64/bin/go",
+    "build",
+    "-trimpath",
+    "-buildvcs=false",
+    "-o",
+    "/home/ajs/.cache/pb-phase6/tmp/fx/pb-fixture-r5",
+    "./harness/fixture/"
+  ],
+  "build_environment": {
+    "CLAUDE_CODE_TMPDIR": "/home/ajs/.cache/pb-phase6/tmp",
+    "GOPROXY": "off",
+    "GOTMPDIR": "/home/ajs/.cache/pb-phase6/tmp",
+    "GOTOOLCHAIN": "local",
+    "TMPDIR": "/home/ajs/.cache/pb-phase6/tmp"
+  },
+  "build_flags": [
+    "-trimpath",
+    "-buildvcs=false",
+    "-o",
+    "/home/ajs/.cache/pb-phase6/tmp/fx/pb-fixture-r5",
+    "./harness/fixture/"
+  ],
+  "build_source_paths": {
+    "docs/phase6-fixture-notes.md": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/docs/phase6-fixture-notes.md",
+    "go.mod": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/go.mod",
+    "go.sum": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/go.sum",
+    "main.go": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/fixture/main.go",
+    "main_test.go": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/fixture/main_test.go",
+    "phase6.go": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/fixture/phase6.go",
+    "phase6_test.go": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/fixture/phase6_test.go"
+  },
+  "embedded_build_info": "/home/ajs/.cache/pb-phase6/tmp/fx/pb-fixture-r5: go1.25.4\n\tpath\tgithub.com/parseablehq/pb/harness/fixture\n\tmod\tgithub.com/parseablehq/pb\t(devel)\t\n\tdep\tgithub.com/apache/arrow/go/v13\tv13.0.0\th1:kELrvDQuKZo8csdWYqBQfyi431x6Zs/YJTEgUuSVcWk=\n\tdep\tgithub.com/goccy/go-json\tv0.10.0\th1:mXKd9Qw4NuzShiRlOXKews24ufknHO7gx30lsDyokKA=\n\tdep\tgithub.com/google/flatbuffers\tv23.1.21+incompatible\th1:bUqzx/MXCDxuS0hRJL2EfjyZL3uQrPbMocUa8zGqsTA=\n\tdep\tgithub.com/klauspost/compress\tv1.16.7\th1:2mk3MPGNzKyxErAw8YaohYh69+pa4sIQSC0fPGCFR9I=\n\tdep\tgithub.com/klauspost/cpuid/v2\tv2.2.3\th1:sxCkb+qR91z4vsqw4vGGZlDgPz3G7gjaLyK3V8y70BU=\n\tdep\tgithub.com/pierrec/lz4/v4\tv4.1.17\th1:kV4Ip+/hUBC+8T6+2EgburRtkE9ef4nbY3f4dFhGjMc=\n\tdep\tgithub.com/zeebo/xxh3\tv1.0.2\th1:xZmwmqxHZA8AI603jOQ0tMqmBr9lPeFwGg6d+xy9DC0=\n\tdep\tgolang.org/x/net\tv0.30.0\th1:AcW1SDZMkb8IpzCdQUaIq2sP4sZ4zw+55h6ynffypl4=\n\tdep\tgolang.org/x/sys\tv0.27.0\th1:wBqf8DvsY9Y/2P8gAfPDEYNuS30J4lPHJxXSb/nJZ+s=\n\tdep\tgolang.org/x/text\tv0.20.0\th1:gK/Kv2otX8gz+wn7Rmb3vT96ZwuoxnQlY+HlJVj7Qug=\n\tdep\tgolang.org/x/xerrors\tv0.0.0-20220907171357-04be3eba64a2\th1:H2TDz8ibqkAF6YGhCdN3jS9O0/s90v0rJh3X/OLHEUk=\n\tdep\tgoogle.golang.org/genproto/googleapis/rpc\tv0.0.0-20240701130421-f6361c86f094\th1:BwIjyKYGsK9dMCBOorzRri8MQwmi7mT9rGHsCEinZkA=\n\tdep\tgoogle.golang.org/grpc\tv1.65.0\th1:bs/cUb4lp1G5iImFFd3u5ixQzweKizoZJAwBNLR42lc=\n\tdep\tgoogle.golang.org/protobuf\tv1.35.1\th1:m3LfL6/Ca+fqnjnlqQXNpFPABW1UD7mjh8KO2mKFytA=\n\tbuild\t-buildmode=exe\n\tbuild\t-compiler=gc\n\tbuild\t-trimpath=true\n\tbuild\tCGO_ENABLED=1\n\tbuild\tGOARCH=amd64\n\tbuild\tGOOS=linux\n\tbuild\tGOAMD64=v1\n",
+  "go_env": {
+    "AR": "ar",
+    "CC": "gcc",
+    "CGO_CFLAGS": "-O2 -g",
+    "CGO_CPPFLAGS": "",
+    "CGO_CXXFLAGS": "-O2 -g",
+    "CGO_ENABLED": "1",
+    "CGO_FFLAGS": "-O2 -g",
+    "CGO_LDFLAGS": "-O2 -g",
+    "CXX": "g++",
+    "GCCGO": "gccgo",
+    "GO111MODULE": "",
+    "GOAMD64": "v1",
+    "GOARCH": "amd64",
+    "GOAUTH": "netrc",
+    "GOBIN": "",
+    "GOCACHE": "/home/ajs/.cache/go-build",
+    "GOCACHEPROG": "",
+    "GODEBUG": "",
+    "GOENV": "/home/ajs/.config/go/env",
+    "GOEXE": "",
+    "GOEXPERIMENT": "",
+    "GOFIPS140": "off",
+    "GOFLAGS": "",
+    "GOGCCFLAGS": "-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=0 -ffile-prefix-map=/home/ajs/.cache/pb-phase6/tmp/go-build3042684347=/tmp/go-build -gno-record-gcc-switches",
+    "GOHOSTARCH": "amd64",
+    "GOHOSTOS": "linux",
+    "GOINSECURE": "",
+    "GOMOD": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/go.mod",
+    "GOMODCACHE": "/home/ajs/go/pkg/mod",
+    "GONOPROXY": "",
+    "GONOSUMDB": "",
+    "GOOS": "linux",
+    "GOPATH": "/home/ajs/go",
+    "GOPRIVATE": "",
+    "GOPROXY": "off",
+    "GOROOT": "/home/ajs/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.4.linux-amd64",
+    "GOSUMDB": "sum.golang.org",
+    "GOTELEMETRY": "local",
+    "GOTELEMETRYDIR": "/home/ajs/.config/go/telemetry",
+    "GOTMPDIR": "/home/ajs/.cache/pb-phase6/tmp",
+    "GOTOOLCHAIN": "local",
+    "GOTOOLDIR": "/home/ajs/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.4.linux-amd64/pkg/tool/linux_amd64",
+    "GOVCS": "",
+    "GOVERSION": "go1.25.4",
+    "GOWORK": "",
+    "PKG_CONFIG": "pkg-config"
+  },
+  "modules": [
+    {
+      "kind": "mod",
+      "path": "github.com/parseablehq/pb",
+      "sum": null,
+      "version": "(devel)"
+    },
+    {
+      "kind": "dep",
+      "path": "github.com/apache/arrow/go/v13",
+      "sum": "h1:kELrvDQuKZo8csdWYqBQfyi431x6Zs/YJTEgUuSVcWk=",
+      "version": "v13.0.0"
+    },
+    {
+      "kind": "dep",
+      "path": "github.com/goccy/go-json",
+      "sum": "h1:mXKd9Qw4NuzShiRlOXKews24ufknHO7gx30lsDyokKA=",
+      "version": "v0.10.0"
+    },
+    {
+      "kind": "dep",
+      "path": "github.com/google/flatbuffers",
+      "sum": "h1:bUqzx/MXCDxuS0hRJL2EfjyZL3uQrPbMocUa8zGqsTA=",
+      "version": "v23.1.21+incompatible"
+    },
+    {
+      "kind": "dep",
+      "path": "github.com/klauspost/compress",
+      "sum": "h1:2mk3MPGNzKyxErAw8YaohYh69+pa4sIQSC0fPGCFR9I=",
+      "version": "v1.16.7"
+    },
+    {
+      "kind": "dep",
+      "path": "github.com/klauspost/cpuid/v2",
+      "sum": "h1:sxCkb+qR91z4vsqw4vGGZlDgPz3G7gjaLyK3V8y70BU=",
+      "version": "v2.2.3"
+    },
+    {
+      "kind": "dep",
+      "path": "github.com/pierrec/lz4/v4",
+      "sum": "h1:kV4Ip+/hUBC+8T6+2EgburRtkE9ef4nbY3f4dFhGjMc=",
+      "version": "v4.1.17"
+    },
+    {
+      "kind": "dep",
+      "path": "github.com/zeebo/xxh3",
+      "sum": "h1:xZmwmqxHZA8AI603jOQ0tMqmBr9lPeFwGg6d+xy9DC0=",
+      "version": "v1.0.2"
+    },
+    {
+      "kind": "dep",
+      "path": "golang.org/x/net",
+      "sum": "h1:AcW1SDZMkb8IpzCdQUaIq2sP4sZ4zw+55h6ynffypl4=",
+      "version": "v0.30.0"
+    },
+    {
+      "kind": "dep",
+      "path": "golang.org/x/sys",
+      "sum": "h1:wBqf8DvsY9Y/2P8gAfPDEYNuS30J4lPHJxXSb/nJZ+s=",
+      "version": "v0.27.0"
+    },
+    {
+      "kind": "dep",
+      "path": "golang.org/x/text",
+      "sum": "h1:gK/Kv2otX8gz+wn7Rmb3vT96ZwuoxnQlY+HlJVj7Qug=",
+      "version": "v0.20.0"
+    },
+    {
+      "kind": "dep",
+      "path": "golang.org/x/xerrors",
+      "sum": "h1:H2TDz8ibqkAF6YGhCdN3jS9O0/s90v0rJh3X/OLHEUk=",
+      "version": "v0.0.0-20220907171357-04be3eba64a2"
+    },
+    {
+      "kind": "dep",
+      "path": "google.golang.org/genproto/googleapis/rpc",
+      "sum": "h1:BwIjyKYGsK9dMCBOorzRri8MQwmi7mT9rGHsCEinZkA=",
+      "version": "v0.0.0-20240701130421-f6361c86f094"
+    },
+    {
+      "kind": "dep",
+      "path": "google.golang.org/grpc",
+      "sum": "h1:bs/cUb4lp1G5iImFFd3u5ixQzweKizoZJAwBNLR42lc=",
+      "version": "v1.65.0"
+    },
+    {
+      "kind": "dep",
+      "path": "google.golang.org/protobuf",
+      "sum": "h1:m3LfL6/Ca+fqnjnlqQXNpFPABW1UD7mjh8KO2mKFytA=",
+      "version": "v1.35.1"
+    }
+  ],
+  "schema_version": 1,
+  "source_paths": {
+    "docs/phase6-fixture-notes.md": "/home/ajs/.cache/pb-phase6/tmp/fx/pb-fixture-r5.sources/docs/phase6-fixture-notes.md",
+    "go.mod": "/home/ajs/.cache/pb-phase6/tmp/fx/pb-fixture-r5.sources/go.mod",
+    "go.sum": "/home/ajs/.cache/pb-phase6/tmp/fx/pb-fixture-r5.sources/go.sum",
+    "main.go": "/home/ajs/.cache/pb-phase6/tmp/fx/pb-fixture-r5.sources/main.go",
+    "main_test.go": "/home/ajs/.cache/pb-phase6/tmp/fx/pb-fixture-r5.sources/main_test.go",
+    "phase6.go": "/home/ajs/.cache/pb-phase6/tmp/fx/pb-fixture-r5.sources/phase6.go",
+    "phase6_test.go": "/home/ajs/.cache/pb-phase6/tmp/fx/pb-fixture-r5.sources/phase6_test.go"
+  },
+  "source_root": "/home/ajs/.cache/pb-phase6/tmp/fx/pb-fixture-r5.sources",
+  "source_worktree": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail",
+  "sources": {
+    "docs/phase6-fixture-notes.md": "c70fff448ce1ca63ac918f47581d75279065cddb34793cbf7b73be136469d774",
+    "go.mod": "90555a3ae88bee209ce16845ad259afa2e4c9b3c14890e0578a8a514c1350565",
+    "go.sum": "ae20b3abc13e58b529d7f5219d657f506df24c471aa873d9b72d3435954f92ac",
+    "main.go": "d9025f74429d96cae9d49ec3a4cb633770aad7b44cb974f686548aca9e37bdb0",
+    "main_test.go": "6575232d3fbcf908734a2d6e537c1c16098907c779e7015ad4c777412ecb5beb",
+    "phase6.go": "8e77b9681cadb9bdc7a87fa1ebbbd6520d87fbca3b7ed2298f20af3ba9e12eb3",
+    "phase6_test.go": "3b42e6916bbf68170fdb9c2fc24a2557f7c6e58534a24bd5bed7161b6c6e7b07"
+  },
+  "toolchain": {
+    "path": "/home/ajs/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.4.linux-amd64/bin/go",
+    "sha256": "06c386d4ead3c7e28565a544d0e7693d5998f060bc75029a5e86b52b4f824767",
+    "version": "go version go1.25.4 linux/amd64"
+  }
+}

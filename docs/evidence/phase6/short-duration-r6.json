@@ -1,0 +1,4940 @@
+{
+  "schema_version": 1,
+  "scope": "R6 five short duration modes, separate full and hash-framing collectors; busy host expressly authorized; no comparative acceptance",
+  "parent_manifest_sha256": "a47093f4a3ea785a310f7ca1baa92444deaf7e21db5ba7db72dc897ddc3d047b",
+  "partitions": 10,
+  "measured_sessions": 20,
+  "contract_controls": 20,
+  "warmups": 0,
+  "nominal_duration_s": 60,
+  "seed": 2026,
+  "session_index": 0,
+  "tls": false,
+  "all_individual_samples_valid": true,
+  "comparative_ratios_null": 80,
+  "cpu_screen_counts": {
+    "flagged": 20
+  },
+  "independent_review": {
+    "status": "scoped retained-evidence integrity accepted; not native launch or quantitative acceptance",
+    "report": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/docs/phase6-short-duration-review-sol.md",
+      "sha256": "03bb5000c1b3ad19802602dde6026d3a60a51b529f0e94d38cd714f1657274a5",
+      "size_bytes": 21789
+    },
+    "receipt": {
+      "path": "/home/ajs/.cache/pb-phase6/short-duration-review-sol/review-receipt.json",
+      "sha256": "95a6362fa9297901a2da07d313434c56d6cccae5e0e3dc8daeb1a6d19bce4e9e"
+    },
+    "checks": 372650,
+    "failures": [],
+    "reviewed_summary_sha256": "997dc72f4fbbd20ce494b726af6327fdec2ad884614a31591c866e07f2aab2e3",
+    "pending_followups": [
+      "fresh-seed slow-sink and reconnect resource controls before respective soak",
+      "independent omission conservation and direct native exit cross-check for future duration evidence"
+    ]
+  },
+  "entries": [
+    {
+      "campaign": "campaign-r6-short-steady-full-01",
+      "report": {
+        "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-steady-full-01/report.json",
+        "sha256": "76bf6a587d38407a8848cc6367946b32ae290da19513c000fd811c5c685c3fed"
+      },
+      "resources": {
+        "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-steady-full-01/resources-offline.json",
+        "size_bytes": 34318,
+        "sha256": "53f734b41cc40c20029da1e4785e22e140640ada0a9055d2b87d938558d2e504"
+      },
+      "cleanup": {
+        "campaign_id": "campaign-r6-short-steady-full-01",
+        "started_utc": "2026-10-15T00:05:05.210737+00:00",
+        "ended_utc": "2026-10-15T00:07:05.951138+00:00",
+        "exit_code": 0,
+        "cleanup_utc": "2026-10-15T00:07:05.967662+00:00",
+        "pid_gone": true,
+        "matching_processes": [],
+        "lock_reacquired_nonblocking_and_released": true,
+        "report_sha256": "76bf6a587d38407a8848cc6367946b32ae290da19513c000fd811c5c685c3fed",
+        "passed": true,
+        "complete": true,
+        "failure": null,
+        "end_identity_check": {
+          "passed": true,
+          "changed": []
+        },
+        "recorded_measured_samples": 2,
+        "comparison_contracts_passed": true,
+        "quarantine": {
+          "steady": [
+            "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+          ]
+        }
+      },
+      "comparison": {
+        "comparable": true,
+        "reasons": [],
+        "differing_fields": [],
+        "checked_fields": [
+          "stdout_sha256",
+          "stdout_bytes",
+          "rendered_rows",
+          "batches",
+          "stderr_sha256",
+          "termination",
+          "requests",
+          "ticket_sha256",
+          "request_validation",
+          "workload_sha256",
+          "sink",
+          "tls",
+          "config_before",
+          "config_after"
+        ],
+        "samples": 2
+      },
+      "ratio_quarantine": [
+        "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+      ],
+      "metric_quarantine": {
+        "wall_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "schedule_bound: absolute observations only"
+        ],
+        "first_complete_record_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "fixture_to_first_complete_record_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "cpu_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "cpu_us_per_row": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "peak_rss_bytes": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "rows_per_second": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "schedule_bound: absolute observations only"
+        ],
+        "output_bytes_per_second": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "schedule_bound: absolute observations only"
+        ]
+      },
+      "samples": [
+        {
+          "role": "go",
+          "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-steady-full-01/steady/sample-000-go/sample.json",
+          "sha256": "6488bb0c736ae6a2455d624983ba9c0e53a758dfe4719692f370741ac59aab7c",
+          "rows": 384000,
+          "batches": 3000,
+          "stdout_bytes": 68540781,
+          "stdout_sha256": "f07ea53c9f71e5c1d995e54bfceb723d6b6866826b7d0cec5b48c6fcca5390f0",
+          "wall_ms": 60016.526508,
+          "cpu_ms": 1665.996,
+          "cpu_us_per_row": 4.33853125,
+          "peak_rss_bytes": 62304256,
+          "sampled_resources": {
+            "rss_bytes": {
+              "samples": 261,
+              "first": 61644800,
+              "last": 64409600,
+              "minimum": 61644800,
+              "maximum": 64503808,
+              "slope_per_second": 23275.253346627545
+            },
+            "fds": {
+              "samples": 261,
+              "first": 7,
+              "last": 7,
+              "minimum": 7,
+              "maximum": 7,
+              "slope_per_second": 0.0
+            },
+            "tasks": {
+              "samples": 261,
+              "first": 18,
+              "last": 21,
+              "minimum": 18,
+              "maximum": 21,
+              "slope_per_second": 0.055170313003535885
+            },
+            "cpu_user_ms": {
+              "samples": 261,
+              "first": 140.0,
+              "last": 1360.0,
+              "minimum": 140.0,
+              "maximum": 1360.0,
+              "slope_per_second": 22.377352644279885
+            },
+            "cpu_system_ms": {
+              "samples": 261,
+              "first": 30.0,
+              "last": 290.0,
+              "minimum": 30.0,
+              "maximum": 290.0,
+              "slope_per_second": 4.630479300712297
+            }
+          },
+          "sample_count": 284,
+          "missing_proc_samples": 1,
+          "production": {
+            "errors": [],
+            "scheduled_batches": 3000,
+            "delivered_batches": 3000,
+            "throughput_admissible": true,
+            "mode": "schedule_bound",
+            "live": {
+              "ops": 1,
+              "stopped_by_count": 0,
+              "stopped_by_deadline": 1,
+              "stopped_by_termination": 0,
+              "scheduled_batches": 3000,
+              "unbounded_ops": 0,
+              "emitted_batches": 3000,
+              "omitted_by_deadline": 0,
+              "omitted_by_termination": 0,
+              "lateness_ns": {
+                "count": 3000,
+                "sum": 2788043515,
+                "max": 3225507
+              },
+              "send_call_ns": {
+                "count": 3000,
+                "sum": 41408323,
+                "max": 462484
+              },
+              "last": {
+                "scheduled": 3000,
+                "emitted": 3000,
+                "stop_reason": "deadline",
+                "started_ns": 1034063970080145,
+                "deadline_ns": 1034123970080145,
+                "ended_ns": 1034123951435555,
+                "interval_ms": 20,
+                "duration_ms": 60000,
+                "batches": 0
+              }
+            },
+            "producer_deadline_ns": 1034123970080145,
+            "send_call_semantics": "marshaling/copy/flow-control Send wall; not pure blocking time",
+            "schedule_complete": true
+          },
+          "request_evidence": {
+            "admission": "exact_summary_counters",
+            "captured_dogets": 1,
+            "uncaptured_dogets": 0,
+            "captured_about_requests": 1,
+            "terminal_event_captured": true,
+            "request_validation": {
+              "auth_checks": 1,
+              "invalid_auth": 0,
+              "ticket_checks": 1,
+              "ticket_mismatches": 0,
+              "unexpected_requests": 0,
+              "doget_before_about": 0
+            }
+          },
+          "fixture_events_dropped": 0,
+          "fixture_sent_rows": 384000,
+          "fixture_expected_output_ns": 739336680,
+          "cpu_screen": {
+            "observer": {
+              "start_ns": 1034063938622506,
+              "end_ns": 1034123956462398,
+              "user_ms": 3236.25,
+              "system_ms": 63.062000000000005,
+              "scope": "collector RUSAGE_SELF around collect, excludes children and post-capture validation"
+            },
+            "fixture": {
+              "user_ms": 1989.569,
+              "system_ms": 456.78,
+              "start_bounds": {
+                "start_ns": 1034063937738778,
+                "end_ns": 1034063938294693
+              },
+              "end_bounds": {
+                "start_ns": 1034123961461837,
+                "end_ns": 1034123962098938
+              },
+              "scope": "fixture lifetime CPU difference between pre-meter and post-exit summary snapshots",
+              "expected_output_encoding_wall_ms": 739.33668,
+              "expected_output_encoding_semantics": "monotonic encoding wall time; overlaps fixture CPU; never subtracted from native CPU"
+            },
+            "host_before": {
+              "start_ns": 1034063938532193,
+              "end_ns": 1034063938610635,
+              "counters": {
+                "user": 186212635,
+                "nice": 414783,
+                "system": 146283523,
+                "idle": 1711470761,
+                "iowait": 11548003,
+                "irq": 8017503,
+                "softirq": 5464194,
+                "steal": 0
+              },
+              "loadavg_raw": "7.32 9.23 8.90 8/3062 681137",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "host_after": {
+              "start_ns": 1034123957368423,
+              "end_ns": 1034123957532656,
+              "counters": {
+                "user": 186231068,
+                "nice": 414783,
+                "system": 146301099,
+                "idle": 1711552392,
+                "iowait": 11549233,
+                "irq": 8018159,
+                "softirq": 5464753,
+                "steal": 0
+              },
+              "loadavg_raw": "7.67 9.01 8.85 6/3091 920423",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "comparative_admissible": false,
+            "throughput_admissible": true,
+            "interference_status": "flagged",
+            "potential_limit_status": "below_screen",
+            "observer_busy_cores": 0.054973391363464075,
+            "fixture_busy_cores": 0.04076125597961605,
+            "system_tick_deltas": {
+              "user": 18433,
+              "nice": 0,
+              "system": 17576,
+              "idle": 81631,
+              "iowait": 1230,
+              "irq": 656,
+              "softirq": 559,
+              "steal": 0
+            },
+            "host_elapsed_ms": 60019.000463,
+            "system_busy_ms": 372240.0,
+            "client_cpu_ms": 1665.996,
+            "observer_cpu_ms": 3299.312,
+            "fixture_cpu_ms": 2446.349,
+            "residual_raw_ms": 364828.34300000005,
+            "unattributed_busy_cores_estimate": 6.078547463063907,
+            "unattributed_busy_cores_range": [
+              6.068885781670904,
+              6.088209144456909
+            ],
+            "interval_uncertainty_ms": 579.88446,
+            "attribution": "screening interval envelope, not exact attribution; no clean/quiescence claim"
+          }
+        },
+        {
+          "role": "candidate",
+          "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-steady-full-01/steady/sample-000-candidate/sample.json",
+          "sha256": "879ef6fa3ac2b4c4d9247575f6f64475a9cc2febfa51e86cab00b1a6b7ddc391",
+          "rows": 384000,
+          "batches": 3000,
+          "stdout_bytes": 68540781,
+          "stdout_sha256": "f07ea53c9f71e5c1d995e54bfceb723d6b6866826b7d0cec5b48c6fcca5390f0",
+          "wall_ms": 59985.131758,
+          "cpu_ms": 492.12100000000004,
+          "cpu_us_per_row": 1.281565104166667,
+          "peak_rss_bytes": 8495104,
+          "sampled_resources": {
+            "rss_bytes": {
+              "samples": 261,
+              "first": 8536064,
+              "last": 8536064,
+              "minimum": 8536064,
+              "maximum": 8536064,
+              "slope_per_second": 0.0
+            },
+            "fds": {
+              "samples": 261,
+              "first": 7,
+              "last": 7,
+              "minimum": 7,
+              "maximum": 7,
+              "slope_per_second": 0.0
+            },
+            "tasks": {
+              "samples": 261,
+              "first": 2,
+              "last": 2,
+              "minimum": 2,
+              "maximum": 2,
+              "slope_per_second": 0.0
+            },
+            "cpu_user_ms": {
+              "samples": 261,
+              "first": 30.0,
+              "last": 360.0,
+              "minimum": 30.0,
+              "maximum": 360.0,
+              "slope_per_second": 6.0427398451230525
+            },
+            "cpu_system_ms": {
+              "samples": 261,
+              "first": 10.0,
+              "last": 130.0,
+              "minimum": 10.0,
+              "maximum": 130.0,
+              "slope_per_second": 2.0949219796877627
+            }
+          },
+          "sample_count": 284,
+          "missing_proc_samples": 1,
+          "production": {
+            "errors": [],
+            "scheduled_batches": 3000,
+            "delivered_batches": 3000,
+            "throughput_admissible": true,
+            "mode": "schedule_bound",
+            "live": {
+              "ops": 1,
+              "stopped_by_count": 0,
+              "stopped_by_deadline": 1,
+              "stopped_by_termination": 0,
+              "scheduled_batches": 3000,
+              "unbounded_ops": 0,
+              "emitted_batches": 3000,
+              "omitted_by_deadline": 0,
+              "omitted_by_termination": 0,
+              "lateness_ns": {
+                "count": 3000,
+                "sum": 2781906702,
+                "max": 3225106
+              },
+              "send_call_ns": {
+                "count": 3000,
+                "sum": 42260868,
+                "max": 812212
+              },
+              "last": {
+                "scheduled": 3000,
+                "emitted": 3000,
+                "stop_reason": "deadline",
+                "started_ns": 1034124044727957,
+                "deadline_ns": 1034184044727957,
+                "ended_ns": 1034184026156275,
+                "interval_ms": 20,
+                "duration_ms": 60000,
+                "batches": 0
+              }
+            },
+            "producer_deadline_ns": 1034184044727957,
+            "send_call_semantics": "marshaling/copy/flow-control Send wall; not pure blocking time",
+            "schedule_complete": true
+          },
+          "request_evidence": {
+            "admission": "exact_summary_counters",
+            "captured_dogets": 1,
+            "uncaptured_dogets": 0,
+            "captured_about_requests": 1,
+            "terminal_event_captured": true,
+            "request_validation": {
+              "auth_checks": 1,
+              "invalid_auth": 0,
+              "ticket_checks": 1,
+              "ticket_mismatches": 0,
+              "unexpected_requests": 0,
+              "doget_before_about": 0
+            }
+          },
+          "fixture_events_dropped": 0,
+          "fixture_sent_rows": 384000,
+          "fixture_expected_output_ns": 722555769,
+          "cpu_screen": {
+            "observer": {
+              "start_ns": 1034124041255323,
+              "end_ns": 1034184028152112,
+              "user_ms": 3225.626,
+              "system_ms": 61.187000000000005,
+              "scope": "collector RUSAGE_SELF around collect, excludes children and post-capture validation"
+            },
+            "fixture": {
+              "user_ms": 1932.364,
+              "system_ms": 366.638,
+              "start_bounds": {
+                "start_ns": 1034124040236582,
+                "end_ns": 1034124040920775
+              },
+              "end_bounds": {
+                "start_ns": 1034184033958775,
+                "end_ns": 1034184034567798
+              },
+              "scope": "fixture lifetime CPU difference between pre-meter and post-exit summary snapshots",
+              "expected_output_encoding_wall_ms": 722.555769,
+              "expected_output_encoding_semantics": "monotonic encoding wall time; overlaps fixture CPU; never subtracted from native CPU"
+            },
+            "host_before": {
+              "start_ns": 1034124041154556,
+              "end_ns": 1034124041237878,
+              "counters": {
+                "user": 186231101,
+                "nice": 414783,
+                "system": 146301136,
+                "idle": 1711552487,
+                "iowait": 11549234,
+                "irq": 8018160,
+                "softirq": 5464753,
+                "steal": 0
+              },
+              "loadavg_raw": "7.67 9.01 8.85 9/3069 920758",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "host_after": {
+              "start_ns": 1034184028996228,
+              "end_ns": 1034184029165122,
+              "counters": {
+                "user": 186249833,
+                "nice": 414783,
+                "system": 146318907,
+                "idle": 1711633495,
+                "iowait": 11550540,
+                "irq": 8018816,
+                "softirq": 5465304,
+                "steal": 0
+              },
+              "loadavg_raw": "7.88 8.84 8.80 8/3057 1160181",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "comparative_admissible": false,
+            "throughput_admissible": true,
+            "interference_status": "flagged",
+            "potential_limit_status": "below_screen",
+            "observer_busy_cores": 0.054793794790017274,
+            "fixture_busy_cores": 0.03832619738629465,
+            "system_tick_deltas": {
+              "user": 18732,
+              "nice": 0,
+              "system": 17771,
+              "idle": 81008,
+              "iowait": 1306,
+              "irq": 656,
+              "softirq": 551,
+              "steal": 0
+            },
+            "host_elapsed_ms": 59988.010566,
+            "system_busy_ms": 377100.0,
+            "client_cpu_ms": 492.12100000000004,
+            "observer_cpu_ms": 3286.813,
+            "fixture_cpu_ms": 2299.002,
+            "residual_raw_ms": 371022.064,
+            "unattributed_busy_cores_estimate": 6.1849369648922465,
+            "unattributed_busy_cores_range": [
+              6.174830533719088,
+              6.1950433960654046
+            ],
+            "interval_uncertainty_ms": 606.2647,
+            "attribution": "screening interval envelope, not exact attribution; no clean/quiescence claim"
+          }
+        }
+      ]
+    },
+    {
+      "campaign": "campaign-r6-short-steady-hash-01",
+      "report": {
+        "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-steady-hash-01/report.json",
+        "sha256": "81d4e4c848fdbc03af14246c4bcf433c723bc29f82a3f8192458765b82ce46d5"
+      },
+      "resources": {
+        "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-steady-hash-01/resources-offline.json",
+        "size_bytes": 34253,
+        "sha256": "bbc584a6a3edff05f9da869cb378c0a09ad65cdfb098d1348598e780a96c2555"
+      },
+      "cleanup": {
+        "campaign_id": "campaign-r6-short-steady-hash-01",
+        "started_utc": "2026-10-15T00:07:45.948463+00:00",
+        "ended_utc": "2026-10-15T00:09:46.645682+00:00",
+        "exit_code": 0,
+        "cleanup_utc": "2026-10-15T00:09:46.659866+00:00",
+        "pid_gone": true,
+        "matching_processes": [],
+        "lock_reacquired_nonblocking_and_released": true,
+        "report_sha256": "81d4e4c848fdbc03af14246c4bcf433c723bc29f82a3f8192458765b82ce46d5",
+        "passed": true,
+        "complete": true,
+        "failure": null,
+        "end_identity_check": {
+          "passed": true,
+          "changed": []
+        },
+        "recorded_measured_samples": 2,
+        "comparison_contracts_passed": true,
+        "quarantine": {
+          "steady": [
+            "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+          ]
+        }
+      },
+      "comparison": {
+        "comparable": true,
+        "reasons": [],
+        "differing_fields": [],
+        "checked_fields": [
+          "stdout_sha256",
+          "stdout_bytes",
+          "rendered_rows",
+          "batches",
+          "stderr_sha256",
+          "termination",
+          "requests",
+          "ticket_sha256",
+          "request_validation",
+          "workload_sha256",
+          "sink",
+          "tls",
+          "config_before",
+          "config_after"
+        ],
+        "samples": 2
+      },
+      "ratio_quarantine": [
+        "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+      ],
+      "metric_quarantine": {
+        "wall_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "schedule_bound: absolute observations only"
+        ],
+        "first_complete_record_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "fixture_to_first_complete_record_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "cpu_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "cpu_us_per_row": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "peak_rss_bytes": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "rows_per_second": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "schedule_bound: absolute observations only"
+        ],
+        "output_bytes_per_second": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "schedule_bound: absolute observations only"
+        ]
+      },
+      "samples": [
+        {
+          "role": "go",
+          "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-steady-hash-01/steady/sample-000-go/sample.json",
+          "sha256": "b57e88fbc6588f1a0c3679cb7cdc2cc4e54ac78e98d78b5ed8dd9a732421f081",
+          "rows": 384000,
+          "batches": 3000,
+          "stdout_bytes": 68540781,
+          "stdout_sha256": "f07ea53c9f71e5c1d995e54bfceb723d6b6866826b7d0cec5b48c6fcca5390f0",
+          "wall_ms": 60011.361712,
+          "cpu_ms": 1643.766,
+          "cpu_us_per_row": 4.280640625,
+          "peak_rss_bytes": 62390272,
+          "sampled_resources": {
+            "rss_bytes": {
+              "samples": 264,
+              "first": 61796352,
+              "last": 63860736,
+              "minimum": 61796352,
+              "maximum": 64540672,
+              "slope_per_second": 20665.030075490446
+            },
+            "fds": {
+              "samples": 264,
+              "first": 7,
+              "last": 7,
+              "minimum": 7,
+              "maximum": 7,
+              "slope_per_second": 0.0
+            },
+            "tasks": {
+              "samples": 264,
+              "first": 17,
+              "last": 20,
+              "minimum": 17,
+              "maximum": 20,
+              "slope_per_second": 0.05625569555525867
+            },
+            "cpu_user_ms": {
+              "samples": 264,
+              "first": 150.0,
+              "last": 1380.0,
+              "minimum": 150.0,
+              "maximum": 1380.0,
+              "slope_per_second": 22.341084570963385
+            },
+            "cpu_system_ms": {
+              "samples": 264,
+              "first": 20.0,
+              "last": 250.0,
+              "minimum": 20.0,
+              "maximum": 250.0,
+              "slope_per_second": 4.258489832051755
+            }
+          },
+          "sample_count": 287,
+          "missing_proc_samples": 1,
+          "production": {
+            "errors": [],
+            "scheduled_batches": 3000,
+            "delivered_batches": 3000,
+            "throughput_admissible": true,
+            "mode": "schedule_bound",
+            "live": {
+              "ops": 1,
+              "stopped_by_count": 0,
+              "stopped_by_deadline": 1,
+              "stopped_by_termination": 0,
+              "scheduled_batches": 3000,
+              "unbounded_ops": 0,
+              "emitted_batches": 3000,
+              "omitted_by_deadline": 0,
+              "omitted_by_termination": 0,
+              "lateness_ns": {
+                "count": 3000,
+                "sum": 2801347794,
+                "max": 4002203
+              },
+              "send_call_ns": {
+                "count": 3000,
+                "sum": 41759106,
+                "max": 201213
+              },
+              "last": {
+                "scheduled": 3000,
+                "emitted": 3000,
+                "stop_reason": "deadline",
+                "started_ns": 1034224689767532,
+                "deadline_ns": 1034284689767532,
+                "ended_ns": 1034284670262569,
+                "interval_ms": 20,
+                "duration_ms": 60000,
+                "batches": 0
+              }
+            },
+            "producer_deadline_ns": 1034284689767532,
+            "send_call_semantics": "marshaling/copy/flow-control Send wall; not pure blocking time",
+            "schedule_complete": true
+          },
+          "request_evidence": {
+            "admission": "exact_summary_counters",
+            "captured_dogets": 1,
+            "uncaptured_dogets": 0,
+            "captured_about_requests": 1,
+            "terminal_event_captured": true,
+            "request_validation": {
+              "auth_checks": 1,
+              "invalid_auth": 0,
+              "ticket_checks": 1,
+              "ticket_mismatches": 0,
+              "unexpected_requests": 0,
+              "doget_before_about": 0
+            }
+          },
+          "fixture_events_dropped": 0,
+          "fixture_sent_rows": 384000,
+          "fixture_expected_output_ns": 738026925,
+          "cpu_screen": {
+            "observer": {
+              "start_ns": 1034224661471280,
+              "end_ns": 1034284674487338,
+              "user_ms": 570.9770000000001,
+              "system_ms": 63.98699999999999,
+              "scope": "collector RUSAGE_SELF around collect, excludes children and post-capture validation"
+            },
+            "fixture": {
+              "user_ms": 1991.531,
+              "system_ms": 448.709,
+              "start_bounds": {
+                "start_ns": 1034224660213231,
+                "end_ns": 1034224660925426
+              },
+              "end_bounds": {
+                "start_ns": 1034284681691717,
+                "end_ns": 1034284682487429
+              },
+              "scope": "fixture lifetime CPU difference between pre-meter and post-exit summary snapshots",
+              "expected_output_encoding_wall_ms": 738.026925,
+              "expected_output_encoding_semantics": "monotonic encoding wall time; overlaps fixture CPU; never subtracted from native CPU"
+            },
+            "host_before": {
+              "start_ns": 1034224661294801,
+              "end_ns": 1034224661449956,
+              "counters": {
+                "user": 186261956,
+                "nice": 414783,
+                "system": 146330296,
+                "idle": 1711689617,
+                "iowait": 11551411,
+                "irq": 8019253,
+                "softirq": 5465671,
+                "steal": 0
+              },
+              "loadavg_raw": "6.52 8.37 8.64 6/2994 1312313",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "host_after": {
+              "start_ns": 1034284675389358,
+              "end_ns": 1034284675555996,
+              "counters": {
+                "user": 186280091,
+                "nice": 414783,
+                "system": 146346057,
+                "idle": 1711772747,
+                "iowait": 11553278,
+                "irq": 8019948,
+                "softirq": 5466192,
+                "steal": 0
+              },
+              "loadavg_raw": "6.51 8.00 8.50 8/3073 1507355",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "comparative_admissible": false,
+            "throughput_admissible": true,
+            "interference_status": "flagged",
+            "potential_limit_status": "below_screen",
+            "observer_busy_cores": 0.010580729746597824,
+            "fixture_busy_cores": 0.040662966651397355,
+            "system_tick_deltas": {
+              "user": 18135,
+              "nice": 0,
+              "system": 15761,
+              "idle": 83130,
+              "iowait": 1867,
+              "irq": 695,
+              "softirq": 521,
+              "steal": 0
+            },
+            "host_elapsed_ms": 60014.261195,
+            "system_busy_ms": 351120.0,
+            "client_cpu_ms": 1643.766,
+            "observer_cpu_ms": 634.964,
+            "fixture_cpu_ms": 2440.24,
+            "residual_raw_ms": 346401.03,
+            "unattributed_busy_cores_estimate": 5.771978578132691,
+            "unattributed_busy_cores_range": [
+              5.761261917672433,
+              5.782695238592948
+            ],
+            "interval_uncertainty_ms": 643.15246,
+            "attribution": "screening interval envelope, not exact attribution; no clean/quiescence claim"
+          }
+        },
+        {
+          "role": "candidate",
+          "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-steady-hash-01/steady/sample-000-candidate/sample.json",
+          "sha256": "2f3eb4cfe6af2e8a7c0c028d40e258d15bde4d1c6828c575ebdc9166104ffc69",
+          "rows": 384000,
+          "batches": 3000,
+          "stdout_bytes": 68540781,
+          "stdout_sha256": "f07ea53c9f71e5c1d995e54bfceb723d6b6866826b7d0cec5b48c6fcca5390f0",
+          "wall_ms": 59984.468484,
+          "cpu_ms": 493.41,
+          "cpu_us_per_row": 1.284921875,
+          "peak_rss_bytes": 8499200,
+          "sampled_resources": {
+            "rss_bytes": {
+              "samples": 264,
+              "first": 8617984,
+              "last": 8617984,
+              "minimum": 8617984,
+              "maximum": 8617984,
+              "slope_per_second": 0.0
+            },
+            "fds": {
+              "samples": 264,
+              "first": 7,
+              "last": 7,
+              "minimum": 7,
+              "maximum": 7,
+              "slope_per_second": 0.0
+            },
+            "tasks": {
+              "samples": 264,
+              "first": 2,
+              "last": 2,
+              "minimum": 2,
+              "maximum": 2,
+              "slope_per_second": 0.0
+            },
+            "cpu_user_ms": {
+              "samples": 264,
+              "first": 20.0,
+              "last": 360.0,
+              "minimum": 20.0,
+              "maximum": 360.0,
+              "slope_per_second": 5.9925603412002335
+            },
+            "cpu_system_ms": {
+              "samples": 264,
+              "first": 10.0,
+              "last": 130.0,
+              "minimum": 10.0,
+              "maximum": 130.0,
+              "slope_per_second": 2.1291949079816797
+            }
+          },
+          "sample_count": 287,
+          "missing_proc_samples": 1,
+          "production": {
+            "errors": [],
+            "scheduled_batches": 3000,
+            "delivered_batches": 3000,
+            "throughput_admissible": true,
+            "mode": "schedule_bound",
+            "live": {
+              "ops": 1,
+              "stopped_by_count": 0,
+              "stopped_by_deadline": 1,
+              "stopped_by_termination": 0,
+              "scheduled_batches": 3000,
+              "unbounded_ops": 0,
+              "emitted_batches": 3000,
+              "omitted_by_deadline": 0,
+              "omitted_by_termination": 0,
+              "lateness_ns": {
+                "count": 3000,
+                "sum": 2761668192,
+                "max": 2908866
+              },
+              "send_call_ns": {
+                "count": 3000,
+                "sum": 40017824,
+                "max": 163409
+              },
+              "last": {
+                "scheduled": 3000,
+                "emitted": 3000,
+                "stop_reason": "deadline",
+                "started_ns": 1034284778357589,
+                "deadline_ns": 1034344778357589,
+                "ended_ns": 1034344759312974,
+                "interval_ms": 20,
+                "duration_ms": 60000,
+                "batches": 0
+              }
+            },
+            "producer_deadline_ns": 1034344778357589,
+            "send_call_semantics": "marshaling/copy/flow-control Send wall; not pure blocking time",
+            "schedule_complete": true
+          },
+          "request_evidence": {
+            "admission": "exact_summary_counters",
+            "captured_dogets": 1,
+            "uncaptured_dogets": 0,
+            "captured_about_requests": 1,
+            "terminal_event_captured": true,
+            "request_validation": {
+              "auth_checks": 1,
+              "invalid_auth": 0,
+              "ticket_checks": 1,
+              "ticket_mismatches": 0,
+              "unexpected_requests": 0,
+              "doget_before_about": 0
+            }
+          },
+          "fixture_events_dropped": 0,
+          "fixture_sent_rows": 384000,
+          "fixture_expected_output_ns": 728129270,
+          "cpu_screen": {
+            "observer": {
+              "start_ns": 1034284774855136,
+              "end_ns": 1034344760276139,
+              "user_ms": 577.309,
+              "system_ms": 59.64999999999999,
+              "scope": "collector RUSAGE_SELF around collect, excludes children and post-capture validation"
+            },
+            "fixture": {
+              "user_ms": 1884.352,
+              "system_ms": 416.337,
+              "start_bounds": {
+                "start_ns": 1034284773920420,
+                "end_ns": 1034284774498578
+              },
+              "end_bounds": {
+                "start_ns": 1034344764529819,
+                "end_ns": 1034344765153761
+              },
+              "scope": "fixture lifetime CPU difference between pre-meter and post-exit summary snapshots",
+              "expected_output_encoding_wall_ms": 728.12927,
+              "expected_output_encoding_semantics": "monotonic encoding wall time; overlaps fixture CPU; never subtracted from native CPU"
+            },
+            "host_before": {
+              "start_ns": 1034284774751984,
+              "end_ns": 1034284774841623,
+              "counters": {
+                "user": 186280131,
+                "nice": 414783,
+                "system": 146346088,
+                "idle": 1711772869,
+                "iowait": 11553281,
+                "irq": 8019949,
+                "softirq": 5466193,
+                "steal": 0
+              },
+              "loadavg_raw": "6.51 8.00 8.50 7/3060 1507740",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "host_after": {
+              "start_ns": 1034344760909187,
+              "end_ns": 1034344760992592,
+              "counters": {
+                "user": 186299923,
+                "nice": 414783,
+                "system": 146364355,
+                "idle": 1711852345,
+                "iowait": 11554511,
+                "irq": 8020638,
+                "softirq": 5466736,
+                "steal": 0
+              },
+              "loadavg_raw": "6.57 7.77 8.39 5/3080 1750403",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "comparative_admissible": false,
+            "throughput_admissible": true,
+            "interference_status": "flagged",
+            "potential_limit_status": "below_screen",
+            "observer_busy_cores": 0.01061873208345423,
+            "fixture_busy_cores": 0.03835474512229239,
+            "system_tick_deltas": {
+              "user": 19792,
+              "nice": 0,
+              "system": 18267,
+              "idle": 79476,
+              "iowait": 1230,
+              "irq": 689,
+              "softirq": 543,
+              "steal": 0
+            },
+            "host_elapsed_ms": 59986.240608,
+            "system_busy_ms": 392910.0,
+            "client_cpu_ms": 493.41,
+            "observer_cpu_ms": 636.959,
+            "fixture_cpu_ms": 2300.6890000000003,
+            "residual_raw_ms": 389478.94200000004,
+            "unattributed_busy_cores_estimate": 6.492804650739483,
+            "unattributed_busy_cores_range": [
+              6.48360772100346,
+              6.502001580475507
+            ],
+            "interval_uncertainty_ms": 551.68924,
+            "attribution": "screening interval envelope, not exact attribution; no clean/quiescence claim"
+          }
+        }
+      ]
+    },
+    {
+      "campaign": "campaign-r6-short-idle-full-01",
+      "report": {
+        "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-idle-full-01/report.json",
+        "sha256": "077855583bdbc290b8d169ea44720d434daf9a5fd0b496ac6074da9dfcbaeae3"
+      },
+      "resources": {
+        "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-idle-full-01/resources-offline.json",
+        "size_bytes": 33690,
+        "sha256": "d906e7d4b399a8e9d9ceb316c7c3fdcd49a75b4daf848083f051d2598f908251"
+      },
+      "cleanup": {
+        "campaign_id": "campaign-r6-short-idle-full-01",
+        "started_utc": "2026-10-15T00:10:30.144919+00:00",
+        "ended_utc": "2026-10-15T00:12:30.738261+00:00",
+        "exit_code": 0,
+        "cleanup_utc": "2026-10-15T00:12:30.754425+00:00",
+        "pid_gone": true,
+        "matching_processes": [],
+        "lock_reacquired_nonblocking_and_released": true,
+        "report_sha256": "077855583bdbc290b8d169ea44720d434daf9a5fd0b496ac6074da9dfcbaeae3",
+        "passed": true,
+        "complete": true,
+        "failure": null,
+        "end_identity_check": {
+          "passed": true,
+          "changed": []
+        },
+        "recorded_measured_samples": 2,
+        "comparison_contracts_passed": true,
+        "quarantine": {
+          "idle": [
+            "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+          ]
+        }
+      },
+      "comparison": {
+        "comparable": true,
+        "reasons": [],
+        "differing_fields": [],
+        "checked_fields": [
+          "stdout_sha256",
+          "stdout_bytes",
+          "rendered_rows",
+          "batches",
+          "stderr_sha256",
+          "termination",
+          "requests",
+          "ticket_sha256",
+          "request_validation",
+          "workload_sha256",
+          "sink",
+          "tls",
+          "config_before",
+          "config_after"
+        ],
+        "samples": 2
+      },
+      "ratio_quarantine": [
+        "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+      ],
+      "metric_quarantine": {
+        "wall_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "schedule_bound: absolute observations only"
+        ],
+        "first_complete_record_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "metric unavailable"
+        ],
+        "fixture_to_first_complete_record_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "metric unavailable"
+        ],
+        "cpu_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "cpu_us_per_row": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "metric unavailable"
+        ],
+        "peak_rss_bytes": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "rows_per_second": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "schedule_bound: absolute observations only"
+        ],
+        "output_bytes_per_second": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "schedule_bound: absolute observations only"
+        ]
+      },
+      "samples": [
+        {
+          "role": "go",
+          "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-idle-full-01/idle/sample-000-go/sample.json",
+          "sha256": "d9a4075081ecaa952389c3c951b6af4eb7f5fe926404c6d536783b79feeec11b",
+          "rows": 0,
+          "batches": 0,
+          "stdout_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wall_ms": 60032.304817,
+          "cpu_ms": 42.081,
+          "cpu_us_per_row": null,
+          "peak_rss_bytes": 51044352,
+          "sampled_resources": {
+            "rss_bytes": {
+              "samples": 274,
+              "first": 52338688,
+              "last": 52338688,
+              "minimum": 52338688,
+              "maximum": 52338688,
+              "slope_per_second": 0.0
+            },
+            "fds": {
+              "samples": 274,
+              "first": 7,
+              "last": 7,
+              "minimum": 7,
+              "maximum": 7,
+              "slope_per_second": 0.0
+            },
+            "tasks": {
+              "samples": 274,
+              "first": 11,
+              "last": 11,
+              "minimum": 11,
+              "maximum": 11,
+              "slope_per_second": 0.0
+            },
+            "cpu_user_ms": {
+              "samples": 274,
+              "first": 30.0,
+              "last": 30.0,
+              "minimum": 30.0,
+              "maximum": 30.0,
+              "slope_per_second": 0.0
+            },
+            "cpu_system_ms": {
+              "samples": 274,
+              "first": 0.0,
+              "last": 0.0,
+              "minimum": 0.0,
+              "maximum": 0.0,
+              "slope_per_second": 0.0
+            }
+          },
+          "sample_count": 298,
+          "missing_proc_samples": 1,
+          "production": {
+            "errors": [],
+            "scheduled_batches": 0,
+            "delivered_batches": 0,
+            "throughput_admissible": true,
+            "mode": "finite"
+          },
+          "request_evidence": {
+            "admission": "exact_summary_counters",
+            "captured_dogets": 1,
+            "uncaptured_dogets": 0,
+            "captured_about_requests": 1,
+            "terminal_event_captured": true,
+            "request_validation": {
+              "auth_checks": 1,
+              "invalid_auth": 0,
+              "ticket_checks": 1,
+              "ticket_mismatches": 0,
+              "unexpected_requests": 0,
+              "doget_before_about": 0
+            }
+          },
+          "fixture_events_dropped": 0,
+          "fixture_sent_rows": 0,
+          "fixture_expected_output_ns": 0,
+          "cpu_screen": {
+            "observer": {
+              "start_ns": 1034388869078008,
+              "end_ns": 1034448902461622,
+              "user_ms": 209.029,
+              "system_ms": 39.717,
+              "scope": "collector RUSAGE_SELF around collect, excludes children and post-capture validation"
+            },
+            "fixture": {
+              "user_ms": 28.87,
+              "system_ms": 40.312,
+              "start_bounds": {
+                "start_ns": 1034388868192264,
+                "end_ns": 1034388868762255
+              },
+              "end_bounds": {
+                "start_ns": 1034448909358084,
+                "end_ns": 1034448910325191
+              },
+              "scope": "fixture lifetime CPU difference between pre-meter and post-exit summary snapshots",
+              "expected_output_encoding_wall_ms": 0.0,
+              "expected_output_encoding_semantics": "monotonic encoding wall time; overlaps fixture CPU; never subtracted from native CPU"
+            },
+            "host_before": {
+              "start_ns": 1034388868972454,
+              "end_ns": 1034388869062230,
+              "counters": {
+                "user": 186313999,
+                "nice": 414783,
+                "system": 146378203,
+                "idle": 1711910828,
+                "iowait": 11555456,
+                "irq": 8021132,
+                "softirq": 5467142,
+                "steal": 0
+              },
+              "loadavg_raw": "6.52 7.62 8.31 9/3053 1926245",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "host_after": {
+              "start_ns": 1034448903378001,
+              "end_ns": 1034448903532070,
+              "counters": {
+                "user": 186332069,
+                "nice": 414783,
+                "system": 146395777,
+                "idle": 1711992567,
+                "iowait": 11557017,
+                "irq": 8021791,
+                "softirq": 5467666,
+                "steal": 0
+              },
+              "loadavg_raw": "7.22 7.52 8.22 8/3031 2161478",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "comparative_admissible": false,
+            "throughput_admissible": true,
+            "interference_status": "flagged",
+            "potential_limit_status": "below_screen",
+            "observer_busy_cores": 0.004143535730608162,
+            "fixture_busy_cores": 0.001152412858558264,
+            "system_tick_deltas": {
+              "user": 18070,
+              "nice": 0,
+              "system": 17574,
+              "idle": 81739,
+              "iowait": 1561,
+              "irq": 659,
+              "softirq": 524,
+              "steal": 0
+            },
+            "host_elapsed_ms": 60034.559616,
+            "system_busy_ms": 368270.0,
+            "client_cpu_ms": 42.081,
+            "observer_cpu_ms": 248.74599999999998,
+            "fixture_cpu_ms": 69.182,
+            "residual_raw_ms": 367909.99100000004,
+            "unattributed_busy_cores_estimate": 6.128303319842246,
+            "unattributed_busy_cores_range": [
+              6.117974565138851,
+              6.138632074545641
+            ],
+            "interval_uncertainty_ms": 620.08224,
+            "attribution": "screening interval envelope, not exact attribution; no clean/quiescence claim"
+          }
+        },
+        {
+          "role": "candidate",
+          "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-idle-full-01/idle/sample-000-candidate/sample.json",
+          "sha256": "2e1963de2fd030504f69e8e783549c69f35f63fa1e49a0f90dd8af33d6fab331",
+          "rows": 0,
+          "batches": 0,
+          "stdout_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wall_ms": 60004.108762,
+          "cpu_ms": 2.661,
+          "cpu_us_per_row": null,
+          "peak_rss_bytes": 7897088,
+          "sampled_resources": {
+            "rss_bytes": {
+              "samples": 273,
+              "first": 8138752,
+              "last": 8138752,
+              "minimum": 8138752,
+              "maximum": 8138752,
+              "slope_per_second": 0.0
+            },
+            "fds": {
+              "samples": 273,
+              "first": 7,
+              "last": 7,
+              "minimum": 7,
+              "maximum": 7,
+              "slope_per_second": 0.0
+            },
+            "tasks": {
+              "samples": 273,
+              "first": 2,
+              "last": 2,
+              "minimum": 2,
+              "maximum": 2,
+              "slope_per_second": 0.0
+            },
+            "cpu_user_ms": {
+              "samples": 273,
+              "first": 0.0,
+              "last": 0.0,
+              "minimum": 0.0,
+              "maximum": 0.0,
+              "slope_per_second": 0.0
+            },
+            "cpu_system_ms": {
+              "samples": 273,
+              "first": 0.0,
+              "last": 0.0,
+              "minimum": 0.0,
+              "maximum": 0.0,
+              "slope_per_second": 0.0
+            }
+          },
+          "sample_count": 297,
+          "missing_proc_samples": 1,
+          "production": {
+            "errors": [],
+            "scheduled_batches": 0,
+            "delivered_batches": 0,
+            "throughput_admissible": true,
+            "mode": "finite"
+          },
+          "request_evidence": {
+            "admission": "exact_summary_counters",
+            "captured_dogets": 1,
+            "uncaptured_dogets": 0,
+            "captured_about_requests": 1,
+            "terminal_event_captured": true,
+            "request_validation": {
+              "auth_checks": 1,
+              "invalid_auth": 0,
+              "ticket_checks": 1,
+              "ticket_mismatches": 0,
+              "unexpected_requests": 0,
+              "doget_before_about": 0
+            }
+          },
+          "fixture_events_dropped": 0,
+          "fixture_sent_rows": 0,
+          "fixture_expected_output_ns": 0,
+          "cpu_screen": {
+            "observer": {
+              "start_ns": 1034448928301233,
+              "end_ns": 1034508934093154,
+              "user_ms": 201.39900000000006,
+              "system_ms": 45.173,
+              "scope": "collector RUSAGE_SELF around collect, excludes children and post-capture validation"
+            },
+            "fixture": {
+              "user_ms": 28.752,
+              "system_ms": 34.722,
+              "start_bounds": {
+                "start_ns": 1034448926882133,
+                "end_ns": 1034448927711666
+              },
+              "end_bounds": {
+                "start_ns": 1034508938882825,
+                "end_ns": 1034508939490299
+              },
+              "scope": "fixture lifetime CPU difference between pre-meter and post-exit summary snapshots",
+              "expected_output_encoding_wall_ms": 0.0,
+              "expected_output_encoding_semantics": "monotonic encoding wall time; overlaps fixture CPU; never subtracted from native CPU"
+            },
+            "host_before": {
+              "start_ns": 1034448928117220,
+              "end_ns": 1034448928282124,
+              "counters": {
+                "user": 186332079,
+                "nice": 414783,
+                "system": 146395784,
+                "idle": 1711992598,
+                "iowait": 11557017,
+                "irq": 8021791,
+                "softirq": 5467666,
+                "steal": 0
+              },
+              "loadavg_raw": "7.22 7.52 8.22 7/3030 2161602",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "host_after": {
+              "start_ns": 1034508934920145,
+              "end_ns": 1034508935075224,
+              "counters": {
+                "user": 186348229,
+                "nice": 414783,
+                "system": 146410958,
+                "idle": 1712078641,
+                "iowait": 11558583,
+                "irq": 8022449,
+                "softirq": 5468162,
+                "steal": 0
+              },
+              "loadavg_raw": "6.45 7.25 8.08 7/2964 2360922",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "comparative_admissible": false,
+            "throughput_admissible": true,
+            "interference_status": "flagged",
+            "potential_limit_status": "below_screen",
+            "observer_busy_cores": 0.004109251934363395,
+            "fixture_busy_cores": 0.0010578275606386049,
+            "system_tick_deltas": {
+              "user": 16150,
+              "nice": 0,
+              "system": 15174,
+              "idle": 86043,
+              "iowait": 1566,
+              "irq": 658,
+              "softirq": 496,
+              "steal": 0
+            },
+            "host_elapsed_ms": 60006.958004,
+            "system_busy_ms": 324780.0,
+            "client_cpu_ms": 2.661,
+            "observer_cpu_ms": 246.57200000000006,
+            "fixture_cpu_ms": 63.474000000000004,
+            "residual_raw_ms": 324467.293,
+            "unattributed_busy_cores_estimate": 5.407161165849656,
+            "unattributed_busy_cores_range": [
+              5.397273816786562,
+              5.417048514912751
+            ],
+            "interval_uncertainty_ms": 593.30974,
+            "attribution": "screening interval envelope, not exact attribution; no clean/quiescence claim"
+          }
+        }
+      ]
+    },
+    {
+      "campaign": "campaign-r6-short-idle-hash-01",
+      "report": {
+        "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-idle-hash-01/report.json",
+        "sha256": "a5c4622a503d2a04cfd161a271f5434a728fff58c0d6498dd32d330a7f76e129"
+      },
+      "resources": {
+        "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-idle-hash-01/resources-offline.json",
+        "size_bytes": 33697,
+        "sha256": "13701b52ccd0a4843380bb8ce6fdcc356336cb38a65186250a8ce009acb7a019"
+      },
+      "cleanup": {
+        "campaign_id": "campaign-r6-short-idle-hash-01",
+        "started_utc": "2026-10-15T00:13:43.412766+00:00",
+        "ended_utc": "2026-10-15T00:15:44.004481+00:00",
+        "exit_code": 0,
+        "cleanup_utc": "2026-10-15T00:15:44.030283+00:00",
+        "pid_gone": true,
+        "matching_processes": [],
+        "lock_reacquired_nonblocking_and_released": true,
+        "report_sha256": "a5c4622a503d2a04cfd161a271f5434a728fff58c0d6498dd32d330a7f76e129",
+        "passed": true,
+        "complete": true,
+        "failure": null,
+        "end_identity_check": {
+          "passed": true,
+          "changed": []
+        },
+        "recorded_measured_samples": 2,
+        "comparison_contracts_passed": true,
+        "quarantine": {
+          "idle": [
+            "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+          ]
+        }
+      },
+      "comparison": {
+        "comparable": true,
+        "reasons": [],
+        "differing_fields": [],
+        "checked_fields": [
+          "stdout_sha256",
+          "stdout_bytes",
+          "rendered_rows",
+          "batches",
+          "stderr_sha256",
+          "termination",
+          "requests",
+          "ticket_sha256",
+          "request_validation",
+          "workload_sha256",
+          "sink",
+          "tls",
+          "config_before",
+          "config_after"
+        ],
+        "samples": 2
+      },
+      "ratio_quarantine": [
+        "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+      ],
+      "metric_quarantine": {
+        "wall_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "schedule_bound: absolute observations only"
+        ],
+        "first_complete_record_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "metric unavailable"
+        ],
+        "fixture_to_first_complete_record_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "metric unavailable"
+        ],
+        "cpu_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "cpu_us_per_row": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "metric unavailable"
+        ],
+        "peak_rss_bytes": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "rows_per_second": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "schedule_bound: absolute observations only"
+        ],
+        "output_bytes_per_second": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "schedule_bound: absolute observations only"
+        ]
+      },
+      "samples": [
+        {
+          "role": "go",
+          "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-idle-hash-01/idle/sample-000-go/sample.json",
+          "sha256": "deb8c2f6173d7913d960d97a5d4804400580c2eccd286b1fd5faec696d1d96fc",
+          "rows": 0,
+          "batches": 0,
+          "stdout_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wall_ms": 60029.801902,
+          "cpu_ms": 39.083,
+          "cpu_us_per_row": null,
+          "peak_rss_bytes": 51044352,
+          "sampled_resources": {
+            "rss_bytes": {
+              "samples": 274,
+              "first": 52293632,
+              "last": 52293632,
+              "minimum": 52293632,
+              "maximum": 52293632,
+              "slope_per_second": 0.0
+            },
+            "fds": {
+              "samples": 274,
+              "first": 7,
+              "last": 7,
+              "minimum": 7,
+              "maximum": 7,
+              "slope_per_second": 0.0
+            },
+            "tasks": {
+              "samples": 274,
+              "first": 14,
+              "last": 14,
+              "minimum": 14,
+              "maximum": 14,
+              "slope_per_second": 0.0
+            },
+            "cpu_user_ms": {
+              "samples": 274,
+              "first": 30.0,
+              "last": 30.0,
+              "minimum": 30.0,
+              "maximum": 30.0,
+              "slope_per_second": 0.0
+            },
+            "cpu_system_ms": {
+              "samples": 274,
+              "first": 0.0,
+              "last": 0.0,
+              "minimum": 0.0,
+              "maximum": 0.0,
+              "slope_per_second": 0.0
+            }
+          },
+          "sample_count": 298,
+          "missing_proc_samples": 1,
+          "production": {
+            "errors": [],
+            "scheduled_batches": 0,
+            "delivered_batches": 0,
+            "throughput_admissible": true,
+            "mode": "finite"
+          },
+          "request_evidence": {
+            "admission": "exact_summary_counters",
+            "captured_dogets": 1,
+            "uncaptured_dogets": 0,
+            "captured_about_requests": 1,
+            "terminal_event_captured": true,
+            "request_validation": {
+              "auth_checks": 1,
+              "invalid_auth": 0,
+              "ticket_checks": 1,
+              "ticket_mismatches": 0,
+              "unexpected_requests": 0,
+              "doget_before_about": 0
+            }
+          },
+          "fixture_events_dropped": 0,
+          "fixture_sent_rows": 0,
+          "fixture_expected_output_ns": 0,
+          "cpu_screen": {
+            "observer": {
+              "start_ns": 1034582127649051,
+              "end_ns": 1034642158904729,
+              "user_ms": 202.71599999999998,
+              "system_ms": 47.142,
+              "scope": "collector RUSAGE_SELF around collect, excludes children and post-capture validation"
+            },
+            "fixture": {
+              "user_ms": 31.505,
+              "system_ms": 32.032,
+              "start_bounds": {
+                "start_ns": 1034582126298400,
+                "end_ns": 1034582127127785
+              },
+              "end_bounds": {
+                "start_ns": 1034642163320136,
+                "end_ns": 1034642164125756
+              },
+              "scope": "fixture lifetime CPU difference between pre-meter and post-exit summary snapshots",
+              "expected_output_encoding_wall_ms": 0.0,
+              "expected_output_encoding_semantics": "monotonic encoding wall time; overlaps fixture CPU; never subtracted from native CPU"
+            },
+            "host_before": {
+              "start_ns": 1034582127474904,
+              "end_ns": 1034582127627646,
+              "counters": {
+                "user": 186370403,
+                "nice": 414783,
+                "system": 146431894,
+                "idle": 1712178860,
+                "iowait": 11560249,
+                "irq": 8023250,
+                "softirq": 5468813,
+                "steal": 0
+              },
+              "loadavg_raw": "7.24 7.20 7.99 4/3010 2644018",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "host_after": {
+              "start_ns": 1034642159392682,
+              "end_ns": 1034642159466390,
+              "counters": {
+                "user": 186387607,
+                "nice": 414783,
+                "system": 146449201,
+                "idle": 1712262047,
+                "iowait": 11561491,
+                "irq": 8023889,
+                "softirq": 5469343,
+                "steal": 0
+              },
+              "loadavg_raw": "5.99 6.83 7.81 5/2987 2883487",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "comparative_admissible": false,
+            "throughput_admissible": true,
+            "interference_status": "flagged",
+            "potential_limit_status": "below_screen",
+            "observer_busy_cores": 0.004162232625853052,
+            "fixture_busy_cores": 0.0010584242823876975,
+            "system_tick_deltas": {
+              "user": 17204,
+              "nice": 0,
+              "system": 17307,
+              "idle": 83187,
+              "iowait": 1242,
+              "irq": 639,
+              "softirq": 530,
+              "steal": 0
+            },
+            "host_elapsed_ms": 60031.991486,
+            "system_busy_ms": 356800.0,
+            "client_cpu_ms": 39.083,
+            "observer_cpu_ms": 249.85799999999998,
+            "fixture_cpu_ms": 63.53699999999999,
+            "residual_raw_ms": 356447.522,
+            "unattributed_busy_cores_estimate": 5.937626141940115,
+            "unattributed_busy_cores_range": [
+              5.928044163635528,
+              5.947208120244702
+            ],
+            "interval_uncertainty_ms": 575.22524,
+            "attribution": "screening interval envelope, not exact attribution; no clean/quiescence claim"
+          }
+        },
+        {
+          "role": "candidate",
+          "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-idle-hash-01/idle/sample-000-candidate/sample.json",
+          "sha256": "2165feffa0a1d33e823e290e9b1cf59ce44723bb14e2ac8d129c4e5e34158633",
+          "rows": 0,
+          "batches": 0,
+          "stdout_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "wall_ms": 60004.679929,
+          "cpu_ms": 2.638,
+          "cpu_us_per_row": null,
+          "peak_rss_bytes": 8306688,
+          "sampled_resources": {
+            "rss_bytes": {
+              "samples": 273,
+              "first": 8093696,
+              "last": 8093696,
+              "minimum": 8093696,
+              "maximum": 8093696,
+              "slope_per_second": 0.0
+            },
+            "fds": {
+              "samples": 273,
+              "first": 7,
+              "last": 7,
+              "minimum": 7,
+              "maximum": 7,
+              "slope_per_second": 0.0
+            },
+            "tasks": {
+              "samples": 273,
+              "first": 2,
+              "last": 2,
+              "minimum": 2,
+              "maximum": 2,
+              "slope_per_second": 0.0
+            },
+            "cpu_user_ms": {
+              "samples": 273,
+              "first": 0.0,
+              "last": 0.0,
+              "minimum": 0.0,
+              "maximum": 0.0,
+              "slope_per_second": 0.0
+            },
+            "cpu_system_ms": {
+              "samples": 273,
+              "first": 0.0,
+              "last": 0.0,
+              "minimum": 0.0,
+              "maximum": 0.0,
+              "slope_per_second": 0.0
+            }
+          },
+          "sample_count": 297,
+          "missing_proc_samples": 1,
+          "production": {
+            "errors": [],
+            "scheduled_batches": 0,
+            "delivered_batches": 0,
+            "throughput_admissible": true,
+            "mode": "finite"
+          },
+          "request_evidence": {
+            "admission": "exact_summary_counters",
+            "captured_dogets": 1,
+            "uncaptured_dogets": 0,
+            "captured_about_requests": 1,
+            "terminal_event_captured": true,
+            "request_validation": {
+              "auth_checks": 1,
+              "invalid_auth": 0,
+              "ticket_checks": 1,
+              "ticket_mismatches": 0,
+              "unexpected_requests": 0,
+              "doget_before_about": 0
+            }
+          },
+          "fixture_events_dropped": 0,
+          "fixture_sent_rows": 0,
+          "fixture_expected_output_ns": 0,
+          "cpu_screen": {
+            "observer": {
+              "start_ns": 1034642180089804,
+              "end_ns": 1034702185981223,
+              "user_ms": 208.87800000000001,
+              "system_ms": 35.35799999999999,
+              "scope": "collector RUSAGE_SELF around collect, excludes children and post-capture validation"
+            },
+            "fixture": {
+              "user_ms": 39.458,
+              "system_ms": 28.161,
+              "start_bounds": {
+                "start_ns": 1034642178657535,
+                "end_ns": 1034642179484675
+              },
+              "end_bounds": {
+                "start_ns": 1034702193305678,
+                "end_ns": 1034702193970471
+              },
+              "scope": "fixture lifetime CPU difference between pre-meter and post-exit summary snapshots",
+              "expected_output_encoding_wall_ms": 0.0,
+              "expected_output_encoding_semantics": "monotonic encoding wall time; overlaps fixture CPU; never subtracted from native CPU"
+            },
+            "host_before": {
+              "start_ns": 1034642179870577,
+              "end_ns": 1034642180072314,
+              "counters": {
+                "user": 186387616,
+                "nice": 414783,
+                "system": 146449207,
+                "idle": 1712262072,
+                "iowait": 11561491,
+                "irq": 8023889,
+                "softirq": 5469343,
+                "steal": 0
+              },
+              "loadavg_raw": "5.99 6.83 7.81 7/2968 2883559",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "host_after": {
+              "start_ns": 1034702186885423,
+              "end_ns": 1034702187123542,
+              "counters": {
+                "user": 186405668,
+                "nice": 414783,
+                "system": 146466837,
+                "idle": 1712343983,
+                "iowait": 11562795,
+                "irq": 8024532,
+                "softirq": 5469866,
+                "steal": 0
+              },
+              "loadavg_raw": "5.76 6.61 7.68 10/2968 3120858",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "comparative_admissible": false,
+            "throughput_admissible": true,
+            "interference_status": "flagged",
+            "potential_limit_status": "below_screen",
+            "observer_busy_cores": 0.004070282522779724,
+            "fixture_busy_cores": 0.0011268954368227541,
+            "system_tick_deltas": {
+              "user": 18052,
+              "nice": 0,
+              "system": 17630,
+              "idle": 81911,
+              "iowait": 1304,
+              "irq": 643,
+              "softirq": 523,
+              "steal": 0
+            },
+            "host_elapsed_ms": 60007.252965,
+            "system_busy_ms": 368480.0,
+            "client_cpu_ms": 2.638,
+            "observer_cpu_ms": 244.236,
+            "fixture_cpu_ms": 67.619,
+            "residual_raw_ms": 368165.50700000004,
+            "unattributed_busy_cores_estimate": 6.13535012533797,
+            "unattributed_busy_cores_range": [
+              6.124686563378665,
+              6.146013687297276
+            ],
+            "interval_uncertainty_ms": 639.8910599999999,
+            "attribution": "screening interval envelope, not exact attribution; no clean/quiescence claim"
+          }
+        }
+      ]
+    },
+    {
+      "campaign": "campaign-r6-short-reconnect-full-01",
+      "report": {
+        "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-reconnect-full-01/report.json",
+        "sha256": "2b6401ff44f70bd0b8664e9e56bb3598b722d3d51dfc97faad51e3eb43707c7a"
+      },
+      "resources": {
+        "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-reconnect-full-01/resources-offline.json",
+        "size_bytes": 34502,
+        "sha256": "38cbd894f7eb41e95a2ecbbfbbb4279402e6354be281331a648cc6552107fd19"
+      },
+      "cleanup": {
+        "campaign_id": "campaign-r6-short-reconnect-full-01",
+        "started_utc": "2026-10-15T00:16:25.085327+00:00",
+        "ended_utc": "2026-10-15T00:18:26.130802+00:00",
+        "exit_code": 0,
+        "cleanup_utc": "2026-10-15T00:18:26.155843+00:00",
+        "pid_gone": true,
+        "matching_processes": [],
+        "lock_reacquired_nonblocking_and_released": true,
+        "report_sha256": "2b6401ff44f70bd0b8664e9e56bb3598b722d3d51dfc97faad51e3eb43707c7a",
+        "passed": true,
+        "complete": true,
+        "failure": null,
+        "end_identity_check": {
+          "passed": true,
+          "changed": []
+        },
+        "recorded_measured_samples": 2,
+        "comparison_contracts_passed": true,
+        "quarantine": {
+          "reconnect": [
+            "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+          ]
+        }
+      },
+      "comparison": {
+        "comparable": true,
+        "reasons": [],
+        "differing_fields": [],
+        "checked_fields": [
+          "stdout_sha256",
+          "stdout_bytes",
+          "rendered_rows",
+          "batches",
+          "stderr_sha256",
+          "termination",
+          "requests",
+          "ticket_sha256",
+          "request_validation",
+          "workload_sha256",
+          "sink",
+          "tls",
+          "config_before",
+          "config_after"
+        ],
+        "samples": 2
+      },
+      "ratio_quarantine": [
+        "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+      ],
+      "metric_quarantine": {
+        "wall_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "schedule_bound: absolute observations only"
+        ],
+        "first_complete_record_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "fixture_to_first_complete_record_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "cpu_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "cpu_us_per_row": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "peak_rss_bytes": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "rows_per_second": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "schedule_bound: absolute observations only"
+        ],
+        "output_bytes_per_second": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "schedule_bound: absolute observations only"
+        ]
+      },
+      "samples": [
+        {
+          "role": "go",
+          "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-reconnect-full-01/reconnect/sample-000-go/sample.json",
+          "sha256": "ae9cbcf0ad6e9ae2ad1b74a0d2ce1bcd94ffefee741735f6502a76012f864651",
+          "rows": 800,
+          "batches": 100,
+          "stdout_bytes": 138657,
+          "stdout_sha256": "aef1be5dd14fd7e994c52d9a0d51fc740428e76c386e24ea75aed4dbd1508d61",
+          "wall_ms": 60207.347936,
+          "cpu_ms": 105.95500000000001,
+          "cpu_us_per_row": 132.44375000000002,
+          "peak_rss_bytes": 53915648,
+          "sampled_resources": {
+            "rss_bytes": {
+              "samples": 266,
+              "first": 51879936,
+              "last": 55971840,
+              "minimum": 51879936,
+              "maximum": 55971840,
+              "slope_per_second": 91425.46776921338
+            },
+            "fds": {
+              "samples": 266,
+              "first": 7,
+              "last": 7,
+              "minimum": 7,
+              "maximum": 7,
+              "slope_per_second": 0.0
+            },
+            "tasks": {
+              "samples": 266,
+              "first": 11,
+              "last": 15,
+              "minimum": 11,
+              "maximum": 15,
+              "slope_per_second": 0.10077262027364767
+            },
+            "cpu_user_ms": {
+              "samples": 266,
+              "first": 20.0,
+              "last": 60.0,
+              "minimum": 20.0,
+              "maximum": 60.0,
+              "slope_per_second": 0.7822247876979894
+            },
+            "cpu_system_ms": {
+              "samples": 266,
+              "first": 10.0,
+              "last": 30.0,
+              "minimum": 10.0,
+              "maximum": 30.0,
+              "slope_per_second": 0.3940286128382932
+            }
+          },
+          "sample_count": 290,
+          "missing_proc_samples": 1,
+          "production": {
+            "errors": [],
+            "scheduled_batches": 0,
+            "delivered_batches": 100,
+            "throughput_admissible": true,
+            "mode": "finite"
+          },
+          "request_evidence": {
+            "admission": "exact_summary_counters",
+            "captured_dogets": 101,
+            "uncaptured_dogets": 0,
+            "captured_about_requests": 1,
+            "terminal_event_captured": true,
+            "request_validation": {
+              "auth_checks": 101,
+              "invalid_auth": 0,
+              "ticket_checks": 101,
+              "ticket_mismatches": 0,
+              "unexpected_requests": 0,
+              "doget_before_about": 0
+            }
+          },
+          "fixture_events_dropped": 0,
+          "fixture_sent_rows": 800,
+          "fixture_expected_output_ns": 3591673,
+          "cpu_screen": {
+            "observer": {
+              "start_ns": 1034743821977737,
+              "end_ns": 1034804030898462,
+              "user_ms": 216.82299999999998,
+              "system_ms": 45.024,
+              "scope": "collector RUSAGE_SELF around collect, excludes children and post-capture validation"
+            },
+            "fixture": {
+              "user_ms": 96.344,
+              "system_ms": 80.294,
+              "start_bounds": {
+                "start_ns": 1034743820684016,
+                "end_ns": 1034743821417167
+              },
+              "end_bounds": {
+                "start_ns": 1034804037283267,
+                "end_ns": 1034804038082430
+              },
+              "scope": "fixture lifetime CPU difference between pre-meter and post-exit summary snapshots",
+              "expected_output_encoding_wall_ms": 3.591673,
+              "expected_output_encoding_semantics": "monotonic encoding wall time; overlaps fixture CPU; never subtracted from native CPU"
+            },
+            "host_before": {
+              "start_ns": 1034743821792028,
+              "end_ns": 1034743821953639,
+              "counters": {
+                "user": 186418174,
+                "nice": 414783,
+                "system": 146478936,
+                "idle": 1712401087,
+                "iowait": 11563571,
+                "irq": 8024979,
+                "softirq": 5470238,
+                "steal": 0
+              },
+              "loadavg_raw": "6.06 6.58 7.62 10/2959 3280921",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "host_after": {
+              "start_ns": 1034804031562085,
+              "end_ns": 1034804031640453,
+              "counters": {
+                "user": 186434656,
+                "nice": 414783,
+                "system": 146494970,
+                "idle": 1712486957,
+                "iowait": 11564465,
+                "irq": 8025627,
+                "softirq": 5470770,
+                "steal": 0
+              },
+              "loadavg_raw": "5.55 6.33 7.47 7/2994 3487786",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "comparative_admissible": false,
+            "throughput_admissible": true,
+            "interference_status": "flagged",
+            "potential_limit_status": "below_screen",
+            "observer_busy_cores": 0.004349087096118925,
+            "fixture_busy_cores": 0.002933827947176231,
+            "system_tick_deltas": {
+              "user": 16482,
+              "nice": 0,
+              "system": 16034,
+              "idle": 85870,
+              "iowait": 894,
+              "irq": 648,
+              "softirq": 532,
+              "steal": 0
+            },
+            "host_elapsed_ms": 60209.848425,
+            "system_busy_ms": 336960.0,
+            "client_cpu_ms": 105.95500000000001,
+            "observer_cpu_ms": 261.847,
+            "fixture_cpu_ms": 176.63799999999998,
+            "residual_raw_ms": 336415.56,
+            "unattributed_busy_cores_estimate": 5.587384270183869,
+            "unattributed_busy_cores_range": [
+              5.577094200100539,
+              5.5976743402672
+            ],
+            "interval_uncertainty_ms": 619.56356,
+            "attribution": "screening interval envelope, not exact attribution; no clean/quiescence claim"
+          }
+        },
+        {
+          "role": "candidate",
+          "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-reconnect-full-01/reconnect/sample-000-candidate/sample.json",
+          "sha256": "bae50e03b00159869547e8b1c4fc9e4dc9c50d27298ed40dcac238821b64bd8d",
+          "rows": 800,
+          "batches": 100,
+          "stdout_bytes": 138657,
+          "stdout_sha256": "aef1be5dd14fd7e994c52d9a0d51fc740428e76c386e24ea75aed4dbd1508d61",
+          "wall_ms": 60237.089036,
+          "cpu_ms": 40.585,
+          "cpu_us_per_row": 50.73125,
+          "peak_rss_bytes": 8781824,
+          "sampled_resources": {
+            "rss_bytes": {
+              "samples": 268,
+              "first": 8597504,
+              "last": 8642560,
+              "minimum": 8597504,
+              "maximum": 8642560,
+              "slope_per_second": 509.5416645334817
+            },
+            "fds": {
+              "samples": 268,
+              "first": 7,
+              "last": 7,
+              "minimum": 7,
+              "maximum": 7,
+              "slope_per_second": 0.0
+            },
+            "tasks": {
+              "samples": 268,
+              "first": 2,
+              "last": 2,
+              "minimum": 2,
+              "maximum": 2,
+              "slope_per_second": 0.0
+            },
+            "cpu_user_ms": {
+              "samples": 268,
+              "first": 0.0,
+              "last": 20.0,
+              "minimum": 0.0,
+              "maximum": 20.0,
+              "slope_per_second": 0.4160038307599177
+            },
+            "cpu_system_ms": {
+              "samples": 268,
+              "first": 0.0,
+              "last": 10.0,
+              "minimum": 0.0,
+              "maximum": 10.0,
+              "slope_per_second": 0.17223826363578423
+            }
+          },
+          "sample_count": 292,
+          "missing_proc_samples": 1,
+          "production": {
+            "errors": [],
+            "scheduled_batches": 0,
+            "delivered_batches": 100,
+            "throughput_admissible": true,
+            "mode": "finite"
+          },
+          "request_evidence": {
+            "admission": "exact_summary_counters",
+            "captured_dogets": 101,
+            "uncaptured_dogets": 0,
+            "captured_about_requests": 1,
+            "terminal_event_captured": true,
+            "request_validation": {
+              "auth_checks": 101,
+              "invalid_auth": 0,
+              "ticket_checks": 101,
+              "ticket_mismatches": 0,
+              "unexpected_requests": 0,
+              "doget_before_about": 0
+            }
+          },
+          "fixture_events_dropped": 0,
+          "fixture_sent_rows": 800,
+          "fixture_expected_output_ns": 3600305,
+          "cpu_screen": {
+            "observer": {
+              "start_ns": 1034804057486889,
+              "end_ns": 1034864295732317,
+              "user_ms": 224.14399999999995,
+              "system_ms": 44.432,
+              "scope": "collector RUSAGE_SELF around collect, excludes children and post-capture validation"
+            },
+            "fixture": {
+              "user_ms": 104.616,
+              "system_ms": 72.151,
+              "start_bounds": {
+                "start_ns": 1034804056259916,
+                "end_ns": 1034804056952401
+              },
+              "end_bounds": {
+                "start_ns": 1034864302808472,
+                "end_ns": 1034864303562709
+              },
+              "scope": "fixture lifetime CPU difference between pre-meter and post-exit summary snapshots",
+              "expected_output_encoding_wall_ms": 3.600305,
+              "expected_output_encoding_semantics": "monotonic encoding wall time; overlaps fixture CPU; never subtracted from native CPU"
+            },
+            "host_before": {
+              "start_ns": 1034804057371346,
+              "end_ns": 1034804057472754,
+              "counters": {
+                "user": 186434667,
+                "nice": 414783,
+                "system": 146494975,
+                "idle": 1712486992,
+                "iowait": 11564466,
+                "irq": 8025627,
+                "softirq": 5470771,
+                "steal": 0
+              },
+              "loadavg_raw": "5.55 6.33 7.47 7/2995 3487899",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "host_after": {
+              "start_ns": 1034864296633615,
+              "end_ns": 1034864296787318,
+              "counters": {
+                "user": 186455478,
+                "nice": 414783,
+                "system": 146513418,
+                "idle": 1712565377,
+                "iowait": 11566113,
+                "irq": 8026325,
+                "softirq": 5471307,
+                "steal": 0
+              },
+              "loadavg_raw": "6.11 6.38 7.41 9/3056 3727082",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "comparative_admissible": false,
+            "throughput_admissible": true,
+            "interference_status": "flagged",
+            "potential_limit_status": "below_screen",
+            "observer_busy_cores": 0.00445864838919239,
+            "fixture_busy_cores": 0.002934520954263863,
+            "system_tick_deltas": {
+              "user": 20811,
+              "nice": 0,
+              "system": 18443,
+              "idle": 78385,
+              "iowait": 1647,
+              "irq": 698,
+              "softirq": 536,
+              "steal": 0
+            },
+            "host_elapsed_ms": 60239.415972,
+            "system_busy_ms": 404880.0,
+            "client_cpu_ms": 40.585,
+            "observer_cpu_ms": 268.57599999999996,
+            "fixture_cpu_ms": 176.767,
+            "residual_raw_ms": 404394.072,
+            "unattributed_busy_cores_estimate": 6.713114087758871,
+            "unattributed_busy_cores_range": [
+              6.702694232090089,
+              6.723533943427655
+            ],
+            "interval_uncertainty_ms": 627.68602,
+            "attribution": "screening interval envelope, not exact attribution; no clean/quiescence claim"
+          }
+        }
+      ]
+    },
+    {
+      "campaign": "campaign-r6-short-reconnect-hash-01",
+      "report": {
+        "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-reconnect-hash-01/report.json",
+        "sha256": "2dc4e54e954e44faf6a8ff89a81e56f805ec97704e5e247080c1fe357b27b353"
+      },
+      "resources": {
+        "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-reconnect-hash-01/resources-offline.json",
+        "size_bytes": 34476,
+        "sha256": "f2768df3858a246e22d653c490a29fdef3b688fb2fe8f2bdfc8b76ed0a1555f2"
+      },
+      "cleanup": {
+        "campaign_id": "campaign-r6-short-reconnect-hash-01",
+        "started_utc": "2026-10-15T00:19:05.833209+00:00",
+        "ended_utc": "2026-10-15T00:21:06.830969+00:00",
+        "exit_code": 0,
+        "cleanup_utc": "2026-10-15T00:21:06.848537+00:00",
+        "pid_gone": true,
+        "matching_processes": [],
+        "lock_reacquired_nonblocking_and_released": true,
+        "report_sha256": "2dc4e54e954e44faf6a8ff89a81e56f805ec97704e5e247080c1fe357b27b353",
+        "passed": true,
+        "complete": true,
+        "failure": null,
+        "end_identity_check": {
+          "passed": true,
+          "changed": []
+        },
+        "recorded_measured_samples": 2,
+        "comparison_contracts_passed": true,
+        "quarantine": {
+          "reconnect": [
+            "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+          ]
+        }
+      },
+      "comparison": {
+        "comparable": true,
+        "reasons": [],
+        "differing_fields": [],
+        "checked_fields": [
+          "stdout_sha256",
+          "stdout_bytes",
+          "rendered_rows",
+          "batches",
+          "stderr_sha256",
+          "termination",
+          "requests",
+          "ticket_sha256",
+          "request_validation",
+          "workload_sha256",
+          "sink",
+          "tls",
+          "config_before",
+          "config_after"
+        ],
+        "samples": 2
+      },
+      "ratio_quarantine": [
+        "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+      ],
+      "metric_quarantine": {
+        "wall_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "schedule_bound: absolute observations only"
+        ],
+        "first_complete_record_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "fixture_to_first_complete_record_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "cpu_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "cpu_us_per_row": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "peak_rss_bytes": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "rows_per_second": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "schedule_bound: absolute observations only"
+        ],
+        "output_bytes_per_second": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "schedule_bound: absolute observations only"
+        ]
+      },
+      "samples": [
+        {
+          "role": "go",
+          "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-reconnect-hash-01/reconnect/sample-000-go/sample.json",
+          "sha256": "03d75351ae730fcf613d67411efbe5f5a41f737163b9882c1a7cab946f2bbd0c",
+          "rows": 800,
+          "batches": 100,
+          "stdout_bytes": 138657,
+          "stdout_sha256": "aef1be5dd14fd7e994c52d9a0d51fc740428e76c386e24ea75aed4dbd1508d61",
+          "wall_ms": 60212.743739,
+          "cpu_ms": 113.09200000000001,
+          "cpu_us_per_row": 141.365,
+          "peak_rss_bytes": 52264960,
+          "sampled_resources": {
+            "rss_bytes": {
+              "samples": 266,
+              "first": 52428800,
+              "last": 54272000,
+              "minimum": 52428800,
+              "maximum": 54272000,
+              "slope_per_second": 39778.1369063673
+            },
+            "fds": {
+              "samples": 266,
+              "first": 7,
+              "last": 7,
+              "minimum": 7,
+              "maximum": 7,
+              "slope_per_second": 0.0
+            },
+            "tasks": {
+              "samples": 266,
+              "first": 12,
+              "last": 15,
+              "minimum": 12,
+              "maximum": 15,
+              "slope_per_second": 0.0809083204695176
+            },
+            "cpu_user_ms": {
+              "samples": 266,
+              "first": 30.0,
+              "last": 70.0,
+              "minimum": 30.0,
+              "maximum": 70.0,
+              "slope_per_second": 0.8466639485774318
+            },
+            "cpu_system_ms": {
+              "samples": 266,
+              "first": 10.0,
+              "last": 30.0,
+              "minimum": 10.0,
+              "maximum": 30.0,
+              "slope_per_second": 0.38002842987392343
+            }
+          },
+          "sample_count": 290,
+          "missing_proc_samples": 1,
+          "production": {
+            "errors": [],
+            "scheduled_batches": 0,
+            "delivered_batches": 100,
+            "throughput_admissible": true,
+            "mode": "finite"
+          },
+          "request_evidence": {
+            "admission": "exact_summary_counters",
+            "captured_dogets": 101,
+            "uncaptured_dogets": 0,
+            "captured_about_requests": 1,
+            "terminal_event_captured": true,
+            "request_validation": {
+              "auth_checks": 101,
+              "invalid_auth": 0,
+              "ticket_checks": 101,
+              "ticket_mismatches": 0,
+              "unexpected_requests": 0,
+              "doget_before_about": 0
+            }
+          },
+          "fixture_events_dropped": 0,
+          "fixture_sent_rows": 800,
+          "fixture_expected_output_ns": 3644437,
+          "cpu_screen": {
+            "observer": {
+              "start_ns": 1034904545106724,
+              "end_ns": 1034964758938728,
+              "user_ms": 216.699,
+              "system_ms": 35.85499999999999,
+              "scope": "collector RUSAGE_SELF around collect, excludes children and post-capture validation"
+            },
+            "fixture": {
+              "user_ms": 90.027,
+              "system_ms": 91.078,
+              "start_bounds": {
+                "start_ns": 1034904544268805,
+                "end_ns": 1034904544794641
+              },
+              "end_bounds": {
+                "start_ns": 1034964763296823,
+                "end_ns": 1034964763904931
+              },
+              "scope": "fixture lifetime CPU difference between pre-meter and post-exit summary snapshots",
+              "expected_output_encoding_wall_ms": 3.644437,
+              "expected_output_encoding_semantics": "monotonic encoding wall time; overlaps fixture CPU; never subtracted from native CPU"
+            },
+            "host_before": {
+              "start_ns": 1034904544990362,
+              "end_ns": 1034904545095904,
+              "counters": {
+                "user": 186468644,
+                "nice": 414783,
+                "system": 146525423,
+                "idle": 1712618956,
+                "iowait": 11567065,
+                "irq": 8026783,
+                "softirq": 5471684,
+                "steal": 0
+              },
+              "loadavg_raw": "6.52 6.45 7.39 7/3038 3883397",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "host_after": {
+              "start_ns": 1034964759505056,
+              "end_ns": 1034964759580585,
+              "counters": {
+                "user": 186486998,
+                "nice": 414783,
+                "system": 146542803,
+                "idle": 1712701114,
+                "iowait": 11568448,
+                "irq": 8027450,
+                "softirq": 5472224,
+                "steal": 0
+              },
+              "loadavg_raw": "7.34 6.60 7.38 5/3026 4119564",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "comparative_admissible": false,
+            "throughput_admissible": true,
+            "interference_status": "flagged",
+            "potential_limit_status": "below_screen",
+            "observer_busy_cores": 0.004194361265029348,
+            "fixture_busy_cores": 0.0030077519932495238,
+            "system_tick_deltas": {
+              "user": 18354,
+              "nice": 0,
+              "system": 17380,
+              "idle": 82158,
+              "iowait": 1383,
+              "irq": 667,
+              "softirq": 540,
+              "steal": 0
+            },
+            "host_elapsed_ms": 60214.590223,
+            "system_busy_ms": 369410.0,
+            "client_cpu_ms": 113.09200000000001,
+            "observer_cpu_ms": 252.554,
+            "fixture_cpu_ms": 181.10500000000002,
+            "residual_raw_ms": 368863.249,
+            "unattributed_busy_cores_estimate": 6.1258118278965945,
+            "unattributed_busy_cores_range": [
+              6.116627805918665,
+              6.134995849874524
+            ],
+            "interval_uncertainty_ms": 553.01212,
+            "attribution": "screening interval envelope, not exact attribution; no clean/quiescence claim"
+          }
+        },
+        {
+          "role": "candidate",
+          "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-reconnect-hash-01/reconnect/sample-000-candidate/sample.json",
+          "sha256": "043f9259493ce6823a7cbe9a015fc8d99af8c2959fdb5712a2b578f75564d88a",
+          "rows": 800,
+          "batches": 100,
+          "stdout_bytes": 138657,
+          "stdout_sha256": "aef1be5dd14fd7e994c52d9a0d51fc740428e76c386e24ea75aed4dbd1508d61",
+          "wall_ms": 60239.171916,
+          "cpu_ms": 40.713,
+          "cpu_us_per_row": 50.89125,
+          "peak_rss_bytes": 8269824,
+          "sampled_resources": {
+            "rss_bytes": {
+              "samples": 268,
+              "first": 8441856,
+              "last": 8486912,
+              "minimum": 8441856,
+              "maximum": 8486912,
+              "slope_per_second": 597.7969750490691
+            },
+            "fds": {
+              "samples": 268,
+              "first": 7,
+              "last": 7,
+              "minimum": 7,
+              "maximum": 7,
+              "slope_per_second": 0.0
+            },
+            "tasks": {
+              "samples": 268,
+              "first": 2,
+              "last": 2,
+              "minimum": 2,
+              "maximum": 2,
+              "slope_per_second": 0.0
+            },
+            "cpu_user_ms": {
+              "samples": 268,
+              "first": 0.0,
+              "last": 20.0,
+              "minimum": 0.0,
+              "maximum": 20.0,
+              "slope_per_second": 0.449631091639345
+            },
+            "cpu_system_ms": {
+              "samples": 268,
+              "first": 0.0,
+              "last": 10.0,
+              "minimum": 0.0,
+              "maximum": 10.0,
+              "slope_per_second": 0.14905443558318704
+            }
+          },
+          "sample_count": 292,
+          "missing_proc_samples": 1,
+          "production": {
+            "errors": [],
+            "scheduled_batches": 0,
+            "delivered_batches": 100,
+            "throughput_admissible": true,
+            "mode": "finite"
+          },
+          "request_evidence": {
+            "admission": "exact_summary_counters",
+            "captured_dogets": 101,
+            "uncaptured_dogets": 0,
+            "captured_about_requests": 1,
+            "terminal_event_captured": true,
+            "request_validation": {
+              "auth_checks": 101,
+              "invalid_auth": 0,
+              "ticket_checks": 101,
+              "ticket_mismatches": 0,
+              "unexpected_requests": 0,
+              "doget_before_about": 0
+            }
+          },
+          "fixture_events_dropped": 0,
+          "fixture_sent_rows": 800,
+          "fixture_expected_output_ns": 3326855,
+          "cpu_screen": {
+            "observer": {
+              "start_ns": 1034964781104024,
+              "end_ns": 1035025021331023,
+              "user_ms": 208.928,
+              "system_ms": 44.543,
+              "scope": "collector RUSAGE_SELF around collect, excludes children and post-capture validation"
+            },
+            "fixture": {
+              "user_ms": 98.266,
+              "system_ms": 82.3,
+              "start_bounds": {
+                "start_ns": 1034964780100461,
+                "end_ns": 1034964780756115
+              },
+              "end_bounds": {
+                "start_ns": 1035025025638674,
+                "end_ns": 1035025026206021
+              },
+              "scope": "fixture lifetime CPU difference between pre-meter and post-exit summary snapshots",
+              "expected_output_encoding_wall_ms": 3.326855,
+              "expected_output_encoding_semantics": "monotonic encoding wall time; overlaps fixture CPU; never subtracted from native CPU"
+            },
+            "host_before": {
+              "start_ns": 1034964780991976,
+              "end_ns": 1034964781084503,
+              "counters": {
+                "user": 186487006,
+                "nice": 414783,
+                "system": 146542810,
+                "idle": 1712701142,
+                "iowait": 11568448,
+                "irq": 8027450,
+                "softirq": 5472224,
+                "steal": 0
+              },
+              "loadavg_raw": "7.34 6.60 7.38 8/3002 4119637",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "host_after": {
+              "start_ns": 1035025022181514,
+              "end_ns": 1035025022263138,
+              "counters": {
+                "user": 186502389,
+                "nice": 414783,
+                "system": 146558528,
+                "idle": 1712788265,
+                "iowait": 11569574,
+                "irq": 8028095,
+                "softirq": 5472763,
+                "steal": 0
+              },
+              "loadavg_raw": "6.55 6.55 7.31 4/2966 145522",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "comparative_admissible": false,
+            "throughput_admissible": true,
+            "interference_status": "flagged",
+            "potential_limit_status": "below_screen",
+            "observer_busy_cores": 0.004207743764364,
+            "fixture_busy_cores": 0.002997484763764494,
+            "system_tick_deltas": {
+              "user": 15383,
+              "nice": 0,
+              "system": 15718,
+              "idle": 87123,
+              "iowait": 1126,
+              "irq": 645,
+              "softirq": 539,
+              "steal": 0
+            },
+            "host_elapsed_ms": 60241.271162,
+            "system_busy_ms": 322850.0,
+            "client_cpu_ms": 40.713,
+            "observer_cpu_ms": 253.471,
+            "fixture_cpu_ms": 180.566,
+            "residual_raw_ms": 322375.25,
+            "unattributed_busy_cores_estimate": 5.351401850951533,
+            "unattributed_busy_cores_range": [
+              5.342113266411289,
+              5.360690435491777
+            ],
+            "interval_uncertainty_ms": 559.55614,
+            "attribution": "screening interval envelope, not exact attribution; no clean/quiescence claim"
+          }
+        }
+      ]
+    },
+    {
+      "campaign": "campaign-r6-short-dictionary-full-01",
+      "report": {
+        "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-dictionary-full-01/report.json",
+        "sha256": "c299c1d8482e94c704c6de00bb69d228f75abcc96cb7c99b5765862766d9d5bc"
+      },
+      "resources": {
+        "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-dictionary-full-01/resources-offline.json",
+        "size_bytes": 34543,
+        "sha256": "c4dd2ed7f163c4d84c9fdf0c4f73be9e14dcd1a59f2715554ee4484865af9cbc"
+      },
+      "cleanup": {
+        "campaign_id": "campaign-r6-short-dictionary-full-01",
+        "started_utc": "2026-10-15T00:21:54.237677+00:00",
+        "ended_utc": "2026-10-15T00:23:54.975796+00:00",
+        "exit_code": 0,
+        "cleanup_utc": "2026-10-15T00:23:54.990962+00:00",
+        "pid_gone": true,
+        "matching_processes": [],
+        "lock_reacquired_nonblocking_and_released": true,
+        "report_sha256": "c299c1d8482e94c704c6de00bb69d228f75abcc96cb7c99b5765862766d9d5bc",
+        "passed": true,
+        "complete": true,
+        "failure": null,
+        "end_identity_check": {
+          "passed": true,
+          "changed": []
+        },
+        "recorded_measured_samples": 2,
+        "comparison_contracts_passed": true,
+        "quarantine": {
+          "dictionary": [
+            "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+          ]
+        }
+      },
+      "comparison": {
+        "comparable": true,
+        "reasons": [],
+        "differing_fields": [],
+        "checked_fields": [
+          "stdout_sha256",
+          "stdout_bytes",
+          "rendered_rows",
+          "batches",
+          "stderr_sha256",
+          "termination",
+          "requests",
+          "ticket_sha256",
+          "request_validation",
+          "workload_sha256",
+          "sink",
+          "tls",
+          "config_before",
+          "config_after"
+        ],
+        "samples": 2
+      },
+      "ratio_quarantine": [
+        "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+      ],
+      "metric_quarantine": {
+        "wall_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "schedule_bound: absolute observations only"
+        ],
+        "first_complete_record_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "fixture_to_first_complete_record_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "cpu_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "cpu_us_per_row": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "peak_rss_bytes": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "rows_per_second": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "schedule_bound: absolute observations only"
+        ],
+        "output_bytes_per_second": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "schedule_bound: absolute observations only"
+        ]
+      },
+      "samples": [
+        {
+          "role": "go",
+          "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-dictionary-full-01/dictionary/sample-000-go/sample.json",
+          "sha256": "0eb4ca7110ec1bb7b24af0d9ad5ab5a7f2fa3074c7212fc45c6886f1811e4f64",
+          "rows": 384000,
+          "batches": 3000,
+          "stdout_bytes": 32970756,
+          "stdout_sha256": "526f6241e026bbb7a514b69abb871acae40d3e0ec8c49ce4e616f2e16fc6073e",
+          "wall_ms": 60012.071464,
+          "cpu_ms": 1490.194,
+          "cpu_us_per_row": 3.8807135416666667,
+          "peak_rss_bytes": 65048576,
+          "sampled_resources": {
+            "rss_bytes": {
+              "samples": 263,
+              "first": 63467520,
+              "last": 65208320,
+              "minimum": 62930944,
+              "maximum": 66748416,
+              "slope_per_second": 25292.630080843763
+            },
+            "fds": {
+              "samples": 263,
+              "first": 7,
+              "last": 7,
+              "minimum": 7,
+              "maximum": 7,
+              "slope_per_second": 0.0
+            },
+            "tasks": {
+              "samples": 263,
+              "first": 20,
+              "last": 21,
+              "minimum": 20,
+              "maximum": 21,
+              "slope_per_second": 0.019847684756164465
+            },
+            "cpu_user_ms": {
+              "samples": 263,
+              "first": 140.0,
+              "last": 1200.0,
+              "minimum": 140.0,
+              "maximum": 1200.0,
+              "slope_per_second": 19.479345342140185
+            },
+            "cpu_system_ms": {
+              "samples": 263,
+              "first": 30.0,
+              "last": 280.0,
+              "minimum": 30.0,
+              "maximum": 280.0,
+              "slope_per_second": 4.578533624927791
+            }
+          },
+          "sample_count": 286,
+          "missing_proc_samples": 1,
+          "production": {
+            "errors": [],
+            "scheduled_batches": 3000,
+            "delivered_batches": 3000,
+            "throughput_admissible": true,
+            "mode": "schedule_bound",
+            "live": {
+              "ops": 1,
+              "stopped_by_count": 0,
+              "stopped_by_deadline": 1,
+              "stopped_by_termination": 0,
+              "scheduled_batches": 3000,
+              "unbounded_ops": 0,
+              "emitted_batches": 3000,
+              "omitted_by_deadline": 0,
+              "omitted_by_termination": 0,
+              "lateness_ns": {
+                "count": 3000,
+                "sum": 4676019470,
+                "max": 6228740
+              },
+              "send_call_ns": {
+                "count": 3000,
+                "sum": 40809101,
+                "max": 211567
+              },
+              "last": {
+                "scheduled": 3000,
+                "emitted": 3000,
+                "stop_reason": "deadline",
+                "started_ns": 1035073013190080,
+                "deadline_ns": 1035133013190080,
+                "ended_ns": 1035132995323716,
+                "interval_ms": 20,
+                "duration_ms": 60000,
+                "batches": 0
+              }
+            },
+            "producer_deadline_ns": 1035133013190080,
+            "send_call_semantics": "marshaling/copy/flow-control Send wall; not pure blocking time",
+            "schedule_complete": true,
+            "dictionary_churn": {
+              "counters": {
+                "messages": 3000,
+                "initial": 1,
+                "deltas": 2988,
+                "replacements": 11,
+                "resets": 11,
+                "max_size": 4096
+              },
+              "buckets": {
+                "origin_ns": 1035073013112777,
+                "bucket_ms": 60000,
+                "overflow": 0,
+                "counts": [
+                  {
+                    "batches": 3000,
+                    "rows": 384000,
+                    "dictionary_messages": 3000,
+                    "dictionary_deltas": 2988,
+                    "dictionary_replacements": 11
+                  }
+                ]
+              },
+              "required_resets": 11
+            }
+          },
+          "request_evidence": {
+            "admission": "exact_summary_counters",
+            "captured_dogets": 1,
+            "uncaptured_dogets": 0,
+            "captured_about_requests": 1,
+            "terminal_event_captured": true,
+            "request_validation": {
+              "auth_checks": 1,
+              "invalid_auth": 0,
+              "ticket_checks": 1,
+              "ticket_mismatches": 0,
+              "unexpected_requests": 0,
+              "doget_before_about": 0
+            }
+          },
+          "fixture_events_dropped": 0,
+          "fixture_sent_rows": 384000,
+          "fixture_expected_output_ns": 295786276,
+          "cpu_screen": {
+            "observer": {
+              "start_ns": 1035072985628016,
+              "end_ns": 1035132999224148,
+              "user_ms": 2394.827,
+              "system_ms": 54.538000000000004,
+              "scope": "collector RUSAGE_SELF around collect, excludes children and post-capture validation"
+            },
+            "fixture": {
+              "user_ms": 5134.092,
+              "system_ms": 667.035,
+              "start_bounds": {
+                "start_ns": 1035072984289330,
+                "end_ns": 1035072985081623
+              },
+              "end_bounds": {
+                "start_ns": 1035133006280874,
+                "end_ns": 1035133007020221
+              },
+              "scope": "fixture lifetime CPU difference between pre-meter and post-exit summary snapshots",
+              "expected_output_encoding_wall_ms": 295.786276,
+              "expected_output_encoding_semantics": "monotonic encoding wall time; overlaps fixture CPU; never subtracted from native CPU"
+            },
+            "host_before": {
+              "start_ns": 1035072985448636,
+              "end_ns": 1035072985606265,
+              "counters": {
+                "user": 186515956,
+                "nice": 414783,
+                "system": 146571216,
+                "idle": 1712855580,
+                "iowait": 11571054,
+                "irq": 8028633,
+                "softirq": 5473174,
+                "steal": 0
+              },
+              "loadavg_raw": "7.70 6.77 7.34 6/3031 303679",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "host_after": {
+              "start_ns": 1035133000152891,
+              "end_ns": 1035133000322130,
+              "counters": {
+                "user": 186535425,
+                "nice": 414783,
+                "system": 146588674,
+                "idle": 1712935997,
+                "iowait": 11572563,
+                "irq": 8029311,
+                "softirq": 5473714,
+                "steal": 0
+              },
+              "loadavg_raw": "7.70 6.96 7.37 7/3035 537345",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "comparative_admissible": false,
+            "throughput_admissible": true,
+            "interference_status": "flagged",
+            "potential_limit_status": "below_screen",
+            "observer_busy_cores": 0.04081453847946781,
+            "fixture_busy_cores": 0.0966660016640148,
+            "system_tick_deltas": {
+              "user": 19469,
+              "nice": 0,
+              "system": 17458,
+              "idle": 80417,
+              "iowait": 1509,
+              "irq": 678,
+              "softirq": 540,
+              "steal": 0
+            },
+            "host_elapsed_ms": 60014.873494,
+            "system_busy_ms": 381450.0,
+            "client_cpu_ms": 1490.194,
+            "observer_cpu_ms": 2449.3650000000002,
+            "fixture_cpu_ms": 5801.1269999999995,
+            "residual_raw_ms": 371709.314,
+            "unattributed_busy_cores_estimate": 6.193619887196158,
+            "unattributed_busy_cores_range": [
+              6.182976929162367,
+              6.204262845229951
+            ],
+            "interval_uncertainty_ms": 638.73578,
+            "attribution": "screening interval envelope, not exact attribution; no clean/quiescence claim"
+          }
+        },
+        {
+          "role": "candidate",
+          "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-dictionary-full-01/dictionary/sample-000-candidate/sample.json",
+          "sha256": "1b83046b46a7b8f84f61efab999652ed15aa9726c2e1a2a5773da07dee8c7f9c",
+          "rows": 384000,
+          "batches": 3000,
+          "stdout_bytes": 32970756,
+          "stdout_sha256": "526f6241e026bbb7a514b69abb871acae40d3e0ec8c49ce4e616f2e16fc6073e",
+          "wall_ms": 59986.106879,
+          "cpu_ms": 545.3820000000001,
+          "cpu_us_per_row": 1.4202656250000003,
+          "peak_rss_bytes": 9203712,
+          "sampled_resources": {
+            "rss_bytes": {
+              "samples": 262,
+              "first": 8925184,
+              "last": 9191424,
+              "minimum": 8744960,
+              "maximum": 9424896,
+              "slope_per_second": 28.753894018854858
+            },
+            "fds": {
+              "samples": 262,
+              "first": 7,
+              "last": 7,
+              "minimum": 7,
+              "maximum": 7,
+              "slope_per_second": 0.0
+            },
+            "tasks": {
+              "samples": 262,
+              "first": 2,
+              "last": 2,
+              "minimum": 2,
+              "maximum": 2,
+              "slope_per_second": 0.0
+            },
+            "cpu_user_ms": {
+              "samples": 262,
+              "first": 30.0,
+              "last": 400.0,
+              "minimum": 30.0,
+              "maximum": 400.0,
+              "slope_per_second": 6.623174742191095
+            },
+            "cpu_system_ms": {
+              "samples": 262,
+              "first": 10.0,
+              "last": 130.0,
+              "minimum": 10.0,
+              "maximum": 130.0,
+              "slope_per_second": 2.324891531983088
+            }
+          },
+          "sample_count": 286,
+          "missing_proc_samples": 1,
+          "production": {
+            "errors": [],
+            "scheduled_batches": 3000,
+            "delivered_batches": 3000,
+            "throughput_admissible": true,
+            "mode": "schedule_bound",
+            "live": {
+              "ops": 1,
+              "stopped_by_count": 0,
+              "stopped_by_deadline": 1,
+              "stopped_by_termination": 0,
+              "scheduled_batches": 3000,
+              "unbounded_ops": 0,
+              "emitted_batches": 3000,
+              "omitted_by_deadline": 0,
+              "omitted_by_termination": 0,
+              "lateness_ns": {
+                "count": 3000,
+                "sum": 4671694023,
+                "max": 3761010
+              },
+              "send_call_ns": {
+                "count": 3000,
+                "sum": 40934481,
+                "max": 347159
+              },
+              "last": {
+                "scheduled": 3000,
+                "emitted": 3000,
+                "stop_reason": "deadline",
+                "started_ns": 1035133095436729,
+                "deadline_ns": 1035193095436729,
+                "ended_ns": 1035193077523566,
+                "interval_ms": 20,
+                "duration_ms": 60000,
+                "batches": 0
+              }
+            },
+            "producer_deadline_ns": 1035193095436729,
+            "send_call_semantics": "marshaling/copy/flow-control Send wall; not pure blocking time",
+            "schedule_complete": true,
+            "dictionary_churn": {
+              "counters": {
+                "messages": 3000,
+                "initial": 1,
+                "deltas": 2988,
+                "replacements": 11,
+                "resets": 11,
+                "max_size": 4096
+              },
+              "buckets": {
+                "origin_ns": 1035133095331429,
+                "bucket_ms": 60000,
+                "overflow": 0,
+                "counts": [
+                  {
+                    "batches": 3000,
+                    "rows": 384000,
+                    "dictionary_messages": 3000,
+                    "dictionary_deltas": 2988,
+                    "dictionary_replacements": 11
+                  }
+                ]
+              },
+              "required_resets": 11
+            }
+          },
+          "request_evidence": {
+            "admission": "exact_summary_counters",
+            "captured_dogets": 1,
+            "uncaptured_dogets": 0,
+            "captured_about_requests": 1,
+            "terminal_event_captured": true,
+            "request_validation": {
+              "auth_checks": 1,
+              "invalid_auth": 0,
+              "ticket_checks": 1,
+              "ticket_mismatches": 0,
+              "unexpected_requests": 0,
+              "doget_before_about": 0
+            }
+          },
+          "fixture_events_dropped": 0,
+          "fixture_sent_rows": 384000,
+          "fixture_expected_output_ns": 279217369,
+          "cpu_screen": {
+            "observer": {
+              "start_ns": 1035133091652913,
+              "end_ns": 1035193078780771,
+              "user_ms": 2348.8959999999997,
+              "system_ms": 61.88100000000001,
+              "scope": "collector RUSAGE_SELF around collect, excludes children and post-capture validation"
+            },
+            "fixture": {
+              "user_ms": 5065.346,
+              "system_ms": 545.744,
+              "start_bounds": {
+                "start_ns": 1035133090646750,
+                "end_ns": 1035133091315826
+              },
+              "end_bounds": {
+                "start_ns": 1035193082938634,
+                "end_ns": 1035193083502271
+              },
+              "scope": "fixture lifetime CPU difference between pre-meter and post-exit summary snapshots",
+              "expected_output_encoding_wall_ms": 279.217369,
+              "expected_output_encoding_semantics": "monotonic encoding wall time; overlaps fixture CPU; never subtracted from native CPU"
+            },
+            "host_before": {
+              "start_ns": 1035133091546477,
+              "end_ns": 1035133091638128,
+              "counters": {
+                "user": 186535463,
+                "nice": 414783,
+                "system": 146588703,
+                "idle": 1712936110,
+                "iowait": 11572564,
+                "irq": 8029312,
+                "softirq": 5473715,
+                "steal": 0
+              },
+              "loadavg_raw": "7.70 6.96 7.37 10/3005 537705",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "host_after": {
+              "start_ns": 1035193079315546,
+              "end_ns": 1035193079390054,
+              "counters": {
+                "user": 186553568,
+                "nice": 414783,
+                "system": 146605862,
+                "idle": 1713018347,
+                "iowait": 11573871,
+                "irq": 8029977,
+                "softirq": 5474263,
+                "steal": 0
+              },
+              "loadavg_raw": "6.73 6.79 7.29 6/2981 776444",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "comparative_admissible": false,
+            "throughput_admissible": true,
+            "interference_status": "flagged",
+            "potential_limit_status": "below_screen",
+            "observer_busy_cores": 0.04018892249271751,
+            "fixture_busy_cores": 0.09353982600201607,
+            "system_tick_deltas": {
+              "user": 18105,
+              "nice": 0,
+              "system": 17159,
+              "idle": 82237,
+              "iowait": 1307,
+              "irq": 665,
+              "softirq": 548,
+              "steal": 0
+            },
+            "host_elapsed_ms": 59987.843577,
+            "system_busy_ms": 364770.0,
+            "client_cpu_ms": 545.3820000000001,
+            "observer_cpu_ms": 2410.7769999999996,
+            "fixture_cpu_ms": 5611.089999999999,
+            "residual_raw_ms": 356202.751,
+            "unattributed_busy_cores_estimate": 5.937915580225525,
+            "unattributed_busy_cores_range": [
+              5.928758938025261,
+              5.947072222425789
+            ],
+            "interval_uncertainty_ms": 549.2872199999999,
+            "attribution": "screening interval envelope, not exact attribution; no clean/quiescence claim"
+          }
+        }
+      ]
+    },
+    {
+      "campaign": "campaign-r6-short-dictionary-hash-01",
+      "report": {
+        "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-dictionary-hash-01/report.json",
+        "sha256": "bcceae4f288d8f46a9ad805fcd56d555029159538d4c506c7dcc327b337bc9a3"
+      },
+      "resources": {
+        "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-dictionary-hash-01/resources-offline.json",
+        "size_bytes": 34553,
+        "sha256": "3ade36a2886ba86750ffcfedef4e2407603403ad7726013e1089e9e4828ffd35"
+      },
+      "cleanup": {
+        "campaign_id": "campaign-r6-short-dictionary-hash-01",
+        "started_utc": "2026-10-15T00:24:44.001266+00:00",
+        "ended_utc": "2026-10-15T00:26:44.691777+00:00",
+        "exit_code": 0,
+        "cleanup_utc": "2026-10-15T00:26:44.705787+00:00",
+        "pid_gone": true,
+        "matching_processes": [],
+        "lock_reacquired_nonblocking_and_released": true,
+        "report_sha256": "bcceae4f288d8f46a9ad805fcd56d555029159538d4c506c7dcc327b337bc9a3",
+        "passed": true,
+        "complete": true,
+        "failure": null,
+        "end_identity_check": {
+          "passed": true,
+          "changed": []
+        },
+        "recorded_measured_samples": 2,
+        "comparison_contracts_passed": true,
+        "quarantine": {
+          "dictionary": [
+            "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+          ]
+        }
+      },
+      "comparison": {
+        "comparable": true,
+        "reasons": [],
+        "differing_fields": [],
+        "checked_fields": [
+          "stdout_sha256",
+          "stdout_bytes",
+          "rendered_rows",
+          "batches",
+          "stderr_sha256",
+          "termination",
+          "requests",
+          "ticket_sha256",
+          "request_validation",
+          "workload_sha256",
+          "sink",
+          "tls",
+          "config_before",
+          "config_after"
+        ],
+        "samples": 2
+      },
+      "ratio_quarantine": [
+        "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+      ],
+      "metric_quarantine": {
+        "wall_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "schedule_bound: absolute observations only"
+        ],
+        "first_complete_record_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "fixture_to_first_complete_record_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "cpu_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "cpu_us_per_row": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "peak_rss_bytes": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "rows_per_second": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "schedule_bound: absolute observations only"
+        ],
+        "output_bytes_per_second": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "schedule_bound: absolute observations only"
+        ]
+      },
+      "samples": [
+        {
+          "role": "go",
+          "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-dictionary-hash-01/dictionary/sample-000-go/sample.json",
+          "sha256": "f0d681d46b0fcc28beb7c605c3064bcf19858719b74b46729543eb08dd312d06",
+          "rows": 384000,
+          "batches": 3000,
+          "stdout_bytes": 32970756,
+          "stdout_sha256": "526f6241e026bbb7a514b69abb871acae40d3e0ec8c49ce4e616f2e16fc6073e",
+          "wall_ms": 60011.398158,
+          "cpu_ms": 1495.931,
+          "cpu_us_per_row": 3.8956536458333333,
+          "peak_rss_bytes": 65269760,
+          "sampled_resources": {
+            "rss_bytes": {
+              "samples": 264,
+              "first": 65196032,
+              "last": 65527808,
+              "minimum": 63246336,
+              "maximum": 67276800,
+              "slope_per_second": 20032.938433257317
+            },
+            "fds": {
+              "samples": 264,
+              "first": 7,
+              "last": 7,
+              "minimum": 7,
+              "maximum": 7,
+              "slope_per_second": 0.0
+            },
+            "tasks": {
+              "samples": 264,
+              "first": 20,
+              "last": 21,
+              "minimum": 20,
+              "maximum": 21,
+              "slope_per_second": 0.020803407078531438
+            },
+            "cpu_user_ms": {
+              "samples": 264,
+              "first": 130.0,
+              "last": 1180.0,
+              "minimum": 130.0,
+              "maximum": 1180.0,
+              "slope_per_second": 19.198419763638775
+            },
+            "cpu_system_ms": {
+              "samples": 264,
+              "first": 20.0,
+              "last": 300.0,
+              "minimum": 20.0,
+              "maximum": 300.0,
+              "slope_per_second": 5.036250613654167
+            }
+          },
+          "sample_count": 287,
+          "missing_proc_samples": 1,
+          "production": {
+            "errors": [],
+            "scheduled_batches": 3000,
+            "delivered_batches": 3000,
+            "throughput_admissible": true,
+            "mode": "schedule_bound",
+            "live": {
+              "ops": 1,
+              "stopped_by_count": 0,
+              "stopped_by_deadline": 1,
+              "stopped_by_termination": 0,
+              "scheduled_batches": 3000,
+              "unbounded_ops": 0,
+              "emitted_batches": 3000,
+              "omitted_by_deadline": 0,
+              "omitted_by_termination": 0,
+              "lateness_ns": {
+                "count": 3000,
+                "sum": 4654397107,
+                "max": 5163296
+              },
+              "send_call_ns": {
+                "count": 3000,
+                "sum": 42215197,
+                "max": 2523724
+              },
+              "last": {
+                "scheduled": 3000,
+                "emitted": 3000,
+                "stop_reason": "deadline",
+                "started_ns": 1035242733962299,
+                "deadline_ns": 1035302733962299,
+                "ended_ns": 1035302715213496,
+                "interval_ms": 20,
+                "duration_ms": 60000,
+                "batches": 0
+              }
+            },
+            "producer_deadline_ns": 1035302733962299,
+            "send_call_semantics": "marshaling/copy/flow-control Send wall; not pure blocking time",
+            "schedule_complete": true,
+            "dictionary_churn": {
+              "counters": {
+                "messages": 3000,
+                "initial": 1,
+                "deltas": 2988,
+                "replacements": 11,
+                "resets": 11,
+                "max_size": 4096
+              },
+              "buckets": {
+                "origin_ns": 1035242733875103,
+                "bucket_ms": 60000,
+                "overflow": 0,
+                "counts": [
+                  {
+                    "batches": 3000,
+                    "rows": 384000,
+                    "dictionary_messages": 3000,
+                    "dictionary_deltas": 2988,
+                    "dictionary_replacements": 11
+                  }
+                ]
+              },
+              "required_resets": 11
+            }
+          },
+          "request_evidence": {
+            "admission": "exact_summary_counters",
+            "captured_dogets": 1,
+            "uncaptured_dogets": 0,
+            "captured_about_requests": 1,
+            "terminal_event_captured": true,
+            "request_validation": {
+              "auth_checks": 1,
+              "invalid_auth": 0,
+              "ticket_checks": 1,
+              "ticket_mismatches": 0,
+              "unexpected_requests": 0,
+              "doget_before_about": 0
+            }
+          },
+          "fixture_events_dropped": 0,
+          "fixture_sent_rows": 384000,
+          "fixture_expected_output_ns": 280453568,
+          "cpu_screen": {
+            "observer": {
+              "start_ns": 1035242707460044,
+              "end_ns": 1035302720108278,
+              "user_ms": 524.6189999999999,
+              "system_ms": 57.263999999999996,
+              "scope": "collector RUSAGE_SELF around collect, excludes children and post-capture validation"
+            },
+            "fixture": {
+              "user_ms": 5113.241,
+              "system_ms": 675.743,
+              "start_bounds": {
+                "start_ns": 1035242706568395,
+                "end_ns": 1035242707124260
+              },
+              "end_bounds": {
+                "start_ns": 1035302725176692,
+                "end_ns": 1035302725855694
+              },
+              "scope": "fixture lifetime CPU difference between pre-meter and post-exit summary snapshots",
+              "expected_output_encoding_wall_ms": 280.453568,
+              "expected_output_encoding_semantics": "monotonic encoding wall time; overlaps fixture CPU; never subtracted from native CPU"
+            },
+            "host_before": {
+              "start_ns": 1035242707364956,
+              "end_ns": 1035242707445382,
+              "counters": {
+                "user": 186567888,
+                "nice": 414783,
+                "system": 146619913,
+                "idle": 1713087432,
+                "iowait": 11574715,
+                "irq": 8030509,
+                "softirq": 5474719,
+                "steal": 0
+              },
+              "loadavg_raw": "6.64 6.77 7.25 4/2945 974584",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "host_after": {
+              "start_ns": 1035302720977459,
+              "end_ns": 1035302721143621,
+              "counters": {
+                "user": 186583283,
+                "nice": 414783,
+                "system": 146634812,
+                "idle": 1713175196,
+                "iowait": 11575535,
+                "irq": 8031153,
+                "softirq": 5475273,
+                "steal": 0
+              },
+              "loadavg_raw": "6.72 6.79 7.23 26/3015 1177164",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "comparative_admissible": false,
+            "throughput_admissible": true,
+            "interference_status": "flagged",
+            "potential_limit_status": "below_screen",
+            "observer_busy_cores": 0.009696208018150135,
+            "fixture_busy_cores": 0.09646474132728204,
+            "system_tick_deltas": {
+              "user": 15395,
+              "nice": 0,
+              "system": 14899,
+              "idle": 87764,
+              "iowait": 820,
+              "irq": 644,
+              "softirq": 554,
+              "steal": 0
+            },
+            "host_elapsed_ms": 60013.778665,
+            "system_busy_ms": 314920.0,
+            "client_cpu_ms": 1495.931,
+            "observer_cpu_ms": 581.8829999999999,
+            "fixture_cpu_ms": 5788.984,
+            "residual_raw_ms": 307053.20200000005,
+            "unattributed_busy_cores_estimate": 5.116378418929207,
+            "unattributed_busy_cores_range": [
+              5.106707449146755,
+              5.1260493887116585
+            ],
+            "interval_uncertainty_ms": 580.39144,
+            "attribution": "screening interval envelope, not exact attribution; no clean/quiescence claim"
+          }
+        },
+        {
+          "role": "candidate",
+          "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-dictionary-hash-01/dictionary/sample-000-candidate/sample.json",
+          "sha256": "17cffef48632cdcda646f2594607c097b2b493eae8b5d00a2ad88bba7f8150bd",
+          "rows": 384000,
+          "batches": 3000,
+          "stdout_bytes": 32970756,
+          "stdout_sha256": "526f6241e026bbb7a514b69abb871acae40d3e0ec8c49ce4e616f2e16fc6073e",
+          "wall_ms": 59985.877162,
+          "cpu_ms": 546.2819999999999,
+          "cpu_us_per_row": 1.4226093749999997,
+          "peak_rss_bytes": 9211904,
+          "sampled_resources": {
+            "rss_bytes": {
+              "samples": 264,
+              "first": 9170944,
+              "last": 9162752,
+              "minimum": 8740864,
+              "maximum": 9420800,
+              "slope_per_second": -177.7005783406197
+            },
+            "fds": {
+              "samples": 264,
+              "first": 7,
+              "last": 7,
+              "minimum": 7,
+              "maximum": 7,
+              "slope_per_second": 0.0
+            },
+            "tasks": {
+              "samples": 264,
+              "first": 2,
+              "last": 2,
+              "minimum": 2,
+              "maximum": 2,
+              "slope_per_second": 0.0
+            },
+            "cpu_user_ms": {
+              "samples": 264,
+              "first": 40.0,
+              "last": 400.0,
+              "minimum": 40.0,
+              "maximum": 400.0,
+              "slope_per_second": 6.625119023206834
+            },
+            "cpu_system_ms": {
+              "samples": 264,
+              "first": 10.0,
+              "last": 140.0,
+              "minimum": 10.0,
+              "maximum": 140.0,
+              "slope_per_second": 2.3490110016510206
+            }
+          },
+          "sample_count": 287,
+          "missing_proc_samples": 1,
+          "production": {
+            "errors": [],
+            "scheduled_batches": 3000,
+            "delivered_batches": 3000,
+            "throughput_admissible": true,
+            "mode": "schedule_bound",
+            "live": {
+              "ops": 1,
+              "stopped_by_count": 0,
+              "stopped_by_deadline": 1,
+              "stopped_by_termination": 0,
+              "scheduled_batches": 3000,
+              "unbounded_ops": 0,
+              "emitted_batches": 3000,
+              "omitted_by_deadline": 0,
+              "omitted_by_termination": 0,
+              "lateness_ns": {
+                "count": 3000,
+                "sum": 4774902682,
+                "max": 10743147
+              },
+              "send_call_ns": {
+                "count": 3000,
+                "sum": 41410706,
+                "max": 282089
+              },
+              "last": {
+                "scheduled": 3000,
+                "emitted": 3000,
+                "stop_reason": "deadline",
+                "started_ns": 1035302803940351,
+                "deadline_ns": 1035362803940351,
+                "ended_ns": 1035362786431685,
+                "interval_ms": 20,
+                "duration_ms": 60000,
+                "batches": 0
+              }
+            },
+            "producer_deadline_ns": 1035362803940351,
+            "send_call_semantics": "marshaling/copy/flow-control Send wall; not pure blocking time",
+            "schedule_complete": true,
+            "dictionary_churn": {
+              "counters": {
+                "messages": 3000,
+                "initial": 1,
+                "deltas": 2988,
+                "replacements": 11,
+                "resets": 11,
+                "max_size": 4096
+              },
+              "buckets": {
+                "origin_ns": 1035302803871051,
+                "bucket_ms": 60000,
+                "overflow": 0,
+                "counts": [
+                  {
+                    "batches": 3000,
+                    "rows": 384000,
+                    "dictionary_messages": 3000,
+                    "dictionary_deltas": 2988,
+                    "dictionary_replacements": 11
+                  }
+                ]
+              },
+              "required_resets": 11
+            }
+          },
+          "request_evidence": {
+            "admission": "exact_summary_counters",
+            "captured_dogets": 1,
+            "uncaptured_dogets": 0,
+            "captured_about_requests": 1,
+            "terminal_event_captured": true,
+            "request_validation": {
+              "auth_checks": 1,
+              "invalid_auth": 0,
+              "ticket_checks": 1,
+              "ticket_mismatches": 0,
+              "unexpected_requests": 0,
+              "doget_before_about": 0
+            }
+          },
+          "fixture_events_dropped": 0,
+          "fixture_sent_rows": 384000,
+          "fixture_expected_output_ns": 284463426,
+          "cpu_screen": {
+            "observer": {
+              "start_ns": 1035302800705689,
+              "end_ns": 1035362787793605,
+              "user_ms": 544.6159999999999,
+              "system_ms": 57.368,
+              "scope": "collector RUSAGE_SELF around collect, excludes children and post-capture validation"
+            },
+            "fixture": {
+              "user_ms": 4669.08,
+              "system_ms": 969.174,
+              "start_bounds": {
+                "start_ns": 1035302799849088,
+                "end_ns": 1035302800382468
+              },
+              "end_bounds": {
+                "start_ns": 1035362793022479,
+                "end_ns": 1035362793770029
+              },
+              "scope": "fixture lifetime CPU difference between pre-meter and post-exit summary snapshots",
+              "expected_output_encoding_wall_ms": 284.463426,
+              "expected_output_encoding_semantics": "monotonic encoding wall time; overlaps fixture CPU; never subtracted from native CPU"
+            },
+            "host_before": {
+              "start_ns": 1035302800613963,
+              "end_ns": 1035302800695232,
+              "counters": {
+                "user": 186583310,
+                "nice": 414783,
+                "system": 146634835,
+                "idle": 1713175302,
+                "iowait": 11575537,
+                "irq": 8031154,
+                "softirq": 5475274,
+                "steal": 0
+              },
+              "loadavg_raw": "6.72 6.79 7.23 5/3035 1177514",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "host_after": {
+              "start_ns": 1035362788672833,
+              "end_ns": 1035362788844409,
+              "counters": {
+                "user": 186602734,
+                "nice": 414783,
+                "system": 146653045,
+                "idle": 1713255376,
+                "iowait": 11576621,
+                "irq": 8031815,
+                "softirq": 5475829,
+                "steal": 0
+              },
+              "loadavg_raw": "6.70 6.80 7.20 8/3030 1423930",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "comparative_admissible": false,
+            "throughput_admissible": true,
+            "interference_status": "flagged",
+            "potential_limit_status": "below_screen",
+            "observer_busy_cores": 0.010035428812256266,
+            "fixture_busy_cores": 0.09399302413755041,
+            "system_tick_deltas": {
+              "user": 19424,
+              "nice": 0,
+              "system": 18210,
+              "idle": 80074,
+              "iowait": 1084,
+              "irq": 661,
+              "softirq": 555,
+              "steal": 0
+            },
+            "host_elapsed_ms": 59988.230446,
+            "system_busy_ms": 388500.0,
+            "client_cpu_ms": 546.2819999999999,
+            "observer_cpu_ms": 601.9839999999999,
+            "fixture_cpu_ms": 5638.254,
+            "residual_raw_ms": 381713.48,
+            "unattributed_busy_cores_estimate": 6.363139521903543,
+            "unattributed_busy_cores_range": [
+              6.353408843474456,
+              6.372870200332629
+            ],
+            "interval_uncertainty_ms": 583.72618,
+            "attribution": "screening interval envelope, not exact attribution; no clean/quiescence claim"
+          }
+        }
+      ]
+    },
+    {
+      "campaign": "campaign-r6-short-slow-sink-full-01",
+      "report": {
+        "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-slow-sink-full-01/report.json",
+        "sha256": "ddd2600fd7af48c944bf142306e2590f30844b0ebe699e50898c7136be91de56"
+      },
+      "resources": {
+        "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-slow-sink-full-01/resources-offline.json",
+        "size_bytes": 34784,
+        "sha256": "64003e6c78c887ef0cecee250c6e737dd0b76f8a9079d0703dfcaa82a4d72521"
+      },
+      "cleanup": {
+        "campaign_id": "campaign-r6-short-slow-sink-full-01",
+        "started_utc": "2026-10-15T00:27:42.654870+00:00",
+        "ended_utc": "2026-10-15T00:29:47.656313+00:00",
+        "exit_code": 0,
+        "cleanup_utc": "2026-10-15T00:29:47.670938+00:00",
+        "pid_gone": true,
+        "matching_processes": [],
+        "lock_reacquired_nonblocking_and_released": true,
+        "report_sha256": "ddd2600fd7af48c944bf142306e2590f30844b0ebe699e50898c7136be91de56",
+        "passed": true,
+        "complete": true,
+        "failure": null,
+        "end_identity_check": {
+          "passed": true,
+          "changed": []
+        },
+        "recorded_measured_samples": 2,
+        "comparison_contracts_passed": true,
+        "quarantine": {
+          "slow-sink": [
+            "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+          ]
+        }
+      },
+      "comparison": {
+        "comparable": true,
+        "reasons": [],
+        "differing_fields": [],
+        "checked_fields": [
+          "stdout_sha256",
+          "stdout_bytes",
+          "rendered_rows",
+          "batches",
+          "stderr_sha256",
+          "termination",
+          "requests",
+          "ticket_sha256",
+          "request_validation",
+          "workload_sha256",
+          "sink",
+          "tls",
+          "config_before",
+          "config_after"
+        ],
+        "samples": 2
+      },
+      "ratio_quarantine": [
+        "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+      ],
+      "metric_quarantine": {
+        "wall_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "sink_gated: absolute observations only"
+        ],
+        "first_complete_record_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "sink_gated: absolute observations only"
+        ],
+        "fixture_to_first_complete_record_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "sink_gated: absolute observations only"
+        ],
+        "cpu_ms": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "cpu_us_per_row": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "peak_rss_bytes": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "rows_per_second": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "sink_gated: absolute observations only",
+          "fixture/observer ceiling or producer schedule prevents throughput attribution"
+        ],
+        "output_bytes_per_second": [
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "sink_gated: absolute observations only",
+          "fixture/observer ceiling or producer schedule prevents throughput attribution"
+        ]
+      },
+      "samples": [
+        {
+          "role": "go",
+          "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-slow-sink-full-01/slow-sink/sample-000-go/sample.json",
+          "sha256": "fa644f7ae0c34c2f23e6d6a1e0ba29f9a294e16eae59619a024024576f2ef131",
+          "rows": 59136,
+          "batches": 462,
+          "stdout_bytes": 10464545,
+          "stdout_sha256": "b2253c1a29e15c652d4660071f6dc0fbc25d87643d5e9336c355a228b53f90c4",
+          "wall_ms": 61889.634743,
+          "cpu_ms": 385.778,
+          "cpu_us_per_row": 6.5235727813852815,
+          "peak_rss_bytes": 62033920,
+          "sampled_resources": {
+            "rss_bytes": {
+              "samples": 279,
+              "first": 52654080,
+              "last": 64602112,
+              "minimum": 52654080,
+              "maximum": 64602112,
+              "slope_per_second": 194629.0920795952
+            },
+            "fds": {
+              "samples": 279,
+              "first": 7,
+              "last": 7,
+              "minimum": 7,
+              "maximum": 7,
+              "slope_per_second": 0.0
+            },
+            "tasks": {
+              "samples": 279,
+              "first": 14,
+              "last": 19,
+              "minimum": 14,
+              "maximum": 19,
+              "slope_per_second": 0.11508118222506956
+            },
+            "cpu_user_ms": {
+              "samples": 279,
+              "first": 20.0,
+              "last": 260.0,
+              "minimum": 20.0,
+              "maximum": 260.0,
+              "slope_per_second": 4.582802383313643
+            },
+            "cpu_system_ms": {
+              "samples": 279,
+              "first": 10.0,
+              "last": 110.0,
+              "minimum": 10.0,
+              "maximum": 110.0,
+              "slope_per_second": 1.862507958168959
+            }
+          },
+          "sample_count": 303,
+          "missing_proc_samples": 3,
+          "production": {
+            "errors": [],
+            "scheduled_batches": 3000,
+            "delivered_batches": 462,
+            "throughput_admissible": false,
+            "mode": "sink_limited",
+            "live": {
+              "ops": 1,
+              "stopped_by_count": 0,
+              "stopped_by_deadline": 1,
+              "stopped_by_termination": 0,
+              "scheduled_batches": 3000,
+              "unbounded_ops": 0,
+              "emitted_batches": 462,
+              "omitted_by_deadline": 2538,
+              "omitted_by_termination": 0,
+              "lateness_ns": {
+                "count": 462,
+                "sum": 13371841578412,
+                "max": 50720340684
+              },
+              "send_call_ns": {
+                "count": 462,
+                "sum": 59639351197,
+                "max": 9638968451
+              },
+              "last": {
+                "scheduled": 3000,
+                "emitted": 462,
+                "stop_reason": "deadline",
+                "started_ns": 1035421421377881,
+                "deadline_ns": 1035481421377881,
+                "ended_ns": 1035481565378651,
+                "interval_ms": 20,
+                "duration_ms": 60000,
+                "batches": 0
+              }
+            },
+            "producer_deadline_ns": 1035481421377881,
+            "send_call_semantics": "marshaling/copy/flow-control Send wall; not pure blocking time",
+            "schedule_complete": false
+          },
+          "request_evidence": {
+            "admission": "exact_summary_counters",
+            "captured_dogets": 1,
+            "uncaptured_dogets": 0,
+            "captured_about_requests": 1,
+            "terminal_event_captured": true,
+            "request_validation": {
+              "auth_checks": 1,
+              "invalid_auth": 0,
+              "ticket_checks": 1,
+              "ticket_mismatches": 0,
+              "unexpected_requests": 0,
+              "doget_before_about": 0
+            }
+          },
+          "fixture_events_dropped": 0,
+          "fixture_sent_rows": 59136,
+          "fixture_expected_output_ns": 114718905,
+          "cpu_screen": {
+            "observer": {
+              "start_ns": 1035421388068053,
+              "end_ns": 1035483583486112,
+              "user_ms": 882.665,
+              "system_ms": 68.86899999999999,
+              "scope": "collector RUSAGE_SELF around collect, excludes children and post-capture validation"
+            },
+            "fixture": {
+              "user_ms": 315.837,
+              "system_ms": 71.26,
+              "start_bounds": {
+                "start_ns": 1035421387032876,
+                "end_ns": 1035421387751221
+              },
+              "end_bounds": {
+                "start_ns": 1035483590500611,
+                "end_ns": 1035483591383231
+              },
+              "scope": "fixture lifetime CPU difference between pre-meter and post-exit summary snapshots",
+              "expected_output_encoding_wall_ms": 114.718905,
+              "expected_output_encoding_semantics": "monotonic encoding wall time; overlaps fixture CPU; never subtracted from native CPU"
+            },
+            "host_before": {
+              "start_ns": 1035421387961906,
+              "end_ns": 1035421388055509,
+              "counters": {
+                "user": 186620147,
+                "nice": 414783,
+                "system": 146670129,
+                "idle": 1713335756,
+                "iowait": 11577811,
+                "irq": 8032450,
+                "softirq": 5476372,
+                "steal": 0
+              },
+              "loadavg_raw": "6.84 6.80 7.18 8/3006 1656908",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "host_after": {
+              "start_ns": 1035483584363790,
+              "end_ns": 1035483584535343,
+              "counters": {
+                "user": 186639919,
+                "nice": 414783,
+                "system": 146688212,
+                "idle": 1713419133,
+                "iowait": 11579784,
+                "irq": 8033160,
+                "softirq": 5476915,
+                "steal": 0
+              },
+              "loadavg_raw": "6.28 6.68 7.11 5/2996 1889414",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "comparative_admissible": false,
+            "throughput_admissible": true,
+            "interference_status": "flagged",
+            "potential_limit_status": "below_screen",
+            "observer_busy_cores": 0.015374690833954595,
+            "fixture_busy_cores": 0.0062546337784580705,
+            "system_tick_deltas": {
+              "user": 19772,
+              "nice": 0,
+              "system": 18083,
+              "idle": 83377,
+              "iowait": 1973,
+              "irq": 710,
+              "softirq": 543,
+              "steal": 0
+            },
+            "host_elapsed_ms": 62196.573437,
+            "system_busy_ms": 391080.0,
+            "client_cpu_ms": 385.778,
+            "observer_cpu_ms": 951.534,
+            "fixture_cpu_ms": 387.097,
+            "residual_raw_ms": 389355.591,
+            "unattributed_busy_cores_estimate": 6.260081054053326,
+            "unattributed_busy_cores_range": [
+              6.152078001332034,
+              6.368084106774616
+            ],
+            "interval_uncertainty_ms": 6717.4198,
+            "attribution": "screening interval envelope, not exact attribution; no clean/quiescence claim"
+          }
+        },
+        {
+          "role": "candidate",
+          "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-slow-sink-full-01/slow-sink/sample-000-candidate/sample.json",
+          "sha256": "9f0ccbb943e1073f9839288e3f33f9bc5e8c1fdc677af2a948800dcd57c761f6",
+          "rows": 59136,
+          "batches": 462,
+          "stdout_bytes": 10464545,
+          "stdout_sha256": "b2253c1a29e15c652d4660071f6dc0fbc25d87643d5e9336c355a228b53f90c4",
+          "wall_ms": 61871.206858,
+          "cpu_ms": 110.487,
+          "cpu_us_per_row": 1.868354301948052,
+          "peak_rss_bytes": 8597504,
+          "sampled_resources": {
+            "rss_bytes": {
+              "samples": 279,
+              "first": 8691712,
+              "last": 8732672,
+              "minimum": 8691712,
+              "maximum": 8732672,
+              "slope_per_second": 385.4962734100453
+            },
+            "fds": {
+              "samples": 279,
+              "first": 7,
+              "last": 7,
+              "minimum": 7,
+              "maximum": 7,
+              "slope_per_second": 0.0
+            },
+            "tasks": {
+              "samples": 279,
+              "first": 2,
+              "last": 2,
+              "minimum": 2,
+              "maximum": 2,
+              "slope_per_second": 0.0
+            },
+            "cpu_user_ms": {
+              "samples": 279,
+              "first": 0.0,
+              "last": 50.0,
+              "minimum": 0.0,
+              "maximum": 50.0,
+              "slope_per_second": 0.9911283392364619
+            },
+            "cpu_system_ms": {
+              "samples": 279,
+              "first": 0.0,
+              "last": 50.0,
+              "minimum": 0.0,
+              "maximum": 50.0,
+              "slope_per_second": 0.9328189371720841
+            }
+          },
+          "sample_count": 303,
+          "missing_proc_samples": 3,
+          "production": {
+            "errors": [],
+            "scheduled_batches": 3000,
+            "delivered_batches": 462,
+            "throughput_admissible": false,
+            "mode": "sink_limited",
+            "live": {
+              "ops": 1,
+              "stopped_by_count": 0,
+              "stopped_by_deadline": 1,
+              "stopped_by_termination": 0,
+              "scheduled_batches": 3000,
+              "unbounded_ops": 0,
+              "emitted_batches": 462,
+              "omitted_by_deadline": 2538,
+              "omitted_by_termination": 0,
+              "lateness_ns": {
+                "count": 462,
+                "sum": 13343404463346,
+                "max": 50706907599
+              },
+              "send_call_ns": {
+                "count": 462,
+                "sum": 59511984160,
+                "max": 9645917569
+              },
+              "last": {
+                "scheduled": 3000,
+                "emitted": 462,
+                "stop_reason": "deadline",
+                "started_ns": 1035483618098694,
+                "deadline_ns": 1035543618098694,
+                "ended_ns": 1035543667235501,
+                "interval_ms": 20,
+                "duration_ms": 60000,
+                "batches": 0
+              }
+            },
+            "producer_deadline_ns": 1035543618098694,
+            "send_call_semantics": "marshaling/copy/flow-control Send wall; not pure blocking time",
+            "schedule_complete": false
+          },
+          "request_evidence": {
+            "admission": "exact_summary_counters",
+            "captured_dogets": 1,
+            "uncaptured_dogets": 0,
+            "captured_about_requests": 1,
+            "terminal_event_captured": true,
+            "request_validation": {
+              "auth_checks": 1,
+              "invalid_auth": 0,
+              "ticket_checks": 1,
+              "ticket_mismatches": 0,
+              "unexpected_requests": 0,
+              "doget_before_about": 0
+            }
+          },
+          "fixture_events_dropped": 0,
+          "fixture_sent_rows": 59136,
+          "fixture_expected_output_ns": 114527632,
+          "cpu_screen": {
+            "observer": {
+              "start_ns": 1035483615194778,
+              "end_ns": 1035545792069887,
+              "user_ms": 880.0349999999999,
+              "system_ms": 61.66999999999999,
+              "scope": "collector RUSAGE_SELF around collect, excludes children and post-capture validation"
+            },
+            "fixture": {
+              "user_ms": 356.633,
+              "system_ms": 76.745,
+              "start_bounds": {
+                "start_ns": 1035483614317112,
+                "end_ns": 1035483614875537
+              },
+              "end_bounds": {
+                "start_ns": 1035545797285892,
+                "end_ns": 1035545798082880
+              },
+              "scope": "fixture lifetime CPU difference between pre-meter and post-exit summary snapshots",
+              "expected_output_encoding_wall_ms": 114.527632,
+              "expected_output_encoding_semantics": "monotonic encoding wall time; overlaps fixture CPU; never subtracted from native CPU"
+            },
+            "host_before": {
+              "start_ns": 1035483615096589,
+              "end_ns": 1035483615180221,
+              "counters": {
+                "user": 186639928,
+                "nice": 414783,
+                "system": 146688222,
+                "idle": 1713419174,
+                "iowait": 11579785,
+                "irq": 8033161,
+                "softirq": 5476916,
+                "steal": 0
+              },
+              "loadavg_raw": "6.28 6.68 7.11 3/3000 1889518",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "host_after": {
+              "start_ns": 1035545792635989,
+              "end_ns": 1035545792718811,
+              "counters": {
+                "user": 186657217,
+                "nice": 414783,
+                "system": 146703938,
+                "idle": 1713507648,
+                "iowait": 11581487,
+                "irq": 8033861,
+                "softirq": 5477467,
+                "steal": 0
+              },
+              "loadavg_raw": "5.72 6.45 7.01 6/3065 2092926",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "comparative_admissible": false,
+            "throughput_admissible": true,
+            "interference_status": "flagged",
+            "potential_limit_status": "below_screen",
+            "observer_busy_cores": 0.01522040780877764,
+            "fixture_busy_cores": 0.007004518289010292,
+            "system_tick_deltas": {
+              "user": 17289,
+              "nice": 0,
+              "system": 15716,
+              "idle": 88474,
+              "iowait": 1702,
+              "irq": 700,
+              "softirq": 551,
+              "steal": 0
+            },
+            "host_elapsed_ms": 62177.622222,
+            "system_busy_ms": 342560.0,
+            "client_cpu_ms": 110.487,
+            "observer_cpu_ms": 941.7049999999998,
+            "fixture_cpu_ms": 433.378,
+            "residual_raw_ms": 341074.42999999993,
+            "unattributed_busy_cores_estimate": 5.485485256773284,
+            "unattributed_busy_cores_range": [
+              5.378274330691242,
+              5.5926961828553265
+            ],
+            "interval_uncertainty_ms": 6666.12046,
+            "attribution": "screening interval envelope, not exact attribution; no clean/quiescence claim"
+          }
+        }
+      ]
+    },
+    {
+      "campaign": "campaign-r6-short-slow-sink-hash-01",
+      "report": {
+        "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-slow-sink-hash-01/report.json",
+        "sha256": "29baa2c48f5bbc4d64ed53cf8184bac01ddcd403118b371460324890f5658f5a"
+      },
+      "resources": {
+        "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-slow-sink-hash-01/resources-offline.json",
+        "size_bytes": 35949,
+        "sha256": "838318595b8d1dd102e30dfeeb756b5b04b4266d988233df6344f404de554421"
+      },
+      "cleanup": {
+        "campaign_id": "campaign-r6-short-slow-sink-hash-01",
+        "started_utc": "2026-10-15T00:30:25.373187+00:00",
+        "ended_utc": "2026-10-15T00:32:30.327448+00:00",
+        "exit_code": 0,
+        "cleanup_utc": "2026-10-15T00:32:30.344573+00:00",
+        "pid_gone": true,
+        "matching_processes": [],
+        "lock_reacquired_nonblocking_and_released": true,
+        "report_sha256": "29baa2c48f5bbc4d64ed53cf8184bac01ddcd403118b371460324890f5658f5a",
+        "passed": true,
+        "complete": true,
+        "failure": null,
+        "end_identity_check": {
+          "passed": true,
+          "changed": []
+        },
+        "recorded_measured_samples": 2,
+        "comparison_contracts_passed": false,
+        "quarantine": {
+          "slow-sink": [
+            "delivered workload contract differs: batches, rendered_rows, stdout_bytes, stdout_sha256",
+            "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+          ]
+        }
+      },
+      "comparison": {
+        "comparable": false,
+        "reasons": [
+          "delivered workload contract differs: batches, rendered_rows, stdout_bytes, stdout_sha256"
+        ],
+        "differing_fields": [
+          "batches",
+          "rendered_rows",
+          "stdout_bytes",
+          "stdout_sha256"
+        ],
+        "checked_fields": [
+          "stdout_sha256",
+          "stdout_bytes",
+          "rendered_rows",
+          "batches",
+          "stderr_sha256",
+          "termination",
+          "requests",
+          "ticket_sha256",
+          "request_validation",
+          "workload_sha256",
+          "sink",
+          "tls",
+          "config_before",
+          "config_after"
+        ],
+        "samples": 2
+      },
+      "ratio_quarantine": [
+        "delivered workload contract differs: batches, rendered_rows, stdout_bytes, stdout_sha256",
+        "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+      ],
+      "metric_quarantine": {
+        "wall_ms": [
+          "delivered workload contract differs: batches, rendered_rows, stdout_bytes, stdout_sha256",
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "sink_gated: absolute observations only"
+        ],
+        "first_complete_record_ms": [
+          "delivered workload contract differs: batches, rendered_rows, stdout_bytes, stdout_sha256",
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "sink_gated: absolute observations only"
+        ],
+        "fixture_to_first_complete_record_ms": [
+          "delivered workload contract differs: batches, rendered_rows, stdout_bytes, stdout_sha256",
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "sink_gated: absolute observations only"
+        ],
+        "cpu_ms": [
+          "delivered workload contract differs: batches, rendered_rows, stdout_bytes, stdout_sha256",
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "cpu_us_per_row": [
+          "delivered workload contract differs: batches, rendered_rows, stdout_bytes, stdout_sha256",
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "peak_rss_bytes": [
+          "delivered workload contract differs: batches, rendered_rows, stdout_bytes, stdout_sha256",
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited"
+        ],
+        "rows_per_second": [
+          "delivered workload contract differs: batches, rendered_rows, stdout_bytes, stdout_sha256",
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "sink_gated: absolute observations only",
+          "fixture/observer ceiling or producer schedule prevents throughput attribution"
+        ],
+        "output_bytes_per_second": [
+          "delivered workload contract differs: batches, rendered_rows, stdout_bytes, stdout_sha256",
+          "host CPU admission unavailable, ambiguous, flagged or resolution_limited",
+          "sink_gated: absolute observations only",
+          "fixture/observer ceiling or producer schedule prevents throughput attribution"
+        ]
+      },
+      "samples": [
+        {
+          "role": "go",
+          "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-slow-sink-hash-01/slow-sink/sample-000-go/sample.json",
+          "sha256": "16aaa955cc1bf433c94bca9ab3413634c5a09e927192894398518b8f5b920e5f",
+          "rows": 59648,
+          "batches": 466,
+          "stdout_bytes": 10555629,
+          "stdout_sha256": "f6b6cc971afd55c34263719d242c27b51eb9635a3a568466ea40735d22c43f6a",
+          "wall_ms": 61810.840434,
+          "cpu_ms": 382.634,
+          "cpu_us_per_row": 6.414867221030043,
+          "peak_rss_bytes": 62910464,
+          "sampled_resources": {
+            "rss_bytes": {
+              "samples": 281,
+              "first": 52916224,
+              "last": 65413120,
+              "minimum": 52916224,
+              "maximum": 65413120,
+              "slope_per_second": 214234.62097842194
+            },
+            "fds": {
+              "samples": 281,
+              "first": 7,
+              "last": 7,
+              "minimum": 7,
+              "maximum": 7,
+              "slope_per_second": 0.0
+            },
+            "tasks": {
+              "samples": 281,
+              "first": 14,
+              "last": 18,
+              "minimum": 14,
+              "maximum": 18,
+              "slope_per_second": 0.07773666185036811
+            },
+            "cpu_user_ms": {
+              "samples": 281,
+              "first": 30.0,
+              "last": 270.0,
+              "minimum": 30.0,
+              "maximum": 270.0,
+              "slope_per_second": 4.689335026603738
+            },
+            "cpu_system_ms": {
+              "samples": 281,
+              "first": 10.0,
+              "last": 90.0,
+              "minimum": 10.0,
+              "maximum": 90.0,
+              "slope_per_second": 1.6131848149763819
+            }
+          },
+          "sample_count": 305,
+          "missing_proc_samples": 3,
+          "production": {
+            "errors": [],
+            "scheduled_batches": 3000,
+            "delivered_batches": 466,
+            "throughput_admissible": false,
+            "mode": "sink_limited",
+            "live": {
+              "ops": 1,
+              "stopped_by_count": 0,
+              "stopped_by_deadline": 1,
+              "stopped_by_termination": 0,
+              "scheduled_batches": 3000,
+              "unbounded_ops": 0,
+              "emitted_batches": 466,
+              "omitted_by_deadline": 2534,
+              "omitted_by_termination": 0,
+              "lateness_ns": {
+                "count": 466,
+                "sum": 13460144970625,
+                "max": 50578805888
+              },
+              "send_call_ns": {
+                "count": 466,
+                "sum": 59581864046,
+                "max": 9641956522
+              },
+              "last": {
+                "scheduled": 3000,
+                "emitted": 466,
+                "stop_reason": "deadline",
+                "started_ns": 1035584138482325,
+                "deadline_ns": 1035644138482325,
+                "ended_ns": 1035644219330899,
+                "interval_ms": 20,
+                "duration_ms": 60000,
+                "batches": 0
+              }
+            },
+            "producer_deadline_ns": 1035644138482325,
+            "send_call_semantics": "marshaling/copy/flow-control Send wall; not pure blocking time",
+            "schedule_complete": false
+          },
+          "request_evidence": {
+            "admission": "exact_summary_counters",
+            "captured_dogets": 1,
+            "uncaptured_dogets": 0,
+            "captured_about_requests": 1,
+            "terminal_event_captured": true,
+            "request_validation": {
+              "auth_checks": 1,
+              "invalid_auth": 0,
+              "ticket_checks": 1,
+              "ticket_mismatches": 0,
+              "unexpected_requests": 0,
+              "doget_before_about": 0
+            }
+          },
+          "fixture_events_dropped": 0,
+          "fixture_sent_rows": 59648,
+          "fixture_expected_output_ns": 108420295,
+          "cpu_screen": {
+            "observer": {
+              "start_ns": 1035584108782641,
+              "end_ns": 1035646243735051,
+              "user_ms": 374.246,
+              "system_ms": 68.56099999999998,
+              "scope": "collector RUSAGE_SELF around collect, excludes children and post-capture validation"
+            },
+            "fixture": {
+              "user_ms": 311.682,
+              "system_ms": 73.41,
+              "start_bounds": {
+                "start_ns": 1035584107832741,
+                "end_ns": 1035584108477773
+              },
+              "end_bounds": {
+                "start_ns": 1035646251201276,
+                "end_ns": 1035646252183820
+              },
+              "scope": "fixture lifetime CPU difference between pre-meter and post-exit summary snapshots",
+              "expected_output_encoding_wall_ms": 108.420295,
+              "expected_output_encoding_semantics": "monotonic encoding wall time; overlaps fixture CPU; never subtracted from native CPU"
+            },
+            "host_before": {
+              "start_ns": 1035584108689709,
+              "end_ns": 1035584108769220,
+              "counters": {
+                "user": 186668801,
+                "nice": 414783,
+                "system": 146715154,
+                "idle": 1713559880,
+                "iowait": 11582365,
+                "irq": 8034272,
+                "softirq": 5477815,
+                "steal": 0
+              },
+              "loadavg_raw": "6.10 6.44 6.98 3/3024 2243857",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "host_after": {
+              "start_ns": 1035646244695453,
+              "end_ns": 1035646244826801,
+              "counters": {
+                "user": 186688619,
+                "nice": 414783,
+                "system": 146733389,
+                "idle": 1713642910,
+                "iowait": 11584346,
+                "irq": 8034988,
+                "softirq": 5478361,
+                "steal": 0
+              },
+              "loadavg_raw": "6.38 6.47 6.96 33/3009 2482504",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "comparative_admissible": false,
+            "throughput_admissible": true,
+            "interference_status": "flagged",
+            "potential_limit_status": "below_screen",
+            "observer_busy_cores": 0.007163905180561616,
+            "fixture_busy_cores": 0.006230169292248844,
+            "system_tick_deltas": {
+              "user": 19818,
+              "nice": 0,
+              "system": 18235,
+              "idle": 83030,
+              "iowait": 1981,
+              "irq": 716,
+              "softirq": 546,
+              "steal": 0
+            },
+            "host_elapsed_ms": 62136.137092,
+            "system_busy_ms": 393150.0,
+            "client_cpu_ms": 382.634,
+            "observer_cpu_ms": 442.80699999999996,
+            "fixture_cpu_ms": 385.092,
+            "residual_raw_ms": 391939.467,
+            "unattributed_busy_cores_estimate": 6.3077539953873645,
+            "unattributed_busy_cores_range": [
+              6.19358683160799,
+              6.421921159166739
+            ],
+            "interval_uncertainty_ms": 7093.90654,
+            "attribution": "screening interval envelope, not exact attribution; no clean/quiescence claim"
+          }
+        },
+        {
+          "role": "candidate",
+          "path": "/home/ajs/.cache/pb-phase6/campaign-r6-short-slow-sink-hash-01/slow-sink/sample-000-candidate/sample.json",
+          "sha256": "df2c32983d4b094bc0156c064370caf453bff55b35043ebeb045c5ddbdc65d65",
+          "rows": 59776,
+          "batches": 467,
+          "stdout_bytes": 10578400,
+          "stdout_sha256": "9e445d2698d98b5fabd888a16f7ddea4ba3a77b178ec7877c7efd3c5b0ebcf04",
+          "wall_ms": 61894.767924,
+          "cpu_ms": 112.07,
+          "cpu_us_per_row": 1.8748327087794432,
+          "peak_rss_bytes": 8400896,
+          "sampled_resources": {
+            "rss_bytes": {
+              "samples": 282,
+              "first": 8613888,
+              "last": 8654848,
+              "minimum": 8613888,
+              "maximum": 8654848,
+              "slope_per_second": 381.73660709064166
+            },
+            "fds": {
+              "samples": 282,
+              "first": 7,
+              "last": 7,
+              "minimum": 7,
+              "maximum": 7,
+              "slope_per_second": 0.0
+            },
+            "tasks": {
+              "samples": 282,
+              "first": 2,
+              "last": 2,
+              "minimum": 2,
+              "maximum": 2,
+              "slope_per_second": 0.0
+            },
+            "cpu_user_ms": {
+              "samples": 282,
+              "first": 0.0,
+              "last": 50.0,
+              "minimum": 0.0,
+              "maximum": 50.0,
+              "slope_per_second": 0.9692075193193622
+            },
+            "cpu_system_ms": {
+              "samples": 282,
+              "first": 0.0,
+              "last": 50.0,
+              "minimum": 0.0,
+              "maximum": 50.0,
+              "slope_per_second": 1.0177233963529486
+            }
+          },
+          "sample_count": 306,
+          "missing_proc_samples": 3,
+          "production": {
+            "errors": [],
+            "scheduled_batches": 3000,
+            "delivered_batches": 467,
+            "throughput_admissible": false,
+            "mode": "sink_limited",
+            "live": {
+              "ops": 1,
+              "stopped_by_count": 0,
+              "stopped_by_deadline": 1,
+              "stopped_by_termination": 0,
+              "scheduled_batches": 3000,
+              "unbounded_ops": 0,
+              "emitted_batches": 467,
+              "omitted_by_deadline": 2533,
+              "omitted_by_termination": 0,
+              "lateness_ns": {
+                "count": 467,
+                "sum": 13486694765189,
+                "max": 50674364429
+              },
+              "send_call_ns": {
+                "count": 467,
+                "sum": 59555233950,
+                "max": 9647975480
+              },
+              "last": {
+                "scheduled": 3000,
+                "emitted": 467,
+                "stop_reason": "deadline",
+                "started_ns": 1035646281586816,
+                "deadline_ns": 1035706281586816,
+                "ended_ns": 1035706376284709,
+                "interval_ms": 20,
+                "duration_ms": 60000,
+                "batches": 0
+              }
+            },
+            "producer_deadline_ns": 1035706281586816,
+            "send_call_semantics": "marshaling/copy/flow-control Send wall; not pure blocking time",
+            "schedule_complete": false
+          },
+          "request_evidence": {
+            "admission": "exact_summary_counters",
+            "captured_dogets": 1,
+            "uncaptured_dogets": 0,
+            "captured_about_requests": 1,
+            "terminal_event_captured": true,
+            "request_validation": {
+              "auth_checks": 1,
+              "invalid_auth": 0,
+              "ticket_checks": 1,
+              "ticket_mismatches": 0,
+              "unexpected_requests": 0,
+              "doget_before_about": 0
+            }
+          },
+          "fixture_events_dropped": 0,
+          "fixture_sent_rows": 59776,
+          "fixture_expected_output_ns": 116489133,
+          "cpu_screen": {
+            "observer": {
+              "start_ns": 1035646279045007,
+              "end_ns": 1035708497293958,
+              "user_ms": 368.077,
+              "system_ms": 61.69699999999999,
+              "scope": "collector RUSAGE_SELF around collect, excludes children and post-capture validation"
+            },
+            "fixture": {
+              "user_ms": 361.138,
+              "system_ms": 61.451,
+              "start_bounds": {
+                "start_ns": 1035646278180839,
+                "end_ns": 1035646278705492
+              },
+              "end_bounds": {
+                "start_ns": 1035708500791895,
+                "end_ns": 1035708501379643
+              },
+              "scope": "fixture lifetime CPU difference between pre-meter and post-exit summary snapshots",
+              "expected_output_encoding_wall_ms": 116.489133,
+              "expected_output_encoding_semantics": "monotonic encoding wall time; overlaps fixture CPU; never subtracted from native CPU"
+            },
+            "host_before": {
+              "start_ns": 1035646278928422,
+              "end_ns": 1035646279033329,
+              "counters": {
+                "user": 186688646,
+                "nice": 414783,
+                "system": 146733404,
+                "idle": 1713642934,
+                "iowait": 11584347,
+                "irq": 8034989,
+                "softirq": 5478362,
+                "steal": 0
+              },
+              "loadavg_raw": "6.38 6.47 6.96 8/2997 2482614",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "host_after": {
+              "start_ns": 1035708497768962,
+              "end_ns": 1035708497852028,
+              "counters": {
+                "user": 186705069,
+                "nice": 414783,
+                "system": 146749088,
+                "idle": 1713731897,
+                "iowait": 11586671,
+                "irq": 8035660,
+                "softirq": 5478900,
+                "steal": 0
+              },
+              "loadavg_raw": "7.18 6.68 7.00 1/3041 2695498",
+              "ticks_per_second": 100,
+              "cpu_count": 20,
+              "status": "observed"
+            },
+            "comparative_admissible": false,
+            "throughput_admissible": true,
+            "interference_status": "flagged",
+            "potential_limit_status": "below_screen",
+            "observer_busy_cores": 0.0069436240641166215,
+            "fixture_busy_cores": 0.0068275399387375205,
+            "system_tick_deltas": {
+              "user": 16423,
+              "nice": 0,
+              "system": 15684,
+              "idle": 88963,
+              "iowait": 2324,
+              "irq": 671,
+              "softirq": 538,
+              "steal": 0
+            },
+            "host_elapsed_ms": 62218.923606,
+            "system_busy_ms": 333160.0,
+            "client_cpu_ms": 112.07,
+            "observer_cpu_ms": 429.774,
+            "fixture_cpu_ms": 422.589,
+            "residual_raw_ms": 332195.56700000004,
+            "unattributed_busy_cores_estimate": 5.33914037317041,
+            "unattributed_busy_cores_range": [
+              5.226921930687957,
+              5.4513588156528625
+            ],
+            "interval_uncertainty_ms": 6982.110699999999,
+            "attribution": "screening interval envelope, not exact attribution; no clean/quiescence claim"
+          }
+        }
+      ]
+    }
+  ]
+}

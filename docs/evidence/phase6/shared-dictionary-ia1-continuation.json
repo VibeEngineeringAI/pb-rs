@@ -1,0 +1,228 @@
+{
+  "status": "SOURCE SETTLED: continuation implements distinct nested dictionary binding; earlier separate finding is resolved for the measured corpus, with no waiver",
+  "worktree": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail",
+  "sources": {
+    "src/tail/session.rs": "d86a574fb7eb9500bffaf3fc0f0d0f2507d1390ade35598baed347371409866f",
+    "src/tail/session/tests.rs": "7dad715f4b67e782d7e44745231b6d1510b32bd689ab800a3946d261ca9c07fe",
+    "src/tail/validation.rs": "65ebd8fab90a99937b343955affe8deca50c702aa37f72edef6f980f9425d3f6",
+    "src/tail/resources.rs": "8210efe689760620dd3536e2825a738acad28a51c5f17ac078933e3829d5473b",
+    "src/tail/values.rs": "037183a7939fc11d3921c36d086fad023d9a6c0004839096b28ab140cd56ea6b",
+    "src/tail/transport.rs": "77dd92bb0bf34c620bcb2ca259347f0d6b27d83d72593a76e912984858165240",
+    "Cargo.toml": "eb55b298c3158cf32c51a9876f53d3ebe220adbd7eaa51fd1af8fe4d1dc0c83c",
+    "Cargo.lock": "aa35f338bd6b6b803c5e970f021d59f54d2e7435823f75a5baee018d7a1ebb44"
+  },
+  "scope": {
+    "production": [
+      "src/tail/session.rs"
+    ],
+    "tests": [
+      "src/tail/session/tests.rs"
+    ],
+    "fixtures": "tests/fixtures/arrow-go-v13-decoder-ia1",
+    "validation_changed": false,
+    "new_module": false,
+    "dependency_change": false,
+    "docs_or_harness_edit": false,
+    "commit": false,
+    "agents": false,
+    "performance_campaign": false
+  },
+  "design": {
+    "schema_ownership": "Original converted schema creates the renderer and validates Go types first. Row wire schema keeps the original order/positions and every nested ID, with established Utf8/Binary and nullability rules plus first-slice Go-equal annotation canonicalization. A separate ID lookup is collected in children-first order, replacing a compatible value layout with its last occurrence as Go Memo.AddType does. Each ID has an explicit one-field decoding schema; Arrow first-match lookup cannot select an earlier occurrence or erase other nested IDs.",
+    "dictionary_ownership": "Decoded nested dictionaries retain validated integer-key placeholders and buffers; normal Arrow decoding validates all other layout/content. Nested delta pieces are retained separately without concatenation, and replacement clears them. Diagnostic dictionary_bytes still reports retained memo arrays, including those delta pieces; resources.rs and RAII handoff counter are unchanged.",
+    "record_ownership": "At each record, construct a current dictionary snapshot using the last compatible ID layouts and recursive memo dependencies. Rebuilt ArrayData uses safe build() with full validation, including newly bound dictionary key bounds. Buffers are shared, not copied by the binder. The snapshot is transient and the RecordBatch owns the resolved values. The original renderer handles the batch. Flat dictionaries retain the direct Arrow path and its existing concatenation behavior.",
+    "delta_stages": "Go retains a nested parent delta until reification. Matching exact recorded error occurs on a subsequent record; EOF before that record remains EOF, and a replacement discards the delta. Ordinary flat/child deltas still append successfully, with the appended entry selected in both controls. Missing-existing-ID delta errors match Go during dictionary loading.",
+    "bounds": "Non-native-endian rejection, verifier depth 128, Go array-load depth 64, original structural conflict prewalk, map/run-end nullability and production Arrow validation remain. No unsafe, skip_validation or catch_unwind added."
+  },
+  "go_source_trace": {
+    "memo": "dictutils.Memo.AddType replaces compatible types; typeFromFB converts children before registering their parent.",
+    "deferred_binding": "ipc.readDictionary loads value ArrayData without resolving nested dictionaries. newRecord resolves by field paths; Dictionary.Dictionary constructs values lazily, observing the final shared-data binding.",
+    "updates": "Memo.AddOrReplace replaces chunks; AddDelta retains pieces; Memo.reify rejects unresolved nested dictionaries only at record resolution.",
+    "identities": {
+      "/home/ajs/go/pkg/mod/github.com/apache/arrow/go/v13@v13.0.0/arrow/ipc/metadata.go": {
+        "bytes": 37209,
+        "sha256": "769cb2c38aaba2b52f21457e260665971e76d713a7b490fa9d8b3339da786bae"
+      },
+      "/home/ajs/go/pkg/mod/github.com/apache/arrow/go/v13@v13.0.0/arrow/ipc/file_reader.go": {
+        "bytes": 19455,
+        "sha256": "a7fce0fbd2c321137c88b7e50384c435216774cbabbdfd0b95352c71452d61f7"
+      },
+      "/home/ajs/go/pkg/mod/github.com/apache/arrow/go/v13@v13.0.0/arrow/ipc/reader.go": {
+        "bytes": 7691,
+        "sha256": "7e95b0036747f7339cd34e41c26241ab1e2d05f43d66294b4bb1140041ee935e"
+      },
+      "/home/ajs/go/pkg/mod/github.com/apache/arrow/go/v13@v13.0.0/arrow/internal/dictutils/dict.go": {
+        "bytes": 9817,
+        "sha256": "69c642d71f5dec9a9ab32540722400eb88ae167c1fe2820b59661b0a341dc2c3"
+      },
+      "/home/ajs/go/pkg/mod/github.com/apache/arrow/go/v13@v13.0.0/arrow/array/dictionary.go": {
+        "bytes": 51667,
+        "sha256": "4df1ac1d1f97f9375d451db4a49b4bbc4299be92ad4773becc6ccb3325d25454"
+      }
+    }
+  },
+  "checks": [
+    {
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--lib",
+        "tail::"
+      ],
+      "exit": 0,
+      "passed": 101,
+      "log": "/home/ajs/.cache/pb-phase6/ia1-nested-implementation/tail-normal.log",
+      "bytes": 8853,
+      "sha256": "6a5d8a9805fba9aa356602f3e6dfb9c76cd6333bfee8e6da9e319adc879b5b03"
+    },
+    {
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--features",
+        "diagnostics",
+        "--lib",
+        "tail::"
+      ],
+      "exit": 0,
+      "passed": 103,
+      "log": "/home/ajs/.cache/pb-phase6/ia1-nested-implementation/tail-diagnostics.log",
+      "bytes": 9023,
+      "sha256": "ba5b0df4d81586cfce5305b07f384a6368abbee1f2090a65fbf791f11fb4185d"
+    },
+    {
+      "argv": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--lib",
+        "--tests",
+        "--features",
+        "diagnostics",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "passed": null,
+      "log": "/home/ajs/.cache/pb-phase6/ia1-nested-implementation/clippy.log",
+      "bytes": 151,
+      "sha256": "2e363c45dbf18bd07810523ac9eebc8f3bc22fc71ed6a10411ec877998eef093"
+    },
+    {
+      "argv": [
+        "rustfmt",
+        "--edition",
+        "2024",
+        "--check",
+        "src/tail/session.rs",
+        "src/tail/session/tests.rs"
+      ],
+      "exit": 0,
+      "passed": null,
+      "log": "/home/ajs/.cache/pb-phase6/ia1-nested-implementation/fmt.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "causality": {
+    "before_source_sha256": "454eb0372ebab93fb009c1f7076a60a28e46f83c6d6983ea0e6c1212685e671b",
+    "before_exit": 101,
+    "before_behavior": "The settled first slice completes nested_distinct at EOF but prints both [7,8], while captured Go prints both [9,10].",
+    "before_log": "/home/ajs/.cache/pb-phase6/ia1-nested-implementation/causal-final-before.log",
+    "before_log_identity": {
+      "bytes": 1614,
+      "sha256": "76c3eb453038a951bf968b10a58146220f32d8d04307889d1b66ceefea1e1bc8"
+    },
+    "before_compilation_adjustment": "Only the new private-layout inspection test was omitted so the old Decoder API compiles; the complete-stream corpus test and durable oracle files were unchanged.",
+    "after_behavior": "The unchanged complete-stream corpus passes on the final source in the 101/103 test runs. Initial isolated after proof is also retained in causal-after.log."
+  },
+  "oracle": {
+    "version": "go1.25.4",
+    "arrow": "github.com/apache/arrow/go/v13 v13.0.0",
+    "binary": "/home/ajs/.cache/pb-phase6/ia1-nested-implementation/go-decoder",
+    "bytes": 7553712,
+    "sha256": "ea12e2aacb603308d1e63c6eed525198cfa804a31836dadf6e84c21482f245fe",
+    "source": {
+      "harness/decoder-oracle/main.go": {
+        "bytes": 853,
+        "sha256": "ed80a49121c32222f9909a0837d900d98323070ae77c7fb7b9a3d642a28609d9"
+      },
+      "go.mod": {
+        "bytes": 9116,
+        "sha256": "90555a3ae88bee209ce16845ad259afa2e4c9b3c14890e0578a8a514c1350565"
+      },
+      "go.sum": {
+        "bytes": 60333,
+        "sha256": "ae20b3abc13e58b529d7f5219d657f506df24c471aa873d9b72d3435954f92ac"
+      }
+    },
+    "argv": [
+      "/home/ajs/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.4.linux-amd64/bin/go",
+      "build",
+      "-trimpath",
+      "-o",
+      "/home/ajs/.cache/pb-phase6/ia1-nested-implementation/go-decoder",
+      "."
+    ],
+    "environment": {
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOFLAGS": "-mod=readonly",
+      "TMPDIR": "/home/ajs/.cache/pb-phase6/tmp",
+      "GOTMPDIR": "/home/ajs/.cache/pb-phase6/tmp"
+    },
+    "limits": {
+      "seconds": 10,
+      "address_space_bytes": 4294967296,
+      "file_output_bytes": 16777216
+    },
+    "continuation_cases": 23,
+    "worker_terminal_variants": 46,
+    "results": "/home/ajs/.cache/pb-phase6/ia1-nested-implementation/go-results.json",
+    "results_identity": {
+      "bytes": 7741,
+      "sha256": "1732bafe893c7a9e47e4854950329865bd413e8b4f5b4584257fa43edc509eee"
+    },
+    "description": "Actual pinned Go stdout and final read stages, never Rust-derived expectations. All 23 cases replay through production worker Open/dictionary/record/render for both stream EOF and appended InvalidArgument final. Five cases already fail at the recorded IPC stage; the appended RPC cannot mask them."
+  },
+  "durable_corpus": {
+    "cases": 25,
+    "artifact_files": 101,
+    "manifest": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/tests/fixtures/arrow-go-v13-decoder-ia1/manifest.json",
+    "bytes": 20926,
+    "sha256": "d0b41729affb0dcf7580c45d7817419d14f494559e68c01cdec226a3087fe251",
+    "generator": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/tests/fixtures/arrow-go-v13-decoder-ia1/generator.rs.txt",
+    "original_audit_streams_unchanged": true
+  },
+  "preserved_evidence": {
+    "first_slice": "/home/ajs/.cache/pb-phase6/ia1-implementation/evidence.json",
+    "first_slice_source": "/home/ajs/.cache/pb-phase6/ia1-nested-implementation/session-before.rs",
+    "first_slice_tests": "/home/ajs/.cache/pb-phase6/ia1-nested-implementation/tests-before.rs",
+    "first_slice_manifest": "/home/ajs/.cache/pb-phase6/ia1-nested-implementation/manifest-before.json",
+    "r4_candidates": [
+      {
+        "name": "pb",
+        "path": "/home/ajs/.cache/pb-phase6/candidate-review-r4/pb",
+        "bytes": 10671312,
+        "sha256": "fe26926a98cba5e00774e26c5eab33c7c35ebd570ddaec7ceb38ddef663ecc43"
+      },
+      {
+        "name": "pb-cloud",
+        "path": "/home/ajs/.cache/pb-phase6/candidate-review-r4/pb-cloud",
+        "bytes": 10671640,
+        "sha256": "1820a1fd6f2d96354778a2e63a47ad55d24bb8c1e3b911bfe236b4082e41bace"
+      }
+    ]
+  },
+  "remaining_limits": [
+    "No unresolved objection remains in the 23-case continuation corpus. This is bounded implementation evidence, not universal malformed-input or Go-type coverage.",
+    "The earlier exploratory Go v13 V5 union/REE dictionary-loader version issue remains outside admitted matching controls; V4 union controls and the original complete-stream evidence remain preserved in the first-slice cache. No new waiver or implementation for that separate behavior is claimed.",
+    "Full successor all-target validation, native process replays, immutable standard/cloud candidates, measurement/resource/performance acceptance and final independent review remain parent-owned. No performance claims follow from functional tests."
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "cases": 15,
+  "files_verified": 60,
+  "manifest_sha256": "d4fa412a7765a2908838f111530bd67de68b6471c18f345361ea81e4dd19dba2",
+  "artifact_root": "/home/ajs/.cache/pb-phase6/tmp/parent-decoder-r4-yd8jwco8",
+  "toolchain": "go1.25.4 linux/amd64",
+  "result": "all files and regenerated manifest byte-identical",
+  "performance_campaign": false
+}

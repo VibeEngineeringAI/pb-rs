@@ -1,0 +1,413 @@
+{
+  "status": "integration checkpoint, not final acceptance",
+  "base": "4a812d5b9bc4c40882ab10897a73c3ce1e715ce0",
+  "base_packages": 161,
+  "candidate_packages": 230,
+  "added_packages": [
+    {
+      "name": "ahash",
+      "version": "0.8.12",
+      "rust_version": "1.60.0",
+      "locally_unpacked_bytes": 180602
+    },
+    {
+      "name": "anyhow",
+      "version": "1.0.104",
+      "rust_version": "1.68",
+      "locally_unpacked_bytes": 234400
+    },
+    {
+      "name": "arrow-array",
+      "version": "60.0.0",
+      "rust_version": "1.88",
+      "locally_unpacked_bytes": 1787849
+    },
+    {
+      "name": "arrow-buffer",
+      "version": "60.0.0",
+      "rust_version": "1.88",
+      "locally_unpacked_bytes": 644702
+    },
+    {
+      "name": "arrow-cast",
+      "version": "60.0.0",
+      "rust_version": "1.88",
+      "locally_unpacked_bytes": 990400
+    },
+    {
+      "name": "arrow-cmp",
+      "version": "60.0.0",
+      "rust_version": "1.88",
+      "locally_unpacked_bytes": 105305
+    },
+    {
+      "name": "arrow-data",
+      "version": "60.0.0",
+      "rust_version": "1.88",
+      "locally_unpacked_bytes": 386905
+    },
+    {
+      "name": "arrow-flight",
+      "version": "60.0.0",
+      "rust_version": "1.88",
+      "locally_unpacked_bytes": 868071
+    },
+    {
+      "name": "arrow-ipc",
+      "version": "60.0.0",
+      "rust_version": "1.88",
+      "locally_unpacked_bytes": 912671
+    },
+    {
+      "name": "arrow-ord",
+      "version": "60.0.0",
+      "rust_version": "1.88",
+      "locally_unpacked_bytes": 458579
+    },
+    {
+      "name": "arrow-schema",
+      "version": "60.0.0",
+      "rust_version": "1.88",
+      "locally_unpacked_bytes": 513884
+    },
+    {
+      "name": "arrow-select",
+      "version": "60.0.0",
+      "rust_version": "1.88",
+      "locally_unpacked_bytes": 791787
+    },
+    {
+      "name": "async-trait",
+      "version": "0.1.92",
+      "rust_version": "1.71",
+      "locally_unpacked_bytes": 130478
+    },
+    {
+      "name": "atoi",
+      "version": "3.1.0",
+      "rust_version": "1.86.0",
+      "locally_unpacked_bytes": 106834
+    },
+    {
+      "name": "axum",
+      "version": "0.8.9",
+      "rust_version": "1.80",
+      "locally_unpacked_bytes": 841741
+    },
+    {
+      "name": "axum-core",
+      "version": "0.5.6",
+      "rust_version": "1.78",
+      "locally_unpacked_bytes": 118623
+    },
+    {
+      "name": "const-random",
+      "version": "0.1.18",
+      "rust_version": null,
+      "locally_unpacked_bytes": 18035
+    },
+    {
+      "name": "const-random-macro",
+      "version": "0.1.16",
+      "rust_version": null,
+      "locally_unpacked_bytes": 18271
+    },
+    {
+      "name": "crunchy",
+      "version": "0.2.4",
+      "rust_version": null,
+      "locally_unpacked_bytes": 11952
+    },
+    {
+      "name": "either",
+      "version": "1.19.0",
+      "rust_version": "1.63.0",
+      "locally_unpacked_bytes": 94840
+    },
+    {
+      "name": "flatbuffers",
+      "version": "25.12.19",
+      "rust_version": "1.51",
+      "locally_unpacked_bytes": 113108
+    },
+    {
+      "name": "futures",
+      "version": "0.3.34",
+      "rust_version": "1.71",
+      "locally_unpacked_bytes": 362816
+    },
+    {
+      "name": "futures-io",
+      "version": "0.3.34",
+      "rust_version": "1.36",
+      "locally_unpacked_bytes": 35723
+    },
+    {
+      "name": "futures-macro",
+      "version": "0.3.34",
+      "rust_version": "1.71",
+      "locally_unpacked_bytes": 40706
+    },
+    {
+      "name": "getrandom",
+      "version": "0.3.4",
+      "rust_version": "1.63",
+      "locally_unpacked_bytes": 176219
+    },
+    {
+      "name": "half",
+      "version": "2.7.1",
+      "rust_version": "1.81",
+      "locally_unpacked_bytes": 342703
+    },
+    {
+      "name": "httpdate",
+      "version": "1.0.3",
+      "rust_version": "1.56",
+      "locally_unpacked_bytes": 32930
+    },
+    {
+      "name": "hyper-timeout",
+      "version": "0.5.2",
+      "rust_version": null,
+      "locally_unpacked_bytes": 72416
+    },
+    {
+      "name": "itertools",
+      "version": "0.14.0",
+      "rust_version": "1.63.0",
+      "locally_unpacked_bytes": 744666
+    },
+    {
+      "name": "lexical-core",
+      "version": "1.0.6",
+      "rust_version": "1.60.0",
+      "locally_unpacked_bytes": 122939
+    },
+    {
+      "name": "lexical-parse-float",
+      "version": "1.0.6",
+      "rust_version": "1.60.0",
+      "locally_unpacked_bytes": 843583
+    },
+    {
+      "name": "lexical-parse-integer",
+      "version": "1.0.6",
+      "rust_version": "1.60.0",
+      "locally_unpacked_bytes": 161909
+    },
+    {
+      "name": "lexical-util",
+      "version": "1.0.7",
+      "rust_version": "1.60.0",
+      "locally_unpacked_bytes": 716770
+    },
+    {
+      "name": "lexical-write-float",
+      "version": "1.0.6",
+      "rust_version": "1.60.0",
+      "locally_unpacked_bytes": 476937
+    },
+    {
+      "name": "lexical-write-integer",
+      "version": "1.0.6",
+      "rust_version": "1.60.0",
+      "locally_unpacked_bytes": 417259
+    },
+    {
+      "name": "libm",
+      "version": "0.2.16",
+      "rust_version": "1.63",
+      "locally_unpacked_bytes": 668247
+    },
+    {
+      "name": "lz4_flex",
+      "version": "0.14.0",
+      "rust_version": "1.81",
+      "locally_unpacked_bytes": 205998
+    },
+    {
+      "name": "matchit",
+      "version": "0.8.4",
+      "rust_version": null,
+      "locally_unpacked_bytes": 160439
+    },
+    {
+      "name": "mime",
+      "version": "0.3.17",
+      "rust_version": null,
+      "locally_unpacked_bytes": 57466
+    },
+    {
+      "name": "num-bigint",
+      "version": "0.5.1",
+      "rust_version": "1.60",
+      "locally_unpacked_bytes": 528949
+    },
+    {
+      "name": "num-complex",
+      "version": "0.4.6",
+      "rust_version": "1.60",
+      "locally_unpacked_bytes": 142527
+    },
+    {
+      "name": "num-integer",
+      "version": "0.1.47",
+      "rust_version": "1.31",
+      "locally_unpacked_bytes": 112739
+    },
+    {
+      "name": "pin-project",
+      "version": "1.1.13",
+      "rust_version": "1.71",
+      "locally_unpacked_bytes": 453388
+    },
+    {
+      "name": "pin-project-internal",
+      "version": "1.1.13",
+      "rust_version": "1.71",
+      "locally_unpacked_bytes": 113589
+    },
+    {
+      "name": "prost",
+      "version": "0.14.4",
+      "rust_version": "1.85",
+      "locally_unpacked_bytes": 148742
+    },
+    {
+      "name": "prost-derive",
+      "version": "0.14.4",
+      "rust_version": "1.85",
+      "locally_unpacked_bytes": 107686
+    },
+    {
+      "name": "prost-types",
+      "version": "0.14.4",
+      "rust_version": "1.85",
+      "locally_unpacked_bytes": 215036
+    },
+    {
+      "name": "rustc_version",
+      "version": "0.4.1",
+      "rust_version": "1.32",
+      "locally_unpacked_bytes": 43771
+    },
+    {
+      "name": "ryu",
+      "version": "1.0.23",
+      "rust_version": "1.71",
+      "locally_unpacked_bytes": 183100
+    },
+    {
+      "name": "semver",
+      "version": "1.0.28",
+      "rust_version": "1.68",
+      "locally_unpacked_bytes": 131039
+    },
+    {
+      "name": "sync_wrapper",
+      "version": "1.0.2",
+      "rust_version": null,
+      "locally_unpacked_bytes": 20806
+    },
+    {
+      "name": "tiny-keccak",
+      "version": "2.0.2",
+      "rust_version": null,
+      "locally_unpacked_bytes": 92373
+    },
+    {
+      "name": "tokio-macros",
+      "version": "2.7.2",
+      "rust_version": "1.71",
+      "locally_unpacked_bytes": 65592
+    },
+    {
+      "name": "tokio-stream",
+      "version": "0.1.19",
+      "rust_version": "1.71",
+      "locally_unpacked_bytes": 252506
+    },
+    {
+      "name": "tonic",
+      "version": "0.14.6",
+      "rust_version": "1.88",
+      "locally_unpacked_bytes": 539568
+    },
+    {
+      "name": "tonic-prost",
+      "version": "0.14.6",
+      "rust_version": "1.88",
+      "locally_unpacked_bytes": 23011
+    },
+    {
+      "name": "tower",
+      "version": "0.5.3",
+      "rust_version": "1.64.0",
+      "locally_unpacked_bytes": 495292
+    },
+    {
+      "name": "tower-layer",
+      "version": "0.3.3",
+      "rust_version": null,
+      "locally_unpacked_bytes": 24147
+    },
+    {
+      "name": "tracing-attributes",
+      "version": "0.1.31",
+      "rust_version": "1.65.0",
+      "locally_unpacked_bytes": 181874
+    },
+    {
+      "name": "twox-hash",
+      "version": "2.1.5",
+      "rust_version": "1.81",
+      "locally_unpacked_bytes": 167099
+    },
+    {
+      "name": "version_check",
+      "version": "0.9.5",
+      "rust_version": null,
+      "locally_unpacked_bytes": 60157
+    },
+    {
+      "name": "zerocopy",
+      "version": "0.8.63",
+      "rust_version": "1.56.0",
+      "locally_unpacked_bytes": 1977506
+    },
+    {
+      "name": "zerocopy-derive",
+      "version": "0.8.63",
+      "rust_version": null,
+      "locally_unpacked_bytes": 1931300
+    },
+    {
+      "name": "zstd",
+      "version": "0.14.2",
+      "rust_version": "1.64",
+      "locally_unpacked_bytes": 209790
+    },
+    {
+      "name": "zstd-safe",
+      "version": "8.1.0",
+      "rust_version": "1.64",
+      "locally_unpacked_bytes": 160549
+    },
+    {
+      "name": "zstd-sys",
+      "version": "2.1.1+zstd.1.5.7",
+      "rust_version": "1.64",
+      "locally_unpacked_bytes": 3653850
+    }
+  ],
+  "removed_packages": [],
+  "added_unpacked_bytes": 27004749,
+  "size_semantics": "sum of locally unpacked added Linux dependency crate files including source/tests; not network transfer, linked bytes or runtime RSS; metadata filtered x86_64-unknown-linux-gnu",
+  "cargo_lock_sha256": "197bb6cf5b7b1bf082cb84065971afcd677a60c50dabb732c5b1dbb03d2836a1",
+  "integration_binary_bytes": 10643464,
+  "prior_accepted_binary_bytes": 7617800,
+  "binary_delta_bytes": 3025664,
+  "binary_note": "integration binary 42946cc3, before transport/decoder review fixes; normal stripped release; final size must be remeasured",
+  "build_cost": "No quiet clean-build experiment yet. Incremental nonquiet successful release pb compile observed 57.03s; excludes prior dependency compilation and is not comparative build evidence."
+}
