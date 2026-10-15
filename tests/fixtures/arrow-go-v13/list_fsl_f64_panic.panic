@@ -1,0 +1,1 @@
+json: error calling MarshalJSON for type *array.FixedSizeList: json: error calling MarshalJSON for type *array.Float64: json: unsupported value: NaN

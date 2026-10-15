@@ -1,0 +1,296 @@
+{
+  "stdout_bytes": 0,
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "rows": 0,
+  "batches": 0,
+  "invalid_records": 0,
+  "sequence_errors": 0,
+  "collector_mode": "full",
+  "json_parse_attempts": 0,
+  "row_validation": "per-record JSON and sequence",
+  "first_record_ns": null,
+  "first_batch_ns": null,
+  "last_record_ns": null,
+  "first_stdout_ns": null,
+  "last_stdout_ns": null,
+  "visibility_dropped_bytes": 0,
+  "stdout_prefix_dropped_bytes": 0,
+  "started_monotonic_ns": 995060666877821,
+  "ended_monotonic_ns": 995061700767489,
+  "started_unix_ns": 1791983702281764295,
+  "exit_code": 1,
+  "termination": {
+    "exit": 1
+  },
+  "cpu_user_ms": 29.366,
+  "cpu_system_ms": 8.079,
+  "peak_rss_bytes": 50364416,
+  "minor_faults": 4029,
+  "major_faults": 0,
+  "voluntary_context_switches": 325,
+  "involuntary_context_switches": 31,
+  "block_input_operations": 0,
+  "block_output_operations": 0,
+  "resource_source": "native_child_wait4",
+  "proc_io_available": true,
+  "proc_io_unavailable_reason": null,
+  "proc_io_source": "linux_proc_pid_io_before_wait4",
+  "proc_io_syscr": 94,
+  "proc_io_syscw": 13,
+  "proc_io_rchar": 231890,
+  "proc_io_wchar": 617,
+  "proc_io_read_bytes": 0,
+  "proc_io_write_bytes": 0,
+  "proc_io_cancelled_write_bytes": 0,
+  "wall_ms": 1033.889668,
+  "cpu_ms": 37.445,
+  "first_complete_record_ms": null,
+  "first_stdout_ms": null,
+  "first_record_observed_after_native_exit": null,
+  "stderr_bytes": 157,
+  "stderr_sha256": "7b14587cc92a095913c929f4f6510c6e6da38876a3f391aa49feb5e1e1360be0",
+  "errors": [],
+  "timed_out": false,
+  "sink": {},
+  "sampled_resources": {
+    "rss_bytes": {
+      "samples": 0,
+      "first": null,
+      "last": null,
+      "minimum": null,
+      "maximum": null,
+      "slope_per_second": null
+    },
+    "fds": {
+      "samples": 0,
+      "first": null,
+      "last": null,
+      "minimum": null,
+      "maximum": null,
+      "slope_per_second": null
+    },
+    "tasks": {
+      "samples": 0,
+      "first": null,
+      "last": null,
+      "minimum": null,
+      "maximum": null,
+      "slope_per_second": null
+    },
+    "cpu_user_ms": {
+      "samples": 0,
+      "first": null,
+      "last": null,
+      "minimum": null,
+      "maximum": null,
+      "slope_per_second": null
+    },
+    "cpu_system_ms": {
+      "samples": 0,
+      "first": null,
+      "last": null,
+      "minimum": null,
+      "maximum": null,
+      "slope_per_second": null
+    }
+  },
+  "sample_count": 5,
+  "missing_proc_samples": 1,
+  "resources_dropped_bytes": 0,
+  "trend_warmup_s": 5,
+  "observer_cpu": {
+    "start_ns": 995060665619148,
+    "end_ns": 995061701186426,
+    "user_ms": 4.618999999999984,
+    "system_ms": 0.869,
+    "scope": "collector RUSAGE_SELF around collect, excludes children and post-capture validation"
+  },
+  "not_measured": {
+    "network_wire_bytes": "not observed; FlightData protobuf sizes exclude HTTP/2/TLS framing",
+    "heap_allocations": "requires a separate profiler campaign",
+    "retained_capacities": "requires candidate diagnostic instrumentation",
+    "queue_high_water": "requires candidate diagnostic instrumentation",
+    "client_read_ahead": "server Send completion does not prove application consumption",
+    "server_drops": "loopback sends do not establish deployed server delivery guarantees",
+    "cancellation_latency_ms": "these workloads terminate by deliberate remote failure"
+  },
+  "rows_per_second": 0.0,
+  "output_bytes_per_second": 0.0,
+  "cpu_us_per_row": null,
+  "production": {
+    "errors": [],
+    "scheduled_batches": 0,
+    "delivered_batches": 0,
+    "throughput_admissible": true,
+    "mode": "finite"
+  },
+  "cpu_screen": {
+    "observer": {
+      "start_ns": 995060665619148,
+      "end_ns": 995061701186426,
+      "user_ms": 4.618999999999984,
+      "system_ms": 0.869,
+      "scope": "collector RUSAGE_SELF around collect, excludes children and post-capture validation"
+    },
+    "fixture": {
+      "user_ms": 1.172,
+      "system_ms": 2.305,
+      "start_bounds": {
+        "start_ns": 995060664226601,
+        "end_ns": 995060665039628
+      },
+      "end_bounds": {
+        "start_ns": 995061707259710,
+        "end_ns": 995061707841555
+      },
+      "scope": "fixture lifetime CPU difference between pre-meter and post-exit summary snapshots",
+      "expected_output_encoding_wall_ms": 0.0,
+      "expected_output_encoding_semantics": "monotonic encoding wall time; overlaps fixture CPU; never subtracted from native CPU"
+    },
+    "host_before": {
+      "start_ns": 995060665431674,
+      "end_ns": 995060665598914,
+      "counters": {
+        "user": 173752639,
+        "nice": 317879,
+        "system": 135506925,
+        "idle": 1658451465,
+        "iowait": 10620707,
+        "irq": 7592723,
+        "softirq": 5119404,
+        "steal": 0
+      },
+      "loadavg_raw": "12.01 10.42 8.30 11/3156 2002176",
+      "ticks_per_second": 100,
+      "cpu_count": 20,
+      "status": "observed"
+    },
+    "host_after": {
+      "start_ns": 995061701501738,
+      "end_ns": 995061701673488,
+      "counters": {
+        "user": 173753021,
+        "nice": 317879,
+        "system": 135507227,
+        "idle": 1658452816,
+        "iowait": 10620724,
+        "irq": 7592734,
+        "softirq": 5119413,
+        "steal": 0
+      },
+      "loadavg_raw": "12.01 10.42 8.30 6/3184 2006369",
+      "ticks_per_second": 100,
+      "cpu_count": 20,
+      "status": "observed"
+    },
+    "comparative_admissible": false,
+    "throughput_admissible": true,
+    "interference_status": "flagged",
+    "potential_limit_status": "below_screen",
+    "observer_busy_cores": 0.005308109917198615,
+    "fixture_busy_cores": 0.003363028094405911,
+    "system_tick_deltas": {
+      "user": 382,
+      "nice": 0,
+      "system": 302,
+      "idle": 1351,
+      "iowait": 17,
+      "irq": 11,
+      "softirq": 9,
+      "steal": 0
+    },
+    "host_elapsed_ms": 1036.241814,
+    "system_busy_ms": 7040.0,
+    "client_cpu_ms": 37.445,
+    "observer_cpu_ms": 5.487999999999984,
+    "fixture_cpu_ms": 3.4770000000000003,
+    "residual_raw_ms": 6993.59,
+    "unattributed_busy_cores_estimate": 6.748994207253636,
+    "unattributed_busy_cores_range": [
+      6.162262006539721,
+      7.335726407967552
+    ],
+    "interval_uncertainty_ms": 607.99644,
+    "attribution": "screening interval envelope, not exact attribution; no clean/quiescence claim"
+  },
+  "fixture_go_env": {
+    "GOMAXPROCS": "20",
+    "GOGC": "100",
+    "GODEBUG": "",
+    "GOMEMLIMIT": "off"
+  },
+  "request_evidence": {
+    "admission": "exact_summary_counters",
+    "captured_dogets": 1,
+    "uncaptured_dogets": 0,
+    "captured_about_requests": 1,
+    "terminal_event_captured": true,
+    "request_validation": {
+      "auth_checks": 1,
+      "invalid_auth": 0,
+      "ticket_checks": 1,
+      "ticket_mismatches": 0,
+      "unexpected_requests": 0,
+      "doget_before_about": 0
+    }
+  },
+  "fixture_first_record_emission_source": "unavailable",
+  "fixture_to_first_complete_record_ms": null,
+  "batch_visibility": {
+    "matched": 0,
+    "uncorrelated": 0,
+    "latency_ms": {
+      "samples": 0,
+      "first": null,
+      "last": null,
+      "minimum": null,
+      "maximum": null,
+      "slope_per_second": null
+    },
+    "retained_dropped_bytes": 0,
+    "coverage_origin_ns": 995060695084784,
+    "coverage_bucket_ms": 60000,
+    "coverage_by_time": []
+  },
+  "first_doget_ms": 28.206963,
+  "fixture_terminal_to_exit_ms": 5.252936,
+  "contract": {
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "7b14587cc92a095913c929f4f6510c6e6da38876a3f391aa49feb5e1e1360be0",
+    "stdout_bytes": 0,
+    "rendered_rows": 0,
+    "batches": 0,
+    "termination": {
+      "exit": 1
+    },
+    "requests": 1,
+    "ticket_sha256": "77d2f1d744b6bea7f60fcf07c32635b5074672b9e9305073186be1c5f7cd2ee4",
+    "request_validation": {
+      "auth_checks": 1,
+      "invalid_auth": 0,
+      "ticket_checks": 1,
+      "ticket_mismatches": 0,
+      "unexpected_requests": 0,
+      "doget_before_about": 0
+    },
+    "sink": {},
+    "tls": false,
+    "workload_sha256": "92cd4144261f724f44ac05d78eac1510b357d310b4fe58659243c21be82f3b51",
+    "config_before": "a416c0ba27acb2c33795596b9db1d3691a944a1c1820ce59ebc39ad0580b4b86",
+    "config_after": "a416c0ba27acb2c33795596b9db1d3691a944a1c1820ce59ebc39ad0580b4b86"
+  },
+  "fixture_encoded_bytes": 411,
+  "fixture_decoded_bytes": 0,
+  "fixture_max_message_bytes": 411,
+  "fixture_events_dropped": 0,
+  "fixture_sent_rows": 0,
+  "fixture_expected_output_ns": 0,
+  "fixture_cpu_user_ns": 2383000,
+  "fixture_cpu_system_ns": 7145000,
+  "terminal_condition": "expected_remote_failure_InvalidArgument",
+  "requests": 1,
+  "tls": false,
+  "encoded_bytes_per_second": 397.52791107300243,
+  "decoded_bytes_per_second": 0.0,
+  "valid": true
+}

@@ -1,0 +1,42 @@
+{
+  "scope": "Static debug-section verification only; no profiler capture or interpretation result",
+  "tool": {
+    "path": "/usr/bin/readelf",
+    "sha256": "a72f12f3dd8c560554a3ba818bcecbda9178db5befbcc64d91bbb6a241fc21bc",
+    "version": "GNU readelf (GNU Binutils) 2.47"
+  },
+  "binaries": [
+    {
+      "label": "go",
+      "binary": "/home/ajs/.cache/pb-phase6/profiling-prepared/pb-go-symbolized",
+      "sha256": "4b512b5a103f9dbb67258f99ba48631b9993ffe7eb360125363d4d3e85cda414",
+      "debug_info": true,
+      "debug_line": true,
+      "symtab": true,
+      "section_output": {
+        "path": "/home/ajs/.cache/pb-phase6/profiling-prepared/go-sections.txt",
+        "sha256": "e0a76c93340b5245f124498a144f3448aa2adafc1c01b4612b383c7e01d68af2"
+      },
+      "build_manifest": {
+        "path": "/home/ajs/.cache/pb-phase6/profiling-prepared/go-symbolized-manifest.json",
+        "sha256": "6fe64c909024c1023edf3ce1d35a74d764ecaedbacf1e9c899ce022e460f549b"
+      }
+    },
+    {
+      "label": "rust",
+      "binary": "/home/ajs/.cache/pb-phase6/candidate-review-r4/pb-symbolized",
+      "sha256": "b819c8aa1b18302ca0756d4e510cc348ef04d0ab3aebbb65252c8ec9e1441f9f",
+      "debug_info": true,
+      "debug_line": true,
+      "symtab": true,
+      "section_output": {
+        "path": "/home/ajs/.cache/pb-phase6/profiling-prepared/rust-sections.txt",
+        "sha256": "995fd918ab1a0133c00be3fc959c5868d87b9ab29b46268863bfc3ac770e10c7"
+      },
+      "build_manifest": {
+        "path": "/home/ajs/.cache/pb-phase6/candidate-review-r4/pb-symbolized-manifest.json",
+        "sha256": "43cba6ede1d96de16b6f26736a5867f4f1666dfd6cc2d35980c5cf0c153bca1e"
+      }
+    }
+  ]
+}

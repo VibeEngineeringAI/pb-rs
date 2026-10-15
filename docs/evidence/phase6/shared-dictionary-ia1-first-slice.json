@@ -1,0 +1,227 @@
+{
+  "status": "SOURCE SETTLED for bounded IA-1 fix; separate pre-existing nested dictionary binding finding is not waived",
+  "worktree": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail",
+  "scope": {
+    "production": [
+      "src/tail/session.rs"
+    ],
+    "tests": [
+      "src/tail/session/tests.rs"
+    ],
+    "fixtures": "tests/fixtures/arrow-go-v13-decoder-ia1",
+    "validation_changed": false,
+    "commit": false,
+    "agents": false,
+    "performance_campaign": false,
+    "immutable_candidates_changed": false
+  },
+  "sources": {
+    "src/tail/session.rs": "454eb0372ebab93fb009c1f7076a60a28e46f83c6d6983ea0e6c1212685e671b",
+    "src/tail/session/tests.rs": "46f86a2b8bc9a8638d7868caa6d81cc43ecb32f52786017d88dba4ac79459476",
+    "src/tail/validation.rs": "65ebd8fab90a99937b343955affe8deca50c702aa37f72edef6f980f9425d3f6",
+    "src/tail/values.rs": "037183a7939fc11d3921c36d086fad023d9a6c0004839096b28ab140cd56ea6b",
+    "src/tail/transport.rs": "77dd92bb0bf34c620bcb2ca259347f0d6b27d83d72593a76e912984858165240",
+    "src/tail/resources.rs": "8210efe689760620dd3536e2825a738acad28a51c5f17ac078933e3829d5473b",
+    "Cargo.toml": "eb55b298c3158cf32c51a9876f53d3ebe220adbd7eaa51fd1af8fe4d1dc0c83c",
+    "Cargo.lock": "aa35f338bd6b6b803c5e970f021d59f54d2e7435823f75a5baee018d7a1ebb44"
+  },
+  "rationale": "Canonicalize only Go-ignored dictionary value annotations in place after the untouched original-schema Go conflict prewalk. This gives Go-equal shared dictionary values the same Arrow-exact type without copying nested dictionary IDs or changing field order/layout. Original-schema renderer and metadata remain authoritative. Utf8/Binary rewriting, map/run-end nullability, verifier/array bounds and RAII handoff are unchanged; no unsafe/skip validation.",
+  "checks": [
+    {
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--lib",
+        "tail::"
+      ],
+      "status": 0,
+      "passed": 98,
+      "log": "/home/ajs/.cache/pb-phase6/ia1-implementation/tail-normal.log",
+      "bytes": 8557,
+      "sha256": "51fdea33f61f61a810787aabe88dc7e71fcbd6362b400400ff7ca09a02851f4c"
+    },
+    {
+      "argv": [
+        "cargo",
+        "test",
+        "--locked",
+        "--offline",
+        "--features",
+        "diagnostics",
+        "--lib",
+        "tail::"
+      ],
+      "status": 0,
+      "passed": 100,
+      "log": "/home/ajs/.cache/pb-phase6/ia1-implementation/tail-diagnostics.log",
+      "bytes": 8730,
+      "sha256": "c83dd36efd175af938dc692153402332faa8fdd99ae20bad0c254a59aeee8a9f"
+    },
+    {
+      "argv": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--offline",
+        "--lib",
+        "--tests",
+        "--features",
+        "diagnostics",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "status": 0,
+      "passed": null,
+      "log": "/home/ajs/.cache/pb-phase6/ia1-implementation/clippy.log",
+      "bytes": 4958,
+      "sha256": "eb2578eefb4d60672b49497a70b68d5d07062f8d1da9936c3ea8a41394e81d39"
+    },
+    {
+      "argv": [
+        "rustfmt",
+        "--edition",
+        "2024",
+        "--check",
+        "src/tail/session.rs",
+        "src/tail/session/tests.rs"
+      ],
+      "status": 0,
+      "passed": null,
+      "log": "/home/ajs/.cache/pb-phase6/ia1-implementation/fmt.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "causality": {
+    "original_r4_session_sha256": "bc62d630339e2fd4423fc3813f8772490c5df55a60597ecad8d35874e293ca97",
+    "new_complete_record_regression_old_exit": 101,
+    "old_failure": "changed element name triggers established-read Arrow Child type mismatch; control output succeeds before it",
+    "log": "/home/ajs/.cache/pb-phase6/ia1-implementation/causal-old.log",
+    "bytes": 7093,
+    "sha256": "f1969339ae9a5aad677b6a25481fa19ac119241bdcaf9b732f5af6c516a2ea6f"
+  },
+  "go_oracle": {
+    "version": "go1.25.4",
+    "arrow": "github.com/apache/arrow/go/v13 v13.0.0",
+    "binary": "/home/ajs/.cache/pb-phase6/ia1-implementation/go-decoder",
+    "bytes": 7553712,
+    "sha256": "ea12e2aacb603308d1e63c6eed525198cfa804a31836dadf6e84c21482f245fe",
+    "source": {
+      "harness/decoder-oracle/main.go": {
+        "bytes": 853,
+        "sha256": "ed80a49121c32222f9909a0837d900d98323070ae77c7fb7b9a3d642a28609d9"
+      },
+      "go.mod": {
+        "bytes": 9116,
+        "sha256": "90555a3ae88bee209ce16845ad259afa2e4c9b3c14890e0578a8a514c1350565"
+      },
+      "go.sum": {
+        "bytes": 60333,
+        "sha256": "ae20b3abc13e58b529d7f5219d657f506df24c471aa873d9b72d3435954f92ac"
+      }
+    },
+    "build_argv": [
+      "/home/ajs/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.4.linux-amd64/bin/go",
+      "build",
+      "-trimpath",
+      "-o",
+      "/home/ajs/.cache/pb-phase6/ia1-implementation/go-decoder",
+      "."
+    ],
+    "environment": {
+      "GOTOOLCHAIN": "local",
+      "GOPROXY": "off",
+      "GOFLAGS": "-mod=readonly",
+      "TMPDIR": "/home/ajs/.cache/pb-phase6/tmp",
+      "GOTMPDIR": "/home/ajs/.cache/pb-phase6/tmp"
+    },
+    "per_probe_limits": {
+      "seconds": 10,
+      "address_space_bytes": 4294967296,
+      "file_output_bytes": 16777216
+    },
+    "admitted_complete_records": 9,
+    "worker_variants": "Each admitted shape is verified through production Open/dictionary/record/render and both EOF reconnect and fatal InvalidArgument final, exact row plus two LFs. New tests use original audit captures for list fixtures and pinned Go-verified literal outputs for generated nested/FSL/map/V4-union controls.",
+    "results": "/home/ajs/.cache/pb-phase6/ia1-implementation/go-results.json",
+    "results_digest": {
+      "bytes": 4951,
+      "sha256": "f121e0eb204ef0600bc436b80391c4883d6f4c1fd0ae08cbad3643e5d9655b8f"
+    }
+  },
+  "durable_fixtures": {
+    "manifest": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/tests/fixtures/arrow-go-v13-decoder-ia1/manifest.json",
+    "bytes": 2611,
+    "sha256": "653144aae65e1a3d4d1cafb8423282e3f789e092405d2e16370d4bfc80aab60c",
+    "files": [
+      {
+        "name": "list_names_same.arrows",
+        "bytes": 1256,
+        "sha256": "16df99ca576c00de94421929349f9b70bea41826d97ee5c51f618402868e9fd7"
+      },
+      {
+        "name": "list_names_same.go.stdout",
+        "bytes": 23,
+        "sha256": "12c2854788960810824c4c7c4cb5c8e615741f72c7308f4427f1362e45a1a93b"
+      },
+      {
+        "name": "list_names_same.go.stderr",
+        "bytes": 24,
+        "sha256": "ff0eb81585f6cac4e1f0591307f024ac6e20e5c37ee2d51436772de65f912072"
+      },
+      {
+        "name": "list_names_same.go.status",
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      },
+      {
+        "name": "list_names_differ.arrows",
+        "bytes": 1256,
+        "sha256": "63093bbac736de5bcdbe671e7150098340c270c1383b9d1fa21fe1935fa832a3"
+      },
+      {
+        "name": "list_names_differ.go.stdout",
+        "bytes": 23,
+        "sha256": "12c2854788960810824c4c7c4cb5c8e615741f72c7308f4427f1362e45a1a93b"
+      },
+      {
+        "name": "list_names_differ.go.stderr",
+        "bytes": 24,
+        "sha256": "ff0eb81585f6cac4e1f0591307f024ac6e20e5c37ee2d51436772de65f912072"
+      },
+      {
+        "name": "list_names_differ.go.status",
+        "bytes": 2,
+        "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+      }
+    ]
+  },
+  "remaining_limits": [
+    {
+      "finding": "Shared outer dictionary with different nested ID contents",
+      "status": "Separate pre-existing output mismatch, not waived; scope clarification requested. Bounded IA-1 fix leaves it unchanged.",
+      "control": "Shared outer ID 1, identical element names and field metadata, child ID 0 contains [7,8], child ID 2 contains [9,10].",
+      "go": "Both columns render [9,10], EOF, status 0.",
+      "original_r4_and_ia1_rust": "Both columns render [7,8], EOF reconnect; actual production worker probes pass session completion.",
+      "artifacts": [
+        "/home/ajs/.cache/pb-phase6/ia1-implementation/nested-distinct-control.arrows",
+        "/home/ajs/.cache/pb-phase6/ia1-implementation/nested-distinct-control.go.stdout",
+        "/home/ajs/.cache/pb-phase6/ia1-implementation/nested-distinct-control.go.stderr",
+        "/home/ajs/.cache/pb-phase6/ia1-implementation/nested-distinct-control.go.status",
+        "/home/ajs/.cache/pb-phase6/ia1-implementation/nested-distinct-r4.log",
+        "/home/ajs/.cache/pb-phase6/ia1-implementation/nested-distinct-ia1.log"
+      ]
+    },
+    {
+      "finding": "Go v13 dictionary loader uses pre-V5 union/REE validity layout",
+      "status": "Exploratory V5 controls fail even with matching types; excluded from admitted compatibility proofs. V4 union controls match actual Go. Shared REE canonical annotations are source-traced, not claimed as new full-stream Go parity.",
+      "artifacts": "/home/ajs/.cache/pb-phase6/ia1-implementation/go-results.json"
+    },
+    {
+      "finding": "Successor candidate/process/full central validation",
+      "status": "Parent-owned; no immutable R4 binaries overwritten. No broad capability, malformed-input, performance or whole-phase acceptance claim."
+    }
+  ]
+}

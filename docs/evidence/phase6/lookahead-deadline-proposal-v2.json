@@ -1,0 +1,679 @@
+{
+  "scope": "Unpromoted exact-case source+test patch, nine archived actual captures (six Go, three historical/current Rust), independent review pending; no new native processes",
+  "case": "p3-deadline-text-empty-array-lookahead",
+  "tests_passed": 8,
+  "disabled_rule_failures": 2,
+  "guard_calls": {},
+  "inputs": {
+    "harness/phase3.py": "7f8deaf00185b94cd5934fbe6542e0393ded5f25aadd918012bd2f072d222f9d",
+    "harness/test_phase3.py": "f11f07cd571fe9d8b3c364c20a93aaf6cbd81b999dc077b2126374c5488deb59"
+  },
+  "proposal": {
+    "proposal.patch": "68d5baa1bf38bdf7f59a7e5f05979f62d870f762b062cccafb623ec0ea1aa140",
+    "phase3.proposed.py": "03ede18edfddbfabc0f65eaee940acf852cbb40db01f28da1d26294f0588fb8e",
+    "test_phase3.proposed.py": "48b6a8e9cd1389108de2256ee3b38e0ac90e163f2fe90fbec67ca94285ed547e",
+    "tests.log": "dd6268955d60d539cebc972e7a6fa1fc2b3bc1c2c33bd5ea756b8df34aae3cbc",
+    "disabled-rule.log": "c249c37074be5c07953fd872cbc7f325e61c73e44082f0e3c7c6a1959a9cde6f"
+  },
+  "captures": {
+    "r4/reference": {
+      "folder": "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference",
+      "expectation_issues": [],
+      "stderr": "Error: failed to read response body: net/http: request canceled (Client.Timeout or context cancellation while reading body)\n",
+      "wall_ms": 60030.49315,
+      "termination": {
+        "exit": 1
+      },
+      "stdout_bytes": 0,
+      "artifacts": {
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference/stdout.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference/meter.json": "86810f6693ef5e30bebf2a4fbac7bceff6d36d1e08c0becc72b975df8dc847e8",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference/stderr.bin": "21bdeabd75a335912742a275cd4c962f50376d1eea547a2d0e90fdc68ad462e1",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference/stderr.normalized": "21bdeabd75a335912742a275cd4c962f50376d1eea547a2d0e90fdc68ad462e1",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference/stdout.normalized": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference/trace.json": "ca471439059304070f85ee4c6cecd7affa5c773a454453090e9745ccb5ae4ee2",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference/milestones.json": "d623259a326c8fa225f8e54409dccbb1bc309faeebb86665eb753fb53e77d0d6",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference/config-after.toml": "1db40cd32069855432ee61ab71e54ae519f35d984e7b765f9df5ab26dadd2e27",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference/result.json": "1a0d6e43bf76ea8d3975615c1e7f37c026930215c74801a1d302d023592c2946"
+      },
+      "report_sha256": "c5c4149e68180c72f8f37217aa38e030dd366128e749e72b0e4f2a78cd890bda"
+    },
+    "r4/reference-repeat-1": {
+      "folder": "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference-repeat-1",
+      "expectation_issues": [],
+      "stderr": "Error: failed to read response body: context deadline exceeded (Client.Timeout or context cancellation while reading body)\n",
+      "wall_ms": 60029.345545,
+      "termination": {
+        "exit": 1
+      },
+      "stdout_bytes": 0,
+      "artifacts": {
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference-repeat-1/stdout.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference-repeat-1/meter.json": "036f8e292025ed56f0b99f60d4db2dc6f902d4ff91cad307623144bbdb852172",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference-repeat-1/stderr.bin": "c0986688ec9aaba9e4f05a0d0cae14cdb0f1fc919a83cbe333b81299adf68bbf",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference-repeat-1/stderr.normalized": "c0986688ec9aaba9e4f05a0d0cae14cdb0f1fc919a83cbe333b81299adf68bbf",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference-repeat-1/stdout.normalized": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference-repeat-1/trace.json": "3a31ebece609ec28e47a7627a65a64a6dafdf989b566489d668dcee3628b8967",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference-repeat-1/milestones.json": "d7f47195897ce9bc59a2e86dc2f28ee8c36f633371589746534765e0bf565732",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference-repeat-1/config-after.toml": "aef2adf985ae53bb01dab683135788edd1888e722d17f1ced8b73ed38ae4a29e",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference-repeat-1/result.json": "4768197072f501b3fdc07b72e65b14fe4fe418e1bf032a7ff39ab5aae13ddfa9"
+      },
+      "report_sha256": "c5c4149e68180c72f8f37217aa38e030dd366128e749e72b0e4f2a78cd890bda"
+    },
+    "r4/candidate": {
+      "folder": "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase3/cases/p3-deadline-text-empty-array-lookahead/candidate",
+      "expectation_issues": [],
+      "stderr": "Error: failed to read response body: context deadline exceeded (Client.Timeout or context cancellation while reading body)\n",
+      "wall_ms": 60003.610453,
+      "termination": {
+        "exit": 1
+      },
+      "stdout_bytes": 0,
+      "artifacts": {
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase3/cases/p3-deadline-text-empty-array-lookahead/candidate/stdout.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase3/cases/p3-deadline-text-empty-array-lookahead/candidate/meter.json": "ea9cf24fd263bc5b7c81a627236dfdb5e3f72deb6d786b7809990aee6081e555",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase3/cases/p3-deadline-text-empty-array-lookahead/candidate/stderr.bin": "c0986688ec9aaba9e4f05a0d0cae14cdb0f1fc919a83cbe333b81299adf68bbf",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase3/cases/p3-deadline-text-empty-array-lookahead/candidate/stderr.normalized": "c0986688ec9aaba9e4f05a0d0cae14cdb0f1fc919a83cbe333b81299adf68bbf",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase3/cases/p3-deadline-text-empty-array-lookahead/candidate/stdout.normalized": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase3/cases/p3-deadline-text-empty-array-lookahead/candidate/trace.json": "781e46d2831b5aa0286d42f82c3279bf5974f4ab328a1d4ba1ed19e2ebfe89db",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase3/cases/p3-deadline-text-empty-array-lookahead/candidate/milestones.json": "5faa838c4c6dff9d3293952b7d5093f16e8e004d02cc4ead6366ca35fd976cf5",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase3/cases/p3-deadline-text-empty-array-lookahead/candidate/config-after.toml": "a65eed16f07153e62c3e7a7fb15f6865c7d56a2a51eca7201424c39e1a3ffee3",
+        "/home/ajs/.cache/pb-phase6/retained-review-r4-full/phase3/cases/p3-deadline-text-empty-array-lookahead/candidate/result.json": "85358e1369c3df44a244316b302c03d8682c6138727b4f805e17c3e4b7ce28e9"
+      },
+      "report_sha256": "c5c4149e68180c72f8f37217aa38e030dd366128e749e72b0e4f2a78cd890bda"
+    },
+    "r5/reference": {
+      "folder": "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference",
+      "expectation_issues": [],
+      "stderr": "Error: failed to read response body: net/http: request canceled (Client.Timeout or context cancellation while reading body)\n",
+      "wall_ms": 60031.426607,
+      "termination": {
+        "exit": 1
+      },
+      "stdout_bytes": 0,
+      "artifacts": {
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference/stdout.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference/meter.json": "a025a4ab3bdfe5e3bd4a13d1762b7cebd6165ae774643a512c6a60c35dd7d46a",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference/stderr.bin": "21bdeabd75a335912742a275cd4c962f50376d1eea547a2d0e90fdc68ad462e1",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference/stderr.normalized": "21bdeabd75a335912742a275cd4c962f50376d1eea547a2d0e90fdc68ad462e1",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference/stdout.normalized": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference/trace.json": "ffb9ef0fa691841bf17b484803b0b79026e6b64cd514e3b2920c49486af1938d",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference/milestones.json": "c5425e8ca4a4f8a2f1c2cdb54401d5d8822cd77f28b9d343e893e227c297d2eb",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference/config-after.toml": "7bfd1316e4272a9fba914a215e5074d02abf78245c7a86af5d3f133a118d4f13",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference/result.json": "7b09432936b9386fd47f4af5561f79d61b13fbad867a3b6914a9b1b44bc24595"
+      },
+      "report_sha256": "c4125274d2e2a6592d0f99350760af1105c23aea7fb957d27773154ac6b93ccb"
+    },
+    "r5/reference-repeat-1": {
+      "folder": "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference-repeat-1",
+      "expectation_issues": [],
+      "stderr": "Error: failed to read response body: context deadline exceeded (Client.Timeout or context cancellation while reading body)\n",
+      "wall_ms": 60092.905017,
+      "termination": {
+        "exit": 1
+      },
+      "stdout_bytes": 0,
+      "artifacts": {
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference-repeat-1/stdout.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference-repeat-1/meter.json": "063cd2c582bdec25cf3806d9d74b56fbf5fa2ebfc5072db6b5b33e6c5b417877",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference-repeat-1/stderr.bin": "c0986688ec9aaba9e4f05a0d0cae14cdb0f1fc919a83cbe333b81299adf68bbf",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference-repeat-1/stderr.normalized": "c0986688ec9aaba9e4f05a0d0cae14cdb0f1fc919a83cbe333b81299adf68bbf",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference-repeat-1/stdout.normalized": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference-repeat-1/trace.json": "d53d8ac1d3715a10662669f81569379fcab8149fc16180fe64d9d311e089ec27",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference-repeat-1/milestones.json": "d34abce11ba8d9b1efc82f9a710aad9aeeda33a813abfbf988b2a1c47880cd35",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference-repeat-1/config-after.toml": "d05a126d472655635a9896b1c262fe59032fc16446f0568ca9747ab22e89d4b5",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference-repeat-1/result.json": "63386a376d417c5b12477909590c3097d6ebd9de6f19af7ded37ed55a86e5282"
+      },
+      "report_sha256": "c4125274d2e2a6592d0f99350760af1105c23aea7fb957d27773154ac6b93ccb"
+    },
+    "r5/candidate": {
+      "folder": "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase3/cases/p3-deadline-text-empty-array-lookahead/candidate",
+      "expectation_issues": [],
+      "stderr": "Error: failed to read response body: context deadline exceeded (Client.Timeout or context cancellation while reading body)\n",
+      "wall_ms": 60004.454304,
+      "termination": {
+        "exit": 1
+      },
+      "stdout_bytes": 0,
+      "artifacts": {
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase3/cases/p3-deadline-text-empty-array-lookahead/candidate/stdout.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase3/cases/p3-deadline-text-empty-array-lookahead/candidate/meter.json": "04bee40e14ef3f0c3cfbb00d140a3c520693a243d96e535823b0633719bd73d2",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase3/cases/p3-deadline-text-empty-array-lookahead/candidate/stderr.bin": "c0986688ec9aaba9e4f05a0d0cae14cdb0f1fc919a83cbe333b81299adf68bbf",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase3/cases/p3-deadline-text-empty-array-lookahead/candidate/stderr.normalized": "c0986688ec9aaba9e4f05a0d0cae14cdb0f1fc919a83cbe333b81299adf68bbf",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase3/cases/p3-deadline-text-empty-array-lookahead/candidate/stdout.normalized": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase3/cases/p3-deadline-text-empty-array-lookahead/candidate/trace.json": "9050ab87455dc1c4210bfcaaf347951ff0b68aa133663776f0eac1b4dab0428d",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase3/cases/p3-deadline-text-empty-array-lookahead/candidate/milestones.json": "9836988f4509878bb62a495c4030f331fb36e5383902ceb898f54f1157697a69",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase3/cases/p3-deadline-text-empty-array-lookahead/candidate/config-after.toml": "049ba6a12dbd4474ee143a6a846b74ede777a66b6c60c6787f6650c43e240465",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase3/cases/p3-deadline-text-empty-array-lookahead/candidate/result.json": "2d9e2c9140e82c2ae41306a4d434a7c661ec42a71d6c6012ea238a8caac96b8c"
+      },
+      "report_sha256": "c4125274d2e2a6592d0f99350760af1105c23aea7fb957d27773154ac6b93ccb"
+    },
+    "r6/reference": {
+      "folder": "/home/ajs/.cache/pb-phase6/retained-review-r6-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference",
+      "expectation_issues": [],
+      "stderr": "Error: failed to read response body: context deadline exceeded\n",
+      "wall_ms": 60057.987294,
+      "termination": {
+        "exit": 1
+      },
+      "stdout_bytes": 0,
+      "artifacts": {
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference/stdout.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference/meter.json": "5c74ab860b1af9b0734f52035bb1bdeab4585a53b7ec9f276cec044e6990335e",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference/stderr.bin": "8c11d31a7d564af38a8a9df6779d3efc5edb9bad439e06b41acb02396e95b7c5",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference/stderr.normalized": "8c11d31a7d564af38a8a9df6779d3efc5edb9bad439e06b41acb02396e95b7c5",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference/stdout.normalized": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference/trace.json": "f93766cd6acc6f77651898b506a368b6b22688fe1065f9cc15986460d4e785c1",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference/milestones.json": "ac6341433026bd81de6c7fe5d22b92d3289f9d1e98215fdaa968a5cef0a08e44",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference/config-after.toml": "20c1aae2f007eb20e4eaff6e1eba54d86ec1136cfa74f8ea011f626751495ba2",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference/result.json": "8016f04382c7218c0c74a39361a6861800bc86a3813c0cb7b1c288dc7bde407a"
+      },
+      "report_sha256": "51183fb78d406fe33f2cfeeb3b7bb67dc1888b6eceaf5a49d12bfe37d9067509"
+    },
+    "r6/reference-repeat-1": {
+      "folder": "/home/ajs/.cache/pb-phase6/retained-review-r6-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference-repeat-1",
+      "expectation_issues": [],
+      "stderr": "Error: failed to read response body: net/http: request canceled (Client.Timeout or context cancellation while reading body)\n",
+      "wall_ms": 60132.925867,
+      "termination": {
+        "exit": 1
+      },
+      "stdout_bytes": 0,
+      "artifacts": {
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference-repeat-1/stdout.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference-repeat-1/meter.json": "5870c5ab0d3eed2674a7c5645d89dbb51743a5b07b492fd9c608a393fb07518b",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference-repeat-1/stderr.bin": "21bdeabd75a335912742a275cd4c962f50376d1eea547a2d0e90fdc68ad462e1",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference-repeat-1/stderr.normalized": "21bdeabd75a335912742a275cd4c962f50376d1eea547a2d0e90fdc68ad462e1",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference-repeat-1/stdout.normalized": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference-repeat-1/trace.json": "7d25fc5e6ca1910a12b3bb97c8af2f3fdf3f6a0ac0a22a2ce2c524cf45c7e2fa",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference-repeat-1/milestones.json": "739e9823e72e9075ddd29fa0659ef70527f78a4114b75e6f8d55c63a29c90350",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference-repeat-1/config-after.toml": "ab6a0a1facd6648e18e205ca790a9a75c8cee6caa564f79911e822286154d1a6",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-full/phase3/cases/p3-deadline-text-empty-array-lookahead/reference-repeat-1/result.json": "cb604e5369870168795f1b0d24ea93d13d1f9fcb9cdeb6e8fa8544bf42b8926a"
+      },
+      "report_sha256": "51183fb78d406fe33f2cfeeb3b7bb67dc1888b6eceaf5a49d12bfe37d9067509"
+    },
+    "r6/candidate": {
+      "folder": "/home/ajs/.cache/pb-phase6/retained-review-r6-full/phase3/cases/p3-deadline-text-empty-array-lookahead/candidate",
+      "expectation_issues": [],
+      "stderr": "Error: failed to read response body: context deadline exceeded (Client.Timeout or context cancellation while reading body)\n",
+      "wall_ms": 60004.085753,
+      "termination": {
+        "exit": 1
+      },
+      "stdout_bytes": 0,
+      "artifacts": {
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-full/phase3/cases/p3-deadline-text-empty-array-lookahead/candidate/stdout.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-full/phase3/cases/p3-deadline-text-empty-array-lookahead/candidate/meter.json": "4adff09fbb929ac0cd188832dfb0d67ec027c60c01c4bfe4d2fc1f47a2dfbdb3",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-full/phase3/cases/p3-deadline-text-empty-array-lookahead/candidate/stderr.bin": "c0986688ec9aaba9e4f05a0d0cae14cdb0f1fc919a83cbe333b81299adf68bbf",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-full/phase3/cases/p3-deadline-text-empty-array-lookahead/candidate/stderr.normalized": "c0986688ec9aaba9e4f05a0d0cae14cdb0f1fc919a83cbe333b81299adf68bbf",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-full/phase3/cases/p3-deadline-text-empty-array-lookahead/candidate/stdout.normalized": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-full/phase3/cases/p3-deadline-text-empty-array-lookahead/candidate/trace.json": "cfe37fbdac178321ff684b2862612dd0e56e3e5949777f38ab7f9be0c7acd7de",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-full/phase3/cases/p3-deadline-text-empty-array-lookahead/candidate/milestones.json": "4bca5f81b1278a051588cf38dc50bef9130f4c42a9f8f17c02d15510d321c69a",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-full/phase3/cases/p3-deadline-text-empty-array-lookahead/candidate/config-after.toml": "b1dd924e811a3fd7eb93c599affa519bce223a3a4f04e3abfde2aba1806388b7",
+        "/home/ajs/.cache/pb-phase6/retained-review-r6-full/phase3/cases/p3-deadline-text-empty-array-lookahead/candidate/result.json": "350a473f512559a214ad66949428b09b3c66ed4f83748a7e4fcf4395066c216d"
+      },
+      "report_sha256": "51183fb78d406fe33f2cfeeb3b7bb67dc1888b6eceaf5a49d12bfe37d9067509"
+    }
+  },
+  "source_root": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail",
+  "source_rationale": {
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/cmd/query.go": {
+      "sha256": "8952eea540f963c0ca61d514f884eb7d5a32e03932d728e1efee5c8bd0cbf61c",
+      "oracle_commit": "07af390ab09bda8ac9e427ffc6310077bace0125"
+    },
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/pkg/http/http.go": {
+      "sha256": "47b59e5e3d434886ff5aec8ead5a578cc9ffeb690f5d0562c15ea997427244c0",
+      "oracle_commit": "07af390ab09bda8ac9e427ffc6310077bace0125"
+    },
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/pkg/http/refresh.go": {
+      "sha256": "39f767a8fe9e74b142337af07fe46d9df2f2cf258df90095bd3afba24415fc78",
+      "oracle_commit": "07af390ab09bda8ac9e427ffc6310077bace0125"
+    },
+    "/home/ajs/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.4.linux-amd64/src/net/http/client.go": {
+      "sha256": "0ef2c2f5dc3c3d88eba684227340c153b6fce6d49298e19aa3086b9c5eb98595",
+      "toolchain": "go1.25.4"
+    }
+  },
+  "optimization": 0,
+  "exact_apply": [
+    {
+      "argv": [
+        "git",
+        "apply",
+        "--check",
+        "--unsafe-paths",
+        "--directory=/home/ajs/.cache/pb-phase6/lookahead-deadline-proposal-v2/apply-tree",
+        "/home/ajs/.cache/pb-phase6/lookahead-deadline-proposal-v2/proposal.patch"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "apply",
+        "--unsafe-paths",
+        "--directory=/home/ajs/.cache/pb-phase6/lookahead-deadline-proposal-v2/apply-tree",
+        "/home/ajs/.cache/pb-phase6/lookahead-deadline-proposal-v2/proposal.patch"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "reduction_pairs": [
+    {
+      "left": "r4/reference",
+      "right": "r4/reference",
+      "issues": []
+    },
+    {
+      "left": "r4/reference",
+      "right": "r4/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "left": "r4/reference",
+      "right": "r4/candidate",
+      "issues": []
+    },
+    {
+      "left": "r4/reference",
+      "right": "r5/reference",
+      "issues": []
+    },
+    {
+      "left": "r4/reference",
+      "right": "r5/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "left": "r4/reference",
+      "right": "r5/candidate",
+      "issues": []
+    },
+    {
+      "left": "r4/reference",
+      "right": "r6/reference",
+      "issues": []
+    },
+    {
+      "left": "r4/reference",
+      "right": "r6/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "left": "r4/reference",
+      "right": "r6/candidate",
+      "issues": []
+    },
+    {
+      "left": "r4/reference-repeat-1",
+      "right": "r4/reference",
+      "issues": []
+    },
+    {
+      "left": "r4/reference-repeat-1",
+      "right": "r4/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "left": "r4/reference-repeat-1",
+      "right": "r4/candidate",
+      "issues": []
+    },
+    {
+      "left": "r4/reference-repeat-1",
+      "right": "r5/reference",
+      "issues": []
+    },
+    {
+      "left": "r4/reference-repeat-1",
+      "right": "r5/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "left": "r4/reference-repeat-1",
+      "right": "r5/candidate",
+      "issues": []
+    },
+    {
+      "left": "r4/reference-repeat-1",
+      "right": "r6/reference",
+      "issues": []
+    },
+    {
+      "left": "r4/reference-repeat-1",
+      "right": "r6/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "left": "r4/reference-repeat-1",
+      "right": "r6/candidate",
+      "issues": []
+    },
+    {
+      "left": "r4/candidate",
+      "right": "r4/reference",
+      "issues": []
+    },
+    {
+      "left": "r4/candidate",
+      "right": "r4/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "left": "r4/candidate",
+      "right": "r4/candidate",
+      "issues": []
+    },
+    {
+      "left": "r4/candidate",
+      "right": "r5/reference",
+      "issues": []
+    },
+    {
+      "left": "r4/candidate",
+      "right": "r5/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "left": "r4/candidate",
+      "right": "r5/candidate",
+      "issues": []
+    },
+    {
+      "left": "r4/candidate",
+      "right": "r6/reference",
+      "issues": []
+    },
+    {
+      "left": "r4/candidate",
+      "right": "r6/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "left": "r4/candidate",
+      "right": "r6/candidate",
+      "issues": []
+    },
+    {
+      "left": "r5/reference",
+      "right": "r4/reference",
+      "issues": []
+    },
+    {
+      "left": "r5/reference",
+      "right": "r4/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "left": "r5/reference",
+      "right": "r4/candidate",
+      "issues": []
+    },
+    {
+      "left": "r5/reference",
+      "right": "r5/reference",
+      "issues": []
+    },
+    {
+      "left": "r5/reference",
+      "right": "r5/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "left": "r5/reference",
+      "right": "r5/candidate",
+      "issues": []
+    },
+    {
+      "left": "r5/reference",
+      "right": "r6/reference",
+      "issues": []
+    },
+    {
+      "left": "r5/reference",
+      "right": "r6/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "left": "r5/reference",
+      "right": "r6/candidate",
+      "issues": []
+    },
+    {
+      "left": "r5/reference-repeat-1",
+      "right": "r4/reference",
+      "issues": []
+    },
+    {
+      "left": "r5/reference-repeat-1",
+      "right": "r4/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "left": "r5/reference-repeat-1",
+      "right": "r4/candidate",
+      "issues": []
+    },
+    {
+      "left": "r5/reference-repeat-1",
+      "right": "r5/reference",
+      "issues": []
+    },
+    {
+      "left": "r5/reference-repeat-1",
+      "right": "r5/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "left": "r5/reference-repeat-1",
+      "right": "r5/candidate",
+      "issues": []
+    },
+    {
+      "left": "r5/reference-repeat-1",
+      "right": "r6/reference",
+      "issues": []
+    },
+    {
+      "left": "r5/reference-repeat-1",
+      "right": "r6/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "left": "r5/reference-repeat-1",
+      "right": "r6/candidate",
+      "issues": []
+    },
+    {
+      "left": "r5/candidate",
+      "right": "r4/reference",
+      "issues": []
+    },
+    {
+      "left": "r5/candidate",
+      "right": "r4/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "left": "r5/candidate",
+      "right": "r4/candidate",
+      "issues": []
+    },
+    {
+      "left": "r5/candidate",
+      "right": "r5/reference",
+      "issues": []
+    },
+    {
+      "left": "r5/candidate",
+      "right": "r5/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "left": "r5/candidate",
+      "right": "r5/candidate",
+      "issues": []
+    },
+    {
+      "left": "r5/candidate",
+      "right": "r6/reference",
+      "issues": []
+    },
+    {
+      "left": "r5/candidate",
+      "right": "r6/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "left": "r5/candidate",
+      "right": "r6/candidate",
+      "issues": []
+    },
+    {
+      "left": "r6/reference",
+      "right": "r4/reference",
+      "issues": []
+    },
+    {
+      "left": "r6/reference",
+      "right": "r4/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "left": "r6/reference",
+      "right": "r4/candidate",
+      "issues": []
+    },
+    {
+      "left": "r6/reference",
+      "right": "r5/reference",
+      "issues": []
+    },
+    {
+      "left": "r6/reference",
+      "right": "r5/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "left": "r6/reference",
+      "right": "r5/candidate",
+      "issues": []
+    },
+    {
+      "left": "r6/reference",
+      "right": "r6/reference",
+      "issues": []
+    },
+    {
+      "left": "r6/reference",
+      "right": "r6/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "left": "r6/reference",
+      "right": "r6/candidate",
+      "issues": []
+    },
+    {
+      "left": "r6/reference-repeat-1",
+      "right": "r4/reference",
+      "issues": []
+    },
+    {
+      "left": "r6/reference-repeat-1",
+      "right": "r4/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "left": "r6/reference-repeat-1",
+      "right": "r4/candidate",
+      "issues": []
+    },
+    {
+      "left": "r6/reference-repeat-1",
+      "right": "r5/reference",
+      "issues": []
+    },
+    {
+      "left": "r6/reference-repeat-1",
+      "right": "r5/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "left": "r6/reference-repeat-1",
+      "right": "r5/candidate",
+      "issues": []
+    },
+    {
+      "left": "r6/reference-repeat-1",
+      "right": "r6/reference",
+      "issues": []
+    },
+    {
+      "left": "r6/reference-repeat-1",
+      "right": "r6/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "left": "r6/reference-repeat-1",
+      "right": "r6/candidate",
+      "issues": []
+    },
+    {
+      "left": "r6/candidate",
+      "right": "r4/reference",
+      "issues": []
+    },
+    {
+      "left": "r6/candidate",
+      "right": "r4/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "left": "r6/candidate",
+      "right": "r4/candidate",
+      "issues": []
+    },
+    {
+      "left": "r6/candidate",
+      "right": "r5/reference",
+      "issues": []
+    },
+    {
+      "left": "r6/candidate",
+      "right": "r5/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "left": "r6/candidate",
+      "right": "r5/candidate",
+      "issues": []
+    },
+    {
+      "left": "r6/candidate",
+      "right": "r6/reference",
+      "issues": []
+    },
+    {
+      "left": "r6/candidate",
+      "right": "r6/reference-repeat-1",
+      "issues": []
+    },
+    {
+      "left": "r6/candidate",
+      "right": "r6/candidate",
+      "issues": []
+    }
+  ],
+  "preparation_script_sha256": "2672d5b5c686b164df6d60d9223aa1f6605582a5c100ceffccc4b6a3611eb46e",
+  "pooled_context_mutant": {
+    "failures": 2,
+    "errors": 0,
+    "sha256": "f71df78a1a392cd3ac60ca5692dcee56f947a3af5d1734e8e6b8a07dcce41031",
+    "log_sha256": "68ce50f0c2c243258f16a2e34d71806361f529a536ee570004c27fc80806a459"
+  }
+}

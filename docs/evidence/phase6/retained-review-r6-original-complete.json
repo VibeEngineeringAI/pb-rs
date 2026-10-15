@@ -1,0 +1,92 @@
+{
+  "scope": "R6 original retained full inventories across three preserved executions; phase3/phase4 Go A/A failures remain unaccepted",
+  "accepted": false,
+  "all_inventories_executed": true,
+  "performance_claim": false,
+  "cases": 3268,
+  "passed": 3266,
+  "failed": 2,
+  "historical_guards_passed": 30,
+  "phases": {
+    "1": {
+      "cases": 2018,
+      "passed": 2018,
+      "failed": 0,
+      "report": {
+        "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-full/phase1/report.json",
+        "sha256": "e3d0514350d05e66b99550129bd93fe39e476d3d6ff9d1209f3e8424313b18e6"
+      },
+      "driver_status": {
+        "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-full/status.json",
+        "sha256": "5c2cd1057b1b7e48a12e5fa2d1154a0f7eb57fa7e2026ee05a38d846c62435b6"
+      },
+      "identities_unchanged": true,
+      "full_deadlines": false,
+      "failed_case": null
+    },
+    "2": {
+      "cases": 219,
+      "passed": 219,
+      "failed": 0,
+      "report": {
+        "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-full/phase2/report.json",
+        "sha256": "d5a6d84a0927ec0c0aa5263a404f489c18af8651286adee6457a2e7a8cd0fdd0"
+      },
+      "driver_status": {
+        "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-full/status.json",
+        "sha256": "5c2cd1057b1b7e48a12e5fa2d1154a0f7eb57fa7e2026ee05a38d846c62435b6"
+      },
+      "identities_unchanged": true,
+      "full_deadlines": false,
+      "failed_case": null
+    },
+    "3": {
+      "cases": 684,
+      "passed": 683,
+      "failed": 1,
+      "report": {
+        "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-full/phase3/report.json",
+        "sha256": "51183fb78d406fe33f2cfeeb3b7bb67dc1888b6eceaf5a49d12bfe37d9067509"
+      },
+      "driver_status": {
+        "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-full/status.json",
+        "sha256": "5c2cd1057b1b7e48a12e5fa2d1154a0f7eb57fa7e2026ee05a38d846c62435b6"
+      },
+      "identities_unchanged": true,
+      "full_deadlines": true,
+      "failed_case": "p3-deadline-text-empty-array-lookahead"
+    },
+    "4": {
+      "cases": 161,
+      "passed": 160,
+      "failed": 1,
+      "report": {
+        "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/report.json",
+        "sha256": "5851790bc84a6fbf6cac6f796c4eab659c564138e267d0ad80cbb59f9ca265bd"
+      },
+      "driver_status": {
+        "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/status.json",
+        "sha256": "00daef0ec4cca52241303d116ee8c2843a3aec8aec07a7fb8d8bac9a91e5dfd5"
+      },
+      "identities_unchanged": true,
+      "full_deadlines": true,
+      "failed_case": "p4-deadline-header"
+    },
+    "5": {
+      "cases": 186,
+      "passed": 186,
+      "failed": 0,
+      "report": {
+        "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-phase5/phase5/report.json",
+        "sha256": "c1b1786d919fe7dac84fabf9f7b6f3e6ed962b87079fd4c96a5578c6b729483e"
+      },
+      "driver_status": {
+        "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-phase5/status.json",
+        "sha256": "3001a69a6d644ceeb4ee34942d83259a3e7857497e20ee86455e45c207c9995c"
+      },
+      "identities_unchanged": true,
+      "full_deadlines": true,
+      "failed_case": null
+    }
+  }
+}

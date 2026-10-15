@@ -1,0 +1,27 @@
+{
+  "scope": "Fresh independent Opus tooling review and prospective coordinator decisions; readiness only, no quiet admission or performance conclusion",
+  "review": {
+    "path": "docs/phase6-measurement-review-opus-r5.md",
+    "sha256": "91799ef7eff942771b264367a9726dab8ba3615d973747e56fc32b459a4425df"
+  },
+  "operating_decisions": {
+    "path": "docs/phase6-measurement-operating-decisions.md",
+    "sha256": "c107bf8409ea8a5ba8e6b0c90f72407ea7d8a9bb724f340a1715cb1d1c8b47d9"
+  },
+  "review_tests": {
+    "pure_mock_passed": 84,
+    "native_runs": 0,
+    "independent_probes": 6
+  },
+  "prepared_manifest": {
+    "path": "/home/ajs/.cache/pb-phase6/campaign-prepared-r6-v1/manifest.json",
+    "sha256": "a47093f4a3ea785a310f7ca1baa92444deaf7e21db5ba7db72dc897ddc3d047b"
+  },
+  "decisions": {
+    "R5-1": "Keep conservative screen; expected null fast A/A ratios; quarantined finite results interpreted as descriptive absolutes only, no budget pass or reconstructed ratio",
+    "R5-2": "Require matching hash-framing control before output-heavy wall/first-result interpretation",
+    "R5-3": "SIGINT abort; verify recorded owned processes/groups exited before quiet release",
+    "R5-4": "Offline descriptive required-resource reporting pending actual campaigns"
+  },
+  "campaign_started": false
+}

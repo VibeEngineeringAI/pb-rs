@@ -1,0 +1,279 @@
+{
+  "scope": "Retained phases1-5 ordinary gates plus full60s/full120s on immutable review-r5; known-divergence tier excluded; phase7 guards not promoted; no performance claim",
+  "binary_identities": {
+    "/home/ajs/.cache/pb-phase6/baselines/pb-go": {
+      "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "bytes": 71807160
+    },
+    "/home/ajs/.cache/pb-phase6/baselines/pb-go-cloud": {
+      "sha256": "622d4144b7e354c0ee4036244ba719cbbaf8357710804b1d733cd421a0dc227e",
+      "bytes": 71807160
+    },
+    "/home/ajs/.cache/pb-phase6/candidate-review-r5/pb": {
+      "sha256": "0a5877073979ee43e518b40908ae7274286144a9799137202d71a4310b68e825",
+      "bytes": 10703832
+    },
+    "/home/ajs/.cache/pb-phase6/candidate-review-r5/pb-cloud": {
+      "sha256": "db7139ecf8a44933c3a453b5f0c356b0c791fb2e50f8fdc8f67f96e7187bfd44",
+      "bytes": 10704288
+    },
+    "/home/ajs/.cache/pb-phase6/candidate-review-r5/manifest.json": {
+      "sha256": "5f5181a7de625ca9034d62e5ae233eeb9327553b449bd233a1afd8152f4e5079",
+      "bytes": 5834
+    },
+    "/home/ajs/.cache/pb-phase6/tmp/fx/pb-fixture-r4": {
+      "sha256": "8237e34ee15b4a7d773945d3c30280752b2b780f1be3626d547b76cdea2ed4f0",
+      "bytes": 24491201
+    },
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/bin/pb-meter": {
+      "sha256": "17c3b73491b2a31e465f58eda9f210000b5cd886a4ba9fc0764dc3576899127c",
+      "bytes": 17232
+    }
+  },
+  "source_hashes_initial": {
+    "harness/run.py": "b280d1295a4b351e6f2d838c56acaac58b2247bb77fc9881587bb7bbe849a076",
+    "harness/meter.c": "5d7ce9dc2fa65b1ec7018fb863d36fd78d8b8535762acadaefc3f2f4e0f070e9",
+    "harness/phase1.py": "e0216062f0980168e8ea9708f819e773c68e4452a7750f689f9ca29e8c5dc6a6",
+    "harness/phase2.py": "e1f8626b68b05f20edce19c8f6ee9dddff9c4d9fa9989ef94c891a745345562a",
+    "harness/phase3.py": "7f8deaf00185b94cd5934fbe6542e0393ded5f25aadd918012bd2f072d222f9d",
+    "harness/phase4.py": "748f2702a30f9727df53b8f0cd7abfe9f06f3effb8e80d7255c7b335824a9327",
+    "harness/phase5.py": "abcf687f772897cefdf0346982701a725e0165b3b55c0fe3f6997a494cce8b90",
+    "harness/contracts/phase3.md": "31907b6b5cf132a064ec3b905f25f699551a8857e922c9945f24742a1d8c47d0",
+    "harness/contracts/phase4-reference.json": "d8e4afddca0f23abe0590bc3793557e1ba391b9a97f3626765754af1b398f87e",
+    "harness/contracts/phase4.md": "b5860c0d584b591a2f02eb39418770fab3daec08dd95b28b0670b90cb6c5d335",
+    "harness/contracts/phase5-reference.json": "435a71357d6c1319bae78a56dee6bebffdaea670fe2c71b7e0d0a27298118352",
+    "harness/contracts/phase5.md": "c57d210430e1e4cba96eb434782883b88ee5b9f10d66a72dc371182ecae8e9b4",
+    "harness/contracts/phase1-surface.json": "07721e5e289ddafbeb5a94df43e238a7ad5c953dc4fcbd3fc0412cba8b2cfb7b",
+    "harness/contracts/phase2.md": "f396983e1d5d6a6d1333c07d95778d891e1076ec6ba78c1d2d6d2b9201e71774",
+    "harness/contracts/phase3-reference.json": "b4ed9880c62ae9ece00250d783af55eda87b603c77f4c23f8653c264c0f1448e"
+  },
+  "commands": [
+    {
+      "phase": 1,
+      "argv": [
+        "python3",
+        "harness/phase1.py",
+        "compare",
+        "--reference",
+        "/home/ajs/.cache/pb-phase6/baselines/pb-go",
+        "--candidate",
+        "/home/ajs/.cache/pb-phase6/candidate-review-r5/pb",
+        "--out",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase1"
+      ],
+      "exit_code": 0,
+      "report": "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase1/report.json"
+    },
+    {
+      "phase": 2,
+      "argv": [
+        "python3",
+        "harness/phase2.py",
+        "compare",
+        "--reference",
+        "/home/ajs/.cache/pb-phase6/baselines/pb-go",
+        "--candidate",
+        "/home/ajs/.cache/pb-phase6/candidate-review-r5/pb",
+        "--cloud-reference",
+        "/home/ajs/.cache/pb-phase6/baselines/pb-go-cloud",
+        "--cloud-candidate",
+        "/home/ajs/.cache/pb-phase6/candidate-review-r5/pb-cloud",
+        "--fixture",
+        "/home/ajs/.cache/pb-phase6/tmp/fx/pb-fixture-r4",
+        "--out",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase2"
+      ],
+      "exit_code": 0,
+      "report": "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase2/report.json"
+    },
+    {
+      "phase": 3,
+      "argv": [
+        "python3",
+        "harness/phase3.py",
+        "compare",
+        "--reference",
+        "/home/ajs/.cache/pb-phase6/baselines/pb-go",
+        "--candidate",
+        "/home/ajs/.cache/pb-phase6/candidate-review-r5/pb",
+        "--cloud-reference",
+        "/home/ajs/.cache/pb-phase6/baselines/pb-go-cloud",
+        "--cloud-candidate",
+        "/home/ajs/.cache/pb-phase6/candidate-review-r5/pb-cloud",
+        "--include-full60s",
+        "--out",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase3"
+      ],
+      "exit_code": 0,
+      "report": "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase3/report.json"
+    },
+    {
+      "phase": 4,
+      "argv": [
+        "python3",
+        "harness/phase4.py",
+        "compare",
+        "--reference",
+        "/home/ajs/.cache/pb-phase6/baselines/pb-go",
+        "--candidate",
+        "/home/ajs/.cache/pb-phase6/candidate-review-r5/pb",
+        "--cloud-reference",
+        "/home/ajs/.cache/pb-phase6/baselines/pb-go-cloud",
+        "--cloud-candidate",
+        "/home/ajs/.cache/pb-phase6/candidate-review-r5/pb-cloud",
+        "--include-full120s",
+        "--out",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase4"
+      ],
+      "exit_code": 0,
+      "report": "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase4/report.json"
+    },
+    {
+      "phase": 5,
+      "argv": [
+        "python3",
+        "harness/phase5.py",
+        "compare",
+        "--reference",
+        "/home/ajs/.cache/pb-phase6/baselines/pb-go",
+        "--candidate",
+        "/home/ajs/.cache/pb-phase6/candidate-review-r5/pb",
+        "--cloud-reference",
+        "/home/ajs/.cache/pb-phase6/baselines/pb-go-cloud",
+        "--cloud-candidate",
+        "/home/ajs/.cache/pb-phase6/candidate-review-r5/pb-cloud",
+        "--include-full60s",
+        "--out",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase5"
+      ],
+      "exit_code": 0,
+      "report": "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase5/report.json"
+    }
+  ],
+  "complete": true,
+  "passed": true,
+  "binary_identities_unchanged": true,
+  "runner_identities_unchanged": true,
+  "candidate_checkpoint": "R5 historical, before later W1/W2, transport and values wave fixes; R6 replay separate",
+  "cases_passed": 3268,
+  "guards_passed": 30,
+  "phases": [
+    {
+      "phase": 1,
+      "argv": [
+        "python3",
+        "harness/phase1.py",
+        "compare",
+        "--reference",
+        "/home/ajs/.cache/pb-phase6/baselines/pb-go",
+        "--candidate",
+        "/home/ajs/.cache/pb-phase6/candidate-review-r5/pb",
+        "--out",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase1"
+      ],
+      "exit_code": 0,
+      "report": "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase1/report.json",
+      "report_sha256": "887150c7f225f8b811cb7a9de4ab62eeda1b4bda80c64f4afa26642d95097938",
+      "cases_passed": 2018,
+      "guards_passed": 9
+    },
+    {
+      "phase": 2,
+      "argv": [
+        "python3",
+        "harness/phase2.py",
+        "compare",
+        "--reference",
+        "/home/ajs/.cache/pb-phase6/baselines/pb-go",
+        "--candidate",
+        "/home/ajs/.cache/pb-phase6/candidate-review-r5/pb",
+        "--cloud-reference",
+        "/home/ajs/.cache/pb-phase6/baselines/pb-go-cloud",
+        "--cloud-candidate",
+        "/home/ajs/.cache/pb-phase6/candidate-review-r5/pb-cloud",
+        "--fixture",
+        "/home/ajs/.cache/pb-phase6/tmp/fx/pb-fixture-r4",
+        "--out",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase2"
+      ],
+      "exit_code": 0,
+      "report": "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase2/report.json",
+      "report_sha256": "f4c2559f0b4b1f926f0d6fb242a8e0d486365706bcf5899633e1781e6f68e0b0",
+      "cases_passed": 219,
+      "guards_passed": 6
+    },
+    {
+      "phase": 3,
+      "argv": [
+        "python3",
+        "harness/phase3.py",
+        "compare",
+        "--reference",
+        "/home/ajs/.cache/pb-phase6/baselines/pb-go",
+        "--candidate",
+        "/home/ajs/.cache/pb-phase6/candidate-review-r5/pb",
+        "--cloud-reference",
+        "/home/ajs/.cache/pb-phase6/baselines/pb-go-cloud",
+        "--cloud-candidate",
+        "/home/ajs/.cache/pb-phase6/candidate-review-r5/pb-cloud",
+        "--include-full60s",
+        "--out",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase3"
+      ],
+      "exit_code": 0,
+      "report": "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase3/report.json",
+      "report_sha256": "c4125274d2e2a6592d0f99350760af1105c23aea7fb957d27773154ac6b93ccb",
+      "cases_passed": 684,
+      "guards_passed": 8
+    },
+    {
+      "phase": 4,
+      "argv": [
+        "python3",
+        "harness/phase4.py",
+        "compare",
+        "--reference",
+        "/home/ajs/.cache/pb-phase6/baselines/pb-go",
+        "--candidate",
+        "/home/ajs/.cache/pb-phase6/candidate-review-r5/pb",
+        "--cloud-reference",
+        "/home/ajs/.cache/pb-phase6/baselines/pb-go-cloud",
+        "--cloud-candidate",
+        "/home/ajs/.cache/pb-phase6/candidate-review-r5/pb-cloud",
+        "--include-full120s",
+        "--out",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase4"
+      ],
+      "exit_code": 0,
+      "report": "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase4/report.json",
+      "report_sha256": "7035750e110887c52e1419e15121cbae103b57e26479ec8fa7dfc02ef766bb9c",
+      "cases_passed": 161,
+      "guards_passed": 4
+    },
+    {
+      "phase": 5,
+      "argv": [
+        "python3",
+        "harness/phase5.py",
+        "compare",
+        "--reference",
+        "/home/ajs/.cache/pb-phase6/baselines/pb-go",
+        "--candidate",
+        "/home/ajs/.cache/pb-phase6/candidate-review-r5/pb",
+        "--cloud-reference",
+        "/home/ajs/.cache/pb-phase6/baselines/pb-go-cloud",
+        "--cloud-candidate",
+        "/home/ajs/.cache/pb-phase6/candidate-review-r5/pb-cloud",
+        "--include-full60s",
+        "--out",
+        "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase5"
+      ],
+      "exit_code": 0,
+      "report": "/home/ajs/.cache/pb-phase6/retained-review-r5-full/phase5/report.json",
+      "report_sha256": "a033724096c9647359b86c85d2410d0cdafce0a44ab02df289abede051237ec2",
+      "cases_passed": 186,
+      "guards_passed": 3
+    }
+  ],
+  "status_sha256": "86852b5dfee97f6dac73ebf36137abad97e2e35af63378f578dd3758d84357c0"
+}

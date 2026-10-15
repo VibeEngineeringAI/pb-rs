@@ -1,0 +1,253 @@
+{
+  "kind": "debug_diagnostics_functional_only",
+  "passed": true,
+  "identities_before": {
+    "binary": {
+      "path": "/home/ajs/.cache/pb-phase6/candidate-review-r4/pb-debug-diagnostics",
+      "sha256": "1f251566bdcfd31d1af6d7b99f5c43dc65c34abcfc7863d7e193ab4e7b19ba0d",
+      "size_bytes": 205658512
+    },
+    "fixture": {
+      "path": "/home/ajs/.cache/pb-phase6/tmp/fx/pb-fixture-r5",
+      "sha256": "c85f63f9f01a1be6eaa66e6802dae0c3f08409be2ad538d358a7e70f2f5ce314",
+      "size_bytes": 24426260
+    },
+    "meter": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/bin/pb-meter",
+      "sha256": "17c3b73491b2a31e465f58eda9f210000b5cd886a4ba9fc0764dc3576899127c",
+      "size_bytes": 17232
+    },
+    "collector": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/phase6_workloads.py",
+      "sha256": "e8f2edc249ba9e5f5a94662c62eb26169545c916db0de6d55f65802364ccfc07",
+      "size_bytes": 74853
+    },
+    "shared_process": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/run.py",
+      "sha256": "b280d1295a4b351e6f2d838c56acaac58b2247bb77fc9881587bb7bbe849a076",
+      "size_bytes": 59785
+    },
+    "diagnostics_manifest": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/docs/evidence/phase6/diagnostics-review-r4-binary.json",
+      "sha256": "d60f229df1a66d0c92d243a9f8b631be1014d63e867ca6eca77fa81fac85f89b",
+      "size_bytes": 468
+    },
+    "candidate_manifest": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/docs/evidence/phase6/candidate-review-r4.json",
+      "sha256": "19bc289a134bab4a37c092e395799eea8075d5d0b15d6eef27340e3c2083cc23",
+      "size_bytes": 5759
+    },
+    "fixture_manifest": {
+      "path": "/home/ajs/.cache/pb-phase6/tmp/fx/pb-fixture-r5.manifest.json",
+      "sha256": "40d53f0b019805fbc710d7bc41ab5e356b96a4dfc82e5ed6c3dee469f8075286",
+      "size_bytes": 9102
+    }
+  },
+  "binary_after": {
+    "path": "/home/ajs/.cache/pb-phase6/candidate-review-r4/pb-debug-diagnostics",
+    "sha256": "1f251566bdcfd31d1af6d7b99f5c43dc65c34abcfc7863d7e193ab4e7b19ba0d",
+    "size_bytes": 205658512
+  },
+  "fixture_after": {
+    "path": "/home/ajs/.cache/pb-phase6/tmp/fx/pb-fixture-r5",
+    "sha256": "c85f63f9f01a1be6eaa66e6802dae0c3f08409be2ad538d358a7e70f2f5ce314",
+    "size_bytes": 24426260
+  },
+  "results": [
+    {
+      "name": "dictionary-large-lz4",
+      "valid": true,
+      "owners": {
+        "subscriptions_started": 1,
+        "flight_messages_received": 19,
+        "batches_decoded": 9,
+        "rows_decoded": 36,
+        "max_flight_payload_bytes": 72888,
+        "max_dictionary_buffer_bytes": 67109124,
+        "max_batch_buffer_bytes": 67109176,
+        "max_staging_length_bytes": 4194413,
+        "max_staging_capacity_bytes": 8388688,
+        "last_staging_capacity_bytes": 0,
+        "max_application_messages_inflight": 1,
+        "max_renderer_scratch_capacity_bytes": 0,
+        "last_renderer_scratch_capacity_bytes": 0,
+        "semantics": "owner-reported maxima, not simultaneous totals, unique heap or RSS; shared Arrow buffers may be counted by several owners; Flight payload excludes protobuf/framing and transport read-ahead; rows count decoded rows before rendering truncation; capacities are Rust Vec capacities"
+      },
+      "exact_dictionary": {
+        "messages": 9,
+        "initial": 1,
+        "deltas": 6,
+        "replacements": 2,
+        "resets": 2,
+        "max_size": 64
+      },
+      "stdout_sha256": "3ab3830e286d3c63776291df3cfd4f2381708c7ef782257758b3b0050b2ed06f",
+      "stdout_bytes": 32506837,
+      "fixture_max_message_bytes": 72896,
+      "peak_rss_bytes": 154828800,
+      "sampled_resources": {
+        "rss_bytes": {
+          "samples": 0,
+          "first": null,
+          "last": null,
+          "minimum": null,
+          "maximum": null,
+          "slope_per_second": null
+        },
+        "fds": {
+          "samples": 0,
+          "first": null,
+          "last": null,
+          "minimum": null,
+          "maximum": null,
+          "slope_per_second": null
+        },
+        "tasks": {
+          "samples": 0,
+          "first": null,
+          "last": null,
+          "minimum": null,
+          "maximum": null,
+          "slope_per_second": null
+        },
+        "cpu_user_ms": {
+          "samples": 0,
+          "first": null,
+          "last": null,
+          "minimum": null,
+          "maximum": null,
+          "slope_per_second": null
+        },
+        "cpu_system_ms": {
+          "samples": 0,
+          "first": null,
+          "last": null,
+          "minimum": null,
+          "maximum": null,
+          "slope_per_second": null
+        }
+      },
+      "limitations": "No last dictionary owner size or allocation/RSS release counter; maxima not simultaneous totals. Reset evidence is exact fixture counts plus all9 decoded batches/full output hash. 500ms hold is functional only."
+    },
+    {
+      "name": "dictionary-large-zstd",
+      "valid": true,
+      "owners": {
+        "subscriptions_started": 1,
+        "flight_messages_received": 19,
+        "batches_decoded": 9,
+        "rows_decoded": 36,
+        "max_flight_payload_bytes": 2184,
+        "max_dictionary_buffer_bytes": 67109124,
+        "max_batch_buffer_bytes": 67109176,
+        "max_staging_length_bytes": 4194413,
+        "max_staging_capacity_bytes": 8388688,
+        "last_staging_capacity_bytes": 0,
+        "max_application_messages_inflight": 1,
+        "max_renderer_scratch_capacity_bytes": 0,
+        "last_renderer_scratch_capacity_bytes": 0,
+        "semantics": "owner-reported maxima, not simultaneous totals, unique heap or RSS; shared Arrow buffers may be counted by several owners; Flight payload excludes protobuf/framing and transport read-ahead; rows count decoded rows before rendering truncation; capacities are Rust Vec capacities"
+      },
+      "exact_dictionary": {
+        "messages": 9,
+        "initial": 1,
+        "deltas": 6,
+        "replacements": 2,
+        "resets": 2,
+        "max_size": 64
+      },
+      "stdout_sha256": "3ab3830e286d3c63776291df3cfd4f2381708c7ef782257758b3b0050b2ed06f",
+      "stdout_bytes": 32506837,
+      "fixture_max_message_bytes": 2191,
+      "peak_rss_bytes": 154820608,
+      "sampled_resources": {
+        "rss_bytes": {
+          "samples": 0,
+          "first": null,
+          "last": null,
+          "minimum": null,
+          "maximum": null,
+          "slope_per_second": null
+        },
+        "fds": {
+          "samples": 0,
+          "first": null,
+          "last": null,
+          "minimum": null,
+          "maximum": null,
+          "slope_per_second": null
+        },
+        "tasks": {
+          "samples": 0,
+          "first": null,
+          "last": null,
+          "minimum": null,
+          "maximum": null,
+          "slope_per_second": null
+        },
+        "cpu_user_ms": {
+          "samples": 0,
+          "first": null,
+          "last": null,
+          "minimum": null,
+          "maximum": null,
+          "slope_per_second": null
+        },
+        "cpu_system_ms": {
+          "samples": 0,
+          "first": null,
+          "last": null,
+          "minimum": null,
+          "maximum": null,
+          "slope_per_second": null
+        }
+      },
+      "limitations": "No last dictionary owner size or allocation/RSS release counter; maxima not simultaneous totals. Reset evidence is exact fixture counts plus all9 decoded batches/full output hash. 500ms hold is functional only."
+    }
+  ],
+  "parent_verification": {
+    "artifacts": {
+      "/home/ajs/.cache/pb-phase6/tmp/review-r5-large-diagnostics-1791983891900949854/dictionary-large-lz4/sample.json": {
+        "sha256": "3971993b4c28ee1ea73e5379164ca93d7fdc4edf2862ac7e92d3cabae77c280e",
+        "bytes": 11081
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/review-r5-large-diagnostics-1791983891900949854/dictionary-large-lz4/fixture-final-summary.json": {
+        "sha256": "b499047c914d6666794847ecb04a563828dd1a33ab267afb3ff25ee739c24916",
+        "bytes": 2759
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/review-r5-large-diagnostics-1791983891900949854/dictionary-large-lz4/meter.json": {
+        "sha256": "22b8b1b4a9a3a0b29c23786809b5b9572255db2e148fcb24b278d8d90d76d173",
+        "bytes": 716
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/review-r5-large-diagnostics-1791983891900949854/dictionary-large-lz4/resources.jsonl": {
+        "sha256": "dd52ba53793f48064795918b92c712654b832368e8afc54d323ced90cf0200b7",
+        "bytes": 1759
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/review-r5-large-diagnostics-1791983891900949854/dictionary-large-lz4/diagnostics/pb-diagnostics-2713045.json": {
+        "sha256": "b28768ad3e65732568bf527b26d80396b092e2924fae724252cddbece2ad31a3",
+        "bytes": 7008
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/review-r5-large-diagnostics-1791983891900949854/dictionary-large-zstd/sample.json": {
+        "sha256": "d9d884b718eea5f6e2b9a0991242e60899b6bfe72d17b9e836c5930e1eba8120",
+        "bytes": 11009
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/review-r5-large-diagnostics-1791983891900949854/dictionary-large-zstd/fixture-final-summary.json": {
+        "sha256": "a7efe8192f4bc804d609c29961aebf138d835ee2b9b133c97e7c6f954f94ef93",
+        "bytes": 2748
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/review-r5-large-diagnostics-1791983891900949854/dictionary-large-zstd/meter.json": {
+        "sha256": "fa2fa5ea44a6d14bd4032ec332e3d9a36d3c53c6c5a5f19df581df98f012caca",
+        "bytes": 714
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/review-r5-large-diagnostics-1791983891900949854/dictionary-large-zstd/resources.jsonl": {
+        "sha256": "405d9c10c2a0f3d7bc7256cbf31cccd5fb9af9e0c4825c5cd84a6530ba6f31ee",
+        "bytes": 877
+      },
+      "/home/ajs/.cache/pb-phase6/tmp/review-r5-large-diagnostics-1791983891900949854/dictionary-large-zstd/diagnostics/pb-diagnostics-2721721.json": {
+        "sha256": "f6b5fafbae7608298b2a48dbb012359aeb55c5bd2143b07a390bc7f9831ae224",
+        "bytes": 7003
+      }
+    },
+    "scope": "Read actual sidecars/sample/native meter identities and exact counts; no new process run, timing comparison or RSS release inference"
+  }
+}

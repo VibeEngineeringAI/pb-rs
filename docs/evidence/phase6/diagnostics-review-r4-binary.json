@@ -1,0 +1,16 @@
+{
+  "binary": "/home/ajs/.cache/pb-phase6/candidate-review-r4/pb-debug-diagnostics",
+  "sha256": "1f251566bdcfd31d1af6d7b99f5c43dc65c34abcfc7863d7e193ab4e7b19ba0d",
+  "bytes": 205658512,
+  "build_check_manifest": "docs/evidence/phase6/central-review-r4-tests.json",
+  "build_command": [
+    "cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--all-targets",
+    "--features",
+    "diagnostics"
+  ],
+  "scope": "Debug diagnostics functional only, not timing"
+}

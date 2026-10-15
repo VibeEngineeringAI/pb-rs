@@ -1,0 +1,15 @@
+{
+  "scope": "Author offline implementation evidence, identities checked by parent; fresh independent Opus review pending. No timing data or acceptance.",
+  "sources": {
+    "harness/phase6_resource_summary.py": "f6cea40b01a7bebff402488bb17936640c4b4bc46227548fd9a8f256f5294829",
+    "harness/test_phase6_resource_summary.py": "833c4d7aa8b3c981e2ac406f8eef4d6ca532ffe0bd37581d64ab63cf7ea347dd",
+    "docs/phase6-resource-summary.md": "7608b7b6096782975c069f14d1e360e345ae3ff023a0b48e58675ce8da45c21c"
+  },
+  "validation": {
+    "path": "/home/ajs/.cache/pb-phase6/resource-summary/validation-results.json",
+    "sha256": "2c0d8c4d7e5a2203d1353d98d3f1c8f5e9a46bc8d5496509a29ca73c18db54a1"
+  },
+  "author_tests": 26,
+  "author_forbidden_calls": {},
+  "limitation": "Collector schema2 has no journal hash; offline same-byte input identities cannot retroactively authenticate resource-only changes."
+}

@@ -1,0 +1,37 @@
+{
+  "complete": true,
+  "failed": 1,
+  "parity_passed": 35,
+  "payload_auth_passed": 218,
+  "wire_ua_divergent": 183,
+  "diagnostic_divergent": 1,
+  "fixture_sha256": "8237e34ee15b4a7d773945d3c30280752b2b780f1be3626d547b76cdea2ed4f0",
+  "candidate_sha256": {
+    "standard": "729146e310912337655a1046a38aca71909cacd285873e3957f91b14a27ddc0b",
+    "cloud": "eaedfd8b082d49851fb014729c674ff57283be6dca31048d831fcfa8714521c5"
+  },
+  "builds": {
+    "standard": {
+      "cases": 207,
+      "failed": 1,
+      "strict": 29,
+      "wire": 177,
+      "diagnostic": 1
+    },
+    "cloud": {
+      "cases": 12,
+      "failed": 0,
+      "strict": 6,
+      "wire": 6,
+      "diagnostic": 0
+    }
+  },
+  "failures": {
+    "p6-protocol-plaintext-to-tls": [
+      "stderr_contract_b64 differs"
+    ]
+  },
+  "report_path": "/home/ajs/.cache/pb-phase6/tmp/harness-review-r2-full-v1/report.json",
+  "report_sha256": "fb9fa3e58cbde2ceeb09ecf479da0898af845778e113011d1f9605a7931ff00e",
+  "note": "Intermediate unaccepted candidate; latest source fixes are not represented by these binaries. UA and exact garbage-header diagnostic exceptions are separately counted, not strict parity."
+}

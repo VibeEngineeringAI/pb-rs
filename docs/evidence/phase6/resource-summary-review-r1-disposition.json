@@ -1,0 +1,42 @@
+{
+  "scope": "Root disposition of executed independent Opus offline resource summary review; not performance or whole-phase acceptance",
+  "review": {
+    "path": "docs/phase6-resource-summary-review-opus-r1.md",
+    "sha256": "e50621397882f14ad5d695a843a14d313913076cbd426af2e99cc793eb89e42f"
+  },
+  "task_id": "node:delegated-task:command%3Amcp%3A571f5f1b-fd16-4f3c-9fca-38da427496ae%3Adelegate-task%3Ap6-opus-offline-resource-summary-review-r1",
+  "executed_by_reviewer": "26 author tests and guarded frozen collector campaign/finalizer probes using retained real R5 sample shapes; zero native spawns or locks",
+  "required": "RS-R1-1 nullable first-record flag with real zero-row finite/idle/invalid regressions",
+  "dispositions": {
+    "RS-R1-2": "permit signed derived uncaptured count while excluding invalid sample metrics",
+    "RS-R1-3": "document refusal of finalization reports missing counts; no new count derivation",
+    "RS-R1-4": "clear missing-journal diagnostic and limitation",
+    "RS-R1-5": "match collector SHA binding and retain raw/resolved path provenance without resolving historical declarations against current filesystem",
+    "RS-R1-6": "journal sibling from verified resolved report path"
+  },
+  "tool_ready": false,
+  "correction_task": "node:delegated-task:command%3Amcp%3A571f5f1b-fd16-4f3c-9fca-38da427496ae%3Athread-send%3Ap6-resource-summary-opus-r1-fixes",
+  "next_gate": "new independent delegated review of settled correction and C2/C3/C12 probes",
+  "review_artifacts": {
+    "/home/ajs/.cache/pb-phase6/resource-summary-review-r1/probe.py": {
+      "sha256": "b45ecfd749fdea58d0aeeb7e5fd8b040223167ac74e3a7768d4c7695d952f399",
+      "bytes": 14214
+    },
+    "/home/ajs/.cache/pb-phase6/resource-summary-review-r1/probe.log": {
+      "sha256": "548c51896d041bb6e17b31e1d975ed5f2443c95619620219d2aefd59759ab3f0",
+      "bytes": 4906
+    },
+    "/home/ajs/.cache/pb-phase6/resource-summary-review-r1/hashes-before.txt": {
+      "sha256": "947504b96c1765d856e8059f3a61e082a0584afa3c8a6347e1f16434ccc8968f",
+      "bytes": 984
+    },
+    "/home/ajs/.cache/pb-phase6/resource-summary-review-r1/probes.json": {
+      "sha256": "b1bd07d14d226eabb5e5e95d5864e2246b6409a631e0712655173eb73247262b",
+      "bytes": 9204
+    },
+    "/home/ajs/.cache/pb-phase6/resource-summary-review-r1/hashes-after.txt": {
+      "sha256": "947504b96c1765d856e8059f3a61e082a0584afa3c8a6347e1f16434ccc8968f",
+      "bytes": 984
+    }
+  }
+}

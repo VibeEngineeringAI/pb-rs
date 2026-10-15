@@ -1,0 +1,179 @@
+{
+  "scope": "R6 retained phase4 initial failed run; Go A/A diagnostic instability, no accepted normalization",
+  "report": {
+    "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/report.json",
+    "sha256": "5851790bc84a6fbf6cac6f796c4eab659c564138e267d0ad80cbb59f9ca265bd",
+    "cases": 161,
+    "failed": 1
+  },
+  "failed_cases": [
+    "p4-deadline-header"
+  ],
+  "captures": {
+    "reference": {
+      "binary": "/home/ajs/.cache/pb-phase6/baselines/pb-go",
+      "termination": {
+        "exit": 1
+      },
+      "failure": null,
+      "wall_ms": 120028.246423,
+      "stdout_bytes": 0,
+      "requests": [
+        {
+          "method": "GET",
+          "target": "/prometheus/api/v1/labels?stream=select-dataset",
+          "headers": {
+            "accept-encoding": "gzip",
+            "authorization": "Basic aGFybmVzczpoYXJuZXNz"
+          },
+          "body_b64": "",
+          "framing": "none",
+          "listener": "primary"
+        }
+      ],
+      "stderr_normalized": "Error: Get \"http://<FIXTURE>/prometheus/api/v1/labels?stream=select-dataset\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)\nUsage:\n  pb promql labels [stream] [flags]\n\nExamples:\n  pb promql labels otel_metrics\n  pb promql labels --dataset otel_metrics\n\nFlags:\n  -d, --dataset string   Metrics dataset (default \"select-dataset\")\n  -f, --from string      Start time filter (optional)\n  -h, --help             help for labels\n  -o, --output string    Output format: text or json (default \"text\")\n  -t, --to string        End time filter (optional)\n\n",
+      "artifacts": {
+        "result.json": {
+          "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/reference/result.json",
+          "sha256": "1b3bf38623dc89f452e50b219eaab286512b3ea2f890335707e21f6c0f1a95a5"
+        },
+        "stderr.bin": {
+          "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/reference/stderr.bin",
+          "sha256": "8dea13b2ce8e695cfcf7f74a660151c6a828227607a9602bbde225d06fa5d674"
+        },
+        "stderr.normalized": {
+          "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/reference/stderr.normalized",
+          "sha256": "ef4d17ea4258eb31d1ffe422496be2326394f25709d99392f3704caf73259d92"
+        },
+        "stdout.bin": {
+          "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/reference/stdout.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "trace.json": {
+          "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/reference/trace.json",
+          "sha256": "f74e4cea761c3bde2ce77a5919c8f919c82da9049c842794b46b0d5c59d7ae03"
+        },
+        "milestones.json": {
+          "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/reference/milestones.json",
+          "sha256": "cf0748d25888af6750d0a37e6e73773434d4ec1d6f07feb726f7c5d2ce547685"
+        },
+        "config-after.toml": {
+          "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/reference/config-after.toml",
+          "sha256": "e5567402bcfe43e9d0fc2b3b8d24331faead08469dec254949945dbee26a2871"
+        }
+      }
+    },
+    "repeat": {
+      "binary": "/home/ajs/.cache/pb-phase6/baselines/pb-go",
+      "termination": {
+        "exit": 1
+      },
+      "failure": null,
+      "wall_ms": 120030.371876,
+      "stdout_bytes": 0,
+      "requests": [
+        {
+          "method": "GET",
+          "target": "/prometheus/api/v1/labels?stream=select-dataset",
+          "headers": {
+            "accept-encoding": "gzip",
+            "authorization": "Basic aGFybmVzczpoYXJuZXNz"
+          },
+          "body_b64": "",
+          "framing": "none",
+          "listener": "primary"
+        }
+      ],
+      "stderr_normalized": "Error: Get \"http://<FIXTURE>/prometheus/api/v1/labels?stream=select-dataset\": context deadline exceeded\nUsage:\n  pb promql labels [stream] [flags]\n\nExamples:\n  pb promql labels otel_metrics\n  pb promql labels --dataset otel_metrics\n\nFlags:\n  -d, --dataset string   Metrics dataset (default \"select-dataset\")\n  -f, --from string      Start time filter (optional)\n  -h, --help             help for labels\n  -o, --output string    Output format: text or json (default \"text\")\n  -t, --to string        End time filter (optional)\n\n",
+      "artifacts": {
+        "result.json": {
+          "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/repeat/result.json",
+          "sha256": "415174eb28ffabb8c2d122350ea2eb8da9e084204cd419f9c7493c58a5dd620e"
+        },
+        "stderr.bin": {
+          "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/repeat/stderr.bin",
+          "sha256": "481b36a70a891016d48764b55e03e1794cdceb99a6331f22dca567386b8afe04"
+        },
+        "stderr.normalized": {
+          "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/repeat/stderr.normalized",
+          "sha256": "231ec10ad7247acdf69e1efb7e3ab442e081cdd02f61be04eaae86c9a1e60e76"
+        },
+        "stdout.bin": {
+          "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/repeat/stdout.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "trace.json": {
+          "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/repeat/trace.json",
+          "sha256": "c621f3a21b2fea84452baf069bd02b11aac0eaeffe8f94eeb1313a06f86ed613"
+        },
+        "milestones.json": {
+          "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/repeat/milestones.json",
+          "sha256": "8e604d213930a73c33b76f54ef10162ce08d150e3b317ed2d6fb9a3b05d94269"
+        },
+        "config-after.toml": {
+          "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/repeat/config-after.toml",
+          "sha256": "c464c76b5b31f7866a8baa3f93323f1b403146ff962cffa7e759bfac2e9e19b0"
+        }
+      }
+    },
+    "candidate": {
+      "binary": "/home/ajs/.cache/pb-phase6/candidate-review-r6/pb",
+      "termination": {
+        "exit": 1
+      },
+      "failure": null,
+      "wall_ms": 120003.95614,
+      "stdout_bytes": 0,
+      "requests": [
+        {
+          "method": "GET",
+          "target": "/prometheus/api/v1/labels?stream=select-dataset",
+          "headers": {
+            "accept-encoding": "gzip",
+            "authorization": "Basic aGFybmVzczpoYXJuZXNz"
+          },
+          "body_b64": "",
+          "framing": "none",
+          "listener": "primary"
+        }
+      ],
+      "stderr_normalized": "Error: Get \"http://<FIXTURE>/prometheus/api/v1/labels?stream=select-dataset\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)\nUsage:\n  pb promql labels [stream] [flags]\n\nExamples:\n  pb promql labels otel_metrics\n  pb promql labels --dataset otel_metrics\n\nFlags:\n  -d, --dataset string   Metrics dataset (default \"select-dataset\")\n  -f, --from string      Start time filter (optional)\n  -h, --help             help for labels\n  -o, --output string    Output format: text or json (default \"text\")\n  -t, --to string        End time filter (optional)\n\n",
+      "artifacts": {
+        "result.json": {
+          "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/candidate/result.json",
+          "sha256": "5c501f463c9eb8a601db3515531c4813bd5be1d93ba2c545f80cf62bfc8e72d6"
+        },
+        "stderr.bin": {
+          "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/candidate/stderr.bin",
+          "sha256": "7dba483aa02badf47dba04d8d8fd93242cbdb74280725ab90b78a5eff0bc7bde"
+        },
+        "stderr.normalized": {
+          "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/candidate/stderr.normalized",
+          "sha256": "ef4d17ea4258eb31d1ffe422496be2326394f25709d99392f3704caf73259d92"
+        },
+        "stdout.bin": {
+          "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/candidate/stdout.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "trace.json": {
+          "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/candidate/trace.json",
+          "sha256": "4628fbcb7057d9a9aafb98443de4b9893b4ace0614216781f1ce11a6969af410"
+        },
+        "milestones.json": {
+          "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/candidate/milestones.json",
+          "sha256": "e6f9e33d7d419fdc84fe062d69d105452b9a1ad139874a9ecb1daa1ef26723dc"
+        },
+        "config-after.toml": {
+          "path": "/home/ajs/.cache/pb-phase6/retained-review-r6-phases45/phase4/p4-deadline-header/candidate/config-after.toml",
+          "sha256": "94127aa1a50927435e189875e59dee7b64949269873c42e094c2b21aa50457d8"
+        }
+      }
+    }
+  },
+  "runner_source": {
+    "path": "harness/phase4.py",
+    "sha256": "748f2702a30f9727df53b8f0cd7abfe9f06f3effb8e80d7255c7b335824a9327"
+  },
+  "accepted": false,
+  "reference_candidate_normalized_stderr_equal": true
+}

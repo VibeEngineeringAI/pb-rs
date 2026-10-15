@@ -1,0 +1,84 @@
+# Phase6 measurement review r4 — independent focused pre-campaign review
+
+**Disposition: R3-A and R3-B closed; no unresolved concrete objection in this focused measurement-tooling scope.** Independent causal probes confirm both fixes, and N1–N5 plus the R1 admission/reporting gates remain intact. The tooling is suitable for the previously defined first finite same-Go timing A/A and matching full/hash-framing control boundary once the coordinator supplies accepted frozen provenance and the actual quiet-window handshake. This review neither admits a native campaign now nor accepts the production candidate.
+
+This is a fresh independent Sol6.1 measurement review of HEAD `4a812d5b9bc4c40882ab10897a73c3ce1e715ce0` plus dirty Phase6, using the superseding round4 brief. The attempted fresh Opus round4 performed no review after its immediate provider rate limit; none of its work is credited here. **This review does not satisfy or replace finalwholephaseOpus.** The active nested dictionary correction and unbuilt frozen R5 candidate remain separately owned. No further agents were used.
+
+## Scope and input identities
+
+Read the governing measurement sections in `/home/ajs/.cache/pb-roadmap/phase6-final.md`, measurement plan and budgets, R1/R2/R3 reviews, collector/tests, fixture schedule/dictionary accounting, and shared `run.py`/`meter.c` boundaries. Read `/home/ajs/.cache/pb-phase6/tmp/collector-review-r3-resolution.json` as author claims, together with the prior independent R3 `probes.py`, `race_controls.py`, and `cleanup_probe.py`. The R3 review independently matches SHA256 `51ae9f99dfb392253b41fec16086515842da1e11b4773af0d8c334d91dce8e24`; R2 remains `ffc0652b68edbd99b2a7301a9a4845223b0472b51c21b90245f9995036f17819`.
+
+The supplied current identities matched before verification and again after all probes:
+
+- Collector `harness/phase6_workloads.py`: `e2e83fa118c58a96ff55700be88f95f9b8b6479a289a8c59f447f836389fde51`.
+- Tests `harness/test_phase6_workloads.py`: `ac7f43fba1efd9e4a7e993ec9b20aaa498538a31f5cc40ece5d501ced336c322`.
+- Plan `docs/phase6-measurement-plan.md`: `8d7bf088a1d62ec304a822a5dea952314f8c5c35e926a180b542bdfd66b313e1`.
+- Budgets `docs/evidence/phase6/performance-budgets.json`: `76a57ecacf2fba39b1f278e385f1cf4ee410c49f29d2d0e7e7dd2e2713b5ae93`, unchanged.
+- Shared `harness/run.py`: `b280d1295a4b351e6f2d838c56acaac58b2247bb77fc9881587bb7bbe849a076`; `harness/meter.c`: `5d7ce9dc2fa65b1ec7018fb863d36fd78d8b8535762acadaefc3f2f4e0f070e9`.
+
+All nine identities in cache `source-hashes-before.json` and `source-hashes-after.json` agree, including prior review documents. R3 probe scripts were read only; their hashes are recorded in `review-result.json`. The only worktree write is this review. Scripts, logs, synthetic executables/manifests, journals and results are confined to `/home/ajs/.cache/pb-phase6/measurement-review-r4`.
+
+No client or fixture was executed, no native sample was collected, and no build, profiler, soak, pressure rerun, real quiet token, real performance flock, production/shared edit, commit or external message occurred. `/bin/true` was read as synthetic executable content, never executed. No old cache or previous review was overwritten. The existing 20-sample saved pressure/accounting audit was not repeated: these narrow path/read fixes supply no concrete reason to repeat it.
+
+## Verification actually performed
+
+Every Python runner sets `TMPDIR`, `GOTMPDIR` and `CLAUDE_CODE_TMPDIR` to the R4 disk cache before importing harness/tests, sets `sys.dont_write_bytecode`, and redirects `p6.TMP` there. Shell invocations additionally set those three variables and `PYTHONDONTWRITEBYTECODE=1`. Commands below were run with stdout/stderr redirected into that cache:
+
+```sh
+python3 /home/ajs/.cache/pb-phase6/measurement-review-r4/run_pure_tests.py
+python3 /home/ajs/.cache/pb-phase6/measurement-review-r4/race_probes.py
+python3 /home/ajs/.cache/pb-phase6/measurement-review-r4/regression_probes.py
+python3 /home/ajs/.cache/pb-phase6/measurement-review-r4/cleanup_probe.py
+```
+
+Logs are `pure-tests.log`, `race-probes.log`, `regression-probes.log`, and `cleanup-probe-verified.log`. `cleanup-probe.log` preserves the earlier reviewer-assertion failure described below. Machine-readable evidence is in `pure-tests-result.json`, `race-probes.json`, `probes.json`, `cleanup-probe-verified.json`, and the synthetic reports/journals they reference. `review-artifacts.json` records script/log/result hashes; `review-result.json` summarizes disposition and limits. Probe folders are single-run evidence; scripts deliberately refuse existing synthetic roots.
+
+**84 pure/mock tests passed**, zero failures/errors/skips, from `ObserverAudit`, `Collector`, `Workloads`, `Campaign`, and `ReviewAdmission`. `ObserverNative` and `NativeMeter` were not loaded. The quiet-lock test was included because its actual syscall is explicitly mocked; no real performance-lock file was opened. The outer guard primitives `fcntl.flock`, `subprocess.Popen`, `run.spawn_measured`, `os.posix_spawn`, `os.posix_spawnp`, `os.fork`, and `os.system` had zero calls in the suite. Host metadata was mocked. The independent race runner likewise records zero calls to every guarded primitive.
+
+There are **19 independent race/identity cases**, **26 carried N1–N4 regression cases with new assertions**, and **one corrected cleanup-only replay**. The latter two runners use the prior independent probe designs, adapted into the R4 cache; they do not reuse prior outcomes as current proof. Every child/lock primitive remains guarded. Synthetic nonnull ratios only expose admission behavior; they are not measured performance.
+
+## R3-A — closed: verified paths are the actual invocation arguments
+
+`campaign` line1233 now calls `run_sample` with `fixture['path']` and `meter['path']`. Those are the resolved identities from `run.binary_info`; they are also retained in `bound_end_identities`. The measured-client arguments already used resolved verified paths.
+
+The independent runner repoints only cache-owned argument symlinks at mocked lock entry, after initial binding. Separate fixture-only, meter-only and simultaneous repoints all leave **every one of eight actual mocked invocation arguments** identifying the original bound content. This covers two contract controls, excluded warmups and measured samples. Simultaneous repoints also pass for the separate hash/framing report. Same-Go timing A/A with an absent candidate and no candidate manifest keeps both original paths for all **72** calls: two contract controls plus two Go labels each with five warmups and thirty measured samples. End checks remain coherent and positive reports retain their original selected identities.
+
+The causal removal control compiles an otherwise identical copy of the current `campaign` function in memory, changing only that call back to `args.fixture`/`args.meter`. Under the identical repoint hook, every affected argument identifies substitute content, yet status0/passed/complete/end-check and synthetic ratios remain positive. This reproduces the R3 failure and proves the changed argument binding causes its closure. Repository source was never altered.
+
+Separately replacing the **actual bound cache fixture or meter file**, rather than its unused argument link, during the eighth call produces status1, `passed=false`, `complete=false`, the changed resolved path in `end_identity_check`, and every ratio null. Completed journals survive. Thus closure does not depend on pretending the filesystem is transactional. Actual frozen artifact immutability plus end detection remains the stated boundary; preventing hostile executable replacement at every instant is not a new prerequisite.
+
+## R3-B — closed: parsed parent and retained identity share one bounded read
+
+`read_json_with_identity` lines92–100 resolves the parent once, reads at most `limit+1` bytes, rejects overflow, and derives JSON, SHA256 and byte size from those same bytes. `campaign` line1183 retains that returned identity, uses it as `parent_manifest` at line1206, and includes it in end checks. It no longer independently hashes the parent later to establish a new baseline.
+
+Independent parsing hooks atomically replace the cache parent immediately after its original bytes have been parsed, for both a direct argument and a symlink argument. Both current campaigns retain the original embedded object and original raw-byte SHA256/size/resolved path. The end check identifies the changed parent and quarantines every ratio: status1, passed/complete false, while all eight mocked calls, six warmup/measured journal entries and both groups' two measured wall observations survive.
+
+The causal removal control changes only parent ingestion back to separate `read_json(args.manifest)` and later `file_info(args.manifest)`. The same replacement hook then yields status0/passed/complete/end-check true and nonnull synthetic comparisons. Its embedded object is original but its reported parent identity belongs to the replacement. Both direct and linked cases reproduce the precise R3-B inconsistency. The current fix prevents that silent rebase without changing the schema or adding a general filesystem transaction requirement.
+
+Additional positives/negatives confirm raw whitespace-bearing JSON hashes and sizes, resolved symlink path retention, acceptance exactly at the byte limit, rejection one byte over, and unchanged underlying parent acceptance after only its original argument symlink is repointed. A replacement of the actual bound parent during the last sample also fails/quarantines. The test does not require rejecting a changed argument link when the originally resolved file and parsed provenance remain unchanged.
+
+## Preserved N1–N5 and earlier gates
+
+- **N1 remains closed.** Wrong Go, candidate and meter inputs each reject before any mocked lock/sample call. Missing normal-release kind, diagnostics features, cloud token, custom-profile argv, or differing candidate `builds.pb` reject similarly. Identical-content copies pass with selected and declared identities retained. Timing A/A needs Go and meter and correctly exempts the candidate. The old draft remains rejected on current collector identity; the isolated historical role chain rejects missing normal-release kind. No actual R5 candidate manifest was manufactured.
+- **N2 remains closed.** Individually changing an extra runner, fixture compiler, candidate build manifest, frozen snapshot or declared Go copy invalidates/quarantines. Changing a verified runner between initial verification and tracked-set assembly also fails against its initial hash. Resolved-path deduplication/conflicting identities and the new retained parent identity remain enforced.
+- **N3 remains closed.** Independent `streams:null`, post-capture host failure and combined validation/cleanup failure retain every supplied native/hash/count/first-record observation in capture/sample/journal. All fail and suppress comparisons. A separate replay of one already-saved one-row capture and its event/summary files through fake capture reaches successful validation and then throws only on cleanup. Every replay input observation survives, `capture_complete=true`, `valid=false`, `contract_validated=false`, with only `RuntimeError: cleanup-only mock` added and every ratio quarantined. No native replay occurred.
+- **N4 remains closed before aggregation.** Same-plaintext independently indexed reports aggregate; mixed plaintext/TLS, missing TLS, integer0 and string`"false"` reject. Explicit boolean TLS remains in report/manifest/aggregate identity. This is not deployed TLS evidence.
+- **N5 remains closed as instructions.** Current plan and focused prose test preserve same frozen seed/fresh session indices, separate new-seed investigations, historical/do-not-execute debug reproduction, and immutable r5 direct-functional fixture selection. No example was executed.
+
+The first cleanup replay's additional assertion compared all saved fields against a fake fixture whose `go_env` was `{}`. Its only differing non-error field was therefore the intentionally recomputed `fixture_go_env`, not a lost capture/resource observation. The fake was corrected to supply the saved runtime environment, and rerun in a new directory with separate result/log files; all input fields then agree. The failed setup evidence remains in cache. This was a reviewer mock inconsistency, not a collector objection.
+
+Source inspection and the 84 tests preserve R1 H1–H5 and M1–M8: exact schedule/emission/omission/stop/lateness/Send accounting; cyclic dictionary initial/delta/replacement/reset/max-size and bucket coverage independent of retained events; low-N and duration descriptive reporting; exact budget content/SHA; failure/incomplete quarantine and atomic observations; observer/fixture CPU bounds and encoding WALL semantics; raw host residual uncertainty and initial/end identities; whole duration timeout/cleanup/control reservation; seeded sequential finite ordering and duration AB/BA; separate timing A/A; per-metric schedule/sink/pressure exclusions; frozen fixture/compiler/source/runtime chain; and the existing real RAII handoff counter's limited ownership interpretation. The latter production diagnostic counter was not rerun or changed here.
+
+Full/hash-framing output SHA/bytes/rows/batches and complete-LF first-record checks remain covered. Exact auth/ticket coverage, request counts/order, expected InvalidArgument/exit1, isolated-config integrity, bounded capture/logs and missing-event/correlation coverage remain enforced. No stage timing is relabeled: native elapsed, parent complete-record observation, fixture emission correlation, fixture Send/encoding work and terminal/reconnect overhead retain their distinct definitions. Common nonblocking lock/token handling is tested with mocks; a hashed token does not establish actual companion quiet acknowledgement. Conservative all-null fast-finite comparisons remain acceptable.
+
+## Carried limits and next boundary
+
+The native measurement limit remains unchanged. Flight compares pinned Go to the new accepted optimized candidate; prior Rust applies only to shared implemented commands and never becomes a prior tail baseline. Normal release timing remains separate from debug, diagnostics, symbolized profiles and builds. Finite InvalidArgument/exit1 is deliberate remote failure, never successful live delivery.
+
+Native elapsed/CPU/RSS/faults/context switches/block IO belong to the actual child. Fixture/observer CPU windows differ; expected-output encoding wall time overlaps fixture CPU and is never subtracted as CPU. Proc IO is not network traffic; FlightData protobuf bytes exclude HTTP/2/TLS, and decoded/output bytes differ. FD/thread sampling can miss transients; thread counts do not count Tokio tasks. Handoff/owner maxima are not transport read-ahead, simultaneous unique allocations or RSS totals. Missing sampled/capped latency or resource evidence remains missing. The trusted short fixture banner retains its disclosed readability-versus-partial-line deadline limitation.
+
+R3's read-only saved evidence and its historical provenance limitations are carried forward, not re-audited or promoted to current-source execution. In particular, prior large pressure evidence does not establish last dictionary-owner size, allocator/post-reset RSS release, comparative release envelope, long-run trends or HTTP/2 read-ahead. Archived diagnostics reference their disclosed older collector; no current build or performance inference follows. Actual 1800/3600-second sessions, full retention envelopes, server-versus-client pressure attribution, profiles/build cost, deployed Flight auth/TLS and production delivery remain unmeasured or separately owned.
+
+The coordinator must still settle/accept the corrected production R5 release and regenerate final parent provenance before using this tooling. The next measurement boundary remains a first finite same-Go timing A/A and matching full/hash-framing control, with frozen inputs, fresh output folders, the common nonblocking `/home/ajs/.cache/pb-rs-performance.lock`, the actual explicit companion pause-build/test handshake, and the agreed partition budget. This document supplies no handshake, lock reservation or campaign authorization.
+
+Review the finite/control artifacts before duration admission; reserve the whole configured duration/cleanup/control window without shortening a session. Real 30-minute modes and replicated aggregates remain later gates. Replication requires the same seed, fresh indices and identical provenance/transport/sink/observer conditions with descriptive session reporting. No arbitrary new prerequisite is introduced by this review. **Final whole-phase Opus review remains outstanding and is not substituted by this R4 Sol review.**

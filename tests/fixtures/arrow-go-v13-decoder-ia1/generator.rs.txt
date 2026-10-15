@@ -1,0 +1,386 @@
+// Additive test fragment for a scratch copy of src/tail/session/tests.rs.
+// Uses its existing fixture, flight_stream, fbx and messages helpers.
+// Run cargo test --locked --offline --lib ia1_nested_export_oracle_streams.
+// Outputs streams only; expected results MUST come from the pinned Go decoder.
+/// A shared parent list-of-struct, whose payload is a dictionary of lists.
+/// Children have different contents and two entries each. Reversing the row
+/// fields reverses which contents Go's last compatible occurrence selects.
+fn nested_binding_stream(key: i32, text: &str, different: bool, reverse: bool, shared: bool) -> Vec<FlightData> {
+    use arrow_array::{Array, Int8Array, StructArray};
+    use arrow_buffer::OffsetBuffer;
+    let outer = |second: bool| -> ArrayRef {
+        let numbers = Arc::new(ListArray::new(
+            Arc::new(Field::new("item", DataType::Int8, true)),
+            OffsetBuffer::new(vec![0_i32, 2, 4].into()),
+            Arc::new(Int8Array::from(if second {
+                vec![9_i8, 10, 19, 20]
+            } else {
+                vec![7_i8, 8, 17, 18]
+            })),
+            None,
+        ));
+        let payload = Arc::new(DictionaryArray::<Int32Type>::new(vec![key].into(), numbers));
+        let fields: Fields = vec![
+            Field::new("payload", payload.data_type().clone(), true).with_metadata(HashMap::from(
+                [(
+                    "source".to_owned(),
+                    if second && different {
+                        "second"
+                    } else {
+                        "first"
+                    }
+                    .to_owned(),
+                )],
+            )),
+            Field::new("text", DataType::Utf8, true),
+        ]
+        .into();
+        let values = Arc::new(StructArray::new(
+            fields,
+            vec![payload, Arc::new(StringArray::from(vec![text]))],
+            None,
+        ));
+        let lists = Arc::new(ListArray::new(
+            Arc::new(Field::new(
+                if second && different {
+                    "element"
+                } else {
+                    "item"
+                },
+                values.data_type().clone(),
+                true,
+            )),
+            OffsetBuffer::new(vec![0_i32, 1].into()),
+            values,
+            None,
+        ));
+        Arc::new(DictionaryArray::<Int32Type>::new(vec![0_i32].into(), lists))
+    };
+    let mut columns = vec![("a", outer(false)), ("b", outer(true))];
+    if reverse {
+        columns.reverse();
+    }
+    let schema = Arc::new(Schema::new(
+        columns
+            .iter()
+            .map(|(name, array)| Field::new(*name, array.data_type().clone(), true))
+            .collect::<Vec<_>>(),
+    ));
+    let batch = RecordBatch::try_new(
+        Arc::clone(&schema),
+        columns.into_iter().map(|(_, a)| a).collect(),
+    )
+    .unwrap();
+    let mut data = flight_stream(&schema, [&batch]);
+    assert_eq!(data.len(), 6);
+    if shared {
+    let mut header = data[0].data_header.to_vec();
+    let dictionary = ipc_message(&header)
+        .unwrap()
+        .header_as_schema()
+        .unwrap()
+        .fields()
+        .unwrap()
+        .get(1)
+        .dictionary()
+        .unwrap();
+    assert_eq!(dictionary.id(), 3);
+    let offset = usize::from(
+        dictionary
+            ._tab
+            .vtable()
+            .get(arrow_ipc::DictionaryEncoding::VT_ID),
+    );
+    assert_ne!(offset, 0);
+    let start = dictionary._tab.loc() + offset;
+    header[start..start + 8].copy_from_slice(&1_i64.to_le_bytes());
+    data[0].data_header = Bytes::from(header);
+    data.remove(4);
+    }
+    data
+}
+
+/// Reframe an existing uncompressed dictionary or single-column record body.
+/// The original node/buffer descriptors and body are preserved byte for byte.
+fn dictionary_message(data: &FlightData, id: i64, delta: bool) -> FlightData {
+    let message = ipc_message(&data.data_header).unwrap();
+    let record = message
+        .header_as_record_batch()
+        .or_else(|| message.header_as_dictionary_batch().and_then(|d| d.data()))
+        .unwrap();
+    assert!(record.compression().is_none());
+    assert!(record.variadicBufferCounts().is_none());
+    let nodes: Vec<_> = record.nodes().unwrap().iter().collect();
+    let buffers: Vec<_> = record.buffers().unwrap().iter().collect();
+    let mut fbb = fbx::Build::new();
+    let nodes = fbb.create_vector(&nodes);
+    let buffers = fbb.create_vector(&buffers);
+    let mut batch = arrow_ipc::RecordBatchBuilder::new(&mut fbb);
+    batch.add_length(record.length());
+    batch.add_nodes(nodes);
+    batch.add_buffers(buffers);
+    let batch = batch.finish();
+    let mut dictionary = arrow_ipc::DictionaryBatchBuilder::new(&mut fbb);
+    dictionary.add_id(id);
+    dictionary.add_isDelta(delta);
+    dictionary.add_data(batch);
+    let dictionary = dictionary.finish().as_union_value();
+    let mut header = arrow_ipc::MessageBuilder::new(&mut fbb);
+    header.add_header_type(MessageHeader::DictionaryBatch);
+    header.add_header(dictionary);
+    header.add_version(message.version());
+    header.add_bodyLength(message.bodyLength());
+    let header = header.finish();
+    fbb.finish(header, None);
+    FlightData {
+        data_header: Bytes::copy_from_slice(fbb.finished_data()),
+        data_body: data.data_body.clone(),
+        ..Default::default()
+    }
+}
+
+
+fn deep_binding_stream(reverse: bool) -> Vec<FlightData> {
+    use arrow_array::{Array, Int8Array, StructArray};
+    use arrow_buffer::OffsetBuffer;
+    let outer = |second: bool| -> ArrayRef {
+        let numbers = Arc::new(ListArray::new(
+            Arc::new(Field::new("item", DataType::Int8, true)),
+            OffsetBuffer::new(vec![0_i32,2,4].into()),
+            Arc::new(Int8Array::from(if second { vec![9_i8,10,19,20] } else { vec![7_i8,8,17,18] })), None,
+        ));
+        let numbers = Arc::new(DictionaryArray::<Int32Type>::new(vec![0_i32].into(), numbers));
+        let inner_values = Arc::new(StructArray::new(
+            vec![Field::new("numbers", numbers.data_type().clone(), true)].into(), vec![numbers], None,
+        ));
+        let payload = Arc::new(DictionaryArray::<Int32Type>::new(vec![0_i32].into(), inner_values));
+        let fields: Fields = vec![Field::new("payload",payload.data_type().clone(),true),Field::new("text",DataType::Utf8,true)].into();
+        let values = Arc::new(StructArray::new(fields,vec![payload,Arc::new(StringArray::from(vec!["x"]))],None));
+        let lists=Arc::new(ListArray::new(Arc::new(Field::new("item",values.data_type().clone(),true)),OffsetBuffer::new(vec![0_i32,1].into()),values,None));
+        Arc::new(DictionaryArray::<Int32Type>::new(vec![0_i32].into(),lists))
+    };
+    let mut columns=vec![("a",outer(false)),("b",outer(true))];
+    if reverse { columns.reverse(); }
+    let schema=Arc::new(Schema::new(columns.iter().map(|(name,a)|Field::new(*name,a.data_type().clone(),true)).collect::<Vec<_>>()));
+    let batch=RecordBatch::try_new(Arc::clone(&schema),columns.into_iter().map(|(_,a)|a).collect()).unwrap();
+    let mut data=flight_stream(&schema,[&batch]); assert_eq!(data.len(),8);
+    let mut header=data[0].data_header.to_vec();
+    let dictionary=ipc_message(&header).unwrap().header_as_schema().unwrap().fields().unwrap().get(1).dictionary().unwrap();
+    assert_eq!(dictionary.id(),5);
+    let offset=usize::from(dictionary._tab.vtable().get(arrow_ipc::DictionaryEncoding::VT_ID));assert_ne!(offset,0);
+    let at=dictionary._tab.loc()+offset;header[at..at+8].copy_from_slice(&2_i64.to_le_bytes());
+    data[0].data_header=Bytes::from(header);data.remove(6);data
+}
+
+fn nested_binding_cases() -> Vec<(String, Vec<FlightData>)> {
+    use arrow_array::Int8Array;
+    use arrow_buffer::OffsetBuffer;
+    let initial = nested_binding_stream(0, "x", false, false, true);
+    let replacement = nested_binding_stream(1, "r", false, false, true)[2].clone();
+    let delta = dictionary_message(&replacement, 1, true);
+    let mut child_replacement = initial[3].clone();
+    let mut body = child_replacement.data_body.to_vec();
+    let positions: Vec<_> = (0..body.len() - 3)
+        .filter(|&i| body[i..i + 4] == [9, 10, 19, 20])
+        .collect();
+    assert_eq!(positions.len(), 1);
+    body[positions[0]..positions[0] + 4].copy_from_slice(&[11, 12, 21, 22]);
+    child_replacement.data_body = Bytes::from(body);
+    let lists = Arc::new(ListArray::new(
+        Arc::new(Field::new("item", DataType::Int8, true)),
+        OffsetBuffer::new(vec![0_i32, 2].into()),
+        Arc::new(Int8Array::from(vec![29_i8, 30])),
+        None,
+    ));
+    let schema = Arc::new(Schema::new(vec![Field::new(
+        "",
+        DataType::List(Arc::new(Field::new("item", DataType::Int8, true))),
+        true,
+    )]));
+    let batch = RecordBatch::try_new(Arc::clone(&schema), vec![lists]).unwrap();
+    let child_delta = dictionary_message(&flight_stream(&schema, [&batch])[1], 2, true);
+    let mut appended_parent = nested_binding_stream(1, "d", false, false, true)[2].clone();
+    let message = ipc_message(&appended_parent.data_header).unwrap();
+    let offset = message
+        .header_as_dictionary_batch()
+        .unwrap()
+        .data()
+        .unwrap()
+        .buffers()
+        .unwrap()
+        .get(4)
+        .offset() as usize;
+    let mut body = appended_parent.data_body.to_vec();
+    body[offset..offset + 4].copy_from_slice(&2_i32.to_le_bytes());
+    appended_parent.data_body = Bytes::from(body);
+    let mut cases = vec![
+        ("nested_distinct", initial.clone()),
+        (
+            "nested_names_differ",
+            nested_binding_stream(0, "x", true, false, true),
+        ),
+        (
+            "nested_fields_reverse",
+            nested_binding_stream(0, "x", false, true, true),
+        ),
+        (
+            "nested_messages_reverse",
+            vec![
+                initial[0].clone(),
+                initial[3].clone(),
+                initial[2].clone(),
+                initial[1].clone(),
+                initial[4].clone(),
+            ],
+        ),
+        (
+            "nested_parent_first",
+            vec![
+                initial[0].clone(),
+                initial[2].clone(),
+                initial[1].clone(),
+                initial[3].clone(),
+                initial[4].clone(),
+            ],
+        ),
+    ];
+    let append = |suffix: &[FlightData]| {
+        let mut data = initial.clone();
+        data.extend_from_slice(suffix);
+        data
+    };
+    cases.extend([
+        (
+            "nested_parent_replacement",
+            append(&[replacement.clone(), initial[4].clone()]),
+        ),
+        (
+            "nested_child_replacement",
+            append(&[child_replacement.clone(), initial[4].clone()]),
+        ),
+        (
+            "nested_parent_delta_record",
+            append(&[delta.clone(), initial[4].clone()]),
+        ),
+        ("nested_parent_delta_eof", append(&[delta.clone()])),
+        (
+            "nested_parent_delta_replaced",
+            append(&[delta.clone(), replacement.clone(), initial[4].clone()]),
+        ),
+        (
+            "nested_child_delta",
+            append(&[child_delta.clone(), appended_parent, initial[4].clone()]),
+        ),
+        (
+            "nested_delta_missing_child",
+            vec![
+                initial[0].clone(),
+                initial[1].clone(),
+                initial[2].clone(),
+                child_delta.clone(),
+                initial[4].clone(),
+            ],
+        ),
+        (
+            "nested_missing_child",
+            vec![
+                initial[0].clone(),
+                initial[1].clone(),
+                initial[2].clone(),
+                initial[1].clone(),
+                initial[4].clone(),
+            ],
+        ),
+        (
+            "nested_child_early_replacement",
+            vec![
+                initial[0].clone(),
+                initial[1].clone(),
+                initial[2].clone(),
+                initial[3].clone(),
+                child_replacement,
+                initial[4].clone(),
+            ],
+        ),
+        (
+            "nested_parent_delta_initial",
+            vec![
+                initial[0].clone(),
+                initial[1].clone(),
+                initial[2].clone(),
+                initial[3].clone(),
+                delta,
+                initial[4].clone(),
+            ],
+        ),
+    ]);
+    let dir = fixture("arrow-go-v13-decoder-ia1");
+    let flat = messages(&std::fs::read(dir.join("list_names_differ.arrows")).unwrap());
+    let flat_delta = dictionary_message(&flight_stream(&schema, [&batch])[1], 0, true);
+    let mut select_delta = flat[2].clone();
+    let record = ipc_message(&select_delta.data_header)
+        .unwrap()
+        .header_as_record_batch()
+        .unwrap();
+    let offsets: Vec<_> = [1, 3]
+        .into_iter()
+        .map(|i| record.buffers().unwrap().get(i).offset() as usize)
+        .collect();
+    let mut body = select_delta.data_body.to_vec();
+    for offset in offsets {
+        body[offset..offset + 4].copy_from_slice(&1_i32.to_le_bytes());
+    }
+    select_delta.data_body = Bytes::from(body);
+    let mut flat_updates = flat.clone();
+    flat_updates.extend([flat_delta.clone(), select_delta]);
+    cases.push(("flat_parent_delta", flat_updates));
+    cases.push((
+        "flat_parent_delta_eof",
+        vec![
+            flat[0].clone(),
+            flat[1].clone(),
+            flat[2].clone(),
+            flat_delta.clone(),
+        ],
+    ));
+    cases.push((
+        "flat_delta_missing",
+        vec![flat[0].clone(), flat_delta, flat[2].clone()],
+    ));
+    let unshared=nested_binding_stream(0,"x",false,false,false);
+    let mut unshared_updated=unshared.clone();
+    let mut replacement=unshared[3].clone();
+    let mut body=replacement.data_body.to_vec();
+    let at=body.windows(4).position(|b|b==[9,10,19,20]).unwrap();body[at..at+4].copy_from_slice(&[11,12,21,22]);replacement.data_body=Bytes::from(body);
+    unshared_updated.extend([replacement,unshared[5].clone()]);
+    cases.push(("nested_unshared_control",unshared));
+    cases.push(("nested_unshared_child_replacement",unshared_updated));
+    let deep=deep_binding_stream(false);
+    let mut deep_updated=deep.clone();
+    let mut replacement=deep[4].clone();
+    let mut body=replacement.data_body.to_vec();
+    let at=body.windows(4).position(|b|b==[9,10,19,20]).unwrap();body[at..at+4].copy_from_slice(&[11,12,21,22]);replacement.data_body=Bytes::from(body);
+    deep_updated.extend([replacement,deep[6].clone()]);
+    cases.push(("nested_deep_distinct",deep));
+    cases.push(("nested_deep_fields_reverse",deep_binding_stream(true)));
+    cases.push(("nested_deep_child_replacement",deep_updated));
+    cases
+        .into_iter()
+        .map(|(name, data)| (name.to_owned(), data))
+        .collect()
+}
+
+
+#[test]
+fn ia1_nested_export_oracle_streams() {
+    for (name,data) in nested_binding_cases() {
+        let mut ipc=Vec::new();
+        for msg in data {
+            let mut header=msg.data_header.to_vec();
+            while header.len()%8!=0 {header.push(0);}
+            ipc.extend(0xffff_ffff_u32.to_le_bytes());ipc.extend((header.len() as i32).to_le_bytes());ipc.extend(header);ipc.extend(msg.data_body);
+        }
+        ipc.extend(0xffff_ffff_u32.to_le_bytes());ipc.extend(0_i32.to_le_bytes());
+        std::fs::write(format!("/home/ajs/.cache/pb-phase6/ia1-nested-implementation/{name}.arrows"),ipc).unwrap();
+    }
+}

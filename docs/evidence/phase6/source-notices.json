@@ -1,0 +1,109 @@
+{
+  "scope": "Phase6 source-derived compatibility helper notice material; no release/package acceptance",
+  "inputs": {
+    "Apache-2.0.txt": {
+      "source": "/home/ajs/go/pkg/mod/google.golang.org/grpc@v1.65.0/LICENSE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "bytes": 11358,
+      "copy": "full exact license/notice"
+    },
+    "grpc-go-NOTICE.txt": {
+      "source": "/home/ajs/go/pkg/mod/google.golang.org/grpc@v1.65.0/NOTICE.txt",
+      "sha256": "693ff28ec216d5112ac1bbfe64ef539005867d1c7bd427b57d579683293b947f",
+      "bytes": 554,
+      "copy": "full exact license/notice"
+    },
+    "goccy-go-json-MIT.txt": {
+      "source": "/home/ajs/go/pkg/mod/github.com/goccy/go-json@v0.10.0/LICENSE",
+      "sha256": "a707cd425201945d57500566c47c74dc9fb8cd02ef91b9a761abddeb2401e6a7",
+      "bytes": 1072,
+      "copy": "full exact license/notice"
+    },
+    "protobuf-go-BSD.txt": {
+      "source": "/home/ajs/go/pkg/mod/google.golang.org/protobuf@v1.35.1/LICENSE",
+      "sha256": "4835612df0098ca95f8e7d9e3bffcb02358d435dbb38057c844c99d7f725eb20",
+      "bytes": 1479,
+      "copy": "full exact license/notice"
+    },
+    "ArrowGo-source-notice.txt": {
+      "source": "github.com/apache/arrow/go/v13 v13.0.0 arrow/float16/float16.go and arrow/compare.go",
+      "source_sha256": "3db9974be369f05592285f38bca035a706968fbdfc0301d72039d38163cf11f0",
+      "sha256": "155071e569c7918205a406fde29e3964ec4922cdfae3ea20fdc42150400e7f9a",
+      "copy": "exact source header wording, comment markers removed"
+    },
+    "ArrowGo-NOTICE.txt": {
+      "source": "https://raw.githubusercontent.com/apache/arrow/apache-arrow-13.0.0/NOTICE.txt",
+      "full_source_sha256": "f5b6a58f5d2082e403c49663d87566328d40cf03f16abb01f52632a09b97c55e",
+      "sha256": "53fdffb9ec745d15aa60a3490d7483e7ee7b00f897f13edad396aa0512f96956",
+      "copy": "applicable ASF notice at start; other unrelated upstream project notices omitted",
+      "tag_sources_match_pinned_go_module": true
+    },
+    "../../src/LICENSE-Go.txt": {
+      "source": "Go1.25.4 LICENSE",
+      "sha256": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+      "copy": "existing repository full license reused without modification"
+    }
+  },
+  "primary_sources": {
+    "arrow-v13-NOTICE.txt": {
+      "url": "https://raw.githubusercontent.com/apache/arrow/apache-arrow-13.0.0/NOTICE.txt",
+      "sha256": "f5b6a58f5d2082e403c49663d87566328d40cf03f16abb01f52632a09b97c55e",
+      "bytes": 3032
+    },
+    "arrow-v13-float16.go": {
+      "url": "https://raw.githubusercontent.com/apache/arrow/apache-arrow-13.0.0/go/arrow/float16/float16.go",
+      "sha256": "3db9974be369f05592285f38bca035a706968fbdfc0301d72039d38163cf11f0",
+      "bytes": 3860,
+      "matches_pinned_local": true
+    },
+    "arrow-v13-compare.go": {
+      "url": "https://raw.githubusercontent.com/apache/arrow/apache-arrow-13.0.0/go/arrow/compare.go",
+      "sha256": "7542d60858f5d588c8bfeb82015b65544f9c66e14555b7db747116b97c1baf1f",
+      "bytes": 4522,
+      "matches_pinned_local": true
+    },
+    "hinnant-date-algorithms.html": {
+      "url": "https://howardhinnant.github.io/date_algorithms.html",
+      "sha256": "e5f69ba72b78f7bf82b417283089c3ce0b46d0440f68250c203f52c88d7b8f56",
+      "bytes": 75404
+    }
+  },
+  "author_clarifications": {
+    "values": {
+      "task": "p6-values-source-origin-clarification",
+      "write_str_decode_rune": "adapted from goccy v0.10.0 string.go/decode_rune.go; author confirms source consultation; native Rust structure",
+      "float_layout": "goccy encoder thresholds/layout; shortest digits supplied by zmij",
+      "civil_from_days": "Hinnant algorithm written from memory, no historical donor text/version known; current primary publication verified separately"
+    },
+    "transport": {
+      "task": "p6-transport-source-origin-clarification",
+      "prototext": "adapted from protobuf-go v1.35.1 internal/encoding/text/encode.go; read source, two-space binary-dependent detail from measured pinned Go"
+    }
+  },
+  "frozen_rust_files": {
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/src/tail/resources.rs": "8210efe689760620dd3536e2825a738acad28a51c5f17ac078933e3829d5473b",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/src/tail/mod.rs": "0fd7102d65f863c4fd079c893c51627553e0cb15c3506dba37e42de62fa3c0c7",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/src/tail/validation.rs": "65ebd8fab90a99937b343955affe8deca50c702aa37f72edef6f980f9425d3f6",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/src/tail/session.rs": "2d793026cf4e920a5d821a98855a32f7dee918fadc338e2368e0df5134d58a1e",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/src/tail/transport.rs": "f08a0c73afa112216365b4d39f9dc682a2c27a24b18b711a34c0111217a89845",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/src/tail/values.rs": "e02d7e63aec6c9cf6f53f31a927a2cda5855a648adf3e7e05735d09d10354fd5",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/src/tail/session/tests.rs": "cb9bb45eb5a0a403e7ba469203884f3c5e18c17128132cccecf07d4a974fd076"
+  },
+  "notice_outputs": {
+    "licenses/phase6/Apache-2.0.txt": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "licenses/phase6/ArrowGo-NOTICE.txt": "53fdffb9ec745d15aa60a3490d7483e7ee7b00f897f13edad396aa0512f96956",
+    "licenses/phase6/ArrowGo-source-notice.txt": "155071e569c7918205a406fde29e3964ec4922cdfae3ea20fdc42150400e7f9a",
+    "licenses/phase6/NOTICE.txt": "248e60990df3d5f4ec6fab0667e9d6f3c6f5c1a3c0a09754eaa0a168b3e14561",
+    "licenses/phase6/goccy-go-json-MIT.txt": "a707cd425201945d57500566c47c74dc9fb8cd02ef91b9a761abddeb2401e6a7",
+    "licenses/phase6/grpc-go-NOTICE.txt": "693ff28ec216d5112ac1bbfe64ef539005867d1c7bd427b57d579683293b947f",
+    "licenses/phase6/protobuf-go-BSD.txt": "4835612df0098ca95f8e7d9e3bffcb02358d435dbb38057c844c99d7f725eb20",
+    "docs/phase6-source-notices.md": "85fc801cb5052a2018430cab4abbb56ff013ee18f8d10efb441f44f9e1ce0a42"
+  },
+  "frozen_rust_unchanged": true,
+  "all_candidate_sources_unchanged": true,
+  "changed_candidate_sources": [],
+  "candidate_binaries_unchanged": {
+    "pb": true,
+    "pb-cloud": true
+  }
+}

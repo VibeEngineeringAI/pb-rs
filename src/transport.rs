@@ -886,7 +886,7 @@ fn proxy_for(policy: &ProxyPolicy, uri: &Uri) -> Option<Intercept> {
     }
     policy.matcher.intercept(uri)
 }
-fn no_proxy_matches(no_proxy: &str, host: &str, port: u16) -> bool {
+pub(crate) fn no_proxy_matches(no_proxy: &str, host: &str, port: u16) -> bool {
     let host = host.to_ascii_lowercase();
     for entry in no_proxy.split(',').map(str::trim).filter(|s| !s.is_empty()) {
         if entry == "*" {
@@ -1321,7 +1321,7 @@ async fn tls_config(store: &TlsStore) -> Result<Arc<rustls::ClientConfig>, BoxEr
     Ok(config.clone())
 }
 
-fn load_tls_config() -> io::Result<rustls::ClientConfig> {
+pub(crate) fn load_tls_config() -> io::Result<rustls::ClientConfig> {
     #[cfg(target_os = "linux")]
     {
         let mut roots = rustls::RootCertStore::empty();

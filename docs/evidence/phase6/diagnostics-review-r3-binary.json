@@ -1,0 +1,16 @@
+{
+  "binary": "/home/ajs/.cache/pb-phase6/candidate-review-r3/pb-debug-diagnostics",
+  "sha256": "cf3c0838a8d1ce66e83ea6fe59b986ec49a217f33c427d7e573579325c4c3394",
+  "bytes": 205266808,
+  "build_check_manifest": "docs/evidence/phase6/central-review-r3-tests.json",
+  "build_command": [
+    "cargo",
+    "test",
+    "--locked",
+    "--offline",
+    "--all-targets",
+    "--features",
+    "diagnostics"
+  ],
+  "scope": "Debug diagnostics functional observations only, not native timing"
+}

@@ -1,0 +1,219 @@
+
+/// SCRATCH r4 probe generator (not in the repo). Writes raw IPC stream files
+/// to $R4_STREAMS and prints the Rust session outcome for each.
+mod r4probe {
+    use super::*;
+    use arrow_array::Array;
+    use flatbuffers::{FlatBufferBuilder, WIPOffset};
+
+    fn dump(name: &str, data: &[FlightData]) {
+        let (mut o, mut e) = (Vec::new(), Vec::new());
+        let r = session(true, ok(data.to_vec()), &mut o, &mut e);
+        eprintln!("R4 {name}: {r:?} stdout={:?}", String::from_utf8_lossy(&o));
+        let Ok(dir) = std::env::var("R4_STREAMS") else { return };
+        let mut out = Vec::new();
+        for m in data {
+            let mut h = m.data_header.to_vec();
+            while h.len() % 8 != 0 {
+                h.push(0);
+            }
+            out.extend(0xFFFF_FFFFu32.to_le_bytes());
+            out.extend((h.len() as i32).to_le_bytes());
+            out.extend(&h);
+            out.extend(&m.data_body[..]);
+        }
+        out.extend(0xFFFF_FFFFu32.to_le_bytes());
+        out.extend(0i32.to_le_bytes());
+        std::fs::write(std::path::Path::new(&dir).join(format!("{name}.arrows")), out).unwrap();
+    }
+
+    type B<'a> = FlatBufferBuilder<'a>;
+    type N<'a> = WIPOffset<arrow_ipc::Field<'a>>;
+
+    #[derive(Clone, Copy)]
+    enum T { I8, I32, I64, Utf8, Binary }
+
+    fn leaf<'a>(fbb: &mut B<'a>, name: &str, t: T, nullable: bool, dict: Option<i64>) -> N<'a> {
+        let (tt, tv) = match t {
+            T::I8 | T::I32 | T::I64 => {
+                let mut i = arrow_ipc::IntBuilder::new(fbb);
+                i.add_bitWidth(match t { T::I8 => 8, T::I32 => 32, _ => 64 });
+                i.add_is_signed(true);
+                (arrow_ipc::Type::Int, i.finish().as_union_value())
+            }
+            T::Utf8 => (arrow_ipc::Type::Utf8, arrow_ipc::Utf8Builder::new(fbb).finish().as_union_value()),
+            T::Binary => (arrow_ipc::Type::Binary, arrow_ipc::BinaryBuilder::new(fbb).finish().as_union_value()),
+        };
+        node(fbb, name, nullable, tt, tv, &[], dict)
+    }
+
+    fn node<'a>(
+        fbb: &mut B<'a>,
+        name: &str,
+        nullable: bool,
+        tt: arrow_ipc::Type,
+        tv: WIPOffset<flatbuffers::UnionWIPOffset>,
+        children: &[N<'a>],
+        dict: Option<i64>,
+    ) -> N<'a> {
+        let dict = dict.map(|id| {
+            let mut i = arrow_ipc::IntBuilder::new(fbb);
+            i.add_bitWidth(32);
+            i.add_is_signed(true);
+            let i = i.finish();
+            let mut d = arrow_ipc::DictionaryEncodingBuilder::new(fbb);
+            d.add_id(id);
+            d.add_indexType(i);
+            d.finish()
+        });
+        let name = fbb.create_string(name);
+        let children = fbb.create_vector(children);
+        let mut f = arrow_ipc::FieldBuilder::new(fbb);
+        f.add_name(name);
+        f.add_nullable(nullable);
+        f.add_type_type(tt);
+        f.add_type_(tv);
+        f.add_children(children);
+        if let Some(d) = dict {
+            f.add_dictionary(d);
+        }
+        f.finish()
+    }
+
+    fn list<'a>(fbb: &mut B<'a>, name: &str, child: N<'a>, dict: Option<i64>) -> N<'a> {
+        let l = arrow_ipc::ListBuilder::new(fbb).finish().as_union_value();
+        node(fbb, name, true, arrow_ipc::Type::List, l, &[child], dict)
+    }
+
+    fn structure<'a>(fbb: &mut B<'a>, name: &str, children: &[N<'a>], dict: Option<i64>) -> N<'a> {
+        let s = arrow_ipc::Struct_Builder::new(fbb).finish().as_union_value();
+        node(fbb, name, true, arrow_ipc::Type::Struct_, s, children, dict)
+    }
+
+    fn schema<'a>(mut fbb: B<'a>, fields: &[N<'a>], big: bool) -> FlightData {
+        let fields = fbb.create_vector(fields);
+        let mut s = arrow_ipc::SchemaBuilder::new(&mut fbb);
+        s.add_fields(fields);
+        if big {
+            s.add_endianness(arrow_ipc::Endianness::Big);
+        }
+        let s = s.finish().as_union_value();
+        let mut m = arrow_ipc::MessageBuilder::new(&mut fbb);
+        m.add_version(arrow_ipc::MetadataVersion::V5);
+        m.add_header_type(MessageHeader::Schema);
+        m.add_header(s);
+        let m = m.finish();
+        fbb.finish(m, None);
+        FlightData { data_header: Bytes::copy_from_slice(fbb.finished_data()), ..Default::default() }
+    }
+
+    /// Byte-swap `width`-byte words of buffer `index` of a record/dictionary body.
+    fn swap(data: &mut FlightData, index: usize, width: usize) {
+        let (offset, length) = {
+            let m = arrow_ipc::root_as_message(&data.data_header).unwrap();
+            let b = m.header_as_record_batch()
+                .or_else(|| m.header_as_dictionary_batch().and_then(|d| d.data()))
+                .unwrap();
+            let e = b.buffers().unwrap().get(index);
+            (e.offset() as usize, e.length() as usize)
+        };
+        let mut body = data.data_body.to_vec();
+        for word in body[offset..offset + length].chunks_mut(width) {
+            word.reverse();
+        }
+        data.data_body = Bytes::from(body);
+    }
+
+    #[test]
+    fn r4_dump() {
+        // R4-1: big-endian Int64, values 1, -2, 300.
+        let s = Arc::new(Schema::new(vec![Field::new("n", DataType::Int64, true)]));
+        let b = RecordBatch::try_new(Arc::clone(&s), vec![Arc::new(Int64Array::from(vec![1, -2, 300]))]).unwrap();
+        let le = flight_stream(&s, [&b]);
+        dump("r4_le_int64", &le);
+        let mut be = le.clone();
+        let mut fbb = B::new();
+        let n = leaf(&mut fbb, "n", T::I64, true, None);
+        be[0] = schema(fbb, &[n], true);
+        swap(&mut be[1], 1, 8);
+        dump("r4_be_int64", &be);
+        dump("r4_be_int64_schema_only", &be[..1]);
+        // Compressed: write the byte-swapped values with an LZ4 writer.
+        let swapped = RecordBatch::try_new(
+            Arc::clone(&s),
+            vec![Arc::new(Int64Array::from(vec![1i64.swap_bytes(), (-2i64).swap_bytes(), 300i64.swap_bytes()]))],
+        ).unwrap();
+        let options = IpcWriteOptions::default().try_with_compression(Some(arrow_ipc::CompressionType::LZ4_FRAME)).unwrap();
+        let mut bez = flight_stream_with(options, &s, [&swapped]);
+        bez[0] = be[0].clone();
+        dump("r4_be_int64_lz4", &bez);
+        // Big-endian Utf8: offsets swapped, bytes unchanged.
+        let s = Arc::new(Schema::new(vec![Field::new("s", DataType::Utf8, true)]));
+        let b = RecordBatch::try_new(Arc::clone(&s), vec![Arc::new(StringArray::from(vec!["ab", "cde"]))]).unwrap();
+        let mut be = flight_stream(&s, [&b]);
+        let mut fbb = B::new();
+        let n = leaf(&mut fbb, "s", T::Utf8, true, None);
+        be[0] = schema(fbb, &[n], true);
+        swap(&mut be[1], 1, 4);
+        dump("r4_be_utf8", &be);
+        // Big-endian dictionary<Int32, Utf8>: dictionary offsets and indices.
+        let d = DictionaryArray::<Int32Type>::new(vec![1, 0, 1].into(), Arc::new(StringArray::from(vec!["x", "yz"])));
+        let s = Arc::new(Schema::new(vec![Field::new("d", d.data_type().clone(), true)]));
+        let b = RecordBatch::try_new(Arc::clone(&s), vec![Arc::new(d)]).unwrap();
+        let mut be = flight_stream(&s, [&b]);
+        let mut fbb = B::new();
+        let n = leaf(&mut fbb, "d", T::Utf8, true, Some(0));
+        be[0] = schema(fbb, &[n], true);
+        swap(&mut be[1], 1, 4);
+        swap(&mut be[2], 1, 4);
+        dump("r4_be_dict", &be);
+
+        // R4-2: shared dictionary IDs (schema-only streams).
+        let pairs: Vec<(&str, Box<dyn Fn(&mut B<'static>) -> Vec<N<'static>>>)> = vec![
+            ("r4_dict_same_utf8", Box::new(|f| vec![leaf(f, "a", T::Utf8, true, Some(0)), leaf(f, "b", T::Utf8, true, Some(0))])),
+            ("r4_dict_utf8_binary", Box::new(|f| vec![leaf(f, "a", T::Utf8, true, Some(0)), leaf(f, "b", T::Binary, true, Some(0))])),
+            ("r4_dict_int32_utf8", Box::new(|f| vec![leaf(f, "a", T::I32, true, Some(0)), leaf(f, "b", T::Utf8, true, Some(0))])),
+            ("r4_dict_utf8_nullability", Box::new(|f| vec![leaf(f, "a", T::Utf8, true, Some(0)), leaf(f, "b", T::Utf8, false, Some(0))])),
+            ("r4_dict_list_item_nullability", Box::new(|f| {
+                let i = leaf(f, "item", T::I8, true, None);
+                let a = list(f, "a", i, Some(0));
+                let j = leaf(f, "item", T::I8, false, None);
+                let b = list(f, "b", j, Some(0));
+                vec![a, b]
+            })),
+            ("r4_dict_list_item_names", Box::new(|f| {
+                let i = leaf(f, "item", T::I8, true, None);
+                let a = list(f, "a", i, Some(0));
+                let j = leaf(f, "element", T::I8, true, None);
+                let b = list(f, "b", j, Some(0));
+                vec![a, b]
+            })),
+            ("r4_dict_struct_field_names", Box::new(|f| {
+                let i = leaf(f, "x", T::I8, true, None);
+                let a = structure(f, "a", &[i], Some(0));
+                let j = leaf(f, "y", T::I8, true, None);
+                let b = structure(f, "b", &[j], Some(0));
+                vec![a, b]
+            })),
+            ("r4_dict_nested_conflict", Box::new(|f| {
+                let a = leaf(f, "a", T::Utf8, true, Some(0));
+                let n = leaf(f, "n", T::I8, true, None);
+                let c = leaf(f, "c", T::I32, true, Some(0));
+                let s = structure(f, "s", &[n, c], None);
+                vec![a, s]
+            })),
+            ("r4_dict_child_before_parent", Box::new(|f| {
+                // Parent dictionary id 0 (List) whose item is dictionary id 0 (Utf8).
+                let i = leaf(f, "item", T::Utf8, true, Some(0));
+                let a = list(f, "a", i, Some(0));
+                vec![a]
+            })),
+        ];
+        for (name, build) in pairs {
+            let mut fbb = B::new();
+            let fields = build(&mut fbb);
+            let data = schema(fbb, &fields, false);
+            dump(name, &[data]);
+        }
+    }
+}

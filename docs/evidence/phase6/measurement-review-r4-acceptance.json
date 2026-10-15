@@ -1,0 +1,213 @@
+{
+  "kind": "fresh_independent_Sol6.1_focused_measurement_review_r4",
+  "disposition": "accepted_scoped_tooling_only",
+  "closed": [
+    "R3-A",
+    "R3-B"
+  ],
+  "preserved": [
+    "N1",
+    "N2",
+    "N3",
+    "N4",
+    "N5",
+    "R1 admission/reporting gates"
+  ],
+  "unresolved_concrete_objections": [],
+  "source_hashes_before": {
+    "harness/phase6_workloads.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/phase6_workloads.py",
+      "sha256": "e2e83fa118c58a96ff55700be88f95f9b8b6479a289a8c59f447f836389fde51",
+      "size_bytes": 81217
+    },
+    "harness/test_phase6_workloads.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/test_phase6_workloads.py",
+      "sha256": "ac7f43fba1efd9e4a7e993ec9b20aaa498538a31f5cc40ece5d501ced336c322",
+      "size_bytes": 72824
+    },
+    "docs/phase6-measurement-plan.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/docs/phase6-measurement-plan.md",
+      "sha256": "8d7bf088a1d62ec304a822a5dea952314f8c5c35e926a180b542bdfd66b313e1",
+      "size_bytes": 51921
+    },
+    "docs/evidence/phase6/performance-budgets.json": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/docs/evidence/phase6/performance-budgets.json",
+      "sha256": "76a57ecacf2fba39b1f278e385f1cf4ee410c49f29d2d0e7e7dd2e2713b5ae93",
+      "size_bytes": 5631
+    },
+    "docs/phase6-measurement-review-r1.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/docs/phase6-measurement-review-r1.md",
+      "sha256": "ab265adc1359d62e426101d48de1f44e13f877a7b4b0ef9af721d1fc95d2f43d",
+      "size_bytes": 17827
+    },
+    "docs/phase6-measurement-review-r2.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/docs/phase6-measurement-review-r2.md",
+      "sha256": "ffc0652b68edbd99b2a7301a9a4845223b0472b51c21b90245f9995036f17819",
+      "size_bytes": 27610
+    },
+    "docs/phase6-measurement-review-r3.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/docs/phase6-measurement-review-r3.md",
+      "sha256": "51ae9f99dfb392253b41fec16086515842da1e11b4773af0d8c334d91dce8e24",
+      "size_bytes": 16177
+    },
+    "harness/run.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/run.py",
+      "sha256": "b280d1295a4b351e6f2d838c56acaac58b2247bb77fc9881587bb7bbe849a076",
+      "size_bytes": 59785
+    },
+    "harness/meter.c": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/meter.c",
+      "sha256": "5d7ce9dc2fa65b1ec7018fb863d36fd78d8b8535762acadaefc3f2f4e0f070e9",
+      "size_bytes": 6231
+    }
+  },
+  "source_hashes_after": {
+    "harness/phase6_workloads.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/phase6_workloads.py",
+      "sha256": "e2e83fa118c58a96ff55700be88f95f9b8b6479a289a8c59f447f836389fde51",
+      "size_bytes": 81217
+    },
+    "harness/test_phase6_workloads.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/test_phase6_workloads.py",
+      "sha256": "ac7f43fba1efd9e4a7e993ec9b20aaa498538a31f5cc40ece5d501ced336c322",
+      "size_bytes": 72824
+    },
+    "docs/phase6-measurement-plan.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/docs/phase6-measurement-plan.md",
+      "sha256": "8d7bf088a1d62ec304a822a5dea952314f8c5c35e926a180b542bdfd66b313e1",
+      "size_bytes": 51921
+    },
+    "docs/evidence/phase6/performance-budgets.json": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/docs/evidence/phase6/performance-budgets.json",
+      "sha256": "76a57ecacf2fba39b1f278e385f1cf4ee410c49f29d2d0e7e7dd2e2713b5ae93",
+      "size_bytes": 5631
+    },
+    "docs/phase6-measurement-review-r1.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/docs/phase6-measurement-review-r1.md",
+      "sha256": "ab265adc1359d62e426101d48de1f44e13f877a7b4b0ef9af721d1fc95d2f43d",
+      "size_bytes": 17827
+    },
+    "docs/phase6-measurement-review-r2.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/docs/phase6-measurement-review-r2.md",
+      "sha256": "ffc0652b68edbd99b2a7301a9a4845223b0472b51c21b90245f9995036f17819",
+      "size_bytes": 27610
+    },
+    "docs/phase6-measurement-review-r3.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/docs/phase6-measurement-review-r3.md",
+      "sha256": "51ae9f99dfb392253b41fec16086515842da1e11b4773af0d8c334d91dce8e24",
+      "size_bytes": 16177
+    },
+    "harness/run.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/run.py",
+      "sha256": "b280d1295a4b351e6f2d838c56acaac58b2247bb77fc9881587bb7bbe849a076",
+      "size_bytes": 59785
+    },
+    "harness/meter.c": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/meter.c",
+      "sha256": "5d7ce9dc2fa65b1ec7018fb863d36fd78d8b8535762acadaefc3f2f4e0f070e9",
+      "size_bytes": 6231
+    }
+  },
+  "prior_probe_inputs": {
+    "probes.py": {
+      "path": "/home/ajs/.cache/pb-phase6/measurement-review-r3/probes.py",
+      "sha256": "771ba4a0722d50f1d28debcb357cf478a05162f267d17d088830ccec7b560b91",
+      "size_bytes": 11348
+    },
+    "race_controls.py": {
+      "path": "/home/ajs/.cache/pb-phase6/measurement-review-r3/race_controls.py",
+      "sha256": "39807f0223a126f3ac95e965fa3c3a37250b6c6cabe35b38d3bf27d4dfd00ba4",
+      "size_bytes": 3189
+    },
+    "cleanup_probe.py": {
+      "path": "/home/ajs/.cache/pb-phase6/measurement-review-r3/cleanup_probe.py",
+      "sha256": "8eba7e7b258543d857f1382783ac637e0305ad62cfd78bc1911f998a8c1d6328",
+      "size_bytes": 2638
+    }
+  },
+  "author_resolution": {
+    "path": "/home/ajs/.cache/pb-phase6/tmp/collector-review-r3-resolution.json",
+    "sha256": "a3733ff903327735104f2abe4b6593386c3f5ba0fe0830a3d806b89763249ac8",
+    "size_bytes": 4050
+  },
+  "review": {
+    "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/docs/phase6-measurement-review-r4.md",
+    "sha256": "695cf9dc8882507b9851bec08af39b6abfbcde90e0652ffcad594daa71c9cd71",
+    "size_bytes": 16850
+  },
+  "commands": [
+    {
+      "command": "python3 /home/ajs/.cache/pb-phase6/measurement-review-r4/run_pure_tests.py",
+      "log": "/home/ajs/.cache/pb-phase6/measurement-review-r4/pure-tests.log",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 /home/ajs/.cache/pb-phase6/measurement-review-r4/race_probes.py",
+      "log": "/home/ajs/.cache/pb-phase6/measurement-review-r4/race-probes.log",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 /home/ajs/.cache/pb-phase6/measurement-review-r4/regression_probes.py",
+      "log": "/home/ajs/.cache/pb-phase6/measurement-review-r4/regression-probes.log",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 /home/ajs/.cache/pb-phase6/measurement-review-r4/cleanup_probe.py",
+      "log": "/home/ajs/.cache/pb-phase6/measurement-review-r4/cleanup-probe.log",
+      "exit_code": 1
+    },
+    {
+      "command": "python3 /home/ajs/.cache/pb-phase6/measurement-review-r4/cleanup_probe.py",
+      "log": "/home/ajs/.cache/pb-phase6/measurement-review-r4/cleanup-probe-verified.log",
+      "exit_code": 0
+    }
+  ],
+  "environment": {
+    "TMPDIR": "/home/ajs/.cache/pb-phase6/measurement-review-r4",
+    "GOTMPDIR": "/home/ajs/.cache/pb-phase6/measurement-review-r4",
+    "CLAUDE_CODE_TMPDIR": "/home/ajs/.cache/pb-phase6/measurement-review-r4",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "validation": {
+    "pure_tests": 84,
+    "independent_race_identity_cases": 19,
+    "carried_regression_cases": 26,
+    "cleanup_only_verified": true,
+    "prohibited_test_primitive_calls": {
+      "flock": 0,
+      "Popen": 0,
+      "spawn_measured": 0,
+      "posix_spawn": 0,
+      "posix_spawnp": 0,
+      "fork": 0,
+      "system": 0
+    },
+    "prohibited_race_primitive_calls": {
+      "flock": 0,
+      "Popen": 0,
+      "spawn_measured": 0,
+      "posix_spawn": 0,
+      "posix_spawnp": 0,
+      "fork": 0,
+      "system": 0
+    },
+    "reviewer_assertion_failure": "Initial cleanup assertion compared saved fixture_go_env with empty fake runtime metadata; corrected mock in fresh directory passed; original result/log retained."
+  },
+  "native": false,
+  "build": false,
+  "pressure": false,
+  "real_quiet_token": false,
+  "real_flock": false,
+  "agents": false,
+  "commits": false,
+  "native_campaign_admitted": false,
+  "finalwholephaseOpus_satisfied": false,
+  "limitations": [
+    "Production nested dictionary correction and unbuilt frozen R5 acceptance separately owned.",
+    "Coordinator must regenerate accepted final parent provenance and obtain actual quiet handshake/common flock/partition budget.",
+    "First finite same-Go/control gate does not admit duration, soak, replicated series or establish performance.",
+    "Actual frozen file replacement detected at end; no transactional filesystem claim.",
+    "No repeated 20-sample pressure audit or new native evidence.",
+    "Final whole-phase Opus review remains outstanding."
+  ]
+}

@@ -33,6 +33,17 @@ futures-core = "0.3"
 tower-service = "0.3"
 tokio-rustls = "0.26"
 rustls = { version = "0.23", default-features = false, features = ["aws_lc_rs", "std", "tls12"] }
+arrow-flight = { version = "60", default-features = false }
+arrow-array = "60"
+arrow-schema = "60"
+arrow-buffer = "60"
+arrow-ipc = { version = "=60.0.0", features = ["lz4", "zstd"] }
+flatbuffers = "=25.12.19"
+tonic = "0.14"
+futures-util = "0.3"
+h2 = "0.4"
+prost = { version = "0.14", default-features = false, features = ["std", "derive"] }
+prost-types = { version = "0.14", default-features = false }
 
 [dev-dependencies]
 flate2 = "1"

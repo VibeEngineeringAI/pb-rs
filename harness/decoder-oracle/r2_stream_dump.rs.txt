@@ -1,0 +1,343 @@
+// Preserved verbatim from the decoder review r2 scratch copy
+// (~/.cache/pbr2/probe/src/tail/session/tests.rs, sha256
+// 89608a3f6749bf12f95ae48900c8c08cf8cb0e9d90ebb927841fbf59ad1908f3).
+// This is the Rust generator that dumped the ten
+// tests/fixtures/arrow-go-v13-decoder/*.arrows streams (run with
+// R2_STREAMS=<dir>, `dump_streams` and `p3_dump`). It is NOT compiled here: it
+// relies on the session test module's helpers (copied below, lines 81-109,
+// 590-601, 818-846, 877-882 and 1069-1075 of that file), and on its imports.
+// The committed .arrows bytes, not this source, are the fixtures; the manifest
+// pins their SHA-256 values.
+
+// ---- helpers (session/tests.rs) ----
+fn flight_stream<'a>(
+    schema: &Schema,
+    batches: impl IntoIterator<Item = &'a RecordBatch>,
+) -> Vec<FlightData> {
+    flight_stream_with(IpcWriteOptions::default(), schema, batches)
+}
+
+fn flight_stream_with<'a>(
+    options: IpcWriteOptions,
+    schema: &Schema,
+    batches: impl IntoIterator<Item = &'a RecordBatch>,
+) -> Vec<FlightData> {
+    let generator = IpcDataGenerator::default();
+    let mut tracker = DictionaryTracker::new(false);
+    let mut context = IpcWriteContext::default();
+    let mut data = vec![
+        generator
+            .schema_to_bytes_with_dictionary_tracker(schema, &mut tracker, &options)
+            .into(),
+    ];
+    for batch in batches {
+        let (dictionaries, encoded) = generator
+            .encode(batch, &mut tracker, &options, &mut context)
+            .unwrap();
+        data.extend(dictionaries.into_iter().map(FlightData::from));
+        data.push(encoded.into());
+    }
+    data
+}
+
+fn declared_as(declared: &Schema, batch: &RecordBatch) -> Vec<FlightData> {
+    let mut data = flight_stream(&batch.schema(), [batch]);
+    let mut tracker = DictionaryTracker::new(false);
+    data[0] = IpcDataGenerator::default()
+        .schema_to_bytes_with_dictionary_tracker(
+            declared,
+            &mut tracker,
+            &IpcWriteOptions::default(),
+        )
+        .into();
+    data
+}
+
+#[derive(Clone, Copy)]
+enum Slot {
+    NodeLength(usize),
+    NodeNulls(usize),
+    BufferOffset(usize),
+    BufferLength(usize),
+}
+
+/// Rewrite one i64 of a node or buffer entry in place. FieldNode and Buffer
+/// are 16-byte flatbuffer structs stored inline, so the header stays valid.
+fn patch(data: &mut FlightData, slot: Slot, value: i64) {
+    let mut header = data.data_header.to_vec();
+    let position = {
+        let message = arrow_ipc::root_as_message(&header).unwrap();
+        let batch = message
+            .header_as_record_batch()
+            .or_else(|| message.header_as_dictionary_batch().and_then(|d| d.data()))
+            .unwrap();
+        let (bytes, index, half) = match slot {
+            Slot::NodeLength(i) => (batch.nodes().unwrap().bytes(), i, 0),
+            Slot::NodeNulls(i) => (batch.nodes().unwrap().bytes(), i, 1),
+            Slot::BufferOffset(i) => (batch.buffers().unwrap().bytes(), i, 0),
+            Slot::BufferLength(i) => (batch.buffers().unwrap().bytes(), i, 1),
+        };
+        bytes.as_ptr() as usize - header.as_ptr() as usize + index * 16 + half * 8
+    };
+    header[position..position + 8].copy_from_slice(&value.to_le_bytes());
+    data.data_header = Bytes::from(header);
+}
+
+fn nullable_ints() -> (Arc<Schema>, RecordBatch) {
+    let schema = Arc::new(Schema::new(vec![Field::new("n", DataType::Int64, true)]));
+    let column = Arc::new(Int64Array::from(vec![Some(1), None, Some(3)]));
+    let batch = RecordBatch::try_new(Arc::clone(&schema), vec![column]).unwrap();
+    (schema, batch)
+}
+
+fn compressed(codec: arrow_ipc::CompressionType) -> Vec<FlightData> {
+    let (schema, batch) = nullable_ints();
+    let options = IpcWriteOptions::default()
+        .try_with_compression(Some(codec))
+        .unwrap();
+    flight_stream_with(options, &schema, [&batch])
+}
+
+// ---- probes and dumps (session/tests.rs lines 1282-1523) ----
+// ---- r2 review probes (scratch copy only) ----
+mod r2_probes {
+    use super::*;
+    use std::panic::{AssertUnwindSafe, catch_unwind};
+    use arrow_array::Array;
+
+    fn outcome<T: std::fmt::Debug>(f: impl FnOnce() -> T) -> String {
+        match catch_unwind(AssertUnwindSafe(f)) {
+            Ok(v) => format!("RETURNED {v:?}"),
+            Err(p) => format!(
+                "PANICKED {}",
+                p.downcast_ref::<String>()
+                    .cloned()
+                    .or_else(|| p.downcast_ref::<&str>().map(|s| s.to_string()))
+                    .unwrap_or_default()
+            ),
+        }
+    }
+
+    fn summary((batches, stop): (Vec<RecordBatch>, Stop)) -> (usize, Stop) {
+        (batches.len(), stop)
+    }
+
+    #[test]
+    fn p1_fixed_size_binary_negative_width() {
+        use arrow_array::FixedSizeBinaryArray;
+        let schema = Arc::new(Schema::new(vec![Field::new("b", DataType::FixedSizeBinary(1), true)]));
+        let col = FixedSizeBinaryArray::try_from_iter(vec![vec![7u8]].into_iter()).unwrap();
+        let batch = RecordBatch::try_new(Arc::clone(&schema), vec![Arc::new(col)]).unwrap();
+        let declared = Schema::new(vec![Field::new("b", DataType::FixedSizeBinary(-1), true)]);
+        let data = declared_as(&declared, &batch);
+        eprintln!("P1 decode_all: {}", outcome(|| summary(decode_all(ok(data.clone())))));
+        let r = outcome(|| {
+            let (mut o, mut e) = (Vec::new(), Vec::new());
+            session(true, ok(data), &mut o, &mut e)
+        });
+        eprintln!("P1 session: {r}");
+    }
+
+    #[test]
+    fn p2_fixed_size_list_length_overflow() {
+        use arrow_array::{FixedSizeListArray, Int8Array};
+        let col = FixedSizeListArray::new(
+            Arc::new(Field::new_list_field(DataType::Int8, true)),
+            2,
+            Arc::new(Int8Array::from(vec![1, 2])),
+            None,
+        );
+        let schema = Arc::new(Schema::new(vec![Field::new("f", col.data_type().clone(), true)]));
+        let batch = RecordBatch::try_new(Arc::clone(&schema), vec![Arc::new(col)]).unwrap();
+        let mut data = flight_stream(&schema, [&batch]);
+        assert_eq!(decode_all(ok(data.clone())).0.len(), 1);
+        patch(&mut data[1], Slot::NodeLength(0), i64::MAX);
+        eprintln!("P2 decode_all: {}", outcome(|| summary(decode_all(ok(data.clone())))));
+        let r = outcome(|| {
+            let (mut o, mut e) = (Vec::new(), Vec::new());
+            session(true, ok(data), &mut o, &mut e)
+        });
+        eprintln!("P2 session: {r}");
+    }
+
+    fn union_schema_without_type_ids(children: usize) -> Bytes {
+        let mut fbb = flatbuffers::FlatBufferBuilder::new();
+        let mut kids = Vec::new();
+        for i in 0..children {
+            let name = fbb.create_string(&format!("c{i}"));
+            let null = arrow_ipc::NullBuilder::new(&mut fbb).finish();
+            let empty = fbb.create_vector::<flatbuffers::WIPOffset<arrow_ipc::Field>>(&[]);
+            let mut b = arrow_ipc::FieldBuilder::new(&mut fbb);
+            b.add_name(name);
+            b.add_nullable(true);
+            b.add_type_type(arrow_ipc::Type::Null);
+            b.add_type_(null.as_union_value());
+            b.add_children(empty);
+            kids.push(b.finish());
+        }
+        let kids = fbb.create_vector(&kids);
+        let mut u = arrow_ipc::UnionBuilder::new(&mut fbb);
+        u.add_mode(arrow_ipc::UnionMode::Sparse);
+        let u = u.finish();
+        let name = fbb.create_string("u");
+        let mut b = arrow_ipc::FieldBuilder::new(&mut fbb);
+        b.add_name(name);
+        b.add_nullable(true);
+        b.add_type_type(arrow_ipc::Type::Union);
+        b.add_type_(u.as_union_value());
+        b.add_children(kids);
+        let field = b.finish();
+        let fields = fbb.create_vector(&[field]);
+        let mut s = arrow_ipc::SchemaBuilder::new(&mut fbb);
+        s.add_fields(fields);
+        let schema = s.finish();
+        let mut m = arrow_ipc::MessageBuilder::new(&mut fbb);
+        m.add_version(arrow_ipc::MetadataVersion::V5);
+        m.add_header_type(MessageHeader::Schema);
+        m.add_header(schema.as_union_value());
+        let m = m.finish();
+        fbb.finish(m, None);
+        Bytes::copy_from_slice(fbb.finished_data())
+    }
+
+    #[test]
+    fn p3_union_schema_with_129_children_and_no_type_ids() {
+        for n in [128usize, 129] {
+            let header = union_schema_without_type_ids(n);
+            let data = FlightData { data_header: header, ..Default::default() };
+            eprintln!("P3 n={n} initialize: {}", outcome(|| initialize(&data).map(drop)));
+        }
+        // Through the worker Open event, as production does.
+        let data = FlightData { data_header: union_schema_without_type_ids(129), ..Default::default() };
+        let r = outcome(|| {
+            std::thread::scope(|scope| {
+                let (mut o, mut e) = (Vec::new(), Vec::new());
+                let (mut handoff, inbox, acks) = Handoff::new();
+                let worker = scope.spawn(move || Worker::new(&mut o, &mut e, "d", true).run(inbox, acks));
+                let res = block_on(subscribe(stream::iter(vec![Ok(data)]), &mut handoff));
+                let res = match res { Ok(_) => "opened".to_string(), Err(Exit::Fatal(m)) => format!("fatal {m}"), Err(Exit::Terminal(Terminal::Failed(e))) => format!("terminal failed {}", e.message), Err(Exit::Terminal(Terminal::Panicked(m))) => format!("go panic {m}") };
+                drop(handoff);
+                let joined = worker.join().is_err();
+                (res, format!("worker_panicked={joined}"))
+            })
+        });
+        eprintln!("P3 worker open: {r}");
+    }
+
+    #[test]
+    fn p3_dump() {
+        for n in [128usize, 129] {
+            let mut h = union_schema_without_type_ids(n).to_vec();
+            while h.len() % 8 != 0 { h.push(0); }
+            let mut out = Vec::new();
+            out.extend(0xFFFF_FFFFu32.to_le_bytes());
+            out.extend((h.len() as i32).to_le_bytes());
+            out.extend(&h);
+            out.extend(0xFFFF_FFFFu32.to_le_bytes());
+            out.extend(0i32.to_le_bytes());
+            let dir = std::path::PathBuf::from(std::env::var("R2_STREAMS").unwrap());
+            std::fs::write(dir.join(format!("p3_union_{n}.arrows")), out).unwrap();
+        }
+    }
+
+    #[test]
+    fn p4_compressed_buffer_shorter_than_prefix() {
+        for codec in [arrow_ipc::CompressionType::LZ4_FRAME, arrow_ipc::CompressionType::ZSTD] {
+            let mut data = compressed(codec);
+            patch(&mut data[1], Slot::BufferLength(1), 3);
+            eprintln!("P4 {codec:?}: {}", outcome(|| summary(decode_all(ok(data.clone())))));
+        }
+    }
+
+    #[test]
+    fn p5_non_nullable_declared_field_with_nulls() {
+        let (_, batch) = nullable_ints();
+        let declared = Schema::new(vec![Field::new("n", DataType::Int64, false)]);
+        let data = declared_as(&declared, &batch);
+        let (mut o, mut e) = (Vec::new(), Vec::new());
+        let r = session(true, ok(data), &mut o, &mut e);
+        eprintln!("P5 top-level: {r:?} stdout={:?}", String::from_utf8_lossy(&o));
+        // Nested: list with a non-nullable item field containing a null.
+        let list = ListArray::from_iter_primitive::<arrow_array::types::Int64Type, _, _>(vec![Some(vec![Some(1), None])]);
+        let schema = Arc::new(Schema::new(vec![Field::new("l", list.data_type().clone(), true)]));
+        let batch = RecordBatch::try_new(Arc::clone(&schema), vec![Arc::new(list)]).unwrap();
+        let declared = Schema::new(vec![Field::new(
+            "l",
+            DataType::List(Arc::new(Field::new_list_field(DataType::Int64, false))),
+            true,
+        )]);
+        let data = declared_as(&declared, &batch);
+        let (mut o, mut e) = (Vec::new(), Vec::new());
+        let r = session(true, ok(data), &mut o, &mut e);
+        eprintln!("P5 nested: {r:?} stdout={:?}", String::from_utf8_lossy(&o));
+    }
+}
+
+mod r2_dump {
+    use super::*;
+    use arrow_array::Array;
+
+    fn dump(name: &str, data: &[FlightData]) {
+        let dir = std::path::PathBuf::from(std::env::var("R2_STREAMS").unwrap());
+        let mut out = Vec::new();
+        for m in data {
+            let mut h = m.data_header.to_vec();
+            while h.len() % 8 != 0 {
+                h.push(0);
+            }
+            out.extend(0xFFFF_FFFFu32.to_le_bytes());
+            out.extend((h.len() as i32).to_le_bytes());
+            out.extend(&h);
+            out.extend(&m.data_body[..]);
+        }
+        out.extend(0xFFFF_FFFFu32.to_le_bytes());
+        out.extend(0i32.to_le_bytes());
+        std::fs::write(dir.join(format!("{name}.arrows")), out).unwrap();
+    }
+
+    #[test]
+    fn dump_streams() {
+        use arrow_array::{FixedSizeBinaryArray, FixedSizeListArray, Int8Array};
+        // P1
+        let schema = Arc::new(Schema::new(vec![Field::new("b", DataType::FixedSizeBinary(1), true)]));
+        let col = FixedSizeBinaryArray::try_from_iter(vec![vec![7u8]].into_iter()).unwrap();
+        let batch = RecordBatch::try_new(Arc::clone(&schema), vec![Arc::new(col)]).unwrap();
+        let declared = Schema::new(vec![Field::new("b", DataType::FixedSizeBinary(-1), true)]);
+        dump("p1_fsb_negative", &declared_as(&declared, &batch));
+        dump("p1_fsb_valid", &flight_stream(&schema, [&batch]));
+        // P2: FSL size 4, node length i64::MAX
+        let col = FixedSizeListArray::new(
+            Arc::new(Field::new_list_field(DataType::Int8, true)),
+            4,
+            Arc::new(Int8Array::from(vec![1, 2, 3, 4])),
+            None,
+        );
+        let schema = Arc::new(Schema::new(vec![Field::new("f", col.data_type().clone(), true)]));
+        let batch = RecordBatch::try_new(Arc::clone(&schema), vec![Arc::new(col)]).unwrap();
+        let mut data = flight_stream(&schema, [&batch]);
+        dump("p2_fsl_valid", &data);
+        patch(&mut data[1], Slot::NodeLength(0), i64::MAX);
+        eprintln!("P2b decode_all: {:?}", std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            let (b, s) = decode_all(ok(data.clone())); (b.len(), s)
+        })).map_err(|p| p.downcast_ref::<String>().cloned().or_else(|| p.downcast_ref::<&str>().map(|s| s.to_string()))));
+        dump("p2_fsl_overflow", &data);
+        // P4
+        let mut data = compressed(arrow_ipc::CompressionType::LZ4_FRAME);
+        dump("p4_lz4_valid", &data);
+        patch(&mut data[1], Slot::BufferLength(1), 3);
+        dump("p4_lz4_short", &data);
+        // P5
+        let (_, batch) = nullable_ints();
+        let declared = Schema::new(vec![Field::new("n", DataType::Int64, false)]);
+        dump("p5_nonnull_top", &declared_as(&declared, &batch));
+        let list = ListArray::from_iter_primitive::<arrow_array::types::Int64Type, _, _>(vec![Some(vec![Some(1), None])]);
+        let schema = Arc::new(Schema::new(vec![Field::new("l", list.data_type().clone(), true)]));
+        let batch = RecordBatch::try_new(Arc::clone(&schema), vec![Arc::new(list)]).unwrap();
+        let declared = Schema::new(vec![Field::new(
+            "l",
+            DataType::List(Arc::new(Field::new_list_field(DataType::Int64, false))),
+            true,
+        )]);
+        dump("p5_nonnull_nested", &declared_as(&declared, &batch));
+    }
+}

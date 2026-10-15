@@ -1,0 +1,4 @@
+{"dt":{"days":1,"milliseconds":-2},"m":{"months":0},"mdn":{"months":1,"days":2,"nanoseconds":-3}}
+{"dt":{"days":-2147483648,"milliseconds":2147483647},"m":{"months":-3},"mdn":{"months":-1,"days":0,"nanoseconds":9223372036854775807}}
+{"dt":{"days":0,"milliseconds":0},"m":null,"mdn":{"months":0,"days":0,"nanoseconds":0}}
+

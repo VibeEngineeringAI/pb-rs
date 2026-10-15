@@ -1,0 +1,9 @@
+{
+  "review": "docs/phase6-review-wave-contracts-sol-r2.md",
+  "sha256": "3e6bcea3f8fd7b60486cc2763bf64df475785593eb50b1fb686ace8d4809bed7",
+  "disposition": "accept CW1-CW3 within scope; successor replay still required",
+  "independent_tests": 40,
+  "saved_native_captures": 12,
+  "old_authority_provenance": "unverified",
+  "whole_phase_acceptance": false
+}

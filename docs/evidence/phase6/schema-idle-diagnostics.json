@@ -1,0 +1,21 @@
+{
+  "scope": "schema-only diagnostics functional, no timing claim",
+  "artifact": "/home/ajs/.cache/pb-phase6/tmp/schema-idle-diagnostics-1791979466248135642",
+  "resources": {
+    "subscriptions_started": 1,
+    "flight_messages_received": 1,
+    "batches_decoded": 0,
+    "rows_decoded": 0,
+    "max_flight_payload_bytes": 408,
+    "max_dictionary_buffer_bytes": 0,
+    "max_batch_buffer_bytes": 0,
+    "max_staging_length_bytes": 0,
+    "max_staging_capacity_bytes": 0,
+    "last_staging_capacity_bytes": 0,
+    "max_application_messages_inflight": 1,
+    "max_renderer_scratch_capacity_bytes": 0,
+    "last_renderer_scratch_capacity_bytes": 0,
+    "semantics": "owner-reported maxima, not simultaneous totals, unique heap or RSS; shared Arrow buffers may be counted by several owners; Flight payload excludes protobuf/framing and transport read-ahead; rows count decoded rows before rendering truncation; capacities are Rust Vec capacities"
+  },
+  "qualification": "Historical functional check of literal 1/0 delivery-marker instrumentation; not independent evidence of an in-flight upper bound. Review3 replaced it with accepted-send/ack outstanding counter; fresh process verification pending."
+}

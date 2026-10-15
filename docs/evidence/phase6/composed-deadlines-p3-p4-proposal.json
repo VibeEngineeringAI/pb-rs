@@ -1,0 +1,203 @@
+{
+  "status": "OFF-TREE composed proposal; all full suites pass; fresh independent composition review pending",
+  "manifest": {
+    "path": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/manifest.json",
+    "sha256": "c107d260e814f845787008968873d93819d556d7433fcc398484216a443b998e"
+  },
+  "variants": {
+    "phase6": {
+      "root": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail",
+      "before": {
+        "phase3.py": "7f8deaf00185b94cd5934fbe6542e0393ded5f25aadd918012bd2f072d222f9d",
+        "test_phase3.py": "f11f07cd571fe9d8b3c364c20a93aaf6cbd81b999dc077b2126374c5488deb59",
+        "test_phase4.py": "377824659f5522a891f6f46a6045a515661dd9f0268ee484cbe11e55778d5658"
+      },
+      "after": {
+        "phase3.py": "01668670868218625371c386820ea18107c29b24a667b684ed1783be3f18eadd",
+        "test_phase3.py": "812e96091659d8f8e4fabdf4bdeae537d4f2dc153f41a2cb0faa59289bf2e434",
+        "test_phase4.py": "94f2d11cd3a1a6a5a815bb0f1676f9c800c4cd804299136957244cbea8a2eaa1"
+      },
+      "patch": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase6/combined.patch",
+      "patch_sha256": "458036a6bf391ba758a641c8eafe2893bebc168aedd2c1a31e4967e8afde1ba8",
+      "apply": [
+        {
+          "argv": [
+            "git",
+            "apply",
+            "--check",
+            "--verbose",
+            "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase6/combined.patch"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": "Checking patch harness/phase3.py...\nChecking patch harness/test_phase3.py...\nChecking patch harness/test_phase4.py...\n"
+        },
+        {
+          "argv": [
+            "git",
+            "apply",
+            "--verbose",
+            "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase6/combined.patch"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": "Checking patch harness/phase3.py...\nChecking patch harness/test_phase3.py...\nChecking patch harness/test_phase4.py...\nApplied patch harness/phase3.py cleanly.\nApplied patch harness/test_phase3.py cleanly.\nApplied patch harness/test_phase4.py cleanly.\n"
+        }
+      ],
+      "ast_changed": [
+        "normalize_timeout"
+      ],
+      "dependencies": {
+        "phase1.py": "e0216062f0980168e8ea9708f819e773c68e4452a7750f689f9ca29e8c5dc6a6",
+        "phase2.py": "e1f8626b68b05f20edce19c8f6ee9dddff9c4d9fa9989ef94c891a745345562a",
+        "phase4.py": "748f2702a30f9727df53b8f0cd7abfe9f06f3effb8e80d7255c7b335824a9327",
+        "phase5.py": "abcf687f772897cefdf0346982701a725e0165b3b55c0fe3f6997a494cce8b90",
+        "run.py": "b280d1295a4b351e6f2d838c56acaac58b2247bb77fc9881587bb7bbe849a076",
+        "cases.py": "b892e1b592111d8115ceddac61ca732942dd6b9b7ef900ce4a023cff8420ebfa",
+        "test_phase5.py": "acdc9203e83ac82b58c8cc8ba847c06e21ef142bef1c3d96a8376cc9b0741ebe"
+      },
+      "p4_block_sha256": "07d14ebc2b612a507e9e8a6d541a23b06aebd075ce6844b9153977bd2fdfdc86",
+      "p4_test_addition_sha256": "d190de932672ad8c9a9dcb9ba9e4f0616f595cc0ff22362fc8725ae8c014544e"
+    },
+    "phase7": {
+      "root": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive",
+      "before": {
+        "phase3.py": "39d16e2ba220aad27ec0e67646e04aacbcdd9a9c28d3013f3f04ddefec789099",
+        "test_phase3.py": "0bea853fcedcf6dd2724d057d88813440454183a64f643c944321c624f414e95",
+        "test_phase4.py": "1404a43de6552c1d9b7060acb319d699cabdbd2d3813624339e8eae3968e9278"
+      },
+      "after": {
+        "phase3.py": "33be7605b2e3ea44712a8118b8909b129d00ef3f46c7f4d3932a522351e2b7bd",
+        "test_phase3.py": "ef1a47dc263d18ed94fac7577a7e2597699973e74a4b42d3cbdc598cca9fab59",
+        "test_phase4.py": "b1ed46ac5530a344f408303a1c09e4f4f0eaaaa50c2304b7f7984a592b7c34fb"
+      },
+      "patch": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase7/combined.patch",
+      "patch_sha256": "b7b9e37c6e19442cd0c8c162218b4d349f4f118f8204095210c7c2fe645346e2",
+      "apply": [
+        {
+          "argv": [
+            "git",
+            "apply",
+            "--check",
+            "--verbose",
+            "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase7/combined.patch"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": "Checking patch harness/phase3.py...\nChecking patch harness/test_phase3.py...\nChecking patch harness/test_phase4.py...\n"
+        },
+        {
+          "argv": [
+            "git",
+            "apply",
+            "--verbose",
+            "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase7/combined.patch"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": "Checking patch harness/phase3.py...\nChecking patch harness/test_phase3.py...\nChecking patch harness/test_phase4.py...\nApplied patch harness/phase3.py cleanly.\nApplied patch harness/test_phase3.py cleanly.\nApplied patch harness/test_phase4.py cleanly.\n"
+        }
+      ],
+      "ast_changed": [
+        "normalize_timeout"
+      ],
+      "dependencies": {
+        "phase1.py": "26ca8380b608a49404da1f8bc7233e577b2d48044d5194cdba20186b38ffaca5",
+        "phase2.py": "66568cd9b0663011547763a258875f45949b21f5ed4c05fe9a695cebdc89cfbd",
+        "phase4.py": "e5105ae22b0c599901d8622adf4e2942abb05a8c38bd220e8f685cae58782213",
+        "phase5.py": "2bd03937195ea26b07faffa9281d109013d0b785fe33c63fa10905ce262d4c85",
+        "run.py": "b280d1295a4b351e6f2d838c56acaac58b2247bb77fc9881587bb7bbe849a076",
+        "cases.py": "b892e1b592111d8115ceddac61ca732942dd6b9b7ef900ce4a023cff8420ebfa",
+        "test_phase5.py": "8cca27426188362019b3314dc765e8fd4789f07d67a26cdea75c184899c4b53f"
+      },
+      "p4_block_sha256": "07d14ebc2b612a507e9e8a6d541a23b06aebd075ce6844b9153977bd2fdfdc86",
+      "p4_test_addition_sha256": "d190de932672ad8c9a9dcb9ba9e4f0616f595cc0ff22362fc8725ae8c014544e"
+    }
+  },
+  "suite_runs": {
+    "phase6-normal": {
+      "path": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase6-normal.json",
+      "sha256": "561217ba5d42f3a3806037022adec8b08cf17d8d8938bec37c1108b6b9ab7229",
+      "tests": 101,
+      "passed": true,
+      "imports": {
+        "test_phase3": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase6/staged/harness/test_phase3.py",
+        "phase1": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase6/staged/harness/phase1.py",
+        "cases": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase6/staged/harness/cases.py",
+        "run": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase6/staged/harness/run.py",
+        "phase2": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase6/staged/harness/phase2.py",
+        "phase3": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase6/staged/harness/phase3.py",
+        "test_phase4": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase6/staged/harness/test_phase4.py",
+        "phase4": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase6/staged/harness/phase4.py",
+        "test_phase5": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase6/staged/harness/test_phase5.py",
+        "phase5": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase6/staged/harness/phase5.py"
+      },
+      "process_event_count": 57,
+      "inputs_unchanged": true
+    },
+    "phase6-optimized": {
+      "path": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase6-optimized.json",
+      "sha256": "97d9d3842a89fa72c25ab81b8c148d3f6517ff81126f83680451eee72432fcdd",
+      "tests": 101,
+      "passed": true,
+      "imports": {
+        "test_phase3": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase6/staged/harness/test_phase3.py",
+        "phase1": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase6/staged/harness/phase1.py",
+        "cases": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase6/staged/harness/cases.py",
+        "run": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase6/staged/harness/run.py",
+        "phase2": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase6/staged/harness/phase2.py",
+        "phase3": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase6/staged/harness/phase3.py",
+        "test_phase4": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase6/staged/harness/test_phase4.py",
+        "phase4": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase6/staged/harness/phase4.py",
+        "test_phase5": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase6/staged/harness/test_phase5.py",
+        "phase5": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase6/staged/harness/phase5.py"
+      },
+      "process_event_count": 57,
+      "inputs_unchanged": true
+    },
+    "phase7-normal": {
+      "path": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase7-normal.json",
+      "sha256": "daa8b4c269abb47a179b5f4c5535f3914850a0dafa7b9dea8dc7ffd73f8a7530",
+      "tests": 102,
+      "passed": true,
+      "imports": {
+        "test_phase3": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase7/staged/harness/test_phase3.py",
+        "phase1": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase7/staged/harness/phase1.py",
+        "cases": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase7/staged/harness/cases.py",
+        "run": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase7/staged/harness/run.py",
+        "phase2": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase7/staged/harness/phase2.py",
+        "phase3": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase7/staged/harness/phase3.py",
+        "test_phase4": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase7/staged/harness/test_phase4.py",
+        "phase4": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase7/staged/harness/phase4.py",
+        "test_phase5": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase7/staged/harness/test_phase5.py",
+        "phase5": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase7/staged/harness/phase5.py"
+      },
+      "process_event_count": 57,
+      "inputs_unchanged": true
+    },
+    "phase7-optimized": {
+      "path": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase7-optimized.json",
+      "sha256": "4f14f863fb8561519eee4fc543911fef300923e2cd851e8daef214a60a1a44a3",
+      "tests": 102,
+      "passed": true,
+      "imports": {
+        "test_phase3": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase7/staged/harness/test_phase3.py",
+        "phase1": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase7/staged/harness/phase1.py",
+        "cases": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase7/staged/harness/cases.py",
+        "run": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase7/staged/harness/run.py",
+        "phase2": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase7/staged/harness/phase2.py",
+        "phase3": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase7/staged/harness/phase3.py",
+        "test_phase4": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase7/staged/harness/test_phase4.py",
+        "phase4": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase7/staged/harness/phase4.py",
+        "test_phase5": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase7/staged/harness/test_phase5.py",
+        "phase5": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase7/staged/harness/phase5.py"
+      },
+      "process_event_count": 57,
+      "inputs_unchanged": true
+    }
+  },
+  "p4_corrections": "docs/evidence/phase6/p4-header-deadline-proposal-v2.json",
+  "promotion": false,
+  "native_deadline_replay": false,
+  "note": "Both phase-specific test/dependency sets copied separately. Actual bounded Go/fixture/shell/socket tests run; no 60/120s cases here. Original native failing reports preserved."
+}

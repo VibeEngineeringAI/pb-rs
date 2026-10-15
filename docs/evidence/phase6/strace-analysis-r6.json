@@ -1,0 +1,163 @@
+{
+  "kind": "functional_profile_analysis_only",
+  "analysis": {
+    "path": "/home/ajs/.cache/pb-phase6/profile-probe-strace-one-row-01-analysis/analysis.json",
+    "sha256": "4d25eba4a6de849eb3afd4b226d10bf0b3ebef9c482b8163c1a03b25eed85cc4"
+  },
+  "execution": {
+    "analysis_id": "profile-probe-strace-one-row-01-analysis",
+    "argv": [
+      "python3",
+      "harness/phase6_profiles.py",
+      "analyze",
+      "--report",
+      "/home/ajs/.cache/pb-phase6/profile-probe-strace-one-row-01/report.json",
+      "--report-sha256",
+      "98161533a2fd603f7639fd0c28f7e532f4ea09891e9f46cb224db55514c6bef0",
+      "--sidecar-sha256",
+      "9cadf783f554a22fb6c3bf20c88e9e110ed0b6026f85a45c7dcde898866c3f5d",
+      "--out",
+      "/home/ajs/.cache/pb-phase6/profile-probe-strace-one-row-01-analysis",
+      "--budget-s",
+      "200"
+    ],
+    "pid": 2199262,
+    "token": "phase7-quiet-phase6-strace-analysis-20261014T210710Z",
+    "ack_utc": "2026-10-14T21:07:10Z",
+    "start_deadline_utc": "2026-10-14T21:09:10+00:00",
+    "started_utc": "2026-10-14T21:07:27.854183+00:00",
+    "started_monotonic": 1023406.239299366,
+    "stop_by_utc": "2026-10-14T21:11:17.854183+00:00",
+    "scope": "saved strace analysis only; no capture or native product",
+    "exit_code": 3,
+    "ended_utc": "2026-10-14T21:07:28.420037+00:00",
+    "elapsed_s": 0.5658656000159681
+  },
+  "cleanup": {
+    "analysis_id": "profile-probe-strace-one-row-01-analysis",
+    "token": "phase7-quiet-phase6-strace-analysis-20261014T210710Z",
+    "started_utc": "2026-10-14T21:07:27.854183+00:00",
+    "ended_utc": "2026-10-14T21:07:28.420037+00:00",
+    "cleanup_verified_utc": "2026-10-14T21:09:39.735932+00:00",
+    "pid_gone": true,
+    "scoped_process_matches": [],
+    "lock_reacquired_nonblocking_and_released": true,
+    "exit_code": 3,
+    "analysis_sha256": "4d25eba4a6de849eb3afd4b226d10bf0b3ebef9c482b8163c1a03b25eed85cc4",
+    "analysis_complete": true,
+    "interpretation": {
+      "status": "analysis_complete_no_adequacy_criterion",
+      "interpretable_captures": 0,
+      "roles_with_interpretable": [],
+      "roles_without_interpretable": [
+        "go-symbolized",
+        "rust-symbolized"
+      ],
+      "adequacy_criterion": null
+    },
+    "identities_checked": 53,
+    "release": true
+  },
+  "capture_report": {
+    "path": "/home/ajs/.cache/pb-phase6/profile-probe-strace-one-row-01/report.json",
+    "sha256": "98161533a2fd603f7639fd0c28f7e532f4ea09891e9f46cb224db55514c6bef0",
+    "size_bytes": 103968
+  },
+  "sidecar": {
+    "path": "/home/ajs/.cache/pb-phase6/profile-adapter-v6/profile-sidecar.json",
+    "sha256": "9cadf783f554a22fb6c3bf20c88e9e110ed0b6026f85a45c7dcde898866c3f5d",
+    "size_bytes": 8413
+  },
+  "analysis_harness": {
+    "phase6_profiles": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/phase6_profiles.py",
+      "sha256": "032cec6338fb7126a97a1bd28eeb53d428442a598287ef4fe267160b7650ac73",
+      "size_bytes": 86910
+    },
+    "phase6_workloads": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/phase6_workloads.py",
+      "sha256": "e2e83fa118c58a96ff55700be88f95f9b8b6479a289a8c59f447f836389fde51",
+      "size_bytes": 81217
+    },
+    "profile_external": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/profile_external.py",
+      "sha256": "a0f0d7a315772ed933eae235b0c55850ce8b23da25132c6ccbafc9a4e0256a3c",
+      "size_bytes": 13942
+    },
+    "run": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/run.py",
+      "sha256": "b280d1295a4b351e6f2d838c56acaac58b2247bb77fc9881587bb7bbe849a076",
+      "size_bytes": 59785
+    },
+    "manifest": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/manifest.py",
+      "sha256": "f65de9a0f99a24e4d471a5c9e5946af946cddfc98f6e5d6946c702760c38d159",
+      "size_bytes": 9255
+    },
+    "diagnose": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/diagnose.py",
+      "sha256": "169de15bbec492ec4dec7f04b46edcf65391a79081ba6bb61c71c8dcc83f4ae5",
+      "size_bytes": 25385
+    },
+    "cases": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/cases.py",
+      "sha256": "b892e1b592111d8115ceddac61ca732942dd6b9b7ef900ce4a023cff8420ebfa",
+      "size_bytes": 7557
+    },
+    "phase3_workloads": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/phase3_workloads.py",
+      "sha256": "4753b1d95d7392ce86ce9eace44537f6efeff24f2278e2ecb3a2d0caac826b87",
+      "size_bytes": 2289
+    }
+  },
+  "end_identity_check": {
+    "passed": true,
+    "changed": [],
+    "checked": 53,
+    "inside_lock": true
+  },
+  "analysis_harness_end_passed": true,
+  "analysis_complete": true,
+  "interpretation": {
+    "status": "analysis_complete_no_adequacy_criterion",
+    "interpretable_captures": 0,
+    "roles_with_interpretable": [],
+    "roles_without_interpretable": [
+      "go-symbolized",
+      "rust-symbolized"
+    ],
+    "adequacy_criterion": null
+  },
+  "roles": {
+    "go-symbolized": {
+      "planned_captures": 1,
+      "analyzed": 1,
+      "skipped": 0,
+      "errors": 0,
+      "interpretable_captures": 0,
+      "statuses": {
+        "analyzed": 1
+      },
+      "stack_status": {}
+    },
+    "rust-symbolized": {
+      "planned_captures": 1,
+      "analyzed": 1,
+      "skipped": 0,
+      "errors": 0,
+      "interpretable_captures": 0,
+      "statuses": {
+        "analyzed": 1
+      },
+      "stack_status": {}
+    }
+  },
+  "exit_status": 3,
+  "performance_interpretation": false,
+  "independent_analysis_review_performed": false,
+  "limitations": [
+    "Processing completed without an adequacy criterion; neither capture is interpretable.",
+    "The earlier independent review covers capture evidence, not this subsequent analysis.",
+    "No new capture or product process was launched."
+  ]
+}

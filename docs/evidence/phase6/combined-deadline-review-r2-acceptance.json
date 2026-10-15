@@ -1,0 +1,39 @@
+{
+  "scope": "Scoped independent review closure of exact combined phase3 proposal; not live promotion or fresh full retained replay",
+  "accepted_patch": {
+    "path": "/home/ajs/.cache/pb-phase7/combined-body-lookahead-r2/phase6/combined.patch",
+    "sha256": "00f14a8abb88858ce8ecd7160292f0c2d835210743295f7e3cf8f456154f8795"
+  },
+  "phase6_after": {
+    "runner_sha256": "af783ab65a14512f0df07f81948e03dd082b103a78ed460554c5981b909d95f2",
+    "test_sha256": "812e96091659d8f8e4fabdf4bdeae537d4f2dc153f41a2cb0faa59289bf2e434"
+  },
+  "reviews": {
+    "opus": {
+      "path": "docs/phase6-combined-deadline-review-opus-r2.md",
+      "sha256": "5ac476942960fcd37cb346c9d3c5dce01ce99246a451041b46be59432b66d906",
+      "scope": "Phase6 full37normal/-O on copied Phase6 dependencies + frozen fixture; phase7 lightchecks"
+    },
+    "sol": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-review-combined-deadline-sol-r2.md",
+      "sha256": "19e51b55be97e224033c5ae00c3d0f1f9b43182a2203847b4450c955e74b8af4",
+      "scope": "both variants37normal/-O; shared phase7 staging dependencies disclosed"
+    }
+  },
+  "opus_execution": "24 short pinnedGo queries +4version checks over2fullsuites; no new60s/Rust/build/performance",
+  "root_dispositions": {
+    "F1": "Use independent Opus copied Phase6 dependency/frozen fixture executions as Phase6 suite evidence; do not relabel companion staged dependencies",
+    "F2": "Record six oracle cases twice per suite, not six processes",
+    "F3": "Equivalent JSON map mutant survives; exact verified source delta only2entries, no change required",
+    "F4": "All future composition uses unconditional LF splitting",
+    "F5": "Both exact bare text cases accepted symmetrically; body-only no-lookahead-exception wording does not apply to combined patch"
+  },
+  "archived_reduction": "14actual captures126artifacts;72lookahead+20body directednonself pairs clean, originalsfailedreports preserved",
+  "live_promoted": false,
+  "remaining": [
+    "Hold shared livebase until separate phase4 review completes",
+    "Exact editwindow with companion; per-base guards preserved",
+    "Compose exact scoped changes and execute shared suite on final source identity",
+    "Focused actual candidate replay; preserve original failed reports"
+  ]
+}

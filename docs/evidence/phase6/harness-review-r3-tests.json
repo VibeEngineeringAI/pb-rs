@@ -1,0 +1,16 @@
+{
+  "scope": "Combined phase6 differential harness and collector correctness after observer audit",
+  "command": "PYTHONPATH=harness python3 -m unittest -v test_phase6 test_phase6_workloads",
+  "disk_tmp": "/home/ajs/.cache/pb-phase6/tmp",
+  "tests": 89,
+  "failed": 0,
+  "log": "/home/ajs/.cache/pb-phase6/tmp/central-phase6-harness-r3.log",
+  "log_sha256": "bba257023a5e7e299b95e82d917452bde76f4b27118d021901c5f3a9c201e070",
+  "source_sha256": {
+    "harness/phase6.py": "f9f8ed51b42aee896b6f2fc11ff6eb806c9243cfb75f49f99b10f77e83a1f445",
+    "harness/test_phase6.py": "33b7e13d3cf0720296fbce284f8aa28eed4a0314ead65e4de0fb6a672dfe7cb4",
+    "harness/phase6_workloads.py": "eb793889efb5a8f467de1cde2f64dcaa7f50d89ddfedc2c799244f4ff8b96252",
+    "harness/test_phase6_workloads.py": "fad9c257408c3774acb8091e6472acde83a45de44d71f2ee7887755eaaff1cd9"
+  },
+  "performance_campaign": false
+}

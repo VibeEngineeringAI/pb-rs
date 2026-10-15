@@ -1,0 +1,101 @@
+// R6 whole-source review probe: a record batch arriving where Go v13 expects
+// an initial dictionary. Replays pinned cmd/tail.go's reader loop (Read,
+// RecordToJSON, Println, isStreamEnd on io.EOF) over a fake Flight stream.
+package main
+
+import (
+	"bytes"
+	"errors"
+	"fmt"
+	"io"
+	"os"
+
+	"github.com/apache/arrow/go/v13/arrow"
+	"github.com/apache/arrow/go/v13/arrow/array"
+	"github.com/apache/arrow/go/v13/arrow/flight"
+	"github.com/apache/arrow/go/v13/arrow/ipc"
+	"github.com/apache/arrow/go/v13/arrow/memory"
+)
+
+type capture struct{ msgs []*flight.FlightData }
+
+func (c *capture) Send(d *flight.FlightData) error {
+	c.msgs = append(c.msgs, &flight.FlightData{DataHeader: append([]byte(nil), d.DataHeader...), DataBody: append([]byte(nil), d.DataBody...)})
+	return nil
+}
+
+type replay struct{ msgs []*flight.FlightData }
+
+func (r *replay) Recv() (*flight.FlightData, error) {
+	if len(r.msgs) == 0 {
+		return nil, io.EOF
+	}
+	m := r.msgs[0]
+	r.msgs = r.msgs[1:]
+	return m, nil
+}
+
+var mem = memory.NewGoAllocator()
+var schema = arrow.NewSchema([]arrow.Field{
+	{Name: "d", Type: &arrow.DictionaryType{IndexType: arrow.PrimitiveTypes.Int32, ValueType: arrow.BinaryTypes.String}, Nullable: true},
+	{Name: "n", Type: arrow.PrimitiveTypes.Int64, Nullable: true},
+}, nil)
+
+func record(values []string) arrow.Record {
+	db := array.NewDictionaryBuilder(mem, schema.Field(0).Type.(*arrow.DictionaryType)).(*array.BinaryDictionaryBuilder)
+	nb := array.NewInt64Builder(mem)
+	for i, v := range values {
+		db.AppendString(v)
+		nb.Append(int64(i + 1))
+	}
+	return array.NewRecord(schema, []arrow.Array{db.NewArray(), nb.NewArray()}, int64(len(values)))
+}
+
+func write(rows []string) []*flight.FlightData {
+	c := &capture{}
+	w := flight.NewRecordWriter(c, ipc.WithSchema(schema))
+	if err := w.Write(record(rows)); err != nil {
+		panic(err)
+	}
+	w.Close()
+	return c.msgs
+}
+
+func run(name string, msgs []*flight.FlightData) {
+	fmt.Fprintf(os.Stderr, "== %s (%d messages)\n", name, len(msgs))
+	fmt.Printf("== %s\n", name)
+	reader, err := flight.NewRecordReader(&replay{msgs})
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "init error: %v\n", err)
+		return
+	}
+	for {
+		rec, err := reader.Read()
+		if err != nil {
+			if errors.Is(err, io.EOF) && err == io.EOF {
+				fmt.Fprintf(os.Stderr, "stream end (reconnect): %v\n", err)
+			} else {
+				fmt.Fprintf(os.Stderr, "fatal: %v\n", err)
+			}
+			return
+		}
+		var buf bytes.Buffer
+		array.RecordToJSON(rec, &buf)
+		fmt.Println(buf.String())
+	}
+}
+
+func main() {
+	empty := write(nil)              // schema, dict(empty), record(0 rows)
+	two := write([]string{"a", "b"}) // schema, dict, record(2 rows)
+	three := write([]string{"x", "y", "z"})
+	fmt.Fprintf(os.Stderr, "empty=%d two=%d three=%d messages\n", len(empty), len(two), len(three))
+	// Control: the normal stream.
+	run("control", two)
+	// Zero-row record (absent length field -> read as dictionary id 0) before the dictionary.
+	run("zero-row-record-before-dictionary", []*flight.FlightData{two[0], empty[len(empty)-1], two[1], two[2]})
+	// Only the zero-row record where the dictionary is expected, then EOF.
+	run("zero-row-record-then-eof", []*flight.FlightData{two[0], empty[len(empty)-1]})
+	// Characterized control: 3-row record before the dictionary (id 3 unknown).
+	run("three-row-record-before-dictionary", []*flight.FlightData{two[0], three[len(three)-1], two[1], two[2]})
+}

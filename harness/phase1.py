@@ -428,6 +428,8 @@ PHASE5_OPERATIONS = {
     "role remove", "role list",
 }
 
+PHASE6_OPERATIONS = {"tail"}
+
 
 def deferred_guards(surface=None):
     """Candidate safety assertions, never Go parity or benchmark workloads."""
@@ -440,7 +442,7 @@ def deferred_guards(surface=None):
     nodes = surface["nodes"]
     for node in nodes:
         path = node["path"]
-        if " ".join(path) in PHASE2_OPERATIONS | PHASE4_OPERATIONS | PHASE5_OPERATIONS:
+        if " ".join(path) in PHASE2_OPERATIONS | PHASE4_OPERATIONS | PHASE5_OPERATIONS | PHASE6_OPERATIONS:
             continue
         if not path or path in (["help"], ["agent"], ["version"]):
             continue

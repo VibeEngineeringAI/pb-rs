@@ -32,7 +32,7 @@ import (
 )
 
 // capabilities lists optional route features; phase3.py checks them before export.
-var capabilities = []string{"generate", "gzip", "milestones"}
+var capabilities = []string{"generate", "gzip", "milestones", "phase6"}
 
 type route struct {
 	Method       string `json:"method"`
@@ -135,6 +135,8 @@ type scenario struct {
 	Routes  []route           `json:"routes"`
 	Headers map[string]string `json:"headers"`
 	Flight  *flightPlan       `json:"flight"`
+	// Phase6 enables phase6.go; absent, the fixture behaves exactly as before.
+	Phase6 *p6Config `json:"phase6"`
 }
 
 type request struct {
@@ -154,6 +156,7 @@ type fixture struct {
 	mu         sync.Mutex
 	requests   []request
 	milestones []milestone
+	p6         *phase6
 }
 
 func (f *fixture) mark(index int, update func(*milestone)) {
@@ -167,6 +170,10 @@ var contractHeaders = []string{"authorization", "x-api-key", "x-p-tenant", "cook
 func (f *fixture) record(r request) {
 	f.mu.Lock()
 	defer f.mu.Unlock()
+	if f.p6 != nil && len(f.requests) >= f.p6.cfg.TraceLimit {
+		f.p6.traceDropped.Add(1)
+		return
+	}
 	f.requests = append(f.requests, r)
 }
 
@@ -208,6 +215,9 @@ func (f *fixture) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		_ = json.NewEncoder(w).Encode(f.milestones)
 		return
 	}
+	if f.p6 != nil && f.p6.serveControl(w, r) {
+		return
+	}
 	received := monotonicNS()
 	body, err := io.ReadAll(io.LimitReader(r.Body, 8<<20))
 	if err != nil {
@@ -227,12 +237,20 @@ func (f *fixture) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 	}
-	entry.Unexpected = selected == nil
+	entry.Unexpected = selected == nil && (f.p6 == nil || f.p6.route(r) == nil)
 	f.record(entry)
 	f.mu.Lock()
 	index := len(f.milestones)
 	f.milestones = append(f.milestones, milestone{Request: index, ReceivedMonotonicNS: received, AcceptEncoding: r.Header.Get("Accept-Encoding")})
 	f.mu.Unlock()
+	if f.p6 != nil {
+		var done func()
+		w, done = f.p6.observeHTTP(w, r, received, entry.Headers, index)
+		defer done()
+		if f.p6.serveRoute(f, w, r, index) {
+			return
+		}
+	}
 	if !f.authorized(entry.Headers) {
 		http.Error(w, "fixture: incorrect authentication", http.StatusUnauthorized)
 		return
@@ -299,6 +317,11 @@ func (f *fixture) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (f *fixture) DoGet(ticket *flight.Ticket, stream flight.FlightService_DoGetServer) error {
+	if f.p6 != nil {
+		if handled, err := f.p6.doGet(f, ticket, stream); handled {
+			return err
+		}
+	}
 	headers := map[string]string{}
 	md, _ := metadata.FromIncomingContext(stream.Context())
 	for _, h := range contractHeaders {
@@ -376,21 +399,36 @@ func run() error {
 	if err := f.plan.prepare(); err != nil {
 		return err
 	}
-	httpListener, err := net.Listen("tcp", "127.0.0.1:0")
+	host := "127.0.0.1"
+	if f.plan.Phase6 != nil {
+		if f.p6, err = newPhase6(f.plan.Phase6); err != nil {
+			return err
+		}
+		defer f.p6.close()
+		host = f.p6.listenHost()
+	}
+	httpListener, err := net.Listen("tcp", net.JoinHostPort(host, "0"))
 	if err != nil {
 		return err
 	}
 	defer httpListener.Close()
-	grpcListener, err := net.Listen("tcp", "127.0.0.1:0")
+	grpcListener, err := net.Listen("tcp", net.JoinHostPort(host, "0"))
 	if err != nil {
 		return err
 	}
 	defer grpcListener.Close()
 	f.grpcPort = grpcListener.Addr().(*net.TCPAddr).Port
-	server := grpc.NewServer()
+	banner := map[string]any{"url": "http://" + httpListener.Addr().String(), "grpc_port": f.grpcPort}
+	var options []grpc.ServerOption
+	if f.p6 != nil {
+		if options, httpListener, grpcListener, err = f.p6.start(f, banner, httpListener, grpcListener); err != nil {
+			return err
+		}
+	}
+	server := grpc.NewServer(options...)
 	flight.RegisterFlightServiceServer(server, f)
 	go func() { _ = server.Serve(grpcListener) }()
-	if err := json.NewEncoder(os.Stdout).Encode(map[string]any{"url": "http://" + httpListener.Addr().String(), "grpc_port": f.grpcPort}); err != nil {
+	if err := json.NewEncoder(os.Stdout).Encode(banner); err != nil {
 		return err
 	}
 	return http.Serve(httpListener, f)

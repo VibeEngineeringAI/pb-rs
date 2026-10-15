@@ -1,0 +1,27 @@
+{
+  "scope": "Root acceptance of independently reviewed offline descriptive reporter; no performance, budget, source, or whole-phase acceptance",
+  "review": {
+    "path": "docs/phase6-resource-summary-review-opus-r2.md",
+    "sha256": "653dd0dbc6852166d27713b240db552304feadfb44127fb8fca218847324455f"
+  },
+  "implementation": {
+    "path": "harness/phase6_resource_summary.py",
+    "sha256": "061ef1c3473f8326d3c7d169334269d87702c85c3ebe239361be9fe0b9f925c4"
+  },
+  "tests": {
+    "path": "harness/test_phase6_resource_summary.py",
+    "sha256": "f8d970c0417c83b7bd64d45dee9d7cdcde3bc046c2e6bed30b321e2b690290dd"
+  },
+  "reviewed_doc_sha256": "10b1d94a58db9da3cb8267bbb40fc8a97b17c6646cfa441984e07e5dde1fc82e",
+  "clarified_doc_sha256": "97e84e5d65da6a87f3b2ef5be91aff2915c1ed3794afc46a9f4cbe22561daf37",
+  "production_code_changed_after_review": false,
+  "dispositions": {
+    "RS-R1-1..6": "independently closed with actual guarded tests and real collector-shaped mocked finalizers",
+    "portability_isolation": "35 discovery tests +sentinel, setup-failure cleanup, originalcachedenied verified",
+    "R2-1": "docclarification invalid coverage total is signednet; zero doesnotestablishnocoverageloss",
+    "R2-2": "docclarification flagtally sourcevalidonly",
+    "R2-3": "declared malformednestedtypes failclosednonzero/nooutput withtraceback; no catchall"
+  },
+  "accepted_scope": "offline descriptive resource extraction only",
+  "review_cache": "/home/ajs/.cache/pb-phase6/resource-summary-review-r2"
+}

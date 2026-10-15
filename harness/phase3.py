@@ -1474,13 +1474,40 @@ def normalize_timeout(case, data):
     """Only timeout races observed in repeated Go deadline fixtures."""
     if not case.get("compare", {}).get("timeout_cause"):
         return data
+    if case["name"] == "p4-deadline-header":
+        # Go 1.25.4 cloudRefreshTransport deadline/timer race; R4/R5/R6 captures.
+        # Match the whole normalized stream, including every Usage byte and LF.
+        prefix = b'Error: Get "http://<FIXTURE>/prometheus/api/v1/labels?stream=select-dataset": '
+        usage = (b'Usage:\n  pb promql labels [stream] [flags]\n\nExamples:\n'
+                 b'  pb promql labels otel_metrics\n  pb promql labels --dataset otel_metrics\n\nFlags:\n'
+                 b'  -d, --dataset string   Metrics dataset (default "select-dataset")\n'
+                 b'  -f, --from string      Start time filter (optional)\n'
+                 b'  -h, --help             help for labels\n'
+                 b'  -o, --output string    Output format: text or json (default "text")\n'
+                 b'  -t, --to string        End time filter (optional)\n\n')
+        suffix = b' (Client.Timeout exceeded while awaiting headers)'
+        for cause in (b'context deadline exceeded',
+                      b'context deadline exceeded' + suffix,
+                      b'net/http: request canceled' + suffix):
+            if data == prefix + cause + b"\n" + usage:
+                return prefix + b"<CLIENT-TIMEOUT>" + suffix + b"\n" + usage
+        # Do not let the legacy substring rule weaken this whole-stream guard.
+        return data
     bare_context = {
+        "p3-deadline-text-empty-array-lookahead": b"failed to read response body",
         "p3-deadline-preview-needs-one-more-byte": b"failed to read error response body",
         "p3-deadline-not-reset-per-chunk": b"failed to stream response body",
+        "p3-deadline-body-stall-text": b"failed to stream response body",
     }.get(case["name"])
     if bare_context is not None and data == b"Error: " + bare_context + b": context deadline exceeded\n":
         return (b"Error: " + bare_context + b": <CLIENT-TIMEOUT> "
                 b"(Client.Timeout or context cancellation while reading body)\n")
+    # cloudRefreshTransport is unknown to net/http: its context deadline may
+    # beat setRequestCancel's timer/atomic flag. Observed in real 60s Go runs;
+    # keep this exception at the exact second-hop error, not arbitrary URLs.
+    if (case["name"] == "p3-deadline-spans-redirects" and data ==
+            b'Error: request execution failed: Post "http://<FIXTURE>/v2/api/v1/query": context deadline exceeded\n'):
+        data = data[:-1] + b" (Client.Timeout exceeded while awaiting headers)\n"
     return TIMEOUT_CAUSE.sub(rb"<CLIENT-TIMEOUT> (\1)", data)
 
 

@@ -1,0 +1,294 @@
+{
+  "stdout_bytes": 162,
+  "stdout_sha256": "50f93c839dfdd227382e2ecd88ab7be87e83ce8855794437fcfb781c780d04a9",
+  "rows": 1,
+  "batches": 1,
+  "invalid_records": 0,
+  "sequence_errors": 0,
+  "collector_mode": "full",
+  "json_parse_attempts": 1,
+  "row_validation": "per-record JSON and sequence",
+  "first_record_ns": 995059605033022,
+  "first_batch_ns": 995059605033022,
+  "last_record_ns": 995059605033022,
+  "first_stdout_ns": 995059605033022,
+  "last_stdout_ns": 995059605033022,
+  "visibility_dropped_bytes": 0,
+  "stdout_prefix_dropped_bytes": 0,
+  "started_monotonic_ns": 995059576215335,
+  "ended_monotonic_ns": 995059607189080,
+  "started_unix_ns": 1791983701191101838,
+  "exit_code": 1,
+  "termination": {
+    "exit": 1
+  },
+  "cpu_user_ms": 23.47,
+  "cpu_system_ms": 15.963,
+  "peak_rss_bytes": 52064256,
+  "minor_faults": 4828,
+  "major_faults": 0,
+  "voluntary_context_switches": 319,
+  "involuntary_context_switches": 14,
+  "block_input_operations": 0,
+  "block_output_operations": 0,
+  "resource_source": "native_child_wait4",
+  "proc_io_available": true,
+  "proc_io_unavailable_reason": null,
+  "proc_io_source": "linux_proc_pid_io_before_wait4",
+  "proc_io_syscr": 92,
+  "proc_io_syscw": 10,
+  "proc_io_rchar": 232423,
+  "proc_io_wchar": 739,
+  "proc_io_read_bytes": 0,
+  "proc_io_write_bytes": 0,
+  "proc_io_cancelled_write_bytes": 0,
+  "wall_ms": 30.973745,
+  "cpu_ms": 39.433,
+  "first_complete_record_ms": 28.817687,
+  "first_stdout_ms": 28.817687,
+  "first_record_observed_after_native_exit": false,
+  "stderr_bytes": 157,
+  "stderr_sha256": "7b14587cc92a095913c929f4f6510c6e6da38876a3f391aa49feb5e1e1360be0",
+  "errors": [],
+  "timed_out": false,
+  "sink": {},
+  "sampled_resources": {
+    "rss_bytes": {
+      "samples": 0,
+      "first": null,
+      "last": null,
+      "minimum": null,
+      "maximum": null,
+      "slope_per_second": null
+    },
+    "fds": {
+      "samples": 0,
+      "first": null,
+      "last": null,
+      "minimum": null,
+      "maximum": null,
+      "slope_per_second": null
+    },
+    "tasks": {
+      "samples": 0,
+      "first": null,
+      "last": null,
+      "minimum": null,
+      "maximum": null,
+      "slope_per_second": null
+    },
+    "cpu_user_ms": {
+      "samples": 0,
+      "first": null,
+      "last": null,
+      "minimum": null,
+      "maximum": null,
+      "slope_per_second": null
+    },
+    "cpu_system_ms": {
+      "samples": 0,
+      "first": null,
+      "last": null,
+      "minimum": null,
+      "maximum": null,
+      "slope_per_second": null
+    }
+  },
+  "sample_count": 0,
+  "missing_proc_samples": 1,
+  "resources_dropped_bytes": 0,
+  "trend_warmup_s": 5,
+  "observer_cpu": {
+    "start_ns": 995059575090888,
+    "end_ns": 995059607528908,
+    "user_ms": 0.5649999999999961,
+    "system_ms": 0.8739999999999998,
+    "scope": "collector RUSAGE_SELF around collect, excludes children and post-capture validation"
+  },
+  "not_measured": {
+    "network_wire_bytes": "not observed; FlightData protobuf sizes exclude HTTP/2/TLS framing",
+    "heap_allocations": "requires a separate profiler campaign",
+    "retained_capacities": "requires candidate diagnostic instrumentation",
+    "queue_high_water": "requires candidate diagnostic instrumentation",
+    "client_read_ahead": "server Send completion does not prove application consumption",
+    "server_drops": "loopback sends do not establish deployed server delivery guarantees",
+    "cancellation_latency_ms": "these workloads terminate by deliberate remote failure"
+  },
+  "rows_per_second": 32.28540817392278,
+  "output_bytes_per_second": 5230.236124175492,
+  "cpu_us_per_row": 39433.0,
+  "production": {
+    "errors": [],
+    "scheduled_batches": 0,
+    "delivered_batches": 1,
+    "throughput_admissible": true,
+    "mode": "finite"
+  },
+  "cpu_screen": {
+    "observer": {
+      "start_ns": 995059575090888,
+      "end_ns": 995059607528908,
+      "user_ms": 0.5649999999999961,
+      "system_ms": 0.8739999999999998,
+      "scope": "collector RUSAGE_SELF around collect, excludes children and post-capture validation"
+    },
+    "fixture": {
+      "user_ms": 1.984,
+      "system_ms": 0.597,
+      "start_bounds": {
+        "start_ns": 995059572350655,
+        "end_ns": 995059574515531
+      },
+      "end_bounds": {
+        "start_ns": 995059614373052,
+        "end_ns": 995059615262257
+      },
+      "scope": "fixture lifetime CPU difference between pre-meter and post-exit summary snapshots",
+      "expected_output_encoding_wall_ms": 0.080115,
+      "expected_output_encoding_semantics": "monotonic encoding wall time; overlaps fixture CPU; never subtracted from native CPU"
+    },
+    "host_before": {
+      "start_ns": 995059574869157,
+      "end_ns": 995059575067405,
+      "counters": {
+        "user": 173752230,
+        "nice": 317879,
+        "system": 135506606,
+        "idle": 1658450048,
+        "iowait": 10620690,
+        "irq": 7592711,
+        "softirq": 5119395,
+        "steal": 0
+      },
+      "loadavg_raw": "12.01 10.42 8.30 7/3188 1997719",
+      "ticks_per_second": 100,
+      "cpu_count": 20,
+      "status": "observed"
+    },
+    "host_after": {
+      "start_ns": 995059607767905,
+      "end_ns": 995059607955209,
+      "counters": {
+        "user": 173752243,
+        "nice": 317879,
+        "system": 135506617,
+        "idle": 1658450089,
+        "iowait": 10620691,
+        "irq": 7592712,
+        "softirq": 5119395,
+        "steal": 0
+      },
+      "loadavg_raw": "12.01 10.42 8.30 10/3173 1997848",
+      "ticks_per_second": 100,
+      "cpu_count": 20,
+      "status": "observed"
+    },
+    "comparative_admissible": false,
+    "throughput_admissible": false,
+    "interference_status": "resolution_limited",
+    "potential_limit_status": "resolution_limited",
+    "observer_busy_cores": 0.04645870236227475,
+    "fixture_busy_cores": 0.0833286384968947,
+    "system_tick_deltas": {
+      "user": 13,
+      "nice": 0,
+      "system": 11,
+      "idle": 41,
+      "iowait": 1,
+      "irq": 1,
+      "softirq": 0,
+      "steal": 0
+    },
+    "host_elapsed_ms": 33.086052,
+    "system_busy_ms": 250.0,
+    "client_cpu_ms": 39.433,
+    "observer_cpu_ms": 1.4389999999999958,
+    "fixture_cpu_ms": 2.581
+  },
+  "fixture_go_env": {
+    "GOMAXPROCS": "20",
+    "GOGC": "100",
+    "GODEBUG": "",
+    "GOMEMLIMIT": "off"
+  },
+  "request_evidence": {
+    "admission": "exact_summary_counters",
+    "captured_dogets": 1,
+    "uncaptured_dogets": 0,
+    "captured_about_requests": 1,
+    "terminal_event_captured": true,
+    "request_validation": {
+      "auth_checks": 1,
+      "invalid_auth": 0,
+      "ticket_checks": 1,
+      "ticket_mismatches": 0,
+      "unexpected_requests": 0,
+      "doget_before_about": 0
+    }
+  },
+  "fixture_first_record_emission_source": "exact_summary",
+  "fixture_to_first_complete_record_ms": 0.389881,
+  "batch_visibility": {
+    "matched": 1,
+    "uncorrelated": 0,
+    "latency_ms": {
+      "samples": 1,
+      "first": 0.389881,
+      "last": 0.389881,
+      "minimum": 0.389881,
+      "maximum": 0.389881,
+      "slope_per_second": null
+    },
+    "retained_dropped_bytes": 0,
+    "coverage_origin_ns": 995059604330594,
+    "coverage_bucket_ms": 60000,
+    "coverage_by_time": [
+      {
+        "index": 0,
+        "visible": 1,
+        "correlated": 1
+      }
+    ]
+  },
+  "first_doget_ms": 28.115259,
+  "fixture_terminal_to_exit_ms": 2.511933,
+  "contract": {
+    "stdout_sha256": "50f93c839dfdd227382e2ecd88ab7be87e83ce8855794437fcfb781c780d04a9",
+    "stderr_sha256": "7b14587cc92a095913c929f4f6510c6e6da38876a3f391aa49feb5e1e1360be0",
+    "stdout_bytes": 162,
+    "rendered_rows": 1,
+    "batches": 1,
+    "termination": {
+      "exit": 1
+    },
+    "requests": 1,
+    "ticket_sha256": "77d2f1d744b6bea7f60fcf07c32635b5074672b9e9305073186be1c5f7cd2ee4",
+    "request_validation": {
+      "auth_checks": 1,
+      "invalid_auth": 0,
+      "ticket_checks": 1,
+      "ticket_mismatches": 0,
+      "unexpected_requests": 0,
+      "doget_before_about": 0
+    },
+    "sink": {},
+    "tls": false,
+    "workload_sha256": "bf85c7d7e530320b4f42d60dda2e406d8d13e436bdda46b940895a677b6267ca",
+    "config_before": "a416c0ba27acb2c33795596b9db1d3691a944a1c1820ce59ebc39ad0580b4b86",
+    "config_after": "a416c0ba27acb2c33795596b9db1d3691a944a1c1820ce59ebc39ad0580b4b86"
+  },
+  "fixture_encoded_bytes": 970,
+  "fixture_decoded_bytes": 94,
+  "fixture_max_message_bytes": 559,
+  "fixture_events_dropped": 0,
+  "fixture_sent_rows": 1,
+  "fixture_expected_output_ns": 80115,
+  "fixture_cpu_user_ns": 4376000,
+  "fixture_cpu_system_ns": 6542000,
+  "terminal_condition": "expected_remote_failure_InvalidArgument",
+  "requests": 1,
+  "tls": false,
+  "encoded_bytes_per_second": 31316.8459287051,
+  "decoded_bytes_per_second": 3034.8283683487416,
+  "valid": true
+}

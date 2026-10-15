@@ -1,0 +1,28 @@
+{
+  "base_revision": "4a812d5b9bc4c40882ab10897a73c3ce1e715ce0",
+  "go_revision": "07af390ab09bda8ac9e427ffc6310077bace0125",
+  "prior_rust_revision": "4fcbd51fdaebed08164bfe7041e16c9c51cbb565",
+  "binaries": {
+    "pb-go": {
+      "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "bytes": 71807160,
+      "artifact": "pb-go"
+    },
+    "pb-go-cloud": {
+      "sha256": "622d4144b7e354c0ee4036244ba719cbbaf8357710804b1d733cd421a0dc227e",
+      "bytes": 71807160,
+      "artifact": "pb-go-cloud"
+    },
+    "pb-prior": {
+      "sha256": "9bd38b9db4f4f8e76cd43384cb024dddd4d122c6bc109d29a8afa483ae0e2c6d",
+      "bytes": 7617800,
+      "artifact": "pb-prior"
+    },
+    "pb-prior-cloud": {
+      "sha256": "457619bb5cfd6603288cf6ab21a9f606ef2dbfb618bd65f97860d8849f03e9de",
+      "bytes": 7618256,
+      "artifact": "pb-prior-cloud"
+    }
+  },
+  "status": "Baseline freeze before phase6 rebuild; candidate and measurement evidence pending."
+}

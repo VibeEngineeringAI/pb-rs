@@ -1,0 +1,7 @@
+== control
+{"d":"a","n":1}
+{"d":"b","n":2}
+
+== zero-row-record-before-dictionary
+== zero-row-record-then-eof
+== three-row-record-before-dictionary

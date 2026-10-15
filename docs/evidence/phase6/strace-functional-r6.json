@@ -1,0 +1,91 @@
+{
+  "kind": "functional_profile_capture_only",
+  "campaign_id": "profile-probe-strace-one-row-01",
+  "mode": "strace",
+  "scenario": "one-row",
+  "source_sha256": "032cec6338fb7126a97a1bd28eeb53d428442a598287ef4fe267160b7650ac73",
+  "parent_manifest_sha256": "a47093f4a3ea785a310f7ca1baa92444deaf7e21db5ba7db72dc897ddc3d047b",
+  "sidecar_sha256": "9cadf783f554a22fb6c3bf20c88e9e110ed0b6026f85a45c7dcde898866c3f5d",
+  "execution": {
+    "campaign_id": "profile-probe-strace-one-row-01",
+    "argv": [
+      "python3",
+      "harness/phase6_profiles.py",
+      "capture",
+      "--out",
+      "/home/ajs/.cache/pb-phase6/profile-probe-strace-one-row-01",
+      "--parent-sha256",
+      "a47093f4a3ea785a310f7ca1baa92444deaf7e21db5ba7db72dc897ddc3d047b",
+      "--sidecar",
+      "/home/ajs/.cache/pb-phase6/profile-adapter-v6/profile-sidecar.json",
+      "--sidecar-sha256",
+      "9cadf783f554a22fb6c3bf20c88e9e110ed0b6026f85a45c7dcde898866c3f5d",
+      "--scenario",
+      "one-row",
+      "--mode",
+      "strace",
+      "--repetitions",
+      "1",
+      "--control-repetitions",
+      "1",
+      "--window-budget-s",
+      "1450",
+      "--quiet-window-token",
+      "phase7-quiet-phase6-strace-probe-20261014T205619Z"
+    ],
+    "pid": 3941088,
+    "started_utc": "2026-10-14T20:56:40.739584+00:00",
+    "started_monotonic": 1022759.124699737,
+    "stop_by_utc": "2026-10-14T21:21:40.739584+00:00",
+    "ack_utc": "2026-10-14T20:56:19Z",
+    "start_deadline_utc": "2026-10-14T20:58:19+00:00",
+    "scope": "functional strace capture only; no analysis",
+    "exit_code": 0,
+    "ended_utc": "2026-10-14T20:56:42.256272+00:00",
+    "elapsed_s": 1.516703387023881
+  },
+  "cleanup": {
+    "cleanup_utc": "2026-10-14T20:57:06.780266+00:00",
+    "capture_pid_gone": true,
+    "matching_owned_processes": [],
+    "common_lock_reacquired_nonblocking_and_released": true,
+    "report_sha256": "98161533a2fd603f7639fd0c28f7e532f4ea09891e9f46cb224db55514c6bef0",
+    "exit_code": 0
+  },
+  "complete": true,
+  "passed": true,
+  "sample_count": 6,
+  "control_count": 4,
+  "capture_count": 2,
+  "end_identity_check": {
+    "performed": true,
+    "passed": true,
+    "changed": [],
+    "checked": 53,
+    "total": 53
+  },
+  "analysis_performed": false,
+  "performance_interpretation": false,
+  "independent_capture_review": {
+    "path": "docs/phase6-strace-functional-review-01.md",
+    "sha256": "139d0340d45e425d7d2bdcee5ecf69ad45923b621dc744cb567e6397c960f544",
+    "verdict": "functional capture PASS only",
+    "checks_passed": 318,
+    "checks_total": 318,
+    "guard_trips": 0,
+    "artifact_preservation": "118 capture/coordination/anchor entries: 116 full small hashes plus 2 symbol dump sizes; 34 additional small tracked identities unchanged"
+  },
+  "report": {
+    "path": "/home/ajs/.cache/pb-phase6/profile-probe-strace-one-row-01/report.json",
+    "sha256": "98161533a2fd603f7639fd0c28f7e532f4ea09891e9f46cb224db55514c6bef0"
+  },
+  "limitations": [
+    "Tiny functional capture validates behavior only.",
+    "Capture admissibility flags are not profile adequacy or comparative performance acceptance.",
+    "Analysis requires its own coordinated slot; non-perf adequacy remains undefined."
+  ],
+  "observed_tool_versions": {
+    "strace": "7.0",
+    "readelf": "GNU Binutils 2.47"
+  }
+}

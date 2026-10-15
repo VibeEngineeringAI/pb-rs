@@ -1,0 +1,19 @@
+{
+  "scope": "Exact-case shared harness normalization, no production/corpus changes; final candidate real-deadline replay pending",
+  "patch_sha256": "6727336caf9cf8991456ea2d1598dc64b9cda0167a85e73d297312de92642ac8",
+  "upstream_review": "docs/phase7-review-retained-deadline-r2.md in companion phase7 worktree",
+  "upstream_manifest": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/reduction-manifest.json",
+  "upstream_manifest_sha256": "c2d5dd32b3ad0c86740a8a9c00f5166116f365f456a01ece671b8f71208a3bc4",
+  "verified_capture_artifacts": 40,
+  "verified_reports": 2,
+  "central_tests": {
+    "suite": "33 run, 32 passed, 1 skipped missing default fixture path",
+    "log": "/home/ajs/.cache/pb-phase6/tmp/central-phase3-normalization-tests.log",
+    "skipped_case_separate_run": "test_go_fixture_generate_parity with immutable fixture-r4",
+    "separate_log": "/home/ajs/.cache/pb-phase6/tmp/central-phase3-fixture-test.log"
+  },
+  "source_sha256": {
+    "harness/phase3.py": "7f8deaf00185b94cd5934fbe6542e0393ded5f25aadd918012bd2f072d222f9d",
+    "harness/test_phase3.py": "f11f07cd571fe9d8b3c364c20a93aaf6cbd81b999dc077b2126374c5488deb59"
+  }
+}

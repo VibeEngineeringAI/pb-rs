@@ -1,0 +1,353 @@
+// Original scratch tests.rs SHA256 bbb319fad832b654e9180caa84af9e840a0c604f302efc5992486ba0b16df571
+// Appended test modules; rely on session test helpers; not standalone compiled.
+mod review_wave_decoder_opus {
+    use super::*;
+    use arrow_array::Array;
+
+    const OUT: &str = "/home/ajs/.cache/pb-phase6/review-wave-decoder-opus/streams";
+
+    fn export(name: &str, data: &[FlightData]) {
+        let mut ipc = Vec::new();
+        for msg in data {
+            let mut header = msg.data_header.to_vec();
+            while header.len() % 8 != 0 {
+                header.push(0);
+            }
+            ipc.extend(0xffff_ffff_u32.to_le_bytes());
+            ipc.extend((header.len() as i32).to_le_bytes());
+            ipc.extend(header);
+            ipc.extend_from_slice(&msg.data_body);
+        }
+        ipc.extend(0xffff_ffff_u32.to_le_bytes());
+        ipc.extend(0_i32.to_le_bytes());
+        std::fs::write(format!("{OUT}/{name}.arrows"), ipc).unwrap();
+        // Round-trip through the same splitter the corpus tests use.
+        let split = messages(&std::fs::read(format!("{OUT}/{name}.arrows")).unwrap());
+        assert_eq!(split.len(), data.len());
+        let (mut stdout, mut stderr) = (Vec::new(), Vec::new());
+        let result = session(true, ok(split), &mut stdout, &mut stderr);
+        std::fs::write(format!("{OUT}/{name}.rust.stdout"), &stdout).unwrap();
+        std::fs::write(format!("{OUT}/{name}.rust.result"), format!("{result:?}\n")).unwrap();
+        assert!(stderr.is_empty());
+    }
+
+    fn dict_id(data: &FlightData) -> Option<i64> {
+        ipc_message(&data.data_header)
+            .unwrap()
+            .header_as_dictionary_batch()
+            .map(|b| b.id())
+    }
+
+    fn schema_id(schema: &FlightData, field: usize) -> i64 {
+        ipc_message(&schema.data_header)
+            .unwrap()
+            .header_as_schema()
+            .unwrap()
+            .fields()
+            .unwrap()
+            .get(field)
+            .dictionary()
+            .unwrap()
+            .id()
+    }
+
+    fn patch_id(schema: &mut FlightData, field: usize, id: i64) {
+        let mut header = schema.data_header.to_vec();
+        let dictionary = ipc_message(&header)
+            .unwrap()
+            .header_as_schema()
+            .unwrap()
+            .fields()
+            .unwrap()
+            .get(field)
+            .dictionary()
+            .unwrap();
+        let offset = usize::from(
+            dictionary
+                ._tab
+                .vtable()
+                .get(arrow_ipc::DictionaryEncoding::VT_ID),
+        );
+        assert_ne!(offset, 0);
+        let start = dictionary._tab.loc() + offset;
+        header[start..start + 8].copy_from_slice(&id.to_le_bytes());
+        schema.data_header = Bytes::from(header);
+    }
+
+    fn flat(a: Vec<Option<i32>>, b: Vec<Option<i32>>) -> Vec<FlightData> {
+        let a = Arc::new(DictionaryArray::<Int32Type>::new(
+            a.into(),
+            Arc::new(StringArray::from(vec!["x"])),
+        )) as ArrayRef;
+        let b = Arc::new(DictionaryArray::<Int32Type>::new(
+            b.into(),
+            Arc::new(StringArray::from(vec!["y"])),
+        )) as ArrayRef;
+        let schema = Arc::new(Schema::new(vec![
+            Field::new("a", a.data_type().clone(), true),
+            Field::new("b", b.data_type().clone(), true),
+        ]));
+        let batch = RecordBatch::try_new(Arc::clone(&schema), vec![a, b]).unwrap();
+        let data = flight_stream(&schema, [&batch]);
+        assert_eq!(data.len(), 4);
+        data
+    }
+
+    /// Columns a, b flat and c a dictionary of lists of a dictionary.
+    fn nested(a: Vec<Option<i32>>, b: Vec<Option<i32>>, rows: usize) -> Vec<FlightData> {
+        use arrow_buffer::OffsetBuffer;
+        let a = Arc::new(DictionaryArray::<Int32Type>::new(
+            a.into(),
+            Arc::new(StringArray::from(vec!["x"])),
+        )) as ArrayRef;
+        let b = Arc::new(DictionaryArray::<Int32Type>::new(
+            b.into(),
+            Arc::new(StringArray::from(vec!["y"])),
+        )) as ArrayRef;
+        let inner = Arc::new(DictionaryArray::<Int32Type>::new(
+            vec![0_i32].into(),
+            Arc::new(StringArray::from(vec!["z"])),
+        ));
+        let list = Arc::new(ListArray::new(
+            Arc::new(Field::new("item", inner.data_type().clone(), true)),
+            OffsetBuffer::new(vec![0_i32, 1].into()),
+            inner,
+            None,
+        ));
+        let c = Arc::new(DictionaryArray::<Int32Type>::new(
+            vec![0_i32; rows].into(),
+            list,
+        )) as ArrayRef;
+        let mut columns = vec![("a", a), ("b", b), ("c", c)];
+        if rows == 99 {
+            unreachable!()
+        }
+        if C_FIRST.with(|c| c.get()) {
+            columns.rotate_right(1);
+        }
+        let schema = Arc::new(Schema::new(
+            columns
+                .iter()
+                .map(|(n, a)| Field::new(*n, a.data_type().clone(), true))
+                .collect::<Vec<_>>(),
+        ));
+        let batch =
+            RecordBatch::try_new(Arc::clone(&schema), columns.into_iter().map(|c| c.1).collect())
+                .unwrap();
+        flight_stream(&schema, [&batch])
+    }
+
+    thread_local!(static C_FIRST: std::cell::Cell<bool> = const { std::cell::Cell::new(false) });
+
+    /// Replace the dictionary message for `missing` with a copy of `with`.
+    fn duplicate(data: &mut [FlightData], missing: i64, with: i64) {
+        let copy = data
+            .iter()
+            .find(|d| dict_id(d) == Some(with))
+            .unwrap()
+            .clone();
+        let slot = data
+            .iter_mut()
+            .find(|d| dict_id(d) == Some(missing))
+            .unwrap();
+        *slot = copy;
+    }
+
+    #[test]
+    fn review_wave_probe_export() {
+        std::fs::create_dir_all(OUT).unwrap();
+        let mut log = String::new();
+        // Controls: every dictionary present.
+        let control = flat(vec![Some(0)], vec![None]);
+        export("flat_control_null", &control);
+        // Flat path: b's initial dictionary replaced by a second id-0 message.
+        for (name, a, b) in [
+            ("flat_missing_null", vec![Some(0)], vec![None]),
+            ("flat_missing_zero_rows", vec![], vec![]),
+            ("flat_missing_nonnull", vec![Some(0)], vec![Some(0)]),
+        ] {
+            let mut data = flat(a, b);
+            let (ia, ib) = (schema_id(&data[0], 0), schema_id(&data[0], 1));
+            log += &format!("{name}: a={ia} b={ib}\n");
+            duplicate(&mut data, ib, ia);
+            export(name, &data);
+        }
+        // Nested path (column c nested) with the same missing flat id.
+        let control = nested(vec![Some(0)], vec![None], 1);
+        log += &format!(
+            "nested ids: a={} b={} c={} messages={:?}\n",
+            schema_id(&control[0], 0),
+            schema_id(&control[0], 1),
+            schema_id(&control[0], 2),
+            control.iter().map(dict_id).collect::<Vec<_>>()
+        );
+        export("nested_control_null", &control);
+        for (name, a, b, rows) in [
+            ("nested_missing_null", vec![Some(0)], vec![None], 1),
+            ("nested_missing_zero_rows", vec![], vec![], 0),
+        ] {
+            let mut data = nested(a, b, rows);
+            let (ia, ib) = (schema_id(&data[0], 0), schema_id(&data[0], 1));
+            duplicate(&mut data, ib, ia);
+            export(name, &data);
+        }
+        // Mixed fault: a and b both missing, with ids 9 (first column) and 7.
+        C_FIRST.with(|c| c.set(true));
+        let mut data = nested(vec![None], vec![None], 1);
+        C_FIRST.with(|c| c.set(false));
+        let (ic, ia, ib) = (
+            schema_id(&data[0], 0),
+            schema_id(&data[0], 1),
+            schema_id(&data[0], 2),
+        );
+        let child = data
+            .iter()
+            .filter_map(dict_id)
+            .find(|id| ![ia, ib, ic].contains(id))
+            .unwrap();
+        duplicate(&mut data, ia, child);
+        duplicate(&mut data, ib, child);
+        patch_id(&mut data[0], 1, 9);
+        patch_id(&mut data[0], 2, 7);
+        log += &format!(
+            "mixed: c={ic} child={child} messages={:?}\n",
+            data.iter().map(dict_id).collect::<Vec<_>>()
+        );
+        export("nested_two_missing_order", &data);
+        // Shared flat id with different index widths: Go keys the memo by value type.
+        let a = Arc::new(DictionaryArray::<arrow_array::types::Int8Type>::new(
+            vec![0_i8].into(),
+            Arc::new(StringArray::from(vec!["x"])),
+        )) as ArrayRef;
+        let b = Arc::new(DictionaryArray::<Int32Type>::new(
+            vec![0_i32].into(),
+            Arc::new(StringArray::from(vec!["x"])),
+        )) as ArrayRef;
+        let schema = Arc::new(Schema::new(vec![
+            Field::new("a", a.data_type().clone(), true),
+            Field::new("b", b.data_type().clone(), true),
+        ]));
+        let batch = RecordBatch::try_new(Arc::clone(&schema), vec![a, b]).unwrap();
+        let mut data = flight_stream(&schema, [&batch]);
+        let ib = schema_id(&data[0], 1);
+        let ia = schema_id(&data[0], 0);
+        data.retain(|d| dict_id(d) != Some(ib));
+        patch_id(&mut data[0], 1, ia);
+        export("shared_index_widths", &data);
+        std::fs::write(format!("{OUT}/ids.log"), log).unwrap();
+    }
+}
+
+mod review_wave_decoder_opus_container {
+    use super::*;
+    use arrow_array::{Array, Int8Array};
+    use arrow_buffer::OffsetBuffer;
+    const OUT: &str = "/home/ajs/.cache/pb-phase6/review-wave-decoder-opus/streams";
+
+    fn outer(values: [i8; 2]) -> ArrayRef {
+        let numbers = Arc::new(ListArray::new(
+            Arc::new(Field::new("item", DataType::Int8, true)),
+            OffsetBuffer::new(vec![0_i32, 2].into()),
+            Arc::new(Int8Array::from(values.to_vec())),
+            None,
+        ));
+        let inner = Arc::new(DictionaryArray::<Int32Type>::new(vec![0_i32].into(), numbers));
+        let lists = Arc::new(ListArray::new(
+            Arc::new(Field::new("item", inner.data_type().clone(), true)),
+            OffsetBuffer::new(vec![0_i32, 1].into()),
+            inner,
+            None,
+        ));
+        Arc::new(DictionaryArray::<Int32Type>::new(vec![0_i32].into(), lists))
+    }
+
+    fn field_at<'a>(schema: &'a arrow_ipc::Schema<'a>, path: &[usize]) -> arrow_ipc::Field<'a> {
+        let mut field = schema.fields().unwrap().get(path[0]);
+        for &i in &path[1..] {
+            field = field.children().unwrap().get(i);
+        }
+        field
+    }
+
+    fn stream(list_first: bool) -> Vec<FlightData> {
+        let wrapped = outer([7, 8]);
+        let a = Arc::new(ListArray::new(
+            Arc::new(Field::new("item", wrapped.data_type().clone(), true)),
+            OffsetBuffer::new(vec![0_i32, 1].into()),
+            wrapped,
+            None,
+        )) as ArrayRef;
+        let b = outer([9, 10]);
+        let mut columns = vec![("a", a), ("b", b)];
+        if !list_first {
+            columns.reverse();
+        }
+        let (ia, ib) = if list_first { (0, 1) } else { (1, 0) };
+        let schema = Arc::new(Schema::new(
+            columns
+                .iter()
+                .map(|(n, a)| Field::new(*n, a.data_type().clone(), true))
+                .collect::<Vec<_>>(),
+        ));
+        let batch =
+            RecordBatch::try_new(Arc::clone(&schema), columns.into_iter().map(|c| c.1).collect())
+                .unwrap();
+        let mut data = flight_stream(&schema, [&batch]);
+        let header = data[0].data_header.to_vec();
+        let message = ipc_message(&header).unwrap();
+        let fb = message.header_as_schema().unwrap();
+        let a_outer = field_at(&fb, &[ia, 0]).dictionary().unwrap().id();
+        let b_field = field_at(&fb, &[ib]);
+        let b_outer = b_field.dictionary().unwrap();
+        // Make b's outer dictionary share a's outer ID (never rewrite ID 0).
+        let (keep, patch) = if b_outer.id() != 0 {
+            (a_outer, b_outer)
+        } else {
+            (b_outer.id(), field_at(&fb, &[ia, 0]).dictionary().unwrap())
+        };
+        let removed = patch.id();
+        let offset = usize::from(patch._tab.vtable().get(arrow_ipc::DictionaryEncoding::VT_ID));
+        assert_ne!(offset, 0);
+        let start = patch._tab.loc() + offset;
+        let mut header = header.clone();
+        header[start..start + 8].copy_from_slice(&keep.to_le_bytes());
+        data[0].data_header = Bytes::from(header);
+        let before = data.len();
+        // Drop the patched occurrence's own outer dictionary message. Keep the
+        // message for `keep`, which arrow wrote from that occurrence's values.
+        data.retain(|d| {
+            ipc_message(&d.data_header)
+                .unwrap()
+                .header_as_dictionary_batch()
+                .is_none_or(|b| b.id() != removed)
+        });
+        assert_eq!(data.len(), before - 1);
+        data
+    }
+
+    #[test]
+    fn review_wave_container_export() {
+        for (name, list_first) in [("container_list_first", true), ("container_list_second", false)] {
+            let data = stream(list_first);
+            let mut ipc = Vec::new();
+            for msg in &data {
+                let mut header = msg.data_header.to_vec();
+                while header.len() % 8 != 0 {
+                    header.push(0);
+                }
+                ipc.extend(0xffff_ffff_u32.to_le_bytes());
+                ipc.extend((header.len() as i32).to_le_bytes());
+                ipc.extend(header);
+                ipc.extend_from_slice(&msg.data_body);
+            }
+            ipc.extend(0xffff_ffff_u32.to_le_bytes());
+            ipc.extend(0_i32.to_le_bytes());
+            std::fs::write(format!("{OUT}/{name}.arrows"), &ipc).unwrap();
+            let (mut stdout, mut stderr) = (Vec::new(), Vec::new());
+            let result = session(true, ok(messages(&ipc)), &mut stdout, &mut stderr);
+            std::fs::write(format!("{OUT}/{name}.rust.stdout"), &stdout).unwrap();
+            std::fs::write(format!("{OUT}/{name}.rust.result"), format!("{result:?}\n")).unwrap();
+            assert!(stderr.is_empty());
+        }
+    }
+}

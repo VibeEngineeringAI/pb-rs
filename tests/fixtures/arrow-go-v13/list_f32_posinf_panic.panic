@@ -1,0 +1,1 @@
+json: error calling MarshalJSON for type *array.Float32: unexpected character '+'

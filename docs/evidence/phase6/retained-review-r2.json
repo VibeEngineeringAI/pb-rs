@@ -1,0 +1,428 @@
+{
+  "campaign": "retained-review-r2",
+  "status": "complete",
+  "result": "pass",
+  "updated_utc": "2026-10-14T12:16:16.292861+00:00",
+  "worktree": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail",
+  "claim": "Retained phase1..5 default release compatibility against supplied immutable review-r2 binaries. No phase6 release-gate, performance or release-readiness claim.",
+  "go_reference_revision": "07af390",
+  "binary_identities": {
+    "/home/ajs/.cache/pb-phase6/candidate-review-r2/pb": {
+      "sha256": "729146e310912337655a1046a38aca71909cacd285873e3957f91b14a27ddc0b",
+      "bytes": 10604416,
+      "sha256_at_summary": "729146e310912337655a1046a38aca71909cacd285873e3957f91b14a27ddc0b",
+      "unchanged": true
+    },
+    "/home/ajs/.cache/pb-phase6/candidate-review-r2/pb-cloud": {
+      "sha256": "eaedfd8b082d49851fb014729c674ff57283be6dca31048d831fcfa8714521c5",
+      "bytes": 10604744,
+      "sha256_at_summary": "eaedfd8b082d49851fb014729c674ff57283be6dca31048d831fcfa8714521c5",
+      "unchanged": true
+    },
+    "/home/ajs/.cache/pb-phase6/candidate-review-r2/manifest.json": {
+      "sha256": "9626be664f4fe0cde0f44ad2f19c5449a9e63584e15e8e7a87d1decf8b109d40",
+      "bytes": 5757,
+      "sha256_at_summary": "9626be664f4fe0cde0f44ad2f19c5449a9e63584e15e8e7a87d1decf8b109d40",
+      "unchanged": true
+    },
+    "/home/ajs/.cache/pb-phase6/baselines/pb-go": {
+      "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "bytes": 71807160,
+      "sha256_at_summary": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "unchanged": true
+    },
+    "/home/ajs/.cache/pb-phase6/baselines/pb-go-cloud": {
+      "sha256": "622d4144b7e354c0ee4036244ba719cbbaf8357710804b1d733cd421a0dc227e",
+      "bytes": 71807160,
+      "sha256_at_summary": "622d4144b7e354c0ee4036244ba719cbbaf8357710804b1d733cd421a0dc227e",
+      "unchanged": true
+    },
+    "/home/ajs/.cache/pb-phase6/tmp/fx/pb-fixture-r3": {
+      "sha256": "fdecd359edf1461f892197830ca46fde2855ce87b7d9179cc3520e3ddae83fc9",
+      "bytes": 24437245,
+      "sha256_at_summary": "fdecd359edf1461f892197830ca46fde2855ce87b7d9179cc3520e3ddae83fc9",
+      "unchanged": true
+    },
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/bin/pb-meter": {
+      "sha256": "17c3b73491b2a31e465f58eda9f210000b5cd886a4ba9fc0764dc3576899127c",
+      "bytes": 17232,
+      "sha256_at_summary": "17c3b73491b2a31e465f58eda9f210000b5cd886a4ba9fc0764dc3576899127c",
+      "unchanged": true
+    }
+  },
+  "candidate_source_manifest": {
+    "path": "/home/ajs/.cache/pb-phase6/candidate-review-r2/manifest.json",
+    "sha256": "9626be664f4fe0cde0f44ad2f19c5449a9e63584e15e8e7a87d1decf8b109d40"
+  },
+  "fixture": {
+    "path": "/home/ajs/.cache/pb-phase6/tmp/fx/pb-fixture-r3",
+    "sha256": "fdecd359edf1461f892197830ca46fde2855ce87b7d9179cc3520e3ddae83fc9",
+    "source": "previous immutable r3 fixture reused"
+  },
+  "environment": {
+    "TMPDIR": "/home/ajs/.cache/pb-phase6/tmp",
+    "GOTMPDIR": "/home/ajs/.cache/pb-phase6/tmp",
+    "CLAUDE_CODE_TMPDIR": "/home/ajs/.cache/pb-phase6/tmp",
+    "PB_PHASE3_FIXTURE": "/home/ajs/.cache/pb-phase6/tmp/fx/pb-fixture-r3",
+    "PATH_prefix": "/home/ajs/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.4.linux-amd64/bin",
+    "observed_go_version": "go version go1.25.4 linux/amd64"
+  },
+  "gates": [
+    {
+      "phase": 1,
+      "argv": [
+        "python3",
+        "harness/phase1.py",
+        "compare",
+        "--reference",
+        "/home/ajs/.cache/pb-phase6/baselines/pb-go",
+        "--candidate",
+        "/home/ajs/.cache/pb-phase6/candidate-review-r2/pb",
+        "--out",
+        "/home/ajs/.cache/pb-phase6/retained-review-r2/phase1"
+      ],
+      "exit_code": 0,
+      "report": "/home/ajs/.cache/pb-phase6/retained-review-r2/phase1/report.json",
+      "report_sha256": "c8934b70b0d53d5eda44ffffbecbc1ebc01c9da91dd686582bf5af773c8630c2",
+      "raw_log": "/home/ajs/.cache/pb-phase6/retained-review-r2/phase1.log",
+      "cases": 2018,
+      "cases_passed": 2018,
+      "cases_failed": 0,
+      "cases_skipped": 0,
+      "guards": 9,
+      "guards_passed": 9,
+      "guards_failed": 0,
+      "identity_issues": [],
+      "corpus_sha256": "f1a1365bbc1d189e53898a197648f7810c23e99971ded7e5df7ca66a225f0185",
+      "runner_sha256": "e0216062f0980168e8ea9708f819e773c68e4452a7750f689f9ca29e8c5dc6a6",
+      "scope": null,
+      "complete": true
+    },
+    {
+      "phase": 2,
+      "argv": [
+        "python3",
+        "harness/phase2.py",
+        "compare",
+        "--reference",
+        "/home/ajs/.cache/pb-phase6/baselines/pb-go",
+        "--candidate",
+        "/home/ajs/.cache/pb-phase6/candidate-review-r2/pb",
+        "--cloud-reference",
+        "/home/ajs/.cache/pb-phase6/baselines/pb-go-cloud",
+        "--cloud-candidate",
+        "/home/ajs/.cache/pb-phase6/candidate-review-r2/pb-cloud",
+        "--fixture",
+        "/home/ajs/.cache/pb-phase6/tmp/fx/pb-fixture-r3",
+        "--out",
+        "/home/ajs/.cache/pb-phase6/retained-review-r2/phase2"
+      ],
+      "exit_code": 0,
+      "report": "/home/ajs/.cache/pb-phase6/retained-review-r2/phase2/report.json",
+      "report_sha256": "73b59d7a4e9ec37320b3627bd67e23b699fdc7a69d17fe44a076cba161ee6a01",
+      "raw_log": "/home/ajs/.cache/pb-phase6/retained-review-r2/phase2.log",
+      "cases": 219,
+      "cases_passed": 219,
+      "cases_failed": 0,
+      "cases_skipped": 0,
+      "guards": 6,
+      "guards_passed": 6,
+      "guards_failed": 0,
+      "identity_issues": [],
+      "corpus_sha256": "0f5457e858fe60567d12b4d436ad1223479e7412257b85312eb8001aa6fd99d2",
+      "runner_sha256": "e1f8626b68b05f20edce19c8f6ee9dddff9c4d9fa9989ef94c891a745345562a",
+      "scope": {
+        "phase2_cases": 219,
+        "defined_cases": 225,
+        "future_terminal": [
+          {
+            "name": "p2-logout-prompt-eof",
+            "reason": "interactive terminal workflow deferred by the phase-two scope (noninteractive profiles and logout --yes only)"
+          },
+          {
+            "name": "p2-logout-prompt-no",
+            "reason": "interactive terminal workflow deferred by the phase-two scope (noninteractive profiles and logout --yes only)"
+          },
+          {
+            "name": "p2-logout-prompt-yes",
+            "reason": "interactive terminal workflow deferred by the phase-two scope (noninteractive profiles and logout --yes only)"
+          },
+          {
+            "name": "p2-logout-prompt-y-no-newline",
+            "reason": "interactive terminal workflow deferred by the phase-two scope (noninteractive profiles and logout --yes only)"
+          },
+          {
+            "name": "p2-login-without-terminal",
+            "reason": "interactive terminal workflow deferred by the phase-two scope (noninteractive profiles and logout --yes only)"
+          },
+          {
+            "name": "p2-login-without-terminal-no-config",
+            "reason": "interactive terminal workflow deferred by the phase-two scope (noninteractive profiles and logout --yes only)"
+          }
+        ],
+        "future_terminal_included": false,
+        "note": "scope correction, not a compatibility result: these Go behaviors are unverified for the candidate"
+      },
+      "complete": true
+    },
+    {
+      "phase": 3,
+      "argv": [
+        "python3",
+        "harness/phase3.py",
+        "compare",
+        "--reference",
+        "/home/ajs/.cache/pb-phase6/baselines/pb-go",
+        "--candidate",
+        "/home/ajs/.cache/pb-phase6/candidate-review-r2/pb",
+        "--cloud-reference",
+        "/home/ajs/.cache/pb-phase6/baselines/pb-go-cloud",
+        "--cloud-candidate",
+        "/home/ajs/.cache/pb-phase6/candidate-review-r2/pb-cloud",
+        "--out",
+        "/home/ajs/.cache/pb-phase6/retained-review-r2/phase3"
+      ],
+      "exit_code": 0,
+      "report": "/home/ajs/.cache/pb-phase6/retained-review-r2/phase3/report.json",
+      "report_sha256": "dcffa45ea4f742b0fa9d30153bd10e3e3d69d6249099e02222964618839d781b",
+      "raw_log": "/home/ajs/.cache/pb-phase6/retained-review-r2/phase3.log",
+      "cases": 675,
+      "cases_passed": 675,
+      "cases_failed": 0,
+      "cases_skipped": 0,
+      "guards": 8,
+      "guards_passed": 8,
+      "guards_failed": 0,
+      "identity_issues": [],
+      "corpus_sha256": "b83d5abdd7951897a082382fccc50d104f0137e4da86d78507c7ad293770d82c",
+      "runner_sha256": "b486ed50343a96ca76e459266b63cd0e1e49decdd6878bb3227f90a4178dd18a",
+      "scope": {
+        "defined_cases": 697,
+        "tiers": {
+          "gate": 675,
+          "known-divergence": 13,
+          "full60s": 9
+        },
+        "selected_tiers": [
+          "gate"
+        ],
+        "excluded_tiers": {
+          "full60s": "real 60-second client deadline; opt-in with --include-full60s (per-case timeout 80 s)",
+          "known-divergence": "documented unresolved Go/Rust diagnostics (see KNOWN_DIVERGENCES); opt-in, never counted as passes"
+        },
+        "seeds": {
+          "rewrite": 3001,
+          "json-valid": 3002,
+          "json-malformed": 3003,
+          "text": 3004,
+          "chunking": 3005
+        },
+        "deferred_boundaries": [
+          "p3-boundary-interactive-with-sql",
+          "p3-boundary-interactive-without-sql",
+          "p3-boundary-interactive-long",
+          "p3-boundary-interactive-true",
+          "p3-boundary-interactive-ignores-output-validation",
+          "p3-boundary-interactive-before-save",
+          "p3-boundary-interactive-json",
+          "p3-boundary-interactive-save-json"
+        ],
+        "known_divergences": {
+          "p3-text-status-empty-reason-empty": "HTTP/1.1 status line with an empty reason phrase: Go keeps the raw delimiter ('200 '), hyper does not expose it ('200')",
+          "p3-text-status-empty-reason-no-rows": "HTTP/1.1 status line with an empty reason phrase: Go keeps the raw delimiter ('200 '), hyper does not expose it ('200')",
+          "p3-json-status-empty-reason-empty": "HTTP/1.1 status line with an empty reason phrase: Go keeps the raw delimiter ('200 '), hyper does not expose it ('200')",
+          "p3-text-reset-mid-body": "OS connection-reset wording: Go 'read tcp A->B: read: connection reset by peer', Rust 'Connection reset by peer (os error 104)'; code/retryability match",
+          "p3-text-close-before-headers": "premature EOF before response headers: Go distinguishes diagnostics hyper cannot",
+          "p3-text-malformed-status-line": "malformed status code: Go echoes the raw token ('abc'), hyper reports only 'invalid HTTP status-code parsed'",
+          "p3-json-reset-mid-body": "OS connection-reset wording (see p3-text-reset-mid-body); partial stdout and code match",
+          "p3-status-299-text": "HTTP/1.1 status line with an empty reason phrase: Go keeps the raw delimiter ('200 '), hyper does not expose it ('200') (299 has no standard reason)",
+          "p3-status-299-json": "HTTP/1.1 status line with an empty reason phrase: Go keeps the raw delimiter ('200 '), hyper does not expose it ('200') (299 has no standard reason)",
+          "p3-status-empty-reason-text": "HTTP/1.1 status line with an empty reason phrase: Go keeps the raw delimiter ('200 '), hyper does not expose it ('200')",
+          "p3-status-empty-reason-json": "HTTP/1.1 status line with an empty reason phrase: Go keeps the raw delimiter ('200 '), hyper does not expose it ('200')",
+          "p3-status-empty-reason-empty-body": "HTTP/1.1 status line with an empty reason phrase: Go keeps the raw delimiter ('200 '), hyper does not expose it ('200')",
+          "p3-argv-invalid-utf8-sql": "non-UTF-8 argv rejected at the Rust String parser boundary (phase-one limitation)"
+        },
+        "exclusions": [
+          "Interactive -i/--interactive: candidate-only zero-request boundary checks, not Go parity. Nonempty --save-as is covered by phase four.",
+          "TLS, certificate trust and HTTP proxies: covered by native Rust transport tests; loopback proxies are bypassed by Go.",
+          "HTTP/2, 1xx informational responses, Expect/100-continue and trailers are not scripted.",
+          "Spinner frame counts and timing are scheduler-dependent; frames are collapsed, order and cleanup are checked.",
+          "Known-divergence tier (opt-in, Go-pinned): empty HTTP reason phrases, OS connection-reset wording, premature header EOF and malformed status-code diagnostics, non-UTF-8 argv (see KNOWN_DIVERGENCES).",
+          "SIGQUIT and HTTP/2 are outside the current fixtures.",
+          "Real 60-second deadlines run only with --include-full60s (80 s per-case timeout).",
+          "Peak RSS/CPU are recorded per sample but do not gate; run.py benchmark workloads measure them.",
+          "Outputs over 16 MiB are compared by raw digest and size (no fixture URL/HOME appears in them)."
+        ]
+      },
+      "complete": true,
+      "frozen_reference_manifest": {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/contracts/phase3-reference.json",
+        "sha256": "b4ed9880c62ae9ece00250d783af55eda87b603c77f4c23f8653c264c0f1448e",
+        "verification": "default enabled; no override"
+      }
+    },
+    {
+      "phase": 4,
+      "argv": [
+        "python3",
+        "harness/phase4.py",
+        "compare",
+        "--reference",
+        "/home/ajs/.cache/pb-phase6/baselines/pb-go",
+        "--candidate",
+        "/home/ajs/.cache/pb-phase6/candidate-review-r2/pb",
+        "--cloud-reference",
+        "/home/ajs/.cache/pb-phase6/baselines/pb-go-cloud",
+        "--cloud-candidate",
+        "/home/ajs/.cache/pb-phase6/candidate-review-r2/pb-cloud",
+        "--out",
+        "/home/ajs/.cache/pb-phase6/retained-review-r2/phase4"
+      ],
+      "exit_code": 0,
+      "report": "/home/ajs/.cache/pb-phase6/retained-review-r2/phase4/report.json",
+      "report_sha256": "a9c1a5edc69fa41cbd37a2cc89c72e09287ac1f33b3e977c1f893ed32462ad7d",
+      "raw_log": "/home/ajs/.cache/pb-phase6/retained-review-r2/phase4.log",
+      "cases": 159,
+      "cases_passed": 159,
+      "cases_failed": 0,
+      "cases_skipped": 0,
+      "guards": 4,
+      "guards_passed": 4,
+      "guards_failed": 0,
+      "identity_issues": [],
+      "corpus_sha256": "e57adb313c8b385639533c68c6562cfe508c56b46c88840a13d2d3508badb07a",
+      "runner_sha256": "748f2702a30f9727df53b8f0cd7abfe9f06f3effb8e80d7255c7b335824a9327",
+      "scope": [
+        {
+          "name": "p4-deadline-header",
+          "reason": "full120s requires --include-full120s"
+        },
+        {
+          "name": "p4-deadline-body",
+          "reason": "full120s requires --include-full120s"
+        }
+      ],
+      "complete": true,
+      "frozen_reference_manifest": {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/contracts/phase4-reference.json",
+        "sha256": "d8e4afddca0f23abe0590bc3793557e1ba391b9a97f3626765754af1b398f87e",
+        "verification": "default enabled; no override"
+      }
+    },
+    {
+      "phase": 5,
+      "argv": [
+        "python3",
+        "harness/phase5.py",
+        "compare",
+        "--reference",
+        "/home/ajs/.cache/pb-phase6/baselines/pb-go",
+        "--candidate",
+        "/home/ajs/.cache/pb-phase6/candidate-review-r2/pb",
+        "--cloud-reference",
+        "/home/ajs/.cache/pb-phase6/baselines/pb-go-cloud",
+        "--cloud-candidate",
+        "/home/ajs/.cache/pb-phase6/candidate-review-r2/pb-cloud",
+        "--out",
+        "/home/ajs/.cache/pb-phase6/retained-review-r2/phase5"
+      ],
+      "exit_code": 0,
+      "report": "/home/ajs/.cache/pb-phase6/retained-review-r2/phase5/report.json",
+      "report_sha256": "1b38be2a31d2e26fcf7ed06e32d1e4b95edd1061737e90c3d7b7d4b44aa05bd7",
+      "raw_log": "/home/ajs/.cache/pb-phase6/retained-review-r2/phase5.log",
+      "cases": 185,
+      "cases_passed": 185,
+      "cases_failed": 0,
+      "cases_skipped": 0,
+      "guards": 3,
+      "guards_passed": 3,
+      "guards_failed": 0,
+      "identity_issues": [],
+      "corpus_sha256": "2c7b5ea4adcddacf8a760cc9ef7b55fb4ef6ba044189929fa26d12087588ec4f",
+      "runner_sha256": "abcf687f772897cefdf0346982701a725e0165b3b55c0fe3f6997a494cce8b90",
+      "scope": null,
+      "complete": true,
+      "frozen_reference_manifest": {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase6-flight-tail/harness/contracts/phase5-reference.json",
+        "sha256": "435a71357d6c1319bae78a56dee6bebffdaea670fe2c71b7e0d0a27298118352",
+        "verification": "default enabled; no override"
+      }
+    }
+  ],
+  "totals": {
+    "cases": 3256,
+    "passed": 3256,
+    "failures": 0,
+    "skips": 0,
+    "guards": 30,
+    "guards_passed": 30,
+    "guard_failures": 0
+  },
+  "ordinary_guards": "All current unfiltered default guards; no parity-only, self-check, allow-skips, filters, timeout changes, repeat reductions, manifest bypass, comparator edits or extra normalization.",
+  "python_unit_tests": {
+    "repeated": false,
+    "reason": "User authorized omitting repeat unless retained harness changes; retained harness and contracts unchanged from review-r1.",
+    "retained_harness_changes_from_review_r1": [],
+    "prior_evidence": "docs/evidence/phase6/retained-review-r1.json"
+  },
+  "source_hashes_initial": {
+    "harness/test_phase1.py": "8cf79bcddd026dfb93a24b896e971a328a35ee23a408ad2f2c850adc068f8cc9",
+    "harness/phase2_workloads.py": "a27e414f94f14229a84a3a021aea61d3a2817752a0326ca2c35ec590cf88ff09",
+    "harness/test_phase2.py": "9b95bf3df244e799399fd734305e29c4c576b00c14f9816d8efb132b9dfc327d",
+    "harness/phase3.py": "b486ed50343a96ca76e459266b63cd0e1e49decdd6878bb3227f90a4178dd18a",
+    "harness/test_phase3.py": "c60ba16bb9d1e495760c0d6bd58d5a1815c123bb833156b7d41ec9729130a42a",
+    "harness/test_phase4.py": "377824659f5522a891f6f46a6045a515661dd9f0268ee484cbe11e55778d5658",
+    "harness/test_phase4_workloads.py": "bbc2ee9650c565897bd3da0293413f82415abb8b00d5af62643b5045e11003e4",
+    "harness/test_phase5.py": "acdc9203e83ac82b58c8cc8ba847c06e21ef142bef1c3d96a8376cc9b0741ebe",
+    "harness/test_phase5_workloads.py": "fd3cda83a7fc75db07251d3a7aff6d9c8d25eaf0cccc12eecac2f85996f5f91e",
+    "harness/phase3_workloads.py": "4753b1d95d7392ce86ce9eace44537f6efeff24f2278e2ecb3a2d0caac826b87",
+    "harness/test_profile_external.py": "8489d249d7a1f4ac191108e3ba905972c6b6aab7ab4e89b09ea77e3d73bb513a",
+    "harness/phase4.py": "748f2702a30f9727df53b8f0cd7abfe9f06f3effb8e80d7255c7b335824a9327",
+    "harness/diagnose.py": "169de15bbec492ec4dec7f04b46edcf65391a79081ba6bb61c71c8dcc83f4ae5",
+    "harness/phase4_workloads.py": "e65649c2d183de0ee783b387f65962f75546c2a28096ec126dfeaebee7a42f5f",
+    "harness/phase5.py": "abcf687f772897cefdf0346982701a725e0165b3b55c0fe3f6997a494cce8b90",
+    "harness/go_diagnostics.py": "dcb009a8a4c4b35c466fa60b7ebcec1edcff2104083e5d6a3b3009d9f420415e",
+    "harness/manifest.py": "f65de9a0f99a24e4d471a5c9e5946af946cddfc98f6e5d6946c702760c38d159",
+    "harness/phase5_workloads.py": "dd0cd0f827cd4928a73c16efafc803898abf0fa8201fd737bd5e1f0a8e41386d",
+    "harness/phase1.py": "e0216062f0980168e8ea9708f819e773c68e4452a7750f689f9ca29e8c5dc6a6",
+    "harness/phase2.py": "e1f8626b68b05f20edce19c8f6ee9dddff9c4d9fa9989ef94c891a745345562a",
+    "harness/profile_external.py": "a0f0d7a315772ed933eae235b0c55850ce8b23da25132c6ccbafc9a4e0256a3c",
+    "harness/cases.py": "b892e1b592111d8115ceddac61ca732942dd6b9b7ef900ce4a023cff8420ebfa",
+    "harness/run.py": "b280d1295a4b351e6f2d838c56acaac58b2247bb77fc9881587bb7bbe849a076",
+    "harness/test_diagnose.py": "9d7f9cbe13c033c76341f1fc4510c7e54f31d212738575bcbfadcb9cee646b79",
+    "harness/test_go_diagnostics.py": "dd746727ef74f9ca96841019df29f11cb66aaecb260d4f69a738a09ad83d2b1e",
+    "harness/test_harness.py": "3cd99e7eaa72f324e9d6d2b037f4fe199a890d90b8422571e36339b21bff1f1e",
+    "harness/test_manifest.py": "fbd0c4731ba4503a944c434f5277c7739a56e9d6cfe48878d7a5f9c92b6dd2d0",
+    "harness/test_meter_io.py": "29e1abfafb49605b4c9f5692af4548120e436954bac58d71dcd3069996097587",
+    "harness/phase6.py": "698ddc87eafb20b7261ecde744654443563f24994169625cac20290ef51372f8",
+    "harness/phase6_workloads.py": "f6060d128c5bd67387c7bd8d88ba51b42944891410dd7683c9f0d7f884fd4b3c",
+    "harness/test_phase6.py": "473c95252ea40ba555e330209daf8d3e3eb0448376b410ddf96a45f8d8a29b3b",
+    "harness/test_phase6_workloads.py": "83063be2b6da8cd6681dfd8697acbe7a9cf8c4a1223ade8e54e470611b732a2b",
+    "harness/contracts/phase3.md": "31907b6b5cf132a064ec3b905f25f699551a8857e922c9945f24742a1d8c47d0",
+    "harness/contracts/phase4-reference.json": "d8e4afddca0f23abe0590bc3793557e1ba391b9a97f3626765754af1b398f87e",
+    "harness/contracts/phase4.md": "b5860c0d584b591a2f02eb39418770fab3daec08dd95b28b0670b90cb6c5d335",
+    "harness/contracts/phase5-reference.json": "435a71357d6c1319bae78a56dee6bebffdaea670fe2c71b7e0d0a27298118352",
+    "harness/contracts/phase5.md": "c57d210430e1e4cba96eb434782883b88ee5b9f10d66a72dc371182ecae8e9b4",
+    "harness/contracts/README.md": "2c1f25461e4d9ac14db8773143ae05fc003c85bbdad382ea67f7e98c974e330f",
+    "harness/contracts/phase1-surface.json": "07721e5e289ddafbeb5a94df43e238a7ad5c953dc4fcbd3fc0412cba8b2cfb7b",
+    "harness/contracts/phase2.md": "f396983e1d5d6a6d1333c07d95778d891e1076ec6ba78c1d2d6d2b9201e71774",
+    "harness/contracts/phase3-reference.json": "b4ed9880c62ae9ece00250d783af55eda87b603c77f4c23f8653c264c0f1448e",
+    "harness/contracts/phase6.md": "bea603b3a9ef693f8ca764d4befd06c7488ccde7fcc8f09b999b028ce2395e67",
+    "harness/contracts/phase6-reference.json": "bee7263c606ea0cd68d3d4112e8e23e683866d995bd97204e33d7054bb1316d9"
+  },
+  "source_changes_since_snapshot": [
+    "harness/phase6.py",
+    "harness/test_phase6.py"
+  ],
+  "raw_logs_cache": "/home/ajs/.cache/pb-phase6/retained-review-r2",
+  "limitations": [
+    "Default tiers only; real60s/full120s and known-divergence opt-ins excluded by retained gate contracts.",
+    "Native meter in SQL compatibility is correctness evidence only.",
+    "No source edits, cargo builds/tests, timing campaigns, profiling, benchmarks or commits."
+  ],
+  "comparison_to_review_r1": {
+    "all_retained_corpus_and_runner_hashes_identical": true,
+    "all_case_and_guard_counts_identical": true,
+    "previous_evidence_preserved": true
+  }
+}

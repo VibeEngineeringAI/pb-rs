@@ -51,6 +51,7 @@ class CorpusTests(unittest.TestCase):
         self.assertTrue(all(not g["argv"][:1] in (["help"], ["agent"], ["version"]) for g in guards))
         self.assertFalse(any(g["argv"][:1] == ["profile"] for g in guards))
         self.assertFalse(any(g["canonical_path"][3:] in phase1.PHASE2_OPERATIONS for g in guards))
+        self.assertFalse(any(g["canonical_path"] == "pb tail" for g in guards))
         self.assertTrue(any(g["argv"][:1] == ["login"] for g in guards))
         self.assertTrue(any(g["argv"][:2] == ["completion", "bash"] for g in guards))
         benchmark_names = {c["name"] for c in phase1.corpus() if c["benchmark"]}

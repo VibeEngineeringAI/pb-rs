@@ -1,0 +1,67 @@
+{
+  "scope": "Current immutable review-r4 binaries; 15 decoder probe cases are separate evidence; measurements/retained completion/final review pending",
+  "cases": 291,
+  "strict": 36,
+  "wire_ua_divergent": 255,
+  "diagnostic_divergent": 1,
+  "reports": {
+    "full": {
+      "report": "/home/ajs/.cache/pb-phase6/tmp/harness-review-r4-full-v1/report.json",
+      "sha256": "f8e1d12ee8b9c435e35dc3a142375908f58227b68ec9c4762baa15a6a3cdeff1",
+      "schema_version": 1,
+      "oracle_revision": "07af390",
+      "complete": true,
+      "mode": "compare",
+      "partial": false,
+      "failed": 0,
+      "parity_passed": 36,
+      "payload_auth_passed": 219,
+      "wire_ua_divergent": 183,
+      "diagnostic_divergent": 1,
+      "fixture_sha256": "8237e34ee15b4a7d773945d3c30280752b2b780f1be3626d547b76cdea2ed4f0",
+      "corpus_sha256": "d7a06741a59b813a5eaaced7b1f536a13ff7a81813bb1643605af9f2680fdc0b",
+      "candidate_sha256": {
+        "standard": "fe26926a98cba5e00774e26c5eab33c7c35ebd570ddaec7ceb38ddef663ecc43",
+        "cloud": "1820a1fd6f2d96354778a2e63a47ad55d24bb8c1e3b911bfe236b4082e41bace"
+      }
+    },
+    "review3": {
+      "report": "/home/ajs/.cache/pb-phase6/tmp/harness-review-r4-review3-v1/report.json",
+      "sha256": "a89d0eec1b068a0f1f267c72ecf76e3ee67227efe45bbc68cea3441d2815a033",
+      "schema_version": 1,
+      "oracle_revision": "07af390",
+      "complete": true,
+      "mode": "compare",
+      "partial": false,
+      "failed": 0,
+      "parity_passed": 0,
+      "payload_auth_passed": 56,
+      "wire_ua_divergent": 56,
+      "diagnostic_divergent": 0,
+      "fixture_sha256": "8237e34ee15b4a7d773945d3c30280752b2b780f1be3626d547b76cdea2ed4f0",
+      "corpus_sha256": "0b5a64727fc96f2cc4cd360828fd96e80f44604e29af197d8e0feb8bb34c3754",
+      "candidate_sha256": {
+        "standard": "fe26926a98cba5e00774e26c5eab33c7c35ebd570ddaec7ceb38ddef663ecc43"
+      }
+    },
+    "trailer": {
+      "report": "/home/ajs/.cache/pb-phase6/tmp/harness-review-r4-trailer-v1/report.json",
+      "sha256": "1328c0d918df8b4713469582d16f251abc6ec2224af7ded9ccae610150541061",
+      "schema_version": 1,
+      "oracle_revision": "07af390",
+      "complete": true,
+      "mode": "compare",
+      "partial": false,
+      "failed": 0,
+      "parity_passed": 0,
+      "payload_auth_passed": 16,
+      "wire_ua_divergent": 16,
+      "diagnostic_divergent": 0,
+      "fixture_sha256": "8237e34ee15b4a7d773945d3c30280752b2b780f1be3626d547b76cdea2ed4f0",
+      "corpus_sha256": "a4385c77e80e09a467905fa4d288d8c666f19af4476cf15d3ac4414498421374",
+      "candidate_sha256": {
+        "standard": "fe26926a98cba5e00774e26c5eab33c7c35ebd570ddaec7ceb38ddef663ecc43"
+      }
+    }
+  }
+}
