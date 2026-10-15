@@ -26,7 +26,7 @@ class FrozenReplayTests(unittest.TestCase):
             (candidate / 'build-manifest.json').write_text(json.dumps(manifest))
             argv = ['replay', '--reference-dir', str(reference), '--candidate-dir', str(candidate),
                     '--out', str(root / 'result'), '--jobs', '1']
-            for option in ('fixture', 'flight-fixture', 'decoder-fixture', 'meter',
+            for option in ('fixture', 'flight-fixture', 'decoder-fixture', 'meter', 'effects-test',
                            'trailer-followup-reference', 'review3-followup-reference'):
                 argv += ['--' + option, str(root / 'fixture')]
             if gate:

@@ -10,6 +10,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import hashlib
 import importlib
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -65,6 +66,7 @@ def commands(args):
     yield 'device-login', [sys.executable, 'harness/phase7_device.py',
         '--reference', str(ref / 'pb-go-login'), '--candidate', str(candidate / 'pb-login')]
     yield 'root-help', [sys.executable, 'harness/root_help.py', *common]
+    yield 'interactive-effects', [str(args.effects_test), '--include-ignored', '--test-threads=4']
 
 
 def main():
@@ -75,6 +77,8 @@ def main():
     parser.add_argument('--flight-fixture', type=Path, required=True)
     parser.add_argument('--decoder-fixture', type=Path, required=True)
     parser.add_argument('--meter', type=Path, required=True)
+    parser.add_argument('--effects-test', type=Path, required=True,
+                        help='Prebuilt tests/interactive_effects.rs executable')
     parser.add_argument('--trailer-followup-reference', type=Path, required=True)
     parser.add_argument('--review3-followup-reference', type=Path, required=True)
     parser.add_argument('--out', type=Path, required=True)
@@ -86,7 +90,7 @@ def main():
         parser.error('--jobs must be positive')
     for field in ('reference_dir', 'candidate_dir', 'fixture', 'meter', 'out',
                   'trailer_followup_reference', 'review3_followup_reference',
-                  'flight_fixture', 'decoder_fixture'):
+                  'flight_fixture', 'decoder_fixture', 'effects_test'):
         setattr(args, field, getattr(args, field).resolve())
     matrix = list(commands(args))
     if args.gate and set(args.gate) - {name for name, _ in matrix}:
@@ -94,7 +98,8 @@ def main():
     inputs = [args.reference_dir / name for name in ('pb-go', 'pb-go-cloud', 'pb-go-login')]
     inputs += [args.candidate_dir / name for name in ('pb-normal', 'pb-cloud', 'pb-login')]
     inputs += [args.fixture, args.meter, args.flight_fixture, args.decoder_fixture,
-               args.trailer_followup_reference, args.review3_followup_reference]
+               args.trailer_followup_reference, args.review3_followup_reference,
+               args.effects_test, ROOT / 'tests/interactive_effects.rs']
     required = list(inputs)
     build_path = args.candidate_dir / 'build-manifest.json'
     build = json.loads(build_path.read_text())
@@ -135,13 +140,22 @@ def main():
     def run_gate(name, command):
         if not verify():
             raise RuntimeError('input identity changed before ' + name)
-        command = [*command, '--out', str(args.out / name)]
+        env = dict(os.environ)
+        if name == 'interactive-effects':
+            env.update(PB_GO_ORACLE=str(args.reference_dir / 'pb-go'),
+                       PB_GO_ORACLE_CLOUD=str(args.reference_dir / 'pb-go-cloud'),
+                       PB_EFFECTS_CANDIDATE=str(args.candidate_dir / 'pb-normal'),
+                       PB_EFFECTS_CLOUD_CANDIDATE=str(args.candidate_dir / 'pb-cloud'),
+                       PB_EFFECTS_PYTHON=sys.executable,
+                       PB_EFFECTS_CAPTURE_DIR=str(args.out / name))
+        else:
+            command = [*command, '--out', str(args.out / name)]
         start = time.monotonic()
         with (args.out / (name + '.log')).open('x') as log:
             # Each retained runner owns its case deadlines and child cleanup.
             # Do not kill only its process group: PTY/Flight runners deliberately
             # create further sessions that would outlive that group.
-            code = subprocess.run(command, cwd=ROOT, stdout=log,
+            code = subprocess.run(command, cwd=ROOT, env=env, stdout=log,
                                   stderr=subprocess.STDOUT, check=False).returncode
         stable = verify()
         return {'gate': name, 'command': command, 'exit': code,
