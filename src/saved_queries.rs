@@ -278,18 +278,12 @@ fn save(parsed: &ParsedInvocation) -> Result<Outcome, CliError> {
     } else {
         crate::error::trim_bytes(parsed.text_bytes("name"))
     };
-    for (flag, label) in [("from", "invalid start time"), ("to", "invalid end time")] {
-        if std::str::from_utf8(parsed.text_bytes(flag)).is_err() {
-            crate::time_compat::parse_time_bytes(parsed.text_bytes(flag))
-                .map_err(|e| error(format!("{label}: {e}")))?;
-        }
-    }
     create_with_raw(
         None,
         &query,
         name,
-        default_time(parsed.text("from"), "1m"),
-        default_time(parsed.text("to"), "now"),
+        default_time_bytes(parsed.text_bytes("from"), b"1m"),
+        default_time_bytes(parsed.text_bytes("to"), b"now"),
         Some((&raw_query, raw_name)),
     )?;
     Ok(Outcome {
@@ -303,23 +297,20 @@ pub(super) fn save_after_query(
     client: &ApiClient,
     runtime: &tokio::runtime::Runtime,
 ) -> Result<(), CliError> {
-    for (flag, label) in [("from", "invalid start time"), ("to", "invalid end time")] {
-        if std::str::from_utf8(parsed.text_bytes(flag)).is_err() {
-            crate::time_compat::parse_time_bytes(parsed.text_bytes(flag))
-                .map_err(|e| error(format!("{label}: {e}")))?;
-        }
-    }
     let raw_query = crate::sql::rewrite::prepare_query_bytes(parsed.positional_bytes(0));
     create_with_raw(
         Some((client, runtime)),
         query,
         parsed.text("save-as"),
-        default_time(parsed.text("from"), "1m"),
-        default_time(parsed.text("to"), "now"),
+        default_time_bytes(parsed.text_bytes("from"), b"1m"),
+        default_time_bytes(parsed.text_bytes("to"), b"now"),
         Some((&raw_query, parsed.text_bytes("save-as"))),
     )
 }
 fn default_time<'a>(value: &'a str, default: &'a str) -> &'a str {
+    if value.is_empty() { default } else { value }
+}
+fn default_time_bytes<'a>(value: &'a [u8], default: &'a [u8]) -> &'a [u8] {
     if value.is_empty() { default } else { value }
 }
 #[cfg(test)]
@@ -330,19 +321,20 @@ fn create_with_client(
     from: &str,
     to: &str,
 ) -> Result<(), CliError> {
-    create_with_raw(supplied, query, name, from, to, None)
+    create_with_raw(supplied, query, name, from.as_bytes(), to.as_bytes(), None)
 }
 fn create_with_raw(
     supplied: Option<(&ApiClient, &tokio::runtime::Runtime)>,
     query: &str,
     name: &str,
-    from: &str,
-    to: &str,
+    from: &[u8],
+    to: &[u8],
     raw: Option<(&[u8], &[u8])>,
 ) -> Result<(), CliError> {
-    let from =
-        time_compat::parse_time(from).map_err(|e| error(format!("invalid start time: {e}")))?;
-    let to = time_compat::parse_time(to).map_err(|e| error(format!("invalid end time: {e}")))?;
+    let from = time_compat::parse_time_bytes(from)
+        .map_err(|e| error(format!("invalid start time: {e}")))?;
+    let to =
+        time_compat::parse_time_bytes(to).map_err(|e| error(format!("invalid end time: {e}")))?;
     let owned_client;
     let client = match supplied {
         Some((client, _)) => client,

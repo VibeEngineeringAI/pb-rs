@@ -352,6 +352,22 @@ fn raw_network_paths_query_values_json_and_styled_names_match_go() {
             b"-ojson",
         ]),
         args(&[b"promql", b"label-values", b"job\xff", b"ds"]),
+        args(&[
+            b"sql",
+            b"save",
+            b"select * from x",
+            b"--from=bogus",
+            b"--to=\xff",
+        ]),
+        args(&[
+            b"sql",
+            b"run",
+            b"select 1",
+            b"--save-as=n",
+            b"--from=bogus",
+            b"--to=\xff",
+            b"-ojson",
+        ]),
         args(&[b"promql", b"tsdb", b"ds", b"--focus-label=job\xff"]),
     ];
     let mut mismatch = None;

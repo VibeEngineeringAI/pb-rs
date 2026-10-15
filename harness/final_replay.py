@@ -14,6 +14,7 @@ from pathlib import Path
 import subprocess
 import sys
 import time
+from build_final import sources as build_sources
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -99,6 +100,8 @@ def main():
     build = json.loads(build_path.read_text())
     if not build.get('complete'):
         parser.error('candidate build manifest is incomplete')
+    if build_sources() != build.get('source_sha256'):
+        parser.error('source inventory differs from build manifest')
     for name in ('pb-normal', 'pb-cloud', 'pb-login'):
         if digest(args.candidate_dir / name) != build['binaries'].get(name):
             parser.error('candidate differs from build manifest: ' + name)
@@ -125,7 +128,8 @@ def main():
         (args.out / 'manifest.json').write_text(json.dumps(report, indent=2) + '\n')
 
     def verify():
-        return all(Path(p).is_file() and digest(p) == sha for p, sha in identities.items())
+        return build_sources() == build['source_sha256'] and all(
+            Path(p).is_file() and digest(p) == sha for p, sha in identities.items())
 
     save()
     def run_gate(name, command):

@@ -10,7 +10,7 @@ import final_replay
 
 
 class FrozenReplayTests(unittest.TestCase):
-    def run_replay(self, *, gate=None, failure=False, mutate=False):
+    def run_replay(self, *, gate=None, failure=False, mutate=False, added_source=False):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder)
             reference, candidate = root / 'reference', root / 'candidate'
@@ -21,7 +21,7 @@ class FrozenReplayTests(unittest.TestCase):
                 for name in names:
                     (directory / name).write_bytes(name.encode())
             (root / 'fixture').write_bytes(b'fixture')
-            manifest = {'complete': True, 'source_sha256': {'Cargo.toml': final_replay.digest(final_replay.ROOT / 'Cargo.toml')},
+            manifest = {'complete': True, 'source_sha256': final_replay.build_sources(),
                         'binaries': {p.name: final_replay.digest(p) for p in candidate.iterdir()}}
             (candidate / 'build-manifest.json').write_text(json.dumps(manifest))
             argv = ['replay', '--reference-dir', str(reference), '--candidate-dir', str(candidate),
@@ -32,13 +32,18 @@ class FrozenReplayTests(unittest.TestCase):
             if gate:
                 argv += ['--gate', gate]
 
+            current_sources = dict(manifest['source_sha256'])
+
             def child(command, **kwargs):
                 if mutate:
                     (candidate / 'pb-normal').write_bytes(b'changed')
+                if added_source:
+                    current_sources['src/new.rs'] = 'new source digest'
                 return subprocess.CompletedProcess(command, 7 if failure else 0)
 
             with patch.object(sys, 'argv', argv), \
                     patch.object(final_replay, 'commands', return_value=[('a', ['mock']), ('b', ['mock'])]), \
+                    patch.object(final_replay, 'build_sources', side_effect=lambda: dict(current_sources)), \
                     patch.object(final_replay.subprocess, 'run', side_effect=child):
                 code = final_replay.main()
             return code, json.loads((root / 'result/manifest.json').read_text())
@@ -62,6 +67,12 @@ class FrozenReplayTests(unittest.TestCase):
 
     def test_changed_binary_invalidates_run(self):
         code, result = self.run_replay(mutate=True)
+        self.assertEqual(code, 1)
+        self.assertFalse(result['passed'])
+        self.assertTrue(all(not row['identities_unchanged'] for row in result['checks']))
+
+    def test_new_source_file_invalidates_run(self):
+        code, result = self.run_replay(added_source=True)
         self.assertEqual(code, 1)
         self.assertFalse(result['passed'])
         self.assertTrue(all(not row['identities_unchanged'] for row in result['checks']))
