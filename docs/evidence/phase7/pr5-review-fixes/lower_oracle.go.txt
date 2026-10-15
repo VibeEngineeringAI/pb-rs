@@ -1,0 +1,6 @@
+package main
+import("fmt";"unicode")
+func main() {
+    fmt.Printf("// Go Unicode %s\n",unicode.Version)
+    for c:=rune(0);c<=unicode.MaxRune;c++ { if c>=0xd800&&c<=0xdfff {continue}; mapped:=unicode.ToLower(c); if mapped!=c {fmt.Printf("%X %X\n",c,mapped)} }
+}

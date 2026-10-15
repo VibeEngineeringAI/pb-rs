@@ -213,13 +213,13 @@ Spinner: `spinner.Line` frames at 100 ms; ticks only while loading; tag check re
   `strings.Index(strings.ToLower(sql), " from ")` (and `"\nfrom "` in `extractDataset`), then
   slices the ORIGINAL `sql` bytes with that offset. Rust reproduces this (`go_lower_index`,
   `go_slice_from`, `go_trim_space`).
-  - **Lowering:** `go_lower_rune` applies Go's simple lowercase. U+0130 maps to 'i'.
-    U+A7CB and U+A7DC stay unchanged: Rust's newer tables lowercase them to U+0264 / U+019B
-    (3→2 bytes), but go1.25.4 does not. Every other rune takes Rust's single-rune
-    `to_lowercase`.
-    [evidence] The parent's exhaustive probe over all 1,112,064 scalars found these two as the
-    only mappings that change byte width or produce an ASCII result and are absent from pinned
-    Go (153 Go rows): `docs/evidence/phase7/sql-lower-map/{report.json,go.txt,rust.txt,main.*.txt}`.
+  - **Lowering:** the shared `tui::unicode::lower` pins every simple lowercase mapping
+    to Go 1.25.4 / Unicode 15.0.0, including U+0130 → 'i' and unchanged runes
+    introduced in later Unicode versions. It is also used by SQL/PromQL filters.
+    The [PR #5 follow-up](phase7-pr5-review-fixes.md) exhaustively checks all
+    1,112,064 scalars and retains the Go dump and generator. Earlier byte-width
+    probes in `docs/evidence/phase7/sql-lower-map/` remain historical evidence;
+    their former Rust-based helper has been replaced by the complete pinned table.
     Shifting examples: U+212A KELVIN SIGN 3→1 byte, U+0130 'İ' 2→1, U+023A 'Ⱥ' 2→3.
   - **Bytes:** slicing is byte-exact, including cuts inside a rune. `TrimSpace` stops at an
     invalid byte. Past the end, `[low:len]` becomes Go's `runtime error: slice bounds out of

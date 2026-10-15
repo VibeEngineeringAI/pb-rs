@@ -1846,6 +1846,8 @@ struct ResultsTable {
     page_size: usize,
     current_page: usize,
     cursor: usize,
+    /// Go leaves maxTotalWidth unset: all three column positions are reachable.
+    scroll: usize,
     focused: bool,
     filter: TextInput,
 }
@@ -1861,6 +1863,7 @@ impl ResultsTable {
             page_size,
             current_page: 0,
             cursor: 0,
+            scroll: 0,
             focused: false,
             filter: TextInput::new(),
         }
@@ -1871,12 +1874,12 @@ impl ResultsTable {
         if filter.is_empty() || !self.filterable {
             return self.rows.iter().collect();
         }
-        let needle = filter.to_lowercase();
+        let needle = super::unicode::lower(&filter);
         self.rows
             .iter()
             .filter(|row| {
-                row.metric.to_lowercase().contains(&needle)
-                    || row.value.to_lowercase().contains(&needle)
+                super::unicode::lower(&row.metric).contains(&needle)
+                    || super::unicode::lower(&row.value).contains(&needle)
             })
             .collect()
     }
@@ -1982,6 +1985,12 @@ impl ResultsTable {
         }
         if key.is(&["esc"]) {
             self.filter.set_value("");
+        }
+        if key.is(&["right", "d"]) && self.scroll < 2 {
+            self.scroll += 1;
+        }
+        if key.is(&["left", "a"]) && self.scroll > 0 {
+            self.scroll -= 1;
         }
     }
 
@@ -2095,13 +2104,22 @@ impl ResultsTable {
             ]
         };
         let mut headers = Vec::with_capacity(3);
-        for (i, title) in titles.iter().enumerate() {
+        // Scroll whole columns, retaining their original flex widths. The
+        // generated overflow column uses the left border and a one-cell '<'.
+        let columns = (self.scroll > 0).then_some((0, 1, "<")).into_iter().chain(
+            titles
+                .into_iter()
+                .enumerate()
+                .skip(self.scroll)
+                .map(|(i, title)| (i, widths[i], title)),
+        );
+        for (i, width, title) in columns {
             let cell = header_borders[i]
                 .fg(Color::role(Role::Accent))
                 .bold(true)
-                .width(widths[i])
+                .width(width)
                 .align(style::LEFT);
-            headers.push(cell.render(&limit_str(title, widths[i])));
+            headers.push(cell.render(&limit_str(title, width)));
         }
         let header_refs: Vec<&str> = headers.iter().map(String::as_str).collect();
         let mut lines = vec![style::join_horizontal(1.0, &header_refs)];
@@ -2151,8 +2169,14 @@ impl ResultsTable {
                 ];
                 let mut cells = Vec::with_capacity(3);
                 let borders = if is_last { &last } else { &inner };
-                for ((border, width), text) in borders.iter().zip(widths).zip(data) {
-                    let border = *border;
+                let columns = (self.scroll > 0).then_some((0, 1, "<")).into_iter().chain(
+                    data.into_iter()
+                        .enumerate()
+                        .skip(self.scroll)
+                        .map(|(i, text)| (i, widths[i], text)),
+                );
+                for (i, width, text) in columns {
+                    let border = borders[i];
                     let cell = if highlighted {
                         border
                             .bg(Color::role(Role::SelRow))
@@ -3000,9 +3024,9 @@ fn filter_datasets(all: &[String], query: &str) -> Vec<String> {
     if query.is_empty() {
         return all.to_vec();
     }
-    let q = query.to_lowercase();
+    let q = super::unicode::lower(query);
     all.iter()
-        .filter(|d| d.to_lowercase().contains(&q))
+        .filter(|d| super::unicode::lower(d).contains(&q))
         .cloned()
         .collect()
 }
@@ -3012,10 +3036,10 @@ fn filter_builder_list(all: &[String], query: &str) -> Vec<String> {
     if query.is_empty() {
         return all.to_vec();
     }
-    let q = query.to_lowercase();
+    let q = super::unicode::lower(query);
     let filtered = all
         .iter()
-        .filter(|i| i.as_str() != ANY && i.to_lowercase().contains(&q))
+        .filter(|i| i.as_str() != ANY && super::unicode::lower(i).contains(&q))
         .cloned();
     if all.first().is_some_and(|f| f == ANY) {
         std::iter::once(ANY.to_owned()).chain(filtered).collect()
@@ -6172,6 +6196,163 @@ mod tests {
             series_count: 1,
             value_width: 14,
         }))
+    }
+
+    #[test]
+    fn pr5_ui_unicode_promql_selectors_use_go_simple_lowercase() {
+        for (name, query, matches) in [
+            ("İstanbul", "ist", true),
+            ("istanbul", "İST", true),
+            ("ΟΣ", "οσ", true),
+            ("οσ", "ΟΣ", true),
+            ("ΟΣ", "ος", false),
+            ("İstanbul", "i\u{307}st", false),
+        ] {
+            let all = vec![name.to_owned()];
+            assert_eq!(
+                !filter_datasets(&all, query).is_empty(),
+                matches,
+                "dataset/metric {name:?}/{query:?}"
+            );
+            let labels = vec![ANY.to_owned(), name.to_owned()];
+            assert_eq!(
+                filter_builder_list(&labels, query).len(),
+                1 + usize::from(matches),
+                "label/value {name:?}/{query:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn pr5_ui_unicode_promql_rows_use_go_simple_lowercase() {
+        for (text, query, matches) in [
+            ("İstanbul", "ist", true),
+            ("istanbul", "İST", true),
+            ("ΟΣ", "οσ", true),
+            ("οσ", "ΟΣ", true),
+            ("ΟΣ", "ος", false),
+            ("İstanbul", "i\u{307}st", false),
+        ] {
+            for (metric, value) in [(text, "1"), ("up", text)] {
+                let mut s = state("up", "m", true);
+                s.update(Message::Done(vector(vec![row(
+                    "2026-01-01T00:00:00Z",
+                    metric,
+                    value,
+                )])));
+                press(&mut s, rune('/'));
+                for c in query.chars() {
+                    press(&mut s, rune(c));
+                }
+                assert_eq!(
+                    !s.table.visible_rows().is_empty(),
+                    matches,
+                    "row {metric:?}/{value:?}/{query:?}"
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn pr5_ui_promql_horizontal_keys_reveal_clipped_values_and_restore_columns() {
+        let mut s = state("up", "m", true);
+        s.update(Message::Resize {
+            width: 40,
+            height: 35,
+        });
+        let value = "-1.2345678901234567e-100";
+        s.update(Message::Done(Completion::Result(Ok(ResultData {
+            result_type: "vector".into(),
+            chart_result: String::new(),
+            rows: vec![row("2026-01-01T00:00:00Z", "up", value)],
+            chart_rows: Vec::new(),
+            series_count: 1,
+            value_width: value.len(),
+        }))));
+        let original = s.clone();
+        let frame = |s: &PromqlState| String::from_utf8(s.view()).unwrap();
+        assert!(s.table.view().contains("TIME [LOCAL]"));
+        assert!(
+            !frame(&s).contains(value),
+            "value starts clipped at 40 columns"
+        );
+        press(&mut s, key(KeyCode::Right));
+        assert!(
+            frame(&s).contains(value),
+            "Right must expose the clipped exponent"
+        );
+        assert!(!s.table.view().contains("TIME [LOCAL]"));
+        let metric_column = s.table.view();
+        assert!(
+            metric_column.contains('…'),
+            "the narrow METRIC column remains present"
+        );
+        assert!(metric_column.contains('<'));
+        press(&mut s, rune('d'));
+        assert!(
+            !s.table.view().contains('…'),
+            "the narrow METRIC column scrolls out"
+        );
+        assert!(s.table.view().contains("VALUE"));
+        let last_column = s.table.view();
+        press(&mut s, key(KeyCode::Right));
+        assert_eq!(s.table.view(), last_column, "stop at the final column");
+        press(&mut s, key(KeyCode::Left));
+        assert_eq!(s.table.view(), metric_column);
+        press(&mut s, rune('a'));
+        assert!(s.table.view().contains("TIME [LOCAL]"));
+        assert_eq!(frame(&s), frame(&original));
+        assert!(Arc::ptr_eq(&s.table.rows, &original.table.rows));
+        press(&mut s, key(KeyCode::Left));
+        assert_eq!(frame(&s), frame(&original), "stop at the first column");
+    }
+
+    #[test]
+    fn pr5_ui_promql_column_scroll_survives_resize_results_and_filtering() {
+        let mut s = state("up", "m", true);
+        let rows = vec![row("2026-01-01T00:00:00Z", "up{job=\"prod\"}", "12")];
+        s.update(Message::Done(vector(rows.clone())));
+        press(&mut s, rune('d'));
+        let snapshot = s.clone();
+        s.update(Message::Resize {
+            width: 100,
+            height: 30,
+        });
+        assert!(
+            !s.table.view().contains("TIME [LOCAL]"),
+            "resize preserves the column offset"
+        );
+        assert!(s.table.view().contains("METRIC"));
+        assert_eq!(
+            s.table.value_width, 5,
+            "Go resize still resets the VALUE width"
+        );
+        assert!(Arc::ptr_eq(&s.table.rows, &snapshot.table.rows));
+        s.update(Message::Done(vector(rows)));
+        assert!(
+            !s.table.view().contains("TIME [LOCAL]"),
+            "a new result preserves the column offset"
+        );
+        assert!(s.table.view().contains("prod"));
+        press(&mut s, rune('/'));
+        press(&mut s, rune('d'));
+        press(&mut s, key(KeyCode::Right));
+        assert_eq!(s.table.filter.value(), "d");
+        assert!(
+            s.table.view().contains("METRIC"),
+            "filter editing consumes horizontal keys"
+        );
+        assert_eq!(s.table.visible_rows().len(), 1);
+        s.update(Message::Done(Completion::Result(
+            Err("query failed".into()),
+        )));
+        assert!(!s.table.view().contains("TIME [LOCAL]"));
+        assert!(
+            s.table.view().contains('<'),
+            "empty table keeps its overflow marker"
+        );
+        assert!(s.table.rows.is_empty());
+        assert_eq!(snapshot.table.rows.len(), 1);
     }
 
     /// Fixture paths also used for the retained exact pre/post byte comparison.

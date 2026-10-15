@@ -1,0 +1,19 @@
+test_legacy_mode_reconstruction_uses_captured_case_before_contract_override (test_phase7.ContractsTests.test_legacy_mode_reconstruction_uses_captured_case_before_contract_override) ... FAIL
+
+======================================================================
+FAIL: test_legacy_mode_reconstruction_uses_captured_case_before_contract_override (test_phase7.ContractsTests.test_legacy_mode_reconstruction_uses_captured_case_before_contract_override)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7.py", line 1296, in test_legacy_mode_reconstruction_uses_captured_case_before_contract_override
+    self.assertEqual(loaded['terminal_modes'], {'initial': [2004], 'final': [2004]})
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'initial': [], 'final': []} != {'initial': [2004], 'final': [2004]}
+- {'final': [], 'initial': []}
++ {'final': [2004], 'initial': [2004]}
+?            ++++               ++++
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.257s
+
+FAILED (failures=1)

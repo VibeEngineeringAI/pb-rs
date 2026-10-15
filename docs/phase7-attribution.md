@@ -24,7 +24,9 @@ by Phase7, rather than all Cargo dependencies. Project-owned `pkg/ui` and
 
 - **Go 1.25.4, BSD:** PromQL sort/pdqsort/stable helpers, Unix/time formatting,
   hex-float parsing and underscore validation; Go Unicode 15.0.0 fold/Ll/Lu data
-  generated into `src/tui/saved_fuzzy_unicode.rs`. The existing diagnostic
+  generated into `src/tui/saved_fuzzy_unicode.rs`; PR #5 follow-up adds the
+  simple lowercase/uppercase mappings in `src/tui/unicode.rs` from the same pinned Go
+  sources, covered by the existing full Go and Unicode notices. The existing diagnostic
   printable ranges in `src/printable.rs` also retain their Go attribution.
   `go_f64_to_i64` matches the observed Go linux/amd64 conversion; the audit did
   not identify a separately copied compiler implementation for that helper.
@@ -59,6 +61,8 @@ by Phase7, rather than all Cargo dependencies. Project-owned `pkg/ui` and
 
 The machine-readable evidence is
 [`attribution-inventory.json`](evidence/phase7/attribution-inventory.json).
+The inventory retains its original audit-time repository hashes; the PR #5
+follow-up is recorded in [the test-first fix log](phase7-pr5-review-fixes.md).
 Each component records upstream and repository file SHA-256 hashes, license
 byte counts/hashes, notice section offsets, cache origins and public source
 origins where available. For the 15 Go modules, locally cached `.info` files

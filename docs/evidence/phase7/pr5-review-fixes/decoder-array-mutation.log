@@ -1,0 +1,21 @@
+   Compiling pb v0.1.0 (/home/ajs/.local/share/pb-pr5-fixes/decoder-matrix-fixed/array-mutation/source)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 23.03s
+     Running unittests src/lib.rs (/home/ajs/.local/share/pb-pr5-fixes/decoder-matrix-fixed/array-mutation/target/debug/deps/pb-9403838716320e55)
+
+running 1 test
+
+thread 'tui::sql_service::tests::nested_numeric_errors_follow_wire_order_before_map_sorting' (1485026) panicked at src/tui/sql_service.rs:1070:13:
+assertion `left == right` failed: first conversion error: [1e401,1e400]
+  left: "json: cannot unmarshal number 1e400 into Go struct field QueryData.records of type float64"
+ right: "json: cannot unmarshal number 1e401 into Go struct field QueryData.records of type float64"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test tui::sql_service::tests::nested_numeric_errors_follow_wire_order_before_map_sorting ... FAILED
+
+failures:
+
+failures:
+    tui::sql_service::tests::nested_numeric_errors_follow_wire_order_before_map_sorting
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 573 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--lib`

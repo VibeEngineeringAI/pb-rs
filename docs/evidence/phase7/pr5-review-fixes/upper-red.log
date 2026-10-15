@@ -1,0 +1,21 @@
+   Compiling pb v0.1.0 (/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.42s
+     Running unittests src/lib.rs (target/debug/deps/pb-9403838716320e55)
+
+running 1 test
+
+thread 'tui::sql::tests::sql_result_headers_use_pinned_go_simple_uppercase' (1813146) panicked at src/tui/sql.rs:4764:13:
+assertion `left == right` failed: header for "ɤ"
+  left: "Ɤ"
+ right: "ɤ"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test tui::sql::tests::sql_result_headers_use_pinned_go_simple_uppercase ... FAILED
+
+failures:
+
+failures:
+    tui::sql::tests::sql_result_headers_use_pinned_go_simple_uppercase
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 574 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--lib`

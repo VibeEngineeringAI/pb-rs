@@ -1215,34 +1215,12 @@ fn is_sql_space(c: u8) -> bool {
     matches!(c, b' ' | b'\t' | b'\n' | b'\r')
 }
 
-/// unicode.ToLower (simple case mapping). U+0130 is the only rune whose
-/// full lowercase (Rust's `to_lowercase`) has several runes; its simple
-/// mapping is 'i'.
-fn go_lower_rune(c: char) -> char {
-    match c {
-        '\u{130}' => return 'i',
-        // Lowercase mappings Rust's newer Unicode tables add but go1.25.4's
-        // unicode tables (Unicode 15.0) lack; Go leaves these runes unchanged.
-        // Exhaustive scalar probe: docs/evidence/phase7/sql-lower-map/.
-        '\u{a7cb}' | '\u{a7dc}' => return c,
-        _ => {}
-    }
-    let mut lower = c.to_lowercase();
-    match (lower.next(), lower.next()) {
-        (Some(single), None) => single,
-        _ => c,
-    }
-}
-
 /// `strings.Index(strings.ToLower(s), needle)`: a byte offset into the
 /// lowered text, which query.go then applies to the ORIGINAL bytes. Letters
 /// whose lowercase has another UTF-8 length (KELVIN SIGN 3→1, 'İ' 2→1,
 /// 'Ⱥ' 2→3) shift that offset, exactly as in Go.
 fn go_lower_index(s: &str, needle: &str) -> Option<usize> {
-    s.chars()
-        .map(go_lower_rune)
-        .collect::<String>()
-        .find(needle)
+    super::unicode::lower(s).find(needle)
 }
 
 /// Go `s[low:]`, including its runtime panic text when `low` is past the end.
@@ -1777,7 +1755,7 @@ impl Table {
         if filter.is_empty() {
             return self.rows.iter().collect();
         }
-        let needle = filter.to_lowercase();
+        let needle = super::unicode::lower(&filter);
         self.rows
             .iter()
             .filter(|row| {
@@ -1785,7 +1763,7 @@ impl Table {
                 for column in self.columns.iter().filter(|c| c.filterable) {
                     checked = true;
                     if let Some(cell) = row.get(&column.key)
-                        && cell.display().to_lowercase().contains(&needle)
+                        && super::unicode::lower(cell.display()).contains(&needle)
                     {
                         return true;
                     }
@@ -2454,9 +2432,9 @@ fn filter_names(all: &[String], query: &str) -> Vec<String> {
     if query.is_empty() {
         return all.to_vec();
     }
-    let needle = query.to_lowercase();
+    let needle = super::unicode::lower(query);
     all.iter()
-        .filter(|name| name.to_lowercase().contains(&needle))
+        .filter(|name| super::unicode::lower(name).contains(&needle))
         .cloned()
         .collect()
 }
@@ -3116,7 +3094,7 @@ impl QueryState {
             .into_iter()
             .map(|s| Column {
                 key: s.key,
-                title: go_to_upper(&s.title),
+                title: super::unicode::upper(&s.title),
                 width: s.width,
                 filterable: s.filterable,
             })
@@ -4109,19 +4087,6 @@ fn infer_column_width(column: &str, sample: &[Record], max_records: usize, max_w
     width.max(column.len() as i64)
 }
 
-/// strings.ToUpper rune by rune (no multi-rune special casing).
-fn go_to_upper(text: &str) -> String {
-    text.chars()
-        .map(|c| {
-            let mut upper = c.to_uppercase();
-            match (upper.next(), upper.next()) {
-                (Some(u), None) => u,
-                _ => c,
-            }
-        })
-        .collect()
-}
-
 /// renderTitledPane.
 fn titled_pane(
     panics: &RenderPanics,
@@ -4350,6 +4315,75 @@ mod tests {
             }),
             fixed_now(),
         )
+    }
+
+    #[test]
+    fn pr5_ui_unicode_dataset_and_column_filters_use_go_simple_lowercase() {
+        for (name, query, matches) in [
+            ("İstanbul", "ist", true),
+            ("istanbul", "İST", true),
+            ("ΟΣ", "οσ", true),
+            ("οσ", "ΟΣ", true),
+            ("ΟΣ", "ος", false),
+            ("İstanbul", "i\u{307}st", false),
+        ] {
+            let mut s = state("");
+            s.update(
+                Msg::Datasets(DatasetsCompletion {
+                    result: Ok(vec![name.to_owned()]),
+                }),
+                fixed_now(),
+            );
+            s.update(Msg::Key(ctrl('d')), fixed_now());
+            s.update(Msg::Key(runes(query)), fixed_now());
+            assert_eq!(
+                !s.filtered_datasets.is_empty(),
+                matches,
+                "dataset {name:?}/{query:?}"
+            );
+
+            s.update(Msg::Key(key(KeyCode::Esc)), fixed_now());
+            s.columns_drawer_open = true;
+            s.all_columns = vec![name.to_owned()];
+            s.filtered_columns = s.all_columns.clone();
+            s.focus_pane(Focus::Columns);
+            s.update(Msg::Key(runes(query)), fixed_now());
+            assert_eq!(
+                !s.filtered_columns.is_empty(),
+                matches,
+                "column {name:?}/{query:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn pr5_ui_unicode_sql_rows_use_go_simple_lowercase() {
+        let mut table = Table::new(5, 80);
+        table.set_columns(vec![Column {
+            key: "value".into(),
+            title: "VALUE".into(),
+            width: 30,
+            filterable: true,
+        }]);
+        for (value, query, matches) in [
+            ("İstanbul", "ist", true),
+            ("istanbul", "İST", true),
+            ("ΟΣ", "οσ", true),
+            ("οσ", "ΟΣ", true),
+            ("ΟΣ", "ος", false),
+            ("İstanbul", "i\u{307}st", false),
+        ] {
+            table.set_rows(vec![BTreeMap::from([(
+                "value".into(),
+                Cell::Value(value.into()),
+            )])]);
+            table.filter.set_value(query);
+            assert_eq!(
+                !table.visible_rows().is_empty(),
+                matches,
+                "row {value:?}/{query:?}"
+            );
+        }
     }
 
     #[test]
@@ -4693,6 +4727,43 @@ mod tests {
     }
 
     #[test]
+    fn sql_result_headers_use_pinned_go_simple_uppercase() {
+        for (field, expected) in [
+            ("ɤ", "ɤ"),
+            ("ƛ", "ƛ"),
+            ("\u{10d70}", "\u{10d70}"),
+            ("http_status", "HTTP_STATUS"),
+            ("straße", "STRAßE"),
+            ("ﬀ", "ﬀ"),
+            ("ςσ", "ΣΣ"),
+            ("ǅ", "Ǆ"),
+        ] {
+            let mut s = state("select * from logs");
+            let request = windows(&s.init()).remove(0);
+            s.update(
+                Msg::Window(WindowCompletion {
+                    run_id: request.run_id,
+                    window_index: request.window_index,
+                    result: Ok(QueryData {
+                        fields: vec![field.into()],
+                        records: vec![Record::from([(field.into(), Cell::Str("sample".into()))])],
+                    }),
+                }),
+                fixed_now(),
+            );
+            assert_eq!(s.table.columns[0].title, expected, "header for {field:?}");
+            assert!(
+                s.table.render_headers().contains(expected),
+                "rendered header for {field:?}"
+            );
+            assert_eq!(
+                s.table.columns[0].key, field,
+                "column lookup keeps the original name"
+            );
+        }
+    }
+
+    #[test]
     fn columns_put_timestamp_first_and_tags_last() {
         let mut s = state("");
         let mut record = Record::new();
@@ -4976,10 +5047,10 @@ mod tests {
     fn go_lowering_keeps_runes_newer_than_go_unicode_tables() {
         // Rust maps these (Unicode 16) but go1.25.4 does not; their byte
         // width would otherwise shift Go's offset (3 -> 2 bytes).
-        assert_eq!(go_lower_rune('\u{a7cb}'), '\u{a7cb}');
-        assert_eq!(go_lower_rune('\u{a7dc}'), '\u{a7dc}');
-        assert_eq!(go_lower_rune('\u{130}'), 'i');
-        assert_eq!(go_lower_rune('\u{212a}'), 'k');
+        assert_eq!(crate::tui::unicode::lower_rune('\u{a7cb}'), '\u{a7cb}');
+        assert_eq!(crate::tui::unicode::lower_rune('\u{a7dc}'), '\u{a7dc}');
+        assert_eq!(crate::tui::unicode::lower_rune('\u{130}'), 'i');
+        assert_eq!(crate::tui::unicode::lower_rune('\u{212a}'), 'k');
         let query = "select '\u{a7cb}' from dataset";
         assert_eq!(
             resolve_dataset_placeholder(query, "logs").unwrap(),

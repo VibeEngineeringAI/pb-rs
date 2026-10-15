@@ -42,6 +42,8 @@ os.environ.update({name: str(TMP) for name in ('TMPDIR', 'GOTMPDIR', 'CLAUDE_COD
 SCHEMA = 1
 CELL_FIELDS = ['data', 'fg', 'bg', 'bold', 'italics', 'underscore', 'strikethrough',
                'reverse', 'blink', 'faint', 'conceal', 'overline']
+# Persistent modes not represented by cells/cursor/alternate-screen state.
+TERMINAL_SESSION_MODES = frozenset((1, 1000, 1002, 1003, 1004, 1006, 2004, 2026))
 CONTRACT_HEADERS = (*phase3.CONTRACT_HEADERS, 'x-p-telemetry-type', 'x-p-log-source')
 KEYS = {'enter': '\r', 'tab': '\t', 'shift-tab': '\x1b[Z', 'esc': '\x1b',
         'ctrl-c': '\x03', 'ctrl-r': '\x12', 'ctrl-d': '\x04', 'ctrl-l': '\x0c',
@@ -192,7 +194,24 @@ class Terminal:
         class StyledScreen(Attributes, pyte.Screen):
             pass
         class StyledHistory(Attributes, pyte.HistoryScreen):
-            pass
+            def __init__(screen, *args, **kwargs):
+                screen.history_overflow = False
+                super().__init__(*args, **kwargs)
+
+            def index(screen):
+                # pyte appends the outgoing row only at the scrolling margin.
+                # A full bounded deque loses a row at that append, not when an
+                # unrelated token arrives or when capacity is first reached.
+                _, bottom = screen.margins or (0, screen.lines - 1)
+                if screen.cursor.y == bottom and len(screen.history.top) == screen.history.top.maxlen:
+                    screen.history_overflow = True
+                super().index()
+
+            def reverse_index(screen):
+                top, _ = screen.margins or (0, screen.lines - 1)
+                if screen.cursor.y == top and len(screen.history.bottom) == screen.history.bottom.maxlen:
+                    screen.history_overflow = True
+                super().reverse_index()
         self.main = StyledHistory(columns, rows, history=20000)
         self.alt = StyledScreen(columns, rows)
         self.active = self.main
@@ -211,9 +230,11 @@ class Terminal:
 
     def _stream(self, token):
         stream = self.alt_stream if self.alternate else self.main_stream
-        if len(self.main.history.top) == self.main.history.top.maxlen:
-            self.history_overflow = True
         stream.feed(token)
+        self.history_overflow = self.history_overflow or self.main.history_overflow
+
+    def session_modes(self):
+        return sorted(self.private_modes & TERMINAL_SESSION_MODES)
 
     @staticmethod
     def _cell(cell):
@@ -267,6 +288,10 @@ class Terminal:
 
     def _control(self, token):
         import re
+        if token == '\x1bc':
+            # RIS resets these session modes as well as pyte's screen state.
+            # Keep the observer's evidence of any earlier history loss sticky.
+            self.private_modes.difference_update(TERMINAL_SESSION_MODES)
         if token.startswith('\x1b]'):
             payload = token[2:].removesuffix('\x07').removesuffix('\x1b\\')
             if payload in ('10;?', '11;?'):
@@ -894,6 +919,7 @@ def _execute(command, env, cwd, case, fixture=None, *, proc_sampler=None,
     terminal.feed(case.get('initial_screen', '').encode())
     terminal.byte_offset = 0
     initial = terminal.frame()
+    initial_modes = terminal.session_modes()
     script, index = case.get('actions', []), 0
     action_started = started
     stable_since = first_match = last_hash = None
@@ -1127,6 +1153,8 @@ def _execute(command, env, cwd, case, fixture=None, *, proc_sampler=None,
     return {'schema_version': SCHEMA, 'cell_fields': CELL_FIELDS, 'stdout': bytes(raw), 'stderr': bytes(stderr),
             'termination': termination, 'failure': failure, 'frames': frames,
             'final_frame': terminal.frame(), 'initial_frame': initial,
+            'terminal_modes': {'initial': initial_modes, 'final': terminal.session_modes()},
+            'history_overflow': terminal.history_overflow,
             'termios_before': before, 'termios_after': after, 'termios_observations': observations,
             'termios_restored': before == after, 'actions': actions, 'responses': responses,
             'transitions': terminal.transitions, 'unsupported': terminal.unsupported,
@@ -1313,12 +1341,125 @@ def ordered_request_contract(result):
     return requests
 
 
+def session_terminal_modes(result):
+    """Read captured modes, or recover legacy evidence from its retained ANSI.
+
+    Mode parsing is independent of terminal geometry and resize timing. Reuse
+    the same UTF8/escape tokenizer without rendering: an OSC title containing
+    CSI-looking text must not be mistaken for a real mode change. No retained
+    files are rewritten and absent raw evidence is a validation failure.
+    """
+    if 'terminal_modes' in result:
+        modes = result['terminal_modes']
+        if not isinstance(modes, dict) or set(modes) != {'initial', 'final'}:
+            raise ValueError('terminal private modes evidence invalid')
+        for state in modes.values():
+            if not isinstance(state, list) or any(type(mode) is not int or mode not in TERMINAL_SESSION_MODES
+                                                  for mode in state) or len(state) != len(set(state)):
+                raise ValueError('terminal private modes evidence invalid')
+        return {name: sorted(state) for name, state in modes.items()}
+    if 'terminal_modes_error' in result:
+        raise ValueError(result['terminal_modes_error'])
+    raw = result.get('stdout')
+    if not isinstance(raw, bytes):
+        raise ValueError('terminal private modes evidence unavailable')
+
+    class ModesOnly(Terminal):
+        def _stream(self, token):
+            pass
+
+        def _switch(self, enabled, mode):
+            self.alternate = enabled
+
+    terminal = ModesOnly(1, 1, result.get('case', {}).get('theme', 'dark'))
+    seed = result.get('case', {}).get('initial_screen', '').encode()
+    for offset in range(0, len(seed), 65536):
+        terminal.feed(seed[offset:offset + 65536])
+    initial = terminal.session_modes()
+    for offset in range(0, len(raw), 65536):
+        terminal.feed(raw[offset:offset + 65536])
+    terminal.feed(b'', final=True)
+    return {'initial': initial, 'final': terminal.session_modes()}
+
+
+def session_history_overflow(result):
+    """Legacy history is safe only when the retained evidence proves no loss.
+
+    Without resets, main history grows monotonically. A final history below
+    capacity therefore cannot have evicted a row. Capacity, history clears,
+    reverse-index's unexported bottom deque, or absent evidence are ambiguous;
+    do not manufacture a passing flag or rewrite the original failure text.
+    """
+    if 'history_overflow' in result:
+        if type(result['history_overflow']) is not bool:
+            raise ValueError('history overflow evidence invalid')
+        return result['history_overflow']
+    if 'history_overflow_error' in result:
+        raise ValueError(result['history_overflow_error'])
+    raw = result.get('stdout')
+    seed = result.get('case', {}).get('initial_screen', '')
+    frames = [result.get('final_frame')]
+    if 'initial_frame' in result:
+        frames.append(result['initial_frame'])
+    frames.extend(row.get('frame') for row in result.get('frames', []))
+    frames.extend(row['frame'] for row in result.get('transitions', []) if 'frame' in row)
+    if not isinstance(raw, bytes) or not isinstance(seed, str) or any(
+            not isinstance(frame, dict) or not isinstance(frame.get('scrollback'), list) or
+            len(frame['scrollback']) >= 20000 for frame in frames):
+        raise ValueError('history overflow evidence unavailable')
+
+    class HistoryControls:
+        uncertain = False
+
+        def ignore(self, *args, **kwargs):
+            pass
+
+        def __getattr__(self, name):
+            return self.ignore
+
+        def reset(self):
+            self.uncertain = True
+
+        def reverse_index(self):
+            self.uncertain = True
+
+        def erase_in_display(self, how=0, *args, **kwargs):
+            if how == 3:
+                self.uncertain = True
+
+    # Use pyte's parser rather than searching bytes: OSC contents, C1 CSI and
+    # zero-padded parameters must have the same meaning as in the observer.
+    pyte, _ = dependencies()
+    controls = HistoryControls()
+    stream = pyte.Stream(controls)
+    try:
+        stream.feed(seed)
+        stream.feed(raw.decode(errors='replace'))
+    except (ValueError, TypeError):
+        raise ValueError('history overflow evidence unavailable') from None
+    if controls.uncertain:
+        raise ValueError('history overflow evidence unavailable')
+    return False
+
+
 def validate(result):
     """Independent effect/lifecycle assertions, before any oracle equality check."""
     case, issues = result['case'], []
     if result['failure']:
         issues.append(result['failure'])
+    try:
+        if session_history_overflow(result):
+            issues.append('terminal observer history overflow')
+    except ValueError as error:
+        issues.append(str(error))
     expected = case.get('expect', {})
+    try:
+        modes = session_terminal_modes(result)
+    except ValueError as error:
+        issues.append(str(error))
+    else:
+        if expected.get('screen_restored', True) and modes['initial'] != modes['final']:
+            issues.append('terminal private modes not restored')
     for check in expected.get('checkpoint_cells', []):
         frame = next((f['frame'] for f in result['frames'] if f['name'] == check['checkpoint']), None)
         row, col = check['row'], check['col']
@@ -1395,6 +1536,9 @@ def validate(result):
                 if query.get(key) != value:
                     issues.append('request query differs: ' + assertion['path'] + '.' + key)
     for stream in ('stdout', 'stderr'):
+        if not isinstance(result.get(stream), bytes):
+            issues.append(stream + ' evidence unavailable')
+            continue
         text = result[stream].decode(errors='replace')
         for phrase in expected.get(stream + '_contains', []):
             if phrase not in text:
@@ -1459,6 +1603,11 @@ def compare(reference, candidate):
     for field in ('termination', 'config_before', 'config_after', 'termios_restored'):
         if reference[field] != candidate[field]:
             issues.append(field + ' differs')
+    try:
+        if session_terminal_modes(reference) != session_terminal_modes(candidate):
+            issues.append('terminal private modes differ')
+    except ValueError:
+        pass  # validate above reports missing or malformed evidence per role.
     if ordered_request_contract(reference) != ordered_request_contract(candidate):
         issues.append('ordered request contract differs')
     for field in ('stderr', 'post_screen_stdout'):
@@ -1485,6 +1634,7 @@ def compare(reference, candidate):
                 normalize(right.decode(errors='surrogateescape'), candidate['replacements']):
             issues.append(field + ' bytes differ')
     if reference['case'].get('io') == 'pipe' and \
+            isinstance(reference.get('stdout'), bytes) and isinstance(candidate.get('stdout'), bytes) and \
             normalize(reference['stdout'].decode(errors='surrogateescape'), reference['replacements']) != \
             normalize(candidate['stdout'].decode(errors='surrogateescape'), candidate['replacements']):
         issues.append('pipe stdout bytes differ')
@@ -1509,8 +1659,17 @@ def compare(reference, candidate):
 def load_session(path, case=None):
     data = json.loads(Path(path).read_text())
     for field in ('stdout', 'stderr', 'post_screen_stdout'):
-        value = data.pop(field + '_hex')
+        value = data.pop(field + '_hex', None)
         data[field] = bytes.fromhex(value) if value is not None else None
+    for field, recover in (('terminal_modes', session_terminal_modes),
+                           ('history_overflow', session_history_overflow)):
+        if field not in data:
+            try:
+                data[field] = recover(data)
+            except ValueError as error:
+                # Preserve the captured-case diagnosis for per-session validate,
+                # including after reduce_report substitutes the active contract.
+                data[field + '_error'] = str(error)
     if case is not None:
         data['case'] = case
     return data

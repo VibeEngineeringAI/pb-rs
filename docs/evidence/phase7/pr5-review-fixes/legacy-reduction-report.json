@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "kind": "functional-evidence-reduction",
+  "capture_root": "/home/ajs/.cache/pb-phase7/styled-release5",
+  "cases": [
+    {
+      "name": "p7-promql-promoted-short-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "6ec500020a83d561ba710eed2d5ee35271e16ed853b27db084f6ec7cc83e1672",
+      "active_case_sha256": "6ec500020a83d561ba710eed2d5ee35271e16ed853b27db084f6ec7cc83e1672",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-signal-sigquit-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "c4e8a73a95a9a1f22d5de52f718cddcf5bda350fac27bbb9a8340f8ce0bb9942",
+      "active_case_sha256": "c4e8a73a95a9a1f22d5de52f718cddcf5bda350fac27bbb9a8340f8ce0bb9942",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-promoted-short-query-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "9a2d1bb2f59138e22888cfa0f033ebd8073cd8043f66e69fb2ba186eed92d94c",
+      "active_case_sha256": "9a2d1bb2f59138e22888cfa0f033ebd8073cd8043f66e69fb2ba186eed92d94c",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-resize-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "cb12825e185f985b153a152a66746509c905fa41012626ee13221d459078da24",
+      "active_case_sha256": "cb12825e185f985b153a152a66746509c905fa41012626ee13221d459078da24",
+      "contract_changed": false,
+      "issues": []
+    }
+  ],
+  "harness_sources": {
+    "phase7.py": "3bb5852db477329d3ce6efba833e0150d76d9dcf9f9a9e00f4c8ffb87036eeb6",
+    "phase7_workloads.py": "04404c96efabad1d2b0674df17751856913363443744c3dd1fb497f07a5f6178",
+    "phase7_spawn.c": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4"
+  },
+  "original_report_sha256": "6aa2c9ac12e6942c927e1cc987e2d4ac9f7a9a6ddf6515dfbf183204b0136c2a"
+}

@@ -1,0 +1,132 @@
+{
+  "passed": true,
+  "results": [
+    {
+      "role": "reference",
+      "case": "sql_unicode_dataset",
+      "passed": true,
+      "binary": {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/bin/pb-go-pinned",
+        "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314"
+      }
+    },
+    {
+      "role": "reference",
+      "case": "sql_nested_overflow",
+      "passed": true,
+      "binary": {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/bin/pb-go-pinned",
+        "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314"
+      }
+    },
+    {
+      "role": "reference",
+      "case": "sql_first_error",
+      "passed": true,
+      "binary": {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/bin/pb-go-pinned",
+        "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314"
+      }
+    },
+    {
+      "role": "reference",
+      "case": "promql_scroll",
+      "passed": true,
+      "binary": {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/bin/pb-go-pinned",
+        "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314"
+      }
+    },
+    {
+      "role": "reference",
+      "case": "promql_unicode_dataset",
+      "passed": true,
+      "binary": {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/bin/pb-go-pinned",
+        "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314"
+      }
+    },
+    {
+      "role": "reference",
+      "case": "promql_unicode_metric",
+      "passed": true,
+      "binary": {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/bin/pb-go-pinned",
+        "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314"
+      }
+    },
+    {
+      "role": "reference",
+      "case": "sql_uppercase_headers",
+      "passed": true,
+      "binary": {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/bin/pb-go-pinned",
+        "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314"
+      }
+    },
+    {
+      "role": "candidate",
+      "case": "sql_unicode_dataset",
+      "passed": true,
+      "binary": {
+        "path": "/home/ajs/.local/share/pb-pr5-fixes/candidate-final/pb",
+        "sha256": "cb6112a691bd0a6da4ae521961b9fd29cc7d0c01ae15f14ea0ca7d0968576494"
+      }
+    },
+    {
+      "role": "candidate",
+      "case": "sql_nested_overflow",
+      "passed": true,
+      "binary": {
+        "path": "/home/ajs/.local/share/pb-pr5-fixes/candidate-final/pb",
+        "sha256": "cb6112a691bd0a6da4ae521961b9fd29cc7d0c01ae15f14ea0ca7d0968576494"
+      }
+    },
+    {
+      "role": "candidate",
+      "case": "sql_first_error",
+      "passed": true,
+      "binary": {
+        "path": "/home/ajs/.local/share/pb-pr5-fixes/candidate-final/pb",
+        "sha256": "cb6112a691bd0a6da4ae521961b9fd29cc7d0c01ae15f14ea0ca7d0968576494"
+      }
+    },
+    {
+      "role": "candidate",
+      "case": "promql_scroll",
+      "passed": true,
+      "binary": {
+        "path": "/home/ajs/.local/share/pb-pr5-fixes/candidate-final/pb",
+        "sha256": "cb6112a691bd0a6da4ae521961b9fd29cc7d0c01ae15f14ea0ca7d0968576494"
+      }
+    },
+    {
+      "role": "candidate",
+      "case": "promql_unicode_dataset",
+      "passed": true,
+      "binary": {
+        "path": "/home/ajs/.local/share/pb-pr5-fixes/candidate-final/pb",
+        "sha256": "cb6112a691bd0a6da4ae521961b9fd29cc7d0c01ae15f14ea0ca7d0968576494"
+      }
+    },
+    {
+      "role": "candidate",
+      "case": "promql_unicode_metric",
+      "passed": true,
+      "binary": {
+        "path": "/home/ajs/.local/share/pb-pr5-fixes/candidate-final/pb",
+        "sha256": "cb6112a691bd0a6da4ae521961b9fd29cc7d0c01ae15f14ea0ca7d0968576494"
+      }
+    },
+    {
+      "role": "candidate",
+      "case": "sql_uppercase_headers",
+      "passed": true,
+      "binary": {
+        "path": "/home/ajs/.local/share/pb-pr5-fixes/candidate-final/pb",
+        "sha256": "cb6112a691bd0a6da4ae521961b9fd29cc7d0c01ae15f14ea0ca7d0968576494"
+      }
+    }
+  ],
+  "exact_sql_uppercase_header_row_parity": true
+}

@@ -12,6 +12,7 @@ pub(crate) mod input;
 mod json;
 pub(crate) mod style;
 pub(crate) mod terminal;
+mod unicode;
 
 pub(crate) mod admin;
 pub(crate) mod device;

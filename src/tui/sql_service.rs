@@ -857,9 +857,39 @@ fn go_kind(value: &Node) -> &'static str {
 /// `fmt.Sprintf("%v", v)` of a decoded `interface{}`; `Err(literal)` when a
 /// number is out of float64 range (Go's convertNumber rejects it).
 fn go_display(node: &Node) -> Result<String, String> {
+    // json.Decoder converts every number in wire order, including values a
+    // later duplicate key replaces. Formatting instead sorts and deduplicates
+    // maps, so validate first, once per cell, before that information is lost.
+    validate_interface_numbers(node)?;
     let mut out = String::new();
     write_display(node, &mut out)?;
     Ok(out)
+}
+
+fn validate_interface_numbers(node: &Node) -> Result<(), String> {
+    // Reversed pushes preserve depth-first wire order without recursion at
+    // Go's 10,000-level nesting limit.
+    let mut pending = vec![node];
+    while let Some(node) = pending.pop() {
+        if node.is_number() {
+            go_float64(node)?;
+        } else if let Some(items) = node.as_array() {
+            pending.extend(items.iter().rev());
+        } else if let Some(members) = node.as_object() {
+            pending.extend(members.iter().rev().map(|(_, value)| value));
+        }
+    }
+    Ok(())
+}
+
+fn go_float64(node: &Node) -> Result<f64, String> {
+    let literal = node.scalar().map(|v| v.to_string()).unwrap_or_default();
+    let value: f64 = literal.parse().map_err(|_| literal.clone())?;
+    if value.is_infinite() {
+        Err(literal)
+    } else {
+        Ok(value)
+    }
 }
 
 fn write_display(node: &Node, out: &mut String) -> Result<(), String> {
@@ -871,12 +901,7 @@ fn write_display(node: &Node, out: &mut String) -> Result<(), String> {
         } else if let Some(text) = node.as_str() {
             out.push_str(text);
         } else if node.is_number() {
-            let literal = node.scalar().map(|v| v.to_string()).unwrap_or_default();
-            let value: f64 = literal.parse().map_err(|_| literal.clone())?;
-            if value.is_infinite() {
-                return Err(literal);
-            }
-            out.push_str(&crate::metrics::go_float(value));
+            out.push_str(&crate::metrics::go_float(go_float64(node)?));
         } else if let Some(items) = node.as_array() {
             out.push('[');
             for (i, item) in items.iter().enumerate() {
@@ -1016,6 +1041,70 @@ mod tests {
         assert_eq!(record["a"].display(), "map[a:map[z:2] b:[1 x <nil> true]]");
         assert_eq!(record["s"], Cell::Str("t".into()));
         assert_eq!(record["n"], Cell::Value("1e+06".into()));
+    }
+
+    #[test]
+    fn nested_duplicate_values_do_not_hide_numeric_overflow() {
+        for nested in [
+            r#"{"x":1e400,"x":"visible"}"#,
+            r#"{"x":[{"n":1e400}],"x":null}"#,
+            r#"[{"x":{"n":[1e400]},"x":{}}]"#,
+        ] {
+            let body = format!(r#"{{"fields":["result"],"records":[{{"result":{nested}}}]}}"#);
+            assert_eq!(
+                decode_query_value(body.as_bytes()).unwrap_err(),
+                "json: cannot unmarshal number 1e400 into Go struct field QueryData.records of type float64",
+                "overwritten nested value: {nested}"
+            );
+        }
+    }
+
+    #[test]
+    fn nested_numeric_errors_follow_wire_order_before_map_sorting() {
+        for nested in [
+            r#"{"z":1e401,"a":1e400}"#,
+            r#"{"z":[1e401],"z":null,"a":1e400}"#,
+            r#"[1e401,1e400]"#,
+        ] {
+            let body = format!(r#"{{"records":[{{"result":{nested}}}]}}"#);
+            assert_eq!(
+                decode_query_value(body.as_bytes()).unwrap_err(),
+                "json: cannot unmarshal number 1e401 into Go struct field QueryData.records of type float64",
+                "first conversion error: {nested}"
+            );
+        }
+        // A prior struct-field error still wins over nested conversion errors.
+        assert_eq!(
+            decode_query_value(br#"{"fields":[1],"records":[{"result":{"z":1e401,"a":1e400}}]}"#)
+                .unwrap_err(),
+            "json: cannot unmarshal number into Go struct field QueryData.fields of type string"
+        );
+    }
+
+    #[test]
+    fn valid_nested_duplicates_keep_last_values_and_sorted_display() {
+        let data = decode_query_value(
+            br#"{"records":[{"result":{"z":1,"a":[1,2],"z":{"b":true,"a":3}}}]}"#,
+        )
+        .unwrap();
+        assert_eq!(
+            data.records[0]["result"],
+            Cell::Value("map[a:[1 2] z:map[a:3 b:true]]".into())
+        );
+    }
+
+    #[test]
+    fn deeply_nested_overwritten_numeric_overflow_is_stack_safe() {
+        let depth = 9_000;
+        let mut body = br#"{"records":[{"result":{"x":"#.to_vec();
+        body.extend(std::iter::repeat_n(b'[', depth));
+        body.extend_from_slice(b"1e400");
+        body.extend(std::iter::repeat_n(b']', depth));
+        body.extend_from_slice(br#", "x":null}}]}"#);
+        assert_eq!(
+            decode_query_value(&body).unwrap_err(),
+            "json: cannot unmarshal number 1e400 into Go struct field QueryData.records of type float64"
+        );
     }
 
     #[test]

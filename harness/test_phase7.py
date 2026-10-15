@@ -175,6 +175,59 @@ class TerminalTests(unittest.TestCase):
         self.assertEqual(terminal.frame()['cursor']['shape'], 5)
         self.assertFalse(terminal.frame()['cursor']['visible'])
 
+    def test_history_eviction_in_last_token_is_independent_of_feed_boundaries(self):
+        payload = b'A\r\n' + b'x\r\n' * 20003
+        for chunks in ([payload], [payload[:60000], payload[60000:]],
+                       [payload[:3], payload[3:-6], payload[-6:]]):
+            with self.subTest(chunk_sizes=list(map(len, chunks))):
+                terminal = p7.Terminal(1, 2)
+                for chunk in chunks:
+                    terminal.feed(chunk)
+                terminal.feed(b'', final=True)
+                self.assertEqual(len(terminal.main.history.top), 20000)
+                self.assertEqual(terminal.main.history.top[0][0].data, 'x')
+                self.assertTrue(terminal.history_overflow)
+
+    def test_full_history_without_eviction_survives_non_scrolling_controls(self):
+        terminal = p7.Terminal(1, 2)
+        terminal.feed(b'A\r\n' + b'x\r\n' * 20000)
+        self.assertEqual(len(terminal.main.history.top), 20000)
+        self.assertEqual(terminal.main.history.top[0][0].data, 'A')
+        for token in (b'\x1b[0m', b'\x1b[?25l', b'\x1b[?25h', b'\x1b[H', b'', b'x', b'\x1b[H\n'):
+            terminal.feed(token)
+            self.assertFalse(terminal.history_overflow, repr(token))
+        terminal.feed(b'\x1b[2;1H\n', final=True)
+        self.assertTrue(terminal.history_overflow)
+
+    def test_history_eviction_uses_declared_scrolling_region_bottom(self):
+        terminal = p7.Terminal(1, 4)
+        terminal.feed(b'A\r\n' + b'x\r\n' * 20002)
+        self.assertEqual(len(terminal.main.history.top), 20000)
+        self.assertFalse(terminal.history_overflow)
+        terminal.feed(b'\x1b[1;2r\x1b[1;1H\n')
+        self.assertFalse(terminal.history_overflow)
+        # Row two is the region bottom, although the physical screen has four.
+        terminal.feed(b'\x1b[2;1H\n', final=True)
+        self.assertTrue(terminal.history_overflow)
+
+    def test_reverse_index_detects_actual_bottom_history_eviction(self):
+        terminal = p7.Terminal(1, 2)
+        terminal.feed(b'\x1bM' * 20000)
+        self.assertEqual(len(terminal.main.history.bottom), 20000)
+        self.assertFalse(terminal.history_overflow)
+        terminal.feed(b'\x1b[0m')
+        self.assertFalse(terminal.history_overflow)
+        terminal.feed(b'\x1bM', final=True)
+        self.assertTrue(terminal.history_overflow)
+
+    def test_full_reset_does_not_erase_evidence_of_earlier_history_loss(self):
+        terminal = p7.Terminal(1, 2)
+        terminal.feed(b'A\r\n' + b'x\r\n' * 20003)
+        self.assertTrue(terminal.history_overflow)
+        terminal.feed(b'\x1bc', final=True)
+        self.assertEqual(len(terminal.main.history.top), 0)
+        self.assertTrue(terminal.history_overflow)
+
     def test_known_fixture_origin_normalization_preserves_style_and_width(self):
         left, right = p7.Terminal(30, 3), p7.Terminal(30, 3)
         left.feed(b'\x1b[31mhttp://127.0.0.1:12345')
@@ -1189,6 +1242,215 @@ class ProcessTests(unittest.TestCase):
 
 
 class ContractsTests(unittest.TestCase):
+    def mode_capture(self, payload, **case_options):
+        case = {'size': [12, 3], 'actions': [], **case_options}
+        result = p7.execute([sys.executable, '-c', 'import os;os.write(1,' + repr(payload) + ')'],
+                            dict(os.environ), str(p7.TMP), case)
+        result.update(case=case, requests=[], config_before={}, config_after={}, replacements={})
+        return result
+
+    def test_private_mode_cleanup_is_validated_and_compared_before_alt_exit(self):
+        modes = (1, 1000, 1002, 1003, 1004, 1006, 2004, 2026)
+        enabled = b''.join(f'\x1b[?{mode}h'.encode() for mode in modes)
+        disabled = b''.join(f'\x1b[?{mode}l'.encode() for mode in modes)
+        for prefix, suffix in ((b'', b''), (b'\x1b[?1049h', b'\x1b[?1049lbye\r\n')):
+            with self.subTest(alternate=bool(prefix)):
+                good = self.mode_capture(prefix + enabled + b'UI' + disabled + suffix)
+                leaked = self.mode_capture(prefix + enabled + b'UI' + suffix)
+                self.assertEqual(good['final_frame'], leaked['final_frame'])
+                self.assertEqual(good['post_screen_stdout'], leaked['post_screen_stdout'])
+                self.assertEqual(p7.validate(good), [])
+                self.assertTrue(any('private modes' in issue for issue in p7.validate(leaked)))
+                self.assertTrue(any('private modes' in issue for issue in p7.compare(good, leaked)))
+                self.assertEqual(good['terminal_modes'], {'initial': [], 'final': []})
+                self.assertEqual(leaked['terminal_modes']['final'], list(modes))
+
+    def test_nonrestoring_exit_keeps_private_modes_but_still_compares_them(self):
+        result = self.mode_capture(b'\x1b[?1049h\x1b[?25l\x1b[?2004hUI',
+                                   expect={'restored': False, 'screen_restored': False})
+        self.assertEqual(p7.validate(result), [])
+        self.assertEqual(p7.compare(result, result), [])
+        changed = copy.deepcopy(result)
+        changed['terminal_modes']['final'].append(1002)
+        self.assertTrue(any('private modes' in issue for issue in p7.compare(result, changed)))
+
+    def test_legacy_capture_reconstructs_modes_without_changing_retained_bytes(self):
+        good = self.mode_capture(b'\x1b[?2004hUI\x1b[?2004l')
+        bad = self.mode_capture(b'\x1b[?2004hUI')
+        for capture in (good, bad):
+            capture.pop('terminal_modes', None)
+        with tempfile.TemporaryDirectory(dir=p7.TMP) as temporary:
+            for name, capture in (('good', good), ('bad', bad)):
+                serial = copy.deepcopy(capture)
+                for field in ('stdout', 'stderr', 'post_screen_stdout'):
+                    raw = serial.pop(field)
+                    serial[field + '_hex'] = raw.hex() if raw is not None else None
+                path = Path(temporary) / (name + '.json')
+                retained = json.dumps(serial).encode()
+                path.write_bytes(retained)
+                loaded = p7.load_session(path)
+                self.assertEqual(path.read_bytes(), retained)
+                self.assertEqual(loaded['terminal_modes']['final'], [] if name == 'good' else [2004])
+                self.assertEqual(p7.validate(loaded), [] if name == 'good' else
+                                 ['terminal private modes not restored'])
+        unavailable = copy.deepcopy(good)
+        unavailable['stdout'] = None
+        self.assertTrue(any('private modes' in issue for issue in p7.validate(unavailable)))
+
+    def test_terminal_mode_payload_cannot_hide_modes_in_osc_text(self):
+        result = self.mode_capture(b'\x1b]0;title \x1b[?2004h\x07UI')
+        result.pop('terminal_modes', None)
+        self.assertEqual(p7.validate(result), [])
+
+    def test_supported_full_reset_restores_live_and_legacy_session_modes(self):
+        enabled = b''.join(f'\x1b[?{mode}h'.encode() for mode in
+                           (1, 1000, 1002, 1003, 1004, 1006, 2004, 2026))
+        clean = self.mode_capture(b'\x1bcUI')
+        reset = self.mode_capture(enabled + b'\x1bcUI')
+        self.assertEqual(reset['unsupported'], [])
+        self.assertEqual(clean['final_frame'], reset['final_frame'])
+        self.assertEqual(p7.validate(reset), [])
+        self.assertEqual(p7.compare(clean, reset), [])
+        reset.pop('terminal_modes')
+        self.assertEqual(p7.session_terminal_modes(reset), {'initial': [], 'final': []})
+        self.assertEqual(p7.compare(clean, reset), [])
+        # A reset-looking title is data; it must not hide an actual leak.
+        leaked = self.mode_capture(b'\x1b[?2004h\x1b]0;title \x1bc\x07UI')
+        self.assertEqual(leaked['terminal_modes']['final'], [2004])
+        self.assertTrue(any('private modes' in issue for issue in p7.validate(leaked)))
+
+    def test_legacy_mode_parsing_requires_raw_bytes_but_not_render_geometry(self):
+        raw = {'stdout': b'\x1b[?2004hUI', 'case': {}}
+        self.assertEqual(p7.session_terminal_modes(raw), {'initial': [], 'final': [2004]})
+        raw['stdout'] += b'\x1bc'
+        self.assertEqual(p7.session_terminal_modes(raw), {'initial': [], 'final': []})
+        for missing in ({}, {'stdout': None}, {'stdout': 'unretained text'}):
+            with self.subTest(missing=missing), self.assertRaisesRegex(ValueError, 'evidence unavailable'):
+                p7.session_terminal_modes(missing)
+
+    def test_legacy_mode_recovery_bounds_pending_while_preserving_fragmented_utf8_and_ansi(self):
+        # The seed ends inside a control which stdout completes. ANSI and a
+        # multibyte rune also cross the 64KiB stdout boundaries deliberately.
+        seed = '\x1b[?1004h' + '日é' * 20000 + '\x1b[?1003'
+        raw = b'x' * 65534 + b'\x1b[?2004h'
+        raw += b'x' * (131070 - len(raw))
+        raw += ('日é' * 1024).encode()
+        raw += (b'\x1b[?2004l\x1b[?2004h' + ('日é' * 1024).encode()) * 64
+        raw = b'h' + raw + b'\x1b[?2004l\x1b[?1002h'
+        pending_sizes = []
+        original = p7.Terminal._control
+        def observed(terminal, token):
+            pending_sizes.append(len(terminal.pending.encode(errors='surrogateescape')))
+            return original(terminal, token)
+        with mock.patch.object(p7.Terminal, '_control', observed):
+            modes = p7.session_terminal_modes({'case': {'initial_screen': seed}, 'stdout': raw})
+        self.assertEqual(modes, {'initial': [1004], 'final': [1002, 1003, 1004]})
+        self.assertGreater(len(pending_sizes), 100)
+        # One read-sized block plus the short incomplete control from the
+        # previous block; this asserts memory bounds, not elapsed time.
+        self.assertLessEqual(max(pending_sizes), 65536 + 16)
+
+    def test_legacy_mode_reconstruction_uses_captured_case_before_contract_override(self):
+        result = self.mode_capture(b'UI', initial_screen='\x1b[?2004h')
+        result.pop('terminal_modes')
+        for field in ('stdout', 'stderr', 'post_screen_stdout'):
+            raw = result.pop(field)
+            result[field + '_hex'] = raw.hex() if raw is not None else None
+        with tempfile.TemporaryDirectory(dir=p7.TMP) as temporary:
+            path = Path(temporary) / 'legacy.json'
+            path.write_text(json.dumps(result))
+            loaded = p7.load_session(path, {'size': [12, 3], 'expect': {}})
+        self.assertEqual(loaded['terminal_modes'], {'initial': [2004], 'final': [2004]})
+        self.assertEqual(p7.validate(loaded), [])
+
+    def test_history_loss_fails_validation_and_comparison_even_with_equal_frames(self):
+        captures = []
+        for marker in (b'A', b'B'):
+            terminal = p7.Terminal(1, 2)
+            payload = marker + b'\r\n' + b'x\r\n' * 20003
+            terminal.feed(payload, final=True)
+            captures.append({'case': {}, 'failure': None, 'termination': {'exit': 0},
+                'stdout': payload, 'stderr': b'', 'post_screen_stdout': None,
+                'frames': [], 'initial_frame': p7.Terminal(1, 2).frame(),
+                'final_frame': terminal.frame(), 'history_overflow': terminal.history_overflow,
+                'termios_before': [], 'termios_after': [], 'termios_restored': True,
+                'requests': [], 'config_before': {}, 'config_after': {}, 'replacements': {}})
+        self.assertEqual(captures[0]['final_frame'], captures[1]['final_frame'])
+        for capture in captures:
+            self.assertTrue(any('history overflow' in issue for issue in p7.validate(capture)))
+        self.assertTrue(any('history overflow' in issue for issue in p7.compare(*captures)))
+
+    def legacy_history_capture(self, payload):
+        terminal = p7.Terminal(1, 2)
+        terminal.feed(payload, final=True)
+        return {'case': {}, 'failure': None, 'termination': {'exit': 0},
+                'stdout': payload, 'stderr': b'', 'post_screen_stdout': None,
+                'frames': [], 'initial_frame': p7.Terminal(1, 2).frame(),
+                'final_frame': terminal.frame(), 'transitions': terminal.transitions,
+                'termios_before': [], 'termios_after': [], 'termios_restored': True,
+                'requests': [], 'config_before': {}, 'config_after': {}, 'replacements': {}}
+
+    def test_legacy_lost_prefix_pair_cannot_pass_without_overflow_evidence(self):
+        left, right = (self.legacy_history_capture(marker + b'\r\n' + b'x\r\n' * 20003)
+                       for marker in (b'A', b'B'))
+        self.assertEqual(left['final_frame'], right['final_frame'])
+        for result in (left, right):
+            self.assertIn('history overflow evidence unavailable', p7.validate(result))
+        self.assertTrue(p7.compare(left, right))
+
+    def test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss(self):
+        good = self.legacy_history_capture(b'A\r\nB')
+        self.assertEqual(p7.validate(good), [])
+        for payload in (b'\x1b[3JUI', b'\x1b[03JUI', b'\x1bcUI', b'\x1bMUI',
+                        '\u009b3JUI'.encode(), b'A\r\n' + b'x\r\n' * 20000):
+            with self.subTest(payload_prefix=payload[:20]):
+                result = self.legacy_history_capture(payload)
+                self.assertIn('history overflow evidence unavailable', p7.validate(result))
+        # Reset-looking title contents cannot clear the history buffer.
+        title = self.legacy_history_capture(b'\x1b]0;title \x1bc\x07A')
+        self.assertEqual(p7.validate(title), [])
+        del good['final_frame']['scrollback']
+        self.assertIn('history overflow evidence unavailable', p7.validate(good))
+
+    def write_legacy_session(self, path, result):
+        serial = copy.deepcopy(result)
+        for field in ('stdout', 'stderr', 'post_screen_stdout'):
+            raw = serial.pop(field)
+            serial[field + '_hex'] = raw.hex() if raw is not None else None
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(serial))
+
+    def test_missing_legacy_raw_is_a_per_session_reduce_issue_including_pipe_compare(self):
+        good = self.legacy_history_capture(b'UI')
+        case = {'name': 'missing-legacy-raw', 'io': 'pipe', 'expect': {}}
+        good['case'] = case
+        bad = copy.deepcopy(good)
+        bad['stdout'] = None
+        with tempfile.TemporaryDirectory(dir=p7.TMP) as temporary:
+            root = Path(temporary)
+            reference = root / case['name'] / 'reference/session.json'
+            candidate = root / case['name'] / 'candidate/session.json'
+            self.write_legacy_session(reference, good)
+            self.write_legacy_session(candidate, bad)
+            retained = candidate.read_bytes()
+            loaded = p7.load_session(candidate)
+            self.assertIn('terminal private modes evidence unavailable', p7.validate(loaded))
+            self.assertIn('history overflow evidence unavailable', p7.validate(loaded))
+            self.assertTrue(p7.compare(p7.load_session(reference), loaded))
+            report = p7.reduce_report(root, root / 'reduced', [case])
+            self.assertEqual(len(report['cases']), 1)
+            self.assertTrue(any('evidence unavailable' in issue for issue in report['cases'][0]['issues']))
+            self.assertEqual(candidate.read_bytes(), retained)
+
+    def test_legacy_history_uncertainty_keeps_captured_seed_before_contract_override(self):
+        result = self.legacy_history_capture(b'UI')
+        result['case'] = {'initial_screen': '\x1bc'}
+        with tempfile.TemporaryDirectory(dir=p7.TMP) as temporary:
+            path = Path(temporary) / 'session.json'
+            self.write_legacy_session(path, result)
+            loaded = p7.load_session(path, {})
+        self.assertIn('history overflow evidence unavailable', p7.validate(loaded))
+
     def test_expected_chart_cell_is_an_independent_gate(self):
         result = p7.execute([sys.executable, '-c', 'pass'], dict(os.environ), str(p7.TMP), {'actions': []})
         terminal = p7.Terminal(4, 2)

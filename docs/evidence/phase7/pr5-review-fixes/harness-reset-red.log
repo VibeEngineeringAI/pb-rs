@@ -1,0 +1,45 @@
+test_supported_full_reset_restores_live_and_legacy_session_modes (test_phase7.ContractsTests.test_supported_full_reset_restores_live_and_legacy_session_modes) ... FAIL
+test_legacy_mode_parsing_requires_raw_bytes_but_not_render_geometry (test_phase7.ContractsTests.test_legacy_mode_parsing_requires_raw_bytes_but_not_render_geometry) ... ERROR
+test_full_reset_does_not_erase_evidence_of_earlier_history_loss (test_phase7.TerminalTests.test_full_reset_does_not_erase_evidence_of_earlier_history_loss) ... ok
+test_pool_rehashes_control_streams_at_end_after_initial_validation (test_phase7_bench.PoolTests.test_pool_rehashes_control_streams_at_end_after_initial_validation) ... FAIL
+
+======================================================================
+ERROR: test_legacy_mode_parsing_requires_raw_bytes_but_not_render_geometry (test_phase7.ContractsTests.test_legacy_mode_parsing_requires_raw_bytes_but_not_render_geometry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7.py", line 1313, in test_legacy_mode_parsing_requires_raw_bytes_but_not_render_geometry
+    self.assertEqual(p7.session_terminal_modes(raw), {'initial': [], 'final': [2004]})
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7.py", line 1362, in session_terminal_modes
+    raise ValueError('terminal private modes evidence unavailable')
+ValueError: terminal private modes evidence unavailable
+
+======================================================================
+FAIL: test_supported_full_reset_restores_live_and_legacy_session_modes (test_phase7.ContractsTests.test_supported_full_reset_restores_live_and_legacy_session_modes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7.py", line 1301, in test_supported_full_reset_restores_live_and_legacy_session_modes
+    self.assertEqual(p7.validate(reset), [])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['terminal private modes not restored'] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+'terminal private modes not restored'
+
+- ['terminal private modes not restored']
++ []
+
+======================================================================
+FAIL: test_pool_rehashes_control_streams_at_end_after_initial_validation (test_phase7_bench.PoolTests.test_pool_rehashes_control_streams_at_end_after_initial_validation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7_bench.py", line 1833, in test_pool_rehashes_control_streams_at_end_after_initial_validation
+    self.assertTrue(mutated)
+    ~~~~~~~~~~~~~~~^^^^^^^^^
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 4 tests in 5.890s
+
+FAILED (failures=2, errors=1)

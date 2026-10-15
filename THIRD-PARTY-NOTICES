@@ -14,8 +14,8 @@ This repository file alone does not establish release/installer delivery.
 1. Go standard library — go1.25.4 (BSD-3-Clause)
 ------------------------------------------------
 Source files: src/sort/sort.go, src/sort/slice.go, src/sort/zsortfunc.go, src/time/time.go, src/time/format.go, src/time/format_rfc3339.go, src/strconv/atof.go, src/strconv/atoi.go, src/strconv/isprint.go, src/strings/strings.go, src/unicode/letter.go, src/unicode/tables.go
-Repository paths: src/tui/promql.rs, src/tui/saved_fuzzy_unicode.rs, src/tui/saved.rs, src/printable.rs
-Material: go_sort (pdqsort, stable sorting); go_format_unix (absolute-day/time formatting); parse_hex_float/atof_hex and underscore validation; saved matcher fold/Ll/Lu tables generated from Go Unicode 15.0.0. Also preserves the pre-Phase7 diagnostic printable-range data attribution (src/printable.rs), reused by parser quoting. go_f64_to_i64 reproduces the linux/amd64 cast result; no separately copied compiler implementation was identified.
+Repository paths: src/tui/promql.rs, src/tui/saved_fuzzy_unicode.rs, src/tui/unicode.rs, src/tui/saved.rs, src/printable.rs
+Material: go_sort (pdqsort, stable sorting); go_format_unix (absolute-day/time formatting); parse_hex_float/atof_hex and underscore validation; saved matcher fold/Ll/Lu tables and SQL/PromQL simple case-mapping tables generated from Go Unicode 15.0.0. Also preserves the pre-Phase7 diagnostic printable-range data attribution (src/printable.rs), reused by parser quoting. go_f64_to_i64 reproduces the linux/amd64 cast result; no separately copied compiler implementation was identified.
 License origin: LICENSE; SHA-256 911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad
 Additional mapped source copyright headers, verbatim:
 // Copyright 2009 The Go Authors. All rights reserved.

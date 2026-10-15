@@ -1,5 +1,10 @@
 # Phase 7 combined-source checkpoint
 
+PR #5 follow-up: [test-first review fixes](phase7-pr5-review-fixes.md) records
+the Unicode, PromQL scrolling, JSON decoding and harness corrections. Its
+correctness checks do not replace the historical release/platform/performance
+gates recorded below.
+
 This is a working checkpoint, not release approval. Phase7 interactive workflows are integrated locally over merged Phase6 `ea70f7ad7d501d59b26cf6397f6a0b1f28143fc4`; no Phase7 commit, merge or release has been made. The pinned behavior oracle remains Go `07af390ab09bda8ac9e427ffc6310077bace0125`.
 
 ## Implementation and contracts

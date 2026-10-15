@@ -1,0 +1,9 @@
+   Compiling pb v0.1.0 (/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.45s
+     Running unittests src/lib.rs (target/debug/deps/pb-9403838716320e55)
+
+running 1 test
+test tui::sql::tests::sql_result_headers_use_pinned_go_simple_uppercase ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 574 filtered out; finished in 0.00s
+

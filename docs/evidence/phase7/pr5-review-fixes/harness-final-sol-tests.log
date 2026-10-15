@@ -1,0 +1,18 @@
+Independent boundary/immutability cases: 25 PASS; bounded seed/stdout feeds: 5 PASS
+test_full_history_without_eviction_survives_non_scrolling_controls (test_phase7.TerminalTests.test_full_history_without_eviction_survives_non_scrolling_controls) ... ok
+test_history_eviction_uses_declared_scrolling_region_bottom (test_phase7.TerminalTests.test_history_eviction_uses_declared_scrolling_region_bottom) ... ok
+test_legacy_mode_recovery_bounds_pending_while_preserving_fragmented_utf8_and_ansi (test_phase7.ContractsTests.test_legacy_mode_recovery_bounds_pending_while_preserving_fragmented_utf8_and_ansi) ... ok
+test_legacy_capture_reconstructs_modes_without_changing_retained_bytes (test_phase7.ContractsTests.test_legacy_capture_reconstructs_modes_without_changing_retained_bytes) ... ok
+test_terminal_mode_payload_cannot_hide_modes_in_osc_text (test_phase7.ContractsTests.test_terminal_mode_payload_cannot_hide_modes_in_osc_text) ... ok
+test_legacy_mode_reconstruction_uses_captured_case_before_contract_override (test_phase7.ContractsTests.test_legacy_mode_reconstruction_uses_captured_case_before_contract_override) ... ok
+test_missing_legacy_raw_is_a_per_session_reduce_issue_including_pipe_compare (test_phase7.ContractsTests.test_missing_legacy_raw_is_a_per_session_reduce_issue_including_pipe_compare) ... ok
+test_legacy_history_uncertainty_keeps_captured_seed_before_contract_override (test_phase7.ContractsTests.test_legacy_history_uncertainty_keeps_captured_seed_before_contract_override) ... ok
+test_pool_rehashes_control_streams_at_end_after_initial_validation (test_phase7_bench.PoolTests.test_pool_rehashes_control_streams_at_end_after_initial_validation) ... ok
+test_both_role_phase_diagnostics_bind_retained_bytes_and_reject_mutated_control (test_phase7_bench.R4Tests.test_both_role_phase_diagnostics_bind_retained_bytes_and_reject_mutated_control) ... ok
+test_public_manifest_redacts_paths_and_host_has_no_node (test_phase7_bench.AdapterTests.test_public_manifest_redacts_paths_and_host_has_no_node) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 7.286s
+
+OK
+Focused regressions/consumer integration: 11 PASS

@@ -68,6 +68,31 @@ restoration is checked against the full acquired termios state, not just echo.
 `wait4` distinguishes true signal death from an ordinary exit with numeric
 130/143. Cursor and alternate-screen restoration remain separate assertions.
 
+PR #5 follow-up captures `terminal_modes.initial/final` for application cursor,
+mouse tracking/protocol, focus reporting, bracketed paste and synchronized
+updates. Normal restoration requires equal initial/final mode sets; explicit
+`screen_restored: false` cases still compare the sets across binaries. Legacy
+captures reconstruct these sets from retained raw ANSI through the same tokenizer
+without rendering or rewriting evidence. Missing raw evidence fails validation.
+`history_overflow` records actual bounded-history eviction, including reverse
+scrolling and eviction in the final token; merely filling history is valid.
+Existing capture failures remain failures and are never rewritten.
+Supported full terminal reset clears tracked session modes, but never clears a
+recorded history-loss flag. Mode-only legacy parsing does not require geometry.
+For captures predating `history_overflow`, a passing no-loss conclusion requires
+all retained scrollback frames below capacity and a parsed stream without history
+clears or reverse-index. Ambiguous evidence fails validation; it is not silently
+counted as no loss. Missing raw data is a per-session issue in reduction.
+
+This follow-up compares the listed session modes at acquisition and exit. It does
+not extend the observer to global cursor visibility across alternate-screen
+switches, default-on autowrap, application-keypad state, or checkpoint mode parity.
+Those remain separate observer limitations. Mode tracking recognizes ESC-prefixed
+CSI; UTF-8-encoded C1 CSI may be interpreted by pyte without mode accounting.
+The Go and Rust TUIs emit ESC-prefixed CSI; C1 mode parity is not claimed.
+Reverse-index bottom-history eviction
+is conservatively rejected even though that deque is not exported in `frame()`.
+
 ## Readiness and first useful frame
 
 An action declares positive/negative visible text predicates, alternate-screen

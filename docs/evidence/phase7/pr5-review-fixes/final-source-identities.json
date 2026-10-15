@@ -1,0 +1,13 @@
+{
+  "starting_head": "0ab778525ecebe53cc19f4e3e27f32119290ab25",
+  "sources": {
+    "src/tui/mod.rs": "e122d6f35a24b0152c08a2d526dc32f5dfae146af5492476e26a9a757c82db6e",
+    "src/tui/sql.rs": "448a4b00aa52828274fdceab8f0f107ad80293bc475803f516115c36946acbbb",
+    "src/tui/promql.rs": "143ca978a610f5cd1f3a7f14d54e59c33685e8a9492f9e5cf1ef99fcca3bf37d",
+    "src/tui/sql_service.rs": "f807039eeb8f5bb0e7c5868d5e3ee9c2b79dda2c1ea4af15c0e2d91f0744de54",
+    "src/tui/unicode.rs": "7f419f5d7ab6feee163ccc3f5b75a130c5a5c95e5a877d086cdda45eaf19f8f0",
+    "harness/phase7.py": "3bb5852db477329d3ce6efba833e0150d76d9dcf9f9a9e00f4c8ffb87036eeb6",
+    "harness/test_phase7.py": "9149be93ea48778a796ff1ce7bf4bc96f3addecc9fd9dd74383a142a8c6000c8",
+    "harness/contracts/phase7.md": "6ab769207674de40a1b076f11c0cb6f93cf35308226cadab890ba3294975c765"
+  }
+}

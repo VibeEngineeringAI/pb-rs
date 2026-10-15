@@ -1,0 +1,6 @@
+test_legacy_mode_reconstruction_uses_captured_case_before_contract_override (test_phase7.ContractsTests.test_legacy_mode_reconstruction_uses_captured_case_before_contract_override) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.246s
+
+OK

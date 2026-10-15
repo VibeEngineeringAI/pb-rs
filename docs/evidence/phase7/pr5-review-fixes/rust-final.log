@@ -1,0 +1,792 @@
+   Compiling pb v0.1.0 (/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.41s
+     Running unittests src/lib.rs (target/debug/deps/pb-9403838716320e55)
+
+running 575 tests
+test admin::tests::role_payload_preserves_order_duplicates_empty_and_go_escaping ... ok
+test admin_datasets::tests::names_render_like_lipgloss_without_color ... ok
+test admin_datasets::tests::invalid_or_missing_types_issue_no_request ... ok
+test admin_inventory::style::tests::styles_wrap_each_line_and_pad_multiline_cells ... ok
+test admin_inventory::style::tests::truncation_and_widths_follow_lipgloss ... ok
+test admin_datasets::tests::info_transport_failure_keeps_classification_under_go_prefix ... ok
+test admin_inventory::tests::colored_tables_style_each_cell ... ok
+test admin_inventory::tests::json_write_failures_are_reported_but_text_failures_are_ignored ... ok
+test admin_inventory::tests::long_cells_truncate_at_go_limits ... ok
+test admin_inventory::tests::role_actions_preserve_nil_reuse_and_resource_merging ... ok
+test admin_inventory::tests::user_roles_flatten_maps_with_go_reset_and_replacement ... ok
+test admin_inventory::tests::role_names_are_raw_map_keys ... ok
+test admin_inventory::tests::users_follow_go_slice_and_field_semantics ... ok
+test api::tests::cloud_json_errors_and_null_fields_match_go ... ok
+test api::tests::cloud_typed_duplicates_keep_earlier_errors_and_ignore_null ... ok
+test admin::tests::role_preflight_and_single_privilege_mutation_use_existing_service ... ok
+test api::tests::device_posts_preserve_headers_and_redirect_method_policy ... ok
+test api::tests::device_validation_orders_auth_before_scheme_and_wraps_request_errors ... ok
+test admin_datasets::tests::guarded_removal_reads_info_then_deletes_matching_type ... ok
+test admin_datasets::tests::mutation_success_is_exactly_200_with_trimmed_text_body ... ok
+test admin_datasets::tests::creation_sends_typed_headers_and_prints_kind ... ok
+test admin_datasets::tests::status_only_success_releases_stalled_body_without_reading ... ok
+test admin_inventory::tests::indexed_results_ignore_completion_order_and_start_every_read ... ok
+test api::tests::cloud_validation_uses_separate_release_and_user_credentials ... ok
+test api::tests::encoded_dot_metadata_does_not_change_wire_path ... ok
+test api::tests::expired_deadline_rejects_an_already_buffered_frame ... ok
+test admin_inventory::tests::listing_failures_keep_typed_http_and_decode_errors ... ok
+test api::tests::empty_redirect_location_returns_original_response ... ok
+test api::tests::custom_headers_follow_redirect_and_oauth_replay ... ok
+test api::tests::metrics_preparation_uses_sorted_go_query_and_own_policy ... ok
+test api::tests::malformed_chunk_length_keeps_received_prefix_and_go_body_message ... ok
+test api::tests::chunked_text_and_json_prefixes_preserve_partial_body_before_eof ... ok
+test api::tests::path_append_preserves_prefix_and_base_query ... ok
+test api::tests::preparation_and_execution_failures_remain_distinct ... ok
+test api::tests::invalid_gzip_401_body_rotates_tokens_then_fails_without_replay ... ok
+test api::tests::oauth_refresh_persists_and_replays_identical_body_once ... ok
+test api::tests::redirect_limit_and_failing_hop_report_the_go_url ... ok
+test admin_datasets::tests::guarded_removal_stops_before_delete_on_mismatch_or_info_failure ... ok
+test api::tests::failed_persistence_retains_rotated_tokens_without_replay ... ok
+test admin_datasets::tests::unguarded_removal_issues_only_delete ... ok
+test api::tests::sql_query_parameters_preserve_go_parsequery_bytes ... ok
+test api::tests::redirect_privacy_matches_go_custom_header_behavior ... ok
+test api::tests::refresh_failure_preserves_custom_server_reason_phrase ... ok
+test api::tests::streaming_body_fault_keeps_received_prefix_and_body_error_stage ... ok
+test api::tests::dropping_stream_does_not_wait_for_stalled_tail ... ok
+test api::tests::refresh_does_not_retry_second_unauthorized ... ok
+test api::tests::streaming_connection_reset_keeps_network_cause_after_headers ... ok
+test auth::tests::basic_and_cookie_encoding ... ok
+test auth::tests::validation_order_and_headers ... ok
+test datasets::tests::ignore_case_null_preserves_prior_boolean ... ok
+test datasets::tests::alert_value_matches_go_float_and_map_presentation ... ok
+test datasets::tests::empty_duplicate_arrays_discard_reusable_records ... ok
+test datasets::tests::multiline_styles_keep_lipgloss_padding ... ok
+test datasets::tests::malformed_unused_time_field_is_safe_and_rejected ... ok
+test datasets::tests::schema_has_explicit_missing_fields_and_partial_text_errors ... ok
+test datasets::tests::schema_preserves_raw_numbers_and_escape_spelling ... ok
+test datasets::tests::schema_typed_validation_and_raw_map_output_both_handle_duplicates ... ok
+test datasets::tests::stats_custom_time_uses_wire_spelling_and_precedes_saved_type_errors ... ok
+test datasets::tests::typed_defaults_checks_and_size_display ... ok
+test datasets::tests::typed_duplicate_fields_merge_and_keep_first_errors_and_null_values ... ok
+test error::byte_tests::json_escapes_invalid_bytes_individually_but_keeps_valid_replacement_runes ... ok
+test api::tests::streaming_headers_and_bounded_reads_complete_before_tail_is_released ... ok
+test error::byte_tests::status_trims_go_whitespace_without_replacing_response_bytes ... ok
+test api::tests::relative_and_invalid_standard_urls_match_go_execution_errors ... ok
+test api::tests::unrelated_redirect_strips_cookie_and_does_not_refresh ... ok
+test error::byte_tests::trims_unicode_whitespace_and_stops_at_invalid_bytes ... ok
+test gojson::tests::borrowed_fragments_preserve_duplicates_and_original_bytes ... ok
+test error::byte_tests::prefix_allows_untyped_errors_to_publish_wrapped_raw_bytes ... ok
+test error::byte_tests::prefix_keeps_raw_bytes_and_typed_http_public_output ... ok
+test gojson::tests::invalid_utf8_replaces_each_byte_in_strings_and_keys ... ok
+test gojson::tests::multibyte_prefixes_and_complete_utf8_have_distinct_replacement_rules ... ok
+test gojson::tests::numeric_tokens_keep_exponent_spelling ... ok
+test api::tests::redirects_preserve_wire_path_segments_and_raw_utf8 ... ok
+test gojson::tests::raw_utf8_repair_preserves_escaped_surrogate_handling ... ok
+test gojson::tests::ordered_members_and_map_mode_have_distinct_duplicate_semantics ... ok
+test gojson::tests::repaired_keys_keep_go_duplicate_semantics ... ok
+test gojson::tests::replacement_and_compaction ... ok
+test gojson::tests::syntax_and_raw_numbers ... ok
+test metrics::output::style::probe_tests::responses_follow_pinned_osc_and_cursor_framing ... ok
+test metrics::output::style::tests::ascii_profile_is_plain_output ... ok
+test metrics::output::style::tests::background_detection_probes_only_where_termenv_does ... ok
+test metrics::output::style::tests::profile_detection_follows_termenv_env_color_profile ... ok
+test metrics::output::style::tests::renders_match_lipgloss_for_every_profile_and_background ... ok
+test metrics::output::style::tests::styled_headers_and_widths_follow_go_structure ... ok
+test metrics::output::style::tests::text_renders_match_pinned_go_on_a_pty ... ok
+test metrics::output::style::tests::widths_match_lipgloss_width_including_ascii_led_clusters ... ok
+test metrics::output::tests::active_queries_truncate_bytes_and_pad_runes ... ok
+test metrics::output::tests::anonymous_struct_errors_match_go_type_strings ... ok
+test metrics::output::tests::ansi_width_can_and_sub_cancel_sequences ... ok
+test metrics::output::tests::ansi_width_csi_intermediate_parameter_returns_to_ground ... ok
+test metrics::output::tests::ansi_width_escape_restarts_and_c0_preserves_state ... ok
+test metrics::output::tests::ansi_width_orphan_continuations_follow_byte_transitions ... ok
+test metrics::output::tests::ansi_width_regressions_control_table_padding ... ok
+test metrics::output::tests::ansi_width_utf8_enters_ground_except_in_osc_and_dcs_strings ... ok
+test metrics::output::tests::cardinality_tables_use_display_widths ... ok
+test metrics::output::tests::duplicate_members_reuse_go_slice_elements ... ok
+test metrics::output::tests::labels_series_and_values_text ... ok
+test metrics::output::tests::raw_json_sorts_preserves_numbers_and_rejects_extra_values ... ok
+test metrics::output::tests::run_decode_errors_follow_encoding_json ... ok
+test metrics::output::tests::run_vector_and_matrix_text ... ok
+test metrics::output::tests::timestamps_match_go_time_including_overflow ... ok
+test metrics::output::tests::tsdb_shapes ... ok
+test metrics::output::text_stream::tests::duplicate_containers_and_late_errors_fall_back_without_output ... ok
+test metrics::output::text_stream::tests::fragmented_rendering_matches_general_decoder ... ok
+test gojson::tests::skipping_matches_ordered_syntax_diagnostics ... ok
+test metrics::raw_json::tests::handles_wide_sample_arrays ... ok
+test metrics::raw_json::tests::preserves_scalar_lexemes_and_go_escaping ... ok
+test metrics::raw_json::tests::sorted_objects_replace_duplicate_decoded_keys ... ok
+test process::tests::child_restores_inherited_limit_without_lowering_parent ... ok
+test profile::interactive_tests::credential_form_panic_is_fatal_and_writes_nothing ... ok
+test profile::interactive_tests::default_picker_choice_and_silent_cancel ... ok
+test profile::interactive_tests::empty_default_picker_enter_is_a_go_fatal_panic ... ok
+test profile::interactive_tests::logout_confirmation_selection_and_replacement ... ok
+test profile::interactive_tests::profile_add_saves_form_values_even_after_cancel ... ok
+test profile::interactive_tests::removing_default_asks_for_replacement_and_cancel_clears_it ... ok
+test saved_queries::tests::duplicate_nulls_and_case_matching_follow_go_structs ... ok
+test saved_queries::tests::menu_application_keeps_printed_query_separate_from_wire_limit ... ok
+test saved_queries::tests::menu_fetch_accepts_non_success_arrays_and_reports_decode_failure ... ok
+test saved_queries::tests::projection_filters_only_null_sql_and_validates_builders ... ok
+test saved_queries::tests::stream_extraction_retains_regex_quirks ... ok
+test saved_queries::tests::successful_create_drops_stalled_body_and_encodes_go_request ... ok
+test sql::output::scan::tests::reused_scanner_keeps_capacity_and_leaves_delimiters_unread ... ok
+test metrics::raw_json::tests::handles_nested_containers_beyond_serde_default_depth ... ok
+test sql::output::tests::conversion_error_safely_drops_deep_remaining_nodes ... ok
+test sql::output::tests::json_stops_at_close_and_rejects_invalid_prefix_before_tail ... ok
+test sql::output::tests::malformed_tails_keep_completed_elements ... ok
+test sql::output::tests::pretty_json_rounds_sorts_and_escapes ... ok
+test sql::output::tests::preview_caps_without_reading_tail_and_preserves_invalid_utf8 ... ok
+test sql::output::tests::reusable_render_buffers_match_generic_renderer ... ok
+test sql::output::tests::scalar_and_container_boundaries_preserve_decoder_context ... ok
+test sql::output::tests::text_is_raw_and_empty_messages_are_distinct ... ok
+test sql::output::tests::write_error_policy_matches_each_go_output_path ... ok
+test sql::rewrite::tests::dataset_alias_uses_go_simple_case_folding ... ok
+test sql::rewrite::tests::field_quoting_preserves_ascii_boundaries_and_comments ... ok
+test sql::rewrite::tests::go_original_limit_vectors ... ok
+test sql::rewrite::tests::go_original_quoting_vectors ... ok
+test sql::rewrite::tests::limit_token_and_malformed_sql_quirks ... ok
+test sql::rewrite::tests::request_pass_order_and_second_limit_application ... ok
+test sql::rewrite::tests::short_unicode_inputs_never_require_char_boundary_indexes ... ok
+test sql::rewrite::tests::table_quoting_preserves_lexical_quirks ... ok
+test api::tests::device_context_deadline_has_no_client_timeout_suffix ... ok
+test sql::tests::body_reader_consumes_lazily_across_chunks_and_empty_chunks ... ok
+test sql::tests::body_reader_defers_error_until_current_chunk_is_consumed ... ok
+test api::tests::device_deadline_during_redirect_drain_names_the_next_hop ... ok
+test status::tests::about_checks_unshown_fields_and_keeps_go_null_defaults ... ok
+test status::tests::about_processes_every_duplicate_field_in_input_order ... ok
+test status::tests::unhealthy_json_owns_stdout_and_exit ... ok
+test gojson::tests::deep_ordered_documents_serialize_and_drop_safely ... ok
+test tail::session::tests::compressed_bodies_decode_and_their_declared_sizes_are_checked ... ok
+test tail::session::tests::compressed_buffers_shorter_than_their_prefix_fail_like_go ... ok
+test admin_inventory::tests::role_text_renders_partial_rows_then_fails ... ok
+test sql::output::tests::deep_decode_conversion_serialization_and_drop_are_safe ... ok
+test admin_inventory::tests::role_output_is_validated_before_details_and_json_sorts_keys ... ok
+test tail::session::tests::decoder_review_streams_match_go_or_are_declared_divergences ... ok
+test tail::session::tests::deferred_dictionary_binding_validates_indices_and_replacement_shrink ... ok
+test tail::session::tests::dictionary_ids_are_counted_from_the_ipc_schema_including_nested_fields ... ok
+test tail::session::tests::dictionary_decoding_runs_on_the_worker_and_renders_values ... ok
+test tail::session::tests::dictionary_lookup_uses_last_type_without_changing_row_paths ... ok
+test tail::session::tests::dictionary_values_beyond_go_read_limit_fail_at_the_dictionary ... ok
+test tail::session::tests::established_reads_reconnect_only_for_eof_and_stream_end_codes ... ok
+test tail::session::tests::fatal_bytes_render_raw_in_text_and_replaced_in_json ... ok
+test tail::session::tests::fields_sharing_a_dictionary_id_need_one_dictionary_message ... ok
+test tail::session::tests::fixed_size_list_lengths_that_overflow_are_rejected ... ok
+test tail::session::tests::go_nesting_counts_every_loaded_child_level ... ok
+test tail::session::tests::dense_union_decodes_from_unaligned_flight_bodies ... ok
+test tail::session::tests::hostile_offsets_remain_rejected_for_rewritten_strings ... ok
+test tail::session::tests::initial_dictionaries_are_required_per_subscription ... ok
+test api::tests::body_deadline_preserves_go_message_and_stage ... ok
+test tail::session::tests::initialization_errors_keep_their_wrapping_through_the_worker ... ok
+test tail::session::tests::invalid_utf8_strings_decode_as_bytes_at_every_nesting_level ... ok
+test admin_inventory::tests::user_text_renders_partial_rows_then_fails ... ok
+test tail::session::tests::midstream_schema_and_metadata_only_messages_are_fatal ... ok
+test tail::session::tests::missing_or_short_schema_header_is_an_initialization_failure ... ok
+test api::tests::original_deadline_covers_refresh ... ok
+test tail::session::tests::invalid_utf8_strings_render_with_the_original_string_plan ... ok
+test tail::session::tests::dictionary_presence_and_order_match_the_go_wave_corpus ... ok
+test tail::session::tests::node_null_counts_must_be_within_the_node_length ... ok
+test api::tests::gzip_redirect_drain_is_bounded_before_end_of_body ... ok
+test tail::session::tests::non_native_byte_order_fails_initialization ... ok
+test tail::session::tests::leaf_child_dictionaries_load_but_records_never_resolve_them ... ok
+test tail::session::tests::only_the_first_metadata_only_message_is_skipped ... ok
+test gojson::tests::deep_documents_serialize_replace_and_drop_without_native_recursion_overflow ... ok
+test tail::session::tests::ordinary_write_errors_are_ignored_like_go_fmt ... ok
+test tail::session::tests::orphan_dictionary_messages_are_validated ... ok
+test tail::session::tests::negative_row_counts_follow_the_go_probe_or_are_rejected ... ok
+test tail::session::tests::orphan_conversion_matches_column_conversion_for_every_type ... ok
+test tail::session::tests::reader_initialization_eof_and_every_status_are_fatal ... ok
+test tail::session::tests::raw_status_bytes_survive_every_fatal_stage ... ok
+test tail::session::tests::renderer_panic_ends_the_session_without_that_batch ... ok
+test gojson::tests::borrowed_fragments_enforce_full_document_depth_limit ... ok
+test tail::session::tests::schema_faults_use_go_order_wrapping_and_panic_text ... ok
+test tail::session::tests::schema_level_hazards_fail_reader_initialization ... ok
+test tail::session::tests::schema_read_after_metadata_only_wraps_eof_and_status ... ok
+test tail::session::tests::orphan_occurrences_never_change_nested_binding ... ok
+test tail::session::tests::decoder_review_r3_streams_match_go_or_are_declared_divergences ... ok
+test tail::session::tests::shared_dictionary_ids_require_go_equal_value_types ... ok
+test tail::session::tests::orphan_dictionary_deltas_and_nested_orphans_follow_go ... ok
+test tail::session::tests::short_validity_bitmaps_are_rejected_for_values_structs_and_dictionaries ... ok
+test tail::session::tests::text_and_json_share_stdout_framing_including_empty_batches ... ok
+test tail::session::tests::shared_dictionary_list_names_match_go_through_the_worker ... ok
+test tail::session::tests::shared_dictionary_nested_ids_and_metadata_match_go_through_the_worker ... ok
+test tail::session::tests::unknown_header_names_follow_go_enum_fallback ... ok
+test tail::session::tests::unknown_union_modes_use_go_panic_text ... ok
+test tail::session::tests::truncated_record_and_dictionary_bodies_fail_without_unwinding ... ok
+test tail::session::tests::union_type_ids_and_dense_offsets_are_checked_before_slicing ... ok
+test tail::session::tests::wire_run_ends_are_non_nullable_whatever_the_schema_declares ... ok
+test tail::session::tests::wire_schema_rewrites_only_string_types_and_keeps_ids_and_metadata ... ok
+test tail::transport::tests::about_port_follows_go_unmarshal ... ok
+test tail::transport::tests::connect_request_bytes ... ok
+test tail::transport::tests::connect_response_parts_follow_go ... ok
+test tail::session::tests::worker_decode_errors_are_fatal_after_earlier_output ... ok
+test tail::transport::tests::construction_failures_are_deferred_to_do_get ... ok
+test tail::transport::tests::dial_errors_use_go_text ... ok
+test tail::transport::tests::empty_data_filter_is_exact_and_bounded ... ok
+test tail::session::tests::nesting_beyond_go_read_limit_fails_at_the_first_record_only ... ok
+test tail::transport::tests::flight_status_keeps_go_codes_and_raw_bytes ... ok
+test tail::session::tests::shared_dictionary_recursive_types_match_go_through_the_worker ... ok
+test tail::transport::tests::go_header_field_decoders ... ok
+test tail::transport::tests::go_quote_bytes_escapes_invalid_utf8_like_strconv ... ok
+test tail::session::tests::value_wave_corpus_replays_byte_exact_through_the_session ... ok
+test tail::transport::tests::hpack_helper_encodes_long_lengths ... ok
+test api::tests::header_timeout_reports_the_current_redirect_url ... ok
+test sql::tests::blocked_stdout_preserves_body_deadline_and_partial_output ... ok
+test tail::transport::tests::metadata_matches_tail_auth_metadata ... ok
+test tail::session::tests::go_value_corpus_replays_byte_exact_through_the_session ... ok
+test tail::transport::tests::partial_deadline_matches_go ... ok
+test sql::tests::completed_json_wins_over_deadline_after_blocked_stdout_resumes ... ok
+test api::tests::streamed_body_retains_deadline_while_consumer_is_idle ... ok
+test tail::session::tests::nested_dictionary_binding_corpus_matches_go_through_the_worker ... ok
+test tail::transport::tests::prototext_strings_follow_protobuf_go ... ok
+test tail::transport::tests::proxy_selection_follows_grpc_map_address ... ok
+test tail::transport::tests::refused_flight_dial_surfaces_as_unavailable_status ... ok
+test tail::transport::tests::rejected_tunnel_reports_go_dump_or_status ... ok
+test tail::transport::tests::reset_before_preface_reports_the_read_like_grpc_go ... ok
+test error::byte_tests::trims_large_whitespace_prefix_and_suffix ... ok
+test api::tests::device_deadlines_name_the_current_redirect_hop ... ok
+test tail::session::tests::oversized_staging_capacity_is_released ... ok
+test tail::transport::tests::preface_stage_write_failures_follow_grpc_go ... ok
+test tail::session::tests::spinner_frames_until_stopped_then_clears_and_watching_follows ... ok
+test tail::transport::tests::status_messages_use_go_code_names_and_exact_limit_mapping ... ok
+test tail::transport::tests::target_uses_raw_hostname_and_scheme_policy ... ok
+test tail::transport::tests::ticket_matches_go_json_marshal_with_html_escaping ... ok
+test tail::transport::tests::lost_connection_mid_stream_reads_as_unavailable ... ok
+test tail::transport::tests::tunnel_sends_connect_and_keeps_following_bytes ... ok
+test tail::session::tests::blocked_stdout_keeps_the_runtime_serviced_and_reads_no_further ... ok
+test tail::transport::tests::wire_binds_terminal_events_to_streams ... ok
+test tail::values::tests::binary_decoded_strings_render_with_the_original_string_plan ... ok
+test tail::values::tests::binary_uses_base64_and_nil_buffers_render_null ... ok
+test tail::values::tests::decimals_follow_big_float_g_formatting ... ok
+test tail::values::tests::float64_error_truncates_after_complete_rows ... ok
+test tail::values::tests::floats_follow_goccy_strconv_layout ... ok
+test tail::values::tests::go_float_vectors_match_every_bit_pattern ... ignored, needs PB_VALUES_FLOAT_VECTORS from the review-wave Go generator
+test tail::values::tests::integers_keep_full_width_and_zero_rows_emit_nothing ... ok
+test tail::values::tests::keys_sort_by_encoded_bytes_and_last_duplicate_wins ... ok
+test admin_inventory::tests::user_json_is_atomic_and_output_is_validated_after_details ... ok
+test tail::values::tests::nested_lists_render_and_nonfinite_inside_lists_panic ... ok
+test tail::transport::tests::resets_before_the_response_use_go_mapping ... ok
+test tail::values::tests::shortest_float_ties_round_to_even_like_go ... ok
+test tail::values::tests::strings_escape_like_goccy_normalized_html ... ok
+test tail::values::tests::structs_sort_fields_and_null_structs_are_null ... ok
+test tail::values::tests::temporal_values_format_in_utc ... ok
+test tail::values::tests::unions_render_type_code_and_value_pairs ... ok
+test tail::values::tests::unsupported_view_types_fail_plan_creation ... ok
+test tail::values::tests::oracle_corpus_matches_go_bytes ... ok
+test time_compat::tests::adjacent_negative_duration_moves_clock_forward ... ok
+test time_compat::tests::day_duration_at_minimum_wraps_negation_before_clock_addition ... ok
+test time_compat::tests::minimum_duration_wraps_negation_before_clock_addition ... ok
+test time_compat::tests::relative_grammar_and_clock ... ok
+test time_compat::tests::step_integer_division_boundary_and_manual_grammar ... ok
+test time_compat::tests::utc_conversion_crosses_four_digit_year_boundary ... ok
+test transport::tests::body_format_failures_are_distinct_from_connection_failures ... ok
+test transport::tests::cgi_proxy_rejection_precedes_no_proxy_and_loopback ... ok
+test transport::tests::chunk_size_eof_normalization_applies_only_to_body_errors ... ok
+test transport::tests::connection_reset_detection_uses_io_kind_through_api_wrappers ... ok
+test tail::values::tests::values_wave_corpus_matches_go_bytes ... ok
+test transport::tests::empty_gzip_response_preserves_status_and_empty_body ... ok
+test api::tests::streamed_body_deadline_includes_oauth_refresh_and_redirect ... ok
+test transport::tests::gzip_decodes_body_and_preserves_go_header_policy ... ok
+test tail::transport::tests::empty_data_inside_a_header_block_still_fails_in_h2 ... ok
+test transport::tests::https_target_tunnels_through_http_and_https_proxies ... ok
+test transport::tests::eof_inside_response_headers_is_connection_broken_without_retry ... ok
+test transport::tests::metrics_tls_negotiates_http1_when_server_offers_http2 ... ok
+test transport::tests::metrics_transport_has_no_proxy_or_connection_timers ... ok
+test tail::values::tests::large_list_scratch_is_released_after_the_batch ... ok
+test transport::tests::no_proxy_respects_domains_ports_ip_ranges_and_loopback ... ok
+test transport::tests::plain_http_proxy_uses_absolute_uri_and_proxy_auth ... ok
+test transport::tests::record_framing_reports_boundaries_across_split_reads ... ok
+test transport::tests::refused_error_formatting_cannot_panic_on_raw_authorities ... ok
+test transport::tests::refused_proxy_names_the_proxy_instead_of_the_destination ... ok
+test transport::tests::requests_are_counted_when_writing_begins ... ok
+test transport::tests::healthy_keep_alive_exchanges_are_neither_duplicated_nor_retried ... ok
+test tail::transport::tests::server_preface_is_bounded_like_grpc_go ... ok
+test transport::tests::socks5_authenticates_and_resolves_destination_remotely ... ok
+test tail::transport::tests::server_statuses_pass_through ... ok
+test transport::tests::fresh_connection_eof_before_headers_is_go_eof_without_retry ... ok
+test transport::tests::unrecognized_proxy_schemes_forward_http_like_go_without_bypass ... ok
+test transport::tests::unsent_requests_replay_for_any_method_only_on_reused_http1_connections ... ok
+test tui::admin::tests::dataset_navigation_clamps_and_cancel_is_not_selection ... ok
+test tui::admin::tests::role_requires_submit_focus_and_ignores_escape_and_blurred_arrows ... ok
+test tui::clipboard::tests::selection_order_matches_atotto_init ... ok
+test tui::device::tests::device_code_decoding_follows_encoding_json ... ok
+test tui::device::tests::expiry_and_interval_use_wrapping_go_durations ... ok
+test tui::device::tests::screen_states_and_ctrl_c ... ok
+test tui::device::tests::token_and_oauth_error_decoding ... ok
+test tui::device::tests::tokens_must_carry_session_and_workspace ... ok
+test tui::editor::tests::area_case_and_transpose ... ok
+test tui::editor::tests::area_char_limit_counts_cells_and_newlines ... ok
+test tui::editor::tests::area_clone_shares_viewport_like_go ... ok
+test tui::editor::tests::area_defaults_match_bubbles ... ok
+test tui::editor::tests::area_length_uses_uniseg_width ... ok
+test tui::editor::tests::area_newlines_merge_and_split ... ok
+test tui::editor::tests::area_paste_keeps_newlines_and_expands_tabs ... ok
+test tui::editor::tests::area_scrolls_with_cursor_like_go ... ok
+test tui::editor::tests::area_soft_wrap_grid ... ok
+test tui::editor::tests::area_vertical_motion_keeps_column ... ok
+test tui::editor::tests::area_vertical_motion_walks_runewidth ... ok
+test tui::editor::tests::area_view_has_height_rows_and_placeholder ... ok
+test tui::editor::tests::area_view_matches_go_oracle ... ok
+test tui::editor::tests::area_word_left_at_blank_start_terminates ... ok
+test tui::editor::tests::area_word_motion_crosses_lines ... ok
+test tui::editor::tests::ctrl_v_requests_clipboard_and_paste_inserts ... ok
+test tui::editor::tests::input_blink_cycle ... ok
+test tui::editor::tests::input_blink_timer_survives_blur_and_matches_by_tag ... ok
+test tui::editor::tests::input_blurred_ignores_keys ... ok
+test tui::editor::tests::input_ctrl_k_u_and_alt_rune_inserts ... ok
+test tui::editor::tests::input_delete_word_forward_on_last_char ... ok
+test tui::editor::tests::input_horizontal_scroll_window ... ok
+test tui::editor::tests::input_overflow_window_uses_runewidth ... ok
+test tui::editor::tests::input_password_mask_uses_uniseg_width ... ok
+test tui::editor::tests::input_password_masks_word_ops ... ok
+test tui::editor::tests::input_paste_sanitizes_tabs_newlines_controls ... ok
+test tui::editor::tests::input_set_value_cursor_rules ... ok
+test tui::editor::tests::input_typing_and_char_limit ... ok
+test tui::editor::tests::input_unicode_is_rune_indexed ... ok
+test tui::editor::tests::input_view_layout ... ok
+test tui::editor::tests::input_word_motion_and_deletion ... ok
+test tui::editor::tests::wordwrap_matches_ansi_for_placeholder ... ok
+test tui::editor::tests::wrap_carry_uses_runewidth ... ok
+test tui::input::tests::bracketed_paste_is_one_bracketed_key_and_waits_for_end ... ok
+test tui::input::tests::control_and_named_keys_match_tea_strings ... ok
+test tui::input::tests::decode_rune_matches_go ... ok
+test tui::input::tests::escape_prefix_is_alt_within_one_read ... ok
+test tui::input::tests::full_reads_defer_trailing_runes_to_the_next_read ... ok
+test tui::input::tests::runes_in_one_read_form_one_key ... ok
+test tui::input::tests::unknown_input_is_reported_without_desynchronizing ... ok
+test tail::transport::tests::empty_data_frames_do_not_reach_h2_limits ... ok
+test tui::login::tests::alt_d_fault_in_a_wizard_field_is_a_recovered_panic ... ok
+test tui::login::tests::blink_at_a_selection_step_is_dropped_and_paste_rearms_the_active_field ... ok
+test tui::login::tests::cloud_esc_paths ... ok
+test tui::login::tests::departed_field_timer_toggles_the_active_field_when_tags_match ... ok
+test tui::login::tests::departed_field_timer_with_a_stale_tag_is_dropped ... ok
+test tui::login::tests::duplicate_name_replace_or_change ... ok
+test tui::login::tests::refocusing_a_field_cancels_its_departed_timer ... ok
+test tui::login::tests::required_fields_and_backtracking ... ok
+test tui::login::tests::several_departed_timers_stay_bounded_and_only_the_current_tag_matches ... ok
+test tui::login::tests::self_hosted_basic_trims_url_and_user_but_not_password ... ok
+test tui::profile::tests::credential_alt_enter_obeys_button_focus_latch_and_current_validity ... ok
+test tui::profile::tests::credential_departed_timer_with_a_stale_tag_or_no_focused_input_is_dropped ... ok
+test tui::profile::tests::credential_departed_username_timer_toggles_the_password_on_equal_tags ... ok
+test tui::profile::tests::credential_paste_reaches_only_the_focused_input_and_clears_latch ... ok
+test tui::profile::tests::credential_refocus_cancels_the_departed_timer_and_arms_once ... ok
+test tui::profile::tests::alt_d_before_the_last_rune_panics_in_form_and_filter ... ok
+test tui::profile::tests::credential_submit_latch_is_sticky_and_enter_cycles_when_invalid ... ok
+test tui::profile::tests::credential_values_are_both_or_neither ... ok
+test tui::profile::tests::empty_picker_enter_is_the_go_nil_item_case ... ok
+test tui::profile::tests::logout_confirmation_needs_a_terminated_yes_line ... ok
+test tui::profile::tests::picker_filter_never_narrows_because_matches_are_not_forwarded ... ok
+test tui::profile::tests::picker_selects_by_cursor_and_cancels_on_quit_keys ... ok
+test tui::profile::tests::picker_pages_four_items_and_full_help_changes_page_size ... ok
+test tui::promql::tests::both_mode_range_window_is_normalized_only_when_not_increasing ... ok
+test tui::promql::tests::alt_enter_on_dataset_pane_opens_picker_before_running ... ok
+test tui::promql::tests::builder_label_completion_caches_but_respects_metric_guard ... ok
+test tui::promql::tests::chart_values_parse_like_strconv ... ok
+test tui::promql::tests::cli_time_location_is_kept_through_the_picker ... ok
+test tui::promql::tests::completion_channel_keeps_backpressure_until_its_head_is_consumed ... ok
+test tui::promql::tests::chart_cursor_first_press_selects_neighbor_then_moves_by_column ... ok
+test tui::promql::tests::control_key_stays_queued_behind_earlier_completions ... ok
+test tui::promql::tests::continuous_input_keeps_one_head_and_cannot_starve_completions ... ok
+test tui::promql::tests::ctrl_b_toggles_builder_and_ctrl_q_focuses_query ... ok
+test tui::promql::tests::ctrl_c_quits_only_without_an_overlay ... ok
+test tui::promql::tests::ctrl_v_starts_a_clipboard_read_that_is_never_inserted ... ok
+test tui::promql::tests::dataset_list_selects_first_dataset_for_placeholder_and_runs ... ok
+test tui::promql::tests::dataset_typed_before_late_list_still_selects_the_filtered_dataset ... ok
+test tui::promql::tests::float_to_int_follows_go_on_this_target ... ok
+test tui::promql::tests::equal_time_points_follow_go_pdqsort_order ... ok
+test tui::promql::tests::go_value_formatting ... ok
+test tui::promql::tests::heads_are_merged_in_arrival_order ... ok
+test tui::promql::tests::hex_floats_round_exactly_like_atof_hex ... ok
+test tui::promql::tests::init_requests_result_cache_and_datasets_in_go_order ... ok
+test tui::promql::tests::labels_timestamps_and_builder_expressions ... ok
+test tui::promql::tests::line_drawing_combines_with_axes_like_ntcharts ... ok
+test tui::promql::tests::mode_cycles_range_instant_both_on_step_pane_and_reruns ... ok
+test tui::promql::tests::go_sort_ports_sort_large_inputs_and_keep_slice_stable_stable ... ok
+test tui::promql::tests::month_arithmetic_uses_go_normalization ... ok
+test tui::promql::tests::numeric_timestamps_format_through_go_time_arithmetic ... ok
+test tui::promql::tests::pr5_ui_promql_column_scroll_survives_resize_results_and_filtering ... ok
+test tui::promql::tests::pr5_ui_unicode_promql_rows_use_go_simple_lowercase ... ok
+test tui::promql::tests::pr5_ui_unicode_promql_selectors_use_go_simple_lowercase ... ok
+test tui::promql::tests::quit_is_not_accepted_while_an_earlier_completion_wins ... ok
+test tui::promql::tests::reentering_labels_cancels_the_previous_request ... ok
+test tui::promql::tests::render_and_editor_faults_map_to_go_outcomes ... ok
+test tui::promql::tests::resize_resets_value_column_to_title_width ... ok
+test tui::promql::tests::result_arriving_before_focus_keys_is_applied_before_them ... ok
+test tui::promql::tests::results_have_no_stale_guard_and_arrive_in_completion_order ... ok
+test tail::transport::tests::padded_empty_data_keeps_h2_lifetime_cap ... ok
+test transport::tests::tls_verifies_trust_and_hostname ... ok
+test tui::promql::tests::row_storage_is_shared_by_state_table_and_view_snapshots ... ok
+test tui::promql::tests::run_without_dataset_opens_picker_with_error ... ok
+test tui::promql::tests::pr5_ui_promql_horizontal_keys_reveal_clipped_values_and_restore_columns ... ok
+test tui::promql::tests::shared_rows_keep_filter_selection_and_metric_detail_local ... ok
+test tui::promql::tests::spinner_ticks_only_while_loading_and_drop_stale_tags ... ok
+test tui::promql::tests::step_grammar_and_resolution_follow_go ... ok
+test tui::promql::tests::time_picker_presets_and_segment_edits ... ok
+test transport::tests::retried_read_failing_on_a_fresh_connection_is_not_retried_again ... ok
+test tui::promql::tests::w_unwraps_only_in_table_view_and_reaches_table_in_chart_view ... ok
+test tui::promql::tests::wide_legend_label_reaches_go_truncate_panic ... ok
+test tui::promql::tests::y_axis_scale_matches_go_nice_steps ... ok
+test tui::promql::tests::yielding_lets_request_tasks_run_under_continuous_input ... ok
+test tui::promql_service::tests::decodes_vector_and_matrix_with_go_tolerance ... ok
+test tui::promql_service::tests::duplicate_label_data_keeps_prior_strings_under_null ... ok
+test tui::promql_service::tests::duplicate_repairs_do_not_hide_the_first_go_decode_error ... ok
+test tui::promql_service::tests::duplicate_result_merges_prior_series_fields_for_vector_and_matrix ... ok
+test tui::promql_service::tests::empty_and_null_label_data_discard_hidden_strings ... ok
+test tui::promql_service::tests::empty_and_null_result_discard_hidden_slots_but_null_structs_do_not ... ok
+test tui::promql_service::tests::escapes_follow_go_url_package ... ok
+test tui::promql_service::tests::field_names_fold_like_go_simple_fold ... ok
+test tui::promql_service::tests::metric_objects_merge_empty_objects_keep_keys_and_null_resets ... ok
+test tui::promql_service::tests::nested_sample_slices_truncate_reexpand_and_clear_by_field ... ok
+test tui::promql_service::tests::non_200_uses_status_text_or_body ... ok
+test tui::promql_service::tests::sample_interfaces_replace_nested_maps_arrays_and_nulls ... ok
+test tui::promql_service::tests::shorter_result_then_reexpansion_retains_hidden_series ... ok
+test tui::promql_service::tests::type_mismatch_reports_first_go_style_error ... ok
+test tui::saved::tests::alt_d_at_last_filter_rune_reports_go_fault_before_refilter_or_apply ... ok
+test tui::saved::tests::apply_and_quit_intercept_before_filtering ... ok
+test tui::saved::tests::clipboard_completion_updates_current_editing_filter_without_generation_guard ... ok
+test tui::saved::tests::description_sql_is_selected_and_delete_key_is_unreachable ... ok
+test tui::saved::tests::equal_fuzzy_scores_retain_source_order_and_short_titles_rank_first ... ok
+test tui::saved::tests::filtering_matches_title_and_preserves_empty_selection ... ok
+test tui::saved::tests::fuzzy_camel_bonus_uses_pinned_ll_lu_categories_and_go_byte_scores ... ok
+test tui::saved::tests::fuzzy_matches_pinned_go_simple_fold_orbits_without_full_case_folding ... ok
+test tui::saved::tests::fuzzy_nul_fault_is_a_command_fault_and_typed_a_still_applies ... ok
+test tui::saved::tests::fuzzy_nul_reuses_the_retained_byte_and_preserves_application ... ok
+test tui::saved::tests::fuzzy_overflow_uses_the_verified_candidate_floor_and_go_rankings ... ok
+test tail::transport::tests::retry_channel_serves_the_next_do_get ... ok
+test tui::saved::tests::navigation_filter_acceptance_and_unicode_backspace ... ok
+test tui::sql::tests::cli_time_keeps_parse_location ... ok
+test tui::sql::tests::column_drawer_typing_filters_and_enter_inserts_quoted_name ... ok
+test tui::sql::tests::columns_put_timestamp_first_and_tags_last ... ok
+test tui::sql::tests::ctrl_d_and_ctrl_b_take_precedence_over_editor_bindings ... ok
+test tui::sql::tests::ctrl_r_inside_time_overlay_runs_without_applying_draft ... ok
+test tui::sql::tests::dataset_overlay_swallows_ctrl_c_and_selection_inserts_placeholder_query ... ok
+test tui::sql::tests::dataset_picker_replacement_title_changes_raw_identity_and_resets_columns ... ok
+test tui::sql::tests::empty_and_closed_sources ... ok
+test tui::sql::tests::datetime_segments_edit_like_go ... ok
+test tui::sql::tests::empty_query_starts_idle_without_a_window ... ok
+test tui::sql::tests::extracted_raw_dataset_bytes_reach_the_schema_effect ... ok
+test tui::sql::tests::go_float_display_through_shared_formatter ... ok
+test tui::sql::tests::go_date_resolves_skipped_and_repeated_wall_times ... ok
+test tui::sql::tests::go_lowering_cut_inside_a_rune_yields_one_replacement_per_byte ... ok
+test tui::sql::tests::go_lowering_keeps_runes_newer_than_go_unicode_tables ... ok
+test tui::sql::tests::go_lowering_offsets_slice_the_original_bytes ... ok
+test tui::sql::tests::init_requests_spinner_datasets_and_first_window_with_wire_window ... ok
+test tui::sql::tests::late_dataset_list_does_not_alias_a_raw_name_to_its_replacement_title ... ok
+test tui::sql::tests::late_schema_for_previous_dataset_still_applies ... ok
+test tui::sql::tests::older_completion_wins_without_accepting_a_later_quit_or_control_key ... ok
+test tui::sql::tests::older_terminal_event_is_taken_before_a_later_completion ... ok
+test tui::sql::tests::pane_body_bytes_pad_by_go_width_and_clip_like_reflow ... ok
+test tui::sql::tests::partial_window_fixes_total_and_errors_split_first_and_later_windows ... ok
+test tui::sql::tests::plan_and_window_injection_match_go_helpers ... ok
+test tui::sql::tests::pr5_ui_unicode_dataset_and_column_filters_use_go_simple_lowercase ... ok
+test tui::sql::tests::pr5_ui_unicode_sql_rows_use_go_simple_lowercase ... ok
+test tui::sql::tests::prefetch_at_ninety_percent_and_cache_keeps_three_windows ... ok
+test tui::sql::tests::go_lowering_past_the_end_panics_like_go ... ok
+test tui::sql::tests::reflow_drops_unterminated_sequences ... ok
+test tui::sql::tests::reflow_nested_escape_extends_the_open_sequence ... ok
+test tui::sql::tests::reflow_reset_follows_tail_only_for_an_open_sgr ... ok
+test tui::sql::tests::reflow_terminators_include_at_sign ... ok
+test tui::sql::tests::reflow_truncate_drops_zero_width_fill_after_the_cut ... ok
+test tui::sql::tests::spinner_accepts_current_tag_only_while_loading ... ok
+test tui::sql::tests::sql_result_headers_use_pinned_go_simple_uppercase ... ok
+test tui::sql::tests::stale_run_completion_is_dropped_but_current_run_applies ... ok
+test tui::sql::tests::time_overlay_enter_applies_and_runs_escape_discards ... ok
+test tui::sql::tests::timestamps_display_in_selected_zone ... ok
+test tui::sql::tests::user_limit_and_offset_bound_windows ... ok
+test tui::sql::tests::window_fetch_panic_becomes_query_failed_for_the_same_window ... ok
+test tui::sql_service::tests::arrow_schema_duplicate_fields_reuse_struct_slots ... ok
+test tui::sql_service::tests::arrow_schema_requires_valid_document_and_nonempty_names ... ok
+test tui::sql_service::tests::body_uses_sorted_keys_and_html_escapes ... ok
+test tui::sql_service::tests::decoder_eof_cases_match_read_value ... ok
+test tui::sql_service::tests::decoder_reports_invalid_prefix_before_tail ... ok
+test tui::sql_service::tests::decoder_stops_at_first_complete_object_without_reading_tail ... ok
+test tui::promql::tests::view_renders_without_panicking_in_each_overlay ... ok
+test tui::promql::tests::row_replacement_and_error_clear_preserve_old_snapshots ... ok
+test tui::sql_service::tests::duplicate_fields_keep_prior_strings_under_null ... ok
+test tui::sql_service::tests::duplicate_records_merge_into_existing_maps ... ok
+test tui::sql_service::tests::duplicate_window_keys_do_not_hide_the_first_go_error ... ok
+test tui::sql_service::tests::empty_and_null_window_arrays_discard_hidden_slots ... ok
+test tui::sql_service::tests::nested_duplicate_values_do_not_hide_numeric_overflow ... ok
+test tui::sql_service::tests::nested_numeric_errors_follow_wire_order_before_map_sorting ... ok
+test tui::sql_service::tests::nesting_beyond_go_limit_is_a_syntax_error ... ok
+test tui::sql_service::tests::schema_endpoint_escapes_raw_invalid_bytes_like_go ... ok
+test tui::sql_service::tests::shorter_window_arrays_hide_slots_that_a_longer_one_reexposes ... ok
+test tui::sql_service::tests::type_errors_use_go_text ... ok
+test tui::sql_service::tests::valid_nested_duplicates_keep_last_values_and_sorted_display ... ok
+test tui::sql_service::tests::values_print_like_fmt_v ... ok
+test tui::sql_service::tests::window_field_names_fold_like_go_simple_fold ... ok
+test tui::style::tests::adaptive_role_follows_background_not_theme ... ok
+test tui::style::tests::borders_follow_lipgloss_apply_border ... ok
+test tui::sql_service::tests::deeply_nested_overwritten_numeric_overflow_is_stack_safe ... ok
+test tui::style::tests::byte_render_preserves_go_payload_and_string_wrap_contract ... ok
+test tui::style::tests::cases_match_go_oracle2 ... ok
+test tui::style::tests::color_conversions_match_go_oracle_table ... ok
+test tui::style::tests::degraded_colors_match_go_termenv_for_known_palette_entries ... ok
+test tui::sql_service::tests::deep_nesting_within_go_limit_is_stack_safe ... ok
+test tui::style::tests::exact_colors_and_literal_indices_convert_like_termenv ... ok
+test tui::style::tests::grapheme_segmentation_follows_uniseg_transitions ... ok
+test tui::sql::tests::raw_extracted_dataset_renders_a_byte_frame_with_go_bytes ... ok
+test tui::style::tests::joins_and_place_follow_lipgloss_positions ... ok
+test tui::style::tests::inherit_copies_only_unset_properties ... ok
+test tui::style::tests::palettes_hold_theme_go_values ... ok
+test tui::style::tests::load_theme_precedence_matches_ui_load_theme ... ok
+test tui::style::tests::render_reproduces_lipgloss_sequences ... ok
+test tui::style::tests::runewidth_locale_detection_follows_handle_env ... ok
+test tui::style::tests::truncate_follows_x_ansi_truncate ... ok
+test tui::style::tests::ui_truncate_cuts_runes_with_go_slice_capacity ... ok
+test tui::style::tests::width_follows_x_ansi_string_width ... ok
+test tui::style::tests::width_padding_alignment_and_background_whitespace ... ok
+test tui::style::tests::widths_match_go_width_oracle ... ok
+test tui::style::tests::wrap_follows_x_ansi_wrap ... ok
+test tui::terminal::tests::byte_frames_are_not_lossy_and_share_the_cache ... ok
+test tui::terminal::tests::errno_text_matches_go ... ok
+test tui::terminal::tests::frames_drop_top_lines_beyond_height_and_position_alt_cursor ... ok
+test tui::terminal::tests::inline_frames_follow_the_standard_renderer ... ok
+test tui::terminal::tests::panic_stamp_is_its_peek_time ... ok
+test tui::terminal::tests::panics_are_delivered_first_then_the_queue_closes ... ok
+test tui::terminal::tests::next_key_is_offered_at_acceptance_of_the_previous_one ... ok
+test tui::terminal::tests::pty::async_consumers_receive_events_and_are_cancel_safe ... ok
+test tui::style::tests::byte_primitives_match_pinned_go_oracle ... ok
+test tail::transport::tests::happy_eyeballs_follows_go_dial_parallel ... ok
+test tui::terminal::tests::pty::background_panic_is_delivered_after_restoration ... ok
+test transport::tests::tls_record_cut_before_plaintext_is_unexpected_eof_and_retried_when_reused ... ok
+test tui::terminal::tests::pty::drop_without_close_restores_without_a_final_frame ... ok
+test tui::promql::tests::row_storage_frame_fixtures ... ok
+test transport::tests::idle_close_arriving_while_the_runtime_is_busy_is_noticed_before_dispatch ... ok
+test transport::tests::mutations_on_reused_connections_are_sent_exactly_once ... ok
+test tui::terminal::tests::pty::fullscreen_session_enters_and_leaves_the_alternate_screen ... ok
+test tui::terminal::tests::pty::hangup_surfaces_the_kernel_outcome_like_go ... ok
+test tail::transport::tests::initial_headers_follow_go_operate_headers ... ok
+test tui::terminal::tests::pty::sigquit_during_close_child ... ok
+test tui::terminal::tests::pty::inline_session_acquires_raw_mode_and_restores_in_go_order ... ok
+test tui::terminal::tests::pty::sigquit_during_close_exits_2_and_leaves_raw_mode ... ok
+test transport::tests::reused_idle_connection_closed_before_headers_retries_read_once ... ok
+test tui::terminal::tests::recovered_scopes_nest_and_unwind ... ok
+test tui::terminal::tests::resize_sender_coalesces_and_keeps_its_own_lane ... ok
+test tui::unicode::tests::simple_lowercase_keeps_go_unicode_15_boundaries ... ok
+test url_reference::tests::redirect_paths_keep_empty_and_encoded_segments ... ok
+test tui::terminal::tests::pty::one_read_is_handed_off_message_by_message ... ok
+test tui::terminal::tests::pty::only_one_session_is_active ... ok
+test tui::terminal::tests::reader_hands_off_one_message_and_controls_are_independent ... ok
+test tui::terminal::tests::pty::owner_thread_panic_restores_the_terminal_once ... ok
+test tui::terminal::tests::pty::partial_acquisition_rolls_back_completed_steps ... ok
+test tui::terminal::tests::pty::recovered_task_panics_keep_the_session ... ok
+test tail::transport::tests::status_details_follow_go_new_with_proto ... ok
+test tui::terminal::tests::pty::resizes_are_independent_and_coalesced ... ok
+test tui::terminal::tests::pty::signals_overtake_keys_not_yet_handed_off ... ok
+test tui::terminal::tests::pty::sigterm_dispositions_return_when_quit_is_accepted ... ok
+test tail::transport::tests::unprocessed_first_attempts_retry_once_like_grpc_go ... ok
+test tail::transport::tests::trailers_keep_go_codes_and_raw_messages ... ok
+test tail::transport::tests::payload_flags_follow_go_check_recv_payload ... ok
+test tail::transport::tests::partial_messages_end_as_go_unexpected_eof ... ok
+test tui::promql::tests::shared_dense_rows_keep_step_15_and_local_render_pagination ... ok
+test tail::transport::tests::frames_explain_streams_that_end_without_trailers ... ok
+test tui::style::tests::every_codepoint_width_matches_go_dump ... ok
+test datasets::tests::raw_schema_and_alert_maps_render_deep_objects_safely ... ok
+test tail::session::tests::schema_initialization_runs_on_the_worker_while_the_runtime_progresses ... ok
+
+test result: ok. 574 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 3.07s
+
+     Running unittests src/main.rs (target/debug/deps/pb-1ed19f550b2eace7)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/admin_adversarial.rs (target/debug/deps/admin_adversarial-7e9b3e9903f70651)
+
+running 4 tests
+test large_role_list_validates_output_before_details_and_sorts_json ... ok
+test identifiers_use_go_url_joining_without_new_validation ... ok
+test large_user_list_aggregates_failures_in_index_order_with_raw_bytes ... ok
+test large_user_list_keeps_index_order_and_exact_membership ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.19s
+
+     Running tests/admin_process.rs (target/debug/deps/admin_process-76db28463a78ce28)
+
+running 3 tests
+test status_only_mutations_finish_before_success_body ... ok
+test full_output_device_keeps_committed_mutations_and_fails_json_encoder ... ok
+test user_creation_awaits_body_and_preserves_password_bytes ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.27s
+
+     Running tests/config.rs (target/debug/deps/config-49e7d003e71a8d66)
+
+running 19 tests
+test profile_urls_accept_relative_references_and_preserve_query_escapes ... ok
+test empty_config_and_missing_active_profile_remain_distinct ... ok
+test failed_config_directory_creation_names_the_failing_component ... ok
+test case_insensitive_struct_keys_keep_profile_names_case_sensitive ... ok
+test seconds_less_time_diagnostics_apply_only_to_decoded_fields ... ok
+test directory_read_error_has_go_network_error_classification ... ok
+test legacy_key_precedence_and_permissive_records ... ok
+test command_output_and_debug_never_include_credential_fields ... ok
+test refresh_updates_only_matching_cloud_record ... ok
+test login_replaces_corrupt_config_but_cloud_refuses_it_and_requires_force ... ok
+test saves_create_and_restore_private_permissions ... ok
+test malformed_config_diagnostics_match_pinned_go_cases ... ok
+test styled_profile_list_normalizes_tabs_and_crlf_before_padding ... ok
+test logout_uses_sole_profile_but_refuses_ambiguous_missing_default ... ok
+test profile_list_keeps_html_but_add_uses_go_marshal_escaping ... ok
+test logout_yes_selects_first_sorted_remaining_profile ... ok
+test add_update_default_and_remove_preserve_go_policies ... ok
+test case_insensitive_table_aliases_merge_existing_credentials ... ok
+test go_toml_interoperability_when_pinned_oracle_is_supplied ... ok
+
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+     Running tests/diagnostics_process.rs (target/debug/deps/diagnostics_process-09d66e904f22a457)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/fd_limit.rs (target/debug/deps/fd_limit-c5c5e9a9c4da9a25)
+
+running 1 test
+test wide_user_list_outgrows_a_low_inherited_soft_limit ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.22s
+
+     Running tests/interactive_effects.rs (target/debug/deps/interactive_effects-dbcb8a76c2ee4874)
+
+running 59 tests
+test deadline_builder_30s ... ignored, opt-in: uses the genuine 15/30/50/120-second request deadlines
+test deadline_promql_120s ... ignored, opt-in: uses the genuine 15/30/50/120-second request deadlines
+test deadline_schema_15s ... ignored, opt-in: uses the genuine 15/30/50/120-second request deadlines
+test deadline_sql_50s ... ignored, opt-in: uses the genuine 15/30/50/120-second request deadlines
+test oauth_promql_both_effects ... ignored, opt-in: requires the synthetic cloud orchestrator bearer-token build
+test oauth_saved_menu_apply_scope ... ignored, opt-in: requires the synthetic cloud orchestrator bearer-token build
+test oauth_schema_fallback_scope ... ignored, opt-in: requires the synthetic cloud orchestrator bearer-token build
+test oauth_sql_window_effects ... ignored, opt-in: requires the synthetic cloud orchestrator bearer-token build
+test logout_decline ... ok
+test default_cancel ... ok
+test credentials_username_only_cancel ... ok
+test credentials_positional_ignored ... ok
+test dataset_cancel ... ok
+test credentials_valid_cancel ... ok
+test replacement_cancel ... ok
+test promql_unicode_decoder_error ... ok
+test promql_label_duplicate_first_error ... ok
+test promql_label_duplicate_array_reset ... ok
+test promql_label_duplicate_data_reuse ... ok
+test saved_filter_quit ... ok
+test saved_apply_json_status ... ok
+test saved_apply_result_order ... ok
+test saved_apply_text_status ... ok
+test saved_profile_snapshot ... ok
+test saved_apply_unchecked ... ok
+test sql_duplicate_fields_reuse ... ok
+test sql_duplicate_first_error ... ok
+test sql_duplicate_record_merge ... ok
+test sql_duplicate_hidden_slots ... ok
+test sql_duplicate_record_null_reset ... ok
+test role_abort ... ok
+test promql_result_policy ... ok
+test promql_stale_result ... ok
+test promql_builder_pending_cache ... ok
+test promql_builder_policy ... ok
+test role_conflict ... ok
+test promql_dataset_cache_guard ... ok
+test sql_unicode_preflight_panic ... ok
+test sql_unicode_decoder_keys ... ok
+test promql_mode_transitions ... ok
+test role_submit ... ok
+test sql_unicode_placeholder_wire ... ok
+test promql_builder_metric_guard ... ok
+test promql_builder_label_guard ... ok
+test sql_invalid_prefix_before_eof ... ok
+test sql_prefix_before_eof ... ok
+test sql_numeric_overflow ... ok
+test sql_unicode_schema_raw_bytes ... ok
+test sql_schema_duplicate_array_reset ... ok
+test sql_schema_duplicate_struct_reuse ... ok
+test sql_schema_fallback ... ok
+test sql_schema_primary_no_fallback ... ok
+test sql_schema_fallback_clock ... ok
+test sql_stale_schema ... ok
+test sql_window_snapshot ... ok
+test sql_window_paging ... ok
+test sql_window_stale ... ok
+test sql_unknown_actual_total ... ok
+test sql_cache_eviction ... ok
+
+test result: ok. 51 passed; 0 failed; 8 ignored; 0 measured; 0 filtered out; finished in 41.73s
+
+     Running tests/metrics_terminal.rs (target/debug/deps/metrics_terminal-129224fe27af8dbb)
+
+running 1 test
+test process_probe_colors_bypasses_timeout_and_termios_restore ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.23s
+
+     Running tests/metrics_transport.rs (target/debug/deps/metrics_transport-4fa5ff06aac67707)
+
+running 4 tests
+test labels_body_reset_retains_retryable_network_error ... ok
+test labels_header_reset_uses_command_error_json ... ok
+test instant_query_header_reset_uses_command_error_json ... ok
+test labels_header_reset_explains_query_timeout_text ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running tests/offline.rs (target/debug/deps/offline-eccef4a3fd9f8356)
+
+running 14 tests
+test flags_are_local_and_explicit_presence_survives_default_values ... ok
+test custom_profile_add_validation_precedes_operation_dispatch ... ok
+test arrays_are_repeatable_without_comma_splitting ... ok
+test raw_json_error_mode_obeys_terminator_and_any_explicit_occurrence ... ok
+test completion_group_renders_help_with_unrecognized_extra_words ... ok
+test integer_unsigned_overflow_precedes_later_syntax_validation ... ok
+test separated_json_error_request_uses_unicode_simple_case_folding ... ok
+test version_and_agent_outputs_follow_owned_contract ... ok
+test typed_integer_flags_accept_go_radix_and_reject_overflow ... ok
+test sequential_parser_reports_the_first_original_token ... ok
+test error_quotes_use_go_string_not_json_string_rules ... ok
+test specification_is_consistent_and_all_help_paths_execute ... ok
+test help_and_discovery_only_include_initialized_help_flags ... ok
+test inherited_profile_preflight_keeps_text_prefix_and_json_public_message ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/process.rs (target/debug/deps/process-1dafa824ef3acc2a)
+
+running 9 tests
+test invalid_utf8_after_terminator_does_not_scan_json_as_a_flag ... ok
+test invalid_utf8_json_rejection_uses_raw_output_request_scan ... ok
+test closed_stdout_terminates_with_sigpipe ... ok
+test invalid_utf8_flag_value_is_rejected_without_panicking ... ok
+test invalid_utf8_is_an_explicit_error_without_panicking ... ok
+test closed_stderr_terminates_with_sigpipe ... ok
+test renamed_executable_keeps_the_public_pb_name ... ok
+test valid_unicode_arguments_reach_the_cli ... ok
+test missing_config_environment_keeps_command_error_policy ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.33s
+
+     Running tests/saved_menu_reread.rs (target/debug/deps/saved_menu_reread-9ffa9487422ff460)
+
+running 1 test
+test failed_menu_reread_continues_with_empty_config_like_go ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running tests/sql_process.rs (target/debug/deps/sql_process-eefc93bc480d059d)
+
+running 16 tests
+test shared_stdout_stderr_pipe_keeps_completed_json_before_decode_error ... ok
+test float_decimals_match_go_ties_and_notation_boundaries ... ok
+test error_preview_finishes_at_cap_before_http_eof ... ok
+test json_finishes_with_unread_http_tail_still_gated ... ok
+test read_only_stdout_follows_text_and_json_writer_policies ... ok
+test sql_closed_stdout_terminates_with_real_sigpipe ... ok
+test preserves_invalid_utf8_in_stdout_and_error_preview ... ok
+test emits_complete_element_before_fixture_sends_final_chunks ... ok
+test dev_full_special_text_messages_ignore_write_errors ... ok
+test closed_stdout_special_messages_still_raise_sigpipe ... ok
+test dev_full_errors_follow_text_and_json_writer_policies ... ok
+test terminal_spinner_starts_before_headers_and_clears_on_completion ... ok
+test conversion_errors_cleanup_near_limit_depth_without_recursive_drop ... ok
+test text_empty_array_waits_for_http_eof ... ok
+test inherited_nonblocking_stdout_waits_for_reader_without_losing_bytes ... ok
+test external_signals_terminate_header_and_body_waits_without_error_envelopes ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.73s
+

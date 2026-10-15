@@ -1,0 +1,14 @@
+   Compiling pb v0.1.0 (/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.16s
+     Running unittests src/lib.rs (target/debug/deps/pb-9403838716320e55)
+
+running 6 tests
+test tui::promql::tests::pr5_ui_unicode_promql_selectors_use_go_simple_lowercase ... ok
+test tui::sql::tests::pr5_ui_unicode_sql_rows_use_go_simple_lowercase ... ok
+test tui::sql::tests::pr5_ui_unicode_dataset_and_column_filters_use_go_simple_lowercase ... ok
+test tui::promql::tests::pr5_ui_unicode_promql_rows_use_go_simple_lowercase ... ok
+test tui::promql::tests::pr5_ui_promql_column_scroll_survives_resize_results_and_filtering ... ok
+test tui::promql::tests::pr5_ui_promql_horizontal_keys_reveal_clipped_values_and_restore_columns ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 568 filtered out; finished in 0.04s
+

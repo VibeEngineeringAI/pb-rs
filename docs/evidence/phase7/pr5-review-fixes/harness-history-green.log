@@ -1,0 +1,9 @@
+test_legacy_lost_prefix_pair_cannot_pass_without_overflow_evidence (test_phase7.ContractsTests.test_legacy_lost_prefix_pair_cannot_pass_without_overflow_evidence) ... ok
+test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss (test_phase7.ContractsTests.test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss) ... ok
+test_missing_legacy_raw_is_a_per_session_reduce_issue_including_pipe_compare (test_phase7.ContractsTests.test_missing_legacy_raw_is_a_per_session_reduce_issue_including_pipe_compare) ... ok
+test_legacy_history_uncertainty_keeps_captured_seed_before_contract_override (test_phase7.ContractsTests.test_legacy_history_uncertainty_keeps_captured_seed_before_contract_override) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 1.600s
+
+OK
