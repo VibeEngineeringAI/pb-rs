@@ -69,6 +69,23 @@ def commands(args):
     yield 'interactive-effects', [str(args.effects_test), '--include-ignored', '--test-threads=4']
 
 
+FLIGHT_ROOT_GATES = frozenset(('flight-main', 'flight-trailer-followup', 'flight-review3-followup'))
+
+
+def preflight_output_root(out, selected_gates):
+    """Flight's runner owns its scratch root; reject incompatible roots early.
+
+    Each selected gate writes under out / gate, so out may itself equal TMP.
+    Subsets without these phase-six runners retain their existing root policy.
+    """
+    if FLIGHT_ROOT_GATES.isdisjoint(selected_gates):
+        return
+    owned = Path(importlib.import_module('phase6').TMP).resolve()
+    out = Path(out).resolve()
+    if out != owned and owned not in out.parents:
+        raise ValueError(f'--out must be at or under {owned} when selecting phase-six Flight gates')
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--reference-dir', type=Path, required=True)
@@ -95,6 +112,10 @@ def main():
     matrix = list(commands(args))
     if args.gate and set(args.gate) - {name for name, _ in matrix}:
         parser.error('unknown --gate')
+    try:
+        preflight_output_root(args.out, args.gate or [name for name, _ in matrix])
+    except ValueError as error:
+        parser.error(str(error))
     inputs = [args.reference_dir / name for name in ('pb-go', 'pb-go-cloud', 'pb-go-login')]
     inputs += [args.candidate_dir / name for name in ('pb-normal', 'pb-cloud', 'pb-login')]
     inputs += [args.fixture, args.meter, args.flight_fixture, args.decoder_fixture,

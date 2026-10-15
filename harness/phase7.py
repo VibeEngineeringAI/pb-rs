@@ -37,7 +37,10 @@ import phase2
 import phase3
 import run
 
-TMP = Path('/home/ajs/.cache/pb-phase7/tmp')
+# Select one owned scratch root before any test/capture creates a temporary
+# directory. Explicit overrides keep independent runs away from frozen caches.
+TMP = Path(os.environ.get('PB_PHASE7_TMP') or Path.home() / '.cache/pb-phase7/tmp').expanduser().resolve()
+TMP.mkdir(parents=True, exist_ok=True)
 os.environ.update({name: str(TMP) for name in ('TMPDIR', 'GOTMPDIR', 'CLAUDE_CODE_TMPDIR')})
 SCHEMA = 1
 CELL_FIELDS = ['data', 'fg', 'bg', 'bold', 'italics', 'underscore', 'strikethrough',
