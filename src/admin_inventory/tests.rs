@@ -342,6 +342,7 @@ impl Fixture {
             },
         );
         let parsed = ParsedInvocation {
+            raw: Default::default(),
             command_path: path.into(),
             positionals: Vec::new(),
             flags,

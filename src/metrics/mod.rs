@@ -47,7 +47,7 @@ fn invocation(parsed: &ParsedInvocation, operation: &str) -> Result<Operation, C
     let mut set = |key: &str, value: &str| pairs.push((key.to_owned(), value.to_owned()));
     let endpoint = match operation {
         "run" => {
-            let end = time_compat::parse_time(parsed.text("to")).map_err(|e| {
+            let end = time_compat::parse_time_bytes(parsed.text_bytes("to")).map_err(|e| {
                 CliError::new(ErrorCode::CommandFailed, format!("invalid --to: {e}"))
             })?;
             let expr = positional(0).unwrap_or("");
@@ -63,9 +63,10 @@ fn invocation(parsed: &ParsedInvocation, operation: &str) -> Result<Operation, C
                 set("time", &time_compat::format_time(end));
                 "query".to_owned()
             } else {
-                let start = time_compat::parse_time(parsed.text("from")).map_err(|e| {
-                    CliError::new(ErrorCode::CommandFailed, format!("invalid --from: {e}"))
-                })?;
+                let start =
+                    time_compat::parse_time_bytes(parsed.text_bytes("from")).map_err(|e| {
+                        CliError::new(ErrorCode::CommandFailed, format!("invalid --from: {e}"))
+                    })?;
                 set("start", &time_compat::format_time(start));
                 set("end", &time_compat::format_time(end));
                 set(
@@ -158,6 +159,65 @@ fn invocation(parsed: &ParsedInvocation, operation: &str) -> Result<Operation, C
     })
 }
 
+// URL values retain byte identity. The String invocation above is also used
+// for validation and JSON-facing output; it must not decide URL escaping.
+fn raw_request(
+    parsed: &ParsedInvocation,
+    operation: &str,
+    request: &Operation,
+) -> (Vec<u8>, Vec<(String, Vec<u8>)>) {
+    let positional_or = |index, flag| {
+        if parsed.positionals.get(index).is_some() {
+            parsed.positional_bytes(index)
+        } else {
+            parsed.text_bytes(flag)
+        }
+    };
+    let mut matches = 0;
+    let pairs = request
+        .pairs
+        .iter()
+        .map(|(key, value)| {
+            let raw = match key.as_str() {
+                "query" if operation == "run" => parsed.positional_bytes(0),
+                "stream" if operation == "run" => parsed.text_bytes("dataset"),
+                "stream" => positional_or(usize::from(operation == "label-values"), "dataset"),
+                "match[]" => {
+                    let result = parsed
+                        .raw
+                        .flags
+                        .get("match")
+                        .and_then(|values| values.get(matches))
+                        .map(Vec::as_slice)
+                        .unwrap_or(value.as_bytes());
+                    matches += 1;
+                    result
+                }
+                "selector" if operation == "cardinality active-series" => {
+                    positional_or(1, "selector")
+                }
+                "selector" => parsed.text_bytes("selector"),
+                "label_name" => positional_or(1, "label"),
+                "date" => parsed.text_bytes("date"),
+                "focusLabel" => parsed.text_bytes("focus-label"),
+                _ => value.as_bytes(),
+            };
+            (key.clone(), raw.to_vec())
+        })
+        .collect();
+    let path = if operation == "label-values" {
+        [
+            b"prometheus/api/v1/label/".as_slice(),
+            parsed.positional_bytes(0),
+            b"/values",
+        ]
+        .concat()
+    } else {
+        request.endpoint.as_bytes().to_vec()
+    };
+    (path, pairs)
+}
+
 /// Spinner lifetime ends at headers, while collection retains the request deadline.
 fn send(
     runtime: &tokio::runtime::Runtime,
@@ -210,7 +270,7 @@ pub(crate) fn execute(
             crate::output_format(parsed).map_err(|e| CliError::new(ErrorCode::InvalidInput, e))?;
         if parsed.boolean("interactive") {
             // Go validates the time range before constructing the interactive session.
-            time_compat::parse_time(parsed.text("to")).map_err(|e| {
+            time_compat::parse_time_bytes(parsed.text_bytes("to")).map_err(|e| {
                 CliError::new(ErrorCode::CommandFailed, format!("invalid --to: {e}"))
             })?;
             let from = if parsed.explicit("from") {
@@ -218,9 +278,12 @@ pub(crate) fn execute(
             } else {
                 "10m"
             };
-            time_compat::parse_time(from).map_err(|e| {
-                CliError::new(ErrorCode::CommandFailed, format!("invalid --from: {e}"))
-            })?;
+            time_compat::parse_time_bytes(if parsed.explicit("from") {
+                parsed.text_bytes("from")
+            } else {
+                from.as_bytes()
+            })
+            .map_err(|e| CliError::new(ErrorCode::CommandFailed, format!("invalid --from: {e}")))?;
             return crate::tui::promql::execute(parsed, stdout, stderr);
         }
         let operation_request = invocation(parsed, operation)?;
@@ -230,8 +293,12 @@ pub(crate) fn execute(
                 .active_profile()
                 .map_err(|e| CliError::new(e.code, e.message))?;
             let client = ApiClient::new(profile, store)?;
-            let request =
-                client.prepare_metrics(&operation_request.endpoint, &operation_request.pairs)?;
+            let request = if parsed.raw.positionals.is_empty() && parsed.raw.flags.is_empty() {
+                client.prepare_metrics(&operation_request.endpoint, &operation_request.pairs)?
+            } else {
+                let (path, pairs) = raw_request(parsed, operation, &operation_request);
+                client.prepare_metrics_bytes(&path, &pairs)?
+            };
             let runtime = tokio::runtime::Builder::new_current_thread()
                 .enable_all()
                 .build()
@@ -271,12 +338,12 @@ pub(crate) fn execute(
             e
         })?;
         let label = if operation == "tsdb" {
-            parsed.text("focus-label")
+            parsed.text_bytes("focus-label")
         } else {
-            parsed.positionals.first().map_or("", String::as_str)
+            parsed.positional_bytes(0)
         };
         let bytes = output::style::with_process_render(|| {
-            output::render_styled(
+            output::render_styled_bytes(
                 operation,
                 &body,
                 format == "json",

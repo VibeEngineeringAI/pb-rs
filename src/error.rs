@@ -174,6 +174,7 @@ impl From<crate::profile::ProfileError> for CliError {
     fn from(error: crate::profile::ProfileError) -> Self {
         let mut result = Self::new(error.code, error.message);
         result.stdout = error.stdout;
+        result.raw_message = error.raw_message.map(Vec::into_boxed_slice);
         result
     }
 }
@@ -217,7 +218,7 @@ pub(crate) fn go_string(bytes: &[u8]) -> String {
     text
 }
 
-fn trim_bytes(mut bytes: &[u8]) -> &[u8] {
+pub(crate) fn trim_bytes(mut bytes: &[u8]) -> &[u8] {
     // Invalid bytes are not whitespace and stop trimming on that side.
     loop {
         // One rune needs at most four bytes. Validating the entire remainder
@@ -250,7 +251,11 @@ fn trim_bytes(mut bytes: &[u8]) -> &[u8] {
     bytes
 }
 
-fn json_string_bytes(mut bytes: &[u8]) -> String {
+pub(crate) fn raw_json_string(bytes: &[u8]) -> Box<serde_json::value::RawValue> {
+    serde_json::value::RawValue::from_string(json_string_bytes(bytes)).expect("encoded JSON string")
+}
+
+pub(crate) fn json_string_bytes(mut bytes: &[u8]) -> String {
     let mut output = String::from("\"");
     while !bytes.is_empty() {
         let (valid, invalid) = match std::str::from_utf8(bytes) {

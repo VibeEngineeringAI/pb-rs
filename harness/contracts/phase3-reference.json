@@ -6882,13 +6882,23 @@
    }
   }
  },
+ "classification_changes": [
+  {
+   "case": "p3-argv-invalid-utf8-sql",
+   "from": "known-divergence",
+   "previous_corpus_sha256": "b83d5abdd7951897a082382fccc50d104f0137e4da86d78507c7ad293770d82c",
+   "previous_selected_sha256": "c533acee584c61a3779ce2b8e86d4b8369a757a942c924b4329726ad44f8c900",
+   "reason": "Raw SQL argv now passes the unchanged pinned Go request/output expectations; only tier metadata changes.",
+   "to": "gate"
+  }
+ ],
  "cloud_reference": "622d4144b7e354c0ee4036244ba719cbbaf8357710804b1d733cd421a0dc227e",
- "corpus_sha256": "b83d5abdd7951897a082382fccc50d104f0137e4da86d78507c7ad293770d82c",
+ "corpus_sha256": "f6f2896eeaa5b87a76a13aa39146787289b89f050771d16bdd9b78f77011fddb",
  "go_toolchain": "go1.25.4",
  "platform": "linux-x86_64",
  "reference": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
  "schema_version": 1,
- "selected_sha256": "c533acee584c61a3779ce2b8e86d4b8369a757a942c924b4329726ad44f8c900",
+ "selected_sha256": "d85f08dbd02c7ff9aed035935084113e39b8a97594d6abee90730fce5aab8b86",
  "selected_tiers": [
   "gate",
   "known-divergence"

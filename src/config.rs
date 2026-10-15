@@ -193,7 +193,7 @@ impl ProfileStore {
             ConfigError::io(operation, &self.path, e)
         })?;
         let text = std::str::from_utf8(&data)
-            .map_err(|_| ConfigError::new(ErrorCode::CommandFailed, "toml: invalid UTF-8"))?;
+            .map_err(|_| ConfigError::new(ErrorCode::CommandFailed, "toml: invalid character"))?;
         let value: toml::Value = toml::from_str(text).map_err(|e| toml_diagnostic(text, e))?;
         reject_new_toml_syntax(text)?;
         decode_config(value).map_err(|error| datetime_diagnostic(text, error))
@@ -209,6 +209,9 @@ impl ProfileStore {
                 format!("failed to encode config: {e}"),
             )
         })?;
+        self.write_encoded(data.as_bytes())
+    }
+    pub(crate) fn write_encoded(&self, data: &[u8]) -> Result<(), ConfigError> {
         if let Some(parent) = self.path.parent() {
             create_config_directory(parent)?;
         }
@@ -234,11 +237,79 @@ impl ProfileStore {
                     error
                 })?;
         }
-        file.write_all(data.as_bytes()).map_err(|e| {
+        file.write_all(data).map_err(|e| {
             let mut error = ConfigError::io("write", &self.path, e);
             error.message = format!("write config file: {}", error.message);
             error
         })
+    }
+    pub(crate) fn save_raw_profile(
+        &self,
+        config: &Config,
+        name: &[u8],
+        profile: &ProfileRecord,
+        overrides: &[(&str, &[u8])],
+        default: &[u8],
+    ) -> Result<(), ConfigError> {
+        let _guard = CONFIG_WRITE.lock().unwrap_or_else(|e| e.into_inner());
+        let mut profiles: BTreeMap<Vec<u8>, serde_json::Map<String, serde_json::Value>> = config
+            .profiles
+            .iter()
+            .map(|(key, profile)| {
+                (
+                    key.as_bytes().to_vec(),
+                    serde_json::to_value(profile)
+                        .unwrap()
+                        .as_object()
+                        .unwrap()
+                        .clone(),
+                )
+            })
+            .collect();
+        profiles.insert(
+            name.to_vec(),
+            serde_json::to_value(profile)
+                .unwrap()
+                .as_object()
+                .unwrap()
+                .clone(),
+        );
+        let mut data = b"DefaultProfile = ".to_vec();
+        data.extend(toml_quote_bytes(default));
+        data.extend_from_slice(b"\n\n[Profiles]\n");
+        for (key, fields) in profiles {
+            data.extend_from_slice(b"[Profiles.");
+            if !key.is_empty()
+                && key
+                    .iter()
+                    .all(|b| b.is_ascii_alphanumeric() || matches!(b, b'_' | b'-'))
+            {
+                data.extend_from_slice(&key);
+            } else {
+                data.extend(toml_quote_bytes(&key));
+            }
+            data.extend_from_slice(b"]\n");
+            for (field, value) in fields {
+                data.extend_from_slice(field.as_bytes());
+                data.extend_from_slice(b" = ");
+                if let serde_json::Value::String(value) = value {
+                    let raw = if key == name {
+                        overrides
+                            .iter()
+                            .find(|(name, _)| *name == field)
+                            .map(|(_, raw)| *raw)
+                            .unwrap_or(value.as_bytes())
+                    } else {
+                        value.as_bytes()
+                    };
+                    data.extend(toml_quote_bytes(raw));
+                } else {
+                    data.extend_from_slice(value.to_string().as_bytes());
+                }
+                data.push(b'\n');
+            }
+        }
+        self.write_encoded(&data)
     }
     pub fn active_profile(&self) -> Result<ProfileRecord, ConfigError> {
         let missing =
@@ -614,4 +685,27 @@ fn reject_new_toml_syntax(text: &str) -> Result<(), ConfigError> {
         i += 1;
     }
     Ok(())
+}
+
+// Go's TOML encoder retains malformed bytes inside literal/basic strings.
+fn toml_quote_bytes(raw: &[u8]) -> Vec<u8> {
+    if !raw.contains(&b'\'') && !raw.iter().any(|b| (*b < 0x20 && *b != b'\t') || *b == 0x7f) {
+        return [b"'".as_slice(), raw, b"'"].concat();
+    }
+    let mut output = b"\"".to_vec();
+    for byte in raw {
+        match byte {
+            b'"' => output.extend_from_slice(b"\\\""),
+            b'\\' => output.extend_from_slice(b"\\\\"),
+            b'\n' => output.extend_from_slice(b"\\n"),
+            b'\r' => output.extend_from_slice(b"\\r"),
+            b'\t' => output.extend_from_slice(b"\\t"),
+            8 => output.extend_from_slice(b"\\b"),
+            12 => output.extend_from_slice(b"\\f"),
+            0..=0x1f | 0x7f => output.extend_from_slice(format!("\\u{byte:04x}").as_bytes()),
+            _ => output.push(*byte),
+        }
+    }
+    output.push(b'"');
+    output
 }

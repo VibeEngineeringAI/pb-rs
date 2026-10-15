@@ -94,8 +94,9 @@ fn process_probe_colors_bypasses_timeout_and_termios_restore() {
                     &mut master_fd,
                     &mut slave_fd,
                     std::ptr::null_mut(),
-                    std::ptr::null(),
-                    std::ptr::null()
+                    // `*mut` on macOS, `*const` on Linux.
+                    std::ptr::null_mut(),
+                    std::ptr::null_mut()
                 ),
                 0
             );
@@ -122,7 +123,7 @@ fn process_probe_colors_bypasses_timeout_and_termios_restore() {
         }
         unsafe {
             command.pre_exec(move || {
-                if libc::setsid() < 0 || libc::ioctl(slave_fd, libc::TIOCSCTTY, 0) < 0 {
+                if libc::setsid() < 0 || libc::ioctl(slave_fd, libc::TIOCSCTTY as _, 0) < 0 {
                     return Err(std::io::Error::last_os_error());
                 }
                 libc::close(master_fd);

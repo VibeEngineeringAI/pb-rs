@@ -438,6 +438,23 @@ impl ApiClient {
     ) -> Result<PreparedRequest, ApiError> {
         self.prepare_with_policy(method, &["api/v1/", path], body, STANDARD_TIMEOUT, true)
     }
+    pub(crate) fn prepare_standard_bytes(
+        &self,
+        method: Method,
+        path: &[u8],
+        body: Option<Vec<u8>>,
+    ) -> Result<PreparedRequest, ApiError> {
+        self.prepare_with_policy_bytes(method, &[b"api/v1/", path], body, STANDARD_TIMEOUT, true)
+    }
+    pub(crate) async fn standard_bytes(
+        &self,
+        method: Method,
+        path: &[u8],
+        body: Option<Vec<u8>>,
+    ) -> Result<ApiResponse, ApiError> {
+        let request = self.prepare_standard_bytes(method, path, body)?;
+        self.send_streaming(request).await?.collect().await
+    }
     /// SQL's interactive service uses NewRequest followed by URL.Query().Set,
     /// retaining the standard headers while choosing its own total deadline.
     pub(crate) fn prepare_standard_query(
@@ -485,6 +502,40 @@ impl ApiClient {
             metrics: true,
         })
     }
+    pub(crate) fn prepare_metrics_bytes(
+        &self,
+        path: &[u8],
+        pairs: &[(String, Vec<u8>)],
+    ) -> Result<PreparedRequest, ApiError> {
+        let profile = self.profile();
+        let mut raw_endpoint = append_url_bytes(&profile.url, &[path])?;
+        if !pairs.is_empty() {
+            raw_endpoint.push('?');
+            let mut sorted: Vec<_> = pairs.iter().collect();
+            sorted.sort_by(|a, b| a.0.cmp(&b.0));
+            raw_endpoint.push_str(
+                &sorted
+                    .into_iter()
+                    .map(|(key, value)| {
+                        format!(
+                            "{}={}",
+                            query_escape_bytes(key.as_bytes()),
+                            query_escape_bytes(value)
+                        )
+                    })
+                    .collect::<Vec<_>>()
+                    .join("&"),
+            );
+        }
+        Ok(PreparedRequest {
+            method: Method::GET,
+            raw_endpoint,
+            headers: Auth::resolve(&profile)?.headers()?,
+            body: None,
+            timeout: METRICS_TIMEOUT,
+            metrics: true,
+        })
+    }
     /// Interactive builder requests use an already assembled URL, auth-only
     /// headers, and the ordinary transport with a 30-second total deadline.
     /// In particular they do not inherit the result client's HTTP/1 policy.
@@ -519,6 +570,34 @@ impl ApiClient {
     ) -> Result<PreparedRequest, ApiError> {
         let profile = self.profile();
         let raw_endpoint = match append_url_string(&profile.url, paths) {
+            Ok(endpoint) => endpoint,
+            Err(_) if ignore_join_error => String::new(),
+            Err(error) => return Err(error),
+        };
+        let mut headers = Auth::resolve(&profile)?.headers()?;
+        headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/json"));
+        if ignore_join_error {
+            debug_headers(&method, &raw_endpoint, &headers);
+        }
+        Ok(PreparedRequest {
+            method,
+            raw_endpoint,
+            headers,
+            body,
+            timeout,
+            metrics: false,
+        })
+    }
+    fn prepare_with_policy_bytes(
+        &self,
+        method: Method,
+        paths: &[&[u8]],
+        body: Option<Vec<u8>>,
+        timeout: Duration,
+        ignore_join_error: bool,
+    ) -> Result<PreparedRequest, ApiError> {
+        let profile = self.profile();
+        let raw_endpoint = match append_url_bytes(&profile.url, paths) {
             Ok(endpoint) => endpoint,
             Err(_) if ignore_join_error => String::new(),
             Err(error) => return Err(error),
@@ -1245,6 +1324,14 @@ pub async fn validate_cloud_api_key(
         .validate_api_key(orchestrator_url, api_key)
         .await
 }
+pub(crate) async fn validate_cloud_api_key_bytes(
+    orchestrator_url: &str,
+    api_key: &[u8],
+) -> Result<CloudWorkspace, ApiError> {
+    CloudAuthClient::new()?
+        .validate_api_key_bytes(orchestrator_url, api_key)
+        .await
+}
 pub struct CloudAuthClient {
     transport: Client,
     token: String,
@@ -1334,6 +1421,14 @@ impl CloudAuthClient {
         orchestrator_url: &str,
         api_key: &str,
     ) -> Result<CloudWorkspace, ApiError> {
+        self.validate_api_key_bytes(orchestrator_url, api_key.as_bytes())
+            .await
+    }
+    pub(crate) async fn validate_api_key_bytes(
+        &self,
+        orchestrator_url: &str,
+        api_key: &[u8],
+    ) -> Result<CloudWorkspace, ApiError> {
         if orchestrator_url.trim().is_empty() {
             return Err(ApiError::InvalidResponse(
                 "cloud orchestrator URL is not configured".into(),
@@ -1345,7 +1440,7 @@ impl CloudAuthClient {
                 source: Box::new(source),
             })?;
         let mut headers = orchestrator_headers(&self.token)?;
-        let mut key = HeaderValue::from_str(api_key)
+        let mut key = HeaderValue::from_bytes(api_key)
             .map_err(|_| AuthError("invalid HTTP header value".into()))?;
         key.set_sensitive(true);
         headers.insert("x-api-key", key);
@@ -1686,7 +1781,7 @@ fn set_query_values(raw: &str, updates: &[(&str, &str)]) -> String {
     result
 }
 
-fn query_escape_bytes(value: &[u8]) -> String {
+pub(crate) fn query_escape_bytes(value: &[u8]) -> String {
     let mut out = String::new();
     for &byte in value {
         match byte {

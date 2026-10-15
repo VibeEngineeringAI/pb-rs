@@ -265,13 +265,37 @@ fn save(parsed: &ParsedInvocation) -> Result<Outcome, CliError> {
     } else {
         supplied
     };
-    create(
+    let raw_query = crate::sql::rewrite::prepare_query_bytes(crate::error::trim_bytes(
+        parsed.positional_bytes(0),
+    ));
+    let raw_name = if supplied.is_empty() {
+        let stream = extract_stream_bytes(&raw_query);
+        if stream.is_empty() {
+            b"saved-query".as_slice()
+        } else {
+            stream
+        }
+    } else {
+        crate::error::trim_bytes(parsed.text_bytes("name"))
+    };
+    for (flag, label) in [("from", "invalid start time"), ("to", "invalid end time")] {
+        if std::str::from_utf8(parsed.text_bytes(flag)).is_err() {
+            crate::time_compat::parse_time_bytes(parsed.text_bytes(flag))
+                .map_err(|e| error(format!("{label}: {e}")))?;
+        }
+    }
+    create_with_raw(
+        None,
         &query,
         name,
         default_time(parsed.text("from"), "1m"),
         default_time(parsed.text("to"), "now"),
+        Some((&raw_query, raw_name)),
     )?;
-    Ok(Outcome::success(format!("Query saved as '{name}'\n")))
+    Ok(Outcome {
+        stdout: [b"Query saved as '".as_slice(), raw_name, b"'\n"].concat(),
+        ..Outcome::default()
+    })
 }
 pub(super) fn save_after_query(
     parsed: &ParsedInvocation,
@@ -279,26 +303,42 @@ pub(super) fn save_after_query(
     client: &ApiClient,
     runtime: &tokio::runtime::Runtime,
 ) -> Result<(), CliError> {
-    create_with_client(
+    for (flag, label) in [("from", "invalid start time"), ("to", "invalid end time")] {
+        if std::str::from_utf8(parsed.text_bytes(flag)).is_err() {
+            crate::time_compat::parse_time_bytes(parsed.text_bytes(flag))
+                .map_err(|e| error(format!("{label}: {e}")))?;
+        }
+    }
+    let raw_query = crate::sql::rewrite::prepare_query_bytes(parsed.positional_bytes(0));
+    create_with_raw(
         Some((client, runtime)),
         query,
         parsed.text("save-as"),
         default_time(parsed.text("from"), "1m"),
         default_time(parsed.text("to"), "now"),
+        Some((&raw_query, parsed.text_bytes("save-as"))),
     )
 }
 fn default_time<'a>(value: &'a str, default: &'a str) -> &'a str {
     if value.is_empty() { default } else { value }
 }
-fn create(query: &str, name: &str, from: &str, to: &str) -> Result<(), CliError> {
-    create_with_client(None, query, name, from, to)
-}
+#[cfg(test)]
 fn create_with_client(
     supplied: Option<(&ApiClient, &tokio::runtime::Runtime)>,
     query: &str,
     name: &str,
     from: &str,
     to: &str,
+) -> Result<(), CliError> {
+    create_with_raw(supplied, query, name, from, to, None)
+}
+fn create_with_raw(
+    supplied: Option<(&ApiClient, &tokio::runtime::Runtime)>,
+    query: &str,
+    name: &str,
+    from: &str,
+    to: &str,
+    raw: Option<(&[u8], &[u8])>,
 ) -> Result<(), CliError> {
     let from =
         time_compat::parse_time(from).map_err(|e| error(format!("invalid start time: {e}")))?;
@@ -314,7 +354,7 @@ fn create_with_client(
     #[derive(Serialize)]
     struct Sql<'a> {
         filter_type: &'static str,
-        filter_query: &'a str,
+        filter_query: &'a serde_json::value::RawValue,
     }
     #[derive(Serialize)]
     struct Time {
@@ -323,19 +363,23 @@ fn create_with_client(
     }
     #[derive(Serialize)]
     struct Filter<'a> {
-        stream_name: &'a str,
-        filter_name: &'a str,
+        stream_name: &'a serde_json::value::RawValue,
+        filter_name: &'a serde_json::value::RawValue,
         user_id: String,
         query: Sql<'a>,
         time_filter: Time,
     }
+    let (query_bytes, name_bytes) = raw.unwrap_or((query.as_bytes(), name.as_bytes()));
+    let stream_name = crate::error::raw_json_string(extract_stream_bytes(query_bytes));
+    let filter_name = crate::error::raw_json_string(name_bytes);
+    let filter_query = crate::error::raw_json_string(query_bytes);
     let body = serde_json::to_string(&Filter {
-        stream_name: extract_stream(query),
-        filter_name: name,
+        stream_name: &stream_name,
+        filter_name: &filter_name,
         user_id: client.profile().username,
         query: Sql {
             filter_type: "sql",
-            filter_query: query,
+            filter_query: &filter_query,
         },
         time_filter: Time {
             from: time_compat::format_time(from),
@@ -388,7 +432,9 @@ fn create_with_client(
 
 // Go's regexp uses ASCII word boundaries and whitespace; it also scans literals/comments.
 fn extract_stream(query: &str) -> &str {
-    let bytes = query.as_bytes();
+    std::str::from_utf8(extract_stream_bytes(query.as_bytes())).expect("slice of valid SQL")
+}
+fn extract_stream_bytes(bytes: &[u8]) -> &[u8] {
     let word = |b: u8| b.is_ascii_alphanumeric() || b == b'_';
     for i in 0..bytes.len() {
         if i > 0 && word(bytes[i - 1]) {
@@ -417,7 +463,7 @@ fn extract_stream(query: &str) -> &str {
             if let Some(end) = bytes[j + 1..].iter().position(|&b| b == b'"')
                 && end != 0
             {
-                return &query[j + 1..j + 1 + end];
+                return &bytes[j + 1..j + 1 + end];
             }
         } else if bytes
             .get(j)
@@ -428,10 +474,10 @@ fn extract_stream(query: &str) -> &str {
             while bytes.get(j).is_some_and(|b| word(*b) || *b == b'-') {
                 j += 1;
             }
-            return &query[start..j];
+            return &bytes[start..j];
         }
     }
-    ""
+    b""
 }
 fn trim(value: &str) -> &str {
     crate::sql::rewrite::trim_sql_space(value)
