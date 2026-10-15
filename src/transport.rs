@@ -60,6 +60,9 @@ pub struct TransportError {
     /// Go distinguishes closes before response headers that Hyper reports as
     /// one IncompleteMessage error, so the transport records which occurred.
     head_eof: Option<HeadEof>,
+    /// Go's ReadResponse error for a received status line it rejects; Hyper
+    /// reports these without the offending token.
+    malformed_head: Option<String>,
 }
 #[derive(Clone, Copy, Debug, PartialEq)]
 enum HeadEof {
@@ -79,6 +82,7 @@ impl TransportError {
             body: false,
             proxy: None,
             head_eof: None,
+            malformed_head: None,
         }
     }
     fn body(url: impl Into<String>, source: impl Into<BoxError>) -> Self {
@@ -88,6 +92,7 @@ impl TransportError {
             body: true,
             proxy: None,
             head_eof: None,
+            malformed_head: None,
         }
     }
     fn with_proxy(mut self, proxy: Option<Uri>) -> Self {
@@ -159,6 +164,12 @@ impl fmt::Display for TransportError {
                     .write_str("net/http: HTTP/1.x transport connection broken: unexpected EOF");
             }
             None => {}
+        }
+        if let Some(message) = &self.malformed_head {
+            return write!(
+                f,
+                "net/http: HTTP/1.x transport connection broken: {message}"
+            );
         }
         let mut cause: Option<&(dyn Error + 'static)> = Some(self.source.as_ref());
         let mut last = self.source.to_string();
@@ -357,7 +368,7 @@ impl Transport {
         // deadline bounds every attempt together. Like Go there is no count
         // limit: each retry consumes a pooled connection that already
         // completed an exchange, and a failure on a fresh one is final.
-        let response = loop {
+        let (response, head) = loop {
             let mut request = Request::builder()
                 .method(method.clone())
                 .uri(uri.clone())
@@ -374,8 +385,13 @@ impl Transport {
                 Some(client) => client.request(request).await,
                 None => self.plain.request(request).await,
             };
+            let head = capture
+                .connection_metadata()
+                .as_ref()
+                .and_then(ConnectionTracker::of)
+                .and_then(|state| state.head_line());
             let error = match result {
-                Ok(response) => break response,
+                Ok(response) => break (response, head),
                 Err(error) => error,
             };
             // Hyper reports Canceled only when it hands the request back
@@ -415,14 +431,19 @@ impl Transport {
                 (true, _, true) | (_, true, true) => Some(HeadEof::Partial),
                 (false, false, _) => None,
             };
+            // A status line Go accepts leaves Hyper's own parse diagnostic.
+            let parse = source_chain(error.source.as_ref()).any(|cause| {
+                cause
+                    .downcast_ref::<HyperError>()
+                    .is_some_and(HyperError::is_parse)
+            });
+            if parse && http1.is_some() {
+                error.malformed_head = head.and_then(|line| go_status_line(&line).err());
+            }
             return Err(error);
         };
         let (mut parts, body) = response.into_parts();
-        let reason = parts
-            .extensions
-            .get::<hyper::ext::ReasonPhrase>()
-            .map(|reason| String::from_utf8_lossy(reason.as_bytes()).into_owned())
-            .unwrap_or_else(|| parts.status.canonical_reason().unwrap_or_default().into());
+        let status_text = go_status(&parts, head.as_deref());
         let compressed = gzip
             && parts
                 .headers
@@ -448,7 +469,7 @@ impl Transport {
         };
         Ok(Response {
             status: parts.status,
-            reason,
+            status_text,
             headers: parts.headers,
             body,
             pending: Bytes::new(),
@@ -473,6 +494,77 @@ struct ConnectionState {
     received: AtomicU64,
     /// Whether received ciphertext ends between TLS records.
     boundary: AtomicBool,
+    /// The current exchange's final status line as received. Go keeps it as
+    /// `Response.Status` and quotes it in status-line errors; Hyper exposes
+    /// neither. Only HTTP/1 responses read it.
+    head: std::sync::Mutex<HeadScan>,
+    /// The scan found the final status line or gave up.
+    head_done: AtomicBool,
+}
+/// A longer status line is reported with Hyper's fallback text instead.
+const HEAD_LINE_LIMIT: usize = 8 << 10;
+/// Follows one exchange's response heads. Go's transport, like Hyper,
+/// discards informational (1xx except 101) responses, which have no body,
+/// and reports the status line of the response that follows them.
+#[derive(Default)]
+struct HeadScan {
+    /// The status line being read, up to and including its newline.
+    line: Vec<u8>,
+    /// Inside an informational response's header block.
+    skipping: bool,
+    /// Header-line bytes since the last newline, and whether the last was CR.
+    pending: usize,
+    carriage: bool,
+}
+impl HeadScan {
+    /// Consumes received bytes; true once the final status line is complete
+    /// (or unusable), after which no later byte can change it.
+    fn feed(&mut self, mut bytes: &[u8]) -> bool {
+        while !bytes.is_empty() {
+            if self.skipping {
+                let Some(end) = bytes.iter().position(|&byte| byte == b'\n') else {
+                    self.pending += bytes.len();
+                    self.carriage = bytes.last() == Some(&b'\r');
+                    return false;
+                };
+                let blank = self.pending + end == 0
+                    || (end == 0 && self.pending == 1 && self.carriage)
+                    || (self.pending == 0 && end == 1 && bytes[0] == b'\r');
+                bytes = &bytes[end + 1..];
+                (self.pending, self.carriage) = (0, false);
+                if blank {
+                    self.skipping = false;
+                    self.line.clear();
+                }
+                continue;
+            }
+            let end = bytes.iter().position(|&byte| byte == b'\n');
+            let take = end.map_or(bytes.len(), |end| end + 1);
+            if self.line.len() + take > HEAD_LINE_LIMIT {
+                self.line.clear();
+                return true;
+            }
+            self.line.extend_from_slice(&bytes[..take]);
+            bytes = &bytes[take..];
+            if end.is_none() {
+                return false;
+            }
+            let informational = self
+                .status_line()
+                .and_then(|line| go_status_line(&line).ok().map(|(_, code)| code))
+                .is_some_and(|code| (100..200).contains(&code) && code != 101);
+            if !informational {
+                return true;
+            }
+            self.skipping = true;
+        }
+        false
+    }
+    /// The complete line without its line ending, as textproto reads it.
+    fn status_line(&self) -> Option<Vec<u8>> {
+        let line = self.line.strip_suffix(b"\n")?;
+        Some(line.strip_suffix(b"\r").unwrap_or(line).to_vec())
+    }
 }
 impl ConnectionState {
     fn new(tls: bool) -> Self {
@@ -481,6 +573,8 @@ impl ConnectionState {
             requests: AtomicU64::new(0),
             received: AtomicU64::new(0),
             boundary: AtomicBool::new(true),
+            head: std::sync::Mutex::new(HeadScan::default()),
+            head_done: AtomicBool::new(false),
         }
     }
     /// HTTP/1 alternates whole requests and responses on a connection, so a
@@ -489,7 +583,165 @@ impl ConnectionState {
         if self.requests.load(Ordering::Relaxed) == 0 || self.received.load(Ordering::Relaxed) > 0 {
             self.requests.fetch_add(1, Ordering::Relaxed);
             self.received.store(0, Ordering::Relaxed);
+            *self.head.lock().expect("head line lock") = HeadScan::default();
+            self.head_done.store(false, Ordering::Relaxed);
         }
+    }
+    fn record_head(&self, bytes: &[u8]) {
+        if self.head_done.load(Ordering::Relaxed) {
+            return;
+        }
+        if self.head.lock().expect("head line lock").feed(bytes) {
+            self.head_done.store(true, Ordering::Relaxed);
+        }
+    }
+    /// The final (or, while incomplete, current) status line, once complete.
+    /// An informational line is never returned: its header block is still
+    /// being skipped, or a following status line has replaced it.
+    fn head_line(&self) -> Option<Vec<u8>> {
+        let head = self.head.lock().expect("head line lock");
+        if head.skipping {
+            return None;
+        }
+        head.status_line()
+    }
+}
+
+/// Go's `ReadResponse` status-line checks: the status after the protocol
+/// (Go's `Response.Status`) and its code, or the error Go returns.
+fn go_status_line(line: &[u8]) -> Result<(&[u8], u16), String> {
+    use crate::argv::quote;
+    let Some(space) = line.iter().position(|&byte| byte == b' ') else {
+        return Err(format!("malformed HTTP response {}", quote(line)));
+    };
+    let (proto, status) = (&line[..space], &line[space + 1..]);
+    let status = &status[status.iter().take_while(|&&byte| byte == b' ').count()..];
+    let code = status
+        .split(|&byte| byte == b' ')
+        .next()
+        .unwrap_or_default();
+    // strconv.Atoi: an optional sign, then decimal digits; Go then rejects
+    // only a negative value, so "-00" is code 0.
+    let (negative, digits) = match code.split_first() {
+        Some((b'-', digits)) => (true, digits),
+        Some((b'+', digits)) => (false, digits),
+        _ => (false, code),
+    };
+    let value = (code.len() == 3 && !digits.is_empty() && digits.iter().all(u8::is_ascii_digit))
+        .then(|| {
+            digits
+                .iter()
+                .fold(0, |value, digit| value * 10 + u16::from(digit - b'0'))
+        })
+        .filter(|&value| !negative || value == 0);
+    let Some(value) = value else {
+        return Err(format!("malformed HTTP status code {}", quote(code)));
+    };
+    // ParseHTTPVersion accepts HTTP/1.0, HTTP/1.1 and any HTTP/D.D.
+    let version = proto.len() == 8
+        && proto.starts_with(b"HTTP/")
+        && proto[5].is_ascii_digit()
+        && proto[6] == b'.'
+        && proto[7].is_ascii_digit();
+    if !version {
+        return Err(format!("malformed HTTP version {}", quote(proto)));
+    }
+    Ok((status, value))
+}
+
+/// Go's `Response.Status`. HTTP/1 keeps the received status line after the
+/// protocol, so an empty reason keeps its delimiter ("200 ") and a missing
+/// one has none ("200"); HTTP/2 joins the code and Go's `StatusText`.
+fn go_status(parts: &http::response::Parts, head: Option<&[u8]>) -> String {
+    let code = parts.status.as_u16();
+    if parts.version == http::Version::HTTP_2 {
+        return format!("{code} {}", go_status_text(code));
+    }
+    // The code check guards against any line Hyper did not use as this head.
+    if let Some((status, _)) = head
+        .and_then(|line| go_status_line(line).ok())
+        .filter(|&(_, value)| value == code)
+    {
+        return String::from_utf8_lossy(status).into_owned();
+    }
+    let reason = parts
+        .extensions
+        .get::<hyper::ext::ReasonPhrase>()
+        .map(|reason| String::from_utf8_lossy(reason.as_bytes()).into_owned())
+        .unwrap_or_else(|| parts.status.canonical_reason().unwrap_or_default().into());
+    if reason.is_empty() {
+        code.to_string()
+    } else {
+        format!("{code} {reason}")
+    }
+}
+
+/// Go 1.25 `net/http.StatusText`.
+pub(crate) fn go_status_text(code: u16) -> &'static str {
+    match code {
+        100 => "Continue",
+        101 => "Switching Protocols",
+        102 => "Processing",
+        103 => "Early Hints",
+        200 => "OK",
+        201 => "Created",
+        202 => "Accepted",
+        203 => "Non-Authoritative Information",
+        204 => "No Content",
+        205 => "Reset Content",
+        206 => "Partial Content",
+        207 => "Multi-Status",
+        208 => "Already Reported",
+        226 => "IM Used",
+        300 => "Multiple Choices",
+        301 => "Moved Permanently",
+        302 => "Found",
+        303 => "See Other",
+        304 => "Not Modified",
+        305 => "Use Proxy",
+        307 => "Temporary Redirect",
+        308 => "Permanent Redirect",
+        400 => "Bad Request",
+        401 => "Unauthorized",
+        402 => "Payment Required",
+        403 => "Forbidden",
+        404 => "Not Found",
+        405 => "Method Not Allowed",
+        406 => "Not Acceptable",
+        407 => "Proxy Authentication Required",
+        408 => "Request Timeout",
+        409 => "Conflict",
+        410 => "Gone",
+        411 => "Length Required",
+        412 => "Precondition Failed",
+        413 => "Request Entity Too Large",
+        414 => "Request URI Too Long",
+        415 => "Unsupported Media Type",
+        416 => "Requested Range Not Satisfiable",
+        417 => "Expectation Failed",
+        418 => "I'm a teapot",
+        421 => "Misdirected Request",
+        422 => "Unprocessable Entity",
+        423 => "Locked",
+        424 => "Failed Dependency",
+        425 => "Too Early",
+        426 => "Upgrade Required",
+        428 => "Precondition Required",
+        429 => "Too Many Requests",
+        431 => "Request Header Fields Too Large",
+        451 => "Unavailable For Legal Reasons",
+        500 => "Internal Server Error",
+        501 => "Not Implemented",
+        502 => "Bad Gateway",
+        503 => "Service Unavailable",
+        504 => "Gateway Timeout",
+        505 => "HTTP Version Not Supported",
+        506 => "Variant Also Negotiates",
+        507 => "Insufficient Storage",
+        508 => "Loop Detected",
+        510 => "Not Extended",
+        511 => "Network Authentication Required",
+        _ => "",
     }
 }
 #[derive(Clone)]
@@ -626,6 +878,7 @@ impl<T: hyper::rt::Read + hyper::rt::Write + Unpin> AsyncRead for TrackedStream<
                 self.state
                     .received
                     .fetch_add(count as u64, Ordering::Relaxed);
+                self.state.record_head(&buf.filled()[before..]);
                 Poll::Ready(Ok(()))
             }
             // Rustls rejects a TCP close without close_notify; crypto/tls
@@ -729,7 +982,7 @@ type GzipReader = async_compression::tokio::bufread::GzipDecoder<
 >;
 pub struct Response {
     status: StatusCode,
-    reason: String,
+    status_text: String,
     headers: HeaderMap,
     body: Option<Incoming>,
     pending: Bytes,
@@ -741,8 +994,9 @@ impl Response {
     pub fn status(&self) -> StatusCode {
         self.status
     }
-    pub fn reason(&self) -> &str {
-        &self.reason
+    /// Go's `Response.Status`, which Go messages print verbatim.
+    pub fn status_text(&self) -> &str {
+        &self.status_text
     }
     pub fn headers(&self) -> &HeaderMap {
         &self.headers
@@ -1020,6 +1274,29 @@ pub struct ProxyStream {
     handshake: std::sync::Mutex<Option<Pin<Box<tokio::time::Sleep>>>>,
     state: Arc<ConnectionState>,
     records: RecordFraming,
+    /// Local and peer socket addresses, which Go's net.OpError names.
+    addresses: Option<(std::net::SocketAddr, std::net::SocketAddr)>,
+}
+/// Go reports a socket read failure as a net.OpError naming both ends;
+/// crypto/tls returns it unchanged. Only a reset is mapped: it is the read
+/// failure observed against the pinned Go client. Windows wording differs.
+fn go_read_error(
+    error: io::Error,
+    addresses: Option<(std::net::SocketAddr, std::net::SocketAddr)>,
+) -> io::Error {
+    match addresses {
+        Some((local, peer))
+            if cfg!(unix)
+                && error.kind() == io::ErrorKind::ConnectionReset
+                && error.raw_os_error().is_some() =>
+        {
+            io::Error::new(
+                io::ErrorKind::ConnectionReset,
+                format!("read tcp {local}->{peer}: read: connection reset by peer"),
+            )
+        }
+        _ => error,
+    }
 }
 impl ProxyStream {
     fn check_handshake(&mut self, cx: &mut Context<'_>) -> io::Result<()> {
@@ -1052,7 +1329,10 @@ impl AsyncRead for ProxyStream {
             let boundary = this.records.feed(&buf.filled()[before..]);
             this.state.boundary.store(boundary, Ordering::Relaxed);
         }
-        polled
+        match polled {
+            Poll::Ready(Err(error)) => Poll::Ready(Err(go_read_error(error, self.addresses))),
+            polled => polled,
+        }
     }
 }
 impl AsyncWrite for ProxyStream {
@@ -1141,7 +1421,9 @@ impl Service<Uri> for ProxyConnector {
             } else {
                 tcp.call(connect_to.clone()).await?
             };
-            let mut io: Box<dyn AsyncIo> = Box::new(connection.into_inner());
+            let socket = connection.into_inner();
+            let addresses = socket.local_addr().ok().zip(socket.peer_addr().ok());
+            let mut io: Box<dyn AsyncIo> = Box::new(socket);
             if intercept.is_some() && connect_to.scheme_str() == Some("https") {
                 let name = rustls::pki_types::ServerName::try_from(
                     connect_to
@@ -1220,6 +1502,7 @@ impl Service<Uri> for ProxyConnector {
                 handshake: std::sync::Mutex::new(handshake),
                 state,
                 records: RecordFraming::default(),
+                addresses,
             }))
         })
     }
@@ -2450,6 +2733,284 @@ mod tests {
                 !request
                     .to_ascii_lowercase()
                     .contains("proxy-authorization:")
+            );
+        });
+    }
+
+    /// Serves one connection: for each request, reads its head and writes the
+    /// scripted response in separate segments so the client sees split reads.
+    async fn segmented_server(
+        responses: Vec<Vec<&'static [u8]>>,
+    ) -> (u16, tokio::task::JoinHandle<usize>) {
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let port = listener.local_addr().unwrap().port();
+        let task = tokio::spawn(async move {
+            let (mut stream, _) = listener.accept().await.unwrap();
+            stream.set_nodelay(true).unwrap();
+            for segments in &responses {
+                headers(&mut stream).await.unwrap();
+                for segment in segments {
+                    stream.write_all(segment).await.unwrap();
+                    stream.flush().await.unwrap();
+                    tokio::time::sleep(Duration::from_millis(5)).await;
+                }
+            }
+            // Further connections would mean the pooled one was not reused.
+            let extra = tokio::time::timeout(Duration::from_millis(50), listener.accept()).await;
+            usize::from(extra.is_ok()) + 1
+        });
+        (port, task)
+    }
+    async fn status_text_of(transport: &Transport, port: u16) -> String {
+        let response = transport
+            .send(
+                &Method::GET,
+                &format!("http://127.0.0.1:{port}/"),
+                &HeaderMap::new(),
+                &None,
+            )
+            .await
+            .unwrap();
+        let text = response.status_text().to_owned();
+        response.bytes().await.unwrap();
+        text
+    }
+    #[test]
+    fn status_text_keeps_the_received_go_status() {
+        runtime().block_on(async {
+            for (line, expected) in [
+                (&b"HTTP/1.1 200 \r\n"[..], "200 "),
+                (b"HTTP/1.1 200\r\n", "200"),
+                (b"HTTP/1.1 299 \r\n", "299 "),
+                (b"HTTP/1.1 299\r\n", "299"),
+                (b"HTTP/1.1 200 OK\r\n", "200 OK"),
+                (b"HTTP/1.1 500 Kaput Now\r\n", "500 Kaput Now"),
+                (b"HTTP/1.1 200  Fine \r\n", "200  Fine "),
+                (b"HTTP/1.0 503 \n", "503 "),
+            ] {
+                let (split, rest) = line.split_at(11);
+                let (port, task) = segmented_server(vec![vec![
+                    split,
+                    rest,
+                    b"Content-Length: 0\r\nConnection: close\r\n\r\n",
+                ]])
+                .await;
+                let transport = Transport::with_policy(policy("", "", "")).unwrap();
+                assert_eq!(status_text_of(&transport, port).await, expected, "{line:?}");
+                task.await.unwrap();
+            }
+        });
+    }
+    #[test]
+    fn informational_responses_never_supply_the_final_status_text() {
+        runtime().block_on(async {
+            for (segments, expected) in [
+                (
+                    vec![
+                        &b"HTTP/1.1 103 Early Hints\r\nLink: </a>; rel=preload\r\n"[..],
+                        b"\r",
+                        b"\nHTTP/1.1 200 \r\nContent-Length: 0\r\n\r\n",
+                    ],
+                    "200 ",
+                ),
+                (
+                    vec![
+                        b"HTTP/1.1 100 Continue\r\n\r\nHTTP/1.1 201",
+                        b" Made\r\nContent-Length: 0\r\n\r\n",
+                    ],
+                    "201 Made",
+                ),
+                (
+                    vec![
+                        b"HTTP/1.1 103 \n\nHTTP/1.1 102 Processing\r\nX: 1\r\n\r\n",
+                        b"HTTP/1.1 200\r\nContent-Length: 0\r\n\r\n",
+                    ],
+                    "200",
+                ),
+            ] {
+                let (port, task) = segmented_server(vec![segments]).await;
+                let transport = Transport::with_policy(policy("", "", "")).unwrap();
+                assert_eq!(status_text_of(&transport, port).await, expected);
+                task.await.unwrap();
+            }
+        });
+    }
+    #[test]
+    fn pooled_requests_each_report_their_own_status_text() {
+        runtime().block_on(async {
+            let (port, task) = segmented_server(vec![
+                vec![b"HTTP/1.1 200 First\r\nContent-Length: 2\r\n\r\nok"],
+                vec![b"HTTP/1.1 200 \r\nContent-Length: 0\r\n\r\n"],
+                vec![
+                    b"HTTP/1.1 103 Early\r\n\r\n",
+                    b"HTTP/1.1 404\r\nContent-Length: 0\r\n\r\n",
+                ],
+            ])
+            .await;
+            let transport = Transport::with_policy(policy("", "", "")).unwrap();
+            assert_eq!(status_text_of(&transport, port).await, "200 First");
+            assert_eq!(status_text_of(&transport, port).await, "200 ");
+            assert_eq!(status_text_of(&transport, port).await, "404");
+            assert_eq!(task.await.unwrap(), 1, "one pooled connection");
+        });
+    }
+    #[test]
+    fn oversized_status_lines_fall_back_to_hyper_reason() {
+        let long = format!("HTTP/1.1 200 {}\r\n", "x".repeat(HEAD_LINE_LIMIT));
+        for split in [None, Some(20)] {
+            let mut scan = HeadScan::default();
+            let done = match split {
+                None => scan.feed(long.as_bytes()),
+                Some(at) => {
+                    assert!(!scan.feed(&long.as_bytes()[..at]));
+                    scan.feed(&long.as_bytes()[at..])
+                }
+            };
+            assert!(done);
+            assert!(scan.line.is_empty() && scan.status_line().is_none());
+        }
+        let mut scan = HeadScan::default();
+        let fits = format!("HTTP/1.1 200 {}\r\n", "x".repeat(HEAD_LINE_LIMIT - 15));
+        assert_eq!(fits.len(), HEAD_LINE_LIMIT);
+        assert!(scan.feed(fits.as_bytes()));
+        assert_eq!(scan.status_line().unwrap(), fits.trim_end().as_bytes());
+        // End to end, the empty-reason distinction is lost but nothing fails.
+        runtime().block_on(async {
+            let line: &'static [u8] = Box::leak(long.into_bytes().into_boxed_slice());
+            let (port, task) = segmented_server(vec![vec![
+                line,
+                b"Content-Length: 0\r\nConnection: close\r\n\r\n",
+            ]])
+            .await;
+            let transport = Transport::with_policy(policy("", "", "")).unwrap();
+            let text = status_text_of(&transport, port).await;
+            assert_eq!(text, format!("200 {}", "x".repeat(HEAD_LINE_LIMIT)));
+            task.await.unwrap();
+        });
+    }
+    #[test]
+    fn rejected_status_lines_report_go_read_response_errors() {
+        runtime().block_on(async {
+            for (line, expected) in [
+                (
+                    &b"HTTP/1.1 abc OK\r\n"[..],
+                    r#"malformed HTTP status code "abc""#,
+                ),
+                (
+                    b"HTTP/1.1 1234 OK\r\n",
+                    r#"malformed HTTP status code "1234""#,
+                ),
+                (
+                    b"HTTP/1.1 -12 OK\r\n",
+                    r#"malformed HTTP status code "-12""#,
+                ),
+                (b"FOO/1.1 200 OK\r\n", r#"malformed HTTP version "FOO/1.1""#),
+                (b"HTTP/1.1\r\n", r#"malformed HTTP response "HTTP/1.1""#),
+                (
+                    b"HTTP/1.1 \xffbc OK\r\n",
+                    r#"malformed HTTP status code "\xffbc""#,
+                ),
+            ] {
+                let (port, task) = segmented_server(vec![vec![
+                    line,
+                    b"Content-Length: 0\r\nConnection: close\r\n\r\n",
+                ]])
+                .await;
+                let transport = Transport::with_policy(policy("", "", "")).unwrap();
+                let error = transport
+                    .send(
+                        &Method::POST,
+                        &format!("http://127.0.0.1:{port}/"),
+                        &HeaderMap::new(),
+                        &None,
+                    )
+                    .await
+                    .err()
+                    .unwrap();
+                assert_eq!(
+                    error.to_string(),
+                    format!("net/http: HTTP/1.x transport connection broken: {expected}"),
+                    "{line:?}"
+                );
+                task.await.unwrap();
+            }
+        });
+    }
+    #[test]
+    fn go_status_line_accepts_what_go_accepts() {
+        assert_eq!(
+            go_status_line(b"HTTP/1.1   200 OK"),
+            Ok((&b"200 OK"[..], 200))
+        );
+        assert_eq!(go_status_line(b"HTTP/2.0 099 x"), Ok((&b"099 x"[..], 99)));
+        assert_eq!(go_status_line(b"HTTP/1.1 +20"), Ok((&b"+20"[..], 20)));
+        assert_eq!(go_status_line(b"HTTP/1.1 -00 x"), Ok((&b"-00 x"[..], 0)));
+        assert_eq!(go_status_line(b"HTTP/1.1 +00"), Ok((&b"+00"[..], 0)));
+        for code in ["-01", "-1", "--0", "+-0", "-+0", "-", "+"] {
+            assert_eq!(
+                go_status_line(format!("HTTP/1.1 {code} x").as_bytes()),
+                Err(format!(
+                    "malformed HTTP status code {}",
+                    crate::argv::quote(code.as_bytes())
+                ))
+            );
+        }
+    }
+    #[test]
+    fn http2_status_text_joins_go_status_text() {
+        for (code, expected) in [
+            (200, "200 OK"),
+            (299, "299 "),
+            (413, "413 Request Entity Too Large"),
+        ] {
+            let (parts, ()) = http::Response::builder()
+                .status(code)
+                .version(http::Version::HTTP_2)
+                .body(())
+                .unwrap()
+                .into_parts();
+            assert_eq!(go_status(&parts, Some(b"HTTP/1.1 200 ignored")), expected);
+        }
+    }
+    #[cfg(unix)]
+    #[test]
+    fn body_reset_names_both_socket_ends_like_go() {
+        runtime().block_on(async {
+            let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+            let port = listener.local_addr().unwrap().port();
+            let task = tokio::spawn(async move {
+                let (mut stream, peer) = listener.accept().await.unwrap();
+                headers(&mut stream).await.unwrap();
+                stream
+                    .write_all(
+                        b"HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\n\r\n6\r\nabcdef\r\n",
+                    )
+                    .await
+                    .unwrap();
+                tokio::time::sleep(Duration::from_millis(50)).await;
+                // SO_LINGER 0 makes the close a reset (test-only).
+                #[allow(deprecated)]
+                stream.set_linger(Some(Duration::ZERO)).unwrap();
+                drop(stream);
+                peer
+            });
+            let transport = Transport::with_policy(policy("", "", "")).unwrap();
+            let mut response = transport
+                .send(
+                    &Method::GET,
+                    &format!("http://127.0.0.1:{port}/"),
+                    &HeaderMap::new(),
+                    &None,
+                )
+                .await
+                .unwrap();
+            assert_eq!(&response.chunk().await.unwrap().unwrap()[..], b"abcdef");
+            let error = response.chunk().await.unwrap_err();
+            let client = task.await.unwrap();
+            assert!(error.is_connection_reset() && error.is_body());
+            assert_eq!(
+                error.to_string(),
+                format!("read tcp {client}->127.0.0.1:{port}: read: connection reset by peer")
             );
         });
     }

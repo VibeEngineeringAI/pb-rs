@@ -1,0 +1,68 @@
+name: Shell completion runtime
+
+on:
+  pull_request:
+    paths:
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - 'src/**'
+      - 'tests/**'
+      - 'harness/**'
+      - 'main.go'
+      - 'cmd/**'
+      - 'pkg/**'
+      - 'go.mod'
+      - 'go.sum'
+      - '.github/workflows/completion-runtime.yaml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  runtime:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            required_shells: zsh,fish,powershell
+          - os: windows-latest
+            required_shells: powershell
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    env:
+      PB_REQUIRE_COMPLETION_SHELLS: ${{ matrix.required_shells }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.25.4'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Select Rust toolchain
+        run: rustup toolchain install 1.96.0 --profile minimal
+      - name: Install Zsh and Fish
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install --yes zsh fish
+      - name: Build pinned Go completion oracle
+        shell: bash
+        run: |
+          mkdir -p bin harness/results/completion-runtime
+          CGO_ENABLED=0 go build -buildvcs=false -trimpath -tags kqueue -o bin/pb-go${{ runner.os == 'Windows' && '.exe' || '' }} .
+          echo "PB_GO_ORACLE=$GITHUB_WORKSPACE/bin/pb-go${{ runner.os == 'Windows' && '.exe' || '' }}" >> "$GITHUB_ENV"
+      - name: Run real completion engines
+        shell: bash
+        run: |
+          set -o pipefail
+          cargo +1.96.0 test --locked --test completion runtime -- --nocapture 2>&1 | tee harness/results/completion-runtime/tests.log
+      - name: Retain completion results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: completion-runtime-${{ matrix.os }}-${{ github.sha }}
+          path: harness/results/completion-runtime/
+          retention-days: 14

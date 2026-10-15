@@ -71,6 +71,12 @@ terminate by SIGPIPE.
 
 ## Known differences and unverified protocols
 
+This section records the original phase-three checkpoint. The subsequent
+[PR #7 audit](pr7-remaining-differences.md) supersedes the reason-phrase,
+connection-reset, header-EOF and malformed-status exclusions below: all twelve
+retained SQL residuals now pass and are required gate cases. The audit lists
+the narrower remaining transport limitations explicitly.
+
 - SIGQUIT is runtime-specific: Go's runtime diagnostic output and Rust's signal
   behavior do not match. SIGINT/SIGTERM parity does not imply SIGQUIT parity.
 - Hyper does not preserve non-ASCII or explicitly empty HTTP/1 reason phrases;

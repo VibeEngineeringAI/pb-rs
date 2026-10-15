@@ -1067,7 +1067,7 @@ mod tests {
     fn non_200_uses_status_text_or_body() {
         let error = exactly_ok(ApiResponse {
             status: 503,
-            reason: "Service Unavailable".into(),
+            status_text: "503 Service Unavailable".into(),
             body: b"  \n".to_vec(),
         })
         .unwrap_err();
@@ -1077,7 +1077,7 @@ mod tests {
         );
         let error = exactly_ok(ApiResponse {
             status: 204,
-            reason: "No Content".into(),
+            status_text: "204 No Content".into(),
             body: b" busy ".to_vec(),
         })
         .unwrap_err();

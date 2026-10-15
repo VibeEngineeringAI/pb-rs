@@ -145,3 +145,100 @@ fn completion_matches_go_oracle() {
         );
     }
 }
+
+fn completion_probe(command: &mut Command) -> std::io::Result<std::process::ExitStatus> {
+    let mut child = command
+        .stdin(Stdio::null())
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
+        .spawn()?;
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(15);
+    loop {
+        match child.try_wait() {
+            Ok(Some(status)) => return Ok(status),
+            Ok(None) if std::time::Instant::now() < deadline => {
+                std::thread::sleep(std::time::Duration::from_millis(10));
+            }
+            result => {
+                let _ = child.kill();
+                let _ = child.wait();
+                return match result {
+                    Err(error) => Err(error),
+                    _ => Err(std::io::Error::new(
+                        std::io::ErrorKind::TimedOut,
+                        "completion interpreter probe exceeded 15 seconds",
+                    )),
+                };
+            }
+        }
+    }
+}
+
+/// Missing optional interpreters skip locally. CI sets a comma-separated list
+/// (or `1`/`all`) to make missing runtimes a hard failure on the relevant OS.
+fn completion_runtime(shell: &str, default_runtime: &str) {
+    let required = std::env::var("PB_REQUIRE_COMPLETION_SHELLS").unwrap_or_default();
+    let required = required == "1"
+        || required == "all"
+        || required.split(',').any(|name| name.trim() == shell);
+    let variable = format!("PB_COMPLETION_{}", shell.to_uppercase());
+    let runtime = std::env::var_os(&variable).unwrap_or_else(|| default_runtime.into());
+    match completion_probe(Command::new(&runtime).arg("--version")) {
+        Ok(status) => assert!(status.success(), "{shell} runtime failed: {status:?}"),
+        Err(error)
+            if error.kind() == std::io::ErrorKind::NotFound
+                && !required
+                && std::env::var_os(&variable).is_none() =>
+        {
+            eprintln!(
+                "{shell} runtime missing; set {variable} or PB_REQUIRE_COMPLETION_SHELLS={shell}"
+            );
+            return;
+        }
+        Err(error) => panic!("required {shell} runtime {runtime:?}: {error}"),
+    }
+    let python = ["python3", "python"]
+        .into_iter()
+        .find(|python| {
+            completion_probe(
+                Command::new(python).args(["-c", "import sys; sys.exit(sys.version_info[0] != 3)"]),
+            )
+            .is_ok_and(|status| status.success())
+        })
+        .expect("Python 3 is required for real-shell completion tests");
+    let output = Command::new(python)
+        .arg(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/tests/completion_runtime.py"
+        ))
+        .args([
+            std::ffi::OsStr::new(shell),
+            &runtime,
+            std::ffi::OsStr::new(env!("CARGO_BIN_EXE_pb")),
+        ])
+        .output()
+        .expect("run bounded shell completion harness");
+    assert!(
+        output.status.success(),
+        "{shell}:\n{}\n{}",
+        String::from_utf8_lossy(&output.stdout),
+        String::from_utf8_lossy(&output.stderr)
+    );
+    eprintln!("{}", String::from_utf8_lossy(&output.stdout));
+}
+
+#[cfg(unix)]
+#[test]
+fn zsh_runtime_completes_with_native_zle() {
+    completion_runtime("zsh", "zsh");
+}
+
+#[test]
+fn fish_runtime_completes_with_native_engine() {
+    completion_runtime("fish", "fish");
+}
+
+#[test]
+fn powershell_runtime_completes_with_native_engine() {
+    completion_runtime("powershell", "pwsh");
+}

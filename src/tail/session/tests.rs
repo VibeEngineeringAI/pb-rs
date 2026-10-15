@@ -252,6 +252,68 @@ fn missing_or_short_schema_header_is_an_initialization_failure() {
     );
 }
 
+/// Go reads the root offset, then `HeaderType()` through the vtable, without
+/// verification; each out-of-range access panics with Go's runtime text.
+#[test]
+fn garbage_headers_reproduce_go_header_type_panics() {
+    let cases: [(&[u8], &str); 6] = [
+        // The retained p6-corrupt-garbage_header fixture shape.
+        (
+            b"\xde\xad\xbe\xef\0\0\0\0\0\0\0\0",
+            "slice bounds out of range [4022250974:12]",
+        ),
+        (
+            &[10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            "index out of range [3] with length 2",
+        ),
+        // SOffsetT -100: the vtable lies past the end.
+        (
+            &[4, 0, 0, 0, 0x9c, 0xff, 0xff, 0xff, 0, 0, 0, 0],
+            "slice bounds out of range [104:12]",
+        ),
+        // A vtable with one byte left.
+        (
+            &[4, 0, 0, 0, 0xf9, 0xff, 0xff, 0xff, 0, 0, 0, 0],
+            "index out of range [1] with length 1",
+        ),
+        // The header-type slot lies past the end.
+        (
+            &[4, 0, 0, 0, 0xfc, 0xff, 0xff, 0xff, 8, 0, 0, 0],
+            "slice bounds out of range [14:12]",
+        ),
+        // The header-type byte itself lies exactly at the end.
+        (
+            &[4, 0, 0, 0, 0xfc, 0xff, 0xff, 0xff, 8, 0, 0, 0, 0, 0, 12, 0],
+            "index out of range [0] with length 0",
+        ),
+    ];
+    for (header, panic) in cases {
+        assert_eq!(go_header_type(header), Err(panic.to_owned()), "{header:?}");
+        let data = FlightData {
+            data_header: Bytes::copy_from_slice(header),
+            ..Default::default()
+        };
+        assert_eq!(
+            open_error(vec![Ok(data)]),
+            format!("{FLIGHT_READER}{UNKNOWN_READ}runtime error: {panic}")
+        );
+    }
+    // A vtable too short for the slot reads as no header, like Go.
+    assert_eq!(
+        go_header_type(&[4, 0, 0, 0, 0xfc, 0xff, 0xff, 0xff, 4, 0, 0, 0]),
+        Ok(0)
+    );
+    let data = int_stream(&[&[1]]);
+    assert_eq!(
+        go_header_type(&data[0].data_header),
+        Ok(MessageHeader::Schema.0)
+    );
+    assert_eq!(
+        go_header_type(&data[1].data_header),
+        Ok(MessageHeader::RecordBatch.0)
+    );
+}
+
 #[test]
 fn established_reads_reconnect_only_for_eof_and_stream_end_codes() {
     for code in [CANCELED, UNAVAILABLE, OK] {

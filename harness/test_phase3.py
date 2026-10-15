@@ -113,6 +113,16 @@ class CorpusTests(unittest.TestCase):
         gate = {c["name"] for c in cases if c["tier"] == "gate"}
         for fixable in ("p3-text-truncated-chunked", "p3-json-truncated-after-elements", "p3-text-truncated-length", "p3-argv-invalid-utf8-sql"):
             self.assertIn(fixable, gate, "fixable body-EOF diagnostics must stay in the gate")
+        promoted = ("p3-text-status-empty-reason-empty", "p3-text-status-empty-reason-no-rows",
+                    "p3-json-status-empty-reason-empty", "p3-status-empty-reason-text", "p3-status-empty-reason-json",
+                    "p3-status-empty-reason-empty-body", "p3-status-299-text", "p3-status-299-json",
+                    "p3-text-reset-mid-body", "p3-json-reset-mid-body", "p3-text-close-before-headers",
+                    "p3-text-malformed-status-line")
+        changes = json.loads(phase3.MANIFEST.read_text())["classification_changes"]
+        for name in promoted:
+            self.assertIn(name, gate, "PR #7 promoted residuals must stay in the gate")
+            self.assertIn({"case": name, "from": "known-divergence", "to": "gate"},
+                          [{k: c[k] for k in ("case", "from", "to")} for c in changes])
         for case in cases:
             if case["tier"] == "full60s":
                 self.assertGreater(case["timeout"], 60)
