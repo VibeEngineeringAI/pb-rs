@@ -100,7 +100,7 @@ PR #6 has merged. Any later production-source change requires another replay.
 | Root help | 48/48 terminal/color/reference cases pass | No known gap in this retained matrix |
 | Native platforms | Windows and macOS CI pass on `f719615` | Full manual Windows console interaction and native big-endian hardware are untested |
 | Live self-hosted | Five datasets, successful SQL and verified TLS HTTP/2, two Flight JSON records | Workarounds establish client functionality; underlying server defects remain |
-| Hosted Linux CI | Pinned PTY dependencies and portable scratch root implemented in `0ae006a`; focused checks pass (8 replay + 96 phase-seven tests, one existing opt-in skip) | New hosted run pending; production source hashes unchanged |
+| Hosted Linux CI | Pinned PTY dependencies and portable scratch root implemented in `0ae006a`; focused checks pass (8 replay + 96 phase-seven tests, one existing opt-in skip) | Follow-up fixes `5d44d71` and `10a5cd5` validated locally; hosted rerun pending; production source hashes unchanged |
 
 The initial combined run's three Flight gates exited at setup because their output
 was outside the required phase-six cache root. All three passed when retried under
@@ -143,3 +143,21 @@ credentials or log-row payloads are copied into this document or the wiki.
 Those initial debug observations were repeated successfully with the frozen
 normal release identified above: five datasets, the expected SQL probe, verified
 HTTP/2, and two complete JSON Flight records with empty stderr.
+
+### Hosted CI follow-up on `387cc28`
+
+The native Windows/macOS jobs passed again, and Go build/tests passed. The
+[self-compare job](https://github.com/VibeEngineeringAI/pb-rs/actions/runs/38808953311/job/116676989092)
+failed in harness tests: Ubuntu's fortified compiler rejects an unchecked
+`write()` in the native supervisor signal probe, and public-report redaction
+still used a hard-coded home directory. These are harness portability failures;
+strict warning flags and exact report assertions remain enabled. The fixes add
+checked signal-probe output, visible compiler diagnostics, and symmetric portable
+path mappings, including explicit scratch-directory overrides. The strict Ubuntu GCC 13 build now passes. Phase-seven tests pass 97 cases with
+one opt-in skipped; that native resize opt-in then passed separately after explicit
+helper preparation. Report adapters pass 11 tests. Benchmark/profile suites passed
+155 tests; one source-inspection test was invalidated by the concurrent diagnostic
+edit shifting source line numbers after import. Its entire five-test class passed
+when rerun with stable files. The [follow-up evidence](evidence/compatibility-closure/ci-portability-followup.json)
+retains both setup failures and retries. Hosted CI is rerunning; the earlier frozen
+release replay remains bound to its original runner hashes.
