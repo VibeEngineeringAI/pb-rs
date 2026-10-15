@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "status": "scoped implementation corrections complete; six owned files frozen for parent review",
+  "review": "docs/phase7-review-measurement-interim-sol-r2.md; implementation follow-up, no independent acceptance",
+  "owned_files_sha256": {
+    "harness/phase7_bench.py": "0d4fba3ee8f98c537e9de86f41ae070132525edd873158e419fb352f842bcf21",
+    "harness/test_phase7_bench.py": "e504ca437a33f378244d5d24f2da771a135bc7d2a904e890ecc3db474c58ecf1",
+    "docs/phase7-measurement.md": "051dc6423c475e406dd504c28bb3a22d747dbf2382e9efdb28ff44d69f27945f",
+    "harness/phase7_profile.py": "17e551a6ff26137006220a68c0ff66bf291696e643ecfc09149978101c64dd0e",
+    "harness/test_phase7_profile.py": "a696d776f3953786cdcff99b105f6c585c3274ee75d2453db400d09e8ade7aee",
+    "docs/phase7-profiling.md": "05d438fac53be7259e49ffdbb04b5066f5ff970a628d9aa40d1def739adda002"
+  },
+  "shared_consumed_source_sha256": {
+    "harness/phase7.py": "b1d5cd2de90b32268f221c8bf7a5f584a2fa7d34eb134a21d2e3ed475e77a654",
+    "harness/phase7_spawn.c": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4",
+    "harness/phase7_workloads.py": "54a9efb7767372c976b459c3e2dc59c590e0b9d6b47b4cc29e36ae81ff588d1c",
+    "harness/profile_external.py": "a0f0d7a315772ed933eae235b0c55850ce8b23da25132c6ccbafc9a4e0256a3c"
+  },
+  "original_evidence_retained": [
+    "collector-measurement-review-r1-response.json",
+    "collector-functional-review-r1-dark/report.json",
+    "collector-bench-integration-final.log",
+    "collector-profile-integration-final.log",
+    "review-measurement-sol-r2-20261014.py",
+    "collector-bench-r2-work.log",
+    "collector-profile-r2-work.log",
+    "collector-bench-r2-failed-preflight-test-fixture.log"
+  ],
+  "checks": {
+    "bench": {
+      "count": 45,
+      "elapsed_seconds": 2.547,
+      "result": "passed",
+      "log": "collector-bench-interim-sol-r2-final.log"
+    },
+    "profile": {
+      "count": 20,
+      "elapsed_seconds": 1.066,
+      "result": "passed",
+      "log": "collector-profile-interim-sol-r2-final.log"
+    },
+    "analysis_owned_process": "actual frozen native helper + Python leader/worker; leader exits before worker, PID-bound group kill before release, both reaped; child-subreaper restored; helper prep boundary mocked to prevent compiler/probe",
+    "syntax_whitespace": "passed for all six owned files",
+    "help_plan": "process-free harness interfaces; frozen plans 20/27 sessions, not executed",
+    "commands": [
+      "export PATH=/home/ajs/.cargo/bin:$PATH TMPDIR=/home/ajs/.cache/pb-phase7/tmp GOTMPDIR=/home/ajs/.cache/pb-phase7/tmp CLAUDE_CODE_TMPDIR=/home/ajs/.cache/pb-phase7/tmp PYTHONDONTWRITEBYTECODE=1",
+      "/home/ajs/.cache/pb-phase7/harness-venv/bin/python -m unittest discover -s harness -p test_phase7_bench.py -v",
+      "/home/ajs/.cache/pb-phase7/harness-venv/bin/python -m unittest discover -s harness -p test_phase7_profile.py -v"
+    ]
+  },
+  "dispositions": {
+    "R2-H1": "Canonical selected native argv/path plus returned sample path/size/SHA/case/policy binding; before/after each role and final all binaries/metadata/helper/source checks. Final-role persistent replacement, same-byte canonical path retarget, wrong returned identity and preflight final-role drift regressions retain sessions and fail.",
+    "R2-M1": "Primary retains root proc sampler/essential PTY readiness; record_termios/chunks/descendants=False. Honor explicit descendant eligibility, including idle trigger. Optional resource-attribution sessions use distinct name/definitions and descendant observation; no unobserved empty-list isolation inference. Matched known-emitter controls use selected policy vs floor-minimal, not optional full mode as primary proxy; unchanged session count.",
+    "R2-M2": "Before QuietWindow require exact both roles, verify retained session/stdout/stderr hashes and payloads, current source/end-source/helper/end-helper/end-artifact identity, selected native binding and observer policy; rerun observation_issues and compare under active contracts. Reject missing/deleted/changed/stale evidence and changed comparator. Replay only currently selected/revalidated cases and exact report snapshot.",
+    "R2-M3": "Profiler final source/helper/all binary/metadata/root-manifest identities retained even on failure and must match before complete. Source/helper/metadata/root drift and wrong sample identity tests fail with raw sessions retained.",
+    "R2-M4": "Reuse existing NativeChild pipe API; reserved WNOWAIT leader owns identity-safe pidfd group cleanup regardless leader liveness; unconditional SIGKILL and bounded same-group verification before release/wait4/close. Mock late-expiry, bounded survivor failure and actual owned leader/worker process test pass. No shared API/C changes.",
+    "R2-M5": "Owned guarded bounded parser preserves unfinished/resumed write semantics with per-line checks and partial failure counts. Chunk-guard raw/analysis/tool hashing; 512MiB raw, 256MiB analysis, 64KiB line, 65536 identity caps recorded. No profile_external edit. Output caps reject overshoot, not quotas.",
+    "R2-M6": "Finite predicate catches huge-int float conversion OverflowError; active reload returns ordinary failure string; intercepted execute retains serialized interrupted output.",
+    "R2-L1": "Release3 examples; timed/preflight base60, idle2, metric256/delay150 and primary policy matched. Long idle300 extends SQL session timeout to360. Resource attribution needs a separately matching preflight; profiling controls intentionally use their own matched attribution/idle1.",
+    "phase6_A": "Owned canonical selected executable/metadata/root paths actually used; original alias repoint cannot retarget selected command. Resolved-path retarget during capture fails independent checks. Shared compiler probe already uses canonical resolved compiler path; no claim atomic execution.",
+    "phase6_B": "artifact metadata, symbolized metadata, root artifact manifest and preflight report use one canonical read_bytes parse+digest snapshot, never interpretation followed by separate hash. Caller uses returned preflight snapshot identity. Atomic replacement reproductions bind original parsed bytes and reject final drift."
+  },
+  "primary_policy": {
+    "root_proc_sampler": true,
+    "essential_pty_readiness": true,
+    "record_termios": false,
+    "record_chunks": false,
+    "record_descendants": false,
+    "cpu_rss_isolated_trigger_eligible": false,
+    "idle_isolated_trigger_eligible": false,
+    "known_emitter_modes": [
+      "primary",
+      "minimal"
+    ],
+    "resource_attribution": "separate harness-only policy/name and matching preflight; eligibility requires observed flag true + empty observed set; idle also long"
+  },
+  "shared_coordination": {
+    "modified": false,
+    "contract": "measurement-review-requests.md in cache",
+    "cache_alias_source_concern": "spawn_helper.prepared follows keyed cache binary/sidecar symlinks, literal path later used; narrow owner disposition is reject symlinks in existing resolver, no C/API change. Shared freeze left untouched. Compiler argv already resolved; sidecar parse/hash already one encoded snapshot. Ordinary path-check-to-exec interval remains, not atomic."
+  },
+  "final_preflight": {
+    "executed": false,
+    "candidate": "/home/ajs/.cache/pb-phase7/candidates/release3/pb-normal",
+    "command_in": "docs/phase7-measurement.md",
+    "primary_variants": 18,
+    "primary_functional_sessions": 36,
+    "budget_seconds": 1800,
+    "base_timeout_seconds": 60,
+    "long_idle_seconds": 300,
+    "long_idle_session_timeout_seconds": 360,
+    "primary_max_sessions": 40,
+    "optional_attribution_idle": "2 variants/4 sessions, separately labeled same fixtures/timeouts, not automatic"
+  },
+  "not_run": [
+    "Go/Rust CLI in this follow-up",
+    "performance/floor/profiler campaign",
+    "installed analysis decoder tool",
+    "compiler/capability probe",
+    "cargo/native build",
+    "common performance lock",
+    "new independent review round"
+  ],
+  "limitations": [
+    "Final complete release3 functional preflight remains parent-owned/unperformed; no source/unit result substitutes for it.",
+    "Final required independent Opus/phase-wide acceptance not granted by interim Sol or implementation.",
+    "No actual perf/strace/heaptrack FD3 interoperability or symbol fidelity established. Heaptrack diagnostics remain exact native stderr and may fail comparison.",
+    "Repeated path/size/SHA checks contain ordinary drift, not adversarial atomic exec binding.",
+    "Shared cache symlink admission concern announced to owner, no unauthorized shared source edit.",
+    "Analysis cleanup verifies the reserved same group only; descendants that deliberately detach session/group are not proven contained.",
+    "Native unwind plus analysis group verification may overrun active deadline by roughly10s; blocking file/system calls cannot be preempted by checks.",
+    "Raw/analysis size caps classify/reject and can be overshot between polls; they are not filesystem quotas.",
+    "Primary CPU/RSS/idle counters remain descriptive/ineligible for isolated triggers without attribution observation; even eligible periodic observation is not exhaustive proof about transient children.",
+    "Current source/harness hashes remain separate from compiled-source builder attestations; profiler managed Go heap comparison absent; no universal faster claim."
+  ]
+}

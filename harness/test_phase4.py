@@ -9,6 +9,10 @@ sys.path.insert(0,str(Path(__file__).resolve().parent))
 import phase4
 
 class SelectionTests(unittest.TestCase):
+    def test_interactive_boundaries_promoted_to_phase7(self):
+        self.assertEqual([], phase4.deferred_boundaries())
+        self.assertEqual(4, len(phase4.historical_deferred_boundaries()))
+
     def invoke(self, selectors=(), include_full120s=False, command='check-reference', real_corpus=False):
         cases=[dict(name='gate-case',tier='gate',build='standard'),
                dict(name='deadline-case',tier='full120s',build='standard')]
@@ -382,7 +386,9 @@ class HeaderDeadlineNormalizationTests(unittest.TestCase):
         case = self.case(); ref = self.result(self.forms()[0]); bad = copy.deepcopy(ref)
         bad['stderr'] = bad['stderr_normalized'] = b'Error: labels is not implemented in this Rust phase\n'
         self.assertTrue(any('deferred-operation stub' in i for i in phase4.p3.differences(case, ref, bad)))
-        for check in phase4.deferred_boundaries():
+        checks = phase4.historical_deferred_boundaries()
+        self.assertTrue(checks)
+        for check in checks:
             boundary = self.result(b'')
             boundary.update(trace=[], requests=[])
             if check['structured']:

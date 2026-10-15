@@ -1,0 +1,71 @@
+{
+  "process_started_monotonic_ns": 991584694863211,
+  "milestones": [
+    {
+      "request": 0,
+      "route": 0,
+      "received_monotonic_ns": 991584725130345,
+      "events": [
+        {
+          "name": "received",
+          "monotonic_ns": 991584725195794
+        },
+        {
+          "name": "headers",
+          "monotonic_ns": 991619725369220
+        },
+        {
+          "name": "complete",
+          "monotonic_ns": 991619725376712
+        }
+      ],
+      "body_bytes_sent": 0,
+      "wire_bytes_sent": 114
+    },
+    {
+      "request": 1,
+      "route": 1,
+      "received_monotonic_ns": 991619725637533,
+      "events": [
+        {
+          "name": "received",
+          "monotonic_ns": 991619725700300
+        },
+        {
+          "name": "client-gone",
+          "monotonic_ns": 991644752113935
+        }
+      ],
+      "body_bytes_sent": 0,
+      "wire_bytes_sent": 0
+    }
+  ],
+  "events": [
+    {
+      "name": "received",
+      "monotonic_ns": 991584725195794,
+      "request": 0
+    },
+    {
+      "name": "headers",
+      "monotonic_ns": 991619725369220,
+      "request": 0
+    },
+    {
+      "name": "complete",
+      "monotonic_ns": 991619725376712,
+      "request": 0
+    },
+    {
+      "name": "received",
+      "monotonic_ns": 991619725700300,
+      "request": 1
+    },
+    {
+      "name": "client-gone",
+      "monotonic_ns": 991644752113935,
+      "request": 1
+    }
+  ],
+  "snapshots": {}
+}

@@ -1,0 +1,15 @@
+{
+  "scope": "actual Go and pre-fix Rust; malformed reread after valid preflight; final candidate pending",
+  "go_valid_reads_before_replacement": 2,
+  "rust_valid_reads_before_replacement": 1,
+  "reason": "Go config package init reads once before command preflight; Rust preflight is its first read",
+  "files": {
+    "go/result.json": "5a5ad8316b10d8b219214339798c1814e64588cfe1a9c64d1ba51da4dd4bda8a",
+    "go/stderr.bin": "924d9a3cbea27fe7c5ca32009abb197d3164b385e8d4c097d190cd3a1d6b4239",
+    "go/stdout.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "reproduce.py": "8209c5e914480e8f7d98734b49307e2768c7d76449efd3abe9f09dc36b3b4da9",
+    "rust/result.json": "7cfe99872d48d2326ecd489ba3b6e62756a5f82780d11c5344ff3a610db6a798",
+    "rust/stderr.bin": "71a3d46cdcc5ff67c379fa46ea150df05cd0a0927e9fa04c884a913a280b16de",
+    "rust/stdout.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

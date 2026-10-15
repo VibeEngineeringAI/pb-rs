@@ -13,6 +13,8 @@ pub mod gojson;
 mod metrics;
 pub mod parser;
 mod printable;
+#[doc(hidden)]
+pub mod process;
 pub mod profile;
 mod render;
 mod saved_queries;
@@ -22,6 +24,7 @@ mod status;
 mod tail;
 mod time_compat;
 mod transport;
+mod tui;
 mod url_reference;
 
 use parser::{ParsedInvocation, quote};
@@ -227,15 +230,22 @@ pub fn run_with_writers(
         };
         return failure(command, &path, &message, code, structured, false);
     }
-    if command.requires_profile
-        && let Err(err) = config::ProfileStore::from_env().and_then(|store| store.active_profile())
-    {
-        let mut err = error::CliError::new(err.code, err.message);
-        if command.wrapped_preflight {
-            err.message = format!("error initializing default profile: {}", err.message);
+    let preflight_profile = if command.requires_profile {
+        match config::ProfileStore::from_env()
+            .and_then(|store| store.active_profile().map(|profile| (store, profile)))
+        {
+            Ok(profile) => Some(profile),
+            Err(err) => {
+                let mut err = error::CliError::new(err.code, err.message);
+                if command.wrapped_preflight {
+                    err.message = format!("error initializing default profile: {}", err.message);
+                }
+                return err.render(command, &path, structured);
+            }
         }
-        return err.render(command, &path, structured);
-    }
+    } else {
+        None
+    };
     if path == "pb user set-role" && parsed.positionals.len() < 2 {
         return failure(
             command,
@@ -270,6 +280,27 @@ pub fn run_with_writers(
             stderr,
             stderr_terminal,
         );
+    }
+    if path == "pb sql list" && parsed.text("output").is_empty() {
+        return match saved_queries::select_menu(stderr) {
+            Ok(Some(selection)) if selection.should_apply() => match selection.application() {
+                Some(application) => sql::execute_saved(
+                    &application,
+                    preflight_profile.expect("saved queries require a profile"),
+                    command,
+                    structured,
+                    stdout,
+                    stderr,
+                    stderr_terminal,
+                ),
+                None => {
+                    let _ = writeln!(stdout, "Empty query selected.");
+                    Outcome::default()
+                }
+            },
+            Ok(_) => Outcome::default(),
+            Err(error) => error.render(command, &path, structured),
+        };
     }
     if matches!(path.as_str(), "pb sql list" | "pb sql save") {
         return saved_queries::execute(&parsed, command, &path, structured, stdout);
@@ -400,6 +431,13 @@ fn execute_operational(
     command: &CommandSpec,
     path: &str,
 ) -> Option<Outcome> {
+    // Login opens the wizard before accessing config, including missing HOME.
+    if path == "pb login" {
+        return Some(match profile::login(parsed) {
+            Ok(stdout) => Outcome::success(stdout),
+            Err(error) => error.render(command, path, structured),
+        });
+    }
     let online = matches!(
         path,
         "pb status"
@@ -438,6 +476,11 @@ fn execute_operational(
         return match profile::execute(parsed, &store) {
             Ok(Some(stdout)) => Some(Outcome::success(stdout)),
             Ok(None) => None,
+            Err(err) if err.fatal.is_some() => Some(Outcome {
+                stdout: err.stdout.into_bytes(),
+                stderr: err.fatal.expect("fatal was checked").into_bytes(),
+                exit_code: 2,
+            }),
             Err(err) => Some(error::CliError::from(err).render(command, path, structured)),
         };
     }

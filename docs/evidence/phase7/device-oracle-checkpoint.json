@@ -1,0 +1,26 @@
+{
+  "status": "Go-only characterization; candidate replay pending",
+  "base": "4a812d5b9bc4c40882ab10897a73c3ce1e715ce0",
+  "go_commit": "07af390ab09bda8ac9e427ffc6310077bace0125",
+  "original_cases": 14,
+  "new_cases": [
+    "device-redirect-deadline",
+    "device-poll-redirect-deadline",
+    "device-poll-redirect-drain"
+  ],
+  "results": {
+    "device-redirect-deadline": "pass; client 30s deadline names current 307 hop",
+    "device-poll-redirect-deadline": "pass after fixture expected-error corrected; 2s context deadline names current 307 hop",
+    "device-poll-redirect-drain": "pass; expiry during 307 body drain names next hop"
+  },
+  "artifact_manifest": "login-oracle-manifest.json",
+  "source": "harness/phase7_device.py",
+  "logs": [
+    "device-oracle-4.log",
+    "device-redirect-oracle-1.log",
+    "device-redirect-oracle-2.log",
+    "device-drain-oracle-1.log"
+  ],
+  "cache_root": "/home/ajs/.cache/pb-phase7",
+  "timing_acceptance": false
+}

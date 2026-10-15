@@ -1,0 +1,41 @@
+{
+  "validation_path": "docs/evidence/phase6/pr4-fixes-validation.json",
+  "validation_sha256": "a92a6ab0321b1bc13faf8c647fc097dfbcc404850db71cf21b86318d2a937141",
+  "streams": {
+    "o1_leaf_child_dict.arrows": {
+      "source": "/home/ajs/.cache/pb-pr4-fixes/go-contract/o1_leaf_child_dict.arrows",
+      "sha256": "8b62eff78903d1c9cb9beb3b474ac4a2b05dd99a87f878ea1a35e31587ec5510",
+      "bytes": 864
+    },
+    "o2_leaf_child_dict_unsent.arrows": {
+      "source": "/home/ajs/.cache/pb-pr4-fixes/go-contract/o2_leaf_child_dict_unsent.arrows",
+      "sha256": "b50119e422af51037f348651d4f2b72ec266d5e44fec34af6d808cf4ac0f964e",
+      "bytes": 1488
+    },
+    "orphan_nested_unsent_child.arrows": {
+      "source": "/home/ajs/.cache/pb-pr4-fixes/go-contract/orphan_nested_unsent_child.arrows",
+      "sha256": "46ab5e2f2f12bacca592ea97d1ca0eeb0983032593a199fe6e85c99125860155",
+      "bytes": 1760
+    },
+    "orphan_parent_last_live_binding.arrows": {
+      "source": "/home/ajs/.cache/pb-pr4-fixes/go-contract/orphan_parent_last_live_binding.arrows",
+      "sha256": "966a37c396da87b063032a5c1b374e919cf4aea280f2513a5e15cab8e845f5a9",
+      "bytes": 2808
+    },
+    "orphan_type_conflict.arrows": {
+      "source": "/home/ajs/.cache/pb-pr4-fixes/go-contract/orphan_type_conflict.arrows",
+      "sha256": "b3d6513b94d76026a20c7523e33b65ff6676d95154c4e09dc045b15ef25c16c4",
+      "bytes": 712
+    },
+    "o1_control.arrows": {
+      "source": "/home/ajs/.cache/pr4-opus-decoder/streams/o1_control.arrows",
+      "sha256": "2659527be24e6b0db242bd4a58a9cda8b84366b6abef5afc3b0ec06b7f8ae22c",
+      "bytes": 408
+    },
+    "o2_control.arrows": {
+      "source": "/home/ajs/.cache/pr4-opus-decoder/streams/o2_control.arrows",
+      "sha256": "1e8348c23c3419b27f8ffdb13233e72d00de8214033492caef16605cd0760ce4",
+      "bytes": 1040
+    }
+  }
+}

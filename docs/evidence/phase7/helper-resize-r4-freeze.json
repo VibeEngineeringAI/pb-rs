@@ -1,0 +1,234 @@
+{
+  "acceptance_claim": false,
+  "exact_delta": {
+    "path": "/home/ajs/.cache/pb-phase7/harness-resize-policy-r4/owned.diff",
+    "sha256": "8dc229f2636d3170145d207156cd71ab9a80a9ab2be5b196b1657f4080ca7461"
+  },
+  "files": {
+    "docs/phase7-harness.md": "038eeacec10dfc11f14cc941ede3a4dd2371ad98c40b03dde5adc130c0fc5bbc",
+    "harness/phase7.py": "dc7574f058b9ff6ae7b77a912847fdbe02d8b68baab8728237d6ef040e6a44fa",
+    "harness/phase7_spawn.c": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4",
+    "harness/phase7_workloads.py": "54a9efb7767372c976b459c3e2dc59c590e0b9d6b47b4cc29e36ae81ff588d1c",
+    "harness/test_phase7.py": "97f19258eaf3a7d052d1f8b1ea7577ad4b3b5acc1d284dbd0162cdcace3080a5"
+  },
+  "frozen_at_utc": "2026-10-14T17:40:34.091026+00:00",
+  "not_run": [
+    "Go/Rust CLI/candidates",
+    "compilation",
+    "timing/performance campaign",
+    "profiler",
+    "common lock",
+    "full UI/retained replay"
+  ],
+  "pending": "parent full UI/retained replay and fresh independent Opus review",
+  "previous_files": {
+    "docs/phase7-harness.md": "6c3c79dd0f159632d9983654a1c4f8e10ebc0032a67dd8a4ff7810f2c7d34882",
+    "harness/phase7.py": "26895f680be00ba1f65440a4e7097ee8d94027e15c64bd7fb317691700f7da0a",
+    "harness/test_phase7.py": "e25bd26ff4229e1487f2492647addf7f778e048f47bba3d19359adc10b535d37"
+  },
+  "prior_freeze_preserved": "/home/ajs/.cache/pb-phase7/harness-dispatch-origin-r3/freeze.json",
+  "quiet_coordination": {
+    "all_execution_stopped_until_explicit_root_RELEASE": true,
+    "native_control_only_after_root_explicit_authorization": true,
+    "source_and_coordination_only_during_pause": true,
+    "tokens": [
+      "phase7-quiet-phase6-samego-aa-20261014T173040Z",
+      "phase7-quiet-phase6-aa-hash-20261014T173242Z"
+    ]
+  },
+  "schema_version": 1,
+  "scope": "additive resize signal policy, changed-only geometry prevalidation and metadata, pure tests and root-authorized own native control",
+  "seam": {
+    "dispatch": "emulator resize -> existing dispatch timestamp -> ioctl only in opt-in; legacy also explicit SIGWINCH",
+    "event": "resize_signal_source: ioctl+explicit / ioctl-only",
+    "execute": "execute(..., resize_signal_policy=\"legacy\")",
+    "geometry": "changed-only initial+entire ordered resize script, list/tuple2, non-bool int1..65535, no unchanged geometry vs prior size, before dependencies/helper/PTY/CLI",
+    "legacy": "default prior semantics, geometry/noop behavior preserved",
+    "opt_in": "ioctl-only-changed",
+    "result": "resize_signal_policy",
+    "unrelated_actions": "not prevalidated by geometry policy"
+  },
+  "services_coordination": "owner confirmed exact policy/fields, source-only integration during pause; consumer70bench+23profile pure tests reported after RELEASE, not executed by this lane",
+  "source_frozen": true,
+  "static_invariants": {
+    "C_helper_workloads_unchanged": true,
+    "all_other_phase7_functions_classes_unchanged": true,
+    "frame_stamp_AST_unchanged": true,
+    "resource_metrics_AST_unchanged": true
+  },
+  "tests": {
+    "checks": [
+      "owned py_compile",
+      "scoped git diff --check",
+      "AST invariant checks",
+      "helper ELF/provenance hashes unchanged"
+    ],
+    "native_after_explicit_root_release": {
+      "command": "/home/ajs/.cache/pb-phase7/harness-resize-policy-r4/native-command.sh",
+      "command_sha256": "dc0bd8c00ed9049907f535bc0ed3008606b961154e285a576b617028292b88d1",
+      "log": "/home/ajs/.cache/pb-phase7/harness-resize-policy-r4/native-control-root1.log",
+      "policy_sessions": 2,
+      "raw_report": "/home/ajs/.cache/pb-phase7/harness-resize-policy-r4/native-control-root1/report.json",
+      "raw_report_sha256": "bef19ebea7c6038a5501918cb8216eaa0ff36added322f04f6c97a06b7308204",
+      "report": {
+        "controls": [
+          {
+            "failure": null,
+            "group_signals": [
+              {
+                "pid": 510928,
+                "pidfd": 8,
+                "reserved_exit": true,
+                "signal": 9
+              }
+            ],
+            "observed": {
+              "event": "final",
+              "seen": [
+                [
+                  100,
+                  30
+                ],
+                [
+                  60,
+                  20
+                ]
+              ],
+              "size": [
+                60,
+                20
+              ]
+            },
+            "passed": true,
+            "policy": "ioctl-only-changed",
+            "termination": {
+              "exit": 0
+            },
+            "termios_restored": true,
+            "worker": {
+              "event": "worker",
+              "pid": 511027,
+              "start_ticks": 101067216
+            },
+            "worker_final_state": null
+          },
+          {
+            "failure": null,
+            "group_signals": [
+              {
+                "pid": 514975,
+                "pidfd": 8,
+                "reserved_exit": false,
+                "signal": 28
+              },
+              {
+                "pid": 514975,
+                "pidfd": 8,
+                "reserved_exit": false,
+                "signal": 28
+              },
+              {
+                "pid": 514975,
+                "pidfd": 8,
+                "reserved_exit": false,
+                "signal": 28
+              },
+              {
+                "pid": 514975,
+                "pidfd": 8,
+                "reserved_exit": true,
+                "signal": 9
+              }
+            ],
+            "observed": {
+              "event": "final",
+              "seen": [
+                [
+                  100,
+                  30
+                ],
+                [
+                  100,
+                  30
+                ],
+                [
+                  60,
+                  20
+                ],
+                [
+                  60,
+                  20
+                ]
+              ],
+              "size": [
+                60,
+                20
+              ]
+            },
+            "passed": true,
+            "policy": "legacy",
+            "termination": {
+              "exit": 0
+            },
+            "termios_restored": true,
+            "worker": {
+              "event": "worker",
+              "pid": 515091,
+              "start_ticks": 101067307
+            },
+            "worker_final_state": null
+          }
+        ],
+        "helper": {
+          "build_key": "d0592f15c157a359d3b1d7adf9ab0efb1cf39a3765205fe8ccde855157ed2fab",
+          "capability": {
+            "group_signal_flag": 4,
+            "method": "actual own-child pidfd group delivery + WNOWAIT reservation",
+            "probe_executable_sha256": "3b684c7b7632302725727fcc586a071c7818f43d704a8cbf4e1afc384e99f03e",
+            "protocol_version": 2,
+            "received": [
+              "LEADER",
+              "MEMBER"
+            ],
+            "reserved_state": "Z",
+            "signal": "SIGUSR1",
+            "status": 0
+          },
+          "compiler": "/usr/bin/gcc",
+          "compiler_sha256": "8aac907d6fbf40394b424b5fa4a2ad1aa291dac7d3a0315c5b415c1f5ace1287",
+          "compiler_version": "gcc (GCC) 16.2.1 20260810\nCopyright (C) 2026 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+          "flags": [
+            "-std=c11",
+            "-O2",
+            "-Wall",
+            "-Wextra",
+            "-Werror"
+          ],
+          "path": "/home/ajs/.cache/pb-phase7/tmp/phase7-spawn-d0592f15c157a359d3b1d7adf9ab0efb1cf39a3765205fe8ccde855157ed2fab",
+          "protocol_version": 2,
+          "provenance_path": "/home/ajs/.cache/pb-phase7/tmp/phase7-spawn-d0592f15c157a359d3b1d7adf9ab0efb1cf39a3765205fe8ccde855157ed2fab.json",
+          "provenance_sha256": "69e1067e728b7ce4cd67a288ea797d346d00b5403ae5c34368756770f0730394",
+          "sha256": "3b684c7b7632302725727fcc586a071c7818f43d704a8cbf4e1afc384e99f03e",
+          "source_sha256": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4"
+        },
+        "kind": "bounded own native resize functional control",
+        "performance_claim": false
+      },
+      "seconds": 2.016,
+      "sha256": "9e0094b99d04832ba5ae814673db0ab63237af9c007869cefc30dc08416bd44f",
+      "test_count": 1
+    },
+    "pure_after_root_release": {
+      "count": 22,
+      "log": "/home/ajs/.cache/pb-phase7/harness-resize-policy-r4/pure-tests-final.log",
+      "seconds": 0.622,
+      "sha256": "cab8d5c0bf23ccaa9cac4c6b60cf90e7ebb431ec0595422ab34ba1eb3bc164ed"
+    },
+    "pure_before_pause": {
+      "count": 22,
+      "log": "/home/ajs/.cache/pb-phase7/harness-resize-policy-r4/pure-tests-1.log",
+      "seconds": 0.58,
+      "sha256": "f6522889a751c1104d110dd97fcc0d44ae52870a0d79ab8fa07b53c7e734d631"
+    }
+  }
+}

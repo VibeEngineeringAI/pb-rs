@@ -1,0 +1,356 @@
+{
+  "schema_version": 1,
+  "round": "R4 implementation follow-up",
+  "status": "owned source frozen; independent review and executable controls pending; no phase/performance acceptance",
+  "frozen_at_utc": "2026-10-14T17:22:30.389911+00:00",
+  "ownership": [
+    "harness/phase7_bench.py",
+    "harness/test_phase7_bench.py",
+    "harness/phase7_profile.py",
+    "harness/test_phase7_profile.py",
+    "docs/phase7-measurement.md",
+    "docs/phase7-profiling.md",
+    "harness/contracts/phase7.md"
+  ],
+  "files": {
+    "harness/phase7_bench.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_bench.py",
+      "sha256": "9e3c03bd5bf13afd12d5503b06564a7090f0ebc290fce608e97fcc7d71b9e484",
+      "size_bytes": 132799
+    },
+    "harness/test_phase7_bench.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7_bench.py",
+      "sha256": "dca886cb3980dcd1d2ae2935ea4a4c6a1e29aac4ba48e6a664d3af4b4392e7b9",
+      "size_bytes": 90810
+    },
+    "harness/phase7_profile.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_profile.py",
+      "sha256": "e8214ce12e748ef6da87e7dece824cc26eb37d2eaedd2e1f607f42d0975ef0df",
+      "size_bytes": 43581
+    },
+    "harness/test_phase7_profile.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7_profile.py",
+      "sha256": "70a96715ba63db4c1b854254ec8a7d22751033b2b589ec427ecf406e4f3cbf82",
+      "size_bytes": 34904
+    },
+    "docs/phase7-measurement.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-measurement.md",
+      "sha256": "1f16d7e6bb00f12863c70b64bdd9fbcc59b70d4dbb276b72ac2f74aef237a50e",
+      "size_bytes": 57600
+    },
+    "docs/phase7-profiling.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-profiling.md",
+      "sha256": "c61906c3a9eace930dea1163b00616d4ff12fed0c28e0929b03965d3e55e8df4",
+      "size_bytes": 21347
+    },
+    "harness/contracts/phase7.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/contracts/phase7.md",
+      "sha256": "25e60fe03baa933ec89f9e7bb8e0ad04bf9683f971620ad970b1cfce06f66527",
+      "size_bytes": 19583
+    }
+  },
+  "consumed_shared_source": {
+    "harness/phase7.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7.py",
+      "sha256": "26895f680be00ba1f65440a4e7097ee8d94027e15c64bd7fb317691700f7da0a",
+      "size_bytes": 88617
+    },
+    "harness/phase7_spawn.c": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_spawn.c",
+      "sha256": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4",
+      "size_bytes": 9383
+    },
+    "harness/phase7_workloads.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_workloads.py",
+      "sha256": "54a9efb7767372c976b459c3e2dc59c590e0b9d6b47b4cc29e36ae81ff588d1c",
+      "size_bytes": 41781
+    }
+  },
+  "consumed_helper": {
+    "build_key": "d0592f15c157a359d3b1d7adf9ab0efb1cf39a3765205fe8ccde855157ed2fab",
+    "capability": {
+      "group_signal_flag": 4,
+      "method": "actual own-child pidfd group delivery + WNOWAIT reservation",
+      "probe_executable_sha256": "3b684c7b7632302725727fcc586a071c7818f43d704a8cbf4e1afc384e99f03e",
+      "protocol_version": 2,
+      "received": [
+        "LEADER",
+        "MEMBER"
+      ],
+      "reserved_state": "Z",
+      "signal": "SIGUSR1",
+      "status": 0
+    },
+    "compiler": "/usr/bin/gcc",
+    "compiler_sha256": "8aac907d6fbf40394b424b5fa4a2ad1aa291dac7d3a0315c5b415c1f5ace1287",
+    "compiler_version": "gcc (GCC) 16.2.1 20260810\nCopyright (C) 2026 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+    "flags": [
+      "-std=c11",
+      "-O2",
+      "-Wall",
+      "-Wextra",
+      "-Werror"
+    ],
+    "path": "/home/ajs/.cache/pb-phase7/tmp/phase7-spawn-d0592f15c157a359d3b1d7adf9ab0efb1cf39a3765205fe8ccde855157ed2fab",
+    "protocol_version": 2,
+    "provenance_path": "/home/ajs/.cache/pb-phase7/tmp/phase7-spawn-d0592f15c157a359d3b1d7adf9ab0efb1cf39a3765205fe8ccde855157ed2fab.json",
+    "provenance_sha256": "69e1067e728b7ce4cd67a288ea797d346d00b5403ae5c34368756770f0730394",
+    "sha256": "3b684c7b7632302725727fcc586a071c7818f43d704a8cbf4e1afc384e99f03e",
+    "source_sha256": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4"
+  },
+  "release5_readonly_binding": {
+    "path": "/home/ajs/.cache/pb-phase7/collector-opus-r4-release5-readonly-binding.json",
+    "sha256": "26ba65c4b8d545db2a75e7bd932ffbd4cd1cfe6282153249f07dcdb9a42ed327",
+    "size_bytes": 38363
+  },
+  "artifact_handoff": "Immutable release5 normal/cloud/login; matching optimized symbolized Rust is89516984bytes SHA1247b62d11a1f15c85a55523fc1bd3950f50ccfc7c736f1afaf8206d476a417f. Parent tests/sections are supplied evidence; this lane verified hashes/metadata only.",
+  "findings": {
+    "R4-M1": {
+      "status": "implemented; source tested, CLI incidence unknown",
+      "change": "Resize requires source-derived SQL footer H-6 ending W-3, body borders at new width, selected-row marker on row16/new borders, fresh output and changed cells. Identical data text is allowed. Full80ms styled stability unchanged.",
+      "tests": [
+        "top-border-first grow/shrink stale footer",
+        "partial footer, selected row, cursor-only/geometry-only negatives",
+        "old-frame/actual changed target gates"
+      ]
+    },
+    "R4-M2": {
+      "status": "bench-only concrete replay implemented; actual diagnostic magnitudes unknown",
+      "change": "Exact raw offset = consumed token bytes+pending encoded text+buffered UTF8, bound to event evaluation/accepted first-ever/checkpoint observations. Both Go and Rust every phase replay reconstructs untimed parser/SGR/main/alternate/pre-resize state, times first-match payload feed, validates target and untimed exact final frame. No optional primary observers enabled/no shared seam needed/no subtraction. Missing/invalid replay explicitly non-interpretable.",
+      "interpretability": "Primary Go-Rust only; five repetitions minimum; absolute median role decode delta<=1ms descriptive interpretability allowance pending independent review, not native acceptance threshold. Legacy resize is still ineligible pending L1.",
+      "tests": [
+        "partial CSI+UTF8/SGR/pre-resize state",
+        "both role retained-byte replay with different redundant SGR byte volumes",
+        "missing offsets/bad first offset/final frame/payload binding mutation"
+      ]
+    },
+    "R4-M3": {
+      "status": "implemented; actual A/A pending",
+      "change": "Explicit aa-go/aa-rust, truthful existing Go-pin/Rust-release validation on both roles, exact same canonical artifact/provenance, distinct labels/preflight/report/comparison identity; budget_evidence and all resource/latency trigger eligibility false.",
+      "tests": [
+        "same actual file accepted",
+        "copies/different provenance/binary identities rejected",
+        "mismatched comparison preflight rejected"
+      ]
+    },
+    "R4-M4": {
+      "status": "implemented before collection; complete synthetic pool source tested",
+      "change": "Distinct declared variant bases and chunk seeds, predeclared spec/source/artifact/helper/case/policy/preflight/control binding. Offline reducer admits all seven chunks only, exact5warmup+30measured independent pairs, exact schedules/identities/controls/end hashes. Raw captures/contracts/comparator rerun, metrics recomputed; no valid-subset summary. Pointwise paired-session bootstrap/descriptive tails.",
+      "tests": [
+        "complete35-pair pool",
+        "duplicate/omitted chunks and sessions, seed/metadata/source/raw reuse/control failures",
+        "control stream mutation after initial validation rejected at final rehash"
+      ]
+    },
+    "R4-L1": {
+      "status": "proposal only; shared code untouched; latency triggers ineligible",
+      "proposal": {
+        "path": "/home/ajs/.cache/pb-phase7/collector-r4-seam-proposal.md",
+        "sha256": "84ea118f036b8087c1eb045af98b7c0ec56f77c9f3d0a78c086bcabcac8a477c",
+        "size_bytes": 3303
+      },
+      "contract": "execute(..., resize_signal_policy=\"legacy\"), opt-in \"ioctl-only-changed\": full script geometry validation/no-op rejection before acquisition, emulator resize then dispatch stamp then ioctl only. Result.resize_signal_policy; event.resize_signal_source ioctl+explicit/ioctl-only. Legacy styled default unchanged.",
+      "required_control": "Root/shared owner bounded actual-driver native grow/shrink delivery counts, unchanged-size rejection before acquisition, legacy compatibility, restoration/nativewait4/PID-bound group cleanup. Parent isolated ioctl mechanism evidence is functional; actual repaint/back-to-back coalescing unknown."
+    },
+    "R4-L2": {
+      "status": "implemented/source tested",
+      "change": "Phase6 agreement exact campaign_id and issued_unix-60<=at_unix<=now; stale copied references fail. No approval created."
+    },
+    "R4-L3": {
+      "status": "implemented/source tested with temporary locks",
+      "change": "Functional preflight owns one exclusive nonblocking common lock across all preparation/captures/validation/finalization, no wait, no probe/release race and no quiet approval. Held lock rejects before helper/PTY work."
+    },
+    "R4-L4": {
+      "status": "implemented/documented/source tested",
+      "change": "Only bound primary Go-Rust latency controls can enable triggers; attribution and A/A latency descriptive. CPU/RSS requires explicit descendant comparison eligibility; unobserved empty lists are insufficient."
+    },
+    "R4-L5": {
+      "status": "implemented/source tested; real wall costs unknown",
+      "change": "Per-role full sample+capture+postprocessing wall scope and clock stamps retained, including interrupted work. Feasibility revalidates raw preflight, uses observed max role cost with literal idle,1.5x other cost,>=8s cleanup,30s floor reserve,30+5s/pair serialization/final reserve. Missing/nonfitting evidence prevents booking; neither estimate nor lock is approval/hard syscall bound."
+    },
+    "R4-L6": {
+      "status": "implemented/documented/source tested",
+      "change": "Measured Phases.change rejects unsupported signals consistently; generic shared signal cases unchanged. Exact spawn_helper/no-build and descendant observation-only APIs documented."
+    },
+    "R3-M2 dense residual": {
+      "status": "implemented source; functional capture unknown",
+      "change": "New dense1000-series sustained workload selects first32/last32 series through existing1000x256 table, exact selected-row footer and visible series, one causal range effect eachphase/no refetch. Final home/chart/idle/quit. This does not claim every1000series visited.",
+      "remaining": "Native event receipt/reducer/render/write stage instrumentation unimplemented and unknown; full-plan performance acceptance cannot claim these durations."
+    }
+  },
+  "tests": [
+    {
+      "suite": "bench",
+      "count": 67,
+      "elapsed_seconds": 43.756,
+      "command": "export PATH=/home/ajs/.cargo/bin:$PATH TMPDIR=/home/ajs/.cache/pb-phase7/tmp GOTMPDIR=/home/ajs/.cache/pb-phase7/tmp CLAUDE_CODE_TMPDIR=/home/ajs/.cache/pb-phase7/tmp\nPYTHONDONTWRITEBYTECODE=1 /home/ajs/.cache/pb-phase7/harness-venv/bin/python -m unittest discover -s harness -p test_phase7_bench.py",
+      "log": {
+        "path": "/home/ajs/.cache/pb-phase7/collector-bench-opus-r4-final4.log",
+        "sha256": "ce07dd0567617524dc6f53398ecb56ed9ba3dc0117acdaad9503cf6edb9830c2",
+        "size_bytes": 167
+      },
+      "scope": "pure/mock unit tests; real pyte; temporary locks only; no CLI/probe/compiler/common lock"
+    },
+    {
+      "suite": "profiler",
+      "count": 23,
+      "elapsed_seconds": 1.36,
+      "command": "export PATH=/home/ajs/.cargo/bin:$PATH TMPDIR=/home/ajs/.cache/pb-phase7/tmp GOTMPDIR=/home/ajs/.cache/pb-phase7/tmp CLAUDE_CODE_TMPDIR=/home/ajs/.cache/pb-phase7/tmp\nPYTHONDONTWRITEBYTECODE=1 /home/ajs/.cache/pb-phase7/harness-venv/bin/python -m unittest discover -s harness -p test_phase7_profile.py -v",
+      "log": {
+        "path": "/home/ajs/.cache/pb-phase7/collector-profile-opus-r4-final2.log",
+        "sha256": "7f261a546994bf22b912041aa376ac4358a0c4d4f99b777f3f7e625ff1b89644",
+        "size_bytes": 3993
+      },
+      "scope": "pure/mock unit tests plus previously authorized bounded owned analysis-leader/worker process fixture; no CLI/profile/candidate captures"
+    }
+  ],
+  "static_checks": {
+    "path": "/home/ajs/.cache/pb-phase7/collector-opus-r4-static-checks.json",
+    "sha256": "9a7d7e809f9191608f84d707ce652973ae5bdb9df565e9cbf4cbf6e629b5035e",
+    "size_bytes": 2324
+  },
+  "static_check_command": "export PATH=/home/ajs/.cargo/bin:$PATH TMPDIR=/home/ajs/.cache/pb-phase7/tmp GOTMPDIR=/home/ajs/.cache/pb-phase7/tmp CLAUDE_CODE_TMPDIR=/home/ajs/.cache/pb-phase7/tmp\nPYTHONDONTWRITEBYTECODE=1 /home/ajs/.cache/pb-phase7/harness-venv/bin/python /home/ajs/.cache/pb-phase7/collector-opus-r4-final-static-checks.py",
+  "static_check_script": {
+    "path": "/home/ajs/.cache/pb-phase7/collector-opus-r4-final-static-checks.py",
+    "sha256": "4c4dea01a7198945cc94cbe509021dedad828ec8a187b741c5874785822e3a9d",
+    "size_bytes": 2626
+  },
+  "static_check_log": {
+    "path": "/home/ajs/.cache/pb-phase7/collector-opus-r4-final-static-checks.log",
+    "sha256": "b5de608396103935413c8575a6135e6ddd28eb612c222794e8473aa20b28d532",
+    "size_bytes": 120
+  },
+  "command_matrix": {
+    "path": "/home/ajs/.cache/pb-phase7/collector-opus-r4-command-matrix.json",
+    "sha256": "2c22a8440472f4c7b58c26a6540ddb8b175592bb7280d23fabbf6a76a1142ed5",
+    "size_bytes": 337239
+  },
+  "matrix_counts": {
+    "functional_roles": 104,
+    "per_policy_workload_variants": 26,
+    "per_policy_pairs": 910,
+    "per_policy_cli_roles": 1820,
+    "per_policy_floor_controls": 456,
+    "per_policy_campaigns": 38,
+    "both_policy_children": 4552
+  },
+  "distinct_seeds": 76,
+  "retained_prior_responses": [
+    {
+      "path": "/home/ajs/.cache/pb-phase7/collector-measurement-interim-sol-r2-response.json",
+      "sha256": "f94a3811078ba48ef23af21905be575ae3ef0b6b8c3e21c89dd59e32f40c76cf",
+      "size_bytes": 9441
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/collector-measurement-opus-r3-response.json",
+      "sha256": "0687b520ede57afb0474dc6047693043d656ff69e0e8fe11900e38f3c0f74a93",
+      "size_bytes": 13609
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/collector-measurement-review-r1-response.json",
+      "sha256": "5e5c206125a62d83b0dfd652f63e60d8187c20b02cc81c18db6bb9b0ae2e7981",
+      "size_bytes": 4680
+    }
+  ],
+  "retained_followup_logs": [
+    {
+      "path": "/home/ajs/.cache/pb-phase7/collector-bench-opus-r4-work1.log",
+      "sha256": "074291e6a3a5d7445f4b215b0feadcc44c0d10f4b45bb894155d6bc7bfb424ee",
+      "size_bytes": 945
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/collector-bench-opus-r4-work2.log",
+      "sha256": "7919d2d24fe3640f420c2907854558a6c0877bd1b508331fac226a6bdecb72d3",
+      "size_bytes": 8810
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/collector-bench-opus-r4-work3.log",
+      "sha256": "9deefb52a90f55262cb1ebf68cdc57fe17ac84ee4921e8b9f9849f2bda82c3cc",
+      "size_bytes": 10249
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/collector-bench-opus-r4-work4.log",
+      "sha256": "ad2f6f60b2d09752c36d0879c8f42fc2b4af29d963cc3a7327c50cbf747051e1",
+      "size_bytes": 11333
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/collector-bench-opus-r4-work5.log",
+      "sha256": "c02fb14004e8d5059ae43d8e5e248662ed451c6f6d8175144ae948a704a9019e",
+      "size_bytes": 10594
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/collector-bench-opus-r4-work6.log",
+      "sha256": "d80d9dac18275a6640ae7806e0634e5c8afe2d30c02a3081918a17e4310f8c92",
+      "size_bytes": 10785
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/collector-bench-opus-r4-work7.log",
+      "sha256": "528d298a0cfe6b4fff86b2c462691f8dc8214013b951f00f27ea5f76102e3c2c",
+      "size_bytes": 22195
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/collector-bench-opus-r4-work8.log",
+      "sha256": "bc7d41dfdcea39006cf44160082a3c517f6b30f795cc9236ea8b5c171a29ba5f",
+      "size_bytes": 10785
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/collector-bench-opus-r4-final1.log",
+      "sha256": "5e286cd73862a6bfde733bc7fefcedbb5c1bf5cb4275120c7c2cc4ff1832a824",
+      "size_bytes": 10785
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/collector-bench-opus-r4-final2.log",
+      "sha256": "519386ad66f8b1b8b928f0e9463b5ca9f63d234bd295323a47edf979368be6db",
+      "size_bytes": 12095
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/collector-bench-opus-r4-final3.log",
+      "sha256": "61ec92bb73ab4ba935e5be9e2d9fe2783f43019228eb09e43dcb5fd29d698981",
+      "size_bytes": 166
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/collector-bench-opus-r4-final4.log",
+      "sha256": "ce07dd0567617524dc6f53398ecb56ed9ba3dc0117acdaad9503cf6edb9830c2",
+      "size_bytes": 167
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/collector-profile-opus-r4-final1.log",
+      "sha256": "bdb022a40dd1bf7aa2aa161bc796f8aed847f75a101a51957da916d4781c7719",
+      "size_bytes": 3993
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/collector-profile-opus-r4-final2.log",
+      "sha256": "7f261a546994bf22b912041aa376ac4358a0c4d4f99b777f3f7e625ff1b89644",
+      "size_bytes": 3993
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/collector-profile-opus-r4-work1.log",
+      "sha256": "4e6bae2423898ad8a9d5752ce1bae36658adc3e025332041d1c271c97ca371cb",
+      "size_bytes": 3993
+    }
+  ],
+  "intermediate_failures": [
+    "Work1 temporary test indentation error fixed; work4 pool synthetic path normalization corrected; work7 pool test frame-factory variable shadow corrected; final2 diagnostic test file/directory collision fixed; all failed logs retained.",
+    "First inline read-only artifact assertion used nonexistent size_bytes instead of phase1 bytes key: KeyError size_bytes. Corrected read-only script passes; no production/source correction or process executed."
+  ],
+  "not_run": [
+    "Go/Rust/candidate/native CLI captures",
+    "compiler/build/capability probe/readelf",
+    "timing/profiler/floor/decoder measurement campaign",
+    "common performance flock acquisition",
+    "A/A or final collector functional preflight",
+    "shared phase7.py/test/C/workload edits"
+  ],
+  "limitations": [
+    "No source-only acceptance; parent independent new review and all actual controls still required.",
+    "Helper resize keyword proposal/control pending; legacy resize latency explicitly non-interpretable.",
+    "Per-role replay reconstructs captured bytes/prestate, not actual native terminal/internal reducer/render/write timings. Real decoder costs unknown; test clock zeros are synthetic only.",
+    "Primary resource isolation cannot be inferred with descendants off; separate full attribution evidence required.",
+    "Native cleanup can overrun active budget by about8s; fixture/evidence blocked filesystem operations are not hard preemptible.",
+    "Ordinary check-to-exec/check-to-use TOCTOU and escaped setsid/setpgid descendants remain stated limits.",
+    "Full collector functional matrix is26variants/52roles per policy,104roles total; base60+longidle300 deliberately gives360s per long SQL capture. All matrix controls/decode/AA/feasibility actual costs unknown.",
+    "Profiler exact symbol fidelity, FD3/stderr/artifact/strace interoperability and release/symbolized controls pending actual parent execution.",
+    "Pending parent shared normalizer changes invalidate source/preflight identity; consume successor explicitly rather than accepting old evidence."
+  ],
+  "freeze_directory": "/home/ajs/.cache/pb-phase7/collector-opus-r4-freeze"
+}

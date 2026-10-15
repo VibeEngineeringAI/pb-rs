@@ -1,0 +1,9 @@
+39d16e2ba220aad27ec0e67646e04aacbcdd9a9c28d3013f3f04ddefec789099  harness/phase3.py
+0bea853fcedcf6dd2724d057d88813440454183a64f643c944321c624f414e95  harness/test_phase3.py
+....................phase3 setup error: reference fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314 is not the frozen manifest's 0000000000000000000000000000000000000000000000000000000000000000
+.............
+----------------------------------------------------------------------
+Ran 33 tests in 8.891s
+
+OK
+phase3 reference-check: 6 passed, 0 failed, 0 skipped of 6; boundaries 0/0 (not applicable (reference check)); report: /home/ajs/.cache/pb-phase7/tmp/tmpmhgvfhng/ref/report.md

@@ -1,0 +1,41 @@
+{
+  "kind": "user-requested fresh independent final review assignments",
+  "opus": {
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-user-opus-final-review-r3",
+    "childThreadId": "thread:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-user-opus-final-review-r3",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A245f7194-2732-4b67-ac9f-f5e734b5da17%253Adelegate-task%253Aphase7-user-opus-final-review-r3:ordinal:1",
+    "childNodeId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-user-opus-final-review-r3",
+    "status": "running",
+    "workState": "working",
+    "hasPendingChildRuns": false,
+    "latestTerminalRunId": null,
+    "latestTerminalStatus": null,
+    "latestTerminalSummary": null,
+    "latestTerminalResultContextTransferId": null,
+    "providerInstanceId": "claudeAgent",
+    "model": "claude-opus-5-5",
+    "summary": null,
+    "resultContextTransferId": null,
+    "waitTimedOut": false
+  },
+  "sol": {
+    "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-user-sol-final-contract-review-r3",
+    "childThreadId": "thread:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-user-sol-final-contract-review-r3",
+    "childRunId": "run:thread:thread%3Adelegated-task%3Acommand%253Amcp%253A245f7194-2732-4b67-ac9f-f5e734b5da17%253Adelegate-task%253Aphase7-user-sol-final-contract-review-r3:ordinal:1",
+    "childNodeId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-user-sol-final-contract-review-r3",
+    "status": "running",
+    "workState": "working",
+    "hasPendingChildRuns": false,
+    "latestTerminalRunId": null,
+    "latestTerminalStatus": null,
+    "latestTerminalSummary": null,
+    "latestTerminalResultContextTransferId": null,
+    "providerInstanceId": "codex",
+    "model": "gpt-6.1-sol",
+    "summary": null,
+    "resultContextTransferId": null,
+    "waitTimedOut": false
+  },
+  "production_scope": "frozen release3; active collector/profile corrections excluded",
+  "required_outcome": "actual Opus verdict plus independent Sol findings; failed provider runs do not count as review"
+}

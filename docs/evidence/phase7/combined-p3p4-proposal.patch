@@ -1,0 +1,388 @@
+--- a/harness/phase3.py
++++ b/harness/phase3.py
+@@ -1474,9 +1474,30 @@
+     """Only timeout races observed in repeated Go deadline fixtures."""
+     if not case.get("compare", {}).get("timeout_cause"):
+         return data
++    if case["name"] == "p4-deadline-header":
++        # Go 1.25.4 cloudRefreshTransport deadline/timer race; R4/R5/R6 captures.
++        # Match the whole normalized stream, including every Usage byte and LF.
++        prefix = b'Error: Get "http://<FIXTURE>/prometheus/api/v1/labels?stream=select-dataset": '
++        usage = (b'Usage:\n  pb promql labels [stream] [flags]\n\nExamples:\n'
++                 b'  pb promql labels otel_metrics\n  pb promql labels --dataset otel_metrics\n\nFlags:\n'
++                 b'  -d, --dataset string   Metrics dataset (default "select-dataset")\n'
++                 b'  -f, --from string      Start time filter (optional)\n'
++                 b'  -h, --help             help for labels\n'
++                 b'  -o, --output string    Output format: text or json (default "text")\n'
++                 b'  -t, --to string        End time filter (optional)\n\n')
++        suffix = b' (Client.Timeout exceeded while awaiting headers)'
++        for cause in (b'context deadline exceeded',
++                      b'context deadline exceeded' + suffix,
++                      b'net/http: request canceled' + suffix):
++            if data == prefix + cause + b"\n" + usage:
++                return prefix + b"<CLIENT-TIMEOUT>" + suffix + b"\n" + usage
++        # Do not let the legacy substring rule weaken this whole-stream guard.
++        return data
+     bare_context = {
++        "p3-deadline-text-empty-array-lookahead": b"failed to read response body",
+         "p3-deadline-preview-needs-one-more-byte": b"failed to read error response body",
+         "p3-deadline-not-reset-per-chunk": b"failed to stream response body",
++        "p3-deadline-body-stall-text": b"failed to stream response body",
+     }.get(case["name"])
+     if bare_context is not None and data == b"Error: " + bare_context + b": context deadline exceeded\n":
+         return (b"Error: " + bare_context + b": <CLIENT-TIMEOUT> "
+--- a/harness/test_phase3.py
++++ b/harness/test_phase3.py
+@@ -353,7 +353,7 @@
+         self.assertNotEqual(phase3.compare_stderr(case, legacy), phase3.compare_stderr(case, legacy.replace(b"reading body", b"awaiting headers")))
+         self.assertEqual(phase3.compare_stderr(by_name()["p3-text-empty"], legacy), legacy, "gate cases are not normalized")
+ 
+-    def test_bare_deadline_cause_is_limited_to_two_exact_text_messages(self):
++    def test_legacy_bare_deadline_contexts_remain_case_specific(self):
+         suffix = b" (Client.Timeout or context cancellation while reading body)"
+         for name, context in (("p3-deadline-preview-needs-one-more-byte", b"failed to read error response body"),
+                               ("p3-deadline-not-reset-per-chunk", b"failed to stream response body")):
+@@ -365,8 +365,81 @@
+                         bare + b"extra\n", bare.replace(context, b"wrong context"),
+                         bare[:-1] + b" (Client.Timeout exceeded while awaiting headers)\n"):
+                 self.assertNotEqual(phase3.compare_stderr(case, bad), canonical)
+-            for other in ("p3-deadline-body-stall-text", "p3-deadline-body-stall-json", "p3-text-empty"):
++            for other in ("p3-deadline-body-stall-json", "p3-text-empty", "p3-deadline-text-empty-array-lookahead"):
+                 self.assertEqual(phase3.compare_stderr(by_name()[other], bare), bare)
++            other_legacy = ("p3-deadline-not-reset-per-chunk" if context == b"failed to read error response body"
++                            else "p3-deadline-preview-needs-one-more-byte")
++            self.assertEqual(phase3.compare_stderr(by_name()[other_legacy], bare), bare)
++            # Deliberately reverse only the observed stream-phase negative.
++            if context == b"failed to read error response body":
++                self.assertEqual(phase3.compare_stderr(by_name()["p3-deadline-body-stall-text"], bare), bare)
++
++    def test_body_stall_text_bare_deadline_has_an_exact_error_boundary(self):
++        case = by_name()["p3-deadline-body-stall-text"]
++        bare = b"Error: failed to stream response body: context deadline exceeded\n"
++        suffixed = bare[:-1] + b" (Client.Timeout or context cancellation while reading body)\n"
++        canceled = suffixed.replace(b"context deadline exceeded", b"net/http: request canceled")
++        canonical = phase3.compare_stderr(case, suffixed)
++        digest = phase3.manifest_entry(case, fake_result(suffixed))["stderr_sha256"]
++        for value in (bare, suffixed, canceled):
++            with self.subTest(value=value):
++                self.assertEqual(phase3.compare_stderr(case, value), canonical)
++                self.assertEqual(phase3.manifest_entry(case, fake_result(value))["stderr_sha256"], digest)
++        for value in (bare.replace(b"context deadline exceeded", b"net/http: request canceled"),
++                      bare[:-1], bare[:-1] + b"\r\n", bare + b"extra\n", b"extra\n" + bare,
++                      bare.replace(b"failed to stream response body", b"failed to read response body"),
++                      bare.replace(b"failed to stream response body", b"failed to read error response body"),
++                      b'Error: request execution failed: Post "http://<FIXTURE>/api/v1/query": context deadline exceeded\n',
++                      bare[:-1] + b" (Client.Timeout exceeded while awaiting headers)\n",
++                      json.dumps({"error": bare.decode()}).encode()):
++            with self.subTest(value=value):
++                self.assertNotEqual(phase3.compare_stderr(case, value), canonical)
++        for other in ("p3-deadline-body-stall-json", "p3-text-empty",
++                      "p3-deadline-text-empty-array-lookahead", "p3-deadline-preview-needs-one-more-byte",
++                      "p3-deadline-header-stall-text", "p3-deadline-spans-redirects"):
++            self.assertEqual(phase3.compare_stderr(by_name()[other], bare), bare)
++        for context in (b"failed to read response body", b"failed to read error response body"):
++            wrong_phase = bare.replace(b"failed to stream response body", context)
++            self.assertEqual(phase3.compare_stderr(case, wrong_phase), wrong_phase)
++        for options in ({}, {"timeout_cause": False}):
++            disabled = copy.deepcopy(case)
++            disabled["compare"] = options
++            self.assertEqual(phase3.compare_stderr(disabled, bare), bare)
++
++    def test_body_stall_text_normalization_keeps_all_existing_gates(self):
++        case = by_name()["p3-deadline-body-stall-text"]
++        bare = b"Error: failed to stream response body: context deadline exceeded\n"
++        reference = fake_result(bare, phase3.as_bytes(case["expect"]["stdout_exact"]), {"exit": 1})
++        reference.update(wall_ms=60050, requests=[{
++            "method": "POST", "target": "/api/v1/query",
++            "body_b64": base64.b64encode(phase3.request_body("SELECT 1", phase3.START, phase3.END)).decode(),
++            "headers": {"content-type": "application/json"}}])
++        reference["trace"] = [{"method": "POST", "path": "/api/v1/query", "unexpected": False}]
++        self.assertEqual(phase3.expectation_issues(case, reference), [])
++        candidate = copy.deepcopy(reference)
++        candidate["stderr"] = candidate["stderr_normalized"] = bare[:-1] + b" (Client.Timeout or context cancellation while reading body)\n"
++        self.assertEqual(phase3.differences(case, reference, candidate), [])
++        self.assertEqual(phase3.differences(case, candidate, reference), [], "bare candidate also accepted")
++        for field, value in (("termination", {"exit": 0}), ("trace", []),
++                             ("trace", reference["trace"] * 2),
++                             ("trace", [{**reference["trace"][0], "unexpected": True}]),
++                             ("stdout_normalized", b""), ("stdout_normalized", b"altered"),
++                             ("wall_ms", 58000), ("wall_ms", 71000),
++                             ("stderr_normalized", bare.replace(b"stream", b"read"))):
++            wrong = copy.deepcopy(reference)
++            wrong[field] = value
++            with self.subTest(field=field, value=value):
++                self.assertTrue(phase3.expectation_issues(case, wrong))
++        for field in ("body_b64", "header", "config_after"):
++            wrong = copy.deepcopy(candidate)
++            if field == "body_b64":
++                wrong["requests"][0][field] = base64.b64encode(b'{}').decode()
++            elif field == "header":
++                wrong["requests"][0]["headers"]["content-type"] = "text/plain"
++            else:
++                wrong[field] = {"injected": {"type": "directory", "mode": "0o700"}}
++            with self.subTest(field=field):
++                self.assertTrue(phase3.differences(case, reference, wrong))
+ 
+     def test_redirect_bare_deadline_has_an_exact_case_and_error_boundary(self):
+         case = by_name()["p3-deadline-spans-redirects"]
+@@ -409,6 +482,57 @@
+             wrong[field] = value
+             self.assertTrue(phase3.expectation_issues(case, wrong), (field, value))
+ 
++    def test_empty_array_lookahead_bare_deadline_exact_boundary(self):
++        case = by_name()["p3-deadline-text-empty-array-lookahead"]
++        bare = b"Error: failed to read response body: context deadline exceeded\n"
++        suffixed = bare[:-1] + b" (Client.Timeout or context cancellation while reading body)\n"
++        canceled = suffixed.replace(b"context deadline exceeded", b"net/http: request canceled")
++        canonical = phase3.compare_stderr(case, suffixed)
++        for value in (bare, suffixed, canceled):
++            self.assertEqual(phase3.compare_stderr(case, value), canonical)
++        for bad in (bare.replace(b"read response", b"stream response"),
++                    bare.replace(b"context deadline exceeded", b"net/http: request canceled"),
++                    bare[:-1], bare[:-1] + b"\r\n", bare + b"extra\n",
++                    bare[:-1] + b" (Client.Timeout exceeded while awaiting headers)\n",
++                    json.dumps({"error": bare.decode()}).encode()):
++            self.assertNotEqual(phase3.compare_stderr(case, bad), canonical)
++        for name in ("p3-deadline-preview-needs-one-more-byte", "p3-deadline-not-reset-per-chunk",
++                     "p3-deadline-body-stall-text", "p3-deadline-body-stall-json",
++                     "p3-deadline-spans-redirects", "p3-text-empty"):
++            self.assertEqual(phase3.compare_stderr(by_name()[name], bare), bare)
++        for bad in (bare.replace(b"read response", b"stream response"),
++                    bare.replace(b"read response", b"read error response"), b"x\n" + bare,
++                    b'Error: request execution failed: Post "http://<FIXTURE>/api/v1/query": context deadline exceeded\n'):
++            self.assertEqual(phase3.compare_stderr(case, bad), bad)
++        disabled = copy.deepcopy(case)
++        disabled["compare"]["timeout_cause"] = False
++        self.assertEqual(phase3.compare_stderr(disabled, bare), bare)
++
++    def test_empty_array_lookahead_keeps_independent_and_differential_gates(self):
++        case = by_name()["p3-deadline-text-empty-array-lookahead"]
++        bare = b"Error: failed to read response body: context deadline exceeded\n"
++        ref = fake_result(bare, b"", {"exit": 1})
++        ref.update(wall_ms=60050, requests=[{"method": "POST", "target": "/api/v1/query",
++                                           "headers": {"x-test": "one"}, "body_b64": "eA=="}],
++                   trace=[{"method": "POST", "path": "/api/v1/query", "unexpected": False}])
++        self.assertEqual(phase3.expectation_issues(case, ref), [])
++        cand = copy.deepcopy(ref)
++        cand["stderr"] = cand["stderr_normalized"] = bare[:-1] + b" (Client.Timeout or context cancellation while reading body)\n"
++        self.assertEqual(phase3.differences(case, ref, cand), [])
++        for key, value in (("termination", {"exit": 0}), ("wall_ms", 1000), ("wall_ms", 71000),
++                           ("trace", []), ("trace", [{"method": "GET", "path": "/api/v1/query", "unexpected": False}]),
++                           ("trace", [{"method": "POST", "path": "/api/v1/query", "unexpected": True}]),
++                           ("stdout_normalized", b"x")):
++            wrong = copy.deepcopy(cand)
++            wrong[key] = value
++            self.assertTrue(phase3.expectation_issues(case, wrong), (key, value))
++        for mutate in (lambda r: r["requests"][0]["headers"].update({"x-test": "two"}),
++                       lambda r: r["requests"][0].update(body_b64="eQ=="),
++                       lambda r: r.update(config_after={"changed": {"type": "file", "raw_sha256": "different"}})):
++            wrong = copy.deepcopy(cand)
++            mutate(wrong)
++            self.assertTrue(phase3.differences(case, ref, wrong))
++
+     def test_paced_chunk_prefix_allowance_and_wall_bounds(self):
+         case = by_name()["p3-deadline-not-reset-per-chunk"]
+         stderr = b"Error: failed to stream response body: context deadline exceeded (Client.Timeout or context cancellation while reading body)\n"
+--- a/harness/test_phase4.py
++++ b/harness/test_phase4.py
+@@ -204,4 +204,200 @@
+                      'interactive-validation-from-instant','typed-null-status','step-auto-next','time-quirk-fraction'):
+             self.assertIn('p4-'+name,names)
+ 
++
++class HeaderDeadlineNormalizationTests(unittest.TestCase):
++    # Literal independent expected bytes, not read from the proposed normalizer.
++    prefix = b'Error: Get "http://<FIXTURE>/prometheus/api/v1/labels?stream=select-dataset": '
++    usage = (b'Usage:\n  pb promql labels [stream] [flags]\n\nExamples:\n'
++             b'  pb promql labels otel_metrics\n  pb promql labels --dataset otel_metrics\n\nFlags:\n'
++             b'  -d, --dataset string   Metrics dataset (default "select-dataset")\n'
++             b'  -f, --from string      Start time filter (optional)\n'
++             b'  -h, --help             help for labels\n'
++             b'  -o, --output string    Output format: text or json (default "text")\n'
++             b'  -t, --to string        End time filter (optional)\n\n')
++    suffix = b' (Client.Timeout exceeded while awaiting headers)'
++
++    def setUp(self):
++        self._case = next(c for c in phase4.corpus() if c['name'] == 'p4-deadline-header')
++
++    def case(self):
++        return copy.deepcopy(self._case)
++
++    def forms(self):
++        return [self.prefix + cause + b'\n' + self.usage for cause in
++                (b'context deadline exceeded', b'context deadline exceeded' + self.suffix,
++                 b'net/http: request canceled' + self.suffix)]
++
++    def canonical(self):
++        return self.prefix + b'<CLIENT-TIMEOUT>' + self.suffix + b'\n' + self.usage
++
++    def result(self, stderr):
++        request = dict(method='GET', target='/prometheus/api/v1/labels?stream=select-dataset',
++                       headers={'authorization': 'Basic aGFybmVzczpoYXJuZXNz', 'accept-encoding': 'gzip'},
++                       body_b64='', framing='none', listener='primary')
++        trace = dict(method='GET', path=request['target'], unexpected=False, body_b64='')
++        return dict(failure=None, actions=[], termination={'exit': 1}, stdout=b'', stdout_normalized=b'',
++                    stdout_sha256=phase4.run.digest(b''), stdout_normalized_sha256=phase4.run.digest(b''),
++                    stdout_bytes=0, stderr=stderr, stderr_normalized=stderr,
++                    requests=[request], trace=[trace], config_before={}, config_after={},
++                    wall_ms=120030, milestones=[], snapshots={}, first_stdout_ms=None,
++                    started_monotonic_ns=0, config_raw_after=None)
++
++    def test_three_observed_forms_and_exact_usage(self):
++        for data in self.forms():
++            self.assertEqual(phase4.p3.normalize_timeout(self.case(), data), self.canonical())
++            self.assertEqual(phase4.p3.compare_stderr(self.case(), data), self.canonical())
++            self.assertEqual(data.partition(b'\n')[2], self.canonical().partition(b'\n')[2])
++        for left in self.forms():
++            for right in self.forms():
++                a, b = self.result(left), self.result(right)
++                self.assertEqual(phase4.expectation_issues(self.case(), a), [])
++                self.assertEqual(phase4.p3.differences(self.case(), a, b), [])
++                self.assertEqual(phase4.signature(a, self.case())['stderr'],
++                                 phase4.signature(b, self.case())['stderr'])
++
++    def test_every_single_byte_change_is_unchanged(self):
++        # Covers error text, method, origin, path/query, every flag/example, and LF.
++        for data in self.forms():
++            for index in range(len(data)):
++                wrong = data[:index] + bytes([data[index] ^ 1]) + data[index + 1:]
++                self.assertEqual(phase4.p3.normalize_timeout(self.case(), wrong), wrong, index)
++                self.assertEqual(phase4.p3.compare_stderr(self.case(), wrong), wrong, index)
++
++    def test_unknown_cause_and_whole_stream_boundaries_are_unchanged(self):
++        for cause in (b'net/http: request canceled', b'context canceled', b'i/o timeout',
++                      b'unknown' + self.suffix, b'context deadline exceeded (Client.Timeout unknown)',
++                      b'context deadline exceeded (Client.Timeout or context cancellation while reading body)',
++                      b'context deadline exceeded (Client.Timeout exceeded while awaiting headers) extra'):
++            wrong = self.prefix + cause + b'\n' + self.usage
++            self.assertEqual(phase4.p3.normalize_timeout(self.case(), wrong), wrong)
++        for data in self.forms():
++            for wrong in (data[:-1], data.replace(b'\n', b'\r\n'), b'prefix\n' + data, data + b'\n',
++                          data + b'extra\n', data.partition(b'\n')[0] + b'\n',
++                          data.replace(b'Usage:', b'Usage: changed'),
++                          data.replace(b'[flags]', b'[options]'),
++                          data.replace(b'--output', b'--format'),
++                          json.dumps({'error': data.decode()}).encode(),
++                          data.replace(b'select-dataset', b'other'),
++                          data.replace(b'http://<FIXTURE>', b'http://localhost:1234'),
++                          data.replace(b'labels?', b'label/x/values?'),
++                          data.replace(b'Error: Get', b'Error: Post'),
++                          data.replace(b'Usage:\n', b'HTTP 500\nUsage:\n')):
++                self.assertEqual(phase4.p3.normalize_timeout(self.case(), wrong), wrong)
++
++    def test_wrong_case_bare_input_and_opt_out_are_unchanged(self):
++        bare = self.forms()[0]
++        for case in phase4.corpus() + phase4.p3.corpus():
++            if case['name'] != 'p4-deadline-header':
++                self.assertEqual(phase4.p3.normalize_timeout(case, bare), bare, case['name'])
++                if not case.get('compare', {}).get('stderr_unordered_lines'):
++                    self.assertEqual(phase4.p3.compare_stderr(case, bare), bare, case['name'])
++        for name in ('P4-DEADLINE-HEADER', 'p4-deadline-header-extra', 'p4-deadline-body', ''):
++            case = self.case(); case['name'] = name
++            self.assertEqual(phase4.p3.normalize_timeout(case, bare), bare)
++        # F5: synthetic opt-in wrong names ending in '-header' must retain the
++        # legacy body-suffix transform, rather than enter the exact P4 branch.
++        legacy = b'Error: failed to read response body: context deadline exceeded (Client.Timeout or context cancellation while reading body)\n'
++        expected = b'Error: failed to read response body: <CLIENT-TIMEOUT> (Client.Timeout or context cancellation while reading body)\n'
++        for name in ('p4-synthetic-header', 'p3-text-gzip-bad-header'):
++            case = self.case(); case['name'] = name
++            self.assertEqual(phase4.p3.normalize_timeout(case, legacy), expected)
++        for option in (False, None, 0):
++            case = self.case(); case['compare']['timeout_cause'] = option
++            for data in self.forms():
++                self.assertEqual(phase4.p3.normalize_timeout(case, data), data)
++        case = self.case(); del case['compare']['timeout_cause']
++        for data in self.forms():
++            self.assertEqual(phase4.p3.normalize_timeout(case, data), data)
++
++    def test_independent_exit_stdout_request_and_duration_gates(self):
++        good = self.result(self.forms()[0]); case = self.case()
++        self.assertEqual(phase4.expectation_issues(case, good), [])
++        # F2: an unrecognized cause cannot acquire the independent timeout needle.
++        self.assertIn("stderr lacks b'Client.Timeout'", phase4.expectation_issues(
++            case, self.result(self.prefix + b'EOF\n' + self.usage)))
++        changes = [({'termination': {'exit': 0}}, 'termination'),
++                   ({'termination': {'signal': 15}}, 'termination'),
++                   ({'stdout': b'x', 'stdout_normalized': b'x', 'stdout_bytes': 1,
++                     'stdout_normalized_sha256': phase4.run.digest(b'x')}, 'stdout'),
++                   ({'trace': [], 'requests': []}, 'requests'),
++                   ({'trace': [dict(method='POST', path=good['trace'][0]['path'], unexpected=False)]}, 'requests'),
++                   ({'trace': [dict(method='GET', path='/prometheus/api/v1/labels?stream=other', unexpected=False)]}, 'raw request targets'),
++                   ({'trace': [dict(method='GET', path=good['trace'][0]['path'], unexpected=True)]}, 'unexpected'),
++                   ({'trace': good['trace'] * 2, 'requests': good['requests'] * 2}, 'requests'),
++                   ({'wall_ms': 118999}, 'below'), ({'wall_ms': 130001}, 'exceeds')]
++        for change, needle in changes:
++            bad = copy.deepcopy(good); bad.update(change)
++            self.assertTrue(any(needle in i for i in phase4.expectation_issues(case, bad)), (change, needle))
++            # F6: equal wrong exit/output/request observations can satisfy the
++            # differential while the independent assertion above still fails.
++            identical = phase4.p3.differences(case, bad, copy.deepcopy(bad))
++            if 'wall_ms' in change:
++                # Candidate duration bounds also gate identical invalid times.
++                self.assertTrue(any(needle in issue for issue in identical))
++            else:
++                self.assertEqual(identical, [], change)
++        for wall in (119000, 130000):
++            valid = copy.deepcopy(good); valid['wall_ms'] = wall
++            self.assertEqual(phase4.expectation_issues(case, valid), [])
++
++    def test_differential_body_headers_status_output_and_config_gates(self):
++        case = self.case(); ref = self.result(self.forms()[0]); cand = self.result(self.forms()[1])
++        self.assertEqual(phase4.p3.differences(case, ref, cand), [])
++        # F1: identity in normalization must still produce stderr differential
++        # failures, in both directions, for every non-admitted stream below.
++        admitted = self.forms()[1]
++        wrong_streams = (admitted.replace(b'--output', b'--format'),
++                         self.prefix + b'i/o timeout' + self.suffix + b'\n' + self.usage,
++                         self.prefix + b'net/http: request canceled\n' + self.usage,
++                         self.forms()[0][:-1])
++        pairs = [(admitted, wrong) for wrong in wrong_streams]
++        # Tightening: the old substring rule collapsed this shared extra line.
++        pairs.append((self.forms()[2] + b'x\n', self.forms()[1] + b'x\n'))
++        for left, right in pairs:
++            for a, b in ((left, right), (right, left)):
++                self.assertTrue(any('stderr differs' in issue for issue in phase4.p3.differences(
++                    case, self.result(a), self.result(b))), (a, b))
++        for key, value, needle in [('termination', {'exit': 0}, 'termination'),
++                                   ('wall_ms', 118999, 'below'), ('wall_ms', 130001, 'exceeds'),
++                                   ('stdout_normalized', b'x', 'stdout')]:
++            bad = copy.deepcopy(cand); bad[key] = value
++            if key == 'stdout_normalized': bad['stdout_normalized_sha256'] = phase4.run.digest(value)
++            self.assertTrue(any(needle in i for i in phase4.p3.differences(case, ref, bad)))
++        for field, value in [('headers', {'authorization': 'different'}), ('body_b64', 'eA=='),
++                             ('target', '/different'), ('method', 'POST'), ('framing', 'chunked'),
++                             ('listener', 'secondary')]:
++            bad = copy.deepcopy(cand); bad['requests'][0][field] = value
++            self.assertTrue(any('requests differ' in i for i in phase4.p3.differences(case, ref, bad)))
++            if field in ('headers', 'body_b64'):
++                # No independent header/body pins for this case; equality alone is insufficient.
++                self.assertEqual(phase4.expectation_issues(case, bad), [])
++                self.assertEqual(phase4.p3.differences(case, bad, copy.deepcopy(bad)), [])
++        changed = {'x': {'type': 'file', 'mode': '0o600', 'raw_sha256': 'different'}}
++        for field in ('config_before', 'config_after'):
++            bad = copy.deepcopy(cand); bad[field] = changed
++            self.assertTrue(any(field.replace('_', ' ') in i for i in phase4.p3.differences(case, ref, bad)))
++            self.assertIn('configuration mutated', phase4.expectation_issues(case, bad))
++        bad = copy.deepcopy(cand); bad.update(config_before=changed, config_after=changed)
++        self.assertEqual(phase4.expectation_issues(case, bad), [])
++        self.assertTrue(any('config' in i for i in phase4.p3.differences(case, ref, bad)))
++
++    def test_deferred_stub_guard_remains_active(self):
++        case = self.case(); ref = self.result(self.forms()[0]); bad = copy.deepcopy(ref)
++        bad['stderr'] = bad['stderr_normalized'] = b'Error: labels is not implemented in this Rust phase\n'
++        self.assertTrue(any('deferred-operation stub' in i for i in phase4.p3.differences(case, ref, bad)))
++        for check in phase4.deferred_boundaries():
++            boundary = self.result(b'')
++            boundary.update(trace=[], requests=[])
++            if check['structured']:
++                boundary['stderr'] = json.dumps({'error': {'code': 'COMMAND_FAILED',
++                    'message': 'command is not implemented in this Rust phase', 'retryable': False}}).encode() + b'\n'
++            else:
++                boundary['stderr'] = b'Error: command is not implemented in this Rust phase\n'
++            self.assertEqual(phase4.p3.boundary_issues(check, boundary), [])
++            boundary['requests'] = [{'method': 'GET', 'target': '/unexpected'}]
++            boundary['trace'] = [{'method': 'GET', 'path': '/unexpected'}]
++            self.assertTrue(any('network' in i for i in phase4.p3.boundary_issues(check, boundary)))
++
++
+ if __name__=='__main__':unittest.main()

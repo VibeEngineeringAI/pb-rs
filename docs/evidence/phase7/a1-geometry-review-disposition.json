@@ -1,0 +1,14 @@
+{
+  "status": "accepted scoped source correction for a new actual preflight only",
+  "review": "docs/phase7-review-a1-geometry-fix-opus-r1.md",
+  "review_sha256": "1bbe24b81f3b3682462bdbfff674fb3a0e3af6034a1244bc960d1751f4c2116c",
+  "bench_sha256": "e03e1d2bfce45d7123b67a1870e8e3e38c7d5a6ae92c99881c513f4965846c01",
+  "source_claim": "SQL open-drawer geometry agrees with source and retained Go frames; 52 case identities unchanged",
+  "validation": "119 author pure tests passed; independent 12/13 focused tests passed, one intentional real-lock guard rejection outside patch;13 geometry and4 reporting mutants caught",
+  "notes": [
+    "tiny reporting-copy cost shifts descriptive scheduling subfields; no performance metric/gate changes",
+    "actual Rust resize/shrink and PromQL preflight remain pending",
+    "original failed A1 retained; no subset or performance acceptance"
+  ],
+  "next": "fresh scoped quiet-window24-role A1 retry"
+}

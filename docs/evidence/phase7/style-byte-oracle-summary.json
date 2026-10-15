@@ -1,0 +1,119 @@
+{
+  "kind": "bounded standalone functional byte differential; no crate/candidate/process build or timing campaign",
+  "source_pin": "07af390",
+  "toolchain": "go1.25.4 linux/amd64; rustc 1.96.0",
+  "scope": [
+    "src/tui/style.rs",
+    "docs/phase7-style.md",
+    "style-byte evidence files"
+  ],
+  "go_vs_rust": {
+    "inputs": 2808,
+    "results_per_input": 13,
+    "comparisons": 36504,
+    "mismatches": 0,
+    "result_columns": [
+      "id",
+      "width",
+      "truncate",
+      "wrap",
+      "ui-truncate or panic",
+      "render plain width",
+      "render colored layout",
+      "render inline",
+      "render underline",
+      "join horizontal top",
+      "join horizontal center",
+      "join vertical right",
+      "place center",
+      "place quarter/three-quarter"
+    ],
+    "persistent_parser_states": 14,
+    "c1_bytes_per_state": 32,
+    "limits": [
+      0,
+      1,
+      3,
+      8
+    ],
+    "parser_utf8_note": "UTF8 transitions immediately consume one grapheme and reset; no persistent UTF8 loop state in width/truncate/wrap. Malformed leads and clusters are separately probed."
+  },
+  "regressions": {
+    "standalone_style_tests": {
+      "passed": 22,
+      "failed": 0,
+      "process_env": "profile/dark detection stubbed in standalone wrapper; renderer oracle checks explicit Env"
+    },
+    "durable_byte_fixture_rows": 888,
+    "string_api_before_after": {
+      "valid_utf8_inputs": 428,
+      "comparisons_per_input": 35,
+      "comparisons": 14980,
+      "mismatches": 0
+    }
+  },
+  "before_source_sha256": "cbf86b9e51873cb90541f24e95d4378977c3cacbe155c5b9f3bb15ab266ed591",
+  "notices_sha256_unchanged_by_style_agent": "f5c3126974ce8b9174d62c3e22da16ae66fa67a7620cd50f0c46caff0d7fdfd4",
+  "module_source_sha256": {
+    "/home/ajs/go/pkg/mod/github.com/charmbracelet/x/ansi@v0.4.5/width.go": "4d1702f52516e6de7e8f040b5a09e1e4939fdb2dbcacee7ec01e15222b828eff",
+    "/home/ajs/go/pkg/mod/github.com/charmbracelet/x/ansi@v0.4.5/wrap.go": "c4eac8e46d96a6b95c25fcf1fdcf79fc1eef0d97f56e6270bc40faf54bb99c73",
+    "/home/ajs/go/pkg/mod/github.com/charmbracelet/x/ansi@v0.4.5/truncate.go": "31824d4400e63ebcc14724f7202c0618d7c8ea7aae016eb01b6b932135360cc7",
+    "/home/ajs/go/pkg/mod/github.com/charmbracelet/x/ansi@v0.4.5/parser/transition_table.go": "99ad73e2c609dcdf7a4573f705fd2ef36692419dcf07dcba1b206761a133a9f2",
+    "/home/ajs/go/pkg/mod/github.com/charmbracelet/lipgloss@v1.0.0/style.go": "63cd1034a389db27559f325215f8fb60163ff06a169098d817fdaf3ff9cc6f15",
+    "/home/ajs/go/pkg/mod/github.com/charmbracelet/lipgloss@v1.0.0/join.go": "53df54bb304c584eaa1dfd0b2eebb81cea5877c25ff453eb314d335e9dc3440a",
+    "/home/ajs/go/pkg/mod/github.com/charmbracelet/lipgloss@v1.0.0/position.go": "c98507b4848de4fbf9b960853c16622500af634cfa3626f6aefb43aa9c8d9bae",
+    "/home/ajs/go/pkg/mod/github.com/rivo/uniseg@v0.4.7/grapheme.go": "9b19b4dab5926971b5da48e77d33c66bb4f8ffc795b0c61fe52f06ebd08d90ac",
+    "/home/ajs/.cache/pb-phase7/sql-lower-oracle/tree/pkg/ui/chrome.go": "b4cc92ea29ee12d8c08d6d95233b0ba96b47360c32e3abc65250285f1647428a"
+  },
+  "evidence_sha256": {
+    "style-byte-before.rs.gz": "1ccc8da0d766541189df6b7da78de04ea0c3290255502652d7d21608413f5e83",
+    "style-byte-oracle-fixtures.tsv": "2621afe508edeebedaae0b98e309a2367fa093eaffdabd9c3090fb880e8a1158",
+    "style-byte-oracle-generate.py": "e5e9a1e5b235a1dd4160a82fae2db523ebf02253315299259fede988a413fa2f",
+    "style-byte-oracle-go.mod.txt": "f3c7e0da58a753ae2fa1b6409ab0904ce8482fe3ddb3af602f4c11602bab9664",
+    "style-byte-oracle-go.sum.txt": "11ab793ab35fe2796dd8d6bf24f14b678f9583d7de402b4a9c6dd793d10400a1",
+    "style-byte-oracle-main.go.txt": "532441e5984591787ae3400e5337cf744fbb0b53e281c3efdd92aa62b969a7bf",
+    "style-byte-oracle-main.rs.txt": "dd467622f5a229b5a46536498f443228e16102edaba73520f4738ac1b12e39ca",
+    "style-byte-oracle-results.jsonl.gz": "e6f4816825ff413382d42b34dae90af2acb0d6c8b952f9e5b108d14cfe546d61",
+    "style-byte-standalone.rs.txt": "da8c2e4e069561e83dde91dedbd33feb9fa6b57b51667993a30a3b90f77f1568",
+    "style-byte-valid-compare.rs.txt": "3fe930362b43dd5a4afb01ae0c5c2a290222961074cd5e3d37cf800c266adf33"
+  },
+  "remaining_unknowns": [
+    "Whole crate fmt/clippy/tests are parent owned and not claimed.",
+    "No actual emitted PTY/frame parity or process gate checked by this implementation agent.",
+    "String callers retain lossy L-STYLE-1 boundary; byte users must carry bytes to terminal.",
+    "Finite probes cover all persistent C1 states but not every arbitrary byte stream or bytewise kernel read split.",
+    "No performance, release, remote-account or cross-platform result claimed."
+  ],
+  "source_sha256_initial_freeze_before_parent_format": "fcd09e5aa040f81ab1f2397a77e414816efff8bf1487533144953c9a8480bd5c",
+  "source_sha256_initial_full_probe_before_inline_tests": "a67e0ce2380158d9c6a94995438f883f99d9fc51c4f586ddf8ddd2b0c355bf04",
+  "source_sha256_final_after_parent_format_and_clippy_fixes": "f4bf856201fde8fb1883707d59f3481ca143e1297609c5c92a706dc583d083e5",
+  "final_source_validation": {
+    "standalone_style_tests": {
+      "passed": 22,
+      "failed": 0
+    },
+    "byte_oracle": {
+      "inputs": 2808,
+      "exact_results": 36504,
+      "mismatches": 0,
+      "go_tsv_sha256": "f1d3878ba27a058dd34cab58453685b27a59beb9be7c8ec6d48189152262698c",
+      "rust_tsv_sha256": "f1d3878ba27a058dd34cab58453685b27a59beb9be7c8ec6d48189152262698c"
+    },
+    "valid_string_before_after": {
+      "inputs": 428,
+      "comparisons": 14980,
+      "mismatches": 0
+    },
+    "changes_since_initial_probe": [
+      "Parent applied rustfmt only, then central Clippy exposed serde_json parse inference ambiguity and unused string wrap.",
+      "Style owner made parse::<usize> explicit and called the existing wrap facade from string rendering after checked pre-wrap UTF8, preserving established post-wrap lossy semantics.",
+      "Style owner reran rustfmt and all bounded probes against final source."
+    ]
+  },
+  "notices_sha256_unchanged_by_style_agent_final": "f5c3126974ce8b9174d62c3e22da16ae66fa67a7620cd50f0c46caff0d7fdfd4",
+  "logs": {
+    "standalone_final": "/home/ajs/.cache/pb-phase7/style-byte-probe/tests-final.log",
+    "valid_comparison_final": "/home/ajs/.cache/pb-phase7/style-byte-probe/valid-final.log",
+    "full_rust_final": "/home/ajs/.cache/pb-phase7/style-byte-probe/rust-results-final.tsv"
+  }
+}

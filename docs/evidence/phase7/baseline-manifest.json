@@ -1,0 +1,30 @@
+{
+  "base_revision": "4a812d5b9bc4c40882ab10897a73c3ce1e715ce0",
+  "go_source_revision": "07af390ab09bda8ac9e427ffc6310077bace0125",
+  "prior_rust_source_revision": "4fcbd51fdaebed08164bfe7041e16c9c51cbb565",
+  "prior_rust_source_note": "No production source changes between accepted review fixes and merged main. Earlier pre-review binary retained separately, not a performance baseline.",
+  "binaries": {
+    "pb-go": {
+      "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "bytes": 71807160
+    },
+    "pb-go-cloud": {
+      "sha256": "622d4144b7e354c0ee4036244ba719cbbaf8357710804b1d733cd421a0dc227e",
+      "bytes": 71807160
+    },
+    "pb-rust-phase5": {
+      "sha256": "9bd38b9db4f4f8e76cd43384cb024dddd4d122c6bc109d29a8afa483ae0e2c6d",
+      "bytes": 7617800
+    },
+    "pb-rust-phase5-cloud": {
+      "sha256": "457619bb5cfd6603288cf6ab21a9f606ef2dbfb618bd65f97860d8849f03e9de",
+      "bytes": 7618256
+    },
+    "pb-rust-phase5-pre-review": {
+      "sha256": "ec9765a4dbd4ad48fd758965cba8aaba50a525d6c7eded89b8c84c4cfcc31b0f",
+      "bytes": 7617656
+    }
+  },
+  "quiet_lock": "/home/ajs/.cache/pb-rs-performance.lock",
+  "campaign_policy": "Explicit phase6 quiet agreement plus advisory lock; no timing yet."
+}

@@ -1,0 +1,29 @@
+   Compiling pb v0.1.0 (/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.44s
+     Running unittests src/lib.rs (target/debug/deps/pb-9403838716320e55)
+
+running 21 tests
+test tui::sql_service::tests::decoder_eof_cases_match_read_value ... ok
+test tui::sql_service::tests::body_uses_sorted_keys_and_html_escapes ... ok
+test tui::sql_service::tests::decoder_stops_at_first_complete_object_without_reading_tail ... ok
+test tui::sql_service::tests::decoder_reports_invalid_prefix_before_tail ... ok
+test tui::sql_service::tests::arrow_schema_duplicate_fields_reuse_struct_slots ... ok
+test tui::sql_service::tests::arrow_schema_requires_valid_document_and_nonempty_names ... ok
+test tui::sql_service::tests::duplicate_fields_keep_prior_strings_under_null ... ok
+test tui::sql_service::tests::duplicate_records_merge_into_existing_maps ... ok
+test tui::sql_service::tests::empty_and_null_window_arrays_discard_hidden_slots ... ok
+test tui::sql_service::tests::nested_duplicate_values_do_not_hide_numeric_overflow ... ok
+test tui::sql_service::tests::duplicate_window_keys_do_not_hide_the_first_go_error ... ok
+test tui::sql_service::tests::shorter_window_arrays_hide_slots_that_a_longer_one_reexposes ... ok
+test tui::sql_service::tests::type_errors_use_go_text ... ok
+test tui::sql_service::tests::nesting_beyond_go_limit_is_a_syntax_error ... ok
+test tui::sql_service::tests::schema_endpoint_escapes_raw_invalid_bytes_like_go ... ok
+test tui::sql_service::tests::values_print_like_fmt_v ... ok
+test tui::sql_service::tests::window_field_names_fold_like_go_simple_fold ... ok
+test tui::sql_service::tests::nested_numeric_errors_follow_wire_order_before_map_sorting ... ok
+test tui::sql_service::tests::valid_nested_duplicates_keep_last_values_and_sorted_display ... ok
+test tui::sql_service::tests::deeply_nested_overwritten_numeric_overflow_is_stack_safe ... ok
+test tui::sql_service::tests::deep_nesting_within_go_limit_is_stack_safe ... ok
+
+test result: ok. 21 passed; 0 failed; 0 ignored; 0 measured; 551 filtered out; finished in 0.02s
+

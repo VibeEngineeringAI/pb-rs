@@ -1,0 +1,31 @@
+window t1-merge: fields=["a" "b"] records=[map[a:1 b:2]] err=<nil>
+window merge-replace: fields=[] records=[map[a:[2] n:s]] err=<nil>
+window t2-null-string: fields=["a" "x"] records=[] err=<nil>
+window hidden: fields=["x" "b" "c" ""] records=[map[a:1 d:4] map[b:2 e:5] map[]] err=<nil>
+window reset-[]: fields=["" ""] records=[map[] map[]] err=<nil>
+window reset-null: fields=["" ""] records=[map[] map[]] err=<nil>
+window trailing-empty: fields=[] records=[] err=<nil>
+window null-record: fields=[] records=[map[b:2]] err=<nil>
+window err-fields: fields=["ok"] records=[] err=json: cannot unmarshal number into Go struct field QueryData.fields of type string
+window err-record: fields=[] records=[map[a:1]] err=json: cannot unmarshal string into Go struct field QueryData.records of type map[string]interface {}
+window err-overflow: fields=[] records=[] err=json: cannot unmarshal number 1e400 into Go struct field QueryData.records of type float64
+window fold-long-s: fields=["x"] records=[map[a:1]] err=<nil>
+window fold-ignored-fıelds: fields=[] records=[] err=<nil>
+window fold-ignored-fieldß: fields=[] records=[] err=<nil>
+window fold-ignored-fieldsſ: fields=[] records=[] err=<nil>
+schema t3-empty-struct: names=["a"] fallback=false err=<nil>
+schema hidden: names=["c" "b"] fallback=false err=<nil>
+schema reset-[]: names=[] fallback=true err=<nil>
+schema reset-null: names=[] fallback=true err=<nil>
+schema err-first: names=[] fallback=true err=json: cannot unmarshal number into Go struct field .fields.name of type string
+schema fold: names=["a"] fallback=false err=<nil>
+labels t4-null-string: status="success" data=["a"] err=<nil>
+labels hidden: status="" data=["x" "b" "c" ""] err=<nil>
+labels reset-[]: status="" data=["" ""] err=<nil>
+labels reset-null: status="" data=["" ""] err=<nil>
+labels trailing-empty: status="" data=[] err=<nil>
+labels err-first: status="" data=["ok"] err=json: cannot unmarshal number into Go struct field promqlLabelListResp.data of type string
+labels fold: status="success" data=[] err=<nil>
+result fold-status: {Status:error Data:{ResultType: Result:[]} Error:x ErrorType:bad_data} err=<nil>
+result fold-values: {Status: Data:{ResultType:vector Result:[{Metric:map[] Value:[] Values:[[1 2]]}]} Error: ErrorType:} err=<nil>
+fold kelvin: "v" err=<nil>

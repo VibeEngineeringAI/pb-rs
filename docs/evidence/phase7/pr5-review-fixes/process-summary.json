@@ -1,0 +1,113 @@
+{
+  "passed": true,
+  "results": [
+    {
+      "role": "reference",
+      "case": "sql_unicode_dataset",
+      "passed": true,
+      "binary": {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/bin/pb-go-pinned",
+        "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314"
+      }
+    },
+    {
+      "role": "reference",
+      "case": "sql_nested_overflow",
+      "passed": true,
+      "binary": {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/bin/pb-go-pinned",
+        "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314"
+      }
+    },
+    {
+      "role": "reference",
+      "case": "sql_first_error",
+      "passed": true,
+      "binary": {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/bin/pb-go-pinned",
+        "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314"
+      }
+    },
+    {
+      "role": "reference",
+      "case": "promql_scroll",
+      "passed": true,
+      "binary": {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/bin/pb-go-pinned",
+        "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314"
+      }
+    },
+    {
+      "role": "reference",
+      "case": "promql_unicode_dataset",
+      "passed": true,
+      "binary": {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/bin/pb-go-pinned",
+        "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314"
+      }
+    },
+    {
+      "role": "reference",
+      "case": "promql_unicode_metric",
+      "passed": true,
+      "binary": {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/bin/pb-go-pinned",
+        "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314"
+      }
+    },
+    {
+      "role": "candidate",
+      "case": "sql_unicode_dataset",
+      "passed": true,
+      "binary": {
+        "path": "/home/ajs/.local/share/pb-pr5-fixes/candidate/pb",
+        "sha256": "fbf1570bc2fbf0436adee185c125c03dfdb3d14c6ef0841a344425fb139e6d71"
+      }
+    },
+    {
+      "role": "candidate",
+      "case": "sql_nested_overflow",
+      "passed": true,
+      "binary": {
+        "path": "/home/ajs/.local/share/pb-pr5-fixes/candidate/pb",
+        "sha256": "fbf1570bc2fbf0436adee185c125c03dfdb3d14c6ef0841a344425fb139e6d71"
+      }
+    },
+    {
+      "role": "candidate",
+      "case": "sql_first_error",
+      "passed": true,
+      "binary": {
+        "path": "/home/ajs/.local/share/pb-pr5-fixes/candidate/pb",
+        "sha256": "fbf1570bc2fbf0436adee185c125c03dfdb3d14c6ef0841a344425fb139e6d71"
+      }
+    },
+    {
+      "role": "candidate",
+      "case": "promql_scroll",
+      "passed": true,
+      "binary": {
+        "path": "/home/ajs/.local/share/pb-pr5-fixes/candidate/pb",
+        "sha256": "fbf1570bc2fbf0436adee185c125c03dfdb3d14c6ef0841a344425fb139e6d71"
+      }
+    },
+    {
+      "role": "candidate",
+      "case": "promql_unicode_dataset",
+      "passed": true,
+      "binary": {
+        "path": "/home/ajs/.local/share/pb-pr5-fixes/candidate/pb",
+        "sha256": "fbf1570bc2fbf0436adee185c125c03dfdb3d14c6ef0841a344425fb139e6d71"
+      }
+    },
+    {
+      "role": "candidate",
+      "case": "promql_unicode_metric",
+      "passed": true,
+      "binary": {
+        "path": "/home/ajs/.local/share/pb-pr5-fixes/candidate/pb",
+        "sha256": "fbf1570bc2fbf0436adee185c125c03dfdb3d14c6ef0841a344425fb139e6d71"
+      }
+    }
+  ]
+}

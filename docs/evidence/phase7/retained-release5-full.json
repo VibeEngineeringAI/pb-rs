@@ -1,0 +1,302 @@
+{
+  "schema": 1,
+  "verified_utc": "2026-10-14T18:28:57.187030+00:00",
+  "candidate": "release5",
+  "status": "pass",
+  "ordinary_cases": 3268,
+  "historical_guards": 6,
+  "phases": [
+    {
+      "phase": 1,
+      "cases": 2018,
+      "passed": 2018,
+      "report_path": "/home/ajs/.cache/pb-phase7/retained-release5-phase1/report.json",
+      "report_sha256": "9beb4e6c82fa7e4b2ddff26d6c8efaa58981c0d33d4e585a29910e1b4efb5ed1",
+      "log_sha256": "d0e2cb7f159e903d4cfc0eea90e473b444a64b5412f1577de509dd24ab931483",
+      "full_timeout_tier": null,
+      "historical_guards_passed": 6
+    },
+    {
+      "phase": 2,
+      "cases": 219,
+      "passed": 219,
+      "report_path": "/home/ajs/.cache/pb-phase7/retained-release5-phase2/report.json",
+      "report_sha256": "a8ebb01c9e33dd6b350cc0a3652e5382378bddb988c17007485624977a7e3805",
+      "log_sha256": "79473e0253592a9125e02b0118cf8bca7c86274923aba40dc125c71a940a9b47",
+      "full_timeout_tier": null,
+      "historical_guards_passed": 0
+    },
+    {
+      "phase": 3,
+      "cases": 684,
+      "passed": 684,
+      "report_path": "/home/ajs/.cache/pb-phase7/retained-release5-phase3/report.json",
+      "report_sha256": "d1b4c7bbe5a6d12fc3728e0d5a4bd7b4f70d854a6860881d27f955aa9f3d8927",
+      "log_sha256": "9f892848f3f65c9a01822ad973da528906ca59e8b3ae0d76a17c4623bf205660",
+      "full_timeout_tier": "full60s",
+      "historical_guards_passed": 0
+    },
+    {
+      "phase": 4,
+      "cases": 161,
+      "passed": 161,
+      "report_path": "/home/ajs/.cache/pb-phase7/retained-release5-phase4/report.json",
+      "report_sha256": "498030de8869dab9531ee54238e696aeb39ef4819c1fa33d05c2b243837b0196",
+      "log_sha256": "96afa4187757a706fbc097daca544e33256c504136b6e60325d90c651f383d26",
+      "full_timeout_tier": "full120s",
+      "historical_guards_passed": 0
+    },
+    {
+      "phase": 5,
+      "cases": 186,
+      "passed": 186,
+      "report_path": "/home/ajs/.cache/pb-phase7/retained-release5-phase5/report.json",
+      "report_sha256": "7601e03ca5e23a6b165185b55cadf1c754bac86bc86866029f82c612efcb115d",
+      "log_sha256": "2f4741722321bd11f88641859f62093f60ec322602f6d4ab292370745b37e7e2",
+      "full_timeout_tier": "full60s",
+      "historical_guards_passed": 0
+    }
+  ],
+  "commands": [
+    {
+      "phase": 1,
+      "command": [
+        "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+        "harness/phase1.py",
+        "compare",
+        "--reference",
+        "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+        "--candidate",
+        "/home/ajs/.cache/pb-phase7/candidates/release5/pb-normal",
+        "--out",
+        "/home/ajs/.cache/pb-phase7/retained-release5-phase1"
+      ],
+      "exit": 0,
+      "elapsed_functional_seconds": 68.27880096435547
+    },
+    {
+      "phase": 2,
+      "command": [
+        "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+        "harness/phase2.py",
+        "compare",
+        "--reference",
+        "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+        "--candidate",
+        "/home/ajs/.cache/pb-phase7/candidates/release5/pb-normal",
+        "--out",
+        "/home/ajs/.cache/pb-phase7/retained-release5-phase2",
+        "--cloud-reference",
+        "/home/ajs/.cache/pb-phase7/baselines/pb-go-cloud",
+        "--cloud-candidate",
+        "/home/ajs/.cache/pb-phase7/candidates/release5/pb-cloud"
+      ],
+      "exit": 0,
+      "elapsed_functional_seconds": 27.186017990112305
+    },
+    {
+      "phase": 3,
+      "command": [
+        "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+        "harness/phase3.py",
+        "compare",
+        "--reference",
+        "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+        "--candidate",
+        "/home/ajs/.cache/pb-phase7/candidates/release5/pb-normal",
+        "--out",
+        "/home/ajs/.cache/pb-phase7/retained-release5-phase3",
+        "--cloud-reference",
+        "/home/ajs/.cache/pb-phase7/baselines/pb-go-cloud",
+        "--cloud-candidate",
+        "/home/ajs/.cache/pb-phase7/candidates/release5/pb-cloud",
+        "--include-full60s"
+      ],
+      "exit": 0,
+      "elapsed_functional_seconds": 1915.3581495285034
+    },
+    {
+      "phase": 4,
+      "command": [
+        "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+        "harness/phase4.py",
+        "compare",
+        "--reference",
+        "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+        "--candidate",
+        "/home/ajs/.cache/pb-phase7/candidates/release5/pb-normal",
+        "--out",
+        "/home/ajs/.cache/pb-phase7/retained-release5-phase4",
+        "--cloud-reference",
+        "/home/ajs/.cache/pb-phase7/baselines/pb-go-cloud",
+        "--cloud-candidate",
+        "/home/ajs/.cache/pb-phase7/candidates/release5/pb-cloud",
+        "--include-full120s"
+      ],
+      "exit": 0,
+      "elapsed_functional_seconds": 785.2747206687927
+    },
+    {
+      "phase": 5,
+      "command": [
+        "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+        "harness/phase5.py",
+        "compare",
+        "--reference",
+        "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+        "--candidate",
+        "/home/ajs/.cache/pb-phase7/candidates/release5/pb-normal",
+        "--out",
+        "/home/ajs/.cache/pb-phase7/retained-release5-phase5",
+        "--cloud-reference",
+        "/home/ajs/.cache/pb-phase7/baselines/pb-go-cloud",
+        "--cloud-candidate",
+        "/home/ajs/.cache/pb-phase7/candidates/release5/pb-cloud",
+        "--include-full60s"
+      ],
+      "exit": 0,
+      "elapsed_functional_seconds": 253.568030834198
+    }
+  ],
+  "identity": {
+    "artifacts": {
+      "/home/ajs/.cache/pb-phase7/candidates/release5/pb-normal": "9ad4f4fc9e732b4a790c0d2ea97dcc58f127ee7580d3df9bc26c8cee28edef21",
+      "/home/ajs/.cache/pb-phase7/candidates/release5/pb-cloud": "4923a466729bc9bd0760ee6baf504c7a3ca31abfce47a8ff452c7b507ef7e931",
+      "/home/ajs/.cache/pb-phase7/candidates/release5/pb-login": "60152f5c48190606afa87c56dcc39f85a674bab3ef0ac7529702d70bf4845e03",
+      "/home/ajs/.cache/pb-phase7/baselines/pb-go": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "/home/ajs/.cache/pb-phase7/baselines/pb-go-cloud": "622d4144b7e354c0ee4036244ba719cbbaf8357710804b1d733cd421a0dc227e"
+    },
+    "runner_hashes": {
+      "harness/phase1.py": "26ca8380b608a49404da1f8bc7233e577b2d48044d5194cdba20186b38ffaca5",
+      "harness/phase2.py": "66568cd9b0663011547763a258875f45949b21f5ed4c05fe9a695cebdc89cfbd",
+      "harness/phase3.py": "33be7605b2e3ea44712a8118b8909b129d00ef3f46c7f4d3932a522351e2b7bd",
+      "harness/phase4.py": "e5105ae22b0c599901d8622adf4e2942abb05a8c38bd220e8f685cae58782213",
+      "harness/phase5.py": "2bd03937195ea26b07faffa9281d109013d0b785fe33c63fa10905ce262d4c85",
+      "harness/run.py": "b280d1295a4b351e6f2d838c56acaac58b2247bb77fc9881587bb7bbe849a076",
+      "harness/cases.py": "b892e1b592111d8115ceddac61ca732942dd6b9b7ef900ce4a023cff8420ebfa",
+      "bin/pb-fixture": "fa8b4711ce6c901fc2b277318337268b45953e9868d4bc1b24407b274cc9ec5c",
+      "harness/phase2_workloads.py": "a27e414f94f14229a84a3a021aea61d3a2817752a0326ca2c35ec590cf88ff09",
+      "harness/phase3_workloads.py": "4753b1d95d7392ce86ce9eace44537f6efeff24f2278e2ecb3a2d0caac826b87",
+      "harness/phase4_workloads.py": "e65649c2d183de0ee783b387f65962f75546c2a28096ec126dfeaebee7a42f5f",
+      "harness/phase5_workloads.py": "dd0cd0f827cd4928a73c16efafc803898abf0fa8201fd737bd5e1f0a8e41386d",
+      "harness/contracts/phase1-surface.json": "07721e5e289ddafbeb5a94df43e238a7ad5c953dc4fcbd3fc0412cba8b2cfb7b",
+      "harness/contracts/phase3-reference.json": "b4ed9880c62ae9ece00250d783af55eda87b603c77f4c23f8653c264c0f1448e",
+      "harness/contracts/phase4-reference.json": "d8e4afddca0f23abe0590bc3793557e1ba391b9a97f3626765754af1b398f87e",
+      "harness/contracts/phase5-reference.json": "435a71357d6c1319bae78a56dee6bebffdaea670fe2c71b7e0d0a27298118352"
+    },
+    "verified_before_after_each_phase": true,
+    "candidate_build_manifest_sha256": "ce10ef451f4bd3bdb88f3dd7919737989d7066af677492d2a79eade94fda937a",
+    "results": [
+      {
+        "phase": 1,
+        "command": [
+          "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+          "harness/phase1.py",
+          "compare",
+          "--reference",
+          "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+          "--candidate",
+          "/home/ajs/.cache/pb-phase7/candidates/release5/pb-normal",
+          "--out",
+          "/home/ajs/.cache/pb-phase7/retained-release5-phase1"
+        ],
+        "exit": 0,
+        "elapsed_functional_seconds": 68.27880096435547
+      },
+      {
+        "phase": 2,
+        "command": [
+          "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+          "harness/phase2.py",
+          "compare",
+          "--reference",
+          "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+          "--candidate",
+          "/home/ajs/.cache/pb-phase7/candidates/release5/pb-normal",
+          "--out",
+          "/home/ajs/.cache/pb-phase7/retained-release5-phase2",
+          "--cloud-reference",
+          "/home/ajs/.cache/pb-phase7/baselines/pb-go-cloud",
+          "--cloud-candidate",
+          "/home/ajs/.cache/pb-phase7/candidates/release5/pb-cloud"
+        ],
+        "exit": 0,
+        "elapsed_functional_seconds": 27.186017990112305
+      },
+      {
+        "phase": 3,
+        "command": [
+          "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+          "harness/phase3.py",
+          "compare",
+          "--reference",
+          "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+          "--candidate",
+          "/home/ajs/.cache/pb-phase7/candidates/release5/pb-normal",
+          "--out",
+          "/home/ajs/.cache/pb-phase7/retained-release5-phase3",
+          "--cloud-reference",
+          "/home/ajs/.cache/pb-phase7/baselines/pb-go-cloud",
+          "--cloud-candidate",
+          "/home/ajs/.cache/pb-phase7/candidates/release5/pb-cloud",
+          "--include-full60s"
+        ],
+        "exit": 0,
+        "elapsed_functional_seconds": 1915.3581495285034
+      },
+      {
+        "phase": 4,
+        "command": [
+          "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+          "harness/phase4.py",
+          "compare",
+          "--reference",
+          "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+          "--candidate",
+          "/home/ajs/.cache/pb-phase7/candidates/release5/pb-normal",
+          "--out",
+          "/home/ajs/.cache/pb-phase7/retained-release5-phase4",
+          "--cloud-reference",
+          "/home/ajs/.cache/pb-phase7/baselines/pb-go-cloud",
+          "--cloud-candidate",
+          "/home/ajs/.cache/pb-phase7/candidates/release5/pb-cloud",
+          "--include-full120s"
+        ],
+        "exit": 0,
+        "elapsed_functional_seconds": 785.2747206687927
+      },
+      {
+        "phase": 5,
+        "command": [
+          "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+          "harness/phase5.py",
+          "compare",
+          "--reference",
+          "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+          "--candidate",
+          "/home/ajs/.cache/pb-phase7/candidates/release5/pb-normal",
+          "--out",
+          "/home/ajs/.cache/pb-phase7/retained-release5-phase5",
+          "--cloud-reference",
+          "/home/ajs/.cache/pb-phase7/baselines/pb-go-cloud",
+          "--cloud-candidate",
+          "/home/ajs/.cache/pb-phase7/candidates/release5/pb-cloud",
+          "--include-full60s"
+        ],
+        "exit": 0,
+        "elapsed_functional_seconds": 253.568030834198
+      }
+    ],
+    "driver_sha256": "6be9552d0c91c0cf069cb6bb411ded1cec493a5d6069e96cf2db20d55372eee0",
+    "compiled_source_map_verified": true
+  },
+  "identity_record_sha256": "84a1c603f75cd989fefe76a8db79ab11c3bc57141263e05c61345a95408dfa3b",
+  "limits": [
+    "Functional compatibility only; elapsed times are not performance measurements.",
+    "Phase7 interactive boundaries promoted to the separate PTY/effect corpus; Phase6 tail is still a deferred guard in this worktree.",
+    "31 phase5 fanout order variations follow the existing characterized order contract.",
+    "Reviewed exact-case deadline normalization is recorded in composed-deadlines-applied.json; original failed reports remain unchanged.",
+    "Combined Phase6/7 integration, live SQL/HTTP2, macOS, six-platform packaging, installer and rollback readiness are not established.",
+    "Phase7 measurement tooling R5 corrections, fresh review, functional preflight, timing and profiling remain pending."
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "status": "applied source; fresh review and root full suite active; no successor runtime preflight",
+  "freeze": {
+    "path": "/home/ajs/.cache/pb-phase7/a1-composition-step15-r2/final-source-freeze.json",
+    "sha256": "f4ba9886d8d06af76ffc492a85978848cae7678a4233ac85955a57594da00adc"
+  },
+  "owned_files": {
+    "docs/evidence/phase7/a1-pagenav-go.json.gz": "d4a025067889e7a2c4ffea4ae6067c971fab0275a7447842fb6abaab86c839df",
+    "docs/evidence/phase7/a1retry-fanout-observation-pairs.json.gz": "05c0ca626ad8f1adb00f4c583d222f23b03fcd1ca8cd9cdb978e1d96da69e2ce",
+    "docs/evidence/phase7/a1retry-promql-retained.json.gz": "12a14654697b1c7b10f328d998382eddf2fb0e67c662fbc62f37ff30ff267b6b",
+    "docs/phase7-measurement.md": "65fadf0c1623bf517369f97e385d36aafc30d84fd3e2a1e0cf8118e80160b901",
+    "harness/contracts/phase7.md": "075b1323abb497fbddc3607efdbd301147f58bab62a91096a685e996f899b36d",
+    "harness/phase7_bench.py": "b874ac0a591b3b04bba25946b4037145271c4ebc11a2e65de836291d9a020372",
+    "harness/test_phase7_bench.py": "d760ccba79bc2b25e38401f870a67dc3c0a0eabcb4e058bc5c53a2ee0d294d86"
+  },
+  "root_artifact_hash_checks": 68,
+  "author_checks": "12 scoped tests, six mutants killed; missing dispatch mutant errors explicitly retained",
+  "prospective_rebind": "52cases90argv;28composition metadata changes24unchanged;4additional sustainedaction changes; not actual preflight",
+  "opus_r2": "EDQUOT tooling failure; no review performed, no acceptance; no evidence root suite caused it",
+  "opus_r3_task": "node:delegated-task:command%3Amcp%3A78a62eba-9e95-4ed0-8754-e373aac96a0d%3Adelegate-task%3Aphase7-opus-a1-step15-successor-review-r3",
+  "launcher_preparation_task": "node:delegated-task:command%3Amcp%3A78a62eba-9e95-4ed0-8754-e373aac96a0d%3Adelegate-task%3Aphase7-sol-a1-retry03-launch-preparation",
+  "root_suite": "/home/ajs/.cache/pb-phase7/a1-step15-root-full-suite",
+  "created_utc": "2026-10-15T17:00:46.518287+00:00"
+}

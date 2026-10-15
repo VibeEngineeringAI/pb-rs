@@ -1,0 +1,328 @@
+{
+  "schema_version": 1,
+  "kind": "two-functional-login-blink-process-controls",
+  "role": "candidate",
+  "performance_claim": false,
+  "acceptance_claim": false,
+  "normalization": false,
+  "status": "completed",
+  "sessions": [
+    {
+      "dwell_ms": 200,
+      "case_sha256": "9d431fd5b8e476b907e49d30fd00d574cb86952e3d49b6af27d4b44c0ca9b034",
+      "session": {
+        "path": "/home/ajs/.cache/pb-phase7/release4-masked-candidate-controls/dwell-200/session.json",
+        "sha256": "64f4a943e215520a6f129bfa06c4c058c11fa9966c14cf2fc72169018d436f6d"
+      },
+      "reference_session": {
+        "path": "/home/ajs/.cache/pb-phase7/release4-masked-investigation/go-dwell-200/session.json",
+        "sha256": "33dfe7806f350ccb00c4a374e4f0e8d52a5ff6643f8a93d647b763d978b0dc66"
+      },
+      "reference_issues": [],
+      "actual_issues": [],
+      "comparison_issues": [
+        "styled cells/cursor/scrollback differ at password-after-old-timer"
+      ],
+      "checkpoint_differences": {
+        "masked-password": [],
+        "deployment": [],
+        "username": [],
+        "password-after-old-timer": [
+          {
+            "field": "cells",
+            "row_zero_based": 6,
+            "column_zero_based": 21,
+            "reference": [
+              " ",
+              "default",
+              "default",
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "actual": [
+              " ",
+              "9e9ef0",
+              "default",
+              false,
+              false,
+              false,
+              false,
+              true,
+              false,
+              false,
+              false,
+              false
+            ]
+          }
+        ],
+        "name": [],
+        "auth": [],
+        "url": [],
+        "password": []
+      },
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "action_effects_equal": true,
+      "ordered_requests_equal": true,
+      "config_before_equal": true,
+      "config_after_equal": true,
+      "final_frame_differences": [],
+      "Go_causal_deadlines": {
+        "kind": "causal functional deadlines; no performance claim",
+        "username_dispatch_ns": 1002994744830958,
+        "username_enter_dispatch_ns": 1002994954516782,
+        "password_dispatch_ns": 1002995198107100,
+        "masked_ready_ns": 1002995206773465,
+        "after_old_timer_ready_ns": 1002995461669802,
+        "late_after_password_ms": 263.562702,
+        "late_before_password_own_530ms_deadline": true
+      },
+      "actual_causal_deadlines": {
+        "kind": "causal functional deadlines; no performance claim",
+        "username_dispatch_ns": 1004088126822640,
+        "username_enter_dispatch_ns": 1004088332629439,
+        "password_dispatch_ns": 1004088551647217,
+        "masked_ready_ns": 1004088553021121,
+        "after_old_timer_ready_ns": 1004088812642864,
+        "late_after_password_ms": 260.995647,
+        "late_before_password_own_530ms_deadline": true
+      }
+    },
+    {
+      "dwell_ms": 650,
+      "case_sha256": "165f5a0bb1eea75a19a803701b5b49ccaa003a3975c1710c483bb347ac816d30",
+      "session": {
+        "path": "/home/ajs/.cache/pb-phase7/release4-masked-candidate-controls/dwell-650/session.json",
+        "sha256": "32972f67468bc459d620a678778934f937b50fa394683b5be36dffcecc358345"
+      },
+      "reference_session": {
+        "path": "/home/ajs/.cache/pb-phase7/release4-masked-investigation/go-dwell-650/session.json",
+        "sha256": "bc64e5309a8c38d9d60eb81cea1a38e7319d91aa1cf8c4df060e7e5fe49d436e"
+      },
+      "reference_issues": [],
+      "actual_issues": [],
+      "comparison_issues": [],
+      "checkpoint_differences": {
+        "masked-password": [],
+        "deployment": [],
+        "username": [],
+        "password-after-old-timer": [],
+        "name": [],
+        "auth": [],
+        "url": [],
+        "password": []
+      },
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "action_effects_equal": true,
+      "ordered_requests_equal": true,
+      "config_before_equal": true,
+      "config_after_equal": true,
+      "final_frame_differences": [],
+      "Go_causal_deadlines": {
+        "kind": "causal functional deadlines; no performance claim",
+        "username_dispatch_ns": 1002997403558949,
+        "username_enter_dispatch_ns": 1002998077304282,
+        "password_dispatch_ns": 1002998316588076,
+        "masked_ready_ns": 1002998320960230,
+        "after_old_timer_ready_ns": 1002998574719930,
+        "late_after_password_ms": 258.131854,
+        "late_before_password_own_530ms_deadline": true
+      },
+      "actual_causal_deadlines": {
+        "kind": "causal functional deadlines; no performance claim",
+        "username_dispatch_ns": 1004090794379613,
+        "username_enter_dispatch_ns": 1004091454135144,
+        "password_dispatch_ns": 1004091673080212,
+        "masked_ready_ns": 1004091673955786,
+        "after_old_timer_ready_ns": 1004091934135689,
+        "late_after_password_ms": 261.055477,
+        "late_before_password_own_530ms_deadline": true
+      }
+    }
+  ],
+  "candidate_provenance": {
+    "path": "/home/ajs/.cache/pb-phase7/candidates/release4/manifest.json",
+    "sha256": "316cc81d7067d315501d5628f8a871d35869e91a369703469337a1e05efd1a0a",
+    "source_snapshot_sha256": "71df47ccd92a445c2bb33667d729aafb61bf228d0806c1f1d6f6f2d68562862b"
+  },
+  "binary_before": {
+    "path": "/home/ajs/.cache/pb-phase7/candidates/release4/pb-normal",
+    "bytes": 9386464,
+    "sha256": "fd1f91b608bbf76832fab183f02d9c63e658f7bc12ca4aabf57a811559a871c1"
+  },
+  "sources_before": {
+    "harness/phase7.py": "26895f680be00ba1f65440a4e7097ee8d94027e15c64bd7fb317691700f7da0a",
+    "harness/test_phase7.py": "e25bd26ff4229e1487f2492647addf7f778e048f47bba3d19359adc10b535d37",
+    "harness/phase7_workloads.py": "54a9efb7767372c976b459c3e2dc59c590e0b9d6b47b4cc29e36ae81ff588d1c",
+    "harness/phase7_spawn.c": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4",
+    "docs/phase7-harness.md": "6c3c79dd0f159632d9983654a1c4f8e10ebc0032a67dd8a4ff7810f2c7d34882",
+    "harness/phase1.py": "26ca8380b608a49404da1f8bc7233e577b2d48044d5194cdba20186b38ffaca5",
+    "harness/phase2.py": "66568cd9b0663011547763a258875f45949b21f5ed4c05fe9a695cebdc89cfbd",
+    "harness/phase3.py": "39d16e2ba220aad27ec0e67646e04aacbcdd9a9c28d3013f3f04ddefec789099",
+    "src/tui/login.rs": "7898c967896f912a5fdeb353a9448c3e1fb1047d541470c4b6001ae01953c301",
+    "src/tui/editor.rs": "454da2706b49598ea73756900ce8fd566f9a3030f8966bdddc3fd8fab7244117",
+    "src/tui/style.rs": "f4bf856201fde8fb1883707d59f3481ca143e1297609c5c92a706dc583d083e5",
+    "docs/evidence/phase7/login-blink-process.py": "b168919c4127c4a1ad3c11ee99f6f3cda8c71c8246e2bcd664209f33e45fc1fb"
+  },
+  "original_Go_files": {
+    "evidence-checks.log": "65aa19dcdccfc1d81574e37e8522309d7a38f1e8c1f45b8f00b1888a96338438",
+    "evidence-checks.py": "28a15324025a2bdf5d5c40168d031ebb985f3401ed5ddb458f8d8045d61c2dcc",
+    "go-controls.json": "363505a73f211570e6aa590b6f566c734afd5b7ac4df7952140aa428a78fac77",
+    "go-controls.log": "7953330db674c593f9091dea1986bff96cf1baa53940c850364af0430ac55cf7",
+    "go-cross-field-controls.py": "f374e3d75266913e708c1ff46f86089f436f565ec496165cece5cc23f45c09ae",
+    "go-dwell-200/config-after.toml": "686489bde52eb501a49f60371876db0cd084f49f513f1745a073eae041653c92",
+    "go-dwell-200/session.json": "33dfe7806f350ccb00c4a374e4f0e8d52a5ff6643f8a93d647b763d978b0dc66",
+    "go-dwell-200/stderr.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "go-dwell-200/stdout.bin": "3cd715e633bad7616b83878355dfed8fec2473666c64012738ff729265a3756d",
+    "go-dwell-650/config-after.toml": "686489bde52eb501a49f60371876db0cd084f49f513f1745a073eae041653c92",
+    "go-dwell-650/session.json": "bc64e5309a8c38d9d60eb81cea1a38e7319d91aa1cf8c4df060e7e5fe49d436e",
+    "go-dwell-650/stderr.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "go-dwell-650/stdout.bin": "48f770487def47804374b873ffbb6416c5ab41cf36073839d10963718c73defc",
+    "observations.md": "de6c288da658cba429442ee345b8dea8e08a7804510d362eb896cefb99cf34e9",
+    "password-raw-timelines.json": "246bef841bcf831fe9d5a4d63e8a874b6c0edbb43e9188ce71807a03d188a0d5",
+    "report.json": "88e8f87dee78862c664dd190e7c8b7bf668c8c3652c2996c6ba4640bbeb358df",
+    "sealed.json": "73635841966e3ff78e25f87b07301686bf78a830f1f6c413f0ee433ddf907688"
+  },
+  "sealed_Go_evidence": {
+    "sealed": {
+      "path": "/home/ajs/.cache/pb-phase7/release4-masked-investigation/sealed.json",
+      "sha256": "73635841966e3ff78e25f87b07301686bf78a830f1f6c413f0ee433ddf907688"
+    },
+    "investigation": {
+      "path": "/home/ajs/.cache/pb-phase7/release4-masked-investigation/report.json",
+      "sha256": "88e8f87dee78862c664dd190e7c8b7bf668c8c3652c2996c6ba4640bbeb358df"
+    },
+    "controls": {
+      "path": "/home/ajs/.cache/pb-phase7/release4-masked-investigation/go-controls.json",
+      "sha256": "363505a73f211570e6aa590b6f566c734afd5b7ac4df7952140aa428a78fac77"
+    },
+    "source_pin": "07af390"
+  },
+  "helper_before": {
+    "source_sha256": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4",
+    "compiler": "/usr/bin/gcc",
+    "compiler_sha256": "8aac907d6fbf40394b424b5fa4a2ad1aa291dac7d3a0315c5b415c1f5ace1287",
+    "compiler_version": "gcc (GCC) 16.2.1 20260810\nCopyright (C) 2026 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+    "flags": [
+      "-std=c11",
+      "-O2",
+      "-Wall",
+      "-Wextra",
+      "-Werror"
+    ],
+    "build_key": "d0592f15c157a359d3b1d7adf9ab0efb1cf39a3765205fe8ccde855157ed2fab",
+    "path": "/home/ajs/.cache/pb-phase7/tmp/phase7-spawn-d0592f15c157a359d3b1d7adf9ab0efb1cf39a3765205fe8ccde855157ed2fab",
+    "sha256": "3b684c7b7632302725727fcc586a071c7818f43d704a8cbf4e1afc384e99f03e",
+    "protocol_version": 2,
+    "provenance_path": "/home/ajs/.cache/pb-phase7/tmp/phase7-spawn-d0592f15c157a359d3b1d7adf9ab0efb1cf39a3765205fe8ccde855157ed2fab.json",
+    "provenance_sha256": "69e1067e728b7ce4cd67a288ea797d346d00b5403ae5c34368756770f0730394",
+    "capability": {
+      "method": "actual own-child pidfd group delivery + WNOWAIT reservation",
+      "group_signal_flag": 4,
+      "signal": "SIGUSR1",
+      "received": [
+        "LEADER",
+        "MEMBER"
+      ],
+      "reserved_state": "Z",
+      "protocol_version": 2,
+      "status": 0,
+      "probe_executable_sha256": "3b684c7b7632302725727fcc586a071c7818f43d704a8cbf4e1afc384e99f03e"
+    }
+  },
+  "original_Go_evidence_unchanged": true,
+  "sources_after": {
+    "harness/phase7.py": "26895f680be00ba1f65440a4e7097ee8d94027e15c64bd7fb317691700f7da0a",
+    "harness/test_phase7.py": "e25bd26ff4229e1487f2492647addf7f778e048f47bba3d19359adc10b535d37",
+    "harness/phase7_workloads.py": "54a9efb7767372c976b459c3e2dc59c590e0b9d6b47b4cc29e36ae81ff588d1c",
+    "harness/phase7_spawn.c": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4",
+    "docs/phase7-harness.md": "6c3c79dd0f159632d9983654a1c4f8e10ebc0032a67dd8a4ff7810f2c7d34882",
+    "harness/phase1.py": "26ca8380b608a49404da1f8bc7233e577b2d48044d5194cdba20186b38ffaca5",
+    "harness/phase2.py": "66568cd9b0663011547763a258875f45949b21f5ed4c05fe9a695cebdc89cfbd",
+    "harness/phase3.py": "39d16e2ba220aad27ec0e67646e04aacbcdd9a9c28d3013f3f04ddefec789099",
+    "src/tui/login.rs": "7898c967896f912a5fdeb353a9448c3e1fb1047d541470c4b6001ae01953c301",
+    "src/tui/editor.rs": "454da2706b49598ea73756900ce8fd566f9a3030f8966bdddc3fd8fab7244117",
+    "src/tui/style.rs": "f4bf856201fde8fb1883707d59f3481ca143e1297609c5c92a706dc583d083e5",
+    "docs/evidence/phase7/login-blink-process.py": "b168919c4127c4a1ad3c11ee99f6f3cda8c71c8246e2bcd664209f33e45fc1fb"
+  },
+  "sources_unchanged": true,
+  "binary_after": {
+    "path": "/home/ajs/.cache/pb-phase7/candidates/release4/pb-normal",
+    "bytes": 9386464,
+    "sha256": "fd1f91b608bbf76832fab183f02d9c63e658f7bc12ca4aabf57a811559a871c1"
+  },
+  "helper_after": {
+    "source_sha256": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4",
+    "compiler": "/usr/bin/gcc",
+    "compiler_sha256": "8aac907d6fbf40394b424b5fa4a2ad1aa291dac7d3a0315c5b415c1f5ace1287",
+    "compiler_version": "gcc (GCC) 16.2.1 20260810\nCopyright (C) 2026 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+    "flags": [
+      "-std=c11",
+      "-O2",
+      "-Wall",
+      "-Wextra",
+      "-Werror"
+    ],
+    "build_key": "d0592f15c157a359d3b1d7adf9ab0efb1cf39a3765205fe8ccde855157ed2fab",
+    "path": "/home/ajs/.cache/pb-phase7/tmp/phase7-spawn-d0592f15c157a359d3b1d7adf9ab0efb1cf39a3765205fe8ccde855157ed2fab",
+    "sha256": "3b684c7b7632302725727fcc586a071c7818f43d704a8cbf4e1afc384e99f03e",
+    "protocol_version": 2,
+    "provenance_path": "/home/ajs/.cache/pb-phase7/tmp/phase7-spawn-d0592f15c157a359d3b1d7adf9ab0efb1cf39a3765205fe8ccde855157ed2fab.json",
+    "provenance_sha256": "69e1067e728b7ce4cd67a288ea797d346d00b5403ae5c34368756770f0730394",
+    "capability": {
+      "method": "actual own-child pidfd group delivery + WNOWAIT reservation",
+      "group_signal_flag": 4,
+      "signal": "SIGUSR1",
+      "received": [
+        "LEADER",
+        "MEMBER"
+      ],
+      "reserved_state": "Z",
+      "protocol_version": 2,
+      "status": 0,
+      "probe_executable_sha256": "3b684c7b7632302725727fcc586a071c7818f43d704a8cbf4e1afc384e99f03e"
+    }
+  },
+  "task": "evidence-only matching immutable release4 cursor-lifetime controls",
+  "source_frozen": true,
+  "source_contract_comparator_edits": false,
+  "new_candidate_sessions": 2,
+  "new_Go_sessions": 0,
+  "interpretation": {
+    "dwell_200": "Reproducible cursor-lifetime compatibility mismatch: only row6/col21 blank foreground+reverse differ at password-after-old-timer; all other frames/final/effects/lifecycle match.",
+    "dwell_650": "Full strict comparison clean after permitting departed username tick before field transition.",
+    "scope": "Functional causal deadlines only. No performance claim, normalization, correction or acceptance."
+  },
+  "actual_runner_exit": 1,
+  "exit_disposition": "expected strict differential mismatch; both candidate sessions independently valid",
+  "invocation": [
+    "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/login-blink-process.py",
+    "--binary",
+    "/home/ajs/.cache/pb-phase7/candidates/release4/pb-normal",
+    "--expect-sha256",
+    "fd1f91b608bbf76832fab183f02d9c63e658f7bc12ca4aabf57a811559a871c1",
+    "--out",
+    "/home/ajs/.cache/pb-phase7/release4-masked-candidate-controls",
+    "--role",
+    "candidate"
+  ],
+  "preserved_capture_report": {
+    "path": "/home/ajs/.cache/pb-phase7/release4-masked-candidate-controls/report.json",
+    "sha256": "bdbf36bee5e83038c6a34f99352f2dc3c4687b8a95f8d35ecbbde7723fe361f4"
+  },
+  "assertions": "Exact case/action/readiness equivalence, two valid sessions, causal before530ms, exact expected mismatch, all other full frames/effects/lifecycle clean, original tree and identities unchanged.",
+  "remaining": "Parent separately designs scoped production correction. No normalization proposed or applied."
+}

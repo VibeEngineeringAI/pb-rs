@@ -141,7 +141,8 @@ class CorpusTests(unittest.TestCase):
         self.assertIn("p3-text-empty-array-then-fault", cases)
 
     def test_boundaries_and_scope(self):
-        checks = phase3.deferred_boundaries()
+        self.assertEqual([], phase3.deferred_boundaries())
+        checks = phase3.historical_deferred_boundaries()
         argv = [" ".join(c["argv"]) for c in checks]
         self.assertTrue(any("-i" in a.split() for a in argv))
         self.assertTrue(any("--save-as" in a and "json" in a for a in argv))
@@ -316,7 +317,7 @@ class ComparisonTests(unittest.TestCase):
         self.assertTrue(any("stub" in i for i in phase3.differences(by_name()["p3-text-empty"], fake_result(), stub)))
 
     def test_boundary_check_rejects_go_like_behavior(self):
-        check = phase3.deferred_boundaries()[0]
+        check = phase3.historical_deferred_boundaries()[0]
         go_like = {**fake_result(stdout=b"rows\n"), "trace": [{"method": "POST"}], "requests": [{"method": "POST", "target": "/x"}]}
         issues = phase3.boundary_issues(check, go_like)
         self.assertTrue(any("network" in i for i in issues) and any("stdout" in i for i in issues))
@@ -481,7 +482,6 @@ class DeadlineTierTests(unittest.TestCase):
             wrong[field] = value
             self.assertTrue(phase3.expectation_issues(case, wrong), (field, value))
 
-
     def test_empty_array_lookahead_bare_deadline_exact_boundary(self):
         case = by_name()["p3-deadline-text-empty-array-lookahead"]
         bare = b"Error: failed to read response body: context deadline exceeded\n"
@@ -613,6 +613,154 @@ class GoOracleTests(unittest.TestCase):
             code = phase3.main(["check-reference", "--reference", str(GO), "--out", str(Path(folder) / "ref2"),
                                 "--manifest", str(manifest), "--meter", "none", "--case", names[0]])
             self.assertEqual(code, 2, "a different reference executable must be rejected by the frozen manifest")
+
+
+class HeaderStallTextDeadlineTests(unittest.TestCase):
+    prefix = b'Error: request execution failed: Post "http://<FIXTURE>/api/v1/query": '
+    suffix = b' (Client.Timeout exceeded while awaiting headers)'
+    canonical = prefix + b'<CLIENT-TIMEOUT>' + suffix + b'\n'
+
+    def forms(self):
+        return [self.prefix + cause + b'\n' for cause in (
+            b'context deadline exceeded', b'context deadline exceeded' + self.suffix,
+            b'net/http: request canceled' + self.suffix)]
+
+    def case(self):
+        return by_name()['p3-deadline-header-stall-text']
+
+    def result(self, stderr=None):
+        result = fake_result(self.forms()[0] if stderr is None else stderr, b'', {'exit': 1})
+        result.update(wall_ms=60050, requests=[{
+            'method': 'POST', 'target': '/api/v1/query',
+            'headers': {'content-type': 'application/json'},
+            'body_b64': base64.b64encode(phase3.request_body('SELECT 1', phase3.START, phase3.END)).decode(),
+            'framing': 'length', 'listener': 'primary'}],
+            trace=[{'method': 'POST', 'path': '/api/v1/query', 'unexpected': False}])
+        return result
+
+    def wrong_streams(self):
+        bare, suffixed, canceled = self.forms()
+        return [bare.replace(b'context deadline exceeded', b'net/http: request canceled'),
+                bare[:-1], bare[:-1] + b'\r\n', b'x\n' + bare, bare + b'x\n',
+                suffixed[:-1], suffixed[:-1] + b'\r\n', b'x\n' + suffixed, suffixed + b'x\n',
+                suffixed.replace(b'Post', b'Get'), suffixed.replace(b'<FIXTURE>', b'other'),
+                suffixed.replace(b'/api/v1/query', b'/v2/api/v1/query'),
+                suffixed.replace(b'/api/v1/query', b'/api/v1/query?x=1'),
+                suffixed.replace(b'http://', b'https://'),
+                suffixed.replace(b'context deadline exceeded', b'i/o timeout'),
+                suffixed.replace(self.suffix, b' (Client.Timeout or context cancellation while reading body)'),
+                bare.replace(b'context deadline exceeded', b'CONTEXT DEADLINE EXCEEDED'),
+                json.dumps({'error': bare.decode()}).encode(),
+                b'Error: failed to stream response body: context deadline exceeded\n',
+                b'Error: failed to read response body: context deadline exceeded\n',
+                b'Error: failed to read error response body: context deadline exceeded\n',
+                b'\r| fetching...' + suffixed, suffixed + b'Usage:\n',
+                suffixed.replace(b'Error: ', b'Error: HTTP 500: '),
+                canceled + b'x\n']
+
+    def test_three_exact_streams_and_manifest_digests(self):
+        case = self.case()
+        expected_digest = run.digest(self.canonical)
+        for value in self.forms():
+            self.assertEqual(phase3.normalize_timeout(case, value), self.canonical)
+            self.assertEqual(phase3.compare_stderr(case, value), self.canonical)
+            self.assertEqual(phase3.manifest_entry(case, self.result(value))['stderr_sha256'], expected_digest)
+            self.assertEqual(phase3.expectation_issues(case, self.result(value)), [])
+        for left in self.forms():
+            for right in self.forms():
+                self.assertEqual(phase3.differences(case, self.result(left), self.result(right)), [])
+
+    def test_whole_stream_negatives_and_directional_stderr_gates(self):
+        case = self.case()
+        for value in self.wrong_streams():
+            with self.subTest(value=value):
+                self.assertEqual(phase3.normalize_timeout(case, value), value)
+                self.assertTrue(phase3.expectation_issues(case, self.result(value)))
+                for left, right in ((self.forms()[1], value), (value, self.forms()[1])):
+                    self.assertTrue(any('stderr' in x for x in phase3.differences(
+                        case, self.result(left), self.result(right))))
+        # Sharing changed output on both sides must not collapse its two causes.
+        left, right = self.forms()[1] + b'x\n', self.forms()[2] + b'x\n'
+        for a, b in ((left, right), (right, left)):
+            self.assertTrue(any('stderr' in x for x in phase3.differences(case, self.result(a), self.result(b))))
+
+    def test_exact_case_scope_even_with_synthetic_timeout_opt_in(self):
+        for other in [*by_name().values(), {'name': 'invented-deadline-header-stall-text'}]:
+            if other['name'] == self.case()['name']:
+                continue
+            other = copy.deepcopy(other)
+            other['compare'] = {'timeout_cause': True}
+            self.assertEqual(phase3.normalize_timeout(other, self.forms()[0]), self.forms()[0])
+            # These foreign suffixed streams retain the legacy behavior, rather
+            # than taking this case's early return for unrecognized streams.
+            wrong = self.forms()[1].replace(b'Post', b'Get')
+            expected = (wrong if other['name'] == 'p4-deadline-header' else
+                        wrong.replace(b'context deadline exceeded', b'<CLIENT-TIMEOUT>'))
+            self.assertEqual(phase3.normalize_timeout(other, wrong), expected)
+
+    def test_timeout_opt_in_is_required_for_all_forms(self):
+        for options in ({}, {'timeout_cause': False}):
+            case = copy.deepcopy(self.case())
+            case['compare'] = options
+            for value in self.forms():
+                self.assertEqual(phase3.normalize_timeout(case, value), value)
+        case = copy.deepcopy(self.case())
+        del case['compare']
+        for value in self.forms():
+            self.assertEqual(phase3.normalize_timeout(case, value), value)
+
+    def test_independent_exit_stdout_request_and_inclusive_wall_gates(self):
+        case, good = self.case(), self.result()
+        self.assertEqual(phase3.expectation_issues(case, good), [])
+        for field, value in (('termination', {'exit': 0}), ('trace', []),
+                             ('trace', good['trace'] * 2),
+                             ('trace', [{**good['trace'][0], 'method': 'GET'}]),
+                             ('trace', [{**good['trace'][0], 'path': '/wrong'}]),
+                             ('trace', [{**good['trace'][0], 'unexpected': True}]),
+                             ('stdout_normalized', b'x'), ('wall_ms', 58999), ('wall_ms', 70001),
+                             ('failure', 'capture failed')):
+            bad = copy.deepcopy(good)
+            bad[field] = value
+            if field == 'stdout_normalized':
+                bad.update(stdout=value, stdout_bytes=len(value),
+                           stdout_sha256=run.digest(value), stdout_normalized_sha256=run.digest(value))
+            self.assertTrue(phase3.expectation_issues(case, bad), (field, value))
+            if field not in ('wall_ms', 'failure'):
+                self.assertEqual(phase3.differences(case, bad, copy.deepcopy(bad)), [])
+        for wall in (59000, 70000):
+            good['wall_ms'] = wall
+            self.assertEqual(phase3.expectation_issues(case, good), [])
+            self.assertEqual(phase3.differences(case, good, copy.deepcopy(good)), [])
+
+    def test_differential_requests_configuration_stdout_exit_and_wall_gates(self):
+        case, ref = self.case(), self.result(self.forms()[1])
+        for kind in ('body', 'header', 'framing', 'listener', 'extra-request', 'missing-request',
+                     'config_before', 'config_after', 'stdout', 'exit', 'early', 'late'):
+            bad = self.result()
+            if kind == 'body':
+                bad['requests'][0]['body_b64'] = 'eA=='
+            elif kind == 'header':
+                bad['requests'][0]['headers']['content-type'] = 'text/plain'
+            elif kind in ('framing', 'listener'):
+                bad['requests'][0][kind] = 'changed'
+            elif kind == 'extra-request':
+                bad['requests'] *= 2
+            elif kind == 'missing-request':
+                bad['requests'] = []
+            elif kind.startswith('config_'):
+                bad[kind] = {'changed': {'type': 'file', 'raw_sha256': 'different'}}
+            elif kind == 'stdout':
+                bad.update(stdout=b'x', stdout_normalized=b'x', stdout_bytes=1,
+                           stdout_sha256=run.digest(b'x'), stdout_normalized_sha256=run.digest(b'x'))
+            elif kind == 'exit':
+                bad['termination'] = {'exit': 0}
+            else:
+                bad['wall_ms'] = 58999 if kind == 'early' else 70001
+            self.assertTrue(phase3.differences(case, ref, bad), kind)
+            if kind in ('body', 'header', 'framing', 'listener', 'config_before', 'config_after'):
+                # Existing scope: these fields are differential, not independent pins.
+                self.assertEqual(phase3.expectation_issues(case, bad), [])
+                self.assertEqual(phase3.differences(case, bad, copy.deepcopy(bad)), [])
 
 
 if __name__ == "__main__":

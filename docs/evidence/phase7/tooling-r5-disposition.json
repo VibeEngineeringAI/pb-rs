@@ -1,0 +1,26 @@
+{
+  "review": "phase7-review-measurement-opus-r5.md",
+  "sha256": "f4ddadefe7a59169aa77501505bfbab3ec0cd764e6e6cdfbd4bc2038ecc5be51",
+  "execution": "source-only; Opus shell failed EDQUOT; no independently executed tests/hashes",
+  "functional_preflight": "fit at source after retained settles and exact input verification/preparation",
+  "first_aa": "fit at source after matching preflight, feasibility, fresh explicit quiet agreement",
+  "latency_triggers": "blocked by R5-M1; descriptive only until matched actualcampaign observer diagnostics",
+  "findings": {
+    "R5-M1": "Accepted concrete defect: preflight payload reused across campaign; per-evaluation readiness omitted. Bench-only correction assigned.",
+    "R5-L1": "Actual long-idle cost/fit unknown; pool specification and booking forbidden before feasibility at unchanged reserves. No adjustment from campaign data.",
+    "R5-L2": "Accepted offline audit gap: bind per-chunk quiet approval and unique campaign IDs; assigned.",
+    "R5-L3": "Accepted partial table first-target gap: bottom/footer completeness contract and negative test assigned."
+  },
+  "task_id": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-collector-opus-r5-fixes",
+  "unchanged": "production/helper/UI comparator remain frozen; earlier raw evidence intact",
+  "pending": "corrections, fresh review, functionalpreflight, actual controls/campaigns, profilerinterop",
+  "no_phase_or_release_acceptance": true,
+  "approved_correction_design": {
+    "capture": "Original campaign/preflight reports immutable and descriptive",
+    "campaign_decode": "Own bounded quiet approval; all actual retained measured session/phase payloads and recorded readiness evaluations; exact source/raw/helper/policy/end binding",
+    "interpret": "New derived artifact revalidates original campaign and diagnostic; no preflight-derived eligibility",
+    "statistics": "Repeated decoder runs collapse within each measured session; independent CLI sessions remain statistical unit",
+    "pool": "Require matching complete constituent session diagnostics or retain descriptive latency",
+    "unknowns": "Observer screen only; no subtraction or pure native latency claim; long-idle feasibility unknown before poolspec/admission"
+  }
+}

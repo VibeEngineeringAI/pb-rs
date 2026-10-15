@@ -1,0 +1,89 @@
+{
+  "scope": "retained bounded pilots/followups; no comparator waiver",
+  "observations": [
+    {
+      "folder": "go-pilot",
+      "record": "/home/ajs/.cache/pb-phase7/opus-r4-saved/go-pilot/paste_nul_a-1791991328299642179.json",
+      "GOMAXPROCS": null,
+      "returncode": 1,
+      "config_unchanged": true,
+      "terminal_restored": true,
+      "no_post": true,
+      "exact_panic_suffix": true,
+      "panic_prefix_present": true,
+      "original_passed": false,
+      "original_failure": "AssertionError('\\x1b]11;?\\x1b\\\\\\r\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\\r\\n\u2502                                                                                                                      \u2502\\r\\n\u2502  SAVED QUERIES                                                                                                       \u2502\\r\\n\u2502                                                                                                                      \u2502\\r\\n\u2502                                                                                                                      \u2502\\r\\n\u2502      a\\x00b                                                                                                              \u2502\\r\\n\u2502      SELECT event.code FROM logs_0                                                                                   \u2502\\r\\n\u2502                                                                                                                      \u2502\\r\\n\u2502                                                                                                                      \u2502\\r\\n\u2502                                                                                                                      \u2502\\r\\n\u2502                                                                                                                      \u2502\\r\\n\u2502                                                                                                                      \u2502\\r\\n\u2502                                                                                                                      \u2502\\r\\n\u2502                                                                                                                      \u2502\\r\\n\u2502                                                                                                                      \u2502\\r\\n\u2502                                                                                                                      \u2502\\r\\n\u2502                                                                                                                      \u2502\\r\\n\u2502                                                                                                                      \u2502\\r\\n\u2502                                                                                                                      \u2502\\r\\n\u2502                                                                                                                      \u2502\\r\\n\u2502                                                                                                                      \u2502\\r\\n\u2502                                                                                                                      \u2502\\r\\n\u2502                                                                                                                      \u2502\\r\\n\u2502                                                                                                                      \u2502\\r\\n\u2502                                                                                                                      \u2502\\r\\n\u2502                                                                                                                      \u2502\\r\\n\u2502                                                                                                                      \u2502\\r\\n\u2502                                                                                                                      \u2502\\r\\n\u2502                                                                                                                      \u2502\\r\\n\u2502                                                                                                                      \u2502\\r\\n\u2502                                                                                                                      \u2502\\r\\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\\r\\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\\r\\n\u2502 <a/enter> apply    <\u2191/\u2193> navigate    <\u2192/\u2190> pages    <b/ctrl-c> quit                                                  \u2502\\r\\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\u2502    Filter:                                                                                                           \u2502\\r\\n\u2502                                                                                                                      \u2502\\r\\n\u2502      a\\x00b                                                                                                              \u2502\\r\\n\u2502      SELECT event.code FROM logs_0                                                                                   \u2502\\r\\n\\r\\rCaught panic:\\r\\n\\r\\nruntime error: index out of range [1] with length 1\\r\\n\\r\\nRestoring terminal...\\r\\n\\r\\n')",
+      "stdout_sha256": "096e4307d172ab55bd47e8e4cfecea44cc730107858cb050df3e34b90fb576eb"
+    },
+    {
+      "folder": "go-pilot2",
+      "record": "/home/ajs/.cache/pb-phase7/opus-r4-saved/go-pilot2/paste_nul_a-1791991361606871637.json",
+      "GOMAXPROCS": null,
+      "returncode": 1,
+      "config_unchanged": true,
+      "terminal_restored": true,
+      "no_post": true,
+      "exact_panic_suffix": false,
+      "panic_prefix_present": false,
+      "original_passed": false,
+      "original_failure": "AssertionError('panic stdout PTY suffix differs')",
+      "stdout_sha256": "c46be6bcf9635df0cecb965f97b97c75a23034dd2a8a52761768dbd08c118751"
+    },
+    {
+      "folder": "go-stdout-followup",
+      "record": "/home/ajs/.cache/pb-phase7/opus-r4-saved/go-stdout-followup/paste_nul_ab-1791991555386532464.json",
+      "GOMAXPROCS": null,
+      "returncode": 1,
+      "config_unchanged": true,
+      "terminal_restored": true,
+      "no_post": true,
+      "exact_panic_suffix": false,
+      "panic_prefix_present": false,
+      "original_passed": false,
+      "original_failure": "AssertionError('panic stdout PTY suffix differs')",
+      "stdout_sha256": "b72f5983c4008bc923352ad4b390f368fa655d818e8e7ead8595a0817440c991"
+    },
+    {
+      "folder": "go-stdout-followup",
+      "record": "/home/ajs/.cache/pb-phase7/opus-r4-saved/go-stdout-followup/typed_A_nul-1791991556071046110.json",
+      "GOMAXPROCS": null,
+      "returncode": 1,
+      "config_unchanged": true,
+      "terminal_restored": true,
+      "no_post": true,
+      "exact_panic_suffix": false,
+      "panic_prefix_present": false,
+      "original_passed": false,
+      "original_failure": "AssertionError('panic stdout PTY suffix differs')",
+      "stdout_sha256": "c46be6bcf9635df0cecb965f97b97c75a23034dd2a8a52761768dbd08c118751"
+    },
+    {
+      "folder": "go-stdout-single-p",
+      "record": "/home/ajs/.cache/pb-phase7/opus-r4-saved/go-stdout-single-p/paste_nul_ab-1791991897516672436.json",
+      "GOMAXPROCS": "1",
+      "returncode": 1,
+      "config_unchanged": true,
+      "terminal_restored": true,
+      "no_post": true,
+      "exact_panic_suffix": false,
+      "panic_prefix_present": false,
+      "original_passed": false,
+      "original_failure": "AssertionError('panic stdout PTY suffix differs')",
+      "stdout_sha256": "4dd2f505640edf38ceac68e28cd9aea4e0c02d883fe2b491d22505fcae604825"
+    },
+    {
+      "folder": "go-stdout-single-p",
+      "record": "/home/ajs/.cache/pb-phase7/opus-r4-saved/go-stdout-single-p/typed_A_nul-1791991898211258901.json",
+      "GOMAXPROCS": "1",
+      "returncode": 1,
+      "config_unchanged": true,
+      "terminal_restored": true,
+      "no_post": true,
+      "exact_panic_suffix": false,
+      "panic_prefix_present": false,
+      "original_passed": false,
+      "original_failure": "AssertionError('panic stdout PTY suffix differs')",
+      "stdout_sha256": "d4b17a5be963352ddd98a270475b81d9580009d49eb6e5e918f22c985c66e79e"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "binary": "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+  "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+  "exit": 1,
+  "stdout": "",
+  "stderr": "Error reading Default Profile\nError creating request: self-hosted profile missing credentials\nError: could not open a new TTY: open /dev/tty: no such device or address\n",
+  "fixture_errors": [],
+  "writer_alive": false
+}

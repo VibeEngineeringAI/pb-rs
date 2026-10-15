@@ -1,0 +1,176 @@
+{
+  "kind": "three bounded actual-process Go/release2 comparisons; not whole-corpus acceptance",
+  "cases": {
+    "sidebar": {
+      "summary": {
+        "passed": true,
+        "report": "/home/ajs/.cache/pb-phase7/styled-release2-focused/sidebar-comparison-1791984245666286757.json",
+        "oracle_record": "/home/ajs/.cache/pb-phase7/styled-release2-focused/sidebar-go-1791984244300507939",
+        "candidate_record": "/home/ajs/.cache/pb-phase7/styled-release2-focused/sidebar-candidate-1791984245048771622"
+      },
+      "comparison": {
+        "case": "sidebar",
+        "oracle_record": "/home/ajs/.cache/pb-phase7/styled-release2-focused/sidebar-go-1791984244300507939",
+        "oracle_passed": true,
+        "normalization": "only digits in the exact ephemeral fixture URL, preserving styles/layout",
+        "chunk_limit": "sidebar C1 can split pyte draw calls; actual-read-only differences require scoped review",
+        "candidate_record": "/home/ajs/.cache/pb-phase7/styled-release2-focused/sidebar-candidate-1791984245048771622",
+        "candidate_passed": true,
+        "comparisons": [
+          {
+            "mode": "actual_reads",
+            "equal": true,
+            "cell_difference_count": 0,
+            "cell_differences": [],
+            "go_cursor": {
+              "x": 0,
+              "y": 34,
+              "visible": true,
+              "shape": 0
+            },
+            "candidate_cursor": {
+              "x": 0,
+              "y": 34,
+              "visible": true,
+              "shape": 0
+            }
+          },
+          {
+            "mode": "one_chunk",
+            "equal": true,
+            "cell_difference_count": 0,
+            "cell_differences": [],
+            "go_cursor": {
+              "x": 0,
+              "y": 34,
+              "visible": true,
+              "shape": 0
+            },
+            "candidate_cursor": {
+              "x": 0,
+              "y": 34,
+              "visible": true,
+              "shape": 0
+            }
+          }
+        ],
+        "passed": true
+      },
+      "comparison_sha256": "c72973d127c345df8ed7cb76f16b78423b365011a4bae86cab8e6dd3fe98d13c"
+    },
+    "builder": {
+      "summary": {
+        "passed": true,
+        "report": "/home/ajs/.cache/pb-phase7/styled-release2-focused/builder-comparison-1791984246928966777.json",
+        "oracle_record": "/home/ajs/.cache/pb-phase7/styled-release2-focused/builder-go-1791984245847258128",
+        "candidate_record": "/home/ajs/.cache/pb-phase7/styled-release2-focused/builder-candidate-1791984246391796933"
+      },
+      "comparison": {
+        "case": "builder",
+        "oracle_record": "/home/ajs/.cache/pb-phase7/styled-release2-focused/builder-go-1791984245847258128",
+        "oracle_passed": true,
+        "normalization": "only digits in the exact ephemeral fixture URL, preserving styles/layout",
+        "chunk_limit": "sidebar C1 can split pyte draw calls; actual-read-only differences require scoped review",
+        "candidate_record": "/home/ajs/.cache/pb-phase7/styled-release2-focused/builder-candidate-1791984246391796933",
+        "candidate_passed": true,
+        "comparisons": [
+          {
+            "mode": "actual_reads",
+            "equal": true,
+            "cell_difference_count": 0,
+            "cell_differences": [],
+            "go_cursor": {
+              "x": 0,
+              "y": 29,
+              "visible": false,
+              "shape": 0
+            },
+            "candidate_cursor": {
+              "x": 0,
+              "y": 29,
+              "visible": false,
+              "shape": 0
+            }
+          },
+          {
+            "mode": "one_chunk",
+            "equal": true,
+            "cell_difference_count": 0,
+            "cell_differences": [],
+            "go_cursor": {
+              "x": 0,
+              "y": 29,
+              "visible": false,
+              "shape": 0
+            },
+            "candidate_cursor": {
+              "x": 0,
+              "y": 29,
+              "visible": false,
+              "shape": 0
+            }
+          }
+        ],
+        "passed": true
+      },
+      "comparison_sha256": "8c3b4aded5cb602f5d14877f1ffd1b681f707a0e6aa112fd0b4b4c50e718e41a"
+    },
+    "saved": {
+      "summary": {
+        "passed": true,
+        "report": "/home/ajs/.cache/pb-phase7/styled-release2-focused/saved-comparison-1791984248182222019.json",
+        "oracle_record": "/home/ajs/.cache/pb-phase7/styled-release2-focused/saved-go-1791984247129921004",
+        "candidate_record": "/home/ajs/.cache/pb-phase7/styled-release2-focused/saved-candidate-1791984247671051604"
+      },
+      "comparison": {
+        "case": "saved",
+        "oracle_record": "/home/ajs/.cache/pb-phase7/styled-release2-focused/saved-go-1791984247129921004",
+        "oracle_passed": true,
+        "normalization": "only digits in the exact ephemeral fixture URL, preserving styles/layout",
+        "chunk_limit": "sidebar C1 can split pyte draw calls; actual-read-only differences require scoped review",
+        "candidate_record": "/home/ajs/.cache/pb-phase7/styled-release2-focused/saved-candidate-1791984247671051604",
+        "candidate_passed": true,
+        "comparisons": [
+          {
+            "mode": "actual_reads",
+            "equal": true,
+            "cell_difference_count": 0,
+            "cell_differences": [],
+            "go_cursor": {
+              "x": 0,
+              "y": 19,
+              "visible": false,
+              "shape": 0
+            },
+            "candidate_cursor": {
+              "x": 0,
+              "y": 19,
+              "visible": false,
+              "shape": 0
+            }
+          },
+          {
+            "mode": "one_chunk",
+            "equal": true,
+            "cell_difference_count": 0,
+            "cell_differences": [],
+            "go_cursor": {
+              "x": 0,
+              "y": 19,
+              "visible": false,
+              "shape": 0
+            },
+            "candidate_cursor": {
+              "x": 0,
+              "y": 19,
+              "visible": false,
+              "shape": 0
+            }
+          }
+        ],
+        "passed": true
+      },
+      "comparison_sha256": "56d7aa011e2a505d9239286c5e246fcbea761db278300b162f353caac5c6af02"
+    }
+  }
+}

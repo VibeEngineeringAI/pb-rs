@@ -1,0 +1,34 @@
+{
+  "kind": "composed retained compatibility coverage, not a full rerun after normalization",
+  "selected_cases": 3268,
+  "covered_pass": 3268,
+  "historical_guards_pass": 4,
+  "original_failed_report_preserved": true,
+  "composition": "3267 original passes plus one fresh Go A/A/combined-candidate header-stall pass after independently reviewed exact-case normalization",
+  "original_checkpoint": {
+    "path": "docs/evidence/phase7/combined-retained-original.json",
+    "sha256": "d509d0908165278501a8ce376311fecdd083114b530be315f92dbc5365a04d0f"
+  },
+  "successor_checks": {
+    "path": "/home/ajs/.cache/pb-phase7/combined-header-deadline-applied/central-checks.json",
+    "sha256": "f5d23dd15dced327d5b4fe56b23e763820150a620fcdb5a6dc8655a016296191",
+    "full_phase3_unit_tests": 43,
+    "passed": true
+  },
+  "fresh_header_report": {
+    "path": "/home/ajs/.cache/pb-phase7/combined-header-deadline-applied/fresh-case/report.json",
+    "sha256": "c339b022f9f05db75375d95904515eb949920645c9fce5cc4274216d9afe3661"
+  },
+  "supervision": {
+    "path": "/home/ajs/.cache/pb-phase7/combined-header-deadline-applied/fresh-case-supervision/report.json",
+    "sha256": "89c63e57489a82ef2b1f049169b87b79f39eb3df990f8eca73d7e6cda1f8188e",
+    "actual_exit": 0,
+    "cleanup_echild": true,
+    "elapsed_seconds": 185.4939722409472
+  },
+  "review": "docs/phase7-review-combined-header-deadline-opus-r1.md",
+  "applied_patch": "docs/evidence/phase7/combined-header-deadline-applied.json",
+  "build_manifest_sha256": "c1aabd24afc0ed82e9bcd1a5028bc52c5cc507113a826119fabd91d7b63fc56c",
+  "production_source_unchanged": true,
+  "performance_claim": false
+}

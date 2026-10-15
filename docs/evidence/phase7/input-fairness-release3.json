@@ -1,0 +1,162 @@
+{
+  "kind": "bounded functional fairness characterization, not timing or universal scheduling proof",
+  "original_review": "Opus R3 I-c / Sol R3 source fairness question",
+  "method": "Saved-query list, filter mode, held xclip subprocess, continuous one-byte Ctrl+G stream with >=16KiB accepted and 1.5s additional feed before clipboard release; raw observed clipboard text while writer continues attempting input. Both fresh processes exit0 and restore terminal/config. No source scheduler change.",
+  "results": {
+    "go": {
+      "role": "go",
+      "binary_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "kind": "bounded functional sustained ignored-input plus held clipboard; not performance",
+      "fixture_sha256": "a0dccd5b91416ec05268d61a9fe9080c50bc953f33781bf4cd8c384954093ae3",
+      "passed": true,
+      "bytes_before_clipboard_release": 19456,
+      "clipboard_visible_during_flood": true,
+      "helper_completed": true,
+      "feed": {
+        "writes": 9,
+        "bytes": 19456,
+        "blocked": 2627
+      },
+      "final_feed": {
+        "writes": 9,
+        "bytes": 19456,
+        "blocked": 2627
+      },
+      "exact_ctrl_g_stream": true,
+      "exit": 0,
+      "terminal_restored": true,
+      "config_unchanged": true,
+      "stdout_sha256": "8197834f626daafc8fde25aac0f1d9304b3938e3ba43aee5e1755b332f850fae",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status_before_cleanup": 0,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/filters",
+          "params": {},
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:36595",
+            "User-Agent": "Go-http-client/1.1",
+            "Content-Type": "application/json",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 1001024.44939442,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "[{\"filter_id\": \"id\", \"filter_name\": \"fixture saved\", \"stream_name\": \"logs\", \"query\": {\"filter_type\": \"sql\", \"filter_query\": \"SELECT 1\"}}]",
+          "response_bytes": 137,
+          "done": true
+        }
+      ],
+      "binary_unchanged": true
+    },
+    "release3": {
+      "role": "release3",
+      "binary_sha256": "aceb58bd412e8fbf34f603d247c68e87e69897356cefd5aad19ab6a92484db28",
+      "kind": "bounded functional sustained ignored-input plus held clipboard; not performance",
+      "fixture_sha256": "a0dccd5b91416ec05268d61a9fe9080c50bc953f33781bf4cd8c384954093ae3",
+      "passed": true,
+      "bytes_before_clipboard_release": 29184,
+      "clipboard_visible_during_flood": true,
+      "helper_completed": true,
+      "feed": {
+        "writes": 16,
+        "bytes": 29184,
+        "blocked": 2612
+      },
+      "final_feed": {
+        "writes": 16,
+        "bytes": 29184,
+        "blocked": 2612
+      },
+      "exact_ctrl_g_stream": true,
+      "exit": 0,
+      "terminal_restored": true,
+      "config_unchanged": true,
+      "stdout_sha256": "0f3eece34f038c309a42ce630d68777f8ad23ccd7a5601d0e6244263f4f0d6c3",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status_before_cleanup": 0,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/v1/filters",
+          "params": {},
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "content-type": "application/json",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:40371"
+          },
+          "received": 1001035.045236803,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "[{\"filter_id\": \"id\", \"filter_name\": \"fixture saved\", \"stream_name\": \"logs\", \"query\": {\"filter_type\": \"sql\", \"filter_query\": \"SELECT 1\"}}]",
+          "response_bytes": 137,
+          "done": true
+        }
+      ],
+      "binary_unchanged": true
+    }
+  },
+  "scope_limits": [
+    "One session per role; no statistical independence or speed claim.",
+    "Only saved-list clipboard path; profile/device and arbitrary scheduling remain unknown.",
+    "PTY kernel backpressure and native reader prevent proving input was synchronously ready on every executor poll.",
+    "Earlier F12 controls are inconclusive: first dropped partial-write suffixes; corrected second stream still split by read boundaries into filter text in both binaries. Those failed captures are retained, not accepted gates."
+  ],
+  "durable_runner": "docs/evidence/phase7/input-fairness-process.py",
+  "durable_runner_execution": "Parameterized from exact executed cache runner; AST checked only after parameterization. Raw actual process evidence came from fairness-probe3/run.py.",
+  "artifacts": {
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/input-fairness-process.py": "aebf2bbe3a648b6c0a4d6620e7e76664d505c1c9dd079baa8c25916a14df599f",
+    "/home/ajs/.cache/pb-phase7/fairness-probe/run.py": "6c66eac53da71a6b38107b9f05536a65bb573d4c8b055d6fc5f6c76c8d93298d",
+    "/home/ajs/.cache/pb-phase7/fairness-probe/run.log": "ad5a95496cffbf1f00f63e6b8c0256e7b7e63f80a8a84949a37765799f74a7db",
+    "/home/ajs/.cache/pb-phase7/fairness-probe/go/started": "03494afd4248c42f5fa1237bf2eeebe751ab8d9c977d55405fcb17469dbd91f8",
+    "/home/ajs/.cache/pb-phase7/fairness-probe/go/release": "a4d451ec23463726f72c43d64c710968f6b602cd653b4de8adee1b556240a829",
+    "/home/ajs/.cache/pb-phase7/fairness-probe/go/completed": "4ddb3e96801a1ee2b77dc5247c0db478d5f97a93b90e7cdb09f5f51d43764b08",
+    "/home/ajs/.cache/pb-phase7/fairness-probe/go/stdout.bin": "dbc21306a8e81ca8352052a9971294217a2641fe9623eb3a22823c2ccdb60ac1",
+    "/home/ajs/.cache/pb-phase7/fairness-probe/go/stderr.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/ajs/.cache/pb-phase7/fairness-probe/go/report.json": "428a6eff4273c14d7cf8b9264474fbc6cacf4cc5535f1c5c6379e185d243b448",
+    "/home/ajs/.cache/pb-phase7/fairness-probe/release3/started": "03494afd4248c42f5fa1237bf2eeebe751ab8d9c977d55405fcb17469dbd91f8",
+    "/home/ajs/.cache/pb-phase7/fairness-probe/release3/release": "a4d451ec23463726f72c43d64c710968f6b602cd653b4de8adee1b556240a829",
+    "/home/ajs/.cache/pb-phase7/fairness-probe/release3/completed": "4ddb3e96801a1ee2b77dc5247c0db478d5f97a93b90e7cdb09f5f51d43764b08",
+    "/home/ajs/.cache/pb-phase7/fairness-probe/release3/stdout.bin": "e3eb62e93b7170d4ed34360dc3c9b4a01d29dd565372fdc00e9cf5f5da254aaf",
+    "/home/ajs/.cache/pb-phase7/fairness-probe/release3/stderr.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/ajs/.cache/pb-phase7/fairness-probe/release3/report.json": "0fdd60cfe840f9063c7b6f64de23a80dd266593dea856cbb6b99d96e43a7c49d",
+    "/home/ajs/.cache/pb-phase7/fairness-probe/release3/helpers/xclip": "bd4aa1dc6515ae5d56f56d16d80beb99a47ead867606d0f3fb6ad8963ae01399",
+    "/home/ajs/.cache/pb-phase7/fairness-probe/go/helpers/xclip": "bd4aa1dc6515ae5d56f56d16d80beb99a47ead867606d0f3fb6ad8963ae01399",
+    "/home/ajs/.cache/pb-phase7/fairness-probe2/run.py": "b900c0ff6ada58c43064857efae9f9b411c21987e42d15da53f1c447f9cb470d",
+    "/home/ajs/.cache/pb-phase7/fairness-probe2/go/started": "03494afd4248c42f5fa1237bf2eeebe751ab8d9c977d55405fcb17469dbd91f8",
+    "/home/ajs/.cache/pb-phase7/fairness-probe2/go/release": "a4d451ec23463726f72c43d64c710968f6b602cd653b4de8adee1b556240a829",
+    "/home/ajs/.cache/pb-phase7/fairness-probe2/go/completed": "4ddb3e96801a1ee2b77dc5247c0db478d5f97a93b90e7cdb09f5f51d43764b08",
+    "/home/ajs/.cache/pb-phase7/fairness-probe2/go/stdout.bin": "4af8dd4890083ceb22e8673faef2f72ab18b48618443605e3834c4e73863f38a",
+    "/home/ajs/.cache/pb-phase7/fairness-probe2/go/stderr.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/ajs/.cache/pb-phase7/fairness-probe2/go/report.json": "8e01f991e36878004018fcc3d231512980f96f4203a5fa428f8943346ac0e9a3",
+    "/home/ajs/.cache/pb-phase7/fairness-probe2/release3/started": "03494afd4248c42f5fa1237bf2eeebe751ab8d9c977d55405fcb17469dbd91f8",
+    "/home/ajs/.cache/pb-phase7/fairness-probe2/release3/release": "a4d451ec23463726f72c43d64c710968f6b602cd653b4de8adee1b556240a829",
+    "/home/ajs/.cache/pb-phase7/fairness-probe2/release3/completed": "4ddb3e96801a1ee2b77dc5247c0db478d5f97a93b90e7cdb09f5f51d43764b08",
+    "/home/ajs/.cache/pb-phase7/fairness-probe2/release3/stdout.bin": "dba8acde857b1174384a714450b42eb9833c09fc18c405dd2c26fa79c5f13dd2",
+    "/home/ajs/.cache/pb-phase7/fairness-probe2/release3/stderr.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/ajs/.cache/pb-phase7/fairness-probe2/release3/report.json": "b95acc21ad5ce65b78502f9dd7408ee3ca0a8be8fd1ffddedbb602e7c9ab39a5",
+    "/home/ajs/.cache/pb-phase7/fairness-probe2/release3/helpers/xclip": "bd4aa1dc6515ae5d56f56d16d80beb99a47ead867606d0f3fb6ad8963ae01399",
+    "/home/ajs/.cache/pb-phase7/fairness-probe2/go/helpers/xclip": "bd4aa1dc6515ae5d56f56d16d80beb99a47ead867606d0f3fb6ad8963ae01399",
+    "/home/ajs/.cache/pb-phase7/fairness-probe3/run.py": "75154a051a0615a5b0a81a5e555784ad241e973a7f48f63268da9b48ada76b5c",
+    "/home/ajs/.cache/pb-phase7/fairness-probe3/go/started": "03494afd4248c42f5fa1237bf2eeebe751ab8d9c977d55405fcb17469dbd91f8",
+    "/home/ajs/.cache/pb-phase7/fairness-probe3/go/release": "a4d451ec23463726f72c43d64c710968f6b602cd653b4de8adee1b556240a829",
+    "/home/ajs/.cache/pb-phase7/fairness-probe3/go/completed": "4ddb3e96801a1ee2b77dc5247c0db478d5f97a93b90e7cdb09f5f51d43764b08",
+    "/home/ajs/.cache/pb-phase7/fairness-probe3/go/stdout.bin": "8197834f626daafc8fde25aac0f1d9304b3938e3ba43aee5e1755b332f850fae",
+    "/home/ajs/.cache/pb-phase7/fairness-probe3/go/stderr.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/ajs/.cache/pb-phase7/fairness-probe3/go/report.json": "9f1974e4921e5b71cbb3cad77551b74c0e228a88d3fb960106c122898c28f8af",
+    "/home/ajs/.cache/pb-phase7/fairness-probe3/release3/started": "03494afd4248c42f5fa1237bf2eeebe751ab8d9c977d55405fcb17469dbd91f8",
+    "/home/ajs/.cache/pb-phase7/fairness-probe3/release3/release": "a4d451ec23463726f72c43d64c710968f6b602cd653b4de8adee1b556240a829",
+    "/home/ajs/.cache/pb-phase7/fairness-probe3/release3/completed": "4ddb3e96801a1ee2b77dc5247c0db478d5f97a93b90e7cdb09f5f51d43764b08",
+    "/home/ajs/.cache/pb-phase7/fairness-probe3/release3/stdout.bin": "0f3eece34f038c309a42ce630d68777f8ad23ccd7a5601d0e6244263f4f0d6c3",
+    "/home/ajs/.cache/pb-phase7/fairness-probe3/release3/stderr.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/ajs/.cache/pb-phase7/fairness-probe3/release3/report.json": "7b209f74c024468155bf4fdce3dc151e5398a166b575c35a0cdecad8ca35b0e2",
+    "/home/ajs/.cache/pb-phase7/fairness-probe3/release3/helpers/xclip": "bd4aa1dc6515ae5d56f56d16d80beb99a47ead867606d0f3fb6ad8963ae01399",
+    "/home/ajs/.cache/pb-phase7/fairness-probe3/go/helpers/xclip": "bd4aa1dc6515ae5d56f56d16d80beb99a47ead867606d0f3fb6ad8963ae01399"
+  }
+}

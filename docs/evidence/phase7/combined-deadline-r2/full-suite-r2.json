@@ -1,0 +1,86 @@
+{
+  "kind": "coordinator actual full shared suite on off-tree combined variants; no promotion",
+  "inputs_before": {
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase3.py": "39d16e2ba220aad27ec0e67646e04aacbcdd9a9c28d3013f3f04ddefec789099",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase3.py": "0bea853fcedcf6dd2724d057d88813440454183a64f643c944321c624f414e95",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase1.py": "26ca8380b608a49404da1f8bc7233e577b2d48044d5194cdba20186b38ffaca5",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase2.py": "66568cd9b0663011547763a258875f45949b21f5ed4c05fe9a695cebdc89cfbd",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/run.py": "b280d1295a4b351e6f2d838c56acaac58b2247bb77fc9881587bb7bbe849a076",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/bin/pb-go": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/bin/pb-fixture": "fa8b4711ce6c901fc2b277318337268b45953e9868d4bc1b24407b274cc9ec5c",
+    "/home/ajs/.cache/pb-phase7/combined-body-lookahead-r2/manifest.json": "a832e212bb17ea2155d596ff1c7f36a7b018e317bf84c6ce1827e9c22d8e7eea",
+    "/home/ajs/.cache/pb-phase7/combined-body-lookahead-r2/run-full-r2.py": "600ca60b0795fd62b596831bbcdbc85db2d9521446b2ab7bfa7d0ae6318d8acd",
+    "/home/ajs/.cache/pb-phase7/combined-body-lookahead-r2/phase7/staged/harness/phase3.py": "3fc89e8997745c326b50e8c66ad21a5d44aaef44473ee918f607a834df6903b4",
+    "/home/ajs/.cache/pb-phase7/combined-body-lookahead-r2/phase7/staged/harness/test_phase3.py": "ef1a47dc263d18ed94fac7577a7e2597699973e74a4b42d3cbdc598cca9fab59",
+    "/home/ajs/.cache/pb-phase7/combined-body-lookahead-r2/phase6/staged/harness/phase3.py": "af783ab65a14512f0df07f81948e03dd082b103a78ed460554c5981b909d95f2",
+    "/home/ajs/.cache/pb-phase7/combined-body-lookahead-r2/phase6/staged/harness/test_phase3.py": "812e96091659d8f8e4fabdf4bdeae537d4f2dc153f41a2cb0faa59289bf2e434"
+  },
+  "runs": [
+    {
+      "label": "phase7-normal-r2",
+      "command": [
+        "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+        "-c",
+        "import sys, pathlib, unittest, phase3; expected=pathlib.Path(sys.argv[1]); print('IMPORTED_RUNNER',phase3.__file__,flush=True); print('OPTIMIZE',sys.flags.optimize,flush=True); exec(\"if pathlib.Path(phase3.__file__).resolve()!=expected/'phase3.py': raise RuntimeError('runner import drift')\"); import importlib.util; spec=importlib.util.spec_from_file_location('combined_test_phase3', expected/'test_phase3.py'); test_phase3=importlib.util.module_from_spec(spec); spec.loader.exec_module(test_phase3); print('IMPORTED_TEST',test_phase3.__file__,flush=True); result=unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromModule(test_phase3)); sys.exit(0 if result.wasSuccessful() and not result.skipped and result.testsRun==37 else 1)",
+        "/home/ajs/.cache/pb-phase7/combined-body-lookahead-r2/phase7/staged/harness"
+      ],
+      "exit": 0,
+      "log": "/home/ajs/.cache/pb-phase7/combined-body-lookahead-r2/phase7-normal-r2.log",
+      "sha256": "5eabdb11541f2b09e91be07a729c5b106079d9cccc4048693aa0b0a148fb9b64"
+    },
+    {
+      "label": "phase7-optimized-r2",
+      "command": [
+        "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+        "-O",
+        "-c",
+        "import sys, pathlib, unittest, phase3; expected=pathlib.Path(sys.argv[1]); print('IMPORTED_RUNNER',phase3.__file__,flush=True); print('OPTIMIZE',sys.flags.optimize,flush=True); exec(\"if pathlib.Path(phase3.__file__).resolve()!=expected/'phase3.py': raise RuntimeError('runner import drift')\"); import importlib.util; spec=importlib.util.spec_from_file_location('combined_test_phase3', expected/'test_phase3.py'); test_phase3=importlib.util.module_from_spec(spec); spec.loader.exec_module(test_phase3); print('IMPORTED_TEST',test_phase3.__file__,flush=True); result=unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromModule(test_phase3)); sys.exit(0 if result.wasSuccessful() and not result.skipped and result.testsRun==37 else 1)",
+        "/home/ajs/.cache/pb-phase7/combined-body-lookahead-r2/phase7/staged/harness"
+      ],
+      "exit": 0,
+      "log": "/home/ajs/.cache/pb-phase7/combined-body-lookahead-r2/phase7-optimized-r2.log",
+      "sha256": "e209a74a2d0d0b11805becde693ea65b6b2cf147102961ea79cb7d07a590662e"
+    },
+    {
+      "label": "phase6-normal-r2",
+      "command": [
+        "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+        "-c",
+        "import sys, pathlib, unittest, phase3; expected=pathlib.Path(sys.argv[1]); print('IMPORTED_RUNNER',phase3.__file__,flush=True); print('OPTIMIZE',sys.flags.optimize,flush=True); exec(\"if pathlib.Path(phase3.__file__).resolve()!=expected/'phase3.py': raise RuntimeError('runner import drift')\"); import importlib.util; spec=importlib.util.spec_from_file_location('combined_test_phase3', expected/'test_phase3.py'); test_phase3=importlib.util.module_from_spec(spec); spec.loader.exec_module(test_phase3); print('IMPORTED_TEST',test_phase3.__file__,flush=True); result=unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromModule(test_phase3)); sys.exit(0 if result.wasSuccessful() and not result.skipped and result.testsRun==37 else 1)",
+        "/home/ajs/.cache/pb-phase7/combined-body-lookahead-r2/phase6/staged/harness"
+      ],
+      "exit": 0,
+      "log": "/home/ajs/.cache/pb-phase7/combined-body-lookahead-r2/phase6-normal-r2.log",
+      "sha256": "de46704cc82d240327385641c70888a01c194895a22b396328c42d1142ac8241"
+    },
+    {
+      "label": "phase6-optimized-r2",
+      "command": [
+        "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+        "-O",
+        "-c",
+        "import sys, pathlib, unittest, phase3; expected=pathlib.Path(sys.argv[1]); print('IMPORTED_RUNNER',phase3.__file__,flush=True); print('OPTIMIZE',sys.flags.optimize,flush=True); exec(\"if pathlib.Path(phase3.__file__).resolve()!=expected/'phase3.py': raise RuntimeError('runner import drift')\"); import importlib.util; spec=importlib.util.spec_from_file_location('combined_test_phase3', expected/'test_phase3.py'); test_phase3=importlib.util.module_from_spec(spec); spec.loader.exec_module(test_phase3); print('IMPORTED_TEST',test_phase3.__file__,flush=True); result=unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromModule(test_phase3)); sys.exit(0 if result.wasSuccessful() and not result.skipped and result.testsRun==37 else 1)",
+        "/home/ajs/.cache/pb-phase7/combined-body-lookahead-r2/phase6/staged/harness"
+      ],
+      "exit": 0,
+      "log": "/home/ajs/.cache/pb-phase7/combined-body-lookahead-r2/phase6-optimized-r2.log",
+      "sha256": "fcca2ad5578091e4c3e674c5732bf364031d9d0fc8f4bdd712ff8da4739bc634"
+    }
+  ],
+  "inputs_after": {
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase3.py": "39d16e2ba220aad27ec0e67646e04aacbcdd9a9c28d3013f3f04ddefec789099",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase3.py": "0bea853fcedcf6dd2724d057d88813440454183a64f643c944321c624f414e95",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase1.py": "26ca8380b608a49404da1f8bc7233e577b2d48044d5194cdba20186b38ffaca5",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase2.py": "66568cd9b0663011547763a258875f45949b21f5ed4c05fe9a695cebdc89cfbd",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/run.py": "b280d1295a4b351e6f2d838c56acaac58b2247bb77fc9881587bb7bbe849a076",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/bin/pb-go": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/bin/pb-fixture": "fa8b4711ce6c901fc2b277318337268b45953e9868d4bc1b24407b274cc9ec5c",
+    "/home/ajs/.cache/pb-phase7/combined-body-lookahead-r2/manifest.json": "a832e212bb17ea2155d596ff1c7f36a7b018e317bf84c6ce1827e9c22d8e7eea",
+    "/home/ajs/.cache/pb-phase7/combined-body-lookahead-r2/run-full-r2.py": "600ca60b0795fd62b596831bbcdbc85db2d9521446b2ab7bfa7d0ae6318d8acd",
+    "/home/ajs/.cache/pb-phase7/combined-body-lookahead-r2/phase7/staged/harness/phase3.py": "3fc89e8997745c326b50e8c66ad21a5d44aaef44473ee918f607a834df6903b4",
+    "/home/ajs/.cache/pb-phase7/combined-body-lookahead-r2/phase7/staged/harness/test_phase3.py": "ef1a47dc263d18ed94fac7577a7e2597699973e74a4b42d3cbdc598cca9fab59",
+    "/home/ajs/.cache/pb-phase7/combined-body-lookahead-r2/phase6/staged/harness/phase3.py": "af783ab65a14512f0df07f81948e03dd082b103a78ed460554c5981b909d95f2",
+    "/home/ajs/.cache/pb-phase7/combined-body-lookahead-r2/phase6/staged/harness/test_phase3.py": "812e96091659d8f8e4fabdf4bdeae537d4f2dc153f41a2cb0faa59289bf2e434"
+  },
+  "unchanged": true
+}

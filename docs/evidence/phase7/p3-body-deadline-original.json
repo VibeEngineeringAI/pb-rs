@@ -1,0 +1,185 @@
+{
+  "kind": "unmodified retained failure and actual Go A/A timeout diagnostic race; proposal only",
+  "case": {
+    "name": "p3-deadline-body-stall-text",
+    "group": "phase3-deadline",
+    "tier": "full60s",
+    "argv": [
+      "sql",
+      "run",
+      "SELECT 1",
+      "--from",
+      "2024-01-01T00:00:00Z",
+      "--to",
+      "2024-01-01T00:01:00Z"
+    ],
+    "config": {
+      "auth": "basic"
+    },
+    "location": "xdg",
+    "fixture": {
+      "headers": {
+        "authorization": "Basic aGFybmVzczpoYXJuZXNz"
+      },
+      "routes": [
+        {
+          "method": "POST",
+          "path": "/api/v1/query",
+          "framing": "chunked",
+          "script": [
+            {
+              "send": 34
+            },
+            {
+              "stall": true
+            }
+          ],
+          "body": "[{\"sequence\":0,\"message\":\"first\"},{\"sequence\":1,\"message\":\"second\"}]"
+        }
+      ]
+    },
+    "build": "standard",
+    "requires": [],
+    "expect": {
+      "termination": {
+        "exit": 1
+      },
+      "requests": [
+        "POST /api/v1/query"
+      ],
+      "stdout_exact": "[{\"sequence\":0,\"message\":\"first\"},",
+      "stderr_exact": "Error: failed to stream response body: <CLIENT-TIMEOUT> (Client.Timeout or context cancellation while reading body)\n",
+      "min_wall_ms": 59000,
+      "max_wall_ms": 70000
+    },
+    "env": {},
+    "unset": [],
+    "timeout": 80.0,
+    "compare": {
+      "timeout_cause": true
+    }
+  },
+  "original_counts": {
+    "pass": 683,
+    "fail": 1
+  },
+  "original_report_path": "/home/ajs/.cache/pb-phase7/retained-release4-phase3/report.json",
+  "original_report_sha256": "a44393207ae776a838daace9e76462a5f9d8a8505843f73e5c52ab1795187934",
+  "captures": [
+    {
+      "role": "reference",
+      "termination": {
+        "exit": 1
+      },
+      "wall_ms": 60040.947993,
+      "stderr": "Error: failed to stream response body: context deadline exceeded\n",
+      "stdout_hex": "5b7b2273657175656e6365223a302c226d657373616765223a226669727374227d2c",
+      "requests": [
+        {
+          "method": "POST",
+          "target": "/api/v1/query",
+          "headers": {
+            "accept-encoding": "gzip",
+            "authorization": "Basic aGFybmVzczpoYXJuZXNz",
+            "content-length": "98",
+            "content-type": "application/json"
+          },
+          "body_b64": "eyJxdWVyeSI6IlNFTEVDVCAxIExJTUlUIDUwMCIsInN0YXJ0VGltZSI6IjIwMjQtMDEtMDFUMDA6MDA6MDBaIiwiZW5kVGltZSI6IjIwMjQtMDEtMDFUMDA6MDE6MDBaIn0=",
+          "framing": "length",
+          "listener": "primary"
+        }
+      ],
+      "config_unchanged": true,
+      "original_expectation_issues": [
+        "stderr b'Error: failed to stream response body: context deadline exceeded\\n', expected b'Error: failed to stream response body: <CLIENT-TIMEOUT> (Client.Timeout or context cancellation while reading body)\\n'"
+      ]
+    },
+    {
+      "role": "reference-repeat-1",
+      "termination": {
+        "exit": 1
+      },
+      "wall_ms": 60090.449583,
+      "stderr": "Error: failed to stream response body: net/http: request canceled (Client.Timeout or context cancellation while reading body)\n",
+      "stdout_hex": "5b7b2273657175656e6365223a302c226d657373616765223a226669727374227d2c",
+      "requests": [
+        {
+          "method": "POST",
+          "target": "/api/v1/query",
+          "headers": {
+            "accept-encoding": "gzip",
+            "authorization": "Basic aGFybmVzczpoYXJuZXNz",
+            "content-length": "98",
+            "content-type": "application/json"
+          },
+          "body_b64": "eyJxdWVyeSI6IlNFTEVDVCAxIExJTUlUIDUwMCIsInN0YXJ0VGltZSI6IjIwMjQtMDEtMDFUMDA6MDA6MDBaIiwiZW5kVGltZSI6IjIwMjQtMDEtMDFUMDA6MDE6MDBaIn0=",
+          "framing": "length",
+          "listener": "primary"
+        }
+      ],
+      "config_unchanged": true,
+      "original_expectation_issues": []
+    },
+    {
+      "role": "candidate",
+      "termination": {
+        "exit": 1
+      },
+      "wall_ms": 60004.588833,
+      "stderr": "Error: failed to stream response body: context deadline exceeded (Client.Timeout or context cancellation while reading body)\n",
+      "stdout_hex": "5b7b2273657175656e6365223a302c226d657373616765223a226669727374227d2c",
+      "requests": [
+        {
+          "method": "POST",
+          "target": "/api/v1/query",
+          "headers": {
+            "accept-encoding": "gzip",
+            "authorization": "Basic aGFybmVzczpoYXJuZXNz",
+            "content-length": "98",
+            "content-type": "application/json"
+          },
+          "body_b64": "eyJxdWVyeSI6IlNFTEVDVCAxIExJTUlUIDUwMCIsInN0YXJ0VGltZSI6IjIwMjQtMDEtMDFUMDA6MDA6MDBaIiwiZW5kVGltZSI6IjIwMjQtMDEtMDFUMDA6MDE6MDBaIn0=",
+          "framing": "length",
+          "listener": "primary"
+        }
+      ],
+      "config_unchanged": true,
+      "original_expectation_issues": []
+    }
+  ],
+  "artifact_hashes": {
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/stdout.bin": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/meter.json": "62bc31a333f31102b60999c4b037601a456b154700ca9d53f93fe177d913cccd",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/stderr.bin": "4ac82e6f88228c4289456931f97f03e61a05b5e0ed0f3c7008bd8fdfbfca10a9",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/stderr.normalized": "4ac82e6f88228c4289456931f97f03e61a05b5e0ed0f3c7008bd8fdfbfca10a9",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/stdout.normalized": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/trace.json": "14c4d874a914103058e7f8ebdf79eefdd7fe77e28c4d01589bda12e026e2f8f7",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/milestones.json": "78a04c899de70baf58ea986e3a0cf694dd5a669797bd1df4a7423ce257e7cdbf",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/config-after.toml": "71659d2c6ff5e9422cb47205e390b8bf4174b76b2b17316387bb3d633257c331",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/result.json": "399b1219a7ab136b916b76865433f634709a365fb752599424f899d8a56ec334",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/stdout.bin": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/meter.json": "ca1eb45c0251cbd649f6440f4fb9773ccdac2ef196e757a0c9366d9448a35876",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/stderr.bin": "9eb8dc6b5680771ed6a37561ace00247ec768ed6f8af757252ef7a9113cff71b",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/stderr.normalized": "9eb8dc6b5680771ed6a37561ace00247ec768ed6f8af757252ef7a9113cff71b",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/stdout.normalized": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/trace.json": "36d9fe249f72b2b432fb6f9a08c5f46dcfed00e04a2e609d6147daa1995802f5",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/milestones.json": "fd3e45610551658d2063b2d79ba3ef2ff18e410d534dd0a6ca8f45e98e42c51e",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/config-after.toml": "00fa7ffd31000dc29da6932a9bbb10d4aa235c901676325aafd9e99fb9b51ec8",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/result.json": "3ee86a45fc09ed7e9dc69c4b13efce2139962bd179c84f8f3cac80268f95f72a",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/stdout.bin": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/meter.json": "ecf4f607daa7fa8464e3b17f53c23f7ce481f1e1be190a84ab0709cb4450042f",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/stderr.bin": "21994d8e6f67f391b6aed79a3d9371de45c904ea56c8ae5d0f7bcb3e88f5b074",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/stderr.normalized": "21994d8e6f67f391b6aed79a3d9371de45c904ea56c8ae5d0f7bcb3e88f5b074",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/stdout.normalized": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/trace.json": "3c1d46e922c116b83d992a3247c8b487d15ec33ca92051554e75da05b9426a43",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/milestones.json": "62957b931f73139c9411687075011efb7fe2efa6a5f32943dac2d8d01ce4834c",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/config-after.toml": "c56da8e42db5f80ec0c038af719c6b18fcb3912e1dd91994173a07270bd3bee8",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/result.json": "625f21cdb2f292cd2038eef3ff9d37f2e18f8b18026c56a85942d74f509603b3"
+  },
+  "proposed_scope": "Only add exact p3-deadline-body-stall-text key to existing bare_context allowlist, with existing timeout_cause true and exact whole diagnostic bytes; no corpus/production changes. Not applied or reviewed.",
+  "source_sha256": {
+    "harness/phase3.py": "39d16e2ba220aad27ec0e67646e04aacbcdd9a9c28d3013f3f04ddefec789099",
+    "harness/test_phase3.py": "0bea853fcedcf6dd2724d057d88813440454183a64f643c944321c624f414e95"
+  },
+  "fresh_two_go_runs": "oracle-p3-body-deadline-1 active; no result claimed"
+}

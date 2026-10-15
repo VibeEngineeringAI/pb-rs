@@ -1,0 +1,28 @@
+{
+  "review": "docs/phase7-review-performance-decisions-opus-r5.md",
+  "review_sha256": "395b94dbc16ccb05b10332541f0babf17b6022a0330f490c711259bb55558629",
+  "conditional_protocol_doc_sha256": "0c0fb616ff4c59091daf17e1b280626ce6db5741845459ad317482c46ff20f01",
+  "disposition": "accept narrowed conditional rules; no empirical decision or runtime admission",
+  "closed": [
+    "PD4-L1 named failure modes",
+    "PD4-L2",
+    "PD4-L3",
+    "PD4-L4",
+    "I-R4-1"
+  ],
+  "PD5-L1": {
+    "scope": "caller may omit an entire declared row set",
+    "disposition": "explicit mandatory derived-record obligation, as reviewer permits; no standalone helper output accepted",
+    "required_before_any_empirical_decision": [
+      "read and hash-verify declared coverage ledger",
+      "derive ordered complete decision row set from ledger identity (case, policy, definition hash, comparison)",
+      "require exact equality to helper inputs and original classifications; reject subsets/supersets",
+      "record equality proof in new derived artifact",
+      "reproduce source CIs upstream and bind them to trigger evidence"
+    ]
+  },
+  "actual_resource_provenance": "NULL/unassessed; no physical CPU or RSS accuracy claim",
+  "runtime_matrix_candidate_binding": "pending",
+  "functional_descriptive_capture": "separately authorized, does not require resource budget adjudication",
+  "no_commit": true
+}

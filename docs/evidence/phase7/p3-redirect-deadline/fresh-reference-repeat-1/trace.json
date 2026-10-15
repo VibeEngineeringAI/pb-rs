@@ -1,0 +1,59 @@
+[
+  {
+    "protocol": "http",
+    "method": "POST",
+    "path": "/api/v1/query",
+    "headers": {
+      "authorization": "Basic aGFybmVzczpoYXJuZXNz",
+      "content-type": "application/json",
+      "accept-encoding": "gzip",
+      "content-length": "98"
+    },
+    "user_agent": "Go-http-client/1.1",
+    "header_names": [
+      "Host",
+      "User-Agent",
+      "Content-Length",
+      "Authorization",
+      "Content-Type",
+      "Accept-Encoding"
+    ],
+    "body": "{\"query\":\"SELECT 1 LIMIT 500\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+    "body_b64": "eyJxdWVyeSI6IlNFTEVDVCAxIExJTUlUIDUwMCIsInN0YXJ0VGltZSI6IjIwMjQtMDEtMDFUMDA6MDA6MDBaIiwiZW5kVGltZSI6IjIwMjQtMDEtMDFUMDA6MDE6MDBaIn0=",
+    "framing": "length",
+    "listener": "primary",
+    "connection": 1,
+    "time_unix_ns": 1791980594856429871,
+    "unexpected": false,
+    "route": 0
+  },
+  {
+    "protocol": "http",
+    "method": "POST",
+    "path": "/v2/api/v1/query",
+    "headers": {
+      "authorization": "Basic aGFybmVzczpoYXJuZXNz",
+      "content-type": "application/json",
+      "accept-encoding": "gzip",
+      "content-length": "98"
+    },
+    "user_agent": "Go-http-client/1.1",
+    "header_names": [
+      "Host",
+      "User-Agent",
+      "Content-Length",
+      "Authorization",
+      "Content-Type",
+      "Referer",
+      "Accept-Encoding"
+    ],
+    "body": "{\"query\":\"SELECT 1 LIMIT 500\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+    "body_b64": "eyJxdWVyeSI6IlNFTEVDVCAxIExJTUlUIDUwMCIsInN0YXJ0VGltZSI6IjIwMjQtMDEtMDFUMDA6MDA6MDBaIiwiZW5kVGltZSI6IjIwMjQtMDEtMDFUMDA6MDE6MDBaIn0=",
+    "framing": "length",
+    "listener": "primary",
+    "connection": 1,
+    "time_unix_ns": 1791980629856992717,
+    "unexpected": false,
+    "route": 1
+  }
+]

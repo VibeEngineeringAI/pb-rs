@@ -1,0 +1,9 @@
+{
+  "scope": "all valid Unicode scalars tested; compare lower-to-ASCII and UTF8-width-changing mappings relevant to byte-index parsing",
+  "scalar_count": 1112064,
+  "go_source": "../sql-lower-map/main.go.txt",
+  "go_output": "../sql-lower-map/go.txt",
+  "identical": true,
+  "rust_source_sha256": "ee67f9e14734c1354b621bb2cd1ee86eaba32e4e27929921c6b874840fc03f3b",
+  "output_sha256": "3330c5062d6742c86e75ddca70c2fa06f4f1c8b5e89f0eb4bb1c54e4453a9200"
+}

@@ -1,0 +1,10 @@
+{
+  "binary": "/home/ajs/.cache/pb-phase7/baselines/pb-go-login",
+  "sha256": "aa393ccf301bcf04404baa87183f812efa0e563c6b17e04d446f439a251e87bd",
+  "source": "07af390ab09bda8ac9e427ffc6310077bace0125",
+  "production_source_unchanged": true,
+  "release_url": "http://phase7-orchestrator.invalid",
+  "release_token": "harness-orchestrator-token",
+  "build": "Go1.25.4 CGO_ENABLED=0 -trimpath -buildvcs=false -tags kqueue -s -w",
+  "purpose": "functional cloud login process fixture; baseline originals preserved"
+}

@@ -1,0 +1,20 @@
+{
+  "review": "docs/phase7-review-performance-decisions-opus-r1.md",
+  "review_sha256": "608751d49a185faece7af41f98d79e53d75729717126ffa24597af5d922fe91b",
+  "scope": "Source-only; no reviewer hashes/tests. One failed shell omitted required temp exports, disclosed. Root read FULL report after companion RELEASE.",
+  "status": "Corrections assigned, not accepted or implemented evidence.",
+  "implementation_task": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-performance-decisions-opus-r1-fixes",
+  "decisions": {
+    "PD-M1": "Prospectively448 decision rows:394nonlonglatency+52sessionCPU/RSS+2idle;18long preidle duplicate latency rows staydescriptive. All84campaigns preserved.",
+    "PD-M2": "Target totalreported wait4CPU uncertainty notuser/systemsplit. Kernel/scheduler few-microsecond claims unverified; actualprovenance/bounds mustbe established, otherwiseunknown.",
+    "PD-M3": "Account exactsampler timing: p7.proc_sample timestamps after initialstat/status/io/fd/finalstat. Counterread lies between serial prior sample return and current return; naive firststampafterend notsafe upperbracket. Derive conservative retainedbrackets or declareunassessed; no unprovedwait4fallback ornewobserver.",
+    "PD-M4": "Onlydecisionfamilycrossings scheduleconfirmation; ALLdecisionrows in confirmedcase/policy usebothruns; failureallinconclusive; no thirdseedwithoutprospectiveamendment.",
+    "PD-L1": "Faster+withinmargin both satisfyNI; fasterlabel requiresbothfaster.",
+    "PD-L2": "Bindcampaign/poolseed anddraws, reproduce source rawCIs beforeenvelopes.",
+    "PD-L3": "Bindledger/seeddesign/computationcode/Python/resourceprovenance beforemeasurements; enumerateunimplementedoriginalstages truthfully.",
+    "PD-L4": "Reportedmaxrsscountertarget distinctphysicalpeak; kernelapproximationunknown needsprovenance, no fabricatedzeroerrorphysicalclaim.",
+    "PD-L5": "Sentinelrelease cannotvalidateprioraffectedcampaigns; temporalreachlimited, crossingcontrolkeepsblock."
+  },
+  "new_measurements": false,
+  "source_changes_authorized": false
+}

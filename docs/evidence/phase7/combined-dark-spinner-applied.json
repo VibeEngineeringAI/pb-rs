@@ -1,0 +1,42 @@
+{
+  "scope": "independently reviewed exact dark checkpoint contract extension; no new process or performance run",
+  "review": "docs/phase7-review-dark-spinner-combined-opus-r1.md",
+  "proposal_patch_sha256": "6d86c891b49546810a6973d569ec0b1121b8d08ec145aa8cc00597b087e145b8",
+  "original_report": {
+    "path": "/home/ajs/.cache/pb-phase7/styled-release6-combined/report.json",
+    "sha256": "4ee1eec675a73ac25c53fc2eeef96acb80ca13dd2d2fe43feb69444d357c4e2d",
+    "gates_passed": 159,
+    "gates": 160,
+    "documentary_clean": 29,
+    "documentary": 30
+  },
+  "reduced_report": {
+    "path": "/home/ajs/.cache/pb-phase7/styled-release6-combined-reduced-dark-spinner/report.json",
+    "sha256": "ecfa8eddc5b40a40f8ff65e9d7ea18f92535d1227635a354ce4d9b908953e857",
+    "gates_passed": 160,
+    "gates": 160,
+    "documentary_clean": 29,
+    "documentary": 30
+  },
+  "contract_changed": [
+    "p7-promql-wide-legend-view-panic-dark"
+  ],
+  "retained_artifacts_manifest": {
+    "path": "/home/ajs/.cache/pb-phase7/combined-dark-spinner-proposal/applied/capture-artifacts.json",
+    "sha256": "54b6a7abf0521818134eb6ae7657d75831448ce1df56d955b0b92fb8eea6ea61",
+    "files": 1473
+  },
+  "source": {
+    "harness/phase7_workloads.py": "04404c96efabad1d2b0674df17751856913363443744c3dd1fb497f07a5f6178",
+    "harness/test_phase7.py": "de3ca6a12e23e4fea7b83513e1303bcedd8fb2ff10eb8cfa345ca973b3c5170a",
+    "harness/phase7.py": "dc7574f058b9ff6ae7b77a912847fdbe02d8b68baab8728237d6ef040e6a44fa",
+    "harness/phase7_spawn.c": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4",
+    "harness/contracts/phase7.md": "def73db20712e846de7c8127eb70f1cff1ae8ce068e1079ec087b191abbb1a90",
+    "docs/phase7-harness.md": "173d8b7203482df9f1181e8fa7095d19099267114f370a46af3c7ed699d3e99e"
+  },
+  "tests": {
+    "terminal_log_sha256": "5025449455f5004c0a6996d146eca3216195967050df8ddf2cf479d76b960921",
+    "artifact_log_sha256": "6a96c663596e3c1a7636fb503274034ad7b7f2356223df8fcc4e0a229b0a81a7"
+  },
+  "limitation": "single checkpoint glyph normalization does not prove animation cadence"
+}

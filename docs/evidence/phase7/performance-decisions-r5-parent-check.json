@@ -1,0 +1,9 @@
+{
+  "manifest": "/home/ajs/.cache/pb-phase7/performance-decisions-r5/artifact-manifest.json",
+  "sha256": "27fc14c911ddb41516902e6c9d21b863cac3891b573a8888173f4f97c8637955",
+  "verified_identities": 68,
+  "checks": "exact bytes and SHA256, no author suite rerun",
+  "review": "docs/phase7-review-performance-decisions-opus-r5.md",
+  "disposition": "docs/evidence/phase7/performance-decisions-r5-disposition.json",
+  "admission": false
+}

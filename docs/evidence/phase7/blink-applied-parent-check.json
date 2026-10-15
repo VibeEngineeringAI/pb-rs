@@ -1,0 +1,12 @@
+{
+  "status": "applied production matches prepared; profile-only delta is new-test placement and rustfmt",
+  "editor_exact": true,
+  "login_exact": true,
+  "profile_added_tests_exact_after_format": true,
+  "profile_remainder_equal_ignoring_whitespace": true,
+  "current_sources": {
+    "src/tui/editor.rs": "43dd1ea2279e0e0f06f05f253d3975c1c321f94e6146e6bdf1e015543908db49",
+    "src/tui/login.rs": "8c5b2198ad4081e1f7ad9edd0bea456abac32325c7a55267944a3705b34383fd",
+    "src/tui/profile.rs": "ebde62e754490dfa759465293af2e253992ff84b7cbb6e432435025452c9e1ec"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "status": "prepared off-tree only; awaiting exact parent edit-window message",
+  "required_message": "saved matcher edit window open",
+  "applied": false,
+  "production_and_existing_docs_unchanged": true,
+  "release4_source_map_matches": true,
+  "old_O3_artifacts_unchanged": true,
+  "binaries_unchanged": true,
+  "rust_executed": false,
+  "source_proposed_sha256": "d25a3358cb60a78977d0ee9bddc239c7b83246fa8cf66d46afccf288ff032bf7",
+  "current_saved_sha256": "24d37551aa9a9498f4a67a6cb99ff5c308377ed54ab5bc1f6fe2139a25d68935",
+  "current_admin_saved_doc_sha256": "6f684ac69bc2c972a4e7d7a67bf7d7fd6ebf89591bb4caf3ca53cbdc3596a84a",
+  "proposed_files_sha256": {
+    "/home/ajs/.cache/pb-phase7/opus-r4-saved/src-tui-saved.proposed.rs": "d25a3358cb60a78977d0ee9bddc239c7b83246fa8cf66d46afccf288ff032bf7",
+    "/home/ajs/.cache/pb-phase7/opus-r4-saved/opus-r4-saved-source.patch": "49f21a66df5ef0fd11aa6afb81484c35a823fe4f037b641f102c39368e94bf31",
+    "/home/ajs/.cache/pb-phase7/opus-r4-saved/docs-phase7-admin-saved.append.md": "4a17565a197f66fb12d36733984c37746c12f62d48db37702b2b41c0e53e922f",
+    "/home/ajs/.cache/pb-phase7/opus-r4-saved/docs-phase7-admin-saved.proposed.md": "98e6fde911ef00ca1f742f83d0fd3e1e0c2b28ac257f808e5cd03f2d37bf214b",
+    "/home/ajs/.cache/pb-phase7/opus-r4-saved/opus-r4-saved.patch": "acdc1c737a6c43ebcfbbf7b84753108c08b015e831d3b6801376038dd57d217e"
+  },
+  "evidence_files_sha256": {
+    "docs/evidence/phase7/opus-r4-saved-before.json": "8d1dbb963a84e694e1bfd3edc293f3756c0ca8d7253f9a4685d183a310153f46",
+    "docs/evidence/phase7/opus-r4-saved-go-diagnostic-observations.json": "62633e9ec02aff9052820accd04ed3e3b845f358796163e2ea62eadf90ec2402",
+    "docs/evidence/phase7/opus-r4-saved-go-oracle.json": "e2fd56f2cc191cd39e5f1dab20a6e8599e4d93f691c7caa1b2ae3e3ad4906a8a",
+    "docs/evidence/phase7/opus-r4-saved-go-process.json": "68cc4c7f5c5d4a85943f396627761259d5391a77210854fa08dc5055225b6888",
+    "docs/evidence/phase7/opus-r4-saved-handoff.md": "d2a8d45f8ef9139192c4efc7c48ca4a1c661bcc7fb00d3732b450eb836e4d334",
+    "docs/evidence/phase7/opus-r4-saved-model-check.json": "8a63ec7f2bef34375419ddd288482f4d48b8ae0ac98f02f6d19f0655a0395691",
+    "docs/evidence/phase7/opus-r4-saved-model-check.py": "291ffc6c2b894a9dccce799af502c3f48d1bb8baaa17ce38e38c41bec0cbd466",
+    "docs/evidence/phase7/opus-r4-saved-oracle.go.txt": "7e1fbfa52c6d2db9d521e6a3055385dfed787646d69bef439cf70d71044349d6",
+    "docs/evidence/phase7/opus-r4-saved-oracle.py": "560b63765bf6ef90a4383f8e6e523e71d4445972b8db2708ecae51e7e895511a",
+    "docs/evidence/phase7/opus-r4-saved-prepare.py": "efe0263a2a4bf3541ac1fd702a41ad61ff534e9db20479346be8092b2f937422",
+    "docs/evidence/phase7/opus-r4-saved-process.py": "34fba6075d0f3df927dadb1f27cff2dee9bf636151c254dc7e288d0c1f4b44eb",
+    "docs/evidence/phase7/opus-r4-saved-release4-process.json": "73c753daf4a4f9b5274106968dfcdc158e78e071f664e9151b658ee7f58f7b69"
+  },
+  "process_summary": {
+    "go": {
+      "strict_passed": 14,
+      "total": 16,
+      "strict_failures": "absent panic stdout in two Go command crashes; exit/request/terminal/config outcomes confirmed"
+    },
+    "release4": {
+      "passed": 7,
+      "total": 16,
+      "observed_behavioral_mismatches": 9
+    }
+  },
+  "actual_go_oracle_controls": 106,
+  "python_design_comparison_passed": true,
+  "rustfmt_check_passed": true
+}

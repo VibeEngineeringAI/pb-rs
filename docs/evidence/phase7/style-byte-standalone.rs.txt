@@ -1,0 +1,10 @@
+#![allow(dead_code)]
+mod metrics {
+ pub(crate) fn has_dark_background() -> bool { true }
+ pub(crate) mod output { pub(crate) mod style {
+ #[derive(Clone,Copy,Debug,PartialEq,Eq)] pub(crate) enum Profile {TrueColor,Ansi256,Ansi,Ascii}
+ pub(crate) struct Terminal {pub(crate) profile:Profile}
+ impl Terminal {pub(crate) fn from_process()->Self {Self{profile:Profile::TrueColor}}}
+ }}
+}
+#[path = "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/style.rs"] mod style;

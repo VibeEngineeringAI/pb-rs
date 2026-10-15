@@ -1,0 +1,89 @@
+{
+  "kind": "functional device/login replay",
+  "count": 17,
+  "passed": 17,
+  "report": "/home/ajs/.cache/pb-phase7/device-release3/report.json",
+  "report_sha256": "b4211491ed1438896f72734f8251273224e7a973d2dbc72933f4b4afd7653a7d",
+  "cases": [
+    {
+      "case": "apikey",
+      "issues": []
+    },
+    {
+      "case": "apikey-rejected",
+      "issues": []
+    },
+    {
+      "case": "device-success",
+      "issues": []
+    },
+    {
+      "case": "device-pending",
+      "issues": []
+    },
+    {
+      "case": "device-denied",
+      "issues": []
+    },
+    {
+      "case": "device-expired",
+      "issues": []
+    },
+    {
+      "case": "device-timeout",
+      "issues": []
+    },
+    {
+      "case": "device-cancel",
+      "issues": []
+    },
+    {
+      "case": "device-sigint",
+      "issues": []
+    },
+    {
+      "case": "device-browser-limit",
+      "issues": []
+    },
+    {
+      "case": "device-malformed",
+      "issues": []
+    },
+    {
+      "case": "device-expiry-overflow",
+      "issues": []
+    },
+    {
+      "case": "device-interval-overflow",
+      "issues": []
+    },
+    {
+      "case": "device-redirect-302",
+      "issues": []
+    },
+    {
+      "case": "device-redirect-deadline",
+      "issues": []
+    },
+    {
+      "case": "device-poll-redirect-deadline",
+      "issues": []
+    },
+    {
+      "case": "device-poll-redirect-drain",
+      "issues": []
+    }
+  ],
+  "candidate": {
+    "path": "/home/ajs/.cache/pb-phase7/candidates/release3/pb-login",
+    "sha256": "688088973e7569f18c91519e2cfebeef8c5c8f426ec18ef5d2edbe7eb39600e8",
+    "bytes": 9373992,
+    "profile": "release",
+    "features": [],
+    "version": "0.0.0-harness",
+    "commit_metadata": "harness",
+    "fixture_token": true,
+    "fixture_url": "http://phase7-orchestrator.invalid"
+  },
+  "runner_sha256": "8173255290e5f4989611350db50e713d8ac61ab9af7b6e327e1c4d95f20a7be0"
+}

@@ -1,0 +1,32 @@
+test_full_history_without_eviction_survives_non_scrolling_controls (test_phase7.TerminalTests.test_full_history_without_eviction_survives_non_scrolling_controls) ... FAIL
+
+======================================================================
+FAIL: test_full_history_without_eviction_survives_non_scrolling_controls (test_phase7.TerminalTests.test_full_history_without_eviction_survives_non_scrolling_controls)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7.py", line 198, in test_full_history_without_eviction_survives_non_scrolling_controls
+    self.assertFalse(terminal.history_overflow, repr(token))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: True is not false : b'\x1b[H\n'
+
+----------------------------------------------------------------------
+Ran 1 test in 0.428s
+
+FAILED (failures=1)
+MUTANT drop-bottom-condition KILLED True
+test_history_eviction_uses_declared_scrolling_region_bottom (test_phase7.TerminalTests.test_history_eviction_uses_declared_scrolling_region_bottom) ... FAIL
+
+======================================================================
+FAIL: test_history_eviction_uses_declared_scrolling_region_bottom (test_phase7.TerminalTests.test_history_eviction_uses_declared_scrolling_region_bottom)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7.py", line 211, in test_history_eviction_uses_declared_scrolling_region_bottom
+    self.assertTrue(terminal.history_overflow)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 1 test in 0.382s
+
+FAILED (failures=1)
+MUTANT ignore-declared-margins KILLED True

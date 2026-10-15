@@ -1,0 +1,17 @@
+{
+  "scope": "accepted same-Go retained evidence integrity only, next primary descriptive capture permitted with separate fresh quiet",
+  "review": "docs/phase7-review-shared-aa-sol-r1.md",
+  "sha256": "5ae9988af10723bc2352ca20d68490d53e58ba7e0a440cfd4ddbadd4ba077577",
+  "review_artifacts_verified": 18,
+  "measured": 1350,
+  "warmups": 225,
+  "reported_counter_limits": [
+    "raw meter.json not retained; cannot independently re-extract raw native wait4 payload",
+    "historical executable identities not actual running-kernel accounting correspondence",
+    "no physical CPU/peakRSS or observer-bias bound"
+  ],
+  "same_go_variability": "5% point screen can cross even samebinary;500rowtextwall+9.09%,CI1.027..1.137; no inventedAAnoise cutoff",
+  "historical_rules_unchanged": "wall/CPU10%AND1ms;RSS20%AND2MiB,fullpointwiseCIrelativecrossing; separateprior5%pointscreen requiresfreshisolated5+30confirmation",
+  "primary_requirement": "all15cases all45metricpopulations complete/provenance/quiet/endchecks; noUIdecisionprotocol substitution",
+  "no_performance_acceptance": true
+}

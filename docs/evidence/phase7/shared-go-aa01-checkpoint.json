@@ -1,0 +1,33 @@
+{
+  "start_utc": "2026-10-15T13:09:08.335503+00:00",
+  "end_utc": "2026-10-15T13:11:30.353092+00:00",
+  "cleanup_utc": "2026-10-15T13:11:30.489507+00:00",
+  "elapsed_through_cleanup": 142.1540213979315,
+  "actual_supervisor_exit": 0,
+  "supervisor_verdict": "ok",
+  "echild_verified": true,
+  "remaining": [],
+  "lock_reacquired_released": true,
+  "end_identities_unchanged": true,
+  "report_complete": true,
+  "report_passed": true,
+  "case_count": 15,
+  "shape_exact15x3x30": true,
+  "all_measured_report_valid": true,
+  "all_warmups_report_clean": true,
+  "all_labels_same_go": true,
+  "report_sha256": "03b33ed88b77aa2a4d62f134d2611a04d25a9c9fc90d50fef1bb7c88b5bcc0cb",
+  "supervisor_sha256": "d0fc6315b4f67016e6b690fcff31473213d6ac3a5a9125d99b2084c1e44eef0e",
+  "performance_interpretation": false,
+  "measured_schedule_matches_original_rng": true,
+  "cleanup_pass": true,
+  "capture_provisional_pass": true,
+  "status": "root capture integrity checkpoint; independent Sol audit pending; no performance interpretation",
+  "evidence": {
+    "/home/ajs/.cache/pb-phase7/shared-performance-combined-go-aa-01-coordination/launch.json": "24e10ba3d32fa77d48973bf9202199aced1794999ba512ed8dc89770737b1c20",
+    "/home/ajs/.cache/pb-phase7/shared-performance-combined-go-aa-01-coordination/cleanup.json": "0f77ce185dbcd2691eab76ad56febd92b3e41f122bf3c90a633f8028458cf416",
+    "/home/ajs/.cache/pb-phase7/shared-performance-combined-go-aa-01/report.json": "03b33ed88b77aa2a4d62f134d2611a04d25a9c9fc90d50fef1bb7c88b5bcc0cb",
+    "/home/ajs/.cache/pb-phase7/shared-performance-combined-go-aa-01-supervision/report.json": "d0fc6315b4f67016e6b690fcff31473213d6ac3a5a9125d99b2084c1e44eef0e",
+    "/home/ajs/.cache/pb-phase7/shared-performance-combined-owned-preparation/plan-r2.json": "6323da9afb5ffa7e2c17094609b0738c24f88d33cc8050e35af0c1d36ce32cd7"
+  }
+}

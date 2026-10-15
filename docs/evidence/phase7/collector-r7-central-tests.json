@@ -1,0 +1,63 @@
+{
+  "source_inputs": {
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_bench.py": "32f716505b38db5ed38f102691a13e1fe4ff18ca143eda2c0e5f8603ba0f2c23",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7_bench.py": "9c37392fb0d382e5ac8be0e266b7722a0420f55933c45a157daa0a245fd786b0",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_profile.py": "cd064da4a3f192a64c9e015a12d2ec5cbc6b305b3ca992d95f3641d83e5b2385",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7_profile.py": "75bb14229f18b212cd234e9d2d4af5ad8cef3eb290f2c483d45e6e1c2e6443dd",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-measurement.md": "99a6356668cddc663b45fe9e5faed87df3e2657bbb47485451c5523a90038b9f",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-profiling.md": "401b214080c5ee78332f090910331a9d537846667055b526fc6ad5b303a9a0a2",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/contracts/phase7.md": "65c990cca9ae0c05911f64b78d2675d7cabc7f5a495ee812bef813c4d6f1f1fa",
+    "/home/ajs/.cache/pb-phase7/collector-r7-corrections/response.json": "1ff10d92596f0cd28fe811611f81d0c8c565b53770756701dadc439807fc33f1",
+    "/home/ajs/.cache/pb-phase7/collector-r7-corrections/command-matrix.json": "5b99e77f33263962bd14a07c450d713f1c14f93353a0c23cb7b93c18bc68e0d4",
+    "/home/ajs/.cache/pb-phase7/collector-r7-corrections/actual-checks.json": "7c90987960d80552df91009bc9eaa9affb46c331cdc2cc73b384e38e0810a587",
+    "/home/ajs/.cache/pb-phase7/collector-r7-corrections/source-snapshot.json": "330a83e8de7fa753f105e56d624c232299f623f65122fc240e8ddc052d2ca72d",
+    "/home/ajs/.cache/pb-phase7/collector-r7-corrections/owned.diff": "988df5e86d5c783ffaff42569fb554ad6ad20965177f1c4eab4aab95e313329b",
+    "/home/ajs/.cache/pb-phase7/collector-r7-corrections/finalize.py": "24084221fafe6234fd83076aff5b2b6a058cb00a8379ff0ea44121d20e12b07f",
+    "/home/ajs/.cache/pb-phase7/collector-r7-corrections/build-matrix.py": "058c8c830a6cff0702f1ab095a9b8dd320025d9b0b884158dce9723b01118734",
+    "/home/ajs/.cache/pb-phase7/harness-resize-policy-r4/freeze.json": "8c1d8fe5661f4241619006dcda850e7ca6eb4f64ffac88a733a00b691db3edb5",
+    "/home/ajs/.cache/pb-phase7/tmp/phase7-spawn-d0592f15c157a359d3b1d7adf9ab0efb1cf39a3765205fe8ccde855157ed2fab": "3b684c7b7632302725727fcc586a071c7818f43d704a8cbf4e1afc384e99f03e",
+    "/home/ajs/.cache/pb-phase7/collector-r6-corrections/freeze.json": "d606e10f457c3037ce70377c5bf4c0d659c6f00a22540f15bddccf710b8caebd",
+    "/home/ajs/.cache/pb-phase7/collector-r7-corrections/bench-final1.log": "0477868200dd1f7dee0ad94e42e03fddd1f1691498eff98ee201006a39830e6b",
+    "/home/ajs/.cache/pb-phase7/collector-r7-corrections/profile-final1.log": "bba1fd03a8160f50a94b688891565a00f8c96b4a9f28db946d44abe6eba41593",
+    "/home/ajs/.cache/pb-phase7/collector-r7-corrections/r7-work1.log": "284b207dee9d9969ed433bcbfe110bf3e0a625a377433bdbbf62bb27a98941ae"
+  },
+  "source_unchanged": true,
+  "results": [
+    {
+      "label": "bench",
+      "command": [
+        "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "harness",
+        "-p",
+        "test_phase7_bench.py",
+        "-v"
+      ],
+      "exit": 0,
+      "log": "/home/ajs/.cache/pb-phase7/collector-r7-central-bench.log",
+      "log_sha256": "efd482e5326adf6db439d80099e6f38d2f149f79d825abb94caf2710d5d233e8",
+      "tail": "_bind_changed_only (test_phase7_bench.ResizePolicyTests.test_all_primary_attribution_and_profile_definitions_bind_changed_only) ... ok\ntest_every_capture_adapter_passes_policy_and_retains_legacy_failure (test_phase7_bench.ResizePolicyTests.test_every_capture_adapter_passes_policy_and_retains_legacy_failure) ... ok\ntest_policy_event_source_order_geometry_and_script_drift_fail_closed (test_phase7_bench.ResizePolicyTests.test_policy_event_source_order_geometry_and_script_drift_fail_closed) ... ok\n\n----------------------------------------------------------------------\nRan 99 tests in 111.309s\n\nOK\n"
+    },
+    {
+      "label": "profile",
+      "command": [
+        "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "harness",
+        "-p",
+        "test_phase7_profile.py",
+        "-v"
+      ],
+      "exit": 0,
+      "log": "/home/ajs/.cache/pb-phase7/collector-r7-central-profile.log",
+      "log_sha256": "16394398287cf7fe59fe1ca36aabe5276ac30f75754529a6d7a8be40304b917a",
+      "tail": "tes (test_phase7_profile.ProcessingTests.test_interrupted_writes_retain_separate_count_and_no_attributed_bytes) ... ok\ntest_owned_analysis_child_leader_exits_and_group_child_is_killed_reaped (test_phase7_profile.ProcessingTests.test_owned_analysis_child_leader_exits_and_group_child_is_killed_reaped) ... ok\ntest_surviving_group_verification_times_out_with_retained_cleanup_failure (test_phase7_profile.ProcessingTests.test_surviving_group_verification_times_out_with_retained_cleanup_failure) ... ok\n\n----------------------------------------------------------------------\nRan 24 tests in 1.465s\n\nOK\n"
+    }
+  ]
+}

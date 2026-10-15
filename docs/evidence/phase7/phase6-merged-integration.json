@@ -1,0 +1,122 @@
+{
+  "head": "ea70f7ad7d501d59b26cf6397f6a0b1f28143fc4",
+  "records": {
+    "Cargo.lock": {
+      "sha256": "90946026c17e2bf6f4fa506eb39d18041d5fa5cdefee3eb4466144512fc56924",
+      "bytes": 61629
+    },
+    "Cargo.toml": {
+      "sha256": "ff21fa2865f83fc0089727c35240ddbba5187eac4e06cd9cd47a8091011cc180",
+      "bytes": 2159
+    },
+    "harness/phase1.py": {
+      "sha256": "840c98a003c2caa4abc51a234090b49f3b24774e57a141f1ac995977b5902edd",
+      "bytes": 39237
+    },
+    "harness/phase2.py": {
+      "sha256": "66568cd9b0663011547763a258875f45949b21f5ed4c05fe9a695cebdc89cfbd",
+      "bytes": 111062
+    },
+    "harness/phase3.py": {
+      "sha256": "33be7605b2e3ea44712a8118b8909b129d00ef3f46c7f4d3932a522351e2b7bd",
+      "bytes": 184134
+    },
+    "harness/phase4.py": {
+      "sha256": "e5105ae22b0c599901d8622adf4e2942abb05a8c38bd220e8f685cae58782213",
+      "bytes": 35701
+    },
+    "harness/phase5.py": {
+      "sha256": "2bd03937195ea26b07faffa9281d109013d0b785fe33c63fa10905ce262d4c85",
+      "bytes": 105736
+    },
+    "harness/test_phase1.py": {
+      "sha256": "2578a977905885bf604241416338c3a680ee0ff1ceff01697b0217fcd2a3f943",
+      "bytes": 18174
+    },
+    "harness/test_phase2.py": {
+      "sha256": "7f2a6e6edfbc043dd6c36b3265fc1558f8e937b69dcb867b419f3529f0cb5f33",
+      "bytes": 36327
+    },
+    "harness/test_phase3.py": {
+      "sha256": "ef1a47dc263d18ed94fac7577a7e2597699973e74a4b42d3cbdc598cca9fab59",
+      "bytes": 40327
+    },
+    "harness/test_phase4.py": {
+      "sha256": "b1ed46ac5530a344f408303a1c09e4f4f0eaaaa50c2304b7f7984a592b7c34fb",
+      "bytes": 26634
+    },
+    "harness/test_phase5.py": {
+      "sha256": "8cca27426188362019b3314dc765e8fd4789f07d67a26cdea75c184899c4b53f",
+      "bytes": 21530
+    },
+    "src/admin.rs": {
+      "sha256": "c1f0d42859bef7bff0312f97402500d6949365622071ee786b0630633e3ae9be",
+      "bytes": 16893
+    },
+    "src/admin_datasets.rs": {
+      "sha256": "736cd91f40b8731c8d4457a0cadf6dbce665f78ec2c8d9ab33666d67b748efe4",
+      "bytes": 22507
+    },
+    "src/api.rs": {
+      "sha256": "bf4455fc5efd239a425b0517ce805baee349aed302552549d0860fd797e99dfe",
+      "bytes": 120879
+    },
+    "src/datasets.rs": {
+      "sha256": "d17c002a407e6f2ef79ab5b4278dbe90e6dbee354f70bb6af920254c6c5950da",
+      "bytes": 54309
+    },
+    "src/lib.rs": {
+      "sha256": "59a712d6f660436306ec72a7ea3e2941bcf4cefdd67738db30a2ab51d4fc404e",
+      "bytes": 19095
+    },
+    "src/main.rs": {
+      "sha256": "eab7feb9d3de4c3d7846932ac48530c0fa6f9e8c61620bca4052ba7da3a17378",
+      "bytes": 7533
+    },
+    "src/metrics/mod.rs": {
+      "sha256": "9296fd906b8478a6d9c08b5c5053588107d3a74b3791aecfb79b8f1e252a2a3e",
+      "bytes": 13077
+    },
+    "src/metrics/output.rs": {
+      "sha256": "840cfad595eb656c1e4a75275f39bfd832425bda46458b3e66b14e7007abdff2",
+      "bytes": 66194
+    },
+    "src/metrics/style.rs": {
+      "sha256": "28ee9a5f16b3f5858bb1cc2c3f2e944a11a18ad8be5cbb60b7e452f68b37544c",
+      "bytes": 17532
+    },
+    "src/profile.rs": {
+      "sha256": "0bc10b4413a90d4bf015f5b34ba5d55c761d7d1d261322f2df562e891cf2e514",
+      "bytes": 42054
+    },
+    "src/saved_queries.rs": {
+      "sha256": "6a576843c0a9e2298f07a1c22add1905d277ba9b1e92589916f0072b26569d34",
+      "bytes": 26867
+    },
+    "src/sql/mod.rs": {
+      "sha256": "9eee146e60be983212158778ebbea32596e258f787f847b620eb40c4f240fc75",
+      "bytes": 25515
+    },
+    "src/time_compat.rs": {
+      "sha256": "1c814165910fd8befb7050a9435b327231491630ce59991dc38799ea8b2ecd35",
+      "bytes": 10626
+    },
+    "tests/config.rs": {
+      "sha256": "c3ad3f02a13ec2bd18b8746d229ff0accacf7c0ecade456b20e4d956b857c491",
+      "bytes": 21116
+    }
+  },
+  "new_commit_created": false,
+  "preserved_snapshot": "/home/ajs/.cache/pb-phase7/phase6-merged-integration/before",
+  "method": "verified backup, cached three-way resolutions, fast-forward merged main, restore resolved tracked overlay; live untracked files left untouched",
+  "status": "combined source integrated; build and compatibility pending",
+  "resolution_notes": [
+    "Both PHASE6_OPERATIONS and PHASE7_OPERATIONS retained with union; login guard remains promoted.",
+    "Cargo package/version/checksum union retained; feature dependency edges combined, no package upgrades.",
+    "Shared deadline rules merged identically; phase7 historical-boundary promotion retained.",
+    "lib.rs three-way merge preserves tail dispatch and interactive profile/service dispatch.",
+    "Initial cached merge-file orchestration treated multiple conflict count as failure; no live edits at that time; resumed with documented count semantics."
+  ],
+  "historical_evidence": "Release5 and Phase6 R6 binaries/results preserved, not evidence for combined source.",
+  "performance_constraint": "User resumed Phase7; every performance run must be strictly under1800 seconds including cleanup. Historical3600 second templates not admitted."
+}

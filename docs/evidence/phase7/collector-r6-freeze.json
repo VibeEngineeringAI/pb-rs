@@ -1,0 +1,173 @@
+{
+  "schema_version": 1,
+  "status": "R6 SOURCE FROZEN; no acceptance; no further edits/commit without coordination",
+  "files": {
+    "harness/phase7_bench.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_bench.py",
+      "size_bytes": 182826,
+      "sha256": "db1d7ee6633be4d8e4d061ba6bd0892908e272d3d0f610c6965665688343d1ca"
+    },
+    "harness/test_phase7_bench.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7_bench.py",
+      "size_bytes": 146022,
+      "sha256": "44fd47d93e5a59a7f01f6bac43b400cdb1d5a70e6d05cc6d317251afe273b4fb"
+    },
+    "harness/phase7_profile.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_profile.py",
+      "size_bytes": 43899,
+      "sha256": "cd064da4a3f192a64c9e015a12d2ec5cbc6b305b3ca992d95f3641d83e5b2385"
+    },
+    "harness/test_phase7_profile.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7_profile.py",
+      "size_bytes": 37130,
+      "sha256": "75bb14229f18b212cd234e9d2d4af5ad8cef3eb290f2c483d45e6e1c2e6443dd"
+    },
+    "docs/phase7-measurement.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-measurement.md",
+      "size_bytes": 78210,
+      "sha256": "94b810daedc1702beb472c6850019b8225a40ea87ad648bba0831f3c6415811a"
+    },
+    "docs/phase7-profiling.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-profiling.md",
+      "size_bytes": 24727,
+      "sha256": "87af121c12936b1f8ebf0fbe0462ce5a5c44ba0d3443ec5440cd99627183d0b7"
+    },
+    "harness/contracts/phase7.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/contracts/phase7.md",
+      "size_bytes": 26295,
+      "sha256": "0da4e96e53b553a1c40fb10d89429f55d118e12a2408183261bb8bc9cc713e67"
+    }
+  },
+  "response": {
+    "path": "/home/ajs/.cache/pb-phase7/collector-r6-corrections/response.json",
+    "size_bytes": 19860,
+    "sha256": "de99769309308c15e41447fe748b5a99c06b1d6200a74f5394b6167b4516b119"
+  },
+  "matrix": {
+    "path": "/home/ajs/.cache/pb-phase7/collector-r6-corrections/command-matrix.json",
+    "size_bytes": 570385,
+    "sha256": "8bba8f129b4e350fec286e28cc66bb45928dd38d5c32ec121e583ca1875ead53"
+  },
+  "actual_checks": {
+    "path": "/home/ajs/.cache/pb-phase7/collector-r6-corrections/actual-checks.json",
+    "size_bytes": 1610,
+    "sha256": "8d0486645d8501df337e55db2e98e25eb5dcd8c594bf7ce1de0dbac664d1cc02"
+  },
+  "source_snapshot": {
+    "path": "/home/ajs/.cache/pb-phase7/collector-r6-corrections/source-snapshot.json",
+    "size_bytes": 18643,
+    "sha256": "c107bcca34db3546bfe4415f48a17c015e1e861ff0c9810cd48631a988c7fe4f"
+  },
+  "owned_diff": {
+    "path": "/home/ajs/.cache/pb-phase7/collector-r6-corrections/owned.diff",
+    "size_bytes": 106986,
+    "sha256": "e96cecf216107baeade1e4927760c91bb8be1b9bb51b635c0cfefbfb248aed4c"
+  },
+  "finalize_script": {
+    "path": "/home/ajs/.cache/pb-phase7/collector-r6-corrections/finalize.py",
+    "size_bytes": 14282,
+    "sha256": "9c9b30e472fa9017cb65cc64ddd029f47693a033b76e5ab5be1d1a1ae525fcbf"
+  },
+  "no_commit_policy": {
+    "declared_by": "ROOT",
+    "scope": "COMPLETE preflight/capture/control/diagnostic/interpret/pool/profile program",
+    "head": "4a812d5b9bc4c40882ab10897a73c3ce1e715ce0",
+    "commit_allowed": false
+  },
+  "consumed_shared_freeze": {
+    "path": "/home/ajs/.cache/pb-phase7/harness-resize-policy-r4/freeze.json",
+    "size_bytes": 8863,
+    "sha256": "8c1d8fe5661f4241619006dcda850e7ca6eb4f64ffac88a733a00b691db3edb5"
+  },
+  "consumed_shared_phase7_py_sha256": "dc7574f058b9ff6ae7b77a912847fdbe02d8b68baab8728237d6ef040e6a44fa",
+  "consumed_helper": {
+    "build_key": "d0592f15c157a359d3b1d7adf9ab0efb1cf39a3765205fe8ccde855157ed2fab",
+    "capability": {
+      "group_signal_flag": 4,
+      "method": "actual own-child pidfd group delivery + WNOWAIT reservation",
+      "probe_executable_sha256": "3b684c7b7632302725727fcc586a071c7818f43d704a8cbf4e1afc384e99f03e",
+      "protocol_version": 2,
+      "received": [
+        "LEADER",
+        "MEMBER"
+      ],
+      "reserved_state": "Z",
+      "signal": "SIGUSR1",
+      "status": 0
+    },
+    "compiler": "/usr/bin/gcc",
+    "compiler_sha256": "8aac907d6fbf40394b424b5fa4a2ad1aa291dac7d3a0315c5b415c1f5ace1287",
+    "compiler_version": "gcc (GCC) 16.2.1 20260810\nCopyright (C) 2026 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+    "flags": [
+      "-std=c11",
+      "-O2",
+      "-Wall",
+      "-Wextra",
+      "-Werror"
+    ],
+    "path": "/home/ajs/.cache/pb-phase7/tmp/phase7-spawn-d0592f15c157a359d3b1d7adf9ab0efb1cf39a3765205fe8ccde855157ed2fab",
+    "protocol_version": 2,
+    "provenance_path": "/home/ajs/.cache/pb-phase7/tmp/phase7-spawn-d0592f15c157a359d3b1d7adf9ab0efb1cf39a3765205fe8ccde855157ed2fab.json",
+    "provenance_sha256": "69e1067e728b7ce4cd67a288ea797d346d00b5403ae5c34368756770f0730394",
+    "sha256": "3b684c7b7632302725727fcc586a071c7818f43d704a8cbf4e1afc384e99f03e",
+    "source_sha256": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4"
+  },
+  "logs": {
+    "bench-final1.log": {
+      "path": "/home/ajs/.cache/pb-phase7/collector-r6-corrections/bench-final1.log",
+      "size_bytes": 193,
+      "sha256": "85c7761c042334b0e3082913613bd7fd67b973868d09001792586dcdeb3a9638"
+    },
+    "bench-work1.log": {
+      "path": "/home/ajs/.cache/pb-phase7/collector-r6-corrections/bench-work1.log",
+      "size_bytes": 191,
+      "sha256": "89df76add97efe2dd991476f52c441c4b1692bf6f56d895832e36669cde5ab1c"
+    },
+    "clone-work1.log": {
+      "path": "/home/ajs/.cache/pb-phase7/collector-r6-corrections/clone-work1.log",
+      "size_bytes": 100,
+      "sha256": "05bdf30ab795dae6effe834d642e9ba599fdca26aa4c5d4386defa417748e793"
+    },
+    "full-gates-work1.log": {
+      "path": "/home/ajs/.cache/pb-phase7/collector-r6-corrections/full-gates-work1.log",
+      "size_bytes": 2939,
+      "sha256": "0833787d4105b764f6b7c0fbec4e629ba48e6042a645dad3d7416b1d367c972e"
+    },
+    "full-gates-work2.log": {
+      "path": "/home/ajs/.cache/pb-phase7/collector-r6-corrections/full-gates-work2.log",
+      "size_bytes": 99,
+      "sha256": "d02e48b23c167fa7fea7c20590769bba3666b698649b0ef7bf8f16a7ddcddf41"
+    },
+    "historical-default-regression.log": {
+      "path": "/home/ajs/.cache/pb-phase7/collector-r6-corrections/historical-default-regression.log",
+      "size_bytes": 98,
+      "sha256": "a75d5a91a411eeced9e6131248a85982b358c592dc17ed1f73ccacc7565157fc"
+    },
+    "profile-final1.log": {
+      "path": "/home/ajs/.cache/pb-phase7/collector-r6-corrections/profile-final1.log",
+      "size_bytes": 122,
+      "sha256": "8ff679688ce9c92a385f50aa49594cbf5946079fdfe13208123f76005dfe7a50"
+    },
+    "profile-work1.log": {
+      "path": "/home/ajs/.cache/pb-phase7/collector-r6-corrections/profile-work1.log",
+      "size_bytes": 122,
+      "sha256": "bc4a78bc759c887aae0e3b2c02aa56b049805240aa06e1e55bf1385358dd8846"
+    },
+    "r5-compat-work1.log": {
+      "path": "/home/ajs/.cache/pb-phase7/collector-r6-corrections/r5-compat-work1.log",
+      "size_bytes": 105,
+      "sha256": "ee42ff80e83aa29de302bd078a62cefc295974e685cef62ef78d9a0f97b1b91e"
+    },
+    "r6-work1.log": {
+      "path": "/home/ajs/.cache/pb-phase7/collector-r6-corrections/r6-work1.log",
+      "size_bytes": 744,
+      "sha256": "3db49b99908be04be8a94ab743c86287e260730abe2bf512f92a65d1a0d44f09"
+    }
+  },
+  "historical_R5_freeze": {
+    "path": "/home/ajs/.cache/pb-phase7/collector-r5-corrections/freeze.json",
+    "size_bytes": 7436,
+    "sha256": "a27f87205ecefc51237bbdc55bf658f8181adf756b7d43db1d26cebec1fd784c"
+  },
+  "execution_state": "no owned process remains"
+}

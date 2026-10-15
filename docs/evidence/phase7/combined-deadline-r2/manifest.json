@@ -1,0 +1,84 @@
+{
+  "status": "off-tree combined proposal; no promotion",
+  "body_patch": "40df1e798bc5ea26b2541682ad4820d3b212c64851562e4f467022ebc99a820d",
+  "lookahead_patch": "68d5baa1bf38bdf7f59a7e5f05979f62d870f762b062cccafb623ec0ea1aa140",
+  "variants": {
+    "phase7": {
+      "before": {
+        "phase3.py": "39d16e2ba220aad27ec0e67646e04aacbcdd9a9c28d3013f3f04ddefec789099",
+        "test_phase3.py": "0bea853fcedcf6dd2724d057d88813440454183a64f643c944321c624f414e95"
+      },
+      "after": {
+        "phase3.py": "3fc89e8997745c326b50e8c66ad21a5d44aaef44473ee918f607a834df6903b4",
+        "test_phase3.py": "ef1a47dc263d18ed94fac7577a7e2597699973e74a4b42d3cbdc598cca9fab59"
+      },
+      "patch": "/home/ajs/.cache/pb-phase7/combined-body-lookahead-r2/phase7/combined.patch",
+      "patch_sha256": "1d5fe9461467023f54ea39e6e3cd29012fe30116cf28686fa550b5e76ed9fdb6",
+      "apply": [
+        {
+          "command": [
+            "git",
+            "apply",
+            "--check",
+            "--verbose",
+            "/home/ajs/.cache/pb-phase7/combined-body-lookahead-r2/phase7/combined.patch"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": "Checking patch harness/phase3.py...\nChecking patch harness/test_phase3.py...\n"
+        },
+        {
+          "command": [
+            "git",
+            "apply",
+            "--verbose",
+            "/home/ajs/.cache/pb-phase7/combined-body-lookahead-r2/phase7/combined.patch"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": "Checking patch harness/phase3.py...\nChecking patch harness/test_phase3.py...\nApplied patch harness/phase3.py cleanly.\nApplied patch harness/test_phase3.py cleanly.\n"
+        }
+      ],
+      "scoped_test_methods_preserved_exactly": true
+    },
+    "phase6": {
+      "before": {
+        "phase3.py": "7f8deaf00185b94cd5934fbe6542e0393ded5f25aadd918012bd2f072d222f9d",
+        "test_phase3.py": "f11f07cd571fe9d8b3c364c20a93aaf6cbd81b999dc077b2126374c5488deb59"
+      },
+      "after": {
+        "phase3.py": "af783ab65a14512f0df07f81948e03dd082b103a78ed460554c5981b909d95f2",
+        "test_phase3.py": "812e96091659d8f8e4fabdf4bdeae537d4f2dc153f41a2cb0faa59289bf2e434"
+      },
+      "patch": "/home/ajs/.cache/pb-phase7/combined-body-lookahead-r2/phase6/combined.patch",
+      "patch_sha256": "00f14a8abb88858ce8ecd7160292f0c2d835210743295f7e3cf8f456154f8795",
+      "apply": [
+        {
+          "command": [
+            "git",
+            "apply",
+            "--check",
+            "--verbose",
+            "/home/ajs/.cache/pb-phase7/combined-body-lookahead-r2/phase6/combined.patch"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": "Checking patch harness/phase3.py...\nChecking patch harness/test_phase3.py...\n"
+        },
+        {
+          "command": [
+            "git",
+            "apply",
+            "--verbose",
+            "/home/ajs/.cache/pb-phase7/combined-body-lookahead-r2/phase6/combined.patch"
+          ],
+          "exit": 0,
+          "stdout": "",
+          "stderr": "Checking patch harness/phase3.py...\nChecking patch harness/test_phase3.py...\nApplied patch harness/phase3.py cleanly.\nApplied patch harness/test_phase3.py cleanly.\n"
+        }
+      ],
+      "scoped_test_methods_preserved_exactly": true
+    }
+  },
+  "scope": "two exact case/message entries, scoped tests; each base retains own deferred guard policy"
+}

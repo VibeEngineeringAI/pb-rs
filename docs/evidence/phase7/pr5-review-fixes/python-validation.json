@@ -1,0 +1,211 @@
+{
+  "modules": [
+    {
+      "module": "test_diagnose.py",
+      "ran": 14,
+      "skip": 0,
+      "ok": true
+    },
+    {
+      "module": "test_go_diagnostics.py",
+      "ran": 13,
+      "skip": 0,
+      "ok": true,
+      "successor_log": "/home/ajs/.local/share/pb-pr5-fixes/combined/go-diagnostics-rerun.log",
+      "successor_log_sha256": "e0caf4c4b5fda633c5eda3f508f66d0446d9d416a836223b5eb7f4ec95b06e71"
+    },
+    {
+      "module": "test_harness.py",
+      "ran": 49,
+      "skip": 0,
+      "ok": true
+    },
+    {
+      "module": "test_manifest.py",
+      "ran": 6,
+      "skip": 0,
+      "ok": true
+    },
+    {
+      "module": "test_meter_io.py",
+      "ran": 7,
+      "skip": 0,
+      "ok": true
+    },
+    {
+      "module": "test_phase1.py",
+      "ran": 19,
+      "skip": 0,
+      "ok": true
+    },
+    {
+      "module": "test_phase2.py",
+      "ran": 29,
+      "skip": 0,
+      "ok": true
+    },
+    {
+      "module": "test_phase3.py",
+      "ran": 43,
+      "skip": 1,
+      "ok": true
+    },
+    {
+      "module": "test_phase4.py",
+      "ran": 29,
+      "skip": 0,
+      "ok": true
+    },
+    {
+      "module": "test_phase4_workloads.py",
+      "ran": 9,
+      "skip": 0,
+      "ok": true
+    },
+    {
+      "module": "test_phase5.py",
+      "ran": 36,
+      "skip": 0,
+      "ok": true
+    },
+    {
+      "module": "test_phase5_workloads.py",
+      "ran": 36,
+      "skip": 0,
+      "ok": true
+    },
+    {
+      "module": "test_phase6.py",
+      "ran": 36,
+      "skip": 0,
+      "ok": true
+    },
+    {
+      "module": "test_phase6_blocked_writer.py",
+      "ran": 4,
+      "skip": 0,
+      "ok": true
+    },
+    {
+      "module": "test_phase6_build_cost.py",
+      "ran": 106,
+      "skip": 0,
+      "ok": true
+    },
+    {
+      "module": "test_phase6_dictionary_cases.py",
+      "ran": 10,
+      "skip": 0,
+      "ok": true
+    },
+    {
+      "module": "test_phase6_duration_gate.py",
+      "ran": 19,
+      "skip": 0,
+      "ok": true
+    },
+    {
+      "module": "test_phase6_h2_limits.py",
+      "ran": 7,
+      "skip": 0,
+      "ok": true
+    },
+    {
+      "module": "test_phase6_paths.py",
+      "ran": 1,
+      "skip": 0,
+      "ok": true
+    },
+    {
+      "module": "test_phase6_process_cleanup.py",
+      "ran": 5,
+      "skip": 0,
+      "ok": true
+    },
+    {
+      "module": "test_phase6_profiles.py",
+      "ran": 66,
+      "skip": 0,
+      "ok": true
+    },
+    {
+      "module": "test_phase6_protocol_limits.py",
+      "ran": 5,
+      "skip": 0,
+      "ok": true
+    },
+    {
+      "module": "test_phase6_provenance.py",
+      "ran": 4,
+      "skip": 0,
+      "ok": true
+    },
+    {
+      "module": "test_phase6_resource_summary.py",
+      "ran": 35,
+      "skip": 0,
+      "ok": true
+    },
+    {
+      "module": "test_phase6_transport_wave.py",
+      "ran": 5,
+      "skip": 0,
+      "ok": true
+    },
+    {
+      "module": "test_phase6_workloads.py",
+      "ran": 94,
+      "skip": 0,
+      "ok": true
+    },
+    {
+      "module": "test_phase7.py",
+      "ran": 95,
+      "skip": 1,
+      "ok": true,
+      "successor_log": "/home/ajs/.local/share/pb-pr5-fixes/harness-final-followup/test-phase7.log",
+      "successor_log_sha256": "002631bf55fb12971ed9ca9497b2d8ffed3bd2bdba9827f79b7638987db1fe53"
+    },
+    {
+      "module": "test_phase7_bench.py",
+      "ran": 131,
+      "skip": 0,
+      "ok": true,
+      "successor_log": "/home/ajs/.local/share/pb-pr5-fixes/harness/green-final-bench-module.log",
+      "successor_log_sha256": "7e3247759da0ac6f8fcbf88b4cac2a48fc87b318264659e5c3d3abaa7213579a",
+      "final_delta_validation": "After the 131-test pass, bounded legacy parser feeding was additionally checked by three focused legacy-consumer tests; see legacy-consumers-final.log."
+    },
+    {
+      "module": "test_phase7_device.py",
+      "ran": 3,
+      "skip": 0,
+      "ok": true,
+      "successor_log": "/home/ajs/.local/share/pb-pr5-fixes/combined/test_phase7_device.py.final.log",
+      "successor_log_sha256": "ef2cbeb76ec55bab27a3742a609afc2318ab4244d8d4742a0fc54d128e3573ac"
+    },
+    {
+      "module": "test_phase7_profile.py",
+      "ran": 24,
+      "skip": 0,
+      "ok": true,
+      "successor_log": "/home/ajs/.local/share/pb-pr5-fixes/combined/test_phase7_profile.py.final.log",
+      "successor_log_sha256": "26fe679b31909e738883842f83438b940165fa7261f327212553e71b5c368293"
+    },
+    {
+      "module": "test_profile_external.py",
+      "ran": 8,
+      "skip": 0,
+      "ok": true
+    },
+    {
+      "module": "test_test_runner.py",
+      "ran": 4,
+      "skip": 0,
+      "ok": true
+    }
+  ],
+  "total_ran": 952,
+  "skipped": 2,
+  "method": "Full isolated-module run plus reruns of changed/failing modules; original failed logs preserved.",
+  "passed": 950
+}

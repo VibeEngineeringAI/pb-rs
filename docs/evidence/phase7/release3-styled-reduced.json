@@ -1,0 +1,1726 @@
+{
+  "schema_version": 1,
+  "kind": "functional-evidence-reduction",
+  "capture_root": "/home/ajs/.cache/pb-phase7/styled-release3",
+  "cases": [
+    {
+      "name": "p7-clipboard-credentials-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "6ebde8239141b70036c69a1c47da43e3502da2f0a4eba65d3d4c180b10252e9b",
+      "active_case_sha256": "6ebde8239141b70036c69a1c47da43e3502da2f0a4eba65d3d4c180b10252e9b",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-clipboard-credentials-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "eefe850e3da609746b08f6c815d4010ad51eb5e5d70841c8dcc864f379267ab4",
+      "active_case_sha256": "eefe850e3da609746b08f6c815d4010ad51eb5e5d70841c8dcc864f379267ab4",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-clipboard-delayed-focus-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "76b7dcd2c916ae3c18ed648df0432309c9be237b2121a4ab96c3928679ecfdd1",
+      "active_case_sha256": "76b7dcd2c916ae3c18ed648df0432309c9be237b2121a4ab96c3928679ecfdd1",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-clipboard-delayed-focus-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "473af9c9820f1f57bfc87a3e29e0f0ba092f6f218c472b6d5c346b0998fb49ad",
+      "active_case_sha256": "473af9c9820f1f57bfc87a3e29e0f0ba092f6f218c472b6d5c346b0998fb49ad",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-clipboard-delayed-quit-dark",
+      "reference_issues": [],
+      "documentary": true,
+      "captured_case_sha256": "9e1f0d7dc93b959cc9e5927e73692b902543e8b108b54b5a1c863068a58f9cb7",
+      "active_case_sha256": "9e1f0d7dc93b959cc9e5927e73692b902543e8b108b54b5a1c863068a58f9cb7",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-clipboard-delayed-quit-light",
+      "reference_issues": [],
+      "documentary": true,
+      "captured_case_sha256": "e9663d1bc23c9fd67a8a889801029a68e420feab837623fba249d9f6d5eea3c4",
+      "active_case_sha256": "e9663d1bc23c9fd67a8a889801029a68e420feab837623fba249d9f6d5eea3c4",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-clipboard-login-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "1b5a52271e9405b02ed5b41babfb9e61650637873c5a3dfa56c79364ec550396",
+      "active_case_sha256": "1b5a52271e9405b02ed5b41babfb9e61650637873c5a3dfa56c79364ec550396",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-clipboard-login-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "1df9a4ab0622ec8109841e04ca8011f0a093794835e946021c5a06bf5377dfbf",
+      "active_case_sha256": "1df9a4ab0622ec8109841e04ca8011f0a093794835e946021c5a06bf5377dfbf",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-clipboard-profile-picker-dropped-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "783aa6eb7491fc0cf99fd18d8efcdbeb693a7f8b700b9ca8c1f28f2e7a3a98b7",
+      "active_case_sha256": "783aa6eb7491fc0cf99fd18d8efcdbeb693a7f8b700b9ca8c1f28f2e7a3a98b7",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-clipboard-profile-picker-dropped-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "33e5fcbf877d6d7a3251a8e0d722de153f0d7a72ed94b34b2c68d5a3ca66b884",
+      "active_case_sha256": "33e5fcbf877d6d7a3251a8e0d722de153f0d7a72ed94b34b2c68d5a3ca66b884",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-clipboard-promql-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "1bb4257f098b0853edb13b15d99da628a5d6a40ca2dfc0fba7c43863877a346b",
+      "active_case_sha256": "1bb4257f098b0853edb13b15d99da628a5d6a40ca2dfc0fba7c43863877a346b",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-clipboard-promql-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "4695396e35d7cb62531b40cb80d9119023cda673402239eaf41a21c0860f8a46",
+      "active_case_sha256": "4695396e35d7cb62531b40cb80d9119023cda673402239eaf41a21c0860f8a46",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-clipboard-saved-filter-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "e4ff6187c1d76718a6703d121e949444fd5accf7b90343d0947faf95b4735df5",
+      "active_case_sha256": "e4ff6187c1d76718a6703d121e949444fd5accf7b90343d0947faf95b4735df5",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-clipboard-saved-filter-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "6398d7431d16ea9fdc7536ab3dbf6a18aaec655689457fa5c9404f07b75577fc",
+      "active_case_sha256": "6398d7431d16ea9fdc7536ab3dbf6a18aaec655689457fa5c9404f07b75577fc",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-clipboard-sql-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "1d363bf9e898cde6aee03cbe27ce429c85b0383e7c120ec3d88dc683a1dd1375",
+      "active_case_sha256": "1d363bf9e898cde6aee03cbe27ce429c85b0383e7c120ec3d88dc683a1dd1375",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-clipboard-sql-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "9027de2c6fa7a31b1b4cff67217d320005e543aded5d601e20eb797e55ae40e6",
+      "active_case_sha256": "9027de2c6fa7a31b1b4cff67217d320005e543aded5d601e20eb797e55ae40e6",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-credential-empty-ctrl-c-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "d4445fa12761a79da624fd60e341c24f5abe6e6cfaa685bd6b167ddb98d44a61",
+      "active_case_sha256": "d4445fa12761a79da624fd60e341c24f5abe6e6cfaa685bd6b167ddb98d44a61",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-credential-empty-ctrl-c-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "d3c1bd4dbcd626b0a6d022d53b4a6489939fe349e203ef03e8e37f0e6fcc5bd8",
+      "active_case_sha256": "d3c1bd4dbcd626b0a6d022d53b4a6489939fe349e203ef03e8e37f0e6fcc5bd8",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-credential-empty-esc-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "f32f3565af1d64f26a62c8b1e71fc531f3e8f031ec8b096078f7dbc8f11e4326",
+      "active_case_sha256": "f32f3565af1d64f26a62c8b1e71fc531f3e8f031ec8b096078f7dbc8f11e4326",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-credential-empty-esc-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "f75c60874f129f36e16f19e19623e7d4688fa26bec00812c47e07641e6ddc38b",
+      "active_case_sha256": "f75c60874f129f36e16f19e19623e7d4688fa26bec00812c47e07641e6ddc38b",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-credential-partial-cancel-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "e197f3cf7996366aeb8c103fb4e61b6efad6c8ed1f8519896a8d367a2ea4e089",
+      "active_case_sha256": "e197f3cf7996366aeb8c103fb4e61b6efad6c8ed1f8519896a8d367a2ea4e089",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-credential-partial-cancel-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "69e367da2e1f20510c816eb923bb6ee0de1dc4e406cb7efcd215a4b2ce33d844",
+      "active_case_sha256": "69e367da2e1f20510c816eb923bb6ee0de1dc4e406cb7efcd215a4b2ce33d844",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-credential-valid-cancel-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "d9c9ecc8cef1f637a3086d255d6b83771b6cb5a0a7798d08ffb430af9cf6afc3",
+      "active_case_sha256": "d9c9ecc8cef1f637a3086d255d6b83771b6cb5a0a7798d08ffb430af9cf6afc3",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-credential-valid-cancel-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "5358db416d2690f56d98c7becb41c8bd0da979bb87fedf8b3b5d7d26b6c8b672",
+      "active_case_sha256": "5358db416d2690f56d98c7becb41c8bd0da979bb87fedf8b3b5d7d26b6c8b672",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-dataset-cancel-ctrl-c-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "01331738f76a553a147a4cee76824ba797df982a0bc27822fe9bf1eb4a75a277",
+      "active_case_sha256": "01331738f76a553a147a4cee76824ba797df982a0bc27822fe9bf1eb4a75a277",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-dataset-cancel-ctrl-c-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "fe2828a0db8383fc96666df4d469c2b8308c6a8495d234d43ebcd7e7c725b155",
+      "active_case_sha256": "fe2828a0db8383fc96666df4d469c2b8308c6a8495d234d43ebcd7e7c725b155",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-dataset-cancel-esc-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "4b5be150a48e3992f82101c7163f58c3a42fad19878c908130cf91bb86671882",
+      "active_case_sha256": "4b5be150a48e3992f82101c7163f58c3a42fad19878c908130cf91bb86671882",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-dataset-cancel-esc-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "fc98db297788e3cb4beedac04aa82b87a4164ac69914a3d86df5ce6007bf0d6c",
+      "active_case_sha256": "fc98db297788e3cb4beedac04aa82b87a4164ac69914a3d86df5ce6007bf0d6c",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-dataset-logs-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "e379d0620235b75fa86caf51d2af9e0cb2f1397fb18b91acc5e7cc92f1403058",
+      "active_case_sha256": "e379d0620235b75fa86caf51d2af9e0cb2f1397fb18b91acc5e7cc92f1403058",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-dataset-logs-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "744eb39df89e350d40cb53afbc9ea3af201bdf3dc946bc3a2a70705de363f050",
+      "active_case_sha256": "744eb39df89e350d40cb53afbc9ea3af201bdf3dc946bc3a2a70705de363f050",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-dataset-metrics-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "2b98acff50684228f6a204743a147b651874ce813f00cec944a49e00be05d316",
+      "active_case_sha256": "2b98acff50684228f6a204743a147b651874ce813f00cec944a49e00be05d316",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-dataset-metrics-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "26665a790dc1e18e408eb0235ae89f193282f4affb46691862011a844c164a99",
+      "active_case_sha256": "26665a790dc1e18e408eb0235ae89f193282f4affb46691862011a844c164a99",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-dataset-traces-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "dd103c45db324ac2fd1d29931b702097a35b90cac8a731d2d590adc70a58d09d",
+      "active_case_sha256": "dd103c45db324ac2fd1d29931b702097a35b90cac8a731d2d590adc70a58d09d",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-dataset-traces-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "b55a1d3eb5de353d8f8a6ec93630017094d68eec9b92da85f742b5b6b6319148",
+      "active_case_sha256": "b55a1d3eb5de353d8f8a6ec93630017094d68eec9b92da85f742b5b6b6319148",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-default-cancel-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "6db926f802e51de2042ea483c3a671f27811c4cb259ec9673ee1022d81fddaa6",
+      "active_case_sha256": "6db926f802e51de2042ea483c3a671f27811c4cb259ec9673ee1022d81fddaa6",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-default-cancel-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "99262b0c8f9e146f5ec9212817649cbef7afde1b0e1ff9f9f6847cb9082c3baf",
+      "active_case_sha256": "99262b0c8f9e146f5ec9212817649cbef7afde1b0e1ff9f9f6847cb9082c3baf",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-default-select-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "75527cf221d63ac008160d19f62c35365caebec14aa88ae0ed7b374f63b03632",
+      "active_case_sha256": "75527cf221d63ac008160d19f62c35365caebec14aa88ae0ed7b374f63b03632",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-default-select-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "554853d339da2dfbe7986151864b7ec372dae0c94bf5b3d454f45e266b17e306",
+      "active_case_sha256": "554853d339da2dfbe7986151864b7ec372dae0c94bf5b3d454f45e266b17e306",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-login-api-key-save-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "a1a4056dfb863ab06daeee75969e6e0fa4766f53112c0bce52666a2377641337",
+      "active_case_sha256": "a1a4056dfb863ab06daeee75969e6e0fa4766f53112c0bce52666a2377641337",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-login-api-key-save-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "e1d22b70c138166948f827041521ed0ae6c2dbf5fd2201ea970a8fdc9ef89b43",
+      "active_case_sha256": "e1d22b70c138166948f827041521ed0ae6c2dbf5fd2201ea970a8fdc9ef89b43",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-login-backtrack-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "42bbe9d7e8c7e1caa1e41bfc1382296ec836f5aa5e834ca03a656d018c141c40",
+      "active_case_sha256": "42bbe9d7e8c7e1caa1e41bfc1382296ec836f5aa5e834ca03a656d018c141c40",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-login-backtrack-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "ca5f51add267a3c26d8e518d14eca687ee715844239e47195e242129edd29e6a",
+      "active_case_sha256": "ca5f51add267a3c26d8e518d14eca687ee715844239e47195e242129edd29e6a",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-login-basic-save-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "6964c94aeefb2dd23ae0c05ac0d06b176073d301a9925a1b168122114f0f931a",
+      "active_case_sha256": "6964c94aeefb2dd23ae0c05ac0d06b176073d301a9925a1b168122114f0f931a",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-login-basic-save-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "fc9f786d77f513559c0713188a1cc202909907292b34aad08a728eef867ed497",
+      "active_case_sha256": "fc9f786d77f513559c0713188a1cc202909907292b34aad08a728eef867ed497",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-login-cancel-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "8a06ee185d361dd1c5bcc17c33e89f06e8ad17d6e95ea42a2cf3b46c9d539708",
+      "active_case_sha256": "8a06ee185d361dd1c5bcc17c33e89f06e8ad17d6e95ea42a2cf3b46c9d539708",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-login-cancel-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "18b2b2f273328b363eb5b5278d5d4aeba1b65e9745eaca35336ef01c2d27fcf9",
+      "active_case_sha256": "18b2b2f273328b363eb5b5278d5d4aeba1b65e9745eaca35336ef01c2d27fcf9",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-login-cloud-cancel-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "603e4b17decc41d738850660a87d9f54ef1c616b0f24fd0f0be0944a4b82da64",
+      "active_case_sha256": "603e4b17decc41d738850660a87d9f54ef1c616b0f24fd0f0be0944a4b82da64",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-login-cloud-cancel-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "ab4155b05a43cd49e37a34a5d575c91c96512c1906d5a12a8cc4762b5f11d54c",
+      "active_case_sha256": "ab4155b05a43cd49e37a34a5d575c91c96512c1906d5a12a8cc4762b5f11d54c",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-login-duplicate-change-name-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "b3d9175268080837485ddbde71d9dc3d98ce0b3ff7f5f3783c35b99268d73411",
+      "active_case_sha256": "b3d9175268080837485ddbde71d9dc3d98ce0b3ff7f5f3783c35b99268d73411",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-login-duplicate-change-name-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "08009e78014a0d9c12f83a3ead0268b84ab31e00b0f880a57559bcd6479bf6d0",
+      "active_case_sha256": "08009e78014a0d9c12f83a3ead0268b84ab31e00b0f880a57559bcd6479bf6d0",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-login-duplicate-replace-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "6040f354651d55a00984cf151659f231d2e900b44cc6eed9f3d99165f65c4608",
+      "active_case_sha256": "6040f354651d55a00984cf151659f231d2e900b44cc6eed9f3d99165f65c4608",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-login-duplicate-replace-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "a704abe84ac3c21ebf7e3f69bf546a299fb7879278380214f1e5d222db28082a",
+      "active_case_sha256": "a704abe84ac3c21ebf7e3f69bf546a299fb7879278380214f1e5d222db28082a",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-login-overwrite-bad-config-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "887a61b121fe309076bcbd9a535b14cb10c48b993a3464ef2f81bbdf8b78bbe6",
+      "active_case_sha256": "887a61b121fe309076bcbd9a535b14cb10c48b993a3464ef2f81bbdf8b78bbe6",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-login-overwrite-bad-config-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "e65148045e3b367a96b4892e03c302bd89712c02c67b7560ee48855d307b9929",
+      "active_case_sha256": "e65148045e3b367a96b4892e03c302bd89712c02c67b7560ee48855d307b9929",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-login-required-url-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "9009e8cda74d5c5ba005b0fe44d1c35b8971c89f75cfcc66bff77906a63a94f9",
+      "active_case_sha256": "9009e8cda74d5c5ba005b0fe44d1c35b8971c89f75cfcc66bff77906a63a94f9",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-login-required-url-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "4971bf94ab8eaf18213dc6772a5c117ca1bf00928ff6ae72ac6fdc0e45eae4c2",
+      "active_case_sha256": "4971bf94ab8eaf18213dc6772a5c117ca1bf00928ff6ae72ac6fdc0e45eae4c2",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-login-signal-sighup-dark",
+      "reference_issues": [],
+      "documentary": true,
+      "captured_case_sha256": "892c193b0c7d2852183fb105094828d4ef065fcf51b95f76a70bfddf8d401df8",
+      "active_case_sha256": "892c193b0c7d2852183fb105094828d4ef065fcf51b95f76a70bfddf8d401df8",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-login-signal-sighup-light",
+      "reference_issues": [],
+      "documentary": true,
+      "captured_case_sha256": "085b86dcc5fe25ab717b445dae26c2a8f06b81dca0bb7416771344cf17720489",
+      "active_case_sha256": "085b86dcc5fe25ab717b445dae26c2a8f06b81dca0bb7416771344cf17720489",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-login-signal-sigint-dark",
+      "reference_issues": [],
+      "documentary": true,
+      "captured_case_sha256": "22d5131f4cfeee32867ce9597ffe315b3008735948756eb6214ce281f9927d8b",
+      "active_case_sha256": "22d5131f4cfeee32867ce9597ffe315b3008735948756eb6214ce281f9927d8b",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-login-signal-sigint-light",
+      "reference_issues": [],
+      "documentary": true,
+      "captured_case_sha256": "f195038d983683f73eac21ea2e4be5e17fb4d98cb568bfd912f13b5967bebe10",
+      "active_case_sha256": "f195038d983683f73eac21ea2e4be5e17fb4d98cb568bfd912f13b5967bebe10",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-login-signal-sigquit-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "fdbcee233d121bcb5bdfa269b0702354c20271aab74bc3a19182280cb91d1b87",
+      "active_case_sha256": "fdbcee233d121bcb5bdfa269b0702354c20271aab74bc3a19182280cb91d1b87",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-login-signal-sigquit-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "1a4142e98f6aa7008a4e0a73310777b87a8e9da80ca453a5c2a33c5bb41b206f",
+      "active_case_sha256": "1a4142e98f6aa7008a4e0a73310777b87a8e9da80ca453a5c2a33c5bb41b206f",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-login-signal-sigterm-dark",
+      "reference_issues": [],
+      "documentary": true,
+      "captured_case_sha256": "ddd8a10eda0fdebcb77a4d999b97aa58168b9a3033f025016124e269121132c5",
+      "active_case_sha256": "ddd8a10eda0fdebcb77a4d999b97aa58168b9a3033f025016124e269121132c5",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-login-signal-sigterm-light",
+      "reference_issues": [],
+      "documentary": true,
+      "captured_case_sha256": "50beed1dc4f38368eb6f4442bd263e7827746e9baafd63e595af8be93d2d117b",
+      "active_case_sha256": "50beed1dc4f38368eb6f4442bd263e7827746e9baafd63e595af8be93d2d117b",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-logout-confirm-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "ea33f377d909ff5b49f95cf57a7df80003d91b2b17bb97c982b3de3370639780",
+      "active_case_sha256": "ea33f377d909ff5b49f95cf57a7df80003d91b2b17bb97c982b3de3370639780",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-logout-confirm-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "78bb64082d1e0ab2108fb103926aedd3b750df69fd55ade6f52b08846fd53b51",
+      "active_case_sha256": "78bb64082d1e0ab2108fb103926aedd3b750df69fd55ade6f52b08846fd53b51",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-logout-decline-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "f8dce2a7295f19bb676636eb13f62276c31261dd1a97611a00c49b8ac3b554ee",
+      "active_case_sha256": "f8dce2a7295f19bb676636eb13f62276c31261dd1a97611a00c49b8ac3b554ee",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-logout-decline-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "78b288e26a2a7d608a8e8806628d8d354e709708d08ce11bab3d599b899fdd9d",
+      "active_case_sha256": "78b288e26a2a7d608a8e8806628d8d354e709708d08ce11bab3d599b899fdd9d",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-logout-replacement-cancel-dark",
+      "reference_issues": [],
+      "documentary": true,
+      "captured_case_sha256": "8087abcfb04372246d5f60013caeb6810788fcfadfce55bcf52111d6b3ac6992",
+      "active_case_sha256": "8087abcfb04372246d5f60013caeb6810788fcfadfce55bcf52111d6b3ac6992",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-logout-replacement-cancel-light",
+      "reference_issues": [],
+      "documentary": true,
+      "captured_case_sha256": "45fcf173ff488dc3853f1a94eb882b43dae14353e37f2059f02f49afc2fdb71b",
+      "active_case_sha256": "45fcf173ff488dc3853f1a94eb882b43dae14353e37f2059f02f49afc2fdb71b",
+      "contract_changed": false,
+      "issues": [
+        "styled cells/cursor/scrollback differ at filter-draft",
+        "final styled cells/cursor/scrollback differ"
+      ]
+    },
+    {
+      "name": "p7-nonTTY-credentials-dark",
+      "reference_issues": [],
+      "documentary": true,
+      "captured_case_sha256": "8b7dff9a94c221248b53f0b8f5408b6919c93e61755b1ec3f5e812fc7a02f196",
+      "active_case_sha256": "8b7dff9a94c221248b53f0b8f5408b6919c93e61755b1ec3f5e812fc7a02f196",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-nonTTY-credentials-light",
+      "reference_issues": [],
+      "documentary": true,
+      "captured_case_sha256": "c8563b3e379907d0070989d5cc5a250f95a3f6ef901584a021273003be073c34",
+      "active_case_sha256": "c8563b3e379907d0070989d5cc5a250f95a3f6ef901584a021273003be073c34",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-nonTTY-login-dark",
+      "reference_issues": [],
+      "documentary": true,
+      "captured_case_sha256": "bd581f1b26c783249c157a88b834ac29304ae240dd01aa04d02039ba4567bc31",
+      "active_case_sha256": "bd581f1b26c783249c157a88b834ac29304ae240dd01aa04d02039ba4567bc31",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-nonTTY-login-light",
+      "reference_issues": [],
+      "documentary": true,
+      "captured_case_sha256": "7f2289587c5b52b019906606e3fb1cb2fbc7d589f33b06fc96a3ad807dccd066",
+      "active_case_sha256": "7f2289587c5b52b019906606e3fb1cb2fbc7d589f33b06fc96a3ad807dccd066",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-nonTTY-promql-dark",
+      "reference_issues": [],
+      "documentary": true,
+      "captured_case_sha256": "254f1c009994370a3fa40e1bac217ca6858f56bf77c25b894af39a1aeb6d97a1",
+      "active_case_sha256": "254f1c009994370a3fa40e1bac217ca6858f56bf77c25b894af39a1aeb6d97a1",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-nonTTY-promql-light",
+      "reference_issues": [],
+      "documentary": true,
+      "captured_case_sha256": "325b1c2cce904eba65ab7c6455839191343fc681342ebff0bef6e4e1435e390d",
+      "active_case_sha256": "325b1c2cce904eba65ab7c6455839191343fc681342ebff0bef6e4e1435e390d",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-nonTTY-saved-dark",
+      "reference_issues": [],
+      "documentary": true,
+      "captured_case_sha256": "1a8693903d1fd005d7de7d358d3cc00d6fde14ef56764307bbde6709e8eb3f74",
+      "active_case_sha256": "1a8693903d1fd005d7de7d358d3cc00d6fde14ef56764307bbde6709e8eb3f74",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-nonTTY-saved-light",
+      "reference_issues": [],
+      "documentary": true,
+      "captured_case_sha256": "11e8ec89c77e10c4acf988e7cc242c81b6cc6eab0fbf7a726ea8ac54a5312a9c",
+      "active_case_sha256": "11e8ec89c77e10c4acf988e7cc242c81b6cc6eab0fbf7a726ea8ac54a5312a9c",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-nonTTY-sql-dark",
+      "reference_issues": [],
+      "documentary": true,
+      "captured_case_sha256": "05b63d104369e1ca55873ab8f10a036891f8f4aebf17dcc00f152e3f80ecd2cd",
+      "active_case_sha256": "05b63d104369e1ca55873ab8f10a036891f8f4aebf17dcc00f152e3f80ecd2cd",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-nonTTY-sql-light",
+      "reference_issues": [],
+      "documentary": true,
+      "captured_case_sha256": "f25cf667b1d41491896fd7fe60440d234e8bcb8f1032c0bc4b28476686f4de10",
+      "active_case_sha256": "f25cf667b1d41491896fd7fe60440d234e8bcb8f1032c0bc4b28476686f4de10",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-builder-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "334fafa9f508bf255842a0e4a1fe9a810fa46165ba4c4da5d0eee4f561abdb6a",
+      "active_case_sha256": "334fafa9f508bf255842a0e4a1fe9a810fa46165ba4c4da5d0eee4f561abdb6a",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-builder-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "1c88fbfea2761f3760d4e320e42d3509225709ded9fc9bb0427d33c771111fec",
+      "active_case_sha256": "1c88fbfea2761f3760d4e320e42d3509225709ded9fc9bb0427d33c771111fec",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-delayed-result-unguarded-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "2d26f5ef8eb15164da108489e637b9669aff66307bfe2f0fc66679a45a768b7d",
+      "active_case_sha256": "2d26f5ef8eb15164da108489e637b9669aff66307bfe2f0fc66679a45a768b7d",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-delayed-result-unguarded-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "55420b2d86faecf183145aaec6e34734eac081774c4d02163f7b41cbfa7184a9",
+      "active_case_sha256": "55420b2d86faecf183145aaec6e34734eac081774c4d02163f7b41cbfa7184a9",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-empty-quit-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "052c15754793c8a3db491a90c1c39224b5929050580461d0442c4e7b9cd105ea",
+      "active_case_sha256": "052c15754793c8a3db491a90c1c39224b5929050580461d0442c4e7b9cd105ea",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-empty-quit-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "460d6ae7fb231f32fd5a47b7bb73a02945145561ca5196d6f13ab77ffa8b0d39",
+      "active_case_sha256": "460d6ae7fb231f32fd5a47b7bb73a02945145561ca5196d6f13ab77ffa8b0d39",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-g10-equal-time-merge-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "dac04616d67a646aca2280758f8291500cdf0d5d1bda5100f5bd0c64d9a1e1e7",
+      "active_case_sha256": "dac04616d67a646aca2280758f8291500cdf0d5d1bda5100f5bd0c64d9a1e1e7",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-g10-equal-time-merge-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "d02568dec2613fa3872088ee00a30007b34b37b6d1964b79779b95414d32703a",
+      "active_case_sha256": "d02568dec2613fa3872088ee00a30007b34b37b6d1964b79779b95414d32703a",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-g3-duplicate-result-merge-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "812e3a98fff913d4e065aa80c7e6617e807ae05f628e0b158c2f91bca15f341f",
+      "active_case_sha256": "812e3a98fff913d4e065aa80c7e6617e807ae05f628e0b158c2f91bca15f341f",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-g3-duplicate-result-merge-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "78a2b0fbdecf2e7bc77edb8cb4ce601dbe4c5fd216b1b260e72e6e1a4fd40a5f",
+      "active_case_sha256": "78a2b0fbdecf2e7bc77edb8cb4ce601dbe4c5fd216b1b260e72e6e1a4fd40a5f",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-g4-fixed-zone-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "c0321422affe029960e3457c88c9f5a0bef1f0e03046010c6ac9fae0a5e63bb6",
+      "active_case_sha256": "c0321422affe029960e3457c88c9f5a0bef1f0e03046010c6ac9fae0a5e63bb6",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-g4-fixed-zone-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "fb52bd8cfe02130c2b5a8474eed16ea9bd73067fd8d8af4667d893bd1bce4841",
+      "active_case_sha256": "fb52bd8cfe02130c2b5a8474eed16ea9bd73067fd8d8af4667d893bd1bce4841",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-g4-z-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "5b34d2e9ce4f9dea20c774af14bb717c2b71cd70036818df941c2e4dfb832c45",
+      "active_case_sha256": "5b34d2e9ce4f9dea20c774af14bb717c2b71cd70036818df941c2e4dfb832c45",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-g4-z-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "58925558364ff86e73f3a917c5977bcf587a2b319d6fd752013efdb105014285",
+      "active_case_sha256": "58925558364ff86e73f3a917c5977bcf587a2b319d6fd752013efdb105014285",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-g7-huge-timestamp-amd64-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "c98522843ea297c6faa527addd43edbd3f8e1ca9909f94dba8104c02d9653cd3",
+      "active_case_sha256": "c98522843ea297c6faa527addd43edbd3f8e1ca9909f94dba8104c02d9653cd3",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-g7-huge-timestamp-amd64-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "51f077ea03057c617a936c20e1f856c1e2b79349c38932fe38be4ecdb0291722",
+      "active_case_sha256": "51f077ea03057c617a936c20e1f856c1e2b79349c38932fe38be4ecdb0291722",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-g7-infinite-plot-amd64-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "d6c18c9a374db8a913f77ac84e83b2e2346a1b06c7ef016412c9931233e3b1fa",
+      "active_case_sha256": "d6c18c9a374db8a913f77ac84e83b2e2346a1b06c7ef016412c9931233e3b1fa",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-g7-infinite-plot-amd64-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "e9535b719680737bf024d8ce639aa04d1c06b11908bc9d98f6d662e1f43f14ef",
+      "active_case_sha256": "e9535b719680737bf024d8ce639aa04d1c06b11908bc9d98f6d662e1f43f14ef",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-hang-double-sigterm-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "41608120b10d406a5f1b962b59961fc683fb32973d1f4aaa6fad3549022ef4d0",
+      "active_case_sha256": "41608120b10d406a5f1b962b59961fc683fb32973d1f4aaa6fad3549022ef4d0",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-hang-double-sigterm-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "cd7ea891014734f1f496b5c2f30a5b151ed753d7300ceb83e96d6904c31e7695",
+      "active_case_sha256": "cd7ea891014734f1f496b5c2f30a5b151ed753d7300ceb83e96d6904c31e7695",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-promoted-compact-json-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "9956379f41f264801d96f4b0324fe9f99fd02762046d1cc7d3d8c317dcd212c9",
+      "active_case_sha256": "9956379f41f264801d96f4b0324fe9f99fd02762046d1cc7d3d8c317dcd212c9",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-promoted-compact-json-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "5c5b50bbb5702ebec66737326d009e58f01842e0c09a4905bf2ab09048d4d13f",
+      "active_case_sha256": "5c5b50bbb5702ebec66737326d009e58f01842e0c09a4905bf2ab09048d4d13f",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-promoted-long-true-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "26141d6b425ab709b1c8c4a0a452d4995518e085308a3d02db595de0f7f0114b",
+      "active_case_sha256": "26141d6b425ab709b1c8c4a0a452d4995518e085308a3d02db595de0f7f0114b",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-promoted-long-true-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "aaeca65fe52f2a3140089bb35acf66de7a360f169d2f7891da468beacfb8e3ef",
+      "active_case_sha256": "aaeca65fe52f2a3140089bb35acf66de7a360f169d2f7891da468beacfb8e3ef",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-promoted-short-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "6ec500020a83d561ba710eed2d5ee35271e16ed853b27db084f6ec7cc83e1672",
+      "active_case_sha256": "6ec500020a83d561ba710eed2d5ee35271e16ed853b27db084f6ec7cc83e1672",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-promoted-short-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "d4378aa7c1821465c1d0bc7440c533eb79a6691768b5d0f5a00b850bb4d61c07",
+      "active_case_sha256": "d4378aa7c1821465c1d0bc7440c533eb79a6691768b5d0f5a00b850bb4d61c07",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-resize-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "795ed04c3bb1fb476df9e1265fbc81ed624f38a8b454671959cb17aa299ecbc0",
+      "active_case_sha256": "795ed04c3bb1fb476df9e1265fbc81ed624f38a8b454671959cb17aa299ecbc0",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-resize-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "dc1ec50773601bda4c65ec57ee48760c61cd1a2bfaf09b6b79550a144d07882a",
+      "active_case_sha256": "dc1ec50773601bda4c65ec57ee48760c61cd1a2bfaf09b6b79550a144d07882a",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-result-empty-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "7cd2039dbf426bdbce1dff7dca8264a8cd89c9b0811eef8acdb75858ae2f0776",
+      "active_case_sha256": "7cd2039dbf426bdbce1dff7dca8264a8cd89c9b0811eef8acdb75858ae2f0776",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-result-empty-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "565d63d53a23828735f71f4c50974d6f09cf57cccaaff231ae0d2afa9fad4c3f",
+      "active_case_sha256": "565d63d53a23828735f71f4c50974d6f09cf57cccaaff231ae0d2afa9fad4c3f",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-result-error-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "66f0e6e2abfa6ef6939f5d575ae784de59f529de8cf9920f1ba0e51a689f44ff",
+      "active_case_sha256": "66f0e6e2abfa6ef6939f5d575ae784de59f529de8cf9920f1ba0e51a689f44ff",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-result-error-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "3199702a3ef6dbb4668b4f1dc19c99554d0dc4cbe4b2a7b8406ee420784d2510",
+      "active_case_sha256": "3199702a3ef6dbb4668b4f1dc19c99554d0dc4cbe4b2a7b8406ee420784d2510",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-signal-sigint-dark",
+      "reference_issues": [],
+      "documentary": true,
+      "captured_case_sha256": "291fa488aaf77ef7345dfabcfdd8348a7a544ac097ccc0dc41df4d048de909e3",
+      "active_case_sha256": "291fa488aaf77ef7345dfabcfdd8348a7a544ac097ccc0dc41df4d048de909e3",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-signal-sigint-light",
+      "reference_issues": [],
+      "documentary": true,
+      "captured_case_sha256": "4fdac4f6bf01fdd4d187acdbe5b1baae84c8085bf5ef3b5e8596a40bd925678a",
+      "active_case_sha256": "4fdac4f6bf01fdd4d187acdbe5b1baae84c8085bf5ef3b5e8596a40bd925678a",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-signal-sigquit-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "c4e8a73a95a9a1f22d5de52f718cddcf5bda350fac27bbb9a8340f8ce0bb9942",
+      "active_case_sha256": "c4e8a73a95a9a1f22d5de52f718cddcf5bda350fac27bbb9a8340f8ce0bb9942",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-signal-sigquit-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "b722c8b1051e0bd0f626cedbbc9ba734b6cff86a913058d4c6d14e503e7ff154",
+      "active_case_sha256": "b722c8b1051e0bd0f626cedbbc9ba734b6cff86a913058d4c6d14e503e7ff154",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-signal-sigterm-dark",
+      "reference_issues": [],
+      "documentary": true,
+      "captured_case_sha256": "c7182e1ea3d8310c8f4c7308a3c0a7cebdf8200ad3da37830e91dd6f8873eefd",
+      "active_case_sha256": "c7182e1ea3d8310c8f4c7308a3c0a7cebdf8200ad3da37830e91dd6f8873eefd",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-signal-sigterm-light",
+      "reference_issues": [],
+      "documentary": true,
+      "captured_case_sha256": "31ed8ef41cc042d0ab43162761c5715dc796e00c162ad058f33a52e4a1958ea2",
+      "active_case_sha256": "31ed8ef41cc042d0ab43162761c5715dc796e00c162ad058f33a52e4a1958ea2",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-table-chart-unwrap-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "46fa1c0fccb1b8cb360cb94ac8be5edb67ff12e566d54b18b5a6451f1b3dec25",
+      "active_case_sha256": "46fa1c0fccb1b8cb360cb94ac8be5edb67ff12e566d54b18b5a6451f1b3dec25",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-table-chart-unwrap-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "ced56e455e11de517f24c28cf601607040543d3e7baefcad7b9fc49d78e47440",
+      "active_case_sha256": "ced56e455e11de517f24c28cf601607040543d3e7baefcad7b9fc49d78e47440",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-wide-legend-view-panic-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "585caf2a2634404ab8f67450f152bec2edf4d490dbdfa4c1c40e1c872be1f6e0",
+      "active_case_sha256": "585caf2a2634404ab8f67450f152bec2edf4d490dbdfa4c1c40e1c872be1f6e0",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-promql-wide-legend-view-panic-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "ec38eb91bb58da2cae29c07e56071e5141ad3da310824a5f777b62dffa01d6b0",
+      "active_case_sha256": "d175ddffa673a9f8129bb1c0cc5a37a96da1a403ca4072af05eadc2db6318f87",
+      "contract_changed": true,
+      "issues": []
+    },
+    {
+      "name": "p7-remove-replacement-cancel-dark",
+      "reference_issues": [],
+      "documentary": true,
+      "captured_case_sha256": "e7c24347e8fc7a99cc0a23e7299383bd00c8ebb0953b9e5ed4d1057a3c47f87e",
+      "active_case_sha256": "e7c24347e8fc7a99cc0a23e7299383bd00c8ebb0953b9e5ed4d1057a3c47f87e",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-remove-replacement-cancel-light",
+      "reference_issues": [],
+      "documentary": true,
+      "captured_case_sha256": "ea8c6265846bee55e5b3ac9c77091f43218884f8bc2444bc1a06ceeb29cbdf3e",
+      "active_case_sha256": "ea8c6265846bee55e5b3ac9c77091f43218884f8bc2444bc1a06ceeb29cbdf3e",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-role-cancel-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "8bc185e1dd5fafba9bc2f3db877c92052b40294afa3068850cd9957e89883e7b",
+      "active_case_sha256": "8bc185e1dd5fafba9bc2f3db877c92052b40294afa3068850cd9957e89883e7b",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-role-cancel-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "d10ed4ac9d9c9b2e8eef704e6c1e41894f19ab5b88afc7d08983b2975f070e52",
+      "active_case_sha256": "d10ed4ac9d9c9b2e8eef704e6c1e41894f19ab5b88afc7d08983b2975f070e52",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-role-conflict-before-prompt-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "81f0d51ec6b1899c7cf91c5a80d406cd8656f7bcc0c02d41b7af44222a2173df",
+      "active_case_sha256": "81f0d51ec6b1899c7cf91c5a80d406cd8656f7bcc0c02d41b7af44222a2173df",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-role-conflict-before-prompt-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "6cc2d66a818adb09dad6e21dc640e7e521c9ff0a3f873b24945479dddf454a21",
+      "active_case_sha256": "6cc2d66a818adb09dad6e21dc640e7e521c9ff0a3f873b24945479dddf454a21",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-role-reader-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "ddfabbab954c3c1d2434a4238dada19de1deec9822bdb656a2eb041da8ab3756",
+      "active_case_sha256": "ddfabbab954c3c1d2434a4238dada19de1deec9822bdb656a2eb041da8ab3756",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-role-reader-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "7d7753925c8de961e1f783d18ee2921ce06a2878a97165893a19f79043c953a9",
+      "active_case_sha256": "7d7753925c8de961e1f783d18ee2921ce06a2878a97165893a19f79043c953a9",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-saved-empty-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "64ca677d6ca323c793ffd89f6b5b46d48507a271d1e50e666a26898e32783f20",
+      "active_case_sha256": "64ca677d6ca323c793ffd89f6b5b46d48507a271d1e50e666a26898e32783f20",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-saved-empty-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "31a4d17688a5e5f01e5b7c6a8fc2528657c0aa0e0d15b7915f44a74ab5ecde5f",
+      "active_case_sha256": "31a4d17688a5e5f01e5b7c6a8fc2528657c0aa0e0d15b7915f44a74ab5ecde5f",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-saved-empty-output-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "0cd5563f0296490e05feaf201f9c9167a63ed62da3b3bf2faf9813d0241e8d17",
+      "active_case_sha256": "0cd5563f0296490e05feaf201f9c9167a63ed62da3b3bf2faf9813d0241e8d17",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-saved-empty-output-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "b5b76e4abf846489448aa22a7867194102d100cf5b85d831395d32e24e4d06b4",
+      "active_case_sha256": "b5b76e4abf846489448aa22a7867194102d100cf5b85d831395d32e24e4d06b4",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-saved-filter-a-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "a705ca5c5827bac8cae3cc582991eaf016236cafe94406ccebac6e48308cd527",
+      "active_case_sha256": "a705ca5c5827bac8cae3cc582991eaf016236cafe94406ccebac6e48308cd527",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-saved-filter-a-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "d5540cf7a4793fa5f30a585e397469ae60a3fca56a50e2af271235f42180ceeb",
+      "active_case_sha256": "d5540cf7a4793fa5f30a585e397469ae60a3fca56a50e2af271235f42180ceeb",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-saved-filter-b-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "19f2d44ec31ab7d995491459802bc6e47258ea05d5126204b326398919951ded",
+      "active_case_sha256": "19f2d44ec31ab7d995491459802bc6e47258ea05d5126204b326398919951ded",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-saved-filter-b-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "1ffc38f48ee0c59d8d2188a8f4fdb7b8d643673c60684411b203fac875ef7dee",
+      "active_case_sha256": "1ffc38f48ee0c59d8d2188a8f4fdb7b8d643673c60684411b203fac875ef7dee",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-saved-filter-enter-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "ff7fff1c23a790769906a7a92634a2ba04816602db9fef39838b02dfec3a18b3",
+      "active_case_sha256": "ff7fff1c23a790769906a7a92634a2ba04816602db9fef39838b02dfec3a18b3",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-saved-filter-enter-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "5223275cc2bd10b236b68404582d93063b833e00a98f49b6b08f4b961dc344d2",
+      "active_case_sha256": "5223275cc2bd10b236b68404582d93063b833e00a98f49b6b08f4b961dc344d2",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-saved-malformed-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "7280da0a93baf3f2db0dfe50ec9420a944eb800fcfc0e29932112ccc17b4aefd",
+      "active_case_sha256": "7280da0a93baf3f2db0dfe50ec9420a944eb800fcfc0e29932112ccc17b4aefd",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-saved-malformed-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "b0d2a18f20ee4bff08514d62b5a657fdaf994fb2d7386176ecea606f097a7106",
+      "active_case_sha256": "b0d2a18f20ee4bff08514d62b5a657fdaf994fb2d7386176ecea606f097a7106",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-saved-non2xx-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "0182cf2f038cb95a196ed19c0785f95fbe4e4c1a89a089ab02d8fe7670dcb71b",
+      "active_case_sha256": "0182cf2f038cb95a196ed19c0785f95fbe4e4c1a89a089ab02d8fe7670dcb71b",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-saved-non2xx-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "14cb03e688a9fa4818a7b21839bc6da87fb1921a0d567c59371c9486d0d9c392",
+      "active_case_sha256": "14cb03e688a9fa4818a7b21839bc6da87fb1921a0d567c59371c9486d0d9c392",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-saved-quit-ctrl-c-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "f565b27d74fdc22fe4060796beccb2fcdb3c5ea4c2fb52c07c6913263ad3dee7",
+      "active_case_sha256": "f565b27d74fdc22fe4060796beccb2fcdb3c5ea4c2fb52c07c6913263ad3dee7",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-saved-quit-ctrl-c-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "e9d6c90d2ed52f3ecf316380bfe85bbd347ff132d7fc6391e766ea0f32915079",
+      "active_case_sha256": "e9d6c90d2ed52f3ecf316380bfe85bbd347ff132d7fc6391e766ea0f32915079",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-alt-enter-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "c725d1d62aad7253257d3715542a7d1ad530f662401f0c85f4f02100c9fffa98",
+      "active_case_sha256": "c725d1d62aad7253257d3715542a7d1ad530f662401f0c85f4f02100c9fffa98",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-alt-enter-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "e7ea78611cdd7dbc5d5ba69c6c37bf31095134da88b56aea3a915051ac200fbb",
+      "active_case_sha256": "e7ea78611cdd7dbc5d5ba69c6c37bf31095134da88b56aea3a915051ac200fbb",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-dataset-placeholder-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "d9db6ff953467d41299a1135e1ec477e6fcc256d6d9a7452f6e00224a1febe3c",
+      "active_case_sha256": "d9db6ff953467d41299a1135e1ec477e6fcc256d6d9a7452f6e00224a1febe3c",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-dataset-placeholder-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "0b5753c722f6f3e5fec003a2be918ab726010ddc3fe3760fd230586e8c0a9f98",
+      "active_case_sha256": "0b5753c722f6f3e5fec003a2be918ab726010ddc3fe3760fd230586e8c0a9f98",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-delayed-window-guard-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "4a5dedd5c08e0dab77bfd12eafc093fa04e5c094d0c7f0b9b845cfad17a7db9e",
+      "active_case_sha256": "4a5dedd5c08e0dab77bfd12eafc093fa04e5c094d0c7f0b9b845cfad17a7db9e",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-delayed-window-guard-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "10ed70c78b854a127139b1d82d3de38ab59e650807da36dc2e01952ae23234ab",
+      "active_case_sha256": "10ed70c78b854a127139b1d82d3de38ab59e650807da36dc2e01952ae23234ab",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-editor-key-precedence-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "a292a433e26ca57ffa7f03bedae016ae64ca6900a79ae1feaea89c6064c33e73",
+      "active_case_sha256": "a292a433e26ca57ffa7f03bedae016ae64ca6900a79ae1feaea89c6064c33e73",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-editor-key-precedence-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "db0dfb6b7374795365659445cfb95d733795d273ec2e736487ebe89c9c751fca",
+      "active_case_sha256": "db0dfb6b7374795365659445cfb95d733795d273ec2e736487ebe89c9c751fca",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-empty-quit-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "1be7d6fe1b8f95e286a63304d38cf2a9b5037f5e6f40398fb37bce1e95c59a89",
+      "active_case_sha256": "1be7d6fe1b8f95e286a63304d38cf2a9b5037f5e6f40398fb37bce1e95c59a89",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-empty-quit-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "428ee705d4cb3874c5764dfae7e183a4e6539e1955d6082d30256e1976db495a",
+      "active_case_sha256": "428ee705d4cb3874c5764dfae7e183a4e6539e1955d6082d30256e1976db495a",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-hang-double-sigterm-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "e900a321e7528d3a40c0fc64f88dd0253a5b88782d868c801b3c3ebbc4050b39",
+      "active_case_sha256": "e900a321e7528d3a40c0fc64f88dd0253a5b88782d868c801b3c3ebbc4050b39",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-hang-double-sigterm-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "3ea8129257edb0a8264cf8b99728f0c9726065a7fa5a7fc51696e54c402e4a49",
+      "active_case_sha256": "3ea8129257edb0a8264cf8b99728f0c9726065a7fa5a7fc51696e54c402e4a49",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-promoted-compact-json-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "efe103477a51b98a93fc0e0bb481f7f0243ae21b27da9a804373455749746677",
+      "active_case_sha256": "efe103477a51b98a93fc0e0bb481f7f0243ae21b27da9a804373455749746677",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-promoted-compact-json-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "88ff881e3832dfb6a68069b806a9c5a1af97ce007c9de5050abfb6352750abff",
+      "active_case_sha256": "88ff881e3832dfb6a68069b806a9c5a1af97ce007c9de5050abfb6352750abff",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-promoted-ignored-save-as-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "0a03176d83a506b3cafa8e1f30756f0bf299c1556f2b003eefef2d878e1f376f",
+      "active_case_sha256": "0a03176d83a506b3cafa8e1f30756f0bf299c1556f2b003eefef2d878e1f376f",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-promoted-ignored-save-as-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "2675888ea7703c8964f0fa1ac27c0aed40653db9c65e7f2d302321954286331c",
+      "active_case_sha256": "2675888ea7703c8964f0fa1ac27c0aed40653db9c65e7f2d302321954286331c",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-promoted-ignored-yaml-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "1f153ec5aba8e61c2924edd164184a84bf850eb8dacd77d6a33ecbe1c9469172",
+      "active_case_sha256": "1f153ec5aba8e61c2924edd164184a84bf850eb8dacd77d6a33ecbe1c9469172",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-promoted-ignored-yaml-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "d8482b418e2d181ab8d3920767ae6e06c6eb65862e8bfc555c27346b01036755",
+      "active_case_sha256": "d8482b418e2d181ab8d3920767ae6e06c6eb65862e8bfc555c27346b01036755",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-promoted-long-empty-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "d7c08b0aee1b5e05dd74a9f9418a69d6c0433c3f3290ed793755e46988c15e4e",
+      "active_case_sha256": "d7c08b0aee1b5e05dd74a9f9418a69d6c0433c3f3290ed793755e46988c15e4e",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-promoted-long-empty-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "fc55a58b6f69d86b33e7c61bf3ab3f240eda2a0ed169e4a8700f8331d828776e",
+      "active_case_sha256": "fc55a58b6f69d86b33e7c61bf3ab3f240eda2a0ed169e4a8700f8331d828776e",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-promoted-long-true-query-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "90d1e5bfd3072220d69f712ed79b8b59781c3e9a7f19e1c12924a618e1feb3c5",
+      "active_case_sha256": "90d1e5bfd3072220d69f712ed79b8b59781c3e9a7f19e1c12924a618e1feb3c5",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-promoted-long-true-query-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "eec310b7132dfbbcd9bce0b81b6474302472f73190d319efa33ebe6565e2a8b8",
+      "active_case_sha256": "eec310b7132dfbbcd9bce0b81b6474302472f73190d319efa33ebe6565e2a8b8",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-promoted-short-empty-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "1f7de629789be64222624ae93a37357a288adb2aa9fa6c2efd6b6a254e8b34eb",
+      "active_case_sha256": "1f7de629789be64222624ae93a37357a288adb2aa9fa6c2efd6b6a254e8b34eb",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-promoted-short-empty-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "a375d28683215fbf701ce71d3bfe1ed8a75230d588dd6edfdd8c7cb52d79472e",
+      "active_case_sha256": "a375d28683215fbf701ce71d3bfe1ed8a75230d588dd6edfdd8c7cb52d79472e",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-promoted-short-query-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "9a2d1bb2f59138e22888cfa0f033ebd8073cd8043f66e69fb2ba186eed92d94c",
+      "active_case_sha256": "9a2d1bb2f59138e22888cfa0f033ebd8073cd8043f66e69fb2ba186eed92d94c",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-promoted-short-query-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "8c2bae8fc2fe8d4b872fda947e2ebcc9237d1a040657c0bbd3629324d004cf4b",
+      "active_case_sha256": "8c2bae8fc2fe8d4b872fda947e2ebcc9237d1a040657c0bbd3629324d004cf4b",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-resize-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "cb12825e185f985b153a152a66746509c905fa41012626ee13221d459078da24",
+      "active_case_sha256": "cb12825e185f985b153a152a66746509c905fa41012626ee13221d459078da24",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-resize-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "822971589e7adb5604cd38dcd980d1ec2ef740c427b42ec502e4c6aa0e6ffdde",
+      "active_case_sha256": "822971589e7adb5604cd38dcd980d1ec2ef740c427b42ec502e4c6aa0e6ffdde",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-result-empty-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "19104c3156c49655def42fca42715706d9e468e58a0513eea09e3d6d51fa3e1f",
+      "active_case_sha256": "19104c3156c49655def42fca42715706d9e468e58a0513eea09e3d6d51fa3e1f",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-result-empty-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "2a5c647e7bbb79ec504fac28dab9c20ca76ea47887d23800460fcfa997208de7",
+      "active_case_sha256": "2a5c647e7bbb79ec504fac28dab9c20ca76ea47887d23800460fcfa997208de7",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-result-error-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "ff3b7705711a7be7176d1b5ce87697ea0316a660acbbcd2df06fcfc75b3ca31c",
+      "active_case_sha256": "ff3b7705711a7be7176d1b5ce87697ea0316a660acbbcd2df06fcfc75b3ca31c",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-result-error-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "52a41714edaca4738900d6e59ace1d477a63fceb6030095a1ff6336f80c5abfb",
+      "active_case_sha256": "52a41714edaca4738900d6e59ace1d477a63fceb6030095a1ff6336f80c5abfb",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-signal-sigint-dark",
+      "reference_issues": [],
+      "documentary": true,
+      "captured_case_sha256": "b80ba6cf568bf7625e2910b427a0fec74f10613a8a4ce6195683831235844f98",
+      "active_case_sha256": "b80ba6cf568bf7625e2910b427a0fec74f10613a8a4ce6195683831235844f98",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-signal-sigint-light",
+      "reference_issues": [],
+      "documentary": true,
+      "captured_case_sha256": "d4028cbc3ddee7e58543fa125c4d3be09b24567d17cc4b4187ece7d7dd07ec02",
+      "active_case_sha256": "d4028cbc3ddee7e58543fa125c4d3be09b24567d17cc4b4187ece7d7dd07ec02",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-signal-sigquit-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "480d48e1f67b82634aa9ae1113c9e18f686caee40e69b892ca39907038caad30",
+      "active_case_sha256": "480d48e1f67b82634aa9ae1113c9e18f686caee40e69b892ca39907038caad30",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-signal-sigquit-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "378ba66d96a894302a78665a0358b5d74c34c1dc0c9d118407740ea62e3bf8da",
+      "active_case_sha256": "378ba66d96a894302a78665a0358b5d74c34c1dc0c9d118407740ea62e3bf8da",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-signal-sigterm-dark",
+      "reference_issues": [],
+      "documentary": true,
+      "captured_case_sha256": "ff96fbb65d9fcb9de8cf39b662518f541fe6da682956341d9c941dd96b70b4a9",
+      "active_case_sha256": "ff96fbb65d9fcb9de8cf39b662518f541fe6da682956341d9c941dd96b70b4a9",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-signal-sigterm-light",
+      "reference_issues": [],
+      "documentary": true,
+      "captured_case_sha256": "4eb43d3ab1f6d016ad195f7ba65b1ca4ff1b4d1205a2cbb74c4c520b8bbc3f34",
+      "active_case_sha256": "4eb43d3ab1f6d016ad195f7ba65b1ca4ff1b4d1205a2cbb74c4c520b8bbc3f34",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-time-overlay-cancel-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "27c07b805dc7b0eb6f7525251d339ba78c4d931196ca4e028f1776fb81fb321f",
+      "active_case_sha256": "27c07b805dc7b0eb6f7525251d339ba78c4d931196ca4e028f1776fb81fb321f",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-time-overlay-cancel-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "f68552e297dc04e9b3655294b59dff926fb734fb97dc651c5d432a7409969f9c",
+      "active_case_sha256": "f68552e297dc04e9b3655294b59dff926fb734fb97dc651c5d432a7409969f9c",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-wide-dataset-truncation-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "0ef451d1ea9633c8db44679b41cf236c0a5cedb5ed6bcca8b1c9fd4753324e7d",
+      "active_case_sha256": "0ef451d1ea9633c8db44679b41cf236c0a5cedb5ed6bcca8b1c9fd4753324e7d",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-wide-dataset-truncation-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "bc09ffa7cd5d173216d6e0d0cd44a49e546bd0c67e92c9a14c50a9cdecf2bbc2",
+      "active_case_sha256": "bc09ffa7cd5d173216d6e0d0cd44a49e546bd0c67e92c9a14c50a9cdecf2bbc2",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-window-partial-final-dark",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "3b95a827b9a60fb315b342501a3ffe7cf7b444e6fa07aa57a6661f17dba3390c",
+      "active_case_sha256": "3b95a827b9a60fb315b342501a3ffe7cf7b444e6fa07aa57a6661f17dba3390c",
+      "contract_changed": false,
+      "issues": []
+    },
+    {
+      "name": "p7-sql-window-partial-final-light",
+      "reference_issues": [],
+      "documentary": false,
+      "captured_case_sha256": "6ce3e627bdfcab76241d1ae3aa85e17299e08537bc98f46066ce89f9ef131b7b",
+      "active_case_sha256": "6ce3e627bdfcab76241d1ae3aa85e17299e08537bc98f46066ce89f9ef131b7b",
+      "contract_changed": false,
+      "issues": []
+    }
+  ],
+  "harness_sources": {
+    "phase7.py": "b1d5cd2de90b32268f221c8bf7a5f584a2fa7d34eb134a21d2e3ed475e77a654",
+    "phase7_workloads.py": "54a9efb7767372c976b459c3e2dc59c590e0b9d6b47b4cc29e36ae81ff588d1c",
+    "phase7_spawn.c": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4"
+  },
+  "original_report_sha256": "4e34a1081a019b3b4e3e49d05f001b5c7ef880ed60bee308b5e3a3028e7d8fb9"
+}

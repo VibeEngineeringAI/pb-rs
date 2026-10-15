@@ -1,0 +1,368 @@
+{
+  "current_harness_sha256": "a89762ad81f835e93cf7994e60188eac3cf9aa08bdee6275075fc120b6529661",
+  "original_harness_sha256": "dc7574f058b9ff6ae7b77a912847fdbe02d8b68baab8728237d6ef040e6a44fa",
+  "scope": "8 retained actual captures, read-only; no process/campaign/reduction execution",
+  "captures": [
+    {
+      "name": "p7-sql-promoted-short-query-dark",
+      "role": "reference",
+      "path": "/home/ajs/.cache/pb-phase7/styled-release5/p7-sql-promoted-short-query-dark/reference/session.json",
+      "legacy_missing_terminal_modes": true,
+      "legacy_missing_history_overflow": true,
+      "binary": {
+        "path": "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+        "bytes": 71807160,
+        "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314"
+      },
+      "terminal_modes": {
+        "initial": [],
+        "final": []
+      },
+      "expect_screen_restored": true,
+      "termination": {
+        "exit": 0
+      },
+      "captured_case_has_resize": false,
+      "initial_size": null,
+      "final_size": [
+        100,
+        30
+      ],
+      "original_case_preserved_despite_override": true,
+      "baseline_issues": [],
+      "fixed_issues": [],
+      "new_issues": [],
+      "hashes_before": {
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-sql-promoted-short-query-dark/reference/session.json": "4fd0e12027970c2ab9bb17de43e3bae97c6a5eb478cd159cac5f0e04f8a6add4",
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-sql-promoted-short-query-dark/reference/stdout.bin": "ec2953b4e4b6cbcbcd108415a7a9bc4cb8a9f5235fb5256abb7e2cc3c9cf5b0b",
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-sql-promoted-short-query-dark/reference/stderr.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hashes_after": {
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-sql-promoted-short-query-dark/reference/session.json": "4fd0e12027970c2ab9bb17de43e3bae97c6a5eb478cd159cac5f0e04f8a6add4",
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-sql-promoted-short-query-dark/reference/stdout.bin": "ec2953b4e4b6cbcbcd108415a7a9bc4cb8a9f5235fb5256abb7e2cc3c9cf5b0b",
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-sql-promoted-short-query-dark/reference/stderr.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "raw_and_session_files_unchanged": true
+    },
+    {
+      "name": "p7-sql-promoted-short-query-dark",
+      "role": "candidate",
+      "path": "/home/ajs/.cache/pb-phase7/styled-release5/p7-sql-promoted-short-query-dark/candidate/session.json",
+      "legacy_missing_terminal_modes": true,
+      "legacy_missing_history_overflow": true,
+      "binary": {
+        "path": "/home/ajs/.cache/pb-phase7/candidates/release5/pb-normal",
+        "bytes": 9398288,
+        "sha256": "9ad4f4fc9e732b4a790c0d2ea97dcc58f127ee7580d3df9bc26c8cee28edef21"
+      },
+      "terminal_modes": {
+        "initial": [],
+        "final": []
+      },
+      "expect_screen_restored": true,
+      "termination": {
+        "exit": 0
+      },
+      "captured_case_has_resize": false,
+      "initial_size": null,
+      "final_size": [
+        100,
+        30
+      ],
+      "original_case_preserved_despite_override": true,
+      "baseline_issues": [],
+      "fixed_issues": [],
+      "new_issues": [],
+      "hashes_before": {
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-sql-promoted-short-query-dark/candidate/session.json": "7df15946ee6b721c55697f8dce30826a6f0364616729eee3e6f10447635c33c6",
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-sql-promoted-short-query-dark/candidate/stdout.bin": "558e85cd81c7e5a91f5c970d707016179f84bda7edaf357b8e67c4aacb321a89",
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-sql-promoted-short-query-dark/candidate/stderr.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hashes_after": {
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-sql-promoted-short-query-dark/candidate/session.json": "7df15946ee6b721c55697f8dce30826a6f0364616729eee3e6f10447635c33c6",
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-sql-promoted-short-query-dark/candidate/stdout.bin": "558e85cd81c7e5a91f5c970d707016179f84bda7edaf357b8e67c4aacb321a89",
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-sql-promoted-short-query-dark/candidate/stderr.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "raw_and_session_files_unchanged": true
+    },
+    {
+      "name": "p7-promql-promoted-short-dark",
+      "role": "reference",
+      "path": "/home/ajs/.cache/pb-phase7/styled-release5/p7-promql-promoted-short-dark/reference/session.json",
+      "legacy_missing_terminal_modes": true,
+      "legacy_missing_history_overflow": true,
+      "binary": {
+        "path": "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+        "bytes": 71807160,
+        "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314"
+      },
+      "terminal_modes": {
+        "initial": [],
+        "final": []
+      },
+      "expect_screen_restored": true,
+      "termination": {
+        "exit": 0
+      },
+      "captured_case_has_resize": false,
+      "initial_size": null,
+      "final_size": [
+        100,
+        30
+      ],
+      "original_case_preserved_despite_override": true,
+      "baseline_issues": [],
+      "fixed_issues": [],
+      "new_issues": [],
+      "hashes_before": {
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-promql-promoted-short-dark/reference/session.json": "2b8a54b02658e441458e98a53ff66a5bd9c7dcfc3955a48640fd4b407d381707",
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-promql-promoted-short-dark/reference/stdout.bin": "3a461e7133cb10ba1b651f6113f38cbc8cb31c15fd5fc5b2eff0980e809580b9",
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-promql-promoted-short-dark/reference/stderr.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hashes_after": {
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-promql-promoted-short-dark/reference/session.json": "2b8a54b02658e441458e98a53ff66a5bd9c7dcfc3955a48640fd4b407d381707",
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-promql-promoted-short-dark/reference/stdout.bin": "3a461e7133cb10ba1b651f6113f38cbc8cb31c15fd5fc5b2eff0980e809580b9",
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-promql-promoted-short-dark/reference/stderr.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "raw_and_session_files_unchanged": true
+    },
+    {
+      "name": "p7-promql-promoted-short-dark",
+      "role": "candidate",
+      "path": "/home/ajs/.cache/pb-phase7/styled-release5/p7-promql-promoted-short-dark/candidate/session.json",
+      "legacy_missing_terminal_modes": true,
+      "legacy_missing_history_overflow": true,
+      "binary": {
+        "path": "/home/ajs/.cache/pb-phase7/candidates/release5/pb-normal",
+        "bytes": 9398288,
+        "sha256": "9ad4f4fc9e732b4a790c0d2ea97dcc58f127ee7580d3df9bc26c8cee28edef21"
+      },
+      "terminal_modes": {
+        "initial": [],
+        "final": []
+      },
+      "expect_screen_restored": true,
+      "termination": {
+        "exit": 0
+      },
+      "captured_case_has_resize": false,
+      "initial_size": null,
+      "final_size": [
+        100,
+        30
+      ],
+      "original_case_preserved_despite_override": true,
+      "baseline_issues": [],
+      "fixed_issues": [],
+      "new_issues": [],
+      "hashes_before": {
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-promql-promoted-short-dark/candidate/session.json": "e38c28a9bcb8709ac70c9c7346ecc464ebbb94c29b0a34574339d26dce9ac242",
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-promql-promoted-short-dark/candidate/stdout.bin": "9222f2f68fef58ea49a7de665a30669893fc41352c313e9bd546ffb05055397e",
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-promql-promoted-short-dark/candidate/stderr.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hashes_after": {
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-promql-promoted-short-dark/candidate/session.json": "e38c28a9bcb8709ac70c9c7346ecc464ebbb94c29b0a34574339d26dce9ac242",
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-promql-promoted-short-dark/candidate/stdout.bin": "9222f2f68fef58ea49a7de665a30669893fc41352c313e9bd546ffb05055397e",
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-promql-promoted-short-dark/candidate/stderr.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "raw_and_session_files_unchanged": true
+    },
+    {
+      "name": "p7-sql-resize-dark",
+      "role": "reference",
+      "path": "/home/ajs/.cache/pb-phase7/styled-release5/p7-sql-resize-dark/reference/session.json",
+      "legacy_missing_terminal_modes": true,
+      "legacy_missing_history_overflow": true,
+      "binary": {
+        "path": "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+        "bytes": 71807160,
+        "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314"
+      },
+      "terminal_modes": {
+        "initial": [],
+        "final": []
+      },
+      "expect_screen_restored": true,
+      "termination": {
+        "exit": 0
+      },
+      "captured_case_has_resize": true,
+      "initial_size": null,
+      "final_size": [
+        140,
+        45
+      ],
+      "original_case_preserved_despite_override": true,
+      "baseline_issues": [],
+      "fixed_issues": [],
+      "new_issues": [],
+      "hashes_before": {
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-sql-resize-dark/reference/session.json": "d206de756926424d1f8b844ddb2c95729abcbed7b32d6e18f53ea402ad5200e9",
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-sql-resize-dark/reference/stdout.bin": "7ac7923d02ef265c77f37755509351e893790f420edfc8b61012188823563321",
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-sql-resize-dark/reference/stderr.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hashes_after": {
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-sql-resize-dark/reference/session.json": "d206de756926424d1f8b844ddb2c95729abcbed7b32d6e18f53ea402ad5200e9",
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-sql-resize-dark/reference/stdout.bin": "7ac7923d02ef265c77f37755509351e893790f420edfc8b61012188823563321",
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-sql-resize-dark/reference/stderr.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "raw_and_session_files_unchanged": true
+    },
+    {
+      "name": "p7-sql-resize-dark",
+      "role": "candidate",
+      "path": "/home/ajs/.cache/pb-phase7/styled-release5/p7-sql-resize-dark/candidate/session.json",
+      "legacy_missing_terminal_modes": true,
+      "legacy_missing_history_overflow": true,
+      "binary": {
+        "path": "/home/ajs/.cache/pb-phase7/candidates/release5/pb-normal",
+        "bytes": 9398288,
+        "sha256": "9ad4f4fc9e732b4a790c0d2ea97dcc58f127ee7580d3df9bc26c8cee28edef21"
+      },
+      "terminal_modes": {
+        "initial": [],
+        "final": []
+      },
+      "expect_screen_restored": true,
+      "termination": {
+        "exit": 0
+      },
+      "captured_case_has_resize": true,
+      "initial_size": null,
+      "final_size": [
+        140,
+        45
+      ],
+      "original_case_preserved_despite_override": true,
+      "baseline_issues": [],
+      "fixed_issues": [],
+      "new_issues": [],
+      "hashes_before": {
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-sql-resize-dark/candidate/session.json": "fe8750a818ff1d0df9c8dfbd9cf21ff5e17c9ec93faa94667ce90cfc9f4e57ae",
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-sql-resize-dark/candidate/stdout.bin": "8ff45ef544c6f9e4da9146ef6e5535dad0cfe45810276f153a747198693300cb",
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-sql-resize-dark/candidate/stderr.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hashes_after": {
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-sql-resize-dark/candidate/session.json": "fe8750a818ff1d0df9c8dfbd9cf21ff5e17c9ec93faa94667ce90cfc9f4e57ae",
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-sql-resize-dark/candidate/stdout.bin": "8ff45ef544c6f9e4da9146ef6e5535dad0cfe45810276f153a747198693300cb",
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-sql-resize-dark/candidate/stderr.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "raw_and_session_files_unchanged": true
+    },
+    {
+      "name": "p7-promql-signal-sigquit-dark",
+      "role": "reference",
+      "path": "/home/ajs/.cache/pb-phase7/styled-release5/p7-promql-signal-sigquit-dark/reference/session.json",
+      "legacy_missing_terminal_modes": true,
+      "legacy_missing_history_overflow": true,
+      "binary": {
+        "path": "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+        "bytes": 71807160,
+        "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314"
+      },
+      "terminal_modes": {
+        "initial": [],
+        "final": [
+          2004
+        ]
+      },
+      "expect_screen_restored": false,
+      "termination": {
+        "exit": 2
+      },
+      "captured_case_has_resize": false,
+      "initial_size": null,
+      "final_size": [
+        100,
+        30
+      ],
+      "original_case_preserved_despite_override": true,
+      "baseline_issues": [],
+      "fixed_issues": [],
+      "new_issues": [],
+      "hashes_before": {
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-promql-signal-sigquit-dark/reference/session.json": "5f13e3c21184e3f206f6d53fe48366cbb776297ea73941b4a9ea92a66cad7761",
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-promql-signal-sigquit-dark/reference/stdout.bin": "08b0f0cb5e62e2c114d997b09c158e579fb8f5632302814b409bf33d3bdc2bc9",
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-promql-signal-sigquit-dark/reference/stderr.bin": "35f36d902f1f3f9ac85a1c21223b8809dbef24f540ebef30974e5e267c76621c"
+      },
+      "hashes_after": {
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-promql-signal-sigquit-dark/reference/session.json": "5f13e3c21184e3f206f6d53fe48366cbb776297ea73941b4a9ea92a66cad7761",
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-promql-signal-sigquit-dark/reference/stdout.bin": "08b0f0cb5e62e2c114d997b09c158e579fb8f5632302814b409bf33d3bdc2bc9",
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-promql-signal-sigquit-dark/reference/stderr.bin": "35f36d902f1f3f9ac85a1c21223b8809dbef24f540ebef30974e5e267c76621c"
+      },
+      "raw_and_session_files_unchanged": true
+    },
+    {
+      "name": "p7-promql-signal-sigquit-dark",
+      "role": "candidate",
+      "path": "/home/ajs/.cache/pb-phase7/styled-release5/p7-promql-signal-sigquit-dark/candidate/session.json",
+      "legacy_missing_terminal_modes": true,
+      "legacy_missing_history_overflow": true,
+      "binary": {
+        "path": "/home/ajs/.cache/pb-phase7/candidates/release5/pb-normal",
+        "bytes": 9398288,
+        "sha256": "9ad4f4fc9e732b4a790c0d2ea97dcc58f127ee7580d3df9bc26c8cee28edef21"
+      },
+      "terminal_modes": {
+        "initial": [],
+        "final": [
+          2004
+        ]
+      },
+      "expect_screen_restored": false,
+      "termination": {
+        "exit": 2
+      },
+      "captured_case_has_resize": false,
+      "initial_size": null,
+      "final_size": [
+        100,
+        30
+      ],
+      "original_case_preserved_despite_override": true,
+      "baseline_issues": [],
+      "fixed_issues": [],
+      "new_issues": [],
+      "hashes_before": {
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-promql-signal-sigquit-dark/candidate/session.json": "58954e6641a514d267f73870810627b3684c34f84cb8e2fd59ba04844d51684c",
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-promql-signal-sigquit-dark/candidate/stdout.bin": "05355fd7b6f438a615772ad14cc9ff4f9785e43ccd332e97772a3cad8ede2a31",
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-promql-signal-sigquit-dark/candidate/stderr.bin": "d2b07d174ae70a59cb4c4bed9c9a3c369c34277a59697f8aeb22cba3a09ef219"
+      },
+      "hashes_after": {
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-promql-signal-sigquit-dark/candidate/session.json": "58954e6641a514d267f73870810627b3684c34f84cb8e2fd59ba04844d51684c",
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-promql-signal-sigquit-dark/candidate/stdout.bin": "05355fd7b6f438a615772ad14cc9ff4f9785e43ccd332e97772a3cad8ede2a31",
+        "/home/ajs/.cache/pb-phase7/styled-release5/p7-promql-signal-sigquit-dark/candidate/stderr.bin": "d2b07d174ae70a59cb4c4bed9c9a3c369c34277a59697f8aeb22cba3a09ef219"
+      },
+      "raw_and_session_files_unchanged": true
+    }
+  ],
+  "pairs": [
+    {
+      "name": "p7-sql-promoted-short-query-dark",
+      "baseline_compare": [],
+      "fixed_compare": [],
+      "new_compare_issues": []
+    },
+    {
+      "name": "p7-promql-promoted-short-dark",
+      "baseline_compare": [],
+      "fixed_compare": [],
+      "new_compare_issues": []
+    },
+    {
+      "name": "p7-sql-resize-dark",
+      "baseline_compare": [],
+      "fixed_compare": [],
+      "new_compare_issues": []
+    },
+    {
+      "name": "p7-promql-signal-sigquit-dark",
+      "baseline_compare": [],
+      "fixed_compare": [],
+      "new_compare_issues": []
+    }
+  ],
+  "all_retained_files_unchanged": true,
+  "all_original_cases_preserved": true,
+  "new_mode_failures": []
+}

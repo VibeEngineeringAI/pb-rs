@@ -1,0 +1,27 @@
+{
+  "passed": true,
+  "process_exit_code": 0,
+  "exact_scroll_exit_code": 0,
+  "reference_passed": 7,
+  "candidate_passed": 7,
+  "reference_binary": {
+    "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/bin/pb-go-pinned",
+    "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314"
+  },
+  "candidate_binary": {
+    "path": "/home/ajs/.local/share/pb-pr5-fixes/candidate-final/pb",
+    "sha256": "cb6112a691bd0a6da4ae521961b9fd29cc7d0c01ae15f14ea0ca7d0968576494"
+  },
+  "candidate_pre_and_post_sha256": "cb6112a691bd0a6da4ae521961b9fd29cc7d0c01ae15f14ea0ca7d0968576494",
+  "candidate_manifest_sha256": "db4e929b3e0b88b5813cece1e078a04afc5b6295fd3793fefae50343251be378",
+  "script_sha256": "18dfbec24f0a6889f22c4be3599a8169c1ed790bd43f4a836f90e5636c01593b",
+  "summary_sha256": "263fc83dffb270c3d1f57e75d85281125f0d89930e1840995c40724fca65f9d0",
+  "log_sha256": "4f7986983d5338f07dae769674ff33328116bd1642b80be229c091a9d9fb1cc8",
+  "exact_scroll_report_sha256": "e612543b930931ed22f0cb294b847f4b91530868a252bbcad1b68afbbc58075c",
+  "all_six_non_scroll_semantic_observations_identical": true,
+  "all_sessions_exit_zero_restore_termios_and_keep_config_unchanged": true,
+  "exact_scroll_states": 5,
+  "exact_scroll_styled_cells": 3600,
+  "exact_scroll_differences": 0,
+  "original_12process_and_3600cell_artifacts_unchanged": true
+}

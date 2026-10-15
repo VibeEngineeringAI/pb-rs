@@ -1,0 +1,20 @@
+{
+  "status": "proposed protocol; root adjudication and independent review pending",
+  "doc": {
+    "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-performance-decisions.md",
+    "size_bytes": 31142,
+    "sha256": "a5a16114f7463713fcabb2b8c68fb9fa8fdc35736bcb6dd079d70e3eccb08274"
+  },
+  "manifest_sha256": "54b37fe5eaa21b942772183820c9f21fb0455e5efed94b80eb313a72585efbc9",
+  "verified_deliverable_files": 17,
+  "root_checks": "All manifest file sizes and SHA256 verified. Full protocol and source measurement-plan sections read. No arithmetic suite rerun; author 90 static/mock passes remain author evidence.",
+  "author_task": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-sol-performance-decisions-r1",
+  "review_task": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-performance-decisions-review-r1",
+  "root_review_questions": [
+    "Whether adding 18 pooled-latency budget obligations is justified by long-idle resource experiment scope; must resolve prospectively, no silent deletion after results.",
+    "CPU accounting uncertainty provenance and full idle interval bounds remain unknown; no current budget acceptance.",
+    "Four dark editor A/A sentinels condition profile decisions but cannot establish workload/light calibration."
+  ],
+  "no_execution_admission": true,
+  "no_actual_measurements": true
+}

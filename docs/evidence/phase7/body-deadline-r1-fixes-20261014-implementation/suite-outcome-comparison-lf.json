@@ -1,0 +1,39 @@
+{
+  "baseline_count": 27,
+  "patched_count": 29,
+  "existing_pure_outcomes_equal_after_rename": true,
+  "normal_and_optimized_outcomes_equal": true,
+  "renamed_test": {
+    "test_phase3_offtree.DeadlineTierTests.test_bare_deadline_cause_is_limited_to_two_exact_text_messages": "test_phase3_offtree.DeadlineTierTests.test_legacy_bare_deadline_contexts_remain_case_specific"
+  },
+  "new_tests": [
+    "test_phase3_offtree.DeadlineTierTests.test_body_stall_text_bare_deadline_has_an_exact_error_boundary",
+    "test_phase3_offtree.DeadlineTierTests.test_body_stall_text_normalization_keeps_all_existing_gates"
+  ],
+  "excluded_process_tests": [
+    {
+      "id": "test_phase3_offtree.FixtureTests.test_go_fixture_generate_parity",
+      "reason": "launches shell, Go fixture or pb CLI processes; outside pure authorization"
+    },
+    {
+      "id": "test_phase3_offtree.GoOracleTests.test_small_reference_subset_and_manifest_identity",
+      "reason": "launches shell, Go fixture or pb CLI processes; outside pure authorization"
+    },
+    {
+      "id": "test_phase3_offtree.RunnerTests.test_bytes_digest_and_elements",
+      "reason": "launches shell, Go fixture or pb CLI processes; outside pure authorization"
+    },
+    {
+      "id": "test_phase3_offtree.RunnerTests.test_close_stdout_produces_sigpipe",
+      "reason": "launches shell, Go fixture or pb CLI processes; outside pure authorization"
+    },
+    {
+      "id": "test_phase3_offtree.RunnerTests.test_devfull_pty_and_timeout",
+      "reason": "launches shell, Go fixture or pb CLI processes; outside pure authorization"
+    },
+    {
+      "id": "test_phase3_offtree.RunnerTests.test_unmet_required_action_is_reported",
+      "reason": "launches shell, Go fixture or pb CLI processes; outside pure authorization"
+    }
+  ]
+}

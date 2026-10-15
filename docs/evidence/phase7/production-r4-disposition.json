@@ -1,0 +1,11 @@
+{
+  "kind": "fresh independent Opus R4 source disposition; not phase acceptance",
+  "report": "docs/phase7-review-final-opus-r4.md",
+  "report_sha256": "82825b117dbf888d3bbdb3bac0492293051b7f2cd17ae1674cfcfe9b746ce504",
+  "verdict": "Prior R3-F1/O3-1/O3-2 resolved at source; one new low O4-1 requires characterization/correction",
+  "limits": "Source-only EDQUOT; only listed changed and integration surfaces re-read, prior unchanged modules rely on cumulative R1-R3 reports plus supplied hash maps. No universal complete new audit or independent execution claim.",
+  "coordinator_correction": "Reviewer proposed /a and /ab process sequences do not account for menu a/b interception; actual controls must use paste or validated coalesced input and retain typed-a interception control. Source matcher finding remains plausible.",
+  "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-saved-o4-characterize-prepare",
+  "edit_policy": "Prepare off-tree only while release4 source-bound gates run; no application until saved matcher edit window open. Native owned matcher state/effect outcome, no literal Go port.",
+  "evidence_after_review": "release4-new-findings-process.json already proves2clock+21credential/saved cases; source checkpoint429lib431diag passes. Full alltargets and OAuth now exit0; deadline and retained/style/device remain running."
+}

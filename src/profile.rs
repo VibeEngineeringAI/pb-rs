@@ -1,32 +1,72 @@
-//! Noninteractive configuration commands. No credential validation occurs here.
+//! Configuration commands, including their interactive pickers, credential
+//! form and logout confirmation. No credential validation occurs here.
 use crate::{
     ErrorCode,
     config::{Config, ConfigError, ProfileRecord, ProfileStore},
     parser::{ParsedInvocation, quote},
     render,
+    tui::profile::PickerOutcome,
 };
 use serde::Serialize;
-use std::fmt;
+use std::{collections::BTreeMap, fmt};
+
+/// Interactive steps the profile commands need. Production uses
+/// `tui::profile::TerminalPrompts`; tests script the answers.
+pub(crate) trait Prompts {
+    /// Text Go prints to stdout before or between interactive steps.
+    fn say(&mut self, text: &str);
+    /// defaultprofile picker; Err is the Bubble Tea program error text.
+    fn select_profile(
+        &mut self,
+        profiles: &BTreeMap<String, ProfileRecord>,
+    ) -> Result<PickerOutcome, String>;
+    /// credential form `Values()` after the program exits.
+    fn credentials(&mut self) -> Result<FormOutcome, String>;
+    /// Cooked `Continue? [y/N]:` line prompt.
+    fn confirm_logout(&mut self, name: &str, url: &str) -> bool;
+}
+
+/// How the credential form program ended.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) enum FormOutcome {
+    /// Normal quit: `Values()` (both or neither).
+    Values(String, String),
+    /// Update/View panicked; the value is the Go panic text.
+    Panicked(String),
+}
+
+/// A recovered Bubble Tea panic in a program whose caller asserts the
+/// returned model without `ok`: Run returned a nil model, so the assertion
+/// panics fatally. Go prints recoverFromPanic's text on stdout and the
+/// runtime panic on stderr, exit status 2 (PTY oracle, L-AUTH-3). The two
+/// goroutine traces are a scoped diagnostic difference (L-AUTH-10).
+fn go_panic(value: &str, model: &str) -> ProfileError {
+    let message = format!("interface conversion: tea.Model is nil, not {model}");
+    let mut error = ProfileError::new(ErrorCode::CommandFailed, message.clone());
+    error.stdout = crate::tui::profile::caught_panic_stdout(value);
+    error.fatal = Some(format!("panic: {message}\n"));
+    error
+}
+const PICKER_MODEL: &str = "defaultprofile.Model";
+const CREDENTIAL_MODEL: &str = "credential.Model";
 
 #[derive(Debug)]
 pub struct ProfileError {
     pub code: ErrorCode,
     pub message: String,
     pub stdout: String,
+    /// A Go runtime panic rather than a command error: stderr text written
+    /// verbatim (no `Error:` rendering) and exit status 2.
+    pub fatal: Option<String>,
 }
 impl ProfileError {
-    fn new(code: ErrorCode, message: impl Into<String>) -> Self {
+    pub(crate) fn new(code: ErrorCode, message: impl Into<String>) -> Self {
         Self {
             code,
             message: message.into(),
             stdout: String::new(),
+            fatal: None,
         }
-    }
-    fn deferred(action: &str) -> Self {
-        Self::new(
-            ErrorCode::CommandFailed,
-            format!("interactive {action} is not implemented in this Rust phase"),
-        )
     }
     fn context(mut self, prefix: &str) -> Self {
         self.message = format!("{prefix}{}", self.message);
@@ -187,7 +227,7 @@ pub fn cloud_profile_add(
         ))
     }
 }
-fn go_json_escape(text: String) -> String {
+pub(crate) fn go_json_escape(text: String) -> String {
     text.replace('&', "\\u0026")
         .replace('<', "\\u003c")
         .replace('>', "\\u003e")
@@ -195,9 +235,23 @@ fn go_json_escape(text: String) -> String {
         .replace('\u{2029}', "\\u2029")
 }
 
+/// `pb login` (cmd/login.go). Configuration is touched only at the wizard's
+/// duplicate-name check and when saving, so a missing $HOME fails there.
+pub fn login(_parsed: &ParsedInvocation) -> Result<String, crate::error::CliError> {
+    crate::tui::login::run()
+}
+
 pub fn execute(
     parsed: &ParsedInvocation,
     store: &ProfileStore,
+) -> Result<Option<String>, ProfileError> {
+    execute_with(parsed, store, &mut crate::tui::profile::TerminalPrompts)
+}
+
+pub(crate) fn execute_with(
+    parsed: &ParsedInvocation,
+    store: &ProfileStore,
+    prompts: &mut dyn Prompts,
 ) -> Result<Option<String>, ProfileError> {
     let args = &parsed.positionals;
     let json = parsed.text("output") == "json";
@@ -215,7 +269,19 @@ pub fn execute(
             if !key.is_empty() {
                 profile.api_key = key.to_owned();
             } else if args.len() < 4 {
-                return Err(ProfileError::deferred("credential entry"));
+                // A third positional username does not seed the form.
+                match prompts.credentials().map_err(|e| {
+                    ProfileError::new(
+                        ErrorCode::CommandFailed,
+                        format!("error reading credentials: {e}"),
+                    )
+                })? {
+                    FormOutcome::Values(username, password) => {
+                        profile.username = username;
+                        profile.password = password;
+                    }
+                    FormOutcome::Panicked(value) => return Err(go_panic(&value, CREDENTIAL_MODEL)),
+                }
             } else {
                 profile.username = args[2].clone();
                 profile.password = args[3].clone();
@@ -296,9 +362,21 @@ pub fn execute(
         }
         "pb profile default" => {
             let mut config = store.read()?;
-            let Some(name) = args.first() else {
-                return Err(ProfileError::deferred("default profile selection"));
+            let name = match args.first() {
+                Some(name) => name.clone(),
+                None => match prompts
+                    .select_profile(&config.profiles)
+                    .map_err(|e| ProfileError::new(ErrorCode::CommandFailed, e))?
+                {
+                    PickerOutcome::Chosen(name) => name,
+                    PickerOutcome::Panicked(value) => return Err(go_panic(&value, PICKER_MODEL)),
+                    // Cancellation writes nothing and prints nothing.
+                    PickerOutcome::Canceled | PickerOutcome::Continue => {
+                        return Ok(Some(String::new()));
+                    }
+                },
             };
+            let name = &name;
             if !config.profiles.contains_key(name) {
                 return Err(ProfileError::new(
                     ErrorCode::NotFound,
@@ -334,7 +412,27 @@ pub fn execute(
                             config.default_profile
                         );
                     }
-                    _ => return Err(ProfileError::deferred("new default profile selection")),
+                    _ => {
+                        prompts.say("Select a new default profile:\n");
+                        match prompts.select_profile(&config.profiles).map_err(|e| {
+                            ProfileError::new(
+                                ErrorCode::CommandFailed,
+                                format!("error selecting new default profile: {e}"),
+                            )
+                        })? {
+                            PickerOutcome::Chosen(choice) => {
+                                prefix = format!("'{choice}' is now set as the default profile\n");
+                                config.default_profile = choice;
+                            }
+                            PickerOutcome::Panicked(value) => {
+                                return Err(go_panic(&value, PICKER_MODEL));
+                            }
+                            // The original is still removed; no default remains.
+                            PickerOutcome::Canceled | PickerOutcome::Continue => {
+                                config.default_profile.clear();
+                            }
+                        }
+                    }
                 }
             }
             store.write(&config).map_err(|e| {
@@ -350,14 +448,17 @@ pub fn execute(
                     message + "\n"
                 }
         }
-        "pb logout" => logout(parsed, store)?,
-        "pb login" => return Err(ProfileError::deferred("login wizard")),
+        "pb logout" => logout(parsed, store, prompts)?,
         _ => return Ok(None),
     };
     Ok(Some(output))
 }
 
-fn logout(parsed: &ParsedInvocation, store: &ProfileStore) -> Result<String, ProfileError> {
+fn logout(
+    parsed: &ParsedInvocation,
+    store: &ProfileStore,
+    prompts: &mut dyn Prompts,
+) -> Result<String, ProfileError> {
     let json = parsed.text("output") == "json";
     let yes = parsed.boolean("yes");
     if json && !yes {
@@ -388,14 +489,49 @@ fn logout(parsed: &ParsedInvocation, store: &ProfileStore) -> Result<String, Pro
                     "no active profile found; set one with: pb profile default <name>",
                 ));
             }
-            _ => return Err(ProfileError::deferred("logout profile selection")),
+            _ => {
+                prompts.say("Select profile to logout:\n");
+                match prompts.select_profile(&config.profiles).map_err(|e| {
+                    ProfileError::new(
+                        ErrorCode::CommandFailed,
+                        format!("error selecting profile to logout: {e}"),
+                    )
+                })? {
+                    PickerOutcome::Chosen(choice) => name = choice,
+                    PickerOutcome::Panicked(value) => return Err(go_panic(&value, PICKER_MODEL)),
+                    PickerOutcome::Canceled | PickerOutcome::Continue => {
+                        return Ok("Logout canceled\n".into());
+                    }
+                }
+            }
         }
     }
-    if !yes {
-        return Err(ProfileError::deferred("logout confirmation"));
+    // Go indexes the map with the chosen title; a title is always a key.
+    let url = config
+        .profiles
+        .get(&name)
+        .map(|p| p.url.clone())
+        .unwrap_or_default();
+    if !yes && !prompts.confirm_logout(&name, &url) {
+        return Ok("Logout canceled\n".into());
     }
-    let profile = config.profiles.remove(&name).expect("selected profile");
+    let profile = config.profiles.remove(&name).unwrap_or_default();
+    // One survivor becomes default; with --yes the first sorted name does.
     config.default_profile = config.profiles.keys().next().cloned().unwrap_or_default();
+    if config.profiles.len() > 1 && !yes {
+        prompts.say("Select a new default profile:\n");
+        match prompts.select_profile(&config.profiles).map_err(|e| {
+            ProfileError::new(
+                ErrorCode::CommandFailed,
+                format!("error selecting new default profile: {e}"),
+            )
+        })? {
+            PickerOutcome::Chosen(choice) => config.default_profile = choice,
+            PickerOutcome::Panicked(value) => return Err(go_panic(&value, PICKER_MODEL)),
+            // Confirmed logout still removes the profile; no default remains.
+            PickerOutcome::Canceled | PickerOutcome::Continue => config.default_profile.clear(),
+        }
+    }
     store
         .write(&config)
         .map_err(|e| ProfileError::from(e).context("failed to update config: "))?;
@@ -690,4 +826,270 @@ fn escape_bytes(value: &[u8], safe: &[u8]) -> String {
         }
     }
     out
+}
+
+#[cfg(test)]
+mod interactive_tests {
+    use super::*;
+    use std::collections::VecDeque;
+
+    #[derive(Default)]
+    struct Script {
+        said: String,
+        picks: VecDeque<Result<PickerOutcome, String>>,
+        offered: Vec<Vec<String>>,
+        credentials: Option<Result<FormOutcome, String>>,
+        confirms: VecDeque<bool>,
+        confirmed: Vec<(String, String)>,
+    }
+    impl Prompts for Script {
+        fn say(&mut self, text: &str) {
+            self.said.push_str(text);
+        }
+        fn select_profile(
+            &mut self,
+            profiles: &BTreeMap<String, ProfileRecord>,
+        ) -> Result<PickerOutcome, String> {
+            self.offered.push(profiles.keys().cloned().collect());
+            self.picks.pop_front().expect("unexpected picker")
+        }
+        fn credentials(&mut self) -> Result<FormOutcome, String> {
+            self.credentials.take().expect("unexpected credential form")
+        }
+        fn confirm_logout(&mut self, name: &str, url: &str) -> bool {
+            self.confirmed.push((name.into(), url.into()));
+            self.confirms.pop_front().expect("unexpected confirmation")
+        }
+    }
+
+    struct Fixture {
+        store: ProfileStore,
+        dir: std::path::PathBuf,
+    }
+    impl Drop for Fixture {
+        fn drop(&mut self) {
+            let _ = std::fs::remove_dir_all(&self.dir);
+        }
+    }
+    fn fixture(names: &[&str], default: &str) -> Fixture {
+        static NEXT: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
+        let dir = std::env::temp_dir().join(format!(
+            "pb-auth-{}-{}",
+            std::process::id(),
+            NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed)
+        ));
+        let store = ProfileStore::new(dir.join("pb/config.toml"));
+        if !names.is_empty() {
+            let config = Config {
+                profiles: names
+                    .iter()
+                    .map(|n| {
+                        (
+                            n.to_string(),
+                            ProfileRecord {
+                                url: format!("http://{n}"),
+                                ..Default::default()
+                            },
+                        )
+                    })
+                    .collect(),
+                default_profile: default.into(),
+            };
+            store.write(&config).unwrap();
+        }
+        Fixture { store, dir }
+    }
+
+    fn run(
+        fixture: &Fixture,
+        args: &[&str],
+        script: &mut Script,
+    ) -> Result<Option<String>, ProfileError> {
+        let args: Vec<String> = args.iter().map(|s| s.to_string()).collect();
+        let (command, path, remaining) =
+            crate::parser::discover(crate::spec::command_spec(), &args).expect("command");
+        let parsed = crate::parser::parse(command, &path, &remaining).expect("arguments");
+        execute_with(&parsed, &fixture.store, script)
+    }
+
+    #[test]
+    fn profile_add_saves_form_values_even_after_cancel() {
+        let f = fixture(&["old"], "old");
+        let mut s = Script {
+            credentials: Some(Ok(FormOutcome::Values(String::new(), String::new()))),
+            ..Default::default()
+        };
+        let out = run(&f, &["profile", "add", "p", "http://h", "seed"], &mut s).unwrap();
+        assert_eq!(out.as_deref(), Some("Profile p added successfully\n"));
+        let config = f.store.read().unwrap();
+        assert_eq!(config.default_profile, "p");
+        let p = &config.profiles["p"];
+        assert!(p.username.is_empty() && p.password.is_empty() && p.url == "http://h");
+
+        let mut s = Script {
+            credentials: Some(Err("could not open a new TTY".into())),
+            ..Default::default()
+        };
+        let err = run(&f, &["profile", "add", "q", "http://h"], &mut s).unwrap_err();
+        assert_eq!(
+            err.message,
+            "error reading credentials: could not open a new TTY"
+        );
+        assert!(!f.store.read().unwrap().profiles.contains_key("q"));
+    }
+
+    #[test]
+    fn default_picker_choice_and_silent_cancel() {
+        let f = fixture(&["a", "b"], "a");
+        let mut s = Script::default();
+        s.picks.push_back(Ok(PickerOutcome::Chosen("b".into())));
+        let out = run(&f, &["profile", "default"], &mut s).unwrap();
+        assert_eq!(out.as_deref(), Some("b is now set as default profile\n"));
+        assert_eq!(f.store.read().unwrap().default_profile, "b");
+
+        let before = std::fs::read(f.store.path()).unwrap();
+        s.picks.push_back(Ok(PickerOutcome::Canceled));
+        assert_eq!(
+            run(&f, &["profile", "default"], &mut s).unwrap().as_deref(),
+            Some("")
+        );
+        assert_eq!(std::fs::read(f.store.path()).unwrap(), before);
+        assert_eq!(s.said, "");
+    }
+
+    #[test]
+    fn empty_default_picker_enter_is_a_go_fatal_panic() {
+        let f = fixture(&[], "");
+        f.store.write(&Config::default()).unwrap();
+        let before = std::fs::read(f.store.path()).unwrap();
+        let mut s = Script::default();
+        s.picks.push_back(Ok(PickerOutcome::Panicked(
+            crate::tui::profile::NIL_DEREFERENCE.into(),
+        )));
+        let err = run(&f, &["profile", "default"], &mut s).unwrap_err();
+        // Matches the pinned Go PTY oracle (auth-oracle/go-picker.json).
+        assert_eq!(
+            err.stdout,
+            "Caught panic:\n\nruntime error: invalid memory address or nil pointer dereference\n\nRestoring terminal...\n\n"
+        );
+        assert_eq!(
+            err.fatal.as_deref(),
+            Some("panic: interface conversion: tea.Model is nil, not defaultprofile.Model\n")
+        );
+        assert_eq!(std::fs::read(f.store.path()).unwrap(), before);
+    }
+
+    #[test]
+    fn credential_form_panic_is_fatal_and_writes_nothing() {
+        let f = fixture(&["old"], "old");
+        let before = std::fs::read(f.store.path()).unwrap();
+        let mut s = Script {
+            credentials: Some(Ok(FormOutcome::Panicked(
+                "runtime error: index out of range [5] with length 5".into(),
+            ))),
+            ..Default::default()
+        };
+        let err = run(&f, &["profile", "add", "p", "http://h"], &mut s).unwrap_err();
+        assert_eq!(
+            err.stdout,
+            "Caught panic:\n\nruntime error: index out of range [5] with length 5\n\nRestoring terminal...\n\n"
+        );
+        assert_eq!(
+            err.fatal.as_deref(),
+            Some("panic: interface conversion: tea.Model is nil, not credential.Model\n")
+        );
+        assert_eq!(std::fs::read(f.store.path()).unwrap(), before);
+    }
+
+    #[test]
+    fn removing_default_asks_for_replacement_and_cancel_clears_it() {
+        let f = fixture(&["a", "b", "c"], "a");
+        let mut s = Script::default();
+        s.picks.push_back(Ok(PickerOutcome::Chosen("c".into())));
+        let out = run(&f, &["profile", "remove", "a"], &mut s).unwrap();
+        assert_eq!(s.said, "Select a new default profile:\n");
+        assert_eq!(s.offered, vec![vec!["b".to_string(), "c".to_string()]]);
+        assert_eq!(
+            out.as_deref(),
+            Some("'c' is now set as the default profile\nDeleted profile a\n")
+        );
+
+        let f = fixture(&["a", "b", "c"], "a");
+        let mut s = Script::default();
+        s.picks.push_back(Ok(PickerOutcome::Canceled));
+        let out = run(&f, &["profile", "remove", "a"], &mut s).unwrap();
+        assert_eq!(out.as_deref(), Some("Deleted profile a\n"));
+        let config = f.store.read().unwrap();
+        assert!(config.default_profile.is_empty() && !config.profiles.contains_key("a"));
+
+        // A picker program error aborts before any write.
+        let f = fixture(&["a", "b", "c"], "a");
+        let mut s = Script::default();
+        s.picks.push_back(Err("boom".into()));
+        let err = run(&f, &["profile", "remove", "a"], &mut s).unwrap_err();
+        assert_eq!(err.message, "error selecting new default profile: boom");
+        assert!(f.store.read().unwrap().profiles.contains_key("a"));
+    }
+
+    #[test]
+    fn logout_confirmation_selection_and_replacement() {
+        // Declining writes nothing.
+        let f = fixture(&["a", "b"], "a");
+        let mut s = Script {
+            confirms: [false].into(),
+            ..Default::default()
+        };
+        let before = std::fs::read(f.store.path()).unwrap();
+        assert_eq!(
+            run(&f, &["logout"], &mut s).unwrap().as_deref(),
+            Some("Logout canceled\n")
+        );
+        assert_eq!(s.confirmed, vec![("a".to_string(), "http://a".to_string())]);
+        assert_eq!(std::fs::read(f.store.path()).unwrap(), before);
+
+        // Confirmed with two survivors: replacement picker; cancel clears.
+        let f = fixture(&["a", "b", "c"], "a");
+        let mut s = Script {
+            confirms: [true].into(),
+            ..Default::default()
+        };
+        s.picks.push_back(Ok(PickerOutcome::Canceled));
+        let out = run(&f, &["logout"], &mut s).unwrap();
+        assert_eq!(out.as_deref(), Some("Logged out and removed profile 'a'\n"));
+        assert_eq!(s.said, "Select a new default profile:\n");
+        let config = f.store.read().unwrap();
+        assert!(config.default_profile.is_empty() && config.profiles.len() == 2);
+
+        // No usable default: choose which profile to log out; cancel stops.
+        let f = fixture(&["a", "b"], "gone");
+        let mut s = Script::default();
+        s.picks.push_back(Ok(PickerOutcome::Canceled));
+        assert_eq!(
+            run(&f, &["logout"], &mut s).unwrap().as_deref(),
+            Some("Logout canceled\n")
+        );
+        assert_eq!(s.said, "Select profile to logout:\n");
+
+        // Chosen profile, confirmed, single survivor becomes default.
+        let f = fixture(&["a", "b"], "");
+        let mut s = Script {
+            confirms: [true].into(),
+            ..Default::default()
+        };
+        s.picks.push_back(Ok(PickerOutcome::Chosen("b".into())));
+        let out = run(&f, &["logout"], &mut s).unwrap();
+        assert_eq!(
+            out.as_deref(),
+            Some("Logged out and removed profile 'b'\n'a' is now set as the default profile\n")
+        );
+
+        // --yes bypasses every prompt and picks the first sorted survivor.
+        let f = fixture(&["a", "c", "b"], "a");
+        let mut s = Script::default();
+        let out = run(&f, &["logout", "--yes"], &mut s).unwrap();
+        assert_eq!(
+            out.as_deref(),
+            Some("Logged out and removed profile 'a'\n'b' is now set as the default profile\n")
+        );
+    }
 }

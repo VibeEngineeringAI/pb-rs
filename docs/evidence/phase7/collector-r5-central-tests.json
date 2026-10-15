@@ -1,0 +1,68 @@
+{
+  "source_inputs": {
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_bench.py": "4e30aeca4bb35fc3ff817d6792281bb3cd549d41cb87e94cf69de812d856a2ca",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7_bench.py": "606bffe4480b5d359cf69b20363d1071b9b1ed3ff073e67a764ef2cd70ff2bdd",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_profile.py": "85c9f5787a109a10d12bc99d1673b3cbb821ad202901ca6d540846a76ae47ab6",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7_profile.py": "75bb14229f18b212cd234e9d2d4af5ad8cef3eb290f2c483d45e6e1c2e6443dd",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-measurement.md": "6d34dfa97829a3052d2a529699f781321a1d56bc697df788d0e90f55b79caf1e",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-profiling.md": "95bf9545972725845c6e406869a1656c0d5793e4330db30a58e97abce132239f",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/contracts/phase7.md": "cea8eb064f3ee865d68581e2d455d5403c4faa0f6747bd4af21723fd85eba5b1",
+    "/home/ajs/.cache/pb-phase7/collector-r5-corrections/response.json": "e1f175e9b60965226eb81f5347ed6432b31d8a5da930256ca3f3ede9040b1014",
+    "/home/ajs/.cache/pb-phase7/collector-r5-corrections/command-matrix.json": "5630ab02c8095e3b01e95d7f75b577c758378be6a7844d477fcb74134feda9d2",
+    "/home/ajs/.cache/pb-phase7/collector-r5-corrections/actual-checks.json": "53def2e2b7b37d05666bd35ec25218fe242cf3a233100c636946914e57c667a0",
+    "/home/ajs/.cache/pb-phase7/collector-r5-corrections/source-snapshot.json": "56b7e931720262de8fa0ad6c1306db1893dcedfe3a662f29b4a058438ed4e985",
+    "/home/ajs/.cache/pb-phase7/collector-r5-corrections/owned.diff": "ea2d4e1e92341f335363dbe65335865803e1f7c2786378750504bc1f80355585",
+    "/home/ajs/.cache/pb-phase7/collector-r5-corrections/finalize.py": "82545220db1cfec35c87761ceca02e88f5d52c2d9386b97bb7eab4fdbcdd8626",
+    "/home/ajs/.cache/pb-phase7/harness-resize-policy-r4/freeze.json": "8c1d8fe5661f4241619006dcda850e7ca6eb4f64ffac88a733a00b691db3edb5",
+    "/home/ajs/.cache/pb-phase7/tmp/phase7-spawn-d0592f15c157a359d3b1d7adf9ab0efb1cf39a3765205fe8ccde855157ed2fab": "3b684c7b7632302725727fcc586a071c7818f43d704a8cbf4e1afc384e99f03e",
+    "/home/ajs/.cache/pb-phase7/collector-r5-corrections/bench-final1.log": "c4a0b5efac600c579f9990e5626f8b0b707bd4d92dae38fd11b6d4fdeb80054f",
+    "/home/ajs/.cache/pb-phase7/collector-r5-corrections/bench-final2.log": "4e007e1f910e1618bf14b00714ada7b57847b6cbda7a4905c31c4ac58ea4e299",
+    "/home/ajs/.cache/pb-phase7/collector-r5-corrections/bench-work1.log": "6583d5b587c046f4a3d1eeed76b9d62658c06768b0726ebdd9dd0527f27f66cc",
+    "/home/ajs/.cache/pb-phase7/collector-r5-corrections/bench-work2.log": "0c2c84fe2b2dc5b9ab2b9d0a72efec98c67a942841c2d97f42a31af157a75251",
+    "/home/ajs/.cache/pb-phase7/collector-r5-corrections/cli-order.log": "e23d27b542cf1a393add0ef173a12e6f29366bdad11a88947378dfad9df4e26a",
+    "/home/ajs/.cache/pb-phase7/collector-r5-corrections/freeze-packaging-failure1.log": "5010d12355a7f97334cbdff4ce8f94a11272def6d3b14ec00b0fdcd6746631b4",
+    "/home/ajs/.cache/pb-phase7/collector-r5-corrections/profile-final1.log": "35857f578c836974b7eec994d0a6c1667eb0967b0573965fe8c2fbdbdba0f4e9",
+    "/home/ajs/.cache/pb-phase7/collector-r5-corrections/r5-work1.log": "bf73ab840b36f13f03c0ce8df16e27b1035d8153f8991383d3b237e35c30c420",
+    "/home/ajs/.cache/pb-phase7/collector-r5-corrections/r5-work2.log": "38be82a07da5f5b2427f00c48ab05b3fdd211b1e5b8bf73cc7194712116008d5",
+    "/home/ajs/.cache/pb-phase7/collector-r5-corrections/r5-work3.log": "e7b8e26db9fa4174fa26cb68cf44aa3e6d34b33803e9bd5fb0bc3401a7ef9d56"
+  },
+  "source_unchanged": true,
+  "results": [
+    {
+      "label": "bench",
+      "command": [
+        "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "harness",
+        "-p",
+        "test_phase7_bench.py",
+        "-v"
+      ],
+      "exit": 0,
+      "log": "/home/ajs/.cache/pb-phase7/collector-r5-central-bench.log",
+      "log_sha256": "2eaa5c13d843197d9b24c8c88543c380dff2eb7d7b1749aead41a512fc86e50a",
+      "tail": "s_bind_changed_only (test_phase7_bench.ResizePolicyTests.test_all_primary_attribution_and_profile_definitions_bind_changed_only) ... ok\ntest_every_capture_adapter_passes_policy_and_retains_legacy_failure (test_phase7_bench.ResizePolicyTests.test_every_capture_adapter_passes_policy_and_retains_legacy_failure) ... ok\ntest_policy_event_source_order_geometry_and_script_drift_fail_closed (test_phase7_bench.ResizePolicyTests.test_policy_event_source_order_geometry_and_script_drift_fail_closed) ... ok\n\n----------------------------------------------------------------------\nRan 79 tests in 60.142s\n\nOK\n"
+    },
+    {
+      "label": "profile",
+      "command": [
+        "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "harness",
+        "-p",
+        "test_phase7_profile.py",
+        "-v"
+      ],
+      "exit": 0,
+      "log": "/home/ajs/.cache/pb-phase7/collector-r5-central-profile.log",
+      "log_sha256": "6dc215e06e57397987ed03c3ab2f4ba0f3f87a002ea7649a7aed7d33362d13d2",
+      "tail": "tes (test_phase7_profile.ProcessingTests.test_interrupted_writes_retain_separate_count_and_no_attributed_bytes) ... ok\ntest_owned_analysis_child_leader_exits_and_group_child_is_killed_reaped (test_phase7_profile.ProcessingTests.test_owned_analysis_child_leader_exits_and_group_child_is_killed_reaped) ... ok\ntest_surviving_group_verification_times_out_with_retained_cleanup_failure (test_phase7_profile.ProcessingTests.test_surviving_group_verification_times_out_with_retained_cleanup_failure) ... ok\n\n----------------------------------------------------------------------\nRan 24 tests in 1.391s\n\nOK\n"
+    }
+  ]
+}

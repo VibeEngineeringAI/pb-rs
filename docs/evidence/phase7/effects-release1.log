@@ -1,0 +1,47 @@
+
+running 42 tests
+test credentials_positional_ignored ... ok
+test credentials_username_only_cancel ... ok
+test credentials_valid_cancel ... ok
+test dataset_cancel ... ok
+test deadline_builder_30s ... ignored, opt-in: uses the genuine 15/30/50/120-second request deadlines
+test deadline_promql_120s ... ignored, opt-in: uses the genuine 15/30/50/120-second request deadlines
+test deadline_schema_15s ... ignored, opt-in: uses the genuine 15/30/50/120-second request deadlines
+test deadline_sql_50s ... ignored, opt-in: uses the genuine 15/30/50/120-second request deadlines
+test default_cancel ... ok
+test logout_decline ... ok
+test oauth_promql_both_effects ... ignored, opt-in: requires the synthetic cloud orchestrator bearer-token build
+test oauth_saved_menu_apply_scope ... ignored, opt-in: requires the synthetic cloud orchestrator bearer-token build
+test oauth_schema_fallback_scope ... ignored, opt-in: requires the synthetic cloud orchestrator bearer-token build
+test oauth_sql_window_effects ... ignored, opt-in: requires the synthetic cloud orchestrator bearer-token build
+test promql_builder_label_guard ... ok
+test promql_builder_metric_guard ... ok
+test promql_builder_pending_cache ... ok
+test promql_builder_policy ... ok
+test promql_dataset_cache_guard ... ok
+test promql_mode_transitions ... ok
+test promql_result_policy ... ok
+test promql_stale_result ... ok
+test replacement_cancel ... ok
+test role_abort ... ok
+test role_conflict ... ok
+test role_submit ... ok
+test saved_apply_json_status ... ok
+test saved_apply_result_order ... ok
+test saved_apply_text_status ... ok
+test saved_apply_unchecked ... ok
+test saved_filter_quit ... ok
+test saved_profile_snapshot ... ok
+test sql_cache_eviction ... ok
+test sql_invalid_prefix_before_eof ... ok
+test sql_numeric_overflow ... ok
+test sql_prefix_before_eof ... ok
+test sql_schema_fallback ... ok
+test sql_stale_schema ... ok
+test sql_unknown_actual_total ... ok
+test sql_window_paging ... ok
+test sql_window_snapshot ... ok
+test sql_window_stale ... ok
+
+test result: ok. 34 passed; 0 failed; 8 ignored; 0 measured; 0 filtered out; finished in 294.43s
+

@@ -1,0 +1,9 @@
+{
+  "binary": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/target/debug/pb",
+  "sha256": "5b14cbd7e1bc3c00ba5d70147b53c07351564de97ce4fabed28e41a2851afb7d",
+  "exit": 1,
+  "stdout": "",
+  "stderr": "Error reading Default Profile\nError: toml: unclosed array, expected `]`\n",
+  "fixture_errors": [],
+  "writer_alive": false
+}

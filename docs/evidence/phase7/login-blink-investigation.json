@@ -1,0 +1,689 @@
+{
+  "schema_version": 1,
+  "kind": "bounded-functional-investigation-not-independent-review",
+  "recorded_at_utc": "2026-10-14T15:34:26.634366+00:00",
+  "acceptance_claim": false,
+  "source_or_contract_changes": false,
+  "performance_claim": false,
+  "sources_unchanged": {
+    "harness/phase7.py": "26895f680be00ba1f65440a4e7097ee8d94027e15c64bd7fb317691700f7da0a",
+    "harness/test_phase7.py": "e25bd26ff4229e1487f2492647addf7f778e048f47bba3d19359adc10b535d37",
+    "harness/phase7_workloads.py": "54a9efb7767372c976b459c3e2dc59c590e0b9d6b47b4cc29e36ae81ff588d1c",
+    "harness/phase7_spawn.c": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4",
+    "docs/phase7-harness.md": "6c3c79dd0f159632d9983654a1c4f8e10ebc0032a67dd8a4ff7810f2c7d34882"
+  },
+  "production_login_editor_style_unchanged_release3_release4_current": {
+    "src/tui/login.rs": "7898c967896f912a5fdeb353a9448c3e1fb1047d541470c4b6001ae01953c301",
+    "src/tui/editor.rs": "454da2706b49598ea73756900ce8fd566f9a3030f8966bdddc3fd8fab7244117",
+    "src/tui/style.rs": "f4bf856201fde8fb1883707d59f3481ca143e1297609c5c92a706dc583d083e5"
+  },
+  "source_reference_hashes": {
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/pkg/model/login/login.go": "c565e9c380006751ac3a1b76fec8d9b3a74873092c690c93b251c85d36183b83",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/go.mod": "90555a3ae88bee209ce16845ad259afa2e4c9b3c14890e0578a8a514c1350565",
+    "/home/ajs/go/pkg/mod/github.com/charmbracelet/bubbles@v0.20.0/cursor/cursor.go": "1289232b076eec8b19d18d8fff5787a3d4791766769a7f748c1751d2839d1c2e",
+    "/home/ajs/go/pkg/mod/github.com/charmbracelet/bubbles@v0.20.0/textinput/textinput.go": "7706d88e7b6db5dc2e85ea239b42e3c094175adba2247c2da47c12cff1e9181f"
+  },
+  "source_pin": "07af390",
+  "Go_binary_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+  "original_reports": {
+    "styled-release3": {
+      "path": "/home/ajs/.cache/pb-phase7/styled-release3/report.json",
+      "sha256": "4e34a1081a019b3b4e3e49d05f001b5c7ef880ed60bee308b5e3a3028e7d8fb9"
+    },
+    "styled-release4": {
+      "path": "/home/ajs/.cache/pb-phase7/styled-release4/report.json",
+      "sha256": "df965a005732d7f32cf2319da796c489ff43e17a5bfbd863f945f98101fed795"
+    }
+  },
+  "release4_counts_historical": {
+    "gates": 160,
+    "pass": 157,
+    "fail": 3,
+    "documentary": 30,
+    "clean": 29,
+    "mismatch": 1
+  },
+  "cases": [
+    {
+      "name": "p7-login-overwrite-bad-config-dark",
+      "case_definition_unchanged": true,
+      "release4_issues": [
+        "styled cells/cursor/scrollback differ at masked-password"
+      ],
+      "Go_crossrelease_AA_issues": [
+        "styled cells/cursor/scrollback differ at masked-password"
+      ],
+      "Rust_crossrelease_issues": [],
+      "release3_pair_issues": [],
+      "exact_frame_differences": [
+        {
+          "field": "cells",
+          "row_zero_based": 6,
+          "column_zero_based": 21,
+          "reference": [
+            " ",
+            "default",
+            "default",
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "candidate": [
+            " ",
+            "9e9ef0",
+            "default",
+            false,
+            false,
+            false,
+            false,
+            true,
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "phase_causal_records": [
+        {
+          "release": "styled-release3",
+          "off_chunk": {
+            "read_monotonic_ns": 996944209361659,
+            "relative_focus_ms": 447.098801,
+            "relative_type_ms": 206.929613,
+            "relative_checkpoint_ms": 94.344677,
+            "bullet_count": 14,
+            "cell": [
+              " ",
+              "default",
+              "default",
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "offsets": [
+              6222,
+              6449
+            ],
+            "raw_repr": "b'\\x1b[11A\\x1b[B\\x1b[B\\x1b[B\\x1b[B\\x1b[B\\x1b[B\\x1b[38;2;73;73;92m\\xe2\\x94\\x82\\x1b[0m    \\x1b[38;2;158;158;240m> \\x1b[0m\\x1b[38;2;227;227;231m\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\x1b[0m                                        \\x1b[38;2;73;73;92m\\xe2\\x94\\x82\\x1b[0m\\x1b[0K\\r\\n\\x1b[B\\x1b[B\\x1b[B\\x1b[B\\x1b[100D'"
+          },
+          "checkpoint_before_off_read": true,
+          "checkpoint_style": [
+            " ",
+            "9e9ef0",
+            "default",
+            false,
+            false,
+            false,
+            false,
+            true,
+            false,
+            false,
+            false,
+            false
+          ],
+          "stable_since_ns": 996944026729887,
+          "first_match_ns": 996944026729887,
+          "ready_ns": 996944115016982
+        },
+        {
+          "release": "styled-release4",
+          "off_chunk": {
+            "read_monotonic_ns": 1002093680922288,
+            "relative_focus_ms": 359.585986,
+            "relative_type_ms": 62.492791,
+            "relative_checkpoint_ms": -109.112814,
+            "bullet_count": 14,
+            "cell": [
+              " ",
+              "default",
+              "default",
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "offsets": [
+              6222,
+              6449
+            ],
+            "raw_repr": "b'\\x1b[11A\\x1b[B\\x1b[B\\x1b[B\\x1b[B\\x1b[B\\x1b[B\\x1b[38;2;73;73;92m\\xe2\\x94\\x82\\x1b[0m    \\x1b[38;2;158;158;240m> \\x1b[0m\\x1b[38;2;227;227;231m\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\x1b[0m                                        \\x1b[38;2;73;73;92m\\xe2\\x94\\x82\\x1b[0m\\x1b[0K\\r\\n\\x1b[B\\x1b[B\\x1b[B\\x1b[B\\x1b[100D'"
+          },
+          "checkpoint_before_off_read": false,
+          "checkpoint_style": [
+            " ",
+            "default",
+            "default",
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "stable_since_ns": 1002093684067056,
+          "first_match_ns": 1002093636089174,
+          "ready_ns": 1002093790035102
+        }
+      ],
+      "paths_and_hashes": {
+        "styled-release3/reference": {
+          "session": "/home/ajs/.cache/pb-phase7/styled-release3/p7-login-overwrite-bad-config-dark/reference/session.json",
+          "session_sha256": "6ec8f8d3178b7c102d57fac079bc480fbd2dfcdac530ac0514c2361f4a56842e",
+          "stdout_sha256": "3cd715e633bad7616b83878355dfed8fec2473666c64012738ff729265a3756d",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "config_after_sha256": "686489bde52eb501a49f60371876db0cd084f49f513f1745a073eae041653c92"
+        },
+        "styled-release3/candidate": {
+          "session": "/home/ajs/.cache/pb-phase7/styled-release3/p7-login-overwrite-bad-config-dark/candidate/session.json",
+          "session_sha256": "e2fad9dd359ee4521092e41fe2c3e74dcd12ff062f937bf7f60bd17165cc38ff",
+          "stdout_sha256": "b5cca7e560fcc6614fd11417e03eb67b9b838abc752d3ffbf8457c471a781259",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "config_after_sha256": "a2ed47ed6dd9a3da863fda04ca7c05ab63966185de258947c799ac162f4100b1"
+        },
+        "styled-release4/reference": {
+          "session": "/home/ajs/.cache/pb-phase7/styled-release4/p7-login-overwrite-bad-config-dark/reference/session.json",
+          "session_sha256": "0fa5057422208deb1fe6c43ba3d2a2d1425e80dd568559266f6a76efc6023b89",
+          "stdout_sha256": "3cd715e633bad7616b83878355dfed8fec2473666c64012738ff729265a3756d",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "config_after_sha256": "686489bde52eb501a49f60371876db0cd084f49f513f1745a073eae041653c92"
+        },
+        "styled-release4/candidate": {
+          "session": "/home/ajs/.cache/pb-phase7/styled-release4/p7-login-overwrite-bad-config-dark/candidate/session.json",
+          "session_sha256": "3ec861671a4cd408cb4a6f3300687f78b2ea2323ccdc844632ceb73e0cd230de",
+          "stdout_sha256": "b5cca7e560fcc6614fd11417e03eb67b9b838abc752d3ffbf8457c471a781259",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "config_after_sha256": "a2ed47ed6dd9a3da863fda04ca7c05ab63966185de258947c799ac162f4100b1"
+        }
+      }
+    },
+    {
+      "name": "p7-login-duplicate-replace-dark",
+      "case_definition_unchanged": true,
+      "release4_issues": [
+        "styled cells/cursor/scrollback differ at masked-password"
+      ],
+      "Go_crossrelease_AA_issues": [
+        "styled cells/cursor/scrollback differ at masked-password"
+      ],
+      "Rust_crossrelease_issues": [],
+      "release3_pair_issues": [],
+      "exact_frame_differences": [
+        {
+          "field": "cells",
+          "row_zero_based": 6,
+          "column_zero_based": 21,
+          "reference": [
+            " ",
+            "default",
+            "default",
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "candidate": [
+            " ",
+            "9e9ef0",
+            "default",
+            false,
+            false,
+            false,
+            false,
+            true,
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "phase_causal_records": [
+        {
+          "release": "styled-release3",
+          "off_chunk": {
+            "read_monotonic_ns": 996948761012267,
+            "relative_focus_ms": 428.973442,
+            "relative_type_ms": 186.169579,
+            "relative_checkpoint_ms": 73.816354,
+            "bullet_count": 14,
+            "cell": [
+              " ",
+              "default",
+              "default",
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "offsets": [
+              6222,
+              6449
+            ],
+            "raw_repr": "b'\\x1b[11A\\x1b[B\\x1b[B\\x1b[B\\x1b[B\\x1b[B\\x1b[B\\x1b[38;2;73;73;92m\\xe2\\x94\\x82\\x1b[0m    \\x1b[38;2;158;158;240m> \\x1b[0m\\x1b[38;2;227;227;231m\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\x1b[0m                                        \\x1b[38;2;73;73;92m\\xe2\\x94\\x82\\x1b[0m\\x1b[0K\\r\\n\\x1b[B\\x1b[B\\x1b[B\\x1b[B\\x1b[100D'"
+          },
+          "checkpoint_before_off_read": true,
+          "checkpoint_style": [
+            " ",
+            "9e9ef0",
+            "default",
+            false,
+            false,
+            false,
+            false,
+            true,
+            false,
+            false,
+            false,
+            false
+          ],
+          "stable_since_ns": 996948594976747,
+          "first_match_ns": 996948594976747,
+          "ready_ns": 996948687195913
+        },
+        {
+          "release": "styled-release4",
+          "off_chunk": {
+            "read_monotonic_ns": 1002099915217785,
+            "relative_focus_ms": 407.06277,
+            "relative_type_ms": 39.807836,
+            "relative_checkpoint_ms": -121.438953,
+            "bullet_count": 14,
+            "cell": [
+              " ",
+              "default",
+              "default",
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "offsets": [
+              6222,
+              6449
+            ],
+            "raw_repr": "b'\\x1b[11A\\x1b[B\\x1b[B\\x1b[B\\x1b[B\\x1b[B\\x1b[B\\x1b[38;2;73;73;92m\\xe2\\x94\\x82\\x1b[0m    \\x1b[38;2;158;158;240m> \\x1b[0m\\x1b[38;2;227;227;231m\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\x1b[0m                                        \\x1b[38;2;73;73;92m\\xe2\\x94\\x82\\x1b[0m\\x1b[0K\\r\\n\\x1b[B\\x1b[B\\x1b[B\\x1b[B\\x1b[100D'"
+          },
+          "checkpoint_before_off_read": false,
+          "checkpoint_style": [
+            " ",
+            "default",
+            "default",
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "stable_since_ns": 1002099916768741,
+          "first_match_ns": 1002099885186040,
+          "ready_ns": 1002100036656738
+        }
+      ],
+      "paths_and_hashes": {
+        "styled-release3/reference": {
+          "session": "/home/ajs/.cache/pb-phase7/styled-release3/p7-login-duplicate-replace-dark/reference/session.json",
+          "session_sha256": "18ac8a0ee3da4611daceac8fab6d35e3e7cd237acee2c43e209050a56fffdb80",
+          "stdout_sha256": "c334b38f18b1c47bdd1d9563a9010935cdc9567305d5eafd50202f76bf4bcd54",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "config_after_sha256": "686489bde52eb501a49f60371876db0cd084f49f513f1745a073eae041653c92"
+        },
+        "styled-release3/candidate": {
+          "session": "/home/ajs/.cache/pb-phase7/styled-release3/p7-login-duplicate-replace-dark/candidate/session.json",
+          "session_sha256": "c45e4e2b717d7d6070b4d074c790192f271ad26a0f7ea90142e20b283fa4bb8e",
+          "stdout_sha256": "140ac07447b452963a0442f2b2d94a056793e0c01693d5e8e381cb6c37210315",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "config_after_sha256": "a2ed47ed6dd9a3da863fda04ca7c05ab63966185de258947c799ac162f4100b1"
+        },
+        "styled-release4/reference": {
+          "session": "/home/ajs/.cache/pb-phase7/styled-release4/p7-login-duplicate-replace-dark/reference/session.json",
+          "session_sha256": "3f146eb2b2c7a4b86e01a87186930d7bc362285e5a76ea1d4fdb3097da62f1ff",
+          "stdout_sha256": "c334b38f18b1c47bdd1d9563a9010935cdc9567305d5eafd50202f76bf4bcd54",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "config_after_sha256": "686489bde52eb501a49f60371876db0cd084f49f513f1745a073eae041653c92"
+        },
+        "styled-release4/candidate": {
+          "session": "/home/ajs/.cache/pb-phase7/styled-release4/p7-login-duplicate-replace-dark/candidate/session.json",
+          "session_sha256": "e26863f340911d850c816f13664c80a4e02e95ceeefa359c9f9b3eaa526f4a16",
+          "stdout_sha256": "140ac07447b452963a0442f2b2d94a056793e0c01693d5e8e381cb6c37210315",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "config_after_sha256": "a2ed47ed6dd9a3da863fda04ca7c05ab63966185de258947c799ac162f4100b1"
+        }
+      }
+    },
+    {
+      "name": "p7-login-overwrite-bad-config-light",
+      "case_definition_unchanged": true,
+      "release4_issues": [
+        "styled cells/cursor/scrollback differ at masked-password"
+      ],
+      "Go_crossrelease_AA_issues": [
+        "styled cells/cursor/scrollback differ at masked-password"
+      ],
+      "Rust_crossrelease_issues": [],
+      "release3_pair_issues": [],
+      "exact_frame_differences": [
+        {
+          "field": "cells",
+          "row_zero_based": 6,
+          "column_zero_based": 21,
+          "reference": [
+            " ",
+            "default",
+            "default",
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "candidate": [
+            " ",
+            "3a3a8c",
+            "default",
+            false,
+            false,
+            false,
+            false,
+            true,
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "phase_causal_records": [
+        {
+          "release": "styled-release3",
+          "off_chunk": {
+            "read_monotonic_ns": 997129415291992,
+            "relative_focus_ms": 449.914018,
+            "relative_type_ms": 203.498215,
+            "relative_checkpoint_ms": 89.045551,
+            "bullet_count": 14,
+            "cell": [
+              " ",
+              "default",
+              "default",
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "offsets": [
+              6343,
+              6571
+            ],
+            "raw_repr": "b'\\x1b[11A\\x1b[B\\x1b[B\\x1b[B\\x1b[B\\x1b[B\\x1b[B\\x1b[38;2;209;213;219m\\xe2\\x94\\x82\\x1b[0m    \\x1b[38;2;58;58;140m> \\x1b[0m\\x1b[38;2;24;24;27m\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\x1b[0m                                        \\x1b[38;2;209;213;219m\\xe2\\x94\\x82\\x1b[0m\\x1b[0K\\r\\n\\x1b[B\\x1b[B\\x1b[B\\x1b[B\\x1b[100D'"
+          },
+          "checkpoint_before_off_read": true,
+          "checkpoint_style": [
+            " ",
+            "3a3a8c",
+            "default",
+            false,
+            false,
+            false,
+            false,
+            true,
+            false,
+            false,
+            false,
+            false
+          ],
+          "stable_since_ns": 997129233624503,
+          "first_match_ns": 997129233624503,
+          "ready_ns": 997129326246441
+        },
+        {
+          "release": "styled-release4",
+          "off_chunk": {
+            "read_monotonic_ns": 1002288445285863,
+            "relative_focus_ms": 420.027806,
+            "relative_type_ms": 83.799934,
+            "relative_checkpoint_ms": -94.032631,
+            "bullet_count": 14,
+            "cell": [
+              " ",
+              "default",
+              "default",
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "offsets": [
+              6343,
+              6571
+            ],
+            "raw_repr": "b'\\x1b[11A\\x1b[B\\x1b[B\\x1b[B\\x1b[B\\x1b[B\\x1b[B\\x1b[38;2;209;213;219m\\xe2\\x94\\x82\\x1b[0m    \\x1b[38;2;58;58;140m> \\x1b[0m\\x1b[38;2;24;24;27m\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\xe2\\x80\\xa2\\x1b[0m                                        \\x1b[38;2;209;213;219m\\xe2\\x94\\x82\\x1b[0m\\x1b[0K\\r\\n\\x1b[B\\x1b[B\\x1b[B\\x1b[B\\x1b[100D'"
+          },
+          "checkpoint_before_off_read": false,
+          "checkpoint_style": [
+            " ",
+            "default",
+            "default",
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "stable_since_ns": 1002288446463663,
+          "first_match_ns": 1002288364602290,
+          "ready_ns": 1002288539318494
+        }
+      ],
+      "paths_and_hashes": {
+        "styled-release3/reference": {
+          "session": "/home/ajs/.cache/pb-phase7/styled-release3/p7-login-overwrite-bad-config-light/reference/session.json",
+          "session_sha256": "626fdab804162fe89faa18ea855340fc5d3ecce1bf69f42bc66a2cd0b3d97f86",
+          "stdout_sha256": "fb3e3e447d1d306cdd90d55c1c496b3459b7c974c5678ff4d70eda3120d975d8",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "config_after_sha256": "686489bde52eb501a49f60371876db0cd084f49f513f1745a073eae041653c92"
+        },
+        "styled-release3/candidate": {
+          "session": "/home/ajs/.cache/pb-phase7/styled-release3/p7-login-overwrite-bad-config-light/candidate/session.json",
+          "session_sha256": "3ee3676c79e74d910f6f49606b5f75457a751ddd0a5a1b654bf5ad7510e005f6",
+          "stdout_sha256": "7d1407d15291bcd95a6f64e6e7d1994d36f3a6c7e5c5b1f1acf023b06f8601ca",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "config_after_sha256": "a2ed47ed6dd9a3da863fda04ca7c05ab63966185de258947c799ac162f4100b1"
+        },
+        "styled-release4/reference": {
+          "session": "/home/ajs/.cache/pb-phase7/styled-release4/p7-login-overwrite-bad-config-light/reference/session.json",
+          "session_sha256": "1bdcccceed8f5f9d56376529612eb608ee685f1a63b5fc3d743fc4bf324eabff",
+          "stdout_sha256": "fb3e3e447d1d306cdd90d55c1c496b3459b7c974c5678ff4d70eda3120d975d8",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "config_after_sha256": "686489bde52eb501a49f60371876db0cd084f49f513f1745a073eae041653c92"
+        },
+        "styled-release4/candidate": {
+          "session": "/home/ajs/.cache/pb-phase7/styled-release4/p7-login-overwrite-bad-config-light/candidate/session.json",
+          "session_sha256": "6950f764dc7788c5b15889adaced0d3852faf159728d9e94bbb8773eac0ac3d3",
+          "stdout_sha256": "7d1407d15291bcd95a6f64e6e7d1994d36f3a6c7e5c5b1f1acf023b06f8601ca",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "config_after_sha256": "a2ed47ed6dd9a3da863fda04ca7c05ab63966185de258947c799ac162f4100b1"
+        }
+      }
+    }
+  ],
+  "two_actual_Go_controls": {
+    "report": "/home/ajs/.cache/pb-phase7/release4-masked-investigation/go-controls.json",
+    "sha256": "363505a73f211570e6aa590b6f566c734afd5b7ac4df7952140aa428a78fac77",
+    "sessions": [
+      {
+        "dwell_ms": 200,
+        "path": "/home/ajs/.cache/pb-phase7/release4-masked-investigation/go-dwell-200/session.json",
+        "sha256": "33dfe7806f350ccb00c4a374e4f0e8d52a5ff6643f8a93d647b763d978b0dc66",
+        "issues": [],
+        "termination": {
+          "exit": 0
+        },
+        "termios_restored": true,
+        "masked_cell": [
+          " ",
+          "9e9ef0",
+          "default",
+          false,
+          false,
+          false,
+          false,
+          true,
+          false,
+          false,
+          false,
+          false
+        ],
+        "after_old_timer_cell": [
+          " ",
+          "default",
+          "default",
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "username_dispatch_ns": 1002994744830958,
+        "username_enter_dispatch_ns": 1002994954516782,
+        "password_dispatch_ns": 1002995198107100,
+        "masked_ready_ns": 1002995206773465,
+        "after_old_timer_ready_ns": 1002995461669802
+      },
+      {
+        "dwell_ms": 650,
+        "path": "/home/ajs/.cache/pb-phase7/release4-masked-investigation/go-dwell-650/session.json",
+        "sha256": "bc64e5309a8c38d9d60eb81cea1a38e7319d91aa1cf8c4df060e7e5fe49d436e",
+        "issues": [],
+        "termination": {
+          "exit": 0
+        },
+        "termios_restored": true,
+        "masked_cell": [
+          " ",
+          "9e9ef0",
+          "default",
+          false,
+          false,
+          false,
+          false,
+          true,
+          false,
+          false,
+          false,
+          false
+        ],
+        "after_old_timer_cell": [
+          " ",
+          "9e9ef0",
+          "default",
+          false,
+          false,
+          false,
+          false,
+          true,
+          false,
+          false,
+          false,
+          false
+        ],
+        "username_dispatch_ns": 1002997403558949,
+        "username_enter_dispatch_ns": 1002998077304282,
+        "password_dispatch_ns": 1002998316588076,
+        "masked_ready_ns": 1002998320960230,
+        "after_old_timer_ready_ns": 1002998574719930
+      }
+    ],
+    "new_Go_session_count": 2,
+    "allowed_maximum": 6,
+    "helper_elf_sha256": "3b684c7b7632302725727fcc586a071c7818f43d704a8cbf4e1afc384e99f03e",
+    "helper_preparation": "resolve existing artifact build=False; preparatory version/capability proof then build=False/probe=False per capture; no compilation"
+  },
+  "findings": {
+    "checkpoint_variability": "All three original Go3/Go4 A/A pairs differ only at masked-password, while Rust3/Rust4 pairs compare cleanly. Go3 and Go4 raw streams contain the same plain-caret redraw; readiness captures before/after it respectively.",
+    "lifetime_compatibility": "Pinned bubbles cursor New leaves id0, Blur does not cancel outstanding timer, and login forwards non-key messages to active input. Matching tags allow a departed username timer to toggle the password cursor before its own fresh530ms deadline. Rust blur removes deadline and driver ticks only active input.",
+    "control_result": "200ms username dwell: early password caret reversed, late250ms checkpoint plain.650ms dwell allowing username tick before leaving: both password checkpoints reversed. Both independently valid, terminal/config/effects clean.",
+    "evidence_limit": "Internal message id/tag values were inferred from source, not instrumented from the Go process. Controlled Go/Rust parity was not run; A/A phase variability is not parity proof.",
+    "normalization_disposition": "No exception proposed or promoted. The checkpoint difference and cursor-lifetime behavior are distinct findings; normalizing the blank style would hide the lifetime difference.",
+    "next_step": "Parent/editor owner disposition of the narrowly scoped pending-blink lifetime/routing behavior, using the two retained dwell sequences for deterministic native-state regression and eventual separately authorized candidate controls."
+  },
+  "artifact_checks": {
+    "count": 4,
+    "log": "/home/ajs/.cache/pb-phase7/release4-masked-investigation/evidence-checks.log",
+    "sha256": "65aa19dcdccfc1d81574e37e8522309d7a38f1e8c1f45b8f00b1888a96338438",
+    "scope": [
+      "exact cells/colors/reverse/cursor/layout/scrollback",
+      "Go A/A and Rust crossrelease comparisons",
+      "raw chunks reconstruct every original masked checkpoint",
+      "two actual Go dwell control states and deadlines"
+    ]
+  },
+  "not_run": [
+    "candidate/Rust sessions",
+    "builds",
+    "profiler or performance campaign",
+    "quiet lock",
+    "source/comparator/contract promotion"
+  ]
+}

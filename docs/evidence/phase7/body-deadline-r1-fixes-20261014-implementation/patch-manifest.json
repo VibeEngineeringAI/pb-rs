@@ -1,0 +1,18 @@
+{
+  "scope": "body-only source entry plus deliberate F1 test reversal; off-tree only",
+  "files": {
+    "harness/phase3.py": {
+      "before_path": "/home/ajs/.cache/pb-phase7/body-deadline-r1-fixes/before/harness/phase3.py",
+      "before_sha256": "39d16e2ba220aad27ec0e67646e04aacbcdd9a9c28d3013f3f04ddefec789099",
+      "after_path": "/home/ajs/.cache/pb-phase7/body-deadline-r1-fixes/staged/harness/phase3.py",
+      "after_sha256": "7ad84976872ef5ee16fb1b96c3282b1c59902a59736606f78f662e41ecc47dfc"
+    },
+    "harness/test_phase3.py": {
+      "before_path": "/home/ajs/.cache/pb-phase7/body-deadline-r1-fixes/before/harness/test_phase3.py",
+      "before_sha256": "0bea853fcedcf6dd2724d057d88813440454183a64f643c944321c624f414e95",
+      "after_path": "/home/ajs/.cache/pb-phase7/body-deadline-r1-fixes/staged/harness/test_phase3.py",
+      "after_sha256": "5421d19cb3b1e0e6776fec26ca64d7809d063e5960946fc78eca2658307d8442"
+    }
+  },
+  "patch_sha256": "2a692f38dd1faa2d721bfd9106b6586d05d82051b4ff2489fe93d73cde9afd0e"
+}

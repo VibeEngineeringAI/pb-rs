@@ -1,0 +1,16 @@
+{
+  "kind": "central actual Rust saved Unicode implementation vs pinned actual Go scalar truth",
+  "passed": true,
+  "scalars": 1112064,
+  "idempotence": "asserted in actual Rust execution",
+  "compiler": "rustc 1.96.0 (ac68faa20 2026-05-25)\nbinary: rustc\ncommit-hash: ac68faa20c58cbccd01ee7208bf3b6e93a7d7f96\ncommit-date: 2026-05-25\nhost: x86_64-unknown-linux-gnu\nrelease: 1.96.0\nLLVM version: 22.1.2\n",
+  "source": "src/tui/saved_fuzzy_unicode.rs",
+  "source_sha256": "3a88503ae1955216f7f2da881d3a1d41d7e112dcd9fa18e0aeb8163155e2e634",
+  "oracle_sha256": "ed0dd50d8b8c1843b0351dc8b90a3935d2a47d886a9f04468fe6f2c4829eaa42",
+  "artifacts": {
+    "/home/ajs/.cache/pb-phase7/unicode-rust-central/main.rs": "044584b39d39487469215cd92126edbc0d3b74087fea462c133da7f55d8dd739",
+    "/home/ajs/.cache/pb-phase7/unicode-rust-central/probe": "477e435c94023a0a5e46aa32cd150edb737aa1cdcab104333f9aadcb49eefdd0",
+    "/home/ajs/.cache/pb-phase7/unicode-rust-central/actual.bin": "e5cb9fae2f742ee04cf207dc22bd3de1d0a4605abdeb2fbb984ef6caade19d77"
+  },
+  "not_established": "Full application/scoring/process parity or non-Linux behavior; successor gates remain required."
+}

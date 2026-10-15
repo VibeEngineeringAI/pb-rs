@@ -1,0 +1,43 @@
+{
+  "argv": [
+    "/home/ajs/.cache/pb-phase7/body-deadline-r1-fixes/run-pure-tests.py",
+    "--runner-dir",
+    "/home/ajs/.cache/pb-phase7/body-deadline-r1-fixes/staged/harness",
+    "--test",
+    "/home/ajs/.cache/pb-phase7/body-deadline-r1-fixes/before/harness/test_phase3.py",
+    "--f1-only",
+    "--out",
+    "/home/ajs/.cache/pb-phase7/body-deadline-r1-fixes/one-entry-f1-reproduced"
+  ],
+  "executable": "/usr/bin/python3",
+  "version": "3.14.7 (main, Aug 10 2026, 07:46:56) [GCC 16.1.1 20260728]",
+  "optimize": 0,
+  "runner_path": "/home/ajs/.cache/pb-phase7/body-deadline-r1-fixes/staged/harness/phase3.py",
+  "test_path": "/home/ajs/.cache/pb-phase7/body-deadline-r1-fixes/before/harness/test_phase3.py",
+  "source_sha256": {
+    "/home/ajs/.cache/pb-phase7/body-deadline-r1-fixes/staged/harness/phase3.py": "7ad84976872ef5ee16fb1b96c3282b1c59902a59736606f78f662e41ecc47dfc",
+    "/home/ajs/.cache/pb-phase7/body-deadline-r1-fixes/before/harness/test_phase3.py": "0bea853fcedcf6dd2724d057d88813440454183a64f643c944321c624f414e95",
+    "/home/ajs/.cache/pb-phase7/body-deadline-r1-fixes/body-deadline-r1-fixes.patch": "2a692f38dd1faa2d721bfd9106b6586d05d82051b4ff2489fe93d73cde9afd0e"
+  },
+  "dependency_paths": {
+    "phase1": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase1.py",
+    "phase2": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase2.py",
+    "run": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/run.py"
+  },
+  "excluded_tests": [],
+  "selected_tests": [
+    "test_phase3_offtree.DeadlineTierTests.test_bare_deadline_cause_is_limited_to_two_exact_text_messages"
+  ],
+  "executable_launches_forbidden_by_audit_hook": true,
+  "tests_run": 1,
+  "failures": [
+    {
+      "id": "test_phase3_offtree.DeadlineTierTests.test_bare_deadline_cause_is_limited_to_two_exact_text_messages",
+      "trace": "Traceback (most recent call last):\n  File \"/home/ajs/.cache/pb-phase7/body-deadline-r1-fixes/before/harness/test_phase3.py\", line 369, in test_bare_deadline_cause_is_limited_to_two_exact_text_messages\n    self.assertEqual(phase3.compare_stderr(by_name()[other], bare), bare)\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: b'Err[31 chars]ody: <CLIENT-TIMEOUT> (Client.Timeout or conte[33 chars]y)\\n' != b'Err[31 chars]ody: context deadline exceeded\\n'\n"
+    }
+  ],
+  "errors": [],
+  "skipped": [],
+  "outcomes": [],
+  "successful": false
+}

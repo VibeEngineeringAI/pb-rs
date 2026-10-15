@@ -1,0 +1,16 @@
+{
+  "review_path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-review-promql-shared-rows-opus-r1.md",
+  "review_sha256": "b43992fe381f5b14c0ba0cfb65b8d4168e74c085bcd4fdedcc24080327abbd3b",
+  "scope": "accepted source ownership only",
+  "production_delta": [
+    "src/tui/promql.rs"
+  ],
+  "source_sha256": "9e186f17c9f61d81ce1d16a9ca0847ad0d44294be0fa9386f8831b17f8a572d2",
+  "limits": [
+    "local render allocation regression not directly instrumented",
+    "empty Arc pointer identity not proof of shared allocation",
+    "48comparisons/36distinctcontents; inherited plain NO_COLOR; perrun sourcehash notcaptured",
+    "no native/runtime/performance acceptance"
+  ],
+  "root_disposition": "No additional source hook required for accepted narrow change. Direct source inspection verifies Arc clone paths; preserve test limits. Rebuild and functional replay required."
+}

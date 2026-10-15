@@ -1,0 +1,65 @@
+IMPORTED_RUNNER /home/ajs/.cache/pb-phase7/combined-body-lookahead-r2/phase7/staged/harness/phase3.py
+OPTIMIZE 0
+test_baseline_requires_passing_complete_capture (test_phase3.BaselineTrustTests.test_baseline_requires_passing_complete_capture) ... ok
+test_stored_artifacts_are_verified (test_phase3.BaselineTrustTests.test_stored_artifacts_are_verified) ... ok
+test_boundary_check_rejects_go_like_behavior (test_phase3.ComparisonTests.test_boundary_check_rejects_go_like_behavior) ... ok
+test_spinner_clear_only_candidate_fails_activation_case (test_phase3.ComparisonTests.test_spinner_clear_only_candidate_fails_activation_case) ... ok
+test_stub_and_blocked_bytes (test_phase3.ComparisonTests.test_stub_and_blocked_bytes) ... ok
+test_benchmark_suite_is_runpy_compatible (test_phase3.CorpusTests.test_benchmark_suite_is_runpy_compatible) ... ok
+test_boundaries_and_scope (test_phase3.CorpusTests.test_boundaries_and_scope) ... ok
+test_deterministic_unique_and_pinned (test_phase3.CorpusTests.test_deterministic_unique_and_pinned) ... ok
+test_required_coverage (test_phase3.CorpusTests.test_required_coverage) ... ok
+test_bare_deadline_cause_is_limited_to_two_exact_text_messages (test_phase3.DeadlineTierTests.test_bare_deadline_cause_is_limited_to_two_exact_text_messages) ... FAIL
+test_only_the_two_go_timeout_causes_are_normalized (test_phase3.DeadlineTierTests.test_only_the_two_go_timeout_causes_are_normalized) ... ok
+test_out_of_tier_cases_are_unfrozen_not_missing (test_phase3.DeadlineTierTests.test_out_of_tier_cases_are_unfrozen_not_missing) ... ok
+test_paced_chunk_prefix_allowance_and_wall_bounds (test_phase3.DeadlineTierTests.test_paced_chunk_prefix_allowance_and_wall_bounds) ... ok
+test_redirect_bare_deadline_has_an_exact_case_and_error_boundary (test_phase3.DeadlineTierTests.test_redirect_bare_deadline_has_an_exact_case_and_error_boundary) ... ok
+test_redirect_normalization_keeps_exit_request_and_duration_gates (test_phase3.DeadlineTierTests.test_redirect_normalization_keeps_exit_request_and_duration_gates) ... ok
+test_chunk_script_barrier_and_abort (test_phase3.FixtureTests.test_chunk_script_barrier_and_abort) ... ok
+test_go_fixture_generate_parity (test_phase3.FixtureTests.test_go_fixture_generate_parity) ... ok
+test_gzip_and_corruption (test_phase3.FixtureTests.test_gzip_and_corruption) ... ok
+test_reasonless_custom_status_and_trace (test_phase3.FixtureTests.test_reasonless_custom_status_and_trace) ... ok
+test_unexpected_and_auth (test_phase3.FixtureTests.test_unexpected_and_auth) ... ok
+test_small_reference_subset_and_manifest_identity (test_phase3.GoOracleTests.test_small_reference_subset_and_manifest_identity) ... phase3 setup error: phase3 fixture startup failed: Expecting value: line 1 column 1 (char 0)
+ERROR
+test_other_platform_manifest_is_rejected (test_phase3.ManifestPlatformTests.test_other_platform_manifest_is_rejected) ... ok
+test_default_limit_quirks (test_phase3.ModelTests.test_default_limit_quirks) ... ok
+test_error_preview (test_phase3.ModelTests.test_error_preview) ... ok
+test_generate_matches_go_fixture_semantics (test_phase3.ModelTests.test_generate_matches_go_fixture_semantics) ... ok
+test_go_trim_space_and_runes (test_phase3.ModelTests.test_go_trim_space_and_runes) ... ok
+test_json_encoding (test_phase3.ModelTests.test_json_encoding) ... ok
+test_pretty_and_text_outputs (test_phase3.ModelTests.test_pretty_and_text_outputs) ... ok
+test_upstream_rewrite_examples (test_phase3.ModelTests.test_upstream_rewrite_examples) ... ok
+test_bytes_digest_and_elements (test_phase3.RunnerTests.test_bytes_digest_and_elements) ... ok
+test_close_stdout_produces_sigpipe (test_phase3.RunnerTests.test_close_stdout_produces_sigpipe) ... ok
+test_devfull_pty_and_timeout (test_phase3.RunnerTests.test_devfull_pty_and_timeout) ... ok
+test_unmet_required_action_is_reported (test_phase3.RunnerTests.test_unmet_required_action_is_reported) ... ok
+
+======================================================================
+ERROR: test_small_reference_subset_and_manifest_identity (test_phase3.GoOracleTests.test_small_reference_subset_and_manifest_identity)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase3.py", line 484, in test_small_reference_subset_and_manifest_identity
+    self.assertEqual(code, 0, (out / "report.md").read_text())
+                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/usr/lib/python3.14/pathlib/__init__.py", line 787, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/pathlib/__init__.py", line 771, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/ajs/.cache/pb-phase7/tmp/tmpck75iggv/ref/report.md'
+
+======================================================================
+FAIL: test_bare_deadline_cause_is_limited_to_two_exact_text_messages (test_phase3.DeadlineTierTests.test_bare_deadline_cause_is_limited_to_two_exact_text_messages)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase3.py", line 369, in test_bare_deadline_cause_is_limited_to_two_exact_text_messages
+    self.assertEqual(phase3.compare_stderr(by_name()[other], bare), bare)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: b'Err[31 chars]ody: <CLIENT-TIMEOUT> (Client.Timeout or conte[33 chars]y)\n' != b'Err[31 chars]ody: context deadline exceeded\n'
+
+----------------------------------------------------------------------
+Ran 33 tests in 5.973s
+
+FAILED (failures=1, errors=1)

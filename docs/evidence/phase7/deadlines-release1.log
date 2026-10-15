@@ -1,0 +1,12 @@
+
+running 4 tests
+test deadline_schema_15s ... ok
+test deadline_builder_30s has been running for over 60 seconds
+test deadline_promql_120s has been running for over 60 seconds
+test deadline_sql_50s has been running for over 60 seconds
+test deadline_builder_30s ... ok
+test deadline_sql_50s ... ok
+test deadline_promql_120s ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 38 filtered out; finished in 250.48s
+

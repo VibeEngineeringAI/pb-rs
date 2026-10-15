@@ -1,0 +1,13 @@
+test_history_eviction_in_last_token_is_independent_of_feed_boundaries (test_phase7.TerminalTests.test_history_eviction_in_last_token_is_independent_of_feed_boundaries) ... ok
+test_full_history_without_eviction_survives_non_scrolling_controls (test_phase7.TerminalTests.test_full_history_without_eviction_survives_non_scrolling_controls) ... ok
+test_reverse_index_detects_actual_bottom_history_eviction (test_phase7.TerminalTests.test_reverse_index_detects_actual_bottom_history_eviction) ... ok
+test_private_mode_cleanup_is_validated_and_compared_before_alt_exit (test_phase7.ContractsTests.test_private_mode_cleanup_is_validated_and_compared_before_alt_exit) ... ok
+test_nonrestoring_exit_keeps_private_modes_but_still_compares_them (test_phase7.ContractsTests.test_nonrestoring_exit_keeps_private_modes_but_still_compares_them) ... ok
+test_legacy_capture_reconstructs_modes_without_changing_retained_bytes (test_phase7.ContractsTests.test_legacy_capture_reconstructs_modes_without_changing_retained_bytes) ... ok
+test_terminal_mode_payload_cannot_hide_modes_in_osc_text (test_phase7.ContractsTests.test_terminal_mode_payload_cannot_hide_modes_in_osc_text) ... ok
+test_history_loss_fails_validation_and_comparison_even_with_equal_frames (test_phase7.ContractsTests.test_history_loss_fails_validation_and_comparison_even_with_equal_frames) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 4.662s
+
+OK

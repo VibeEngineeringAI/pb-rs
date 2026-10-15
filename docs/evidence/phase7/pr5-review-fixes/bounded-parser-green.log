@@ -1,0 +1,8 @@
+test_legacy_mode_recovery_bounds_pending_while_preserving_fragmented_utf8_and_ansi (test_phase7.ContractsTests.test_legacy_mode_recovery_bounds_pending_while_preserving_fragmented_utf8_and_ansi) ... ok
+test_full_history_without_eviction_survives_non_scrolling_controls (test_phase7.TerminalTests.test_full_history_without_eviction_survives_non_scrolling_controls) ... ok
+test_history_eviction_uses_declared_scrolling_region_bottom (test_phase7.TerminalTests.test_history_eviction_uses_declared_scrolling_region_bottom) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.787s
+
+OK

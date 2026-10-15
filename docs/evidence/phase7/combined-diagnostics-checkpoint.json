@@ -1,0 +1,22 @@
+{
+  "scope": "combined diagnostics library validation, not profiling",
+  "command": [
+    "cargo",
+    "test",
+    "--offline",
+    "--locked",
+    "--features",
+    "diagnostics",
+    "--lib"
+  ],
+  "passed": 561,
+  "failed": 0,
+  "ignored": 2,
+  "ignored_reasons": [
+    "SQL scan microbenchmark requires separate idle timing window",
+    "Go float bit vectors need PB_VALUES_FLOAT_VECTORS fixture"
+  ],
+  "log": "/home/ajs/.cache/pb-phase7/integration-diagnostics-combined1.log",
+  "sha256": "60e41d0bf75965564ce4678ad8efe7c122d21cd0820c6bf91b29144559882b98",
+  "production_source_matches_combined_manifest": true
+}

@@ -1,0 +1,35 @@
+{
+  "scope": "current rounds; earlier assignments retained in delegation-release1-checkpoint.json",
+  "tasks": [
+    {
+      "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-final-contract-review-r1",
+      "model": "claude-opus-5-5",
+      "checkpoint_status": "running"
+    },
+    {
+      "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-retained-deadline-review-r2",
+      "model": "claude-opus-5-5",
+      "checkpoint_status": "completed: accept narrow shared patch"
+    },
+    {
+      "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-spawn-helper-review-r1",
+      "model": "claude-opus-5-5",
+      "checkpoint_status": "running"
+    },
+    {
+      "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-terminal-hangup-race-unit7",
+      "model": "claude-opus-5-5",
+      "checkpoint_status": "completed;408unit pass, actualGo198EOF/2EIO"
+    },
+    {
+      "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-sql-sidebar-byte-investigation",
+      "model": "gpt-6.1-sol",
+      "checkpoint_status": "running"
+    },
+    {
+      "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-pty-profile-driver",
+      "model": "gpt-6.1-sol",
+      "checkpoint_status": "running"
+    }
+  ]
+}

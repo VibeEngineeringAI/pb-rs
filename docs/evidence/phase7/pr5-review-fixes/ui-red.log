@@ -1,0 +1,47 @@
+   Compiling pb v0.1.0 (/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.10s
+     Running unittests src/lib.rs (target/debug/deps/pb-9403838716320e55)
+
+running 5 tests
+
+thread 'tui::promql::tests::pr5_ui_unicode_promql_selectors_use_go_simple_lowercase' (3004332) panicked at src/tui/promql.rs:6185:13:
+assertion `left == right` failed: dataset/metric "İstanbul"/"ist"
+  left: false
+ right: true
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'tui::sql::tests::pr5_ui_unicode_sql_rows_use_go_simple_lowercase' (3004334) panicked at src/tui/sql.rs:4396:13:
+assertion `left == right` failed: row "İstanbul"/"ist"
+  left: false
+ right: true
+test tui::promql::tests::pr5_ui_unicode_promql_selectors_use_go_simple_lowercase ... 
+thread 'tui::promql::tests::pr5_ui_unicode_promql_rows_use_go_simple_lowercase' (3004331) panicked at src/tui/promql.rs:6203:17:
+assertion `left == right` failed: row "İstanbul"/"1"/"ist"
+  left: false
+ right: true
+FAILED
+thread 'tui::sql::tests::pr5_ui_unicode_dataset_and_column_filters_use_go_simple_lowercase' (3004333) panicked at src/tui/sql.rs:4371:13:
+assertion `left == right` failed: dataset "İstanbul"/"ist"
+  left: false
+ right: true
+
+test tui::sql::tests::pr5_ui_unicode_sql_rows_use_go_simple_lowercase ... FAILED
+test tui::promql::tests::pr5_ui_unicode_promql_rows_use_go_simple_lowercase ... FAILED
+test tui::sql::tests::pr5_ui_unicode_dataset_and_column_filters_use_go_simple_lowercase ... FAILED
+
+thread 'tui::promql::tests::pr5_ui_promql_horizontal_keys_reveal_clipped_values_and_restore_columns' (3004330) panicked at src/tui/promql.rs:6223:9:
+Right must expose the clipped exponent
+test tui::promql::tests::pr5_ui_promql_horizontal_keys_reveal_clipped_values_and_restore_columns ... FAILED
+
+failures:
+
+failures:
+    tui::promql::tests::pr5_ui_promql_horizontal_keys_reveal_clipped_values_and_restore_columns
+    tui::promql::tests::pr5_ui_unicode_promql_rows_use_go_simple_lowercase
+    tui::promql::tests::pr5_ui_unicode_promql_selectors_use_go_simple_lowercase
+    tui::sql::tests::pr5_ui_unicode_dataset_and_column_filters_use_go_simple_lowercase
+    tui::sql::tests::pr5_ui_unicode_sql_rows_use_go_simple_lowercase
+
+test result: FAILED. 0 passed; 5 failed; 0 ignored; 0 measured; 567 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `--lib`

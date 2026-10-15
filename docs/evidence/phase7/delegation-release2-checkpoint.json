@@ -1,0 +1,48 @@
+{
+  "kind": "release2 task checkpoint; statuses at recording, not final review disposition",
+  "tasks": [
+    {
+      "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-sol-byte-integration-interim-review-r1",
+      "model": "codex/gpt-6.1-sol",
+      "status": "running",
+      "scope": "Independent interim byte integration audit; not final Opus replacement"
+    },
+    {
+      "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-spawn-helper-review-r2",
+      "model": "claudeAgent/claude-opus-5-5",
+      "status": "failed",
+      "scope": "Claude API rate limit reached. Try again later. No review occurred."
+    },
+    {
+      "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-sol-spawn-helper-interim-review-r2",
+      "model": "codex/gpt-6.1-sol",
+      "status": "running",
+      "scope": "Independent interim helper R2 audit; not final Opus replacement"
+    },
+    {
+      "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-helper-review-r1-fixes",
+      "model": "codex/gpt-6.1-sol",
+      "status": "completed",
+      "scope": "57 tests; native protocol fix freeze; source hashes verified"
+    },
+    {
+      "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-helper-no-build-resolver-integration",
+      "model": "codex/gpt-6.1-sol",
+      "status": "running",
+      "scope": "Concrete integration gap: cache-only shared helper identity lookup without compiler build"
+    },
+    {
+      "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-effects-final-review-decoder-controls",
+      "model": "codex/gpt-6.1-sol",
+      "status": "running",
+      "scope": "Strict fixture causal wait plus actual Go/current candidate focused controls"
+    },
+    {
+      "taskId": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-pty-profile-driver",
+      "model": "codex/gpt-6.1-sol",
+      "status": "running",
+      "scope": "Collector/profiler integration and preflight preparation"
+    }
+  ],
+  "final_opus_review": "outstanding; rate-limited attempts do not count"
+}

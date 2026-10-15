@@ -1,0 +1,33 @@
+{
+  "status": "root closes required D1 documentation, independently accepted R2 code unchanged; prerequisite only",
+  "review": {
+    "path": "docs/phase7-review-bounded-execution-opus-r2.md",
+    "sha256": "37451a39650f22495c42daf183b137a204f4913c973840a820029b9c98d6dc34"
+  },
+  "before_doc_sha256": "e9d7d9aa4e784a32f14abd6659afd8f864b40d6cff5db6c91f9aca0511b4065e",
+  "after_doc_sha256": "0f8725903e0887c608e0348b4a36d6bdc16033e6035c95c29bd78a3f7162c124",
+  "checks": {
+    "Ctrl-\\": 3,
+    "SIGUSR1/2": 3,
+    "unhandled fatal signal": 7,
+    "external SIGALRM": 3
+  },
+  "unchanged_inputs": {
+    "docs/evidence/phase7/bounded-execution.py": "fc814f72a976152623093c056ca80b04b50da042585d750d7dbab364fbbbc0dc",
+    "docs/evidence/phase7/bounded-execution-test.py": "8ba5d27886711c34b4681719ce662bf207b99c18199b66963f4e5da1cc60bef2",
+    "harness/phase7_bench.py": "bf630d9ac4dd4e615f221e218cfce7cbb99438c2de1bf5cfdc388941eef013c2",
+    "harness/phase7.py": "dc7574f058b9ff6ae7b77a912847fdbe02d8b68baab8728237d6ef040e6a44fa",
+    "harness/phase7_spawn.c": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4"
+  },
+  "optional_dispositions": {
+    "N-a": "disclosed stdoutNone actualexit1, no codechange",
+    "N-b": "exit event qualified as prewrite assessment; actual processexitwins",
+    "N-c": "writecompletion vsprocess termination scope explicit"
+  },
+  "remaining_prerequisites": [
+    "actual collector SIGINT interoperability unrun",
+    "fresh root/alllane/companion quiet acknowledgement",
+    "all complete source/binary/helper/end/cleanup checks"
+  ],
+  "test_scope": "text checks and exact file hashes only; no native run or repeat of32tests"
+}

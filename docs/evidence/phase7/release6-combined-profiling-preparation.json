@@ -1,0 +1,18 @@
+{
+  "scope": "optimized symbolized preparation, no profiling or timing claim",
+  "binary": {
+    "path": "/home/ajs/.cache/pb-phase7/profiling/release6-combined/pb-rust-symbolized",
+    "sha256": "14c3ee641b98463c037ca3ad59e48abd04f983068dfec313b806df3b3c1b971b",
+    "bytes": 133302000
+  },
+  "source_tree_sha256": "33d5ad21b760233b1d9e32c722d06b66d28cb7aaf679a7515e5ba80d14ca4bcc",
+  "source_commit": "ea70f7ad7d501d59b26cf6397f6a0b1f28143fc4",
+  "evidence": {
+    "/home/ajs/.cache/pb-phase7/profiling/release6-combined/rust-symbolized-provenance.json": "b150979c0d9c42da0ad22de65f0daa0790c3e00494cad8b5a164309466615b1b",
+    "/home/ajs/.cache/pb-phase7/profiling/release6-combined/rust-release-provenance.json": "5f47674071fb99496d84dc72540fb1bbd30a950c91dc4334cdb2b73790942aa3",
+    "/home/ajs/.cache/pb-phase7/profiling/release6-combined/rust-symbolized-sections.txt": "808b9f9adeb37a67a14afbadd73fac75724ce48c4e9500b4b668e4f05334f630",
+    "/home/ajs/.cache/pb-phase7/profiling/release6-combined/rust-release-sections.txt": "0d77b2b1c927d5c60c5825f9ae17034853c8025befd6ac9681162f2ec8bf3f76",
+    "/home/ajs/.cache/pb-phase7/profiling/release6-combined/artifacts.json": "10236e05cb2bdb048704b0e9f00fb9453d6a9b568b63a0483d7dcab3f89d42a2"
+  },
+  "historical_release5_preserved": true
+}

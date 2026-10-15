@@ -1,0 +1,306 @@
+{
+  "prospective_case_count": 52,
+  "profiles": {
+    "primary": {
+      "options": {
+        "sessions": 3,
+        "warmups": 1,
+        "themes": [
+          "dark",
+          "light"
+        ],
+        "sizes": [
+          [
+            120,
+            40
+          ]
+        ],
+        "case_filters": [],
+        "seed": 7,
+        "max_sessions": 52,
+        "budget_seconds": 3600.0,
+        "session_timeout": 60.0,
+        "idle_seconds": 2.0,
+        "long_idle_seconds": 300.0,
+        "include_long_idle": true,
+        "metric_points": 256,
+        "network_delay_ms": 150,
+        "floor_sessions": 3,
+        "floor_frames": 20,
+        "bootstrap_draws": 2000,
+        "campaign_id": "",
+        "preflight_report": "",
+        "observer_policy": "primary",
+        "comparison": "go-rust",
+        "pool_id": "",
+        "pool_chunk": 0,
+        "decoder_report": "",
+        "pool_spec": ""
+      },
+      "case_hashes_before": {
+        "sql-scroll-500-120x40-dark": "0b189aaf990b4e665d3de16134d6f23737aa42312ed329a9907d11386b5b6869",
+        "sql-scroll-1500-120x40-dark": "53b25f881fa00c96f5694e3e40d07c2e8ae28387340698cbb9d7bfa454b48305",
+        "sql-scroll-20000-120x40-dark": "4f9c5c82c14ba5cbe9f041c239000f85bc8980579edbd242bc706cc089eae358",
+        "promql-dense-1-120x40-dark": "b478e5cbea9341ee58f618d971d8f9d48855a67134664a59bcdaa988e6fda5ff",
+        "promql-dense-100-120x40-dark": "72321d32c35fc881b123f1551024875de9fa82fba16b888dba89ced5b75998d1",
+        "promql-dense-1000-120x40-dark": "f99c48100f0f64e9715bf06c0a44a2e9316ea1dc74f6d5a0962c9808f11d305b",
+        "sql-editor-120x40-dark": "7c06d86d7c477dcdd237931e4731f2c2b8e1fed37316c6c54eb4f6f8b5998b4e",
+        "sql-scroll-20000-delayed-120x40-dark": "bc6a9b5ca4907fa22b054dd5a7cf63e4d36531539c79393d64142afd33011714",
+        "sql-scroll-20000-sustained-120x40-dark": "901daecbc140feaa2bfa89efc37ba20cf6dec3e284f49ec19ffd9bcec82734d8",
+        "promql-dense-1000-sustained-120x40-dark": "354fd99826608ce588678f945e7ad41ee3557381896855ab43592d1b53318947",
+        "sql-query-error-120x40-dark": "636f969fea82b78aa478b1e77aa8e2c5e982fc5131aa37e1de5622535d6dcf12",
+        "promql-query-error-120x40-dark": "4602e415cd862c69f8c6a19de9eec708e943ec83e71bab49878a6f227a612297",
+        "sql-scroll-20000-long-idle-120x40-dark": "ec3d022df225f489cc6128d0854ea531b44a22a8a6e107588c34febd9c12d678",
+        "sql-scroll-500-120x40-light": "b80de5a3e6dc00f7f1b80d61add2afcb48d4ee6f88f4a0aa29aad5637cf8aee7",
+        "sql-scroll-1500-120x40-light": "32f077d54e422c00c397e962c7ec69ec935bff33f7679e5f8dc71aa8396223d0",
+        "sql-scroll-20000-120x40-light": "dcd224b9705d2c1c759ea97e9f8760d30a0b7a144a2b28aa053c894396ced826",
+        "promql-dense-1-120x40-light": "8a30844c79a3924df3572d4f8177898040bb4ddd91742cde1a288cfc46f4a4d3",
+        "promql-dense-100-120x40-light": "4b90b369dc108925911cabab687aac9759fcbbc60d4eaaf5d3dce87c49a0941e",
+        "promql-dense-1000-120x40-light": "1466652200688bf1c1eb4fc1fe3bd3a9a0441d33675d05fe452a64b1d9f5689b",
+        "sql-editor-120x40-light": "36ef74d380133b05a6bab4e24c151c604bdd19b5f1480d53b4cd15d866f1326c",
+        "sql-scroll-20000-delayed-120x40-light": "af63db1821ac7cd79340e21a7b0d77ef487dc2baf7dfdb61f37909495f62c7d5",
+        "sql-scroll-20000-sustained-120x40-light": "777a5ab5cf0910b09db2c79ad0fa2a1440b51f862bc68d04dd987b19951ebb79",
+        "promql-dense-1000-sustained-120x40-light": "8b701c4840cb8982a88ad9c56c321f7870e61f31fd613e11e03f7bf0ac853550",
+        "sql-query-error-120x40-light": "1768a19fbbc18910428a536b28d5994ae12f038909b211b42b4cd9c87ad84a27",
+        "promql-query-error-120x40-light": "9b146699fa118e6f8abc3a3038559434f71dbf53474771ee678496b64393dca9",
+        "sql-scroll-20000-long-idle-120x40-light": "77824e2cb36c9278c0bafc111f3003a76468f6e28994294472a93dd61b253a42"
+      },
+      "case_hashes_after": {
+        "sql-scroll-500-120x40-dark": "0b189aaf990b4e665d3de16134d6f23737aa42312ed329a9907d11386b5b6869",
+        "sql-scroll-1500-120x40-dark": "53b25f881fa00c96f5694e3e40d07c2e8ae28387340698cbb9d7bfa454b48305",
+        "sql-scroll-20000-120x40-dark": "4f9c5c82c14ba5cbe9f041c239000f85bc8980579edbd242bc706cc089eae358",
+        "promql-dense-1-120x40-dark": "b478e5cbea9341ee58f618d971d8f9d48855a67134664a59bcdaa988e6fda5ff",
+        "promql-dense-100-120x40-dark": "72321d32c35fc881b123f1551024875de9fa82fba16b888dba89ced5b75998d1",
+        "promql-dense-1000-120x40-dark": "f99c48100f0f64e9715bf06c0a44a2e9316ea1dc74f6d5a0962c9808f11d305b",
+        "sql-editor-120x40-dark": "7c06d86d7c477dcdd237931e4731f2c2b8e1fed37316c6c54eb4f6f8b5998b4e",
+        "sql-scroll-20000-delayed-120x40-dark": "bc6a9b5ca4907fa22b054dd5a7cf63e4d36531539c79393d64142afd33011714",
+        "sql-scroll-20000-sustained-120x40-dark": "901daecbc140feaa2bfa89efc37ba20cf6dec3e284f49ec19ffd9bcec82734d8",
+        "promql-dense-1000-sustained-120x40-dark": "354fd99826608ce588678f945e7ad41ee3557381896855ab43592d1b53318947",
+        "sql-query-error-120x40-dark": "636f969fea82b78aa478b1e77aa8e2c5e982fc5131aa37e1de5622535d6dcf12",
+        "promql-query-error-120x40-dark": "4602e415cd862c69f8c6a19de9eec708e943ec83e71bab49878a6f227a612297",
+        "sql-scroll-20000-long-idle-120x40-dark": "ec3d022df225f489cc6128d0854ea531b44a22a8a6e107588c34febd9c12d678",
+        "sql-scroll-500-120x40-light": "b80de5a3e6dc00f7f1b80d61add2afcb48d4ee6f88f4a0aa29aad5637cf8aee7",
+        "sql-scroll-1500-120x40-light": "32f077d54e422c00c397e962c7ec69ec935bff33f7679e5f8dc71aa8396223d0",
+        "sql-scroll-20000-120x40-light": "dcd224b9705d2c1c759ea97e9f8760d30a0b7a144a2b28aa053c894396ced826",
+        "promql-dense-1-120x40-light": "8a30844c79a3924df3572d4f8177898040bb4ddd91742cde1a288cfc46f4a4d3",
+        "promql-dense-100-120x40-light": "4b90b369dc108925911cabab687aac9759fcbbc60d4eaaf5d3dce87c49a0941e",
+        "promql-dense-1000-120x40-light": "1466652200688bf1c1eb4fc1fe3bd3a9a0441d33675d05fe452a64b1d9f5689b",
+        "sql-editor-120x40-light": "36ef74d380133b05a6bab4e24c151c604bdd19b5f1480d53b4cd15d866f1326c",
+        "sql-scroll-20000-delayed-120x40-light": "af63db1821ac7cd79340e21a7b0d77ef487dc2baf7dfdb61f37909495f62c7d5",
+        "sql-scroll-20000-sustained-120x40-light": "777a5ab5cf0910b09db2c79ad0fa2a1440b51f862bc68d04dd987b19951ebb79",
+        "promql-dense-1000-sustained-120x40-light": "8b701c4840cb8982a88ad9c56c321f7870e61f31fd613e11e03f7bf0ac853550",
+        "sql-query-error-120x40-light": "1768a19fbbc18910428a536b28d5994ae12f038909b211b42b4cd9c87ad84a27",
+        "promql-query-error-120x40-light": "9b146699fa118e6f8abc3a3038559434f71dbf53474771ee678496b64393dca9",
+        "sql-scroll-20000-long-idle-120x40-light": "77824e2cb36c9278c0bafc111f3003a76468f6e28994294472a93dd61b253a42"
+      },
+      "unchanged": true
+    },
+    "resource-attribution": {
+      "options": {
+        "sessions": 3,
+        "warmups": 1,
+        "themes": [
+          "dark",
+          "light"
+        ],
+        "sizes": [
+          [
+            120,
+            40
+          ]
+        ],
+        "case_filters": [],
+        "seed": 7,
+        "max_sessions": 52,
+        "budget_seconds": 3600.0,
+        "session_timeout": 60.0,
+        "idle_seconds": 2.0,
+        "long_idle_seconds": 300.0,
+        "include_long_idle": true,
+        "metric_points": 256,
+        "network_delay_ms": 150,
+        "floor_sessions": 3,
+        "floor_frames": 20,
+        "bootstrap_draws": 2000,
+        "campaign_id": "",
+        "preflight_report": "",
+        "observer_policy": "resource-attribution",
+        "comparison": "go-rust",
+        "pool_id": "",
+        "pool_chunk": 0,
+        "decoder_report": "",
+        "pool_spec": ""
+      },
+      "case_hashes_before": {
+        "sql-scroll-500-120x40-dark-resource-attribution": "7c40e468ea7b42fa97c0fa14aedcaec8f64f702f16fa95ed46a8f50b8b97208b",
+        "sql-scroll-1500-120x40-dark-resource-attribution": "37b892d547f759b86736d91e75e2f7a254e5e56f6d8552dd4ab24ac5b774f035",
+        "sql-scroll-20000-120x40-dark-resource-attribution": "488bd7cea48ca6acb9eef97c52f1325869506590f7d905450b60bacaa20aaf47",
+        "promql-dense-1-120x40-dark-resource-attribution": "802629dc0705bea5c2c1214f0db27f4584e497aaecc813e5c50538cc48dea7bb",
+        "promql-dense-100-120x40-dark-resource-attribution": "d91632b9320d4d102740abbe541c18ce20463a201b2df3f6fba84cb5663dfd06",
+        "promql-dense-1000-120x40-dark-resource-attribution": "4d5ada644a2b2d1781c47f572684909629e27e52c1b010ee7afafa06c7070d6a",
+        "sql-editor-120x40-dark-resource-attribution": "3cad150184e1926a97b0ef7cf9c04aea5d148077e76c9092dfd6e31dfa791d29",
+        "sql-scroll-20000-delayed-120x40-dark-resource-attribution": "069ffd526635a1b3be2c15d0960f9b41efaa8aff24ee439e71a377895caae1db",
+        "sql-scroll-20000-sustained-120x40-dark-resource-attribution": "a40388335198938c0a5419053815dcc8969d9b1f0bf255e8846111b7d6d4551a",
+        "promql-dense-1000-sustained-120x40-dark-resource-attribution": "c793d6bc0873db523ec48d2e0016dca484e0e3a0bc965c367443b6e104f4a4ce",
+        "sql-query-error-120x40-dark-resource-attribution": "36c2fa390c3b033abda4570f8a13108122cb7fcff69c91bc9eb894bfd16f451d",
+        "promql-query-error-120x40-dark-resource-attribution": "b72db8cf5c6dc3636323233e72180d24e75d7aef89b0089ce5b1894212e046cb",
+        "sql-scroll-20000-long-idle-120x40-dark-resource-attribution": "7ee43bca4fe4ec5ae709bf2ddd3bf5e4fb502d488400855e0f71fe6bf73877ab",
+        "sql-scroll-500-120x40-light-resource-attribution": "2f4952dfd9509db7d1d537f567dbf43ae9503caddf519664c223374744b6dc73",
+        "sql-scroll-1500-120x40-light-resource-attribution": "7ddfcb081867839ae837cdd5c793f5228ca510dc11e4a0effe5c8f8190bf9e49",
+        "sql-scroll-20000-120x40-light-resource-attribution": "fe674b3e8ef0483b49281161ca2781816a3a917f83f267b57b4e3957368929d4",
+        "promql-dense-1-120x40-light-resource-attribution": "ffe7e7439a7dcec94596d5911cfcb63df08529d81cd80e47beadb70f2a9d994d",
+        "promql-dense-100-120x40-light-resource-attribution": "d5eed0a0b01828046d5c573c0e08d95a6221a432e983bbfb0a64e253591f4f4e",
+        "promql-dense-1000-120x40-light-resource-attribution": "3b363e6a8935bfa306fb1b02f990b4f6b98466ae4e3cfe3676464451c1fd6bb2",
+        "sql-editor-120x40-light-resource-attribution": "d38031bf0a45a09b19784ab1a549da2b0e4166e0be8d8bd27eaf7877e8288c5a",
+        "sql-scroll-20000-delayed-120x40-light-resource-attribution": "d56db2c0281952aa341d1de6b02ca95ecd655213bebb9f7cde6d5f685d710ef5",
+        "sql-scroll-20000-sustained-120x40-light-resource-attribution": "e917b15d5b49ac7a27b37627aa9ba9c6f8a8a45ab5ea079c5f6f1d486e8c89d7",
+        "promql-dense-1000-sustained-120x40-light-resource-attribution": "ec086ff3b2025151a6de7b6012d5cdc2dbeff3aab6e5fe48cf2f25aea567e373",
+        "sql-query-error-120x40-light-resource-attribution": "95a2ed8afb24bb30e66be9504d3894d76e2b506bc8842ddc7a663eef778cd3a6",
+        "promql-query-error-120x40-light-resource-attribution": "b35dde9e4280bca3139ced68e358074e92e31f695674f25a8d4dbc47e54a3521",
+        "sql-scroll-20000-long-idle-120x40-light-resource-attribution": "6615a8c8088f4b83b18ec4a4737cb80674d122fd9e552272d6e035def563bd71"
+      },
+      "case_hashes_after": {
+        "sql-scroll-500-120x40-dark-resource-attribution": "7c40e468ea7b42fa97c0fa14aedcaec8f64f702f16fa95ed46a8f50b8b97208b",
+        "sql-scroll-1500-120x40-dark-resource-attribution": "37b892d547f759b86736d91e75e2f7a254e5e56f6d8552dd4ab24ac5b774f035",
+        "sql-scroll-20000-120x40-dark-resource-attribution": "488bd7cea48ca6acb9eef97c52f1325869506590f7d905450b60bacaa20aaf47",
+        "promql-dense-1-120x40-dark-resource-attribution": "802629dc0705bea5c2c1214f0db27f4584e497aaecc813e5c50538cc48dea7bb",
+        "promql-dense-100-120x40-dark-resource-attribution": "d91632b9320d4d102740abbe541c18ce20463a201b2df3f6fba84cb5663dfd06",
+        "promql-dense-1000-120x40-dark-resource-attribution": "4d5ada644a2b2d1781c47f572684909629e27e52c1b010ee7afafa06c7070d6a",
+        "sql-editor-120x40-dark-resource-attribution": "3cad150184e1926a97b0ef7cf9c04aea5d148077e76c9092dfd6e31dfa791d29",
+        "sql-scroll-20000-delayed-120x40-dark-resource-attribution": "069ffd526635a1b3be2c15d0960f9b41efaa8aff24ee439e71a377895caae1db",
+        "sql-scroll-20000-sustained-120x40-dark-resource-attribution": "a40388335198938c0a5419053815dcc8969d9b1f0bf255e8846111b7d6d4551a",
+        "promql-dense-1000-sustained-120x40-dark-resource-attribution": "c793d6bc0873db523ec48d2e0016dca484e0e3a0bc965c367443b6e104f4a4ce",
+        "sql-query-error-120x40-dark-resource-attribution": "36c2fa390c3b033abda4570f8a13108122cb7fcff69c91bc9eb894bfd16f451d",
+        "promql-query-error-120x40-dark-resource-attribution": "b72db8cf5c6dc3636323233e72180d24e75d7aef89b0089ce5b1894212e046cb",
+        "sql-scroll-20000-long-idle-120x40-dark-resource-attribution": "7ee43bca4fe4ec5ae709bf2ddd3bf5e4fb502d488400855e0f71fe6bf73877ab",
+        "sql-scroll-500-120x40-light-resource-attribution": "2f4952dfd9509db7d1d537f567dbf43ae9503caddf519664c223374744b6dc73",
+        "sql-scroll-1500-120x40-light-resource-attribution": "7ddfcb081867839ae837cdd5c793f5228ca510dc11e4a0effe5c8f8190bf9e49",
+        "sql-scroll-20000-120x40-light-resource-attribution": "fe674b3e8ef0483b49281161ca2781816a3a917f83f267b57b4e3957368929d4",
+        "promql-dense-1-120x40-light-resource-attribution": "ffe7e7439a7dcec94596d5911cfcb63df08529d81cd80e47beadb70f2a9d994d",
+        "promql-dense-100-120x40-light-resource-attribution": "d5eed0a0b01828046d5c573c0e08d95a6221a432e983bbfb0a64e253591f4f4e",
+        "promql-dense-1000-120x40-light-resource-attribution": "3b363e6a8935bfa306fb1b02f990b4f6b98466ae4e3cfe3676464451c1fd6bb2",
+        "sql-editor-120x40-light-resource-attribution": "d38031bf0a45a09b19784ab1a549da2b0e4166e0be8d8bd27eaf7877e8288c5a",
+        "sql-scroll-20000-delayed-120x40-light-resource-attribution": "d56db2c0281952aa341d1de6b02ca95ecd655213bebb9f7cde6d5f685d710ef5",
+        "sql-scroll-20000-sustained-120x40-light-resource-attribution": "e917b15d5b49ac7a27b37627aa9ba9c6f8a8a45ab5ea079c5f6f1d486e8c89d7",
+        "promql-dense-1000-sustained-120x40-light-resource-attribution": "ec086ff3b2025151a6de7b6012d5cdc2dbeff3aab6e5fe48cf2f25aea567e373",
+        "sql-query-error-120x40-light-resource-attribution": "95a2ed8afb24bb30e66be9504d3894d76e2b506bc8842ddc7a663eef778cd3a6",
+        "promql-query-error-120x40-light-resource-attribution": "b35dde9e4280bca3139ced68e358074e92e31f695674f25a8d4dbc47e54a3521",
+        "sql-scroll-20000-long-idle-120x40-light-resource-attribution": "6615a8c8088f4b83b18ec4a4737cb80674d122fd9e552272d6e035def563bd71"
+      },
+      "unchanged": true
+    }
+  },
+  "a1_prospective_cases": {
+    "sql-scroll-500-120x40-dark": "0b189aaf990b4e665d3de16134d6f23737aa42312ed329a9907d11386b5b6869",
+    "sql-scroll-1500-120x40-dark": "53b25f881fa00c96f5694e3e40d07c2e8ae28387340698cbb9d7bfa454b48305",
+    "sql-scroll-20000-120x40-dark": "4f9c5c82c14ba5cbe9f041c239000f85bc8980579edbd242bc706cc089eae358",
+    "promql-dense-1-120x40-dark": "b478e5cbea9341ee58f618d971d8f9d48855a67134664a59bcdaa988e6fda5ff",
+    "promql-dense-100-120x40-dark": "72321d32c35fc881b123f1551024875de9fa82fba16b888dba89ced5b75998d1",
+    "promql-dense-1000-120x40-dark": "f99c48100f0f64e9715bf06c0a44a2e9316ea1dc74f6d5a0962c9808f11d305b",
+    "sql-editor-120x40-dark": "7c06d86d7c477dcdd237931e4731f2c2b8e1fed37316c6c54eb4f6f8b5998b4e",
+    "sql-scroll-20000-delayed-120x40-dark": "bc6a9b5ca4907fa22b054dd5a7cf63e4d36531539c79393d64142afd33011714",
+    "sql-scroll-20000-sustained-120x40-dark": "901daecbc140feaa2bfa89efc37ba20cf6dec3e284f49ec19ffd9bcec82734d8",
+    "promql-dense-1000-sustained-120x40-dark": "354fd99826608ce588678f945e7ad41ee3557381896855ab43592d1b53318947",
+    "sql-query-error-120x40-dark": "636f969fea82b78aa478b1e77aa8e2c5e982fc5131aa37e1de5622535d6dcf12",
+    "promql-query-error-120x40-dark": "4602e415cd862c69f8c6a19de9eec708e943ec83e71bab49878a6f227a612297"
+  },
+  "a1_hashes_unchanged": true,
+  "changed_bench_functions": [
+    "sql_resize_geometry",
+    "_functional_preflight"
+  ],
+  "immutable_inputs": [
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-review-a1-functional-failure-opus-r1.md",
+      "size_bytes": 8965,
+      "sha256": "5638a0b6cb03a8c97c9884aca67b98cfe1342db800b6e7a390977d0ff7746f68",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7.py",
+      "size_bytes": 90070,
+      "sha256": "dc7574f058b9ff6ae7b77a912847fdbe02d8b68baab8728237d6ef040e6a44fa",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_workloads.py",
+      "size_bytes": 41824,
+      "sha256": "04404c96efabad1d2b0674df17751856913363443744c3dd1fb497f07a5f6178",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_spawn.c",
+      "size_bytes": 9383,
+      "sha256": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/pkg/model/query.go",
+      "size_bytes": 82461,
+      "sha256": "e902816d2c78163cfcdb6a5d272ae750f5beae533c1d01fa50e13eb9715c781d",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/sql.rs",
+      "size_bytes": 188964,
+      "sha256": "98eb54071505344d5c42f3fd32e221d1d86664ebd4623a6af884c85d7d2fcb1f",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/pkg/model/promql.go",
+      "size_bytes": 102835,
+      "sha256": "7332d30d8c4b18ff1e46ce2c9f9907ca4207184db0b4e4d335523570d8b788b8",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/src/tui/promql.rs",
+      "size_bytes": 254186,
+      "sha256": "51387004ec5207391d8c60252d1eb62997ae200d8ec23a89237238a1f114cf55",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/under30-combined-a1-primary-dark-01/sql-scroll-500-120x40-dark/reference/session.json",
+      "size_bytes": 2900685,
+      "sha256": "b0a6919c04a9c157d15101dfabaff64f2e546364e5c841a4d5149aaf1029ce6b",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/under30-combined-a1-primary-dark-01/sql-scroll-500-120x40-dark/reference/stdout.bin",
+      "size_bytes": 38198,
+      "sha256": "2524289b1f62556ade81159f34fb528b18f8b0c12a912dc51357b1f81c9af0fa",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/under30-combined-a1-primary-dark-01/sql-scroll-500-120x40-dark/reference/execute/session.json",
+      "size_bytes": 8720793,
+      "sha256": "ea407b7dc5c292ca86b6ee2324f150f883e94c88860f8f959b4f541d528fcf52",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/under30-combined-a1-primary-dark-01/sql-scroll-500-120x40-dark/reference/execute/stdout.bin",
+      "size_bytes": 38198,
+      "sha256": "2524289b1f62556ade81159f34fb528b18f8b0c12a912dc51357b1f81c9af0fa",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/a1-functional-failure-opus-r1/replay.py",
+      "size_bytes": 6476,
+      "sha256": "931e41c0ddfcf9a80798178cef11c3fe71458b808cc28edbd008d7ff6e9e6d03",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/a1-functional-failure-opus-r1/replay-output.json",
+      "size_bytes": 4000,
+      "sha256": "4935267d3dc894ad660d2a593e349d6e51d67e6aa7164f25f5593aabc51699fb",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/a1-functional-failure-opus-r1/replay-stderr.txt",
+      "size_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged": true
+    }
+  ],
+  "guard_trips": [],
+  "scope": "direct pure generation of all52 exact retained prospective CLI-typed definitions plus12 actual-A1 prospective definitions; no plan dispatch or acceptance"
+}

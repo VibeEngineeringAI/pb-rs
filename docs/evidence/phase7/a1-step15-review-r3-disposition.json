@@ -1,0 +1,72 @@
+{
+  "review_path": "docs/phase7-review-a1-step15-successor-opus-r3.md",
+  "review_sha256": "ea94f609cd3d2e4fb57b3c62723f3a649ae4d4546edaa23590553b75c5f16c15",
+  "review_artifacts_rehashed": 39,
+  "root_read_full": true,
+  "source_scope": "accepted120x40; no blocker/medium; no runtime or performance acceptance",
+  "M1_L1_L4": "closed by executed OpusR3",
+  "N1": "root added whole-campaign/profiler size refusal disclosure",
+  "N2": "root added distinct-last-input SQL NaN rejection test; first-only mutant1assertion failure0errors",
+  "root_scoped_tests": {
+    "live_tests": 6,
+    "live_success": true,
+    "live_failures": 0,
+    "live_errors": 0,
+    "mutant_tests": 1,
+    "mutant_failures": 1,
+    "mutant_errors": 0,
+    "guard_trips": [],
+    "before": {
+      "harness/phase7_bench.py": "b874ac0a591b3b04bba25946b4037145271c4ebc11a2e65de836291d9a020372",
+      "harness/test_phase7_bench.py": "a776f6b7c83796a422ccefdb49574273d83604c88fc90075c8584221e5eb7263",
+      "harness/contracts/phase7.md": "76c0c9a1767ea6eb484fb49b2b5bdd3eaade6d15b1158b33a221b88a88cbe9f7",
+      "docs/phase7-measurement.md": "46b3aa7ef8771797b3b08375ab2b61e392f61da10240308c49407bd03969d625",
+      "harness/phase7.py": "dc7574f058b9ff6ae7b77a912847fdbe02d8b68baab8728237d6ef040e6a44fa"
+    },
+    "after": {
+      "harness/phase7_bench.py": "b874ac0a591b3b04bba25946b4037145271c4ebc11a2e65de836291d9a020372",
+      "harness/test_phase7_bench.py": "a776f6b7c83796a422ccefdb49574273d83604c88fc90075c8584221e5eb7263",
+      "harness/contracts/phase7.md": "76c0c9a1767ea6eb484fb49b2b5bdd3eaade6d15b1158b33a221b88a88cbe9f7",
+      "docs/phase7-measurement.md": "46b3aa7ef8771797b3b08375ab2b61e392f61da10240308c49407bd03969d625",
+      "harness/phase7.py": "dc7574f058b9ff6ae7b77a912847fdbe02d8b68baab8728237d6ef040e6a44fa"
+    },
+    "source_unchanged_during_tests": true,
+    "bench_unchanged": true,
+    "case_hash_effect": "none; only test/docs changed",
+    "scope": "N1 docs plus N2 four-input SQL last-dispatch NaN rejection; prior130 suite historical; no full rerun"
+  },
+  "reviewed_bench_unchanged": true,
+  "original_handoff": "historical first/last statement was degenerate on one-input PromQL captures; new SQL test covers actual distinct events",
+  "artifacts": {
+    "check.py": {
+      "path": "/home/ajs/.cache/pb-phase7/a1-step15-r3-low-closure/check.py",
+      "sha256": "f01325531597e691cbd9c3173b7c81d709c830716159b3b64e8b131eb45d23f8"
+    },
+    "stdout.log": {
+      "path": "/home/ajs/.cache/pb-phase7/a1-step15-r3-low-closure/stdout.log",
+      "sha256": "e43c668d0cef5fda72bc556b597995a274266a3afd8ec05bdbfc260a7a127ab3"
+    },
+    "stderr.log": {
+      "path": "/home/ajs/.cache/pb-phase7/a1-step15-r3-low-closure/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "tests.log": {
+      "path": "/home/ajs/.cache/pb-phase7/a1-step15-r3-low-closure/tests.log",
+      "sha256": "7022c42d5eac9de8e3162d98d6be41d44c70c3a03c6ebecb26ff303b4ee66d31"
+    },
+    "mutant.log": {
+      "path": "/home/ajs/.cache/pb-phase7/a1-step15-r3-low-closure/mutant.log",
+      "sha256": "5dd2f30d4bb5b3555acbc566ba2f9f7b443268cd9cbe895a28012bd6619e721b"
+    },
+    "owned.patch": {
+      "path": "/home/ajs/.cache/pb-phase7/a1-step15-r3-low-closure/owned.patch",
+      "sha256": "7eb499bdb6c283d3ecf0d2206287d03925fea62946ee52c9d8a698235da31a30"
+    },
+    "report.json": {
+      "path": "/home/ajs/.cache/pb-phase7/a1-step15-r3-low-closure/report.json",
+      "sha256": "c39aa8f53fee303c7dddeaee450ea36973999b9aa56dd40f7044530608674531"
+    }
+  },
+  "full_suite": "130/130 historical exact reviewed source; subsequent test/docs-only delta6focusedtests pass, no unnecessary full repeat",
+  "next_gate": "actual24role Go/combined preflight with new source/runtime/end identity binding"
+}

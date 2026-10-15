@@ -1,0 +1,341 @@
+{
+  "boundary_cases": [
+    {
+      "case": "CSI-split-1",
+      "bytes": 65543,
+      "modes": {
+        "initial": [],
+        "final": [
+          2004
+        ]
+      },
+      "matches_prior": true,
+      "capture_unchanged": true
+    },
+    {
+      "case": "CSI-split-2",
+      "bytes": 65542,
+      "modes": {
+        "initial": [],
+        "final": [
+          2004
+        ]
+      },
+      "matches_prior": true,
+      "capture_unchanged": true
+    },
+    {
+      "case": "CSI-split-3",
+      "bytes": 65541,
+      "modes": {
+        "initial": [],
+        "final": [
+          2004
+        ]
+      },
+      "matches_prior": true,
+      "capture_unchanged": true
+    },
+    {
+      "case": "CSI-split-4",
+      "bytes": 65540,
+      "modes": {
+        "initial": [],
+        "final": [
+          2004
+        ]
+      },
+      "matches_prior": true,
+      "capture_unchanged": true
+    },
+    {
+      "case": "CSI-split-5",
+      "bytes": 65539,
+      "modes": {
+        "initial": [],
+        "final": [
+          2004
+        ]
+      },
+      "matches_prior": true,
+      "capture_unchanged": true
+    },
+    {
+      "case": "CSI-split-6",
+      "bytes": 65538,
+      "modes": {
+        "initial": [],
+        "final": [
+          2004
+        ]
+      },
+      "matches_prior": true,
+      "capture_unchanged": true
+    },
+    {
+      "case": "CSI-split-7",
+      "bytes": 65537,
+      "modes": {
+        "initial": [],
+        "final": [
+          2004
+        ]
+      },
+      "matches_prior": true,
+      "capture_unchanged": true
+    },
+    {
+      "case": "UTF8-0xe9-split-1",
+      "bytes": 65545,
+      "modes": {
+        "initial": [],
+        "final": [
+          2004
+        ]
+      },
+      "matches_prior": true,
+      "capture_unchanged": true
+    },
+    {
+      "case": "UTF8-0x65e5-split-1",
+      "bytes": 65546,
+      "modes": {
+        "initial": [],
+        "final": [
+          2004
+        ]
+      },
+      "matches_prior": true,
+      "capture_unchanged": true
+    },
+    {
+      "case": "UTF8-0x65e5-split-2",
+      "bytes": 65545,
+      "modes": {
+        "initial": [],
+        "final": [
+          2004
+        ]
+      },
+      "matches_prior": true,
+      "capture_unchanged": true
+    },
+    {
+      "case": "UTF8-0x1f980-split-1",
+      "bytes": 65547,
+      "modes": {
+        "initial": [],
+        "final": [
+          2004
+        ]
+      },
+      "matches_prior": true,
+      "capture_unchanged": true
+    },
+    {
+      "case": "UTF8-0x1f980-split-2",
+      "bytes": 65546,
+      "modes": {
+        "initial": [],
+        "final": [
+          2004
+        ]
+      },
+      "matches_prior": true,
+      "capture_unchanged": true
+    },
+    {
+      "case": "UTF8-0x1f980-split-3",
+      "bytes": 65545,
+      "modes": {
+        "initial": [],
+        "final": [
+          2004
+        ]
+      },
+      "matches_prior": true,
+      "capture_unchanged": true
+    },
+    {
+      "case": "OSC-BEL-split-1",
+      "bytes": 65562,
+      "modes": {
+        "initial": [],
+        "final": [
+          1004
+        ]
+      },
+      "matches_prior": true,
+      "capture_unchanged": true
+    },
+    {
+      "case": "OSC-BEL-split-2",
+      "bytes": 65561,
+      "modes": {
+        "initial": [],
+        "final": [
+          1004
+        ]
+      },
+      "matches_prior": true,
+      "capture_unchanged": true
+    },
+    {
+      "case": "OSC-BEL-split-7",
+      "bytes": 65556,
+      "modes": {
+        "initial": [],
+        "final": [
+          1004
+        ]
+      },
+      "matches_prior": true,
+      "capture_unchanged": true
+    },
+    {
+      "case": "OSC-BEL-split-18",
+      "bytes": 65545,
+      "modes": {
+        "initial": [],
+        "final": [
+          1004
+        ]
+      },
+      "matches_prior": true,
+      "capture_unchanged": true
+    },
+    {
+      "case": "OSC-ST-split-1",
+      "bytes": 65563,
+      "modes": {
+        "initial": [],
+        "final": [
+          1004
+        ]
+      },
+      "matches_prior": true,
+      "capture_unchanged": true
+    },
+    {
+      "case": "OSC-ST-split-2",
+      "bytes": 65562,
+      "modes": {
+        "initial": [],
+        "final": [
+          1004
+        ]
+      },
+      "matches_prior": true,
+      "capture_unchanged": true
+    },
+    {
+      "case": "OSC-ST-split-7",
+      "bytes": 65557,
+      "modes": {
+        "initial": [],
+        "final": [
+          1004
+        ]
+      },
+      "matches_prior": true,
+      "capture_unchanged": true
+    },
+    {
+      "case": "OSC-ST-split-19",
+      "bytes": 65545,
+      "modes": {
+        "initial": [],
+        "final": [
+          1004
+        ]
+      },
+      "matches_prior": true,
+      "capture_unchanged": true
+    },
+    {
+      "case": "seed-CSI-completed-by-stdout",
+      "bytes": 9,
+      "modes": {
+        "initial": [
+          1004
+        ],
+        "final": [
+          1003,
+          1004,
+          2004
+        ]
+      },
+      "matches_prior": true,
+      "capture_unchanged": true
+    },
+    {
+      "case": "empty-seed-and-stdout",
+      "bytes": 0,
+      "modes": {
+        "initial": [],
+        "final": []
+      },
+      "matches_prior": true,
+      "capture_unchanged": true
+    },
+    {
+      "case": "incomplete-UTF8-final-flush",
+      "bytes": 10,
+      "modes": {
+        "initial": [],
+        "final": [
+          1004
+        ]
+      },
+      "matches_prior": true,
+      "capture_unchanged": true
+    },
+    {
+      "case": "RIS-across-block",
+      "bytes": 65537,
+      "modes": {
+        "initial": [
+          2004
+        ],
+        "final": []
+      },
+      "matches_prior": true,
+      "capture_unchanged": true
+    }
+  ],
+  "bounded_seed_and_stdout": {
+    "modes": {
+      "initial": [
+        1004
+      ],
+      "final": [
+        1002,
+        1003,
+        1004
+      ]
+    },
+    "feeds": [
+      {
+        "bytes": 65536,
+        "final": false
+      },
+      {
+        "bytes": 34479,
+        "final": false
+      },
+      {
+        "bytes": 65536,
+        "final": false
+      },
+      {
+        "bytes": 36073,
+        "final": false
+      },
+      {
+        "bytes": 0,
+        "final": true
+      }
+    ],
+    "capture_unchanged": true
+  }
+}

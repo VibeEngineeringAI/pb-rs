@@ -1,0 +1,110 @@
+test_legacy_lost_prefix_pair_cannot_pass_without_overflow_evidence (test_phase7.ContractsTests.test_legacy_lost_prefix_pair_cannot_pass_without_overflow_evidence) ... FAIL
+test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss (test_phase7.ContractsTests.test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss) ... 
+  test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss (test_phase7.ContractsTests.test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss) (payload_prefix=b'\x1b[3JUI') ... FAIL
+  test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss (test_phase7.ContractsTests.test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss) (payload_prefix=b'\x1b[03JUI') ... FAIL
+  test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss (test_phase7.ContractsTests.test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss) (payload_prefix=b'\x1bcUI') ... FAIL
+  test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss (test_phase7.ContractsTests.test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss) (payload_prefix=b'\x1bMUI') ... FAIL
+  test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss (test_phase7.ContractsTests.test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss) (payload_prefix=b'\xc2\x9b3JUI') ... FAIL
+  test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss (test_phase7.ContractsTests.test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss) (payload_prefix=b'A\r\nx\r\nx\r\nx\r\nx\r\nx\r\nx\r') ... FAIL
+test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss (test_phase7.ContractsTests.test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss) ... FAIL
+test_missing_legacy_raw_is_a_per_session_reduce_issue_including_pipe_compare (test_phase7.ContractsTests.test_missing_legacy_raw_is_a_per_session_reduce_issue_including_pipe_compare) ... ERROR
+test_legacy_history_uncertainty_keeps_captured_seed_before_contract_override (test_phase7.ContractsTests.test_legacy_history_uncertainty_keeps_captured_seed_before_contract_override) ... FAIL
+
+======================================================================
+ERROR: test_missing_legacy_raw_is_a_per_session_reduce_issue_including_pipe_compare (test_phase7.ContractsTests.test_missing_legacy_raw_is_a_per_session_reduce_issue_including_pipe_compare)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7.py", line 1403, in test_missing_legacy_raw_is_a_per_session_reduce_issue_including_pipe_compare
+    loaded = p7.load_session(candidate)
+  File "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7.py", line 1595, in load_session
+    data['terminal_modes'] = session_terminal_modes(data)
+                             ~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7.py", line 1363, in session_terminal_modes
+    raise ValueError('terminal private modes evidence unavailable')
+ValueError: terminal private modes evidence unavailable
+
+======================================================================
+FAIL: test_legacy_lost_prefix_pair_cannot_pass_without_overflow_evidence (test_phase7.ContractsTests.test_legacy_lost_prefix_pair_cannot_pass_without_overflow_evidence)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7.py", line 1365, in test_legacy_lost_prefix_pair_cannot_pass_without_overflow_evidence
+    self.assertIn('history overflow evidence unavailable', p7.validate(result))
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'history overflow evidence unavailable' not found in []
+
+======================================================================
+FAIL: test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss (test_phase7.ContractsTests.test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss) (payload_prefix=b'\x1b[3JUI')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7.py", line 1375, in test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss
+    self.assertIn('history overflow evidence unavailable', p7.validate(result))
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'history overflow evidence unavailable' not found in []
+
+======================================================================
+FAIL: test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss (test_phase7.ContractsTests.test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss) (payload_prefix=b'\x1b[03JUI')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7.py", line 1375, in test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss
+    self.assertIn('history overflow evidence unavailable', p7.validate(result))
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'history overflow evidence unavailable' not found in []
+
+======================================================================
+FAIL: test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss (test_phase7.ContractsTests.test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss) (payload_prefix=b'\x1bcUI')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7.py", line 1375, in test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss
+    self.assertIn('history overflow evidence unavailable', p7.validate(result))
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'history overflow evidence unavailable' not found in []
+
+======================================================================
+FAIL: test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss (test_phase7.ContractsTests.test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss) (payload_prefix=b'\x1bMUI')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7.py", line 1375, in test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss
+    self.assertIn('history overflow evidence unavailable', p7.validate(result))
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'history overflow evidence unavailable' not found in []
+
+======================================================================
+FAIL: test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss (test_phase7.ContractsTests.test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss) (payload_prefix=b'\xc2\x9b3JUI')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7.py", line 1375, in test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss
+    self.assertIn('history overflow evidence unavailable', p7.validate(result))
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'history overflow evidence unavailable' not found in []
+
+======================================================================
+FAIL: test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss (test_phase7.ContractsTests.test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss) (payload_prefix=b'A\r\nx\r\nx\r\nx\r\nx\r\nx\r\nx\r')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7.py", line 1375, in test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss
+    self.assertIn('history overflow evidence unavailable', p7.validate(result))
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'history overflow evidence unavailable' not found in []
+
+======================================================================
+FAIL: test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss (test_phase7.ContractsTests.test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7.py", line 1380, in test_legacy_history_is_inferred_only_when_retained_evidence_proves_no_loss
+    self.assertIn('history overflow evidence unavailable', p7.validate(good))
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'history overflow evidence unavailable' not found in []
+
+======================================================================
+FAIL: test_legacy_history_uncertainty_keeps_captured_seed_before_contract_override (test_phase7.ContractsTests.test_legacy_history_uncertainty_keeps_captured_seed_before_contract_override)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7.py", line 1419, in test_legacy_history_uncertainty_keeps_captured_seed_before_contract_override
+    self.assertIn('history overflow evidence unavailable', p7.validate(loaded))
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'history overflow evidence unavailable' not found in []
+
+----------------------------------------------------------------------
+Ran 4 tests in 1.448s
+
+FAILED (failures=9, errors=1)

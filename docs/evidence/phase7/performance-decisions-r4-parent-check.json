@@ -1,0 +1,7 @@
+{
+  "scope": "R4 proposed conditional decision protocol; manifest identity check only, not actual accounting or performance admission",
+  "identities_verified": 520,
+  "manifest_sha256": "482bcb6e9b12fa1852bcaf43a811fc5ebe41000c06218808e5e27df5c3b51605",
+  "review_task": "phase7-opus-decisions-r4-review",
+  "actual_performance_claim": false
+}

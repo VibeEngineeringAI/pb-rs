@@ -348,6 +348,15 @@ def baseline_signature_issues(actual, saved):
     return [] if actual==saved else ['baseline artifacts differ from frozen signature']
 
 def deferred_boundaries():
+    """Interactive workflows graduated to the phase-seven PTY/effect gate.
+
+    Retain historical definitions below for old evidence readers, never select
+    coverage by inspecting the candidate binary. Ordinary cases are unchanged.
+    """
+    return []
+
+
+def historical_deferred_boundaries():
     return [dict(name='p4-boundary-'+name,argv=argv,structured=structured,config={'auth':'basic'},location='xdg',build='standard',requires=[],env={},unset=[],
                  fixture={'headers':{},'routes':[]},expect={'termination':{'exit':1},'requests':[]})
             for name,argv,structured in [('interactive',['promql','run','up','-i'],False),('interactive-json',['promql','run','up','-i','-o','json'],True),

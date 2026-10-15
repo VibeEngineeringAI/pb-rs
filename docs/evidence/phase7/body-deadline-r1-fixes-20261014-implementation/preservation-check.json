@@ -1,0 +1,362 @@
+{
+  "relevant_protected_files": [
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase3.py",
+      "before_sha256": "39d16e2ba220aad27ec0e67646e04aacbcdd9a9c28d3013f3f04ddefec789099",
+      "after_sha256": "39d16e2ba220aad27ec0e67646e04aacbcdd9a9c28d3013f3f04ddefec789099",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase3.py",
+      "before_sha256": "0bea853fcedcf6dd2724d057d88813440454183a64f643c944321c624f414e95",
+      "after_sha256": "0bea853fcedcf6dd2724d057d88813440454183a64f643c944321c624f414e95",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-body-deadline-original.json",
+      "before_sha256": "8656ff75b3d88df2bd73ab3cd91bb38286af4299aafd770c40c935527bdc0b96",
+      "after_sha256": "8656ff75b3d88df2bd73ab3cd91bb38286af4299aafd770c40c935527bdc0b96",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-body-deadline-proposed-reduction.json",
+      "before_sha256": "611c232c77e51bb3e7c8f17797378256cda773731ba0283dc4c7ff6fc2030a27",
+      "after_sha256": "611c232c77e51bb3e7c8f17797378256cda773731ba0283dc4c7ff6fc2030a27",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/body-deadline-review-assignment.json",
+      "before_sha256": "eb6875cd5c57ed4b49eaa9e35cf7d051cfad8eb51ae464960324c76ff9d6617b",
+      "after_sha256": "eb6875cd5c57ed4b49eaa9e35cf7d051cfad8eb51ae464960324c76ff9d6617b",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/reduction-manifest.json",
+      "before_sha256": "c2d5dd32b3ad0c86740a8a9c00f5166116f365f456a01ece671b8f71208a3bc4",
+      "after_sha256": "c2d5dd32b3ad0c86740a8a9c00f5166116f365f456a01ece671b8f71208a3bc4",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/shared-harness.patch",
+      "before_sha256": "6727336caf9cf8991456ea2d1598dc64b9cda0167a85e73d297312de92642ac8",
+      "after_sha256": "6727336caf9cf8991456ea2d1598dc64b9cda0167a85e73d297312de92642ac8",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/tests-final.log",
+      "before_sha256": "3a5d2663b8f927f927c1ccd38342c64b66bde38e8d28beef0937690a950f4ab6",
+      "after_sha256": "3a5d2663b8f927f927c1ccd38342c64b66bde38e8d28beef0937690a950f4ab6",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/reference/stderr.bin",
+      "before_sha256": "c4e7b4a00ce03aae70b436c90cd4ca0a03d70401af81cfbbb13865d9ee94390a",
+      "after_sha256": "c4e7b4a00ce03aae70b436c90cd4ca0a03d70401af81cfbbb13865d9ee94390a",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/reference/stderr.normalized",
+      "before_sha256": "485884ddc817cb30f2fd0c90a50639a0412a28e1ea5644212bcf66d025e58d23",
+      "after_sha256": "485884ddc817cb30f2fd0c90a50639a0412a28e1ea5644212bcf66d025e58d23",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/reference/result.json",
+      "before_sha256": "3eb0384ebceac8fa30748a90a759b86e9d6bca5c88adcb62b98e5432a86f3f94",
+      "after_sha256": "3eb0384ebceac8fa30748a90a759b86e9d6bca5c88adcb62b98e5432a86f3f94",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/reference/trace.json",
+      "before_sha256": "718cf68d22035fc7f5fa4b49c87de6510b250fe0f26c109c5d2ef71f6ea80533",
+      "after_sha256": "718cf68d22035fc7f5fa4b49c87de6510b250fe0f26c109c5d2ef71f6ea80533",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/reference/meter.json",
+      "before_sha256": "3f0f9fa15c3c11953576e032e3a5a72c6384ad5ce4abe6f63daded0ec08294f4",
+      "after_sha256": "3f0f9fa15c3c11953576e032e3a5a72c6384ad5ce4abe6f63daded0ec08294f4",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/reference/milestones.json",
+      "before_sha256": "bc4af3455600b23423d244d9f8ddf5e08a082925e691b3f4323cb431320a58f5",
+      "after_sha256": "bc4af3455600b23423d244d9f8ddf5e08a082925e691b3f4323cb431320a58f5",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/reference/stdout.bin",
+      "before_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "after_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/reference/stdout.normalized",
+      "before_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "after_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/reference-repeat-1/stderr.bin",
+      "before_sha256": "d63e5ccd1c687ca4bd7ddd00f951f16dd88d54f90bffb17e9c2a09346418513e",
+      "after_sha256": "d63e5ccd1c687ca4bd7ddd00f951f16dd88d54f90bffb17e9c2a09346418513e",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/reference-repeat-1/stderr.normalized",
+      "before_sha256": "6a3667974d675dde1927d50332aa9d9668c90112c7e00d79ecfe0d676eb575d4",
+      "after_sha256": "6a3667974d675dde1927d50332aa9d9668c90112c7e00d79ecfe0d676eb575d4",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/reference-repeat-1/result.json",
+      "before_sha256": "b3f4742e97de50c36f44b4cfaf05f0841887a27e750d04f3e5d0184cbf102c87",
+      "after_sha256": "b3f4742e97de50c36f44b4cfaf05f0841887a27e750d04f3e5d0184cbf102c87",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/reference-repeat-1/trace.json",
+      "before_sha256": "70fa1ff2df87bf9d1295aba4192361d05e4b34ec2567abc38282b192703411f2",
+      "after_sha256": "70fa1ff2df87bf9d1295aba4192361d05e4b34ec2567abc38282b192703411f2",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/reference-repeat-1/meter.json",
+      "before_sha256": "544b0b699a80f0598b4b8c5ab54e5aa97b0212b98a0978e61269ae0429d012ed",
+      "after_sha256": "544b0b699a80f0598b4b8c5ab54e5aa97b0212b98a0978e61269ae0429d012ed",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/reference-repeat-1/milestones.json",
+      "before_sha256": "a9e256223fb05b2c440fd37be809fa0397f497ee7be24ea1f9da5a55e3212dde",
+      "after_sha256": "a9e256223fb05b2c440fd37be809fa0397f497ee7be24ea1f9da5a55e3212dde",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/reference-repeat-1/stdout.bin",
+      "before_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "after_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/reference-repeat-1/stdout.normalized",
+      "before_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "after_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/candidate/stderr.bin",
+      "before_sha256": "bdb3cbd5fae2b1fea0d72c49af901b215f9267d0c178e8e1ea0617dd29485a51",
+      "after_sha256": "bdb3cbd5fae2b1fea0d72c49af901b215f9267d0c178e8e1ea0617dd29485a51",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/candidate/stderr.normalized",
+      "before_sha256": "be929bb805dc72a107f7b4a331e6ae6b58bedb90c4feb50409a032d041abb2cb",
+      "after_sha256": "be929bb805dc72a107f7b4a331e6ae6b58bedb90c4feb50409a032d041abb2cb",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/candidate/result.json",
+      "before_sha256": "75b2a06fc9dfed29439dd6d2ea8c1686e748a751aac588e66cf340af1bd9ca86",
+      "after_sha256": "75b2a06fc9dfed29439dd6d2ea8c1686e748a751aac588e66cf340af1bd9ca86",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/candidate/trace.json",
+      "before_sha256": "f4691268f1fe22b7ae0450719c75de4a27f0584ef8508722a1c9adafaba6ed44",
+      "after_sha256": "f4691268f1fe22b7ae0450719c75de4a27f0584ef8508722a1c9adafaba6ed44",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/candidate/meter.json",
+      "before_sha256": "38c62daf63460f8625778f3ae0e5503cb89b47b5d3339950a9cc69209ad09084",
+      "after_sha256": "38c62daf63460f8625778f3ae0e5503cb89b47b5d3339950a9cc69209ad09084",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/candidate/milestones.json",
+      "before_sha256": "6627ae3fd6b68dc8f12411e73fbac8256a612cc238a1511c8d088e9e421e2ca6",
+      "after_sha256": "6627ae3fd6b68dc8f12411e73fbac8256a612cc238a1511c8d088e9e421e2ca6",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/candidate/stdout.bin",
+      "before_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "after_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/candidate/stdout.normalized",
+      "before_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "after_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/fresh-reference/stderr.bin",
+      "before_sha256": "ab4be89b8177bdbe3523d6b3b0e30eb18a1327d0c97f1e9d45956e9fcb72ef51",
+      "after_sha256": "ab4be89b8177bdbe3523d6b3b0e30eb18a1327d0c97f1e9d45956e9fcb72ef51",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/fresh-reference/stderr.normalized",
+      "before_sha256": "be929bb805dc72a107f7b4a331e6ae6b58bedb90c4feb50409a032d041abb2cb",
+      "after_sha256": "be929bb805dc72a107f7b4a331e6ae6b58bedb90c4feb50409a032d041abb2cb",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/fresh-reference/result.json",
+      "before_sha256": "708475743f118373e66269a4c3f706d45124ff6a9231687e9ca28e6737100d9e",
+      "after_sha256": "708475743f118373e66269a4c3f706d45124ff6a9231687e9ca28e6737100d9e",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/fresh-reference/trace.json",
+      "before_sha256": "560552573b4bc94bb7905ed4f8febed305b9e62b10f423a7a883d16c93486c48",
+      "after_sha256": "560552573b4bc94bb7905ed4f8febed305b9e62b10f423a7a883d16c93486c48",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/fresh-reference/meter.json",
+      "before_sha256": "e6d6ed6c0cea91533703b13fbde6d8c981ed606370e31450a8becc013e44687f",
+      "after_sha256": "e6d6ed6c0cea91533703b13fbde6d8c981ed606370e31450a8becc013e44687f",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/fresh-reference/milestones.json",
+      "before_sha256": "eb34a48b7b5978aeab525cd638c80a1ddf83e8a9a440e611b84032990fd4bae7",
+      "after_sha256": "eb34a48b7b5978aeab525cd638c80a1ddf83e8a9a440e611b84032990fd4bae7",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/fresh-reference/stdout.bin",
+      "before_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "after_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/fresh-reference/stdout.normalized",
+      "before_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "after_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/fresh-reference-repeat-1/stderr.bin",
+      "before_sha256": "64f1d19b5084a6f0cd82eb057460f445805b0ba01f086babedafb68fd13bddac",
+      "after_sha256": "64f1d19b5084a6f0cd82eb057460f445805b0ba01f086babedafb68fd13bddac",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/fresh-reference-repeat-1/stderr.normalized",
+      "before_sha256": "6a3667974d675dde1927d50332aa9d9668c90112c7e00d79ecfe0d676eb575d4",
+      "after_sha256": "6a3667974d675dde1927d50332aa9d9668c90112c7e00d79ecfe0d676eb575d4",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/fresh-reference-repeat-1/result.json",
+      "before_sha256": "43cf6fec968ae83ba1733468474ca2d4e4d6108b35619d159c3b3884e6084852",
+      "after_sha256": "43cf6fec968ae83ba1733468474ca2d4e4d6108b35619d159c3b3884e6084852",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/fresh-reference-repeat-1/trace.json",
+      "before_sha256": "8911914046d5cd0019c0e0196b1dfb4520291943965a1d18e77dfd75333183e8",
+      "after_sha256": "8911914046d5cd0019c0e0196b1dfb4520291943965a1d18e77dfd75333183e8",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/fresh-reference-repeat-1/meter.json",
+      "before_sha256": "ba79c72a15841e44ee754aa593de53333557df03190dc3011dda462eeca1e1a0",
+      "after_sha256": "ba79c72a15841e44ee754aa593de53333557df03190dc3011dda462eeca1e1a0",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/fresh-reference-repeat-1/milestones.json",
+      "before_sha256": "a3b3304571a7465ff5a4972577ad16b220928cdd75ac26dc04dd3a2d11687854",
+      "after_sha256": "a3b3304571a7465ff5a4972577ad16b220928cdd75ac26dc04dd3a2d11687854",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/fresh-reference-repeat-1/stdout.bin",
+      "before_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "after_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-redirect-deadline/fresh-reference-repeat-1/stdout.normalized",
+      "before_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "after_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-review-body-deadline-r1.md",
+      "before_sha256": "1d750df9092fd4d6242b96d00edb882b62d5fbcb5b4cab573f5a6dbecb90a5ca",
+      "after_sha256": "1d750df9092fd4d6242b96d00edb882b62d5fbcb5b4cab573f5a6dbecb90a5ca",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-review-retained-deadline-r1.md",
+      "before_sha256": "26599effd996748783ff92205f2fe86d149382b901af28fc318412a76d70c767",
+      "after_sha256": "26599effd996748783ff92205f2fe86d149382b901af28fc318412a76d70c767",
+      "unchanged": true
+    },
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-review-retained-deadline-r2.md",
+      "before_sha256": "aafc1cce672871c94bfa10aad7bfd80bd48f6b692428539b19ce25344616aa22",
+      "after_sha256": "aafc1cce672871c94bfa10aad7bfd80bd48f6b692428539b19ce25344616aa22",
+      "unchanged": true
+    }
+  ],
+  "capture_report_preservation": {
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/stdout.bin": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/meter.json": "62bc31a333f31102b60999c4b037601a456b154700ca9d53f93fe177d913cccd",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/stderr.bin": "4ac82e6f88228c4289456931f97f03e61a05b5e0ed0f3c7008bd8fdfbfca10a9",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/stderr.normalized": "4ac82e6f88228c4289456931f97f03e61a05b5e0ed0f3c7008bd8fdfbfca10a9",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/stdout.normalized": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/trace.json": "14c4d874a914103058e7f8ebdf79eefdd7fe77e28c4d01589bda12e026e2f8f7",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/milestones.json": "78a04c899de70baf58ea986e3a0cf694dd5a669797bd1df4a7423ce257e7cdbf",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/config-after.toml": "71659d2c6ff5e9422cb47205e390b8bf4174b76b2b17316387bb3d633257c331",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference/result.json": "399b1219a7ab136b916b76865433f634709a365fb752599424f899d8a56ec334",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/stdout.bin": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/meter.json": "ca1eb45c0251cbd649f6440f4fb9773ccdac2ef196e757a0c9366d9448a35876",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/stderr.bin": "9eb8dc6b5680771ed6a37561ace00247ec768ed6f8af757252ef7a9113cff71b",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/stderr.normalized": "9eb8dc6b5680771ed6a37561ace00247ec768ed6f8af757252ef7a9113cff71b",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/stdout.normalized": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/trace.json": "36d9fe249f72b2b432fb6f9a08c5f46dcfed00e04a2e609d6147daa1995802f5",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/milestones.json": "fd3e45610551658d2063b2d79ba3ef2ff18e410d534dd0a6ca8f45e98e42c51e",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/config-after.toml": "00fa7ffd31000dc29da6932a9bbb10d4aa235c901676325aafd9e99fb9b51ec8",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/reference-repeat-1/result.json": "3ee86a45fc09ed7e9dc69c4b13efce2139962bd179c84f8f3cac80268f95f72a",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/stdout.bin": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/meter.json": "ecf4f607daa7fa8464e3b17f53c23f7ce481f1e1be190a84ab0709cb4450042f",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/stderr.bin": "21994d8e6f67f391b6aed79a3d9371de45c904ea56c8ae5d0f7bcb3e88f5b074",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/stderr.normalized": "21994d8e6f67f391b6aed79a3d9371de45c904ea56c8ae5d0f7bcb3e88f5b074",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/stdout.normalized": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/trace.json": "3c1d46e922c116b83d992a3247c8b487d15ec33ca92051554e75da05b9426a43",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/milestones.json": "62957b931f73139c9411687075011efb7fe2efa6a5f32943dac2d8d01ce4834c",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/config-after.toml": "c56da8e42db5f80ec0c038af719c6b18fcb3912e1dd91994173a07270bd3bee8",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/cases/p3-deadline-body-stall-text/candidate/result.json": "625f21cdb2f292cd2038eef3ff9d37f2e18f8b18026c56a85942d74f509603b3",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/stdout.bin": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/meter.json": "c6bb48b8f1e41d809c706b6594a045c2e27d9b95182ae58af6221e2c4476bdca",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/stderr.bin": "9eb8dc6b5680771ed6a37561ace00247ec768ed6f8af757252ef7a9113cff71b",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/stderr.normalized": "9eb8dc6b5680771ed6a37561ace00247ec768ed6f8af757252ef7a9113cff71b",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/stdout.normalized": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/trace.json": "010c9ea9e3bd1bd24bff752e1dbe0d2321d60b92a23a0689ec64b9e4e6e7b34c",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/milestones.json": "ac8774d1e66d77b70fd4579e16bc08d0bb4a0d620b2e945f0a4a351839d56510",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/config-after.toml": "e38998e4846a0828174517ac77fe885296f0e208deca9180ea0b5930e313aac8",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference/result.json": "2bddd023a18df95e1bfc5f00376255504adf28d18d55f83dfbb614fb983ee498",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/stdout.bin": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/meter.json": "651fcd5118495c7f528f952b3a9a50b33147a38397b0c821f7296c441d1f1cca",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/stderr.bin": "21994d8e6f67f391b6aed79a3d9371de45c904ea56c8ae5d0f7bcb3e88f5b074",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/stderr.normalized": "21994d8e6f67f391b6aed79a3d9371de45c904ea56c8ae5d0f7bcb3e88f5b074",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/stdout.normalized": "15ce06609233a0cd4514b875fe0c0853d2b1c4543abf91f75d306039c08ef13c",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/trace.json": "2a8782308b3af8f7764b09f03ffae248d2582085838723866955a22757aa4bd8",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/milestones.json": "74c77fe5c0117f61c58ec1050684603bd11a8d2fcd2589f4f32b89629810cdaa",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/config-after.toml": "f777c861cb5e681e177045cef487f325be3412fc0f10e1e1482f65beda7566cd",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/cases/p3-deadline-body-stall-text/reference-repeat-1/result.json": "b1050d1c28ea21e423ac3c9ec7b15df3a47313bac2a21bc91cf4d16e931307d0",
+    "/home/ajs/.cache/pb-phase7/retained-release4-phase3/report.json": "a44393207ae776a838daace9e76462a5f9d8a8505843f73e5c52ab1795187934",
+    "/home/ajs/.cache/pb-phase7/oracle-p3-body-deadline-1/report.json": "013dd5c74307d373eb6d8e83052ed5125e7e9f41793528bcf81be9c7a0f6cf0d",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-body-deadline-original.json": "8656ff75b3d88df2bd73ab3cd91bb38286af4299aafd770c40c935527bdc0b96",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/p3-body-deadline-proposed-reduction.json": "611c232c77e51bb3e7c8f17797378256cda773731ba0283dc4c7ff6fc2030a27"
+  },
+  "all_bound_inputs_unchanged": true
+}

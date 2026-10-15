@@ -1,0 +1,30 @@
+{
+  "kind": "prospective root disposition, no performance observation",
+  "source_plan": "docs/phase7-under30-execution-plan.md",
+  "source_plan_sha256": "295392ac18f8294209274ab364c026c8fe3e41000a22964b599729c47dbb458a",
+  "current_head": "ea70f7ad7d501d59b26cf6397f6a0b1f28143fc4",
+  "candidate_manifest": "docs/evidence/phase7/release6-combined-build-manifest.json",
+  "strict_run_seconds": 1800,
+  "includes": [
+    "approval-bound preparation",
+    "capture",
+    "teardown",
+    "reaping",
+    "end identity checks",
+    "common lock release"
+  ],
+  "dispositions": {
+    "sustained_8_campaigns": "unassessed: infeasible with unchanged controls/reserves under per-run limit; no metric-budget closure",
+    "other_nonlong": "actual combined-candidate preflight feasibility pending",
+    "long_pools": "existing nine chunks inadmissible; proposed35 one-pair chunks not applied/admitted",
+    "first_planning_preflight": "24 roles primary/dark/nonlong, combined candidate, pending supervisor review and quiet window; descriptive costs only, no comparison",
+    "legacy_release5_example": "superseded by combined candidate; do not execute example verbatim"
+  },
+  "unchanged": [
+    "thresholds",
+    "control counts",
+    "cleanup reserves",
+    "eligibility rules"
+  ],
+  "actual_performance_run": false
+}

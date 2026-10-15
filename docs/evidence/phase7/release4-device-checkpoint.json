@@ -1,0 +1,161 @@
+{
+  "kind": "release4 device/login full functional checkpoint",
+  "cases": 17,
+  "passes": 17,
+  "report": [
+    {
+      "case": "apikey",
+      "issues": []
+    },
+    {
+      "case": "apikey-rejected",
+      "issues": []
+    },
+    {
+      "case": "device-success",
+      "issues": []
+    },
+    {
+      "case": "device-pending",
+      "issues": []
+    },
+    {
+      "case": "device-denied",
+      "issues": []
+    },
+    {
+      "case": "device-expired",
+      "issues": []
+    },
+    {
+      "case": "device-timeout",
+      "issues": []
+    },
+    {
+      "case": "device-cancel",
+      "issues": []
+    },
+    {
+      "case": "device-sigint",
+      "issues": []
+    },
+    {
+      "case": "device-browser-limit",
+      "issues": []
+    },
+    {
+      "case": "device-malformed",
+      "issues": []
+    },
+    {
+      "case": "device-expiry-overflow",
+      "issues": []
+    },
+    {
+      "case": "device-interval-overflow",
+      "issues": []
+    },
+    {
+      "case": "device-redirect-302",
+      "issues": []
+    },
+    {
+      "case": "device-redirect-deadline",
+      "issues": []
+    },
+    {
+      "case": "device-poll-redirect-deadline",
+      "issues": []
+    },
+    {
+      "case": "device-poll-redirect-drain",
+      "issues": []
+    }
+  ],
+  "runner_check": {
+    "label": "device",
+    "command": [
+      "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+      "harness/phase7_device.py",
+      "--reference",
+      "/home/ajs/.cache/pb-phase7/baselines/pb-go-login",
+      "--candidate",
+      "/home/ajs/.cache/pb-phase7/candidates/release4/pb-login",
+      "--out",
+      "/home/ajs/.cache/pb-phase7/device-release4"
+    ],
+    "exit": 0,
+    "log": "/home/ajs/.cache/pb-phase7/release4-device.log",
+    "log_sha256": "f54dc7c8c0725f0c8ba6c1783f1b5559b1e94b73166d83608c1cf804609aec4b",
+    "identities_unchanged": true
+  },
+  "artifact_binding": {
+    "kind": "functional release4 full styled/device replay, no timing claim",
+    "build_manifest_sha256": "316cc81d7067d315501d5628f8a871d35869e91a369703469337a1e05efd1a0a",
+    "runners": {
+      "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7.py": "26895f680be00ba1f65440a4e7097ee8d94027e15c64bd7fb317691700f7da0a",
+      "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_workloads.py": "54a9efb7767372c976b459c3e2dc59c590e0b9d6b47b4cc29e36ae81ff588d1c",
+      "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_device.py": "8173255290e5f4989611350db50e713d8ac61ab9af7b6e327e1c4d95f20a7be0",
+      "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_spawn.c": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4",
+      "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/run.py": "b280d1295a4b351e6f2d838c56acaac58b2247bb77fc9881587bb7bbe849a076",
+      "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase1.py": "26ca8380b608a49404da1f8bc7233e577b2d48044d5194cdba20186b38ffaca5",
+      "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase2.py": "66568cd9b0663011547763a258875f45949b21f5ed4c05fe9a695cebdc89cfbd",
+      "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase3.py": "39d16e2ba220aad27ec0e67646e04aacbcdd9a9c28d3013f3f04ddefec789099",
+      "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase4.py": "e5105ae22b0c599901d8622adf4e2942abb05a8c38bd220e8f685cae58782213",
+      "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase5.py": "2bd03937195ea26b07faffa9281d109013d0b785fe33c63fa10905ce262d4c85",
+      "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/bin/pb-fixture": "fa8b4711ce6c901fc2b277318337268b45953e9868d4bc1b24407b274cc9ec5c"
+    },
+    "artifacts": {
+      "/home/ajs/.cache/pb-phase7/candidates/release4/pb-normal": "fd1f91b608bbf76832fab183f02d9c63e658f7bc12ca4aabf57a811559a871c1",
+      "/home/ajs/.cache/pb-phase7/candidates/release4/pb-cloud": "3804b936c9967560da7ab63e8e1c61eca65dd9fa08bd2295375619ef8e484c43",
+      "/home/ajs/.cache/pb-phase7/candidates/release4/pb-login": "c408d737345e0855f22acfbcd1209f91614616c68e6b962c5ead79705f0be000",
+      "/home/ajs/.cache/pb-phase7/baselines/pb-go": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "/home/ajs/.cache/pb-phase7/baselines/pb-go-cloud": "622d4144b7e354c0ee4036244ba719cbbaf8357710804b1d733cd421a0dc227e",
+      "/home/ajs/.cache/pb-phase7/baselines/pb-go-login": "aa393ccf301bcf04404baa87183f812efa0e563c6b17e04d446f439a251e87bd"
+    },
+    "checks": [
+      {
+        "label": "styled",
+        "command": [
+          "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+          "harness/phase7.py",
+          "compare",
+          "--theme",
+          "both",
+          "--reference",
+          "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+          "--cloud-reference",
+          "/home/ajs/.cache/pb-phase7/baselines/pb-go-cloud",
+          "--candidate",
+          "/home/ajs/.cache/pb-phase7/candidates/release4/pb-normal",
+          "--cloud-candidate",
+          "/home/ajs/.cache/pb-phase7/candidates/release4/pb-cloud",
+          "--out",
+          "/home/ajs/.cache/pb-phase7/styled-release4"
+        ],
+        "exit": 1,
+        "log": "/home/ajs/.cache/pb-phase7/release4-styled.log",
+        "log_sha256": "b459e93d2f02125689d0927502e72db7fa2181e137785c82a25bb705f664bacb",
+        "identities_unchanged": true
+      },
+      {
+        "label": "device",
+        "command": [
+          "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+          "harness/phase7_device.py",
+          "--reference",
+          "/home/ajs/.cache/pb-phase7/baselines/pb-go-login",
+          "--candidate",
+          "/home/ajs/.cache/pb-phase7/candidates/release4/pb-login",
+          "--out",
+          "/home/ajs/.cache/pb-phase7/device-release4"
+        ],
+        "exit": 0,
+        "log": "/home/ajs/.cache/pb-phase7/release4-device.log",
+        "log_sha256": "f54dc7c8c0725f0c8ba6c1783f1b5559b1e94b73166d83608c1cf804609aec4b",
+        "identities_unchanged": true
+      }
+    ]
+  },
+  "scope": "No timing or platform readiness claim; styled check in shared binding records three separate unwaived gate failures."
+}

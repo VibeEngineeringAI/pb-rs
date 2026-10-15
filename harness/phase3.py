@@ -1474,6 +1474,17 @@ def normalize_timeout(case, data):
     """Only timeout races observed in repeated Go deadline fixtures."""
     if not case.get("compare", {}).get("timeout_cause"):
         return data
+    if case["name"] == "p3-deadline-header-stall-text":
+        # Pinned Go 1.25.4 header deadline/timer race; exact R4/R5/R6 streams.
+        prefix = b'Error: request execution failed: Post "http://<FIXTURE>/api/v1/query": '
+        suffix = b' (Client.Timeout exceeded while awaiting headers)'
+        for cause in (b'context deadline exceeded',
+                      b'context deadline exceeded' + suffix,
+                      b'net/http: request canceled' + suffix):
+            if data == prefix + cause + b"\n":
+                return prefix + b"<CLIENT-TIMEOUT>" + suffix + b"\n"
+        # Keep foreign diagnostics byte-exact, before the legacy substring rule.
+        return data
     if case["name"] == "p4-deadline-header":
         # Go 1.25.4 cloudRefreshTransport deadline/timer race; R4/R5/R6 captures.
         # Match the whole normalized stream, including every Usage byte and LF.
@@ -2706,6 +2717,15 @@ def seeded_cases(add):
 # Candidate-only deferred boundaries: interactive mode. Saving is phase four.
 
 def deferred_boundaries():
+    """Interactive workflows graduated to the phase-seven PTY/effect gate.
+
+    Retain historical definitions below for old evidence readers, never select
+    coverage by inspecting the candidate binary. Ordinary cases are unchanged.
+    """
+    return []
+
+
+def historical_deferred_boundaries():
     """No Go parity claim: an explicit unimplemented error before any request or HOME change."""
     checks = []
     for label, argv, structured in (
@@ -3004,7 +3024,7 @@ def run_cases(args, mode):
     elif report["partial"]:
         report["boundaries_status"] = "not run (case/group filter)"
     else:
-        report["boundaries_status"] = "run"
+        report["boundaries_status"] = "promoted to phase7 PTY/effect gate"
         for check in deferred_boundaries():
             actual = sample(binaries["candidate"]["path"], check, out / "boundaries" / check["name"], args.timeout, meter)
             issues = boundary_issues(check, actual)

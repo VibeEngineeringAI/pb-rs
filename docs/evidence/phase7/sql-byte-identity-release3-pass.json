@@ -1,0 +1,127 @@
+{
+  "summary": {
+    "passed": true,
+    "role": "candidate",
+    "record": "/home/ajs/.cache/pb-phase7/sql-byte-identity-release3/sql-byte-identity-candidate-1791985329230392862.json"
+  },
+  "record": {
+    "kind": "bounded actual-process SQL byte-identity regression",
+    "case": "late_dataset_list_after_empty_raw_schema",
+    "role": "candidate",
+    "binary": "/home/ajs/.cache/pb-phase7/candidates/release3/pb-normal",
+    "binary_sha256": "aceb58bd412e8fbf34f603d247c68e87e69897356cefd5aad19ab6a92484db28",
+    "source_pin": null,
+    "dimensions": [
+      120,
+      35
+    ],
+    "raw_dataset_hex": "b58be8af95",
+    "replacement_title": "\ufffd\ufffd\u8bd5",
+    "provenance": {
+      "fixture_path": "tests/interactive_effects.rs:PROCESS_FIXTURE",
+      "fixture_sha256": "8fd9bef44f7cc5e7e7f45fdbace92e33f7388373ea78ef4c26d6b9ab632b6e26",
+      "fixture_file_sha256": "5334d8471c2bbe2735afcfa2435c87c8af18f0b2012785d0bde924646ded8d76"
+    },
+    "candidate_executed": true,
+    "rust_tests_executed": false,
+    "crate_builds_executed": false,
+    "scope": "request identity and causal completion; no full styled-frame parity or timings",
+    "passed": true,
+    "raw_schema_idle_frame_offset": 36589,
+    "logs_schema_frame_offset": 40654,
+    "terminal_restored": true,
+    "config_unchanged": true,
+    "byte_identity_selected": "logs",
+    "returncode": 0,
+    "raw_stdout_path": "/home/ajs/.cache/pb-phase7/sql-byte-identity-release3/sql-byte-identity-candidate-1791985329230392862.stdout",
+    "raw_stderr_path": "/home/ajs/.cache/pb-phase7/sql-byte-identity-release3/sql-byte-identity-candidate-1791985329230392862.stderr",
+    "stdout_sha256": "593b2232627f0a6b409a2a95c8399c0b3d8942223d2660a1b4dfb56c0ed555bc",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "returncode_after_cleanup": 0,
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/prism/v1/home",
+        "params": {},
+        "body": "",
+        "headers": {
+          "x-api-key": "fixture-key",
+          "content-type": "application/json",
+          "user-agent": "Go-http-client/1.1",
+          "accept-encoding": "gzip",
+          "host": "127.0.0.1:41875"
+        },
+        "received": 996692.633699876,
+        "protocol": "HTTP/1.1",
+        "closed_before_response": false,
+        "response_status": 200,
+        "response_preview": "{\"datasets\": [{\"title\": \"logs\", \"datasetType\": \"logs\"}, {\"title\": \"\\ufffd\\ufffd\\u8bd5\", \"datasetType\": \"logs\"}]}",
+        "response_bytes": 112,
+        "done": true
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/logstream/%B5%8B%E8%AF%95/schema",
+        "params": {},
+        "body": "",
+        "headers": {
+          "x-api-key": "fixture-key",
+          "user-agent": "Go-http-client/1.1",
+          "accept-encoding": "gzip",
+          "host": "127.0.0.1:41875"
+        },
+        "received": 996692.691636211,
+        "protocol": "HTTP/1.1",
+        "response_status": 200,
+        "response_preview": "{\"fields\": []}",
+        "response_bytes": 14,
+        "done": true
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/query",
+        "params": {
+          "fields": [
+            "true"
+          ]
+        },
+        "body": "{\"endTime\":\"2026-10-14T13:42:14Z\",\"query\":\"SELECT * FROM '\ufffd\ufffd\u8bd5' LIMIT 1\",\"startTime\":\"2000-01-01T00:00:00+00:00\"}",
+        "headers": {
+          "x-api-key": "fixture-key",
+          "content-type": "application/json",
+          "user-agent": "Go-http-client/1.1",
+          "accept-encoding": "gzip",
+          "content-length": "118",
+          "host": "127.0.0.1:41875"
+        },
+        "received": 996692.692454667,
+        "protocol": "HTTP/1.1",
+        "response_status": 200,
+        "response_preview": "{\"fields\": [], \"records\": []}",
+        "response_bytes": 29,
+        "done": true
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/logstream/logs/schema",
+        "params": {},
+        "body": "",
+        "headers": {
+          "x-api-key": "fixture-key",
+          "user-agent": "Go-http-client/1.1",
+          "accept-encoding": "gzip",
+          "host": "127.0.0.1:41875"
+        },
+        "received": 996692.69813639,
+        "protocol": "HTTP/1.1",
+        "response_status": 200,
+        "response_preview": "{\"fields\": [{\"name\": \"LOGS_SELECTED_SCHEMA\"}]}",
+        "response_bytes": 46,
+        "done": true
+      }
+    ],
+    "binary_unchanged": true
+  },
+  "record_sha256": "afc179550f448c2e1ec0fb58a083c6e2add9fa93a9f3f86f4bdf9b7d340f0032",
+  "scope": "one actual release3 request/config/restoration regression; final styled and retained gates pending"
+}

@@ -1,0 +1,27 @@
+{
+  "kind": "Opus R4 source-only tooling findings assigned; no campaign admission",
+  "report": "docs/phase7-review-measurement-opus-r4.md",
+  "report_sha256": "d0b3d62609c6a0dc68d03775d6fedabf34dd65458a2c9b90a99d3137e39111ff",
+  "review_task": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-tooling-final-review-r4",
+  "implementation_task": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-collector-opus-r4-fixes",
+  "medium": [
+    "resize target readiness",
+    "role/phase decoder overhead interpretation",
+    "honest identical-binary A/A path",
+    "predeclared complete long-idle pooling and distinct seeds"
+  ],
+  "additional": [
+    "dense PromQL sustained scrolling",
+    "fresh campaign-bound companion agreement",
+    "functional preflight common-lock coordination",
+    "attribution latency descriptive-only",
+    "preflight campaign feasibility",
+    "signal validation and seam documentation"
+  ],
+  "shared_helper_policy": "No Python helper/C changes authorized yet; bench-only decoder replay proposal and measurement-only resize signal policy require concrete coordination. Existing styled defaults frozen.",
+  "unknowns": [
+    "R4 reviewer executed nothing or hashes due EDQUOT; second prohibited shell attempt disclosed",
+    "No actual CLI resize duplication/coalescing measured",
+    "No timing admission; phase/internal stage timings unimplemented; full functional preflight unrun"
+  ]
+}

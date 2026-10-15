@@ -94,21 +94,14 @@ pub(super) fn execute(
     stderr: &mut (dyn Write + Send),
     terminal: bool,
 ) -> Outcome {
-    let deferred = || {
-        crate::failure(
-            command,
-            path,
-            &format!(
-                "command {} is not implemented in this Rust phase",
-                crate::parser::quote(path)
-            ),
-            ErrorCode::CommandFailed,
-            structured,
-            false,
-        )
-    };
     if parsed.boolean("interactive") {
-        return deferred();
+        return match crate::tui::sql::execute(parsed, stdout, stderr) {
+            Ok(exit_code) => Outcome {
+                exit_code,
+                ..Outcome::default()
+            },
+            Err(error) => error.render(command, path, structured),
+        };
     }
     let query = parsed.positionals.first().map(String::as_str).unwrap_or("");
     if query.trim().is_empty() {
@@ -126,6 +119,97 @@ pub(super) fn execute(
             return error.render(command, path, structured);
         }
     };
+    match fetch_query(
+        parsed,
+        None,
+        QueryText {
+            normalized: &normalized_query,
+            wire: &query,
+        },
+        format,
+        stdout,
+        stderr,
+        terminal,
+    ) {
+        Ok(()) => Outcome::default(),
+        Err(error) => render_failure(error, command, path, structured, ""),
+    }
+}
+
+/// A saved menu selection reaches the same fetch service, after its own print
+/// and empty-query behavior. Its display SQL must not acquire the wire LIMIT.
+pub(crate) fn execute_saved(
+    application: &crate::saved_queries::SavedApplication,
+    profile: (ProfileStore, crate::config::ProfileRecord),
+    command: &CommandSpec,
+    structured: bool,
+    stdout: &mut (dyn Write + Send),
+    stderr: &mut (dyn Write + Send),
+    terminal: bool,
+) -> Outcome {
+    let normalized = &application.query;
+    let from = application.from.as_str();
+    let to = application.to.as_str();
+    let _ = writeln!(stdout, "Query: {normalized}");
+    let wire_query = rewrite::ensure_default_limit(normalized);
+    let mut parsed = ParsedInvocation {
+        command_path: "pb sql list".into(),
+        positionals: Vec::new(),
+        flags: Default::default(),
+    };
+    for (name, value) in [
+        ("from", if from.is_empty() { "1h" } else { from }),
+        ("to", if to.is_empty() { "now" } else { to }),
+    ] {
+        parsed.flags.insert(
+            name.into(),
+            crate::parser::ParsedFlag {
+                value: crate::parser::FlagValue::Text(value.into()),
+                explicit: true,
+            },
+        );
+    }
+    match fetch_query(
+        &parsed,
+        Some(profile),
+        QueryText {
+            normalized,
+            wire: &wire_query,
+        },
+        "text",
+        stdout,
+        stderr,
+        terminal,
+    ) {
+        Ok(()) => Outcome::default(),
+        Err(error) => render_failure(
+            error,
+            command,
+            "pb sql list",
+            structured,
+            "selected saved query failed: ",
+        ),
+    }
+}
+
+struct QueryText<'a> {
+    normalized: &'a str,
+    wire: &'a str,
+}
+
+fn fetch_query(
+    parsed: &ParsedInvocation,
+    supplied_profile: Option<(ProfileStore, crate::config::ProfileRecord)>,
+    text: QueryText<'_>,
+    format: &str,
+    stdout: &mut (dyn Write + Send),
+    stderr: &mut (dyn Write + Send),
+    terminal: bool,
+) -> Result<(), Failure> {
+    let QueryText {
+        normalized: normalized_query,
+        wire: query,
+    } = text;
     let start = if parsed.text("from").is_empty() {
         "1m"
     } else {
@@ -144,27 +228,30 @@ pub(super) fn execute(
         #[serde(rename = "endTime")]
         end: &'a str,
     }
-    let body = serde_json::to_string(&Request {
-        query: &query,
-        start,
-        end,
-    })
-    .expect("SQL request strings")
-    .replace('&', "\\u0026")
-    .replace('<', "\\u003c")
-    .replace('>', "\\u003e")
-    .replace('\u{2028}', "\\u2028")
-    .replace('\u{2029}', "\\u2029")
-    .into_bytes();
-    let result = (|| -> Result<(), Failure> {
-        let store = ProfileStore::from_env()
-            .map_err(|e| Failure::Api("failed to create new request", ApiError::Persistence(e)))?;
-        let profile = store.active_profile().map_err(|e| {
-            Failure::Api(
-                "failed to create new request",
-                ApiError::InvalidResponse(e.message),
-            )
-        })?;
+    let body = serde_json::to_string(&Request { query, start, end })
+        .expect("SQL request strings")
+        .replace('&', "\\u0026")
+        .replace('<', "\\u003c")
+        .replace('>', "\\u003e")
+        .replace('\u{2028}', "\\u2028")
+        .replace('\u{2029}', "\\u2029")
+        .into_bytes();
+    (|| -> Result<(), Failure> {
+        let (store, profile) = match supplied_profile {
+            Some(profile) => profile,
+            None => {
+                let store = ProfileStore::from_env().map_err(|e| {
+                    Failure::Api("failed to create new request", ApiError::Persistence(e))
+                })?;
+                let profile = store.active_profile().map_err(|e| {
+                    Failure::Api(
+                        "failed to create new request",
+                        ApiError::InvalidResponse(e.message),
+                    )
+                })?;
+                (store, profile)
+            }
+        };
         let client = ApiClient::new(profile, store)
             .map_err(|e| Failure::Api("failed to create new request", e))?;
         let request = client
@@ -226,7 +313,7 @@ pub(super) fn execute(
         if !name.is_empty() {
             match crate::saved_queries::save_after_query(
                 parsed,
-                &normalized_query,
+                normalized_query,
                 &client,
                 &runtime,
             ) {
@@ -239,11 +326,7 @@ pub(super) fn execute(
             }
         }
         Ok(())
-    })();
-    match result {
-        Ok(()) => Outcome::default(),
-        Err(error) => render_failure(error, command, path, structured),
-    }
+    })()
 }
 
 fn render_response(
@@ -350,6 +433,7 @@ fn render_failure(
     command: &CommandSpec,
     path: &str,
     structured: bool,
+    prefix: &str,
 ) -> Outcome {
     match failure {
         Failure::Status {
@@ -361,7 +445,7 @@ fn render_failure(
             if structured {
                 return CliError::http(status, &public, &public).render(command, path, true);
             }
-            let mut stderr = format!("Error: {public}").into_bytes();
+            let mut stderr = format!("Error: {prefix}{public}").into_bytes();
             if preview.is_empty() {
                 stderr.extend_from_slice(b" with an empty response body");
             } else {
@@ -377,24 +461,28 @@ fn render_failure(
         }
         Failure::Api(context, error) => {
             let mut cli = CliError::from(error);
-            cli.message = format!("{context}: {}", cli.message);
+            cli.message = format!("{prefix}{context}: {}", cli.message);
             cli.public_message = cli.message.clone();
             cli.render(command, path, structured)
         }
         Failure::Preview(error) => io_failure(
-            "failed to read error response body",
+            &format!("{prefix}failed to read error response body"),
             error,
             command,
             path,
             structured,
         ),
         Failure::Output(error) => match error.kind {
-            output::OutputErrorKind::Io(cause) => {
-                io_failure(error.context, cause, command, path, structured)
-            }
+            output::OutputErrorKind::Io(cause) => io_failure(
+                &format!("{prefix}{}", error.context),
+                cause,
+                command,
+                path,
+                structured,
+            ),
             output::OutputErrorKind::Decode(message) => CliError::new(
                 ErrorCode::CommandFailed,
-                format!("{}: {message}", error.context),
+                format!("{prefix}{}: {message}", error.context),
             )
             .render(command, path, structured),
         },

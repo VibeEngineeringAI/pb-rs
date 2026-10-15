@@ -1,0 +1,22 @@
+{
+  "status": "root selected reviewed remedy and authorized scopedapplication; not yet applied/validated at this record",
+  "review": {
+    "path": "docs/phase7-review-postidle-opus-r1.md",
+    "sha256": "7d55ae16b94f99fa2835157b6036f317e1f93bc8cc2f809b2928373ecd3f6ad1"
+  },
+  "review_evidence_sha256": "7ebeef4e44e89b5545a86143170a350536c6ae7b6ba86c0247c4d718fd6e66d0",
+  "scope": "Full review read; source-only/no reviewer execution, single failed EDQUOT attempt/no retry",
+  "PD2_M1": "Add250ms postidleanchorONLYattributionSQLlongdark/light, independentretaineddurationcheck; originalS/Eunchanged, actualsamples/accountingstillmandatory; no guarantee/no subtraction",
+  "corrections": {
+    "PI1_M1": "All52caseidentities/everydecision+descriptive+sourceidle row rebind CLItypedactualargv, notjust2semanticchanges. Originalintegerhashes preserved.",
+    "PI1_L1": "Addfloat250.0negative andcompiled droptypeguard causalcontrol",
+    "PI1_L2": "Each90argvdirectcampaign_cases(actualparsedOptions), crosscheckdeclaredmatchingprofile; futurerealpreflightcase_hashescheckmandatory"
+  },
+  "application": "Owner verifies11frozenbeforeidentities, appliesexactreviewedpatch and verifies4stage1postimages, thenrecordsseparatetest/documentation/bindingcorrection successor. Rootfullbenchafterfreeze.",
+  "patch_sha256": "d197c7038fb4bd25e9dba42eeb4db90a79f0bdbd85d3cb212600d3cfee08b47b",
+  "task_ids": [
+    "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-postidle-reviewed-apply",
+    "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-r3-m1-reviewed-remedy-selected"
+  ],
+  "remaining": "Exactappliedfreeze/rootcentraltests/freshR3review/finalsourceprotocolmatrixbinding/realpreflight/accounting/feasibility; no executionadmission or commit"
+}

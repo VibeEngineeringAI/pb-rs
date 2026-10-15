@@ -1,0 +1,90 @@
+{
+  "status": "Applied freeze and43 identities verified by root; fullbench in progress, no acceptance/preflight claim",
+  "freeze": {
+    "path": "/home/ajs/.cache/pb-phase7/postidle-bracket-applied/freeze.json",
+    "size_bytes": 20009,
+    "sha256": "3bf717587510e7cc14170eff4e37d04cbe4b8619573fc94b0f479e8fbd3bf37a"
+  },
+  "bindings": {
+    "path": "/home/ajs/.cache/pb-phase7/postidle-bracket-applied/direct-typed-bindings.json",
+    "size_bytes": 1350227,
+    "sha256": "8a205017141bdc1b2ab9723d9c65cbaecafa05a185de790152096ee833c4e8ba"
+  },
+  "source_changes": {
+    "docs/phase7-measurement.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-measurement.md",
+      "size_bytes": 95153,
+      "sha256": "a7bf74932da60bdef1995212e48da0354a55a05c3ed4ad13185bd679364466ee"
+    },
+    "harness/contracts/phase7.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/contracts/phase7.md",
+      "size_bytes": 36354,
+      "sha256": "f50160bac02eb41b64bba25672e834769428f145377084194ad3efd5147ffa9b"
+    },
+    "harness/phase7_bench.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_bench.py",
+      "size_bytes": 192294,
+      "sha256": "bf630d9ac4dd4e615f221e218cfce7cbb99438c2de1bf5cfdc388941eef013c2"
+    },
+    "harness/test_phase7_bench.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7_bench.py",
+      "size_bytes": 188880,
+      "sha256": "9b3b0a9455a396c669cb5c5b5ee812f4162a42609eeb0e053b7d612b87c6300c"
+    }
+  },
+  "unchanged": {
+    "harness/phase7_profile.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_profile.py",
+      "size_bytes": 43899,
+      "sha256": "cd064da4a3f192a64c9e015a12d2ec5cbc6b305b3ca992d95f3641d83e5b2385"
+    },
+    "harness/test_phase7_profile.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7_profile.py",
+      "size_bytes": 37130,
+      "sha256": "75bb14229f18b212cd234e9d2d4af5ad8cef3eb290f2c483d45e6e1c2e6443dd"
+    },
+    "docs/phase7-profiling.md": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-profiling.md",
+      "size_bytes": 27526,
+      "sha256": "f28aced955ea7d30fa431df78b03ca5c93c7348ff13c4e777543b7213487426e"
+    },
+    "harness/phase7.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7.py",
+      "size_bytes": 90070,
+      "sha256": "dc7574f058b9ff6ae7b77a912847fdbe02d8b68baab8728237d6ef040e6a44fa"
+    },
+    "harness/test_phase7.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7.py",
+      "size_bytes": 85821,
+      "sha256": "97f19258eaf3a7d052d1f8b1ea7577ad4b3b5acc1d284dbd0162cdcace3080a5"
+    },
+    "harness/phase7_spawn.c": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_spawn.c",
+      "size_bytes": 9383,
+      "sha256": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4"
+    },
+    "harness/phase7_workloads.py": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_workloads.py",
+      "size_bytes": 41781,
+      "sha256": "54a9efb7767372c976b459c3e2dc59c590e0b9d6b47b4cc29e36ae81ff588d1c"
+    }
+  },
+  "direct_argv_calls": 90,
+  "counts": {
+    "campaigns": 84,
+    "distinct_seeds": 84,
+    "capture_control_children": 4648,
+    "functional_roles": 104,
+    "measured_role_replays": 3120
+  },
+  "binding_semantics": "86 raw parsed Options;4 own raw pool-plan Options transformed by exact actual pool_definition base assignment before case construction; all52 CLI-typed cases rebound, only2 semantic hold changes",
+  "review": "docs/phase7-review-postidle-opus-r1.md",
+  "independent_review_execution": "source-only; root verifies artifact hashes and runs central suite separately",
+  "task_ids": {
+    "applied": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-postidle-reviewed-apply",
+    "protocol": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-r3-applied-bindings-handoff"
+  },
+  "actual_preflight": false,
+  "performance_claim": false,
+  "commit": false
+}

@@ -293,7 +293,8 @@ class CorpusTests(unittest.TestCase):
         self.assertNotIn(('role', 'add'), commands)
 
     def test_interactive_paths_are_boundaries_not_cases(self):
-        argv = [b['argv'] for b in phase5.deferred_boundaries()]
+        self.assertEqual([], phase5.deferred_boundaries())
+        argv = [b['argv'] for b in phase5.historical_deferred_boundaries()]
         self.assertIn(['role', 'add', 'newrole'], argv)
         self.assertIn(['dataset', 'add', 'new'], argv)
         for case in phase5.corpus():

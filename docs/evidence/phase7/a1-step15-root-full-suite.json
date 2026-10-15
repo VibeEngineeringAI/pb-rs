@@ -1,0 +1,36 @@
+{
+  "actual_exit": 0,
+  "tests": 130,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "elapsed_seconds": 219.78430960606784,
+  "guard_trips": [],
+  "source_unchanged": true,
+  "head": "ea70f7ad7d501d59b26cf6397f6a0b1f28143fc4",
+  "artifacts": {
+    "run.py": {
+      "path": "/home/ajs/.cache/pb-phase7/a1-step15-root-full-suite/run.py",
+      "sha256": "b47d25048e6a888c23ba3aa007f614d2e9434b9dbf6420b34543cb321ba1f2f3"
+    },
+    "report.json": {
+      "path": "/home/ajs/.cache/pb-phase7/a1-step15-root-full-suite/report.json",
+      "sha256": "830baa55a97a562f2e25588c20fec184d096b4c27fd415996cfb7ee55af70a5f"
+    },
+    "bench.log": {
+      "path": "/home/ajs/.cache/pb-phase7/a1-step15-root-full-suite/bench.log",
+      "sha256": "0d96466c21c19bb17282a3b19f061ee4833d44635958354487ea174340fec60d"
+    },
+    "stdout.log": {
+      "path": "/home/ajs/.cache/pb-phase7/a1-step15-root-full-suite/stdout.log",
+      "sha256": "50a292a987c98a26f5c552672997bc7382515390badbf335f03b4ba688ff6d91"
+    },
+    "stderr.log": {
+      "path": "/home/ajs/.cache/pb-phase7/a1-step15-root-full-suite/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "scope": "full bench suite; child/PTY/network blocked, common performance lock prohibited; unit temp-file locks allowed; exact verified Git HEAD stubbed after one read-only Git call",
+  "native_preflight": false,
+  "independent_review": "pending fresh R3; R2 EDQUOT no acceptance"
+}

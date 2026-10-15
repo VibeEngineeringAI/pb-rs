@@ -1,0 +1,25 @@
+{
+  "current_candidate": "release3",
+  "active_tasks": {
+    "collector_r2_fixes": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-collector-r2-concrete-fixes"
+  },
+  "completed_reviews": {
+    "sql_identity_interim_sol_r2": {
+      "task_id": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-sol-sql-identity-review-r2",
+      "disposition": "F1 resolved, no new production finding; interim review only"
+    },
+    "helper_interim_sol_r2": {
+      "task_id": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-sol-spawn-helper-interim-review-r2",
+      "disposition": "no high/medium in bounded scope; final Opus pending"
+    },
+    "collector_profile_interim_sol_r2": {
+      "task_id": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-sol-measurement-interim-review-r2",
+      "disposition": "changes requested R2-H1, M1-M6, L1; implementation assigned"
+    }
+  },
+  "final_opus_source_r2": {
+    "task_id": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-final-source-review-r2",
+    "status": "immediate provider rate limit; no review occurred"
+  },
+  "measurements": "none; no quiet reservation"
+}

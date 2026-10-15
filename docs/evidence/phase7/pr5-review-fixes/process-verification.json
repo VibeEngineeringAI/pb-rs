@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "process_exit_code": 0,
+  "reference_passed": 6,
+  "candidate_passed": 6,
+  "reference_binary": {
+    "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/bin/pb-go-pinned",
+    "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314"
+  },
+  "candidate_binary": {
+    "path": "/home/ajs/.local/share/pb-pr5-fixes/candidate/pb",
+    "sha256": "fbf1570bc2fbf0436adee185c125c03dfdb3d14c6ef0841a344425fb139e6d71"
+  },
+  "candidate_pre_and_post_sha256": "fbf1570bc2fbf0436adee185c125c03dfdb3d14c6ef0841a344425fb139e6d71",
+  "candidate_manifest_sha256": "4a5a5af7134b841a15fb18f293c9a9b19d1f88d825c70c44da5fa183d341999c",
+  "script_sha256": {
+    "check_fixes.py": "819472554de028e355cb350572e656529b817efa5a8ef5ddc5e88b578b110cb2",
+    "process_fixture.py": "2674668d7cb8c90b70870ce0da29e0f392d28e962659c2c8a488dc00bf46743f"
+  },
+  "summary_sha256": "21536d3c685b9f6676dcaf2da653d4fa7491d26a0fcd0e8f3521bba3729a9dae",
+  "log_sha256": "fb1f0ad580c8fc02da0f53a9825ec27f38f4a6bc1dd0dc209868e17d2e9e0225",
+  "non_scroll_semantic_observations_identical": true,
+  "all_sessions_exit_zero_restore_termios_and_keep_config_unchanged": true
+}

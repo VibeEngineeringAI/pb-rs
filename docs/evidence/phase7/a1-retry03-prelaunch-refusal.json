@@ -1,0 +1,82 @@
+{
+  "campaign": "under30-combined-a1-primary-dark-03",
+  "result": "prelaunch coordinator refusal; no supervisor/client/helper/fixture acquisition",
+  "receipt": {
+    "campaign": "under30-combined-a1-primary-dark-03",
+    "anchor_boottime": 1096026.89095836,
+    "start_utc": "2026-10-15T17:17:48.505851+00:00",
+    "functional_pass": false,
+    "performance_claim": false,
+    "errors": [
+      "root launch/wait: PermissionError(13, 'Permission denied')",
+      "supervisor_report: FileNotFoundError(2, 'No such file or directory')",
+      "collector_report: FileNotFoundError(2, 'No such file or directory')",
+      "known_processes_after: PermissionError(13, 'Permission denied')"
+    ],
+    "interruptions": [],
+    "lock_before": {
+      "device": "0:30",
+      "inode": 115796775,
+      "state": "free",
+      "entries": []
+    },
+    "actual_supervisor_exit": null,
+    "coordinator_echild_verified": true,
+    "end_identities_unchanged": true,
+    "inventory_end_exact": true,
+    "lock_after": {
+      "device": "0:30",
+      "inode": 115796775,
+      "state": "free",
+      "entries": []
+    },
+    "lock_identity_unchanged": true,
+    "elapsed_before_final_receipt": 0.25438689114525914,
+    "receipt_utc_before_final_write": "2026-10-15T17:17:48.760235+00:00"
+  },
+  "root_cleanup": {
+    "actual_coordinator_exit": 1,
+    "supervisor_never_launched": true,
+    "no_go_rust_helper_workload_started": true,
+    "coordinator_echild_verified": true,
+    "process_scan": "incomplete PermissionError; not claimed empty",
+    "lock_reacquired_released": true,
+    "root_cleanup_verified_utc": "2026-10-15T17:18:16.601558+00:00",
+    "receipt_sha256": "a2a82991d39eee2f669db0cd876f5513b4e758a34bf7fb2415c44e1ae9638296"
+  },
+  "accessibility_characterization": {
+    "utc": "2026-10-15T17:18:51.176208+00:00",
+    "same_uid_entries": 171,
+    "permission_denied": [
+      {
+        "pid": 1222,
+        "exe_permission_denied": true,
+        "cmdline_readable": true
+      },
+      {
+        "pid": 1226,
+        "exe_permission_denied": true,
+        "cmdline_readable": true
+      }
+    ],
+    "scope": "read-only accessibility characterization; no argv or user content retained; no native tests"
+  },
+  "artifacts": {
+    "receipt.json": {
+      "path": "/home/ajs/.cache/pb-phase7/under30-combined-a1-retry03-preparation/coordination/receipt.json",
+      "sha256": "a2a82991d39eee2f669db0cd876f5513b4e758a34bf7fb2415c44e1ae9638296"
+    },
+    "root-cleanup.json": {
+      "path": "/home/ajs/.cache/pb-phase7/under30-combined-a1-retry03-preparation/coordination/root-cleanup.json",
+      "sha256": "6d6446560b608edbbe7243e90cd5d4e076af78a34401c9d5e19310db98361972"
+    },
+    "proc-access-characterization.json": {
+      "path": "/home/ajs/.cache/pb-phase7/under30-combined-a1-retry03-preparation/coordination/proc-access-characterization.json",
+      "sha256": "a0b33dcf7cb945a0d961344409aaca5bc94a46e36caa6145540332c7d3922e95"
+    }
+  },
+  "token_released": true,
+  "runtime_preflight_accepted": false,
+  "scope": "permission denied on two existing sameUID exe links,cmdline readable; no argsretained/no hostservice change",
+  "successor_task": "node:delegated-task:command%3Amcp%3A78a62eba-9e95-4ed0-8754-e373aac96a0d%3Athread-send%3Aphase7-a1-prelaunch-permission-refusal-successor04"
+}

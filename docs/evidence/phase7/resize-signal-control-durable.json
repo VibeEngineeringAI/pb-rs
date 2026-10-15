@@ -1,0 +1,44 @@
+{
+  "kind": "own native PTY child signal delivery functional control; not CLI or performance",
+  "observations": [
+    {
+      "action": "changed size ioctl only",
+      "output": "WINCH\n"
+    },
+    {
+      "action": "same size ioctl only",
+      "output": ""
+    },
+    {
+      "action": "explicit signal after same size",
+      "output": "WINCH\n"
+    },
+    {
+      "action": "second changed size ioctl only",
+      "output": "WINCH\n"
+    },
+    {
+      "action": "explicit signal after changed size, serialized",
+      "output": "WINCH\n"
+    }
+  ],
+  "compiler": "/usr/bin/gcc",
+  "compiler_sha256": "8aac907d6fbf40394b424b5fa4a2ad1aa291dac7d3a0315c5b415c1f5ace1287",
+  "compile_argv": [
+    "/usr/bin/gcc",
+    "-std=c11",
+    "-O2",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/evidence/phase7/resize-signal-probe.c",
+    "-o",
+    "/home/ajs/.cache/pb-phase7/resize-signal-control-durable/probe"
+  ],
+  "source_sha256": "41c3c5a92a59a05389f8b36c575916cd5d2650f56d369343fb20232458c7a855",
+  "probe_sha256": "f8a5e7cf64328b9d17b49c06fcf67be9cad8ddf2e2fc2e40082915157188b8f2",
+  "runner_sha256": "e06a9e68d477e7d18cd161aec8ebfd14f77e7ae7b713585a0903cdc3b46214a4",
+  "kernel": "7.2.5-3-omarchy",
+  "exit": 0,
+  "limits": "Serialized delivery proves ioctl and explicit signal can each deliver. Back-to-back signal coalescing and actual CLI redraw count not measured. No helper/source change."
+}

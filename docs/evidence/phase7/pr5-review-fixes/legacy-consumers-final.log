@@ -1,0 +1,8 @@
+test_pool_rehashes_control_streams_at_end_after_initial_validation (test_phase7_bench.PoolTests.test_pool_rehashes_control_streams_at_end_after_initial_validation) ... ok
+test_both_role_phase_diagnostics_bind_retained_bytes_and_reject_mutated_control (test_phase7_bench.R4Tests.test_both_role_phase_diagnostics_bind_retained_bytes_and_reject_mutated_control) ... ok
+test_public_manifest_redacts_paths_and_host_has_no_node (test_phase7_bench.AdapterTests.test_public_manifest_redacts_paths_and_host_has_no_node) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 5.613s
+
+OK

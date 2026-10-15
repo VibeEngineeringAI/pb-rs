@@ -1,0 +1,15 @@
+{
+  "review": "docs/phase7-review-a1-functional-failure-opus-r1.md",
+  "review_sha256": "5638a0b6cb03a8c97c9884aca67b98cfe1342db800b6e7a390977d0ff7746f68",
+  "root_disposition": "accept diagnosed impossible closed-drawer geometry; correct expected default-open pane geometry, keep every case/action unchanged",
+  "root_hypothesis_correction": "drawer always starts open, width140 only widens sidebar3columns; earlier root width-threshold interpretation was inaccurate",
+  "secondary": "record actual capture failure/termination before binding checks without weakening abort/validation/admission",
+  "retained_original": "docs/evidence/phase7/combined-a1-functional-failure.json",
+  "source_geometry": "sidebar34 if width<140 else37; editor/results width=max(30,width-sidebar-1); footer ends resultsWidth-3",
+  "no_rust_failure_observed": true,
+  "promql": "source has full-width results; actual dense preflight unrun, no correction authorized",
+  "implementation_task": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Adelegate-task%3Aphase7-sol-a1-sql-geometry-fix-r1",
+  "status": "authorized implementation, fresh independent review then exact-source actual preflight required",
+  "production_change": false,
+  "performance_claim": false
+}

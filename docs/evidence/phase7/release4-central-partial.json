@@ -1,0 +1,19 @@
+{
+  "kind": "release4 partial central checkpoint; deadlines still running",
+  "checks": {
+    "alltargets": {
+      "passed": 552,
+      "ignored": 8,
+      "log": "/home/ajs/.cache/pb-phase7/integration-alltargets15.log",
+      "sha256": "7e73f6f4b1ac63f1db598836f58860a66152f488b56f6c619987631dc8a81041"
+    },
+    "oauth": {
+      "passed": 4,
+      "ignored": 0,
+      "log": "/home/ajs/.cache/pb-phase7/integration-oauth15.log",
+      "sha256": "00827d70c98901c38269d5daa7bae47f7559720f80e827771985f6fb2ea6bdee"
+    }
+  },
+  "ordinary_interactive_effects": 51,
+  "scope": "New clock cases are included in51; full deadline/artifact/source final check still pending integration-round15 completion. Pre-O4-fix candidate."
+}

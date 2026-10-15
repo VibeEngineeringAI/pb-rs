@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "status": "owned source frozen; ready for independent collector R2",
+  "owned_files_sha256": {
+    "harness/phase7_bench.py": "f66499504f9087a66bfa554bb739b1a79cbe294ffe30262b745ece5f84ab49b0",
+    "harness/test_phase7_bench.py": "5e036321b82ade9e5dab0672d4f3a7529572f99392510c5f11a95c0d7194b8dd",
+    "docs/phase7-measurement.md": "5de7bf4d2a56b71b2c6c22594e5296076856244ec1b5be80932eff6ce9df1b70",
+    "harness/phase7_profile.py": "8c2c703aac7b52bb7543541f6ee95ca684df044f387a0907b27997ad02450555",
+    "harness/test_phase7_profile.py": "231ae13abed3e4b45dc7ab43414e7967e2e9e6b000a3e304878200c4c08dabbd",
+    "docs/phase7-profiling.md": "a0d1e70321a6bfb1603c7e6c88a22a1ec4d4ba646a8676f023b3fa9cfc6c86c5"
+  },
+  "shared_interface_sha256": {
+    "harness/phase7.py": "b1d5cd2de90b32268f221c8bf7a5f584a2fa7d34eb134a21d2e3ed475e77a654",
+    "harness/phase7_spawn.c": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4"
+  },
+  "tests": {
+    "bench": {
+      "count": 40,
+      "result": "passed",
+      "log": "collector-bench-integration-final.log"
+    },
+    "profile": {
+      "count": 13,
+      "result": "passed",
+      "log": "collector-profile-integration-final.log"
+    },
+    "actual_interface": "real execute/_execute full/minimal/profiler paths; resolver/acquisition boundary intercepted; cache disappears after preflight; build=False/probe=False; no PTY/subprocess",
+    "syntax_whitespace": "passed"
+  },
+  "apis": {
+    "resolver": "spawn_helper(build=True, *, probe=True)",
+    "initial_preparation": "cached_spawn(probe=True) delegates build=False, before QuietWindow; compiler version/capability overhead excluded from CLI elapsed",
+    "guarded_lookup": "cached_spawn(probe=False) delegates build=False/probe=False",
+    "both_capture_adapters": "execute(..., spawn_helper_build=False)",
+    "minimal": "record_descendants=False disables optional periodic sampling; final cleanup independent; attribution ineligible"
+  },
+  "review_dispositions": {
+    "H1": "native_child_wait4 + helper C/binary/compiler/protocol provenance only; exec_error/unavailable rejected; acceptance harness-owned",
+    "H2": "delegate complete guarded p7.proc_sample, no reread/zero substitution",
+    "H3": "remove all runtime request-count/path gates; posthoc causal milestone counts and exact cached-hit fetch assertions",
+    "M1": "dense focus/series legend, explicit total fallback, window slices/turnover, functional preflight artifact/definition/helper hashes; final executable preflight pending parent",
+    "M2": "campaign ID, bounded issued/expiry, explicit phase6 companion actor/time/reference, common nonblocking flock; no manufactured approval",
+    "M3": "tick and two-endpoint resolution annotation; idle trigger eligibility explicit long-idle only",
+    "M4": "require first-ever persisted stamp; stable interval separate; no timestamp ordering old-frame claim",
+    "L1": "nonblank editor SQL exact SELECT 1",
+    "L2": "fresh bytes and cells differ from real emulator simulated resize, right corner guard; geometry/cursor-only invalid",
+    "L3": "representative recorded-Go frame and tiny full/minimal controls separate; no sampler/history/optional descendants in minimal; no zero-work claim",
+    "L4": "strict JSON object/scalar/bool/finite checks retain deadline failure",
+    "L5": "public path privacy, no hostname/raw cpuinfo, affinity/governors/load, builder attestations; embedded JSON/C source snapshot",
+    "L6": "cache-hit offset0 exactly once whole session and causal checkpoints; turnover requires refetch"
+  },
+  "functional_preflight": {
+    "executed": false,
+    "candidate": "/home/ajs/.cache/pb-phase7/candidates/release2/pb-normal",
+    "doc": "docs/phase7-measurement.md",
+    "variants": 18,
+    "sessions": 36,
+    "budget_seconds": 1800,
+    "session_timeout_base_seconds": 60,
+    "long_idle_seconds": 300,
+    "long_idle_extended_timeout_seconds": 360,
+    "max_sessions": 40,
+    "covers": "all eight primary cases dark/light plus large SQL window/turnover, dense1000, delayed SQL, Unicode editor, long idle"
+  },
+  "execution_disclosure": {
+    "performance_campaigns": 0,
+    "observer_floor_sessions": 0,
+    "profiler_sessions": 0,
+    "local_builds": 0,
+    "final_functional_sessions": 0,
+    "historical_failed_go_smoke": "collector-functional-review-r1-dark/report.json; snapshot error retained, no accepted data"
+  },
+  "pending_parent": "helper independent acceptance, final artifact freeze/preflight, fresh full collector R2, bounded quiet approval before campaigns",
+  "definitions_only_outputs": [
+    "collector-bench-plan-final.json",
+    "collector-profile-plan-final.json"
+  ]
+}

@@ -1,0 +1,243 @@
+{
+  "status": "proposal verified for fresh review; not accepted",
+  "manifest_sha256": "ba9c1157dfffc8330a4007c33ed2370462fda503e21a0e43cb49016921fba16b",
+  "checked_artifacts": [
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-performance-decisions.md",
+      "size_bytes": 45820,
+      "sha256": "5b843481001338eefd9598f69c1c12f7badb6ea6c0ebb31f1083e3655d9bc202"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r1/phase7-performance-decisions-r1.md",
+      "size_bytes": 31142,
+      "sha256": "a5a16114f7463713fcabb2b8c68fb9fa8fdc35736bcb6dd079d70e3eccb08274"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/README.md",
+      "size_bytes": 5445,
+      "sha256": "d7941ee9b5ea8db2135123250f83743b5c43f95bf2efa5654821aa5ecce1e278"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/arithmetic-checks.json",
+      "size_bytes": 35282,
+      "sha256": "75a2c1c2ad3c9ca6e3df6192a305ec8a787e728125ca015042d013fc195aad15"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/before-final-declaration/arithmetic-checks.json",
+      "size_bytes": 34377,
+      "sha256": "2ceafb328af50ad6b2eba16051601d002607780a0a192acbc0bf85f5abbe78e0"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/before-final-declaration/coverage-design.json",
+      "size_bytes": 246694,
+      "sha256": "4a3c247a2614fde32b426c9e337b4223667b4139248386f8f1069a627d501678"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/before-final-declaration/decision_math.py",
+      "size_bytes": 10012,
+      "sha256": "b74f6c80b6aeab4b93172386bb837ed94ea009863023230a83d7fe4cbe18865c"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/before-final-declaration/matrix-and-confirmation-design.json",
+      "size_bytes": 37786,
+      "sha256": "d6b1190845277ed2cfaa754dd553970cd930350a5d72fcbc0f69a87471d755f8"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/before-final-declaration/original-stage-obligations.json",
+      "size_bytes": 1402,
+      "sha256": "04b02c7c5231c897f660b8833737ee1e415f05afbabae5039caa358247e2cdbf"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/before-final-declaration/phase7-performance-decisions-before-final.md",
+      "size_bytes": 44302,
+      "sha256": "623f0909d6d61c658401a67e5ad8c43acb3ccc6e3830bd0cc8d01fb8d1ef7eaa"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/before-final-declaration/prepare_design.py",
+      "size_bytes": 9223,
+      "sha256": "af780f3d347ab60d7ef06f22b0051e810c5b1e5e742a79d3fd7afb5412744439"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/before-final-declaration/python-runtime.json",
+      "size_bytes": 1744,
+      "sha256": "fd967993104fc946b193efb21d919a38780f38402207fe28ce74fa4fc957e489"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/before-final-declaration/resource-provenance-pending.json",
+      "size_bytes": 1700,
+      "sha256": "dff7b46cf81f386f9a1e63d3f75a83a8c9460102d94ceba4e4158a4b2b6acef9"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/before-final-declaration/source-and-ast-identities.json",
+      "size_bytes": 6253,
+      "sha256": "def488d7c7e5a866fa4dd882f2c6307c236e09c690da69e9f808f8d3ec4a4313"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/before-final-declaration/source_reference_statistics.py",
+      "size_bytes": 2077,
+      "sha256": "37e94d6b9a1098d1d5280108b6f56077626884df0e447be5037e26d84667ff56"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/before-final-declaration/static_design_checks.py",
+      "size_bytes": 22472,
+      "sha256": "d14c02c9fa59afd4072a2b3248b32be4d5b976b24b9fc0149d500d82825e506f"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/coverage-design.json",
+      "size_bytes": 246694,
+      "sha256": "4a3c247a2614fde32b426c9e337b4223667b4139248386f8f1069a627d501678"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/decision-record-template.md",
+      "size_bytes": 5613,
+      "sha256": "b04c7309a87f727455094d5e57d037770f236d2504c6b45ade7034f1d77671cf"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/decision_math.py",
+      "size_bytes": 10632,
+      "sha256": "25784f8defafe6df7b410091735b8eab3f3e6dcd2328b5f9410ef75a1fb63729"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/declaration-pending.json",
+      "size_bytes": 14811,
+      "sha256": "52c191abb4f662992e04ab72b016f7e91d83f019a4a3195bdd546b760507ae3b"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/draft-first-pass/arithmetic-checks.json",
+      "size_bytes": 34134,
+      "sha256": "0d4682ed0fc9ea1791a0c686a2d3121eb825b4bdcdd1dad75a80c80627bde28a"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/draft-first-pass/coverage-design.json",
+      "size_bytes": 246694,
+      "sha256": "4a3c247a2614fde32b426c9e337b4223667b4139248386f8f1069a627d501678"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/draft-first-pass/decision_math.py",
+      "size_bytes": 9734,
+      "sha256": "b0104b30a681da87aaa2b14a82f4e5f6beb68d1fb8be4a1c33d88200a32347b0"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/draft-first-pass/matrix-and-confirmation-design.json",
+      "size_bytes": 37826,
+      "sha256": "5dddeddc022fc98337cd8301ade5bee88241ce544e138a96316ae43b1b382bbe"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/draft-first-pass/original-stage-obligations.json",
+      "size_bytes": 1402,
+      "sha256": "04b02c7c5231c897f660b8833737ee1e415f05afbabae5039caa358247e2cdbf"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/draft-first-pass/prepare_design.py",
+      "size_bytes": 9263,
+      "sha256": "294f8271a7f7b3660772a634d7ccfeb33328192ecd621a43ef34b7b4dbe99838"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/draft-first-pass/python-runtime.json",
+      "size_bytes": 1744,
+      "sha256": "fd967993104fc946b193efb21d919a38780f38402207fe28ce74fa4fc957e489"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/draft-first-pass/resource-provenance-pending.json",
+      "size_bytes": 1700,
+      "sha256": "dff7b46cf81f386f9a1e63d3f75a83a8c9460102d94ceba4e4158a4b2b6acef9"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/draft-first-pass/source-and-ast-identities.json",
+      "size_bytes": 6253,
+      "sha256": "f69cd9ee90b9548c45456370d6151fb65b2275707db2f2f8e2d6a346b6e1e01c"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/draft-first-pass/source_reference_statistics.py",
+      "size_bytes": 2077,
+      "sha256": "37e94d6b9a1098d1d5280108b6f56077626884df0e447be5037e26d84667ff56"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/draft-first-pass/static_design_checks.py",
+      "size_bytes": 21902,
+      "sha256": "d044b67c5938b97fb3fe565ec50028c7cb6496cdee2f4e3ce39229afc6ade5b8"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/execution.json",
+      "size_bytes": 1374,
+      "sha256": "c8630d716b3c1e8047f6a96281ec212dd4b1783c556b9c69f583a5103763842c"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/final-binding-checks.json",
+      "size_bytes": 5028,
+      "sha256": "be6c0d792399de80a63b786072e61195b50f1eba759eb11c7a560eef03fc60fa"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/final-source-and-ast-identities.json",
+      "size_bytes": 7635,
+      "sha256": "4b60c9a18dcf5532d42fb97437175f501a7379a757a04e1e32a405e7f67b2259"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/findings-response.json",
+      "size_bytes": 3210,
+      "sha256": "c75f4a77ac4334c29de9015e518b07bfe8f038e753d20c29ebb09ae19e179580"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/freeze_r2.py",
+      "size_bytes": 9821,
+      "sha256": "8850629944dd70b66cfc94d30d180e94f5f9c8c10f176730c6538cb97c6ce55f"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/matrix-and-confirmation-design.json",
+      "size_bytes": 49335,
+      "sha256": "826d48b81115bfcd46dd87574fd084fd47b5f606ab7d655a4da3690a66c904e9"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/original-stage-obligations.json",
+      "size_bytes": 1402,
+      "sha256": "04b02c7c5231c897f660b8833737ee1e415f05afbabae5039caa358247e2cdbf"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/prepare_design.py",
+      "size_bytes": 10152,
+      "sha256": "d3338c376e1a9e73e40bc8b784607294baa1ad49bcb54b31d11291f723299134"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/python-runtime.json",
+      "size_bytes": 1744,
+      "sha256": "fd967993104fc946b193efb21d919a38780f38402207fe28ce74fa4fc957e489"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/r1-preservation.json",
+      "size_bytes": 370,
+      "sha256": "128e60e93620c3c91da611b52f1e4db0175d176554940c1ba48ae265657e2b8b"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/resource-provenance-final-pending.json",
+      "size_bytes": 2308,
+      "sha256": "4e12b392331e9a17938944154a2adf08a362a294b680bf923fa16a5e1d2d04bd"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/resource-provenance-pending.json",
+      "size_bytes": 1700,
+      "sha256": "dff7b46cf81f386f9a1e63d3f75a83a8c9460102d94ceba4e4158a4b2b6acef9"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/revise_document.py",
+      "size_bytes": 24909,
+      "sha256": "b4789bc75e4cf8b964a5aefcbb33daba28b501233aa94832eca1050ae89f87b8"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/source-and-ast-identities.json",
+      "size_bytes": 6253,
+      "sha256": "4ca6f569aaabc157dcf620beb1d3d4189275d545be17f7f36988c351f30d63f3"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/source_reference_statistics.py",
+      "size_bytes": 2077,
+      "sha256": "37e94d6b9a1098d1d5280108b6f56077626884df0e447be5037e26d84667ff56"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/performance-decisions-r2/static_design_checks.py",
+      "size_bytes": 24075,
+      "sha256": "6351ae477cd01584c956f1867fe0d9dd84141a551522e8f9636af2f43a06bbd0"
+    }
+  ],
+  "root_read": "Full R2 protocol, README and findings response; supplied static test execution read, not rerun",
+  "pending": "Fresh independent Opus review, final source binding, actual accounting provenance and execution prerequisites"
+}

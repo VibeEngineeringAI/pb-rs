@@ -1,0 +1,12 @@
+{
+  "total": 63,
+  "differences": 0,
+  "shared_source_changed_after_snapshot": [],
+  "sha256": {
+    "/home/ajs/.local/share/pb-pr5-fixes/decoder-oracle/probe/cases.jsonl": "6eb168d9e82e18e1494af63612950d6b5b95616d6829145667879b8336965a79",
+    "/home/ajs/.local/share/pb-pr5-fixes/decoder-oracle/probe/results.tsv": "0cdc7a3d47b77f32ac6cc5d8914252a09a1a47221f87829b70ccf04e9f349a46",
+    "/home/ajs/.local/share/pb-pr5-fixes/decoder-matrix-fixed/rust-fixed.tsv": "0cdc7a3d47b77f32ac6cc5d8914252a09a1a47221f87829b70ccf04e9f349a46",
+    "/home/ajs/.local/share/pb-pr5-fixes/decoder-matrix-fixed/compare-fixed.txt": "800d80b22568be35e6f6862c4a0a0d800a72d6444bdbb68469e1e8af6364ca4c",
+    "/home/ajs/.local/share/pb-pr5-fixes/decoder-matrix-fixed/cargo.log": "8bce50c3e4b3eac17a2acce8d15157032ac38df5e9870b5638209edeb2d2a93d"
+  }
+}

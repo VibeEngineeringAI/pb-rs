@@ -1,0 +1,69 @@
+{
+  "kind": "unmodified release3 full styled replay; one gate failure pending Go A/A characterization",
+  "report_path": "/home/ajs/.cache/pb-phase7/styled-release3/report.json",
+  "report_sha256": "4e34a1081a019b3b4e3e49d05f001b5c7ef880ed60bee308b5e3a3028e7d8fb9",
+  "counts": {
+    "total": 190,
+    "gate_total": 160,
+    "gate_pass": 159,
+    "documentary_total": 30,
+    "documentary_clean": 29
+  },
+  "failures": [
+    {
+      "name": "p7-logout-replacement-cancel-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [
+        "styled cells/cursor/scrollback differ at filter-draft",
+        "final styled cells/cursor/scrollback differ"
+      ],
+      "documentary": true
+    },
+    {
+      "name": "p7-promql-wide-legend-view-panic-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [
+        "styled cells/cursor/scrollback differ at before-view-panic"
+      ],
+      "documentary": false
+    }
+  ],
+  "gate_cell_difference": {
+    "checkpoint": "before-view-panic",
+    "row_zero_based": 21,
+    "column_zero_based": 39,
+    "go": "\\",
+    "candidate": "-",
+    "attributes_equal": true,
+    "noncell_frame_fields_equal": true
+  },
+  "next": "bounded actual Go A/A; no normalization promoted",
+  "artifacts": {
+    "/home/ajs/.cache/pb-phase7/styled-release3/p7-logout-replacement-cancel-light/candidate/config-after.toml": "8f8647b9fa6cf3e4d9eec36b3cb38ea4e580aa2493459dce6f0cbb4ad6d0dbce",
+    "/home/ajs/.cache/pb-phase7/styled-release3/p7-logout-replacement-cancel-light/candidate/session.json": "19d7420ea03ff73b2b668a9379e9e16191022c75da9f2b2243b28c6fabd7fb02",
+    "/home/ajs/.cache/pb-phase7/styled-release3/p7-logout-replacement-cancel-light/candidate/stderr.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/ajs/.cache/pb-phase7/styled-release3/p7-logout-replacement-cancel-light/candidate/stdout.bin": "72d4d753431385de6861e1119ae5be95026ce5097f191c2a44f8ec84630fb729",
+    "/home/ajs/.cache/pb-phase7/styled-release3/p7-logout-replacement-cancel-light/reference/config-after.toml": "627c92e0d96b6ed40a5d1879ebe0ccb60f4fbf7790cdc8aacd1df9e298a83355",
+    "/home/ajs/.cache/pb-phase7/styled-release3/p7-logout-replacement-cancel-light/reference/session.json": "0bfb91be329a7d74bf84c15f8d53f26cfea0f7acada98a37da2ddf0f720795b6",
+    "/home/ajs/.cache/pb-phase7/styled-release3/p7-logout-replacement-cancel-light/reference/stderr.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/ajs/.cache/pb-phase7/styled-release3/p7-logout-replacement-cancel-light/reference/stdout.bin": "9c6df96c6e2dbcc38bc2e4c05c30a8827ee80bcfdb6f283ac1ad21ac5d01e1bd",
+    "/home/ajs/.cache/pb-phase7/styled-release3/p7-promql-wide-legend-view-panic-light/candidate/config-after.toml": "12f9a455c655b1af22507ce6b04724698c402fa84fde181bde1cec3b49899095",
+    "/home/ajs/.cache/pb-phase7/styled-release3/p7-promql-wide-legend-view-panic-light/candidate/session.json": "fa62dd4dca5467b7d4cbbac6838d498845a4712667b2975d539545cd8fd2d19b",
+    "/home/ajs/.cache/pb-phase7/styled-release3/p7-promql-wide-legend-view-panic-light/candidate/stderr.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/ajs/.cache/pb-phase7/styled-release3/p7-promql-wide-legend-view-panic-light/candidate/stdout.bin": "fa9b771f9ca5f549baa61764f0f3a971b6ef8ab0500c500733faeb7e9db8f0f4",
+    "/home/ajs/.cache/pb-phase7/styled-release3/p7-promql-wide-legend-view-panic-light/reference/config-after.toml": "3b998574cd6cd9b088ee59521152644d1e7c6e8e3c9ba286de52c15a5729ca0d",
+    "/home/ajs/.cache/pb-phase7/styled-release3/p7-promql-wide-legend-view-panic-light/reference/session.json": "a6295669d9a8254a07d7ac3c3d43293c96a4257f6c49fd21b7f793bbe82450ef",
+    "/home/ajs/.cache/pb-phase7/styled-release3/p7-promql-wide-legend-view-panic-light/reference/stderr.bin": "aa82e930836bb25e262805538b7e939adcfe0745227a932f7e3de4cb8c4d0e2c",
+    "/home/ajs/.cache/pb-phase7/styled-release3/p7-promql-wide-legend-view-panic-light/reference/stdout.bin": "924290e428abd9497c30ce427e274c5f45f090b8a8f95554627bd7ca69b1fde5"
+  }
+}

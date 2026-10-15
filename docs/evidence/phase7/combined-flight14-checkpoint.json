@@ -1,0 +1,38 @@
+{
+  "status": "passed",
+  "scope": "Combined release6 normal binary: seven pinned PR4 streams in text and JSON, exact exit/stdout/stderr, no waivers; functional only",
+  "execution": {
+    "command": [
+      "bash",
+      "/home/ajs/.cache/pb-phase7/merged-flight-pr4-adapter-r2/run-after-review.sh"
+    ],
+    "exit": 0,
+    "start_unix_ns": 1792065192372440009,
+    "end_unix_ns": 1792065196376219488,
+    "functional_elapsed_seconds": 4.003779349848628,
+    "log_sha256": "b3039f6acd36c17b5833c38c7b6c098ba3b0867fae7cf4c2ac4fef7aff491665",
+    "performance_claim": false
+  },
+  "proof": {
+    "path": "/home/ajs/.cache/pb-phase7/merged-flight-pr4-adapter-r2/decoder14-normal-r2/proof.json",
+    "sha256": "4d79f42370dda4249967010175ec46057fc811489ddaad06a07971fe64dae9c0"
+  },
+  "cases": 14,
+  "role_captures": 28,
+  "owned_processes_reported_reaped": 56,
+  "raw_artifacts_reverified": 280,
+  "inputs_reverified": 13,
+  "adapter_sha256": "bc99b29175a00335bd92c8946504e1eb42e10c29342adb4620c8072b50a46e51",
+  "review": {
+    "path": "docs/phase7-review-flight14-adapter-opus-r2.md",
+    "sha256": "a80fc463cbdaf24eb5ab88c45dc5ff1a586151fae3fd64a7c49804d84c56f807"
+  },
+  "candidate_sha256": "6d80054f5d87b081bfe51bed014a6f64c8e9a01c2c7f7fcb4c6434e221868443",
+  "output_waivers": [],
+  "limitations": [
+    "Lifecycle review used modeled child processes; actual replay confirms recorded direct-child reaps, not arbitrary escaped descendants.",
+    "Path TOCTOU and fatal adapter-kill limitations remain documented.",
+    "No Cloud decoder14 or performance claim; Flight291 separately covers normal/cloud retained contracts."
+  ],
+  "inspection_note": "Initial root read assumed cases was a list; KeyError0 corrected to dictionary iteration, no source/proof change."
+}

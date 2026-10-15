@@ -1,0 +1,88 @@
+{
+  "apis": {
+    "execute": "execute(..., spawn_helper_build=True)",
+    "observer_config": "record_descendants bool defaults True, False observation only; final cleanup independent",
+    "spawn_helper": "spawn_helper(build=True, *, probe=True)",
+    "strict_capture": "spawn_helper_build=False => build=False, probe=False"
+  },
+  "checks": [
+    "owned py_compile",
+    "scoped git diff --check",
+    "C hash unchanged",
+    "prepared resolver strict read-only repeat equal"
+  ],
+  "exact_diff": {
+    "path": "/home/ajs/.cache/pb-phase7/harness-nobuild-integration.diff",
+    "sha256": "bd53ef9b38e55f68e0228279747c51b88b909268fdb53d074b1ee32a25990829"
+  },
+  "files": {
+    "docs/phase7-harness.md": "db8fdf6a5cdb531dbfe84c175783d953b50789e1fce5eb1ef1255cdaa76d9add",
+    "harness/phase7.py": "b1d5cd2de90b32268f221c8bf7a5f584a2fa7d34eb134a21d2e3ed475e77a654",
+    "harness/phase7_spawn.c": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4",
+    "harness/test_phase7.py": "0015bb5a9fcf581c0168f3a4f4a5bb9a74ed2767a4c029e298fccbb2a3b32844"
+  },
+  "frozen_at_utc": "2026-10-14T13:41:04.519330+00:00",
+  "helper": {
+    "build_key": "d0592f15c157a359d3b1d7adf9ab0efb1cf39a3765205fe8ccde855157ed2fab",
+    "capability": {
+      "group_signal_flag": 4,
+      "method": "actual own-child pidfd group delivery + WNOWAIT reservation",
+      "probe_executable_sha256": "3b684c7b7632302725727fcc586a071c7818f43d704a8cbf4e1afc384e99f03e",
+      "protocol_version": 2,
+      "received": [
+        "LEADER",
+        "MEMBER"
+      ],
+      "reserved_state": "Z",
+      "signal": "SIGUSR1",
+      "status": 0
+    },
+    "compiler": "/usr/bin/gcc",
+    "compiler_sha256": "8aac907d6fbf40394b424b5fa4a2ad1aa291dac7d3a0315c5b415c1f5ace1287",
+    "compiler_version": "gcc (GCC) 16.2.1 20260810\nCopyright (C) 2026 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+    "flags": [
+      "-std=c11",
+      "-O2",
+      "-Wall",
+      "-Wextra",
+      "-Werror"
+    ],
+    "path": "/home/ajs/.cache/pb-phase7/tmp/phase7-spawn-d0592f15c157a359d3b1d7adf9ab0efb1cf39a3765205fe8ccde855157ed2fab",
+    "protocol_version": 2,
+    "provenance_path": "/home/ajs/.cache/pb-phase7/tmp/phase7-spawn-d0592f15c157a359d3b1d7adf9ab0efb1cf39a3765205fe8ccde855157ed2fab.json",
+    "provenance_sha256": "69e1067e728b7ce4cd67a288ea797d346d00b5403ae5c34368756770f0730394",
+    "sha256": "3b684c7b7632302725727fcc586a071c7818f43d704a8cbf4e1afc384e99f03e",
+    "source_sha256": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4"
+  },
+  "not_run": [
+    "Go/candidate CLI sessions in this follow-up",
+    "candidate builds",
+    "timing campaigns",
+    "observer-floor measurements",
+    "profilers"
+  ],
+  "previous_files": {
+    "docs/phase7-harness.md": "6b975173a1785f5ee6865f10c0ae147cb0c5183f3c32f43433cebcef17abbbe2",
+    "harness/phase7.py": "1d748ac3a1b236115c021a843f3d714e81a0654ebbad27cd30996c69a4415698",
+    "harness/test_phase7.py": "d9344e5a51f72e1a124c864ef9a4b25511b25d4c7049cbb7e4dc53e67a0482c0"
+  },
+  "prior_evidence_retained": "/home/ajs/.cache/pb-phase7/harness-native-helper-r2-response.json",
+  "remaining": [
+    "independent Sol helper R2 review and final Opus review acceptance",
+    "services-owned post-fix Go/candidate functional preflight",
+    "no timing/profiler authorized"
+  ],
+  "schema_version": 1,
+  "scope": "backward-compatible no-build/no-probe resolver and optional descendant observation; no C or comparator changes",
+  "source_frozen": true,
+  "tests": {
+    "elapsed_seconds": 10.079,
+    "log": "/home/ajs/.cache/pb-phase7/harness-nobuild-integration-tests-final.log",
+    "owned_count": 64,
+    "services_reported_only": {
+      "bench": 40,
+      "profiler": 13
+    },
+    "sha256": "a8c32d1b9f6f6234053d3135287644959bb1e28d03289feb394f3c70be91e1ec"
+  }
+}

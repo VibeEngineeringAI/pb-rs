@@ -1,0 +1,30 @@
+{
+  "status": "scoped evidence integrity accepted;15RSS numerical failures confirmed, performance issue remains open",
+  "audit_manifest_sha256": "34b84e28f84373a0494ab13c07aa9ff5be2e0887cf0618fb708ed5d8a9d27b3b",
+  "review_sha256": "29d6f35f6a529a499b7fc1b09c283d5ca21f04de9ab96e9a9450166481347d4d",
+  "review_artifacts_rehashed": 29,
+  "original_flagged_protocol_outcomes": {
+    "confirmed": 15,
+    "point_screen_disconfirmed_not_reproduced": 7,
+    "inconclusive_point_reproduced": 8
+  },
+  "original_flagged_full_interval_counts": {
+    "confirmed": 15,
+    "disconfirmed": 0,
+    "inconclusive": 15
+  },
+  "new_full_interval_signals": [
+    [
+      "p2-status-basic-json",
+      "wall_ms"
+    ],
+    [
+      "p2-status-basic-json",
+      "cpu_ms"
+    ]
+  ],
+  "raw_native_payload_retained": false,
+  "actual_physical_accounting_acceptance": null,
+  "performance_acceptance": false,
+  "root_disposition": "Investigate broad RSS regression using preserved corrected mergedPhase6 baseline before any fix or waiver. Fifteen timing flags notconfirmed are not equivalence; newstatuswallCPU signals andfourothernewpointflags remain open. No samplepooling/reselection. Descriptive attribution cannot replace acceptedPhase5 gate."
+}

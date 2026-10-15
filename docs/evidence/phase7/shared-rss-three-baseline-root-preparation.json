@@ -1,0 +1,20 @@
+{
+  "status": "root source/plan review complete for descriptive preparation only; native admission pending realzero-processACKandfreshcompanionquiet",
+  "plan_sha256": "e8ed26a082a77d8337248aa2ae7dc61f2d4423a06bb1aabe984633551f6365ff",
+  "launcher_sha256": "84b1f401a3c086669cbecf2488b7927d49d1d36934a2b37e9df22301ee289426",
+  "manifest_artifacts_rehashed": 23,
+  "declared_identity_files_rehashed": 36,
+  "exact_original15_specs": true,
+  "honest_labels": [
+    "phase5",
+    "phase6",
+    "phase7"
+  ],
+  "no_source_changes": true,
+  "acceptance_baseline_unchanged": true,
+  "bound": "wholeprep/capture/finalization/cleanup strictly<1800; reviewed supervisor unchanged; root retains actualcoordinator exit",
+  "extra_prerequisites": "launcher requires actualACKage<=60s and >=1800sremaining; do notfabricateissuedtime; missedrequirement freshACK",
+  "current_blocker": "Opus geometry ownedboundedpuretest stillrunning; noquietrequestorwindowissued",
+  "runtime_fit": "unknown until capture",
+  "performance_interpretation": false
+}

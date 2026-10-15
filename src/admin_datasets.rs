@@ -1,4 +1,4 @@
-//! Dataset administration: explicit-type creation and optionally type-guarded
+//! Dataset administration: creation and optionally type-guarded
 //! removal. Mutations succeed only on HTTP 200 and release the success body
 //! unread; each request owns its own standard deadline.
 use crate::{
@@ -51,8 +51,7 @@ impl DatasetKind {
     }
 }
 
-/// An omitted or blank `dataset add --type` opens Go's terminal selector,
-/// which belongs to Phase 7. Dispatch should leave that invocation deferred.
+/// An omitted or blank `dataset add --type` requires the terminal selector.
 pub fn deferred(parsed: &ParsedInvocation) -> bool {
     parsed.command_path == "pb dataset add" && requested_type(parsed).is_empty()
 }
@@ -75,8 +74,17 @@ pub async fn execute(parsed: &ParsedInvocation, client: &ApiClient) -> Result<Ve
 }
 
 async fn create(parsed: &ParsedInvocation, client: &ApiClient) -> Result<Vec<u8>, CliError> {
-    let name = &parsed.positionals[0];
     let kind = DatasetKind::parse(&requested_type(parsed))?;
+    create_selected(client, &parsed.positionals[0], kind).await
+}
+
+/// Shared mutation for explicit types and the interactive selection. Selection
+/// happens before entering the runtime, so terminal input cannot block HTTP.
+pub(crate) async fn create_selected(
+    client: &ApiClient,
+    name: &str,
+    kind: DatasetKind,
+) -> Result<Vec<u8>, CliError> {
     let mut request = client.prepare_standard(Method::PUT, &format!("logstream/{name}"), None)?;
     request.set_header(TELEMETRY_TYPE, HeaderValue::from_static(kind.as_str()));
     if let Some(source) = kind.log_source() {

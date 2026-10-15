@@ -1,0 +1,37 @@
+{
+  "token": "phase7-quiet-phase6-strace-probe-20261014T205619Z",
+  "campaign": "profile-probe-strace-one-row-01",
+  "ack_utc": "2026-10-14T20:56:19.000Z",
+  "start_deadline_utc": "2026-10-14T20:58:19.000Z",
+  "absolute_hard_end_utc": "2026-10-14T21:23:19.000Z",
+  "max_actual_start_to_cleanup_seconds": 1500,
+  "capture_budget_seconds": 1450,
+  "status": "Released; companion-reported cleanup verified, root execution resumed",
+  "reviewer_acks": [
+    "phase7-opus-tooling-source-review-r9: zero processes; review unfinished, task idle",
+    "phase7-opus-performance-decisions-review-r1: zero processes; review completed; idle"
+  ],
+  "root_execution": "paused until explicit cleanup RELEASE regardless elapsed deadline",
+  "parent_sha256": "a47093f4a3ea785a310f7ca1baa92444deaf7e21db5ba7db72dc897ddc3d047b",
+  "sidecar_sha256": "9cadf783f554a22fb6c3bf20c88e9e110ed0b6026f85a45c7dcde898866c3f5d",
+  "adapter_sha256": "032cec6338fb7126a97a1bd28eeb53d428442a598287ef4fe267160b7650ac73",
+  "actual_start_utc": "2026-10-14T20:56:40.739584Z",
+  "adapter_end_utc": "2026-10-14T20:56:42.256272Z",
+  "cleanup_verified_utc": "2026-10-14T20:57:06.780266Z",
+  "effective_cleanup_deadline_utc": "2026-10-14T21:21:40.739584Z",
+  "pid": 3941088,
+  "companion_result": {
+    "exit_code": 0,
+    "report_sha256": "98161533a2fd603f7639fd0c28f7e532f4ea09891e9f46cb224db55514c6bef0",
+    "controls": 4,
+    "strace_captures": 2,
+    "end_identities": 53,
+    "all_passed": true,
+    "owned_processes_remaining": 0,
+    "lock_reacquired_released": true,
+    "evidence_directory": "/home/ajs/.cache/pb-phase6/profile-probe-strace-one-row-01-coordination"
+  },
+  "scope": "Companion-reported functional-only result and coordination; not root independently verified performance evidence or interpretation acceptance.",
+  "source_review_status": "R9 ended only to ACK pause, unfinished, no report/findings. Fresh R10 delegated after release.",
+  "decision_review_status": "R1 completed source-only; corrections pending. One failed shell omitted required temp exports, disclosed; no further shell or execution during quiet."
+}

@@ -1,0 +1,8 @@
+package main
+import("encoding/json";"os";"strings";"github.com/muesli/reflow/truncate")
+func main(){ cases:=[]struct{S string; W uint; Tail string}{
+{"  "+strings.Repeat("测",20)+strings.Repeat("\x00",12)+"…",33,""},
+{"\x1b[1mabcdef",3,"…"},{"\x1b[2@abcdef",2,""},{"ab\x1b[3",5,""},
+{"ab\x1b[3",1,"~"},{"\x1b[\x1b[1mabc",2,""},{"\x1b[31ma\x1b[0mbc",2,""},
+{"\x1b[Kabc",2,""},{"abc",0,"…"},}
+e:=json.NewEncoder(os.Stdout);for _,c:=range cases {e.Encode(struct{Input string; Width uint; Tail,Output string}{c.S,c.W,c.Tail,truncate.StringWithTail(c.S,c.W,c.Tail)})}}

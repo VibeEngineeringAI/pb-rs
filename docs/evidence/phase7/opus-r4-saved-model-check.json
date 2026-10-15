@@ -1,0 +1,437 @@
+{
+  "actual_go_controls": 106,
+  "source_interpretation_passed": true,
+  "matched_byte_positions_checked": true,
+  "exact_scores_rankings_and_faults_checked": true,
+  "rust_executed": false,
+  "proposed_sha256": "d25a3358cb60a78977d0ee9bddc239c7b83246fa8cf66d46afccf288ff032bf7",
+  "oracle_sha256": "e2fd56f2cc191cd39e5f1dab20a6e8599e4d93f691c7caa1b2ae3e3ad4906a8a",
+  "runner_sha256": "291ffc6c2b894a9dccce799af502c3f48d1bb8baaa17ce38e38c41bec0cbd466",
+  "results": [
+    {
+      "name": "nul_early_exhaustion",
+      "passed": true
+    },
+    {
+      "name": "nul_trailing_exhaustion",
+      "passed": true
+    },
+    {
+      "name": "nul_two_rune_exhaustion",
+      "passed": true
+    },
+    {
+      "name": "nul_stale_membership",
+      "passed": true
+    },
+    {
+      "name": "nul_repeated_stale",
+      "passed": true
+    },
+    {
+      "name": "nul_before_first_match",
+      "passed": true
+    },
+    {
+      "name": "no_nul_no_stale",
+      "passed": true
+    },
+    {
+      "name": "ascii_adjacent",
+      "passed": true
+    },
+    {
+      "name": "ascii_rank",
+      "passed": true
+    },
+    {
+      "name": "ascii_tie",
+      "passed": true
+    },
+    {
+      "name": "unicode_orbit",
+      "passed": true
+    },
+    {
+      "name": "unicode_category",
+      "passed": true
+    },
+    {
+      "name": "contiguous_01",
+      "passed": true
+    },
+    {
+      "name": "contiguous_02",
+      "passed": true
+    },
+    {
+      "name": "contiguous_03",
+      "passed": true
+    },
+    {
+      "name": "contiguous_04",
+      "passed": true
+    },
+    {
+      "name": "contiguous_05",
+      "passed": true
+    },
+    {
+      "name": "contiguous_06",
+      "passed": true
+    },
+    {
+      "name": "contiguous_07",
+      "passed": true
+    },
+    {
+      "name": "contiguous_08",
+      "passed": true
+    },
+    {
+      "name": "contiguous_09",
+      "passed": true
+    },
+    {
+      "name": "contiguous_10",
+      "passed": true
+    },
+    {
+      "name": "contiguous_11",
+      "passed": true
+    },
+    {
+      "name": "contiguous_12",
+      "passed": true
+    },
+    {
+      "name": "contiguous_13",
+      "passed": true
+    },
+    {
+      "name": "contiguous_14",
+      "passed": true
+    },
+    {
+      "name": "contiguous_15",
+      "passed": true
+    },
+    {
+      "name": "contiguous_16",
+      "passed": true
+    },
+    {
+      "name": "contiguous_17",
+      "passed": true
+    },
+    {
+      "name": "contiguous_18",
+      "passed": true
+    },
+    {
+      "name": "contiguous_19",
+      "passed": true
+    },
+    {
+      "name": "contiguous_20",
+      "passed": true
+    },
+    {
+      "name": "contiguous_21",
+      "passed": true
+    },
+    {
+      "name": "contiguous_22",
+      "passed": true
+    },
+    {
+      "name": "contiguous_23",
+      "passed": true
+    },
+    {
+      "name": "contiguous_24",
+      "passed": true
+    },
+    {
+      "name": "contiguous_25",
+      "passed": true
+    },
+    {
+      "name": "contiguous_26",
+      "passed": true
+    },
+    {
+      "name": "contiguous_27",
+      "passed": true
+    },
+    {
+      "name": "contiguous_28",
+      "passed": true
+    },
+    {
+      "name": "contiguous_29",
+      "passed": true
+    },
+    {
+      "name": "contiguous_30",
+      "passed": true
+    },
+    {
+      "name": "contiguous_31",
+      "passed": true
+    },
+    {
+      "name": "contiguous_32",
+      "passed": true
+    },
+    {
+      "name": "contiguous_33",
+      "passed": true
+    },
+    {
+      "name": "contiguous_34",
+      "passed": true
+    },
+    {
+      "name": "contiguous_35",
+      "passed": true
+    },
+    {
+      "name": "ranking_35",
+      "passed": true
+    },
+    {
+      "name": "contiguous_36",
+      "passed": true
+    },
+    {
+      "name": "ranking_36",
+      "passed": true
+    },
+    {
+      "name": "contiguous_37",
+      "passed": true
+    },
+    {
+      "name": "ranking_37",
+      "passed": true
+    },
+    {
+      "name": "contiguous_38",
+      "passed": true
+    },
+    {
+      "name": "ranking_38",
+      "passed": true
+    },
+    {
+      "name": "contiguous_39",
+      "passed": true
+    },
+    {
+      "name": "ranking_39",
+      "passed": true
+    },
+    {
+      "name": "contiguous_40",
+      "passed": true
+    },
+    {
+      "name": "ranking_40",
+      "passed": true
+    },
+    {
+      "name": "contiguous_41",
+      "passed": true
+    },
+    {
+      "name": "ranking_41",
+      "passed": true
+    },
+    {
+      "name": "contiguous_42",
+      "passed": true
+    },
+    {
+      "name": "ranking_42",
+      "passed": true
+    },
+    {
+      "name": "contiguous_43",
+      "passed": true
+    },
+    {
+      "name": "ranking_43",
+      "passed": true
+    },
+    {
+      "name": "contiguous_44",
+      "passed": true
+    },
+    {
+      "name": "ranking_44",
+      "passed": true
+    },
+    {
+      "name": "contiguous_45",
+      "passed": true
+    },
+    {
+      "name": "ranking_45",
+      "passed": true
+    },
+    {
+      "name": "contiguous_46",
+      "passed": true
+    },
+    {
+      "name": "ranking_46",
+      "passed": true
+    },
+    {
+      "name": "contiguous_47",
+      "passed": true
+    },
+    {
+      "name": "ranking_47",
+      "passed": true
+    },
+    {
+      "name": "contiguous_48",
+      "passed": true
+    },
+    {
+      "name": "ranking_48",
+      "passed": true
+    },
+    {
+      "name": "contiguous_49",
+      "passed": true
+    },
+    {
+      "name": "ranking_49",
+      "passed": true
+    },
+    {
+      "name": "contiguous_50",
+      "passed": true
+    },
+    {
+      "name": "ranking_50",
+      "passed": true
+    },
+    {
+      "name": "contiguous_51",
+      "passed": true
+    },
+    {
+      "name": "ranking_51",
+      "passed": true
+    },
+    {
+      "name": "contiguous_52",
+      "passed": true
+    },
+    {
+      "name": "ranking_52",
+      "passed": true
+    },
+    {
+      "name": "contiguous_53",
+      "passed": true
+    },
+    {
+      "name": "ranking_53",
+      "passed": true
+    },
+    {
+      "name": "contiguous_54",
+      "passed": true
+    },
+    {
+      "name": "ranking_54",
+      "passed": true
+    },
+    {
+      "name": "contiguous_55",
+      "passed": true
+    },
+    {
+      "name": "ranking_55",
+      "passed": true
+    },
+    {
+      "name": "contiguous_56",
+      "passed": true
+    },
+    {
+      "name": "ranking_56",
+      "passed": true
+    },
+    {
+      "name": "contiguous_57",
+      "passed": true
+    },
+    {
+      "name": "ranking_57",
+      "passed": true
+    },
+    {
+      "name": "contiguous_58",
+      "passed": true
+    },
+    {
+      "name": "ranking_58",
+      "passed": true
+    },
+    {
+      "name": "contiguous_59",
+      "passed": true
+    },
+    {
+      "name": "ranking_59",
+      "passed": true
+    },
+    {
+      "name": "contiguous_60",
+      "passed": true
+    },
+    {
+      "name": "ranking_60",
+      "passed": true
+    },
+    {
+      "name": "contiguous_61",
+      "passed": true
+    },
+    {
+      "name": "ranking_61",
+      "passed": true
+    },
+    {
+      "name": "contiguous_62",
+      "passed": true
+    },
+    {
+      "name": "ranking_62",
+      "passed": true
+    },
+    {
+      "name": "contiguous_63",
+      "passed": true
+    },
+    {
+      "name": "ranking_63",
+      "passed": true
+    },
+    {
+      "name": "contiguous_64",
+      "passed": true
+    },
+    {
+      "name": "ranking_64",
+      "passed": true
+    }
+  ],
+  "scope": "Python interpretation only; native compilation/tests and successor process replay pending"
+}

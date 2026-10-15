@@ -1,0 +1,208 @@
+{
+  "review": "docs/phase7-review-measurement-opus-r10.md",
+  "task_id": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-tooling-source-review-r10",
+  "root_read": "full report",
+  "scope": "R8 reducer, option binding, budget, causal tests and labels; inherited observer/provenance only inspected ranges; decision protocol separate",
+  "root_verification": "Read retained completed execution.json; 13 successful pure/mock tests, six mutant outcomes, six source hashes match supplied and before/after maps equal. No rerun. Shell exit code remains unknown after harness EDQUOT. M5 killed through fixture error, not assertion.",
+  "closed": [
+    "R8-M2",
+    "R8-L1"
+  ],
+  "remaining": {
+    "R10-L1": "Low pool-chunk labels: authorized exactly three summaries calls plus meaningful per-route pure regressions; implementation active",
+    "R8-M1": "Decision protocol R2 in preparation; fresh review required",
+    "R10-I2": "Retain actual pool default 2000 draws; declare all program campaigns/chunks 2000, no claimed inheritance of arbitrary chunk draw count"
+  },
+  "implementation_task_id": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-collector-r10-chunk-label-fix",
+  "admission": "No phase acceptance, measurement result or quiet authorization; final binding, actual preflight/feasibility/pilot/profiler interoperability pending",
+  "artifacts": {
+    "docs/phase7-review-measurement-opus-r10.md": {
+      "sha256": "1fcde721aff3571a5b0770075566ee23c7e9f3555ea2d9d12e8f324ad4ea4bed",
+      "bytes": 22878
+    },
+    "/home/ajs/.cache/pb-phase7/review-measurement-opus-r10/evidence.json": {
+      "sha256": "f0e0a85b266fc1f0a37a54660c556a938aed083b5039d1ca16434e57732a5977",
+      "bytes": 3612
+    },
+    "/home/ajs/.cache/pb-phase7/review-measurement-opus-r10/execution.json": {
+      "sha256": "7d4ed9854015ffda8c6b55d5e4f39f96dc1b41561417731084387207d6eeb69a",
+      "bytes": 14905
+    },
+    "/home/ajs/.cache/pb-phase7/review-measurement-opus-r10/probe.log": {
+      "sha256": "8b6b12dd7b3a338c9b808de47f13cc2745905ce4825c6486b9bb6495f6acd355",
+      "bytes": 1584
+    },
+    "/home/ajs/.cache/pb-phase7/review-measurement-opus-r10/probe.py": {
+      "sha256": "22c272895f9cc8cd048d7f66f926cd58e02c0a26aa0e7c2f4d95075ce29eab09",
+      "bytes": 8631
+    }
+  },
+  "execution": {
+    "scope": "pure/mock only; no native/CLI/helper/probe/compiler/build/profiler/timing/common lock",
+    "source_before": {
+      "harness/phase7_bench.py": {
+        "size_bytes": 190969,
+        "sha256": "b59cf46e346bfa94cba2cdc08040e1335a218713794051e73c321dd6d97c6b3c"
+      },
+      "harness/test_phase7_bench.py": {
+        "size_bytes": 167954,
+        "sha256": "66520ee052e810e8d58f64f25855d7b884b6e5cf1745b4227fa22d577ab2e00f"
+      },
+      "harness/phase7_profile.py": {
+        "size_bytes": 43899,
+        "sha256": "cd064da4a3f192a64c9e015a12d2ec5cbc6b305b3ca992d95f3641d83e5b2385"
+      },
+      "harness/test_phase7_profile.py": {
+        "size_bytes": 37130,
+        "sha256": "75bb14229f18b212cd234e9d2d4af5ad8cef3eb290f2c483d45e6e1c2e6443dd"
+      },
+      "harness/phase7.py": {
+        "size_bytes": 90070,
+        "sha256": "dc7574f058b9ff6ae7b77a912847fdbe02d8b68baab8728237d6ef040e6a44fa"
+      },
+      "harness/phase7_spawn.c": {
+        "size_bytes": 9383,
+        "sha256": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4"
+      }
+    },
+    "hash_matches_supplied": {
+      "harness/phase7_bench.py": true,
+      "harness/test_phase7_bench.py": true,
+      "harness/phase7_profile.py": true,
+      "harness/test_phase7_profile.py": true,
+      "harness/phase7.py": true,
+      "harness/phase7_spawn.c": true
+    },
+    "baseline": {
+      "tests": 13,
+      "successful": true,
+      "failures": [],
+      "errors": [],
+      "seconds": 88.622,
+      "log_tail": "rehashes_control_streams_at_end_after_initial_validation (test_phase7_bench.PoolTests.test_pool_rehashes_control_streams_at_end_after_initial_validation) ... ok\ntest_pool_rejects_omitted_duplicate_seed_identity_raw_and_control_failures (test_phase7_bench.PoolTests.test_pool_rejects_omitted_duplicate_seed_identity_raw_and_control_failures) ... ok\ntest_pool_rejects_stale_missing_reused_mismatched_authorizations (test_phase7_bench.PoolTests.test_pool_rejects_stale_missing_reused_mismatched_authorizations) ... ok\ntest_pool_single_fresh_full_feasibility_all_nine_chunks_and_live_last_chunk (test_phase7_bench.PoolTests.test_pool_single_fresh_full_feasibility_all_nine_chunks_and_live_last_chunk) ... ok\ntest_pool_spec_needs_full_preflight_fit_with_unchanged_reserves (test_phase7_bench.PoolTests.test_pool_spec_needs_full_preflight_fit_with_unchanged_reserves) ... ok\ntest_descriptive_crossing_inconclusive_eligible_and_unknown_no_zero (test_phase7_bench.R7Tests.test_descriptive_crossing_inconclusive_eligible_and_unknown_no_zero) ... ok\ntest_latency_no_false_pass_and_independent_threshold_arms_kill_mutants (test_phase7_bench.R7Tests.test_latency_no_false_pass_and_independent_threshold_arms_kill_mutants) ... ok\ntest_summary_crossing_contexts_retain_flag_without_false_candidate_labels (test_phase7_bench.R7Tests.test_summary_crossing_contexts_retain_flag_without_false_candidate_labels) ... ok\n\n----------------------------------------------------------------------\nRan 13 tests in 88.622s\n\nOK\n"
+    },
+    "mutants": {
+      "M1_feasibility_every_chunk": {
+        "tests": 1,
+        "successful": false,
+        "failures": [
+          "test_phase7_bench.PoolTests.test_pool_single_fresh_full_feasibility_all_nine_chunks_and_live_last_chunk"
+        ],
+        "errors": [],
+        "seconds": 11.144,
+        "log_tail": "test_pool_single_fresh_full_feasibility_all_nine_chunks_and_live_last_chunk (test_phase7_bench.PoolTests.test_pool_single_fresh_full_feasibility_all_nine_chunks_and_live_last_chunk) ... FAIL\n\n======================================================================\nFAIL: test_pool_single_fresh_full_feasibility_all_nine_chunks_and_live_last_chunk (test_phase7_bench.PoolTests.test_pool_single_fresh_full_feasibility_all_nine_chunks_and_live_last_chunk)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7_bench.py\", line 1343, in test_pool_single_fresh_full_feasibility_all_nine_chunks_and_live_last_chunk\n    self.assertEqual(fresh.call_count,1)\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^\nAssertionError: 9 != 1\n\n----------------------------------------------------------------------\nRan 1 test in 11.143s\n\nFAILED (failures=1)\n",
+        "killed": true
+      },
+      "M2_drop_common_options_binding": {
+        "tests": 1,
+        "successful": false,
+        "failures": [
+          "test_phase7_bench.PoolTests.test_pool_late_options_mutation_rejected_without_second_expensive_validation (option='budget_seconds')",
+          "test_phase7_bench.PoolTests.test_pool_late_options_mutation_rejected_without_second_expensive_validation (option='bootstrap_draws')",
+          "test_phase7_bench.PoolTests.test_pool_late_options_mutation_rejected_without_second_expensive_validation (option='network_delay_ms')",
+          "test_phase7_bench.PoolTests.test_pool_late_options_mutation_rejected_without_second_expensive_validation (option='preflight_report')"
+        ],
+        "errors": [],
+        "seconds": 11.718,
+        "log_tail": "==\nFAIL: test_pool_late_options_mutation_rejected_without_second_expensive_validation (test_phase7_bench.PoolTests.test_pool_late_options_mutation_rejected_without_second_expensive_validation) (option='network_delay_ms')\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7_bench.py\", line 1392, in test_pool_late_options_mutation_rejected_without_second_expensive_validation\n    self.assertFalse(result['valid']);self.assertIsNone(result['summary'])\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\nAssertionError: True is not false\n\n======================================================================\nFAIL: test_pool_late_options_mutation_rejected_without_second_expensive_validation (test_phase7_bench.PoolTests.test_pool_late_options_mutation_rejected_without_second_expensive_validation) (option='preflight_report')\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7_bench.py\", line 1392, in test_pool_late_options_mutation_rejected_without_second_expensive_validation\n    self.assertFalse(result['valid']);self.assertIsNone(result['summary'])\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\nAssertionError: True is not false\n\n----------------------------------------------------------------------\nRan 1 test in 11.718s\n\nFAILED (failures=4)\n",
+        "killed": true
+      },
+      "M3_exclude_budget_from_common_options": {
+        "tests": 1,
+        "successful": false,
+        "failures": [
+          "test_phase7_bench.PoolTests.test_pool_late_options_mutation_rejected_without_second_expensive_validation (option='budget_seconds')"
+        ],
+        "errors": [],
+        "seconds": 9.475,
+        "log_tail": "test_pool_late_options_mutation_rejected_without_second_expensive_validation (test_phase7_bench.PoolTests.test_pool_late_options_mutation_rejected_without_second_expensive_validation) ... \n  test_pool_late_options_mutation_rejected_without_second_expensive_validation (test_phase7_bench.PoolTests.test_pool_late_options_mutation_rejected_without_second_expensive_validation) (option='budget_seconds') ... FAIL\n\n======================================================================\nFAIL: test_pool_late_options_mutation_rejected_without_second_expensive_validation (test_phase7_bench.PoolTests.test_pool_late_options_mutation_rejected_without_second_expensive_validation) (option='budget_seconds')\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7_bench.py\", line 1392, in test_pool_late_options_mutation_rejected_without_second_expensive_validation\n    self.assertFalse(result['valid']);self.assertIsNone(result['summary'])\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\nAssertionError: True is not false\n\n----------------------------------------------------------------------\nRan 1 test in 9.474s\n\nFAILED (failures=1)\n",
+        "killed": true
+      },
+      "M4_budget_upper_bound_removed": {
+        "tests": 1,
+        "successful": false,
+        "failures": [
+          "test_phase7_bench.PoolTests.test_pool_budget_validated_before_any_evidence_read_and_failure_retained"
+        ],
+        "errors": [],
+        "seconds": 0.002,
+        "log_tail": "test_pool_budget_validated_before_any_evidence_read_and_failure_retained (test_phase7_bench.PoolTests.test_pool_budget_validated_before_any_evidence_read_and_failure_retained) ... FAIL\n\n======================================================================\nFAIL: test_pool_budget_validated_before_any_evidence_read_and_failure_retained (test_phase7_bench.PoolTests.test_pool_budget_validated_before_any_evidence_read_and_failure_retained)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7_bench.py\", line 1405, in test_pool_budget_validated_before_any_evidence_read_and_failure_retained\n    self.assertIn('finite non-bool',result['errors'][0]);self.assertIsNotNone(result['elapsed_seconds'])\n    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 'finite non-bool' not found in \"AssertionError('must reject before read')\"\n\n----------------------------------------------------------------------\nRan 1 test in 0.002s\n\nFAILED (failures=1)\n",
+        "killed": true
+      },
+      "M5_feasibility_uses_min_cap": {
+        "tests": 1,
+        "successful": false,
+        "failures": [],
+        "errors": [
+          "test_phase7_bench.PoolTests.test_pool_single_fresh_full_feasibility_all_nine_chunks_and_live_last_chunk"
+        ],
+        "seconds": 0.003,
+        "log_tail": "ne_chunks_and_live_last_chunk (test_phase7_bench.PoolTests.test_pool_single_fresh_full_feasibility_all_nine_chunks_and_live_last_chunk)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7_bench.py\", line 1336, in test_pool_single_fresh_full_feasibility_all_nine_chunks_and_live_last_chunk\n    root=Path(folder);spec,paths,source=self.fixture(root,floor_sessions=3)\n                                        ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7_bench.py\", line 1257, in fixture\n    spec=bench.pool_definition(opt)\n  File \"/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_bench.py\", line 2085, in pool_definition\n    allocation = require_pool_feasibility(options)\n  File \"<r10-mutant-require_pool_feasibility>\", line 8, in require_pool_feasibility\n  File \"/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_bench.py\", line 2774, in campaign_feasibility\n    definition = plan(options)\n  File \"/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase7_bench.py\", line 1434, in plan\n    raise ValueError(f'planned {count} sessions exceeds finite cap {options.max_sessions}')\nValueError: planned 20 sessions exceeds finite cap 18\n\n----------------------------------------------------------------------\nRan 1 test in 0.003s\n\nFAILED (errors=1)\n",
+        "killed": true
+      },
+      "M6_guard_after_first_read": {
+        "tests": 1,
+        "successful": false,
+        "failures": [
+          "test_phase7_bench.PoolTests.test_pool_budget_validated_before_any_evidence_read_and_failure_retained"
+        ],
+        "errors": [],
+        "seconds": 0.003,
+        "log_tail": "test_pool_budget_validated_before_any_evidence_read_and_failure_retained (test_phase7_bench.PoolTests.test_pool_budget_validated_before_any_evidence_read_and_failure_retained) ... FAIL\n\n======================================================================\nFAIL: test_pool_budget_validated_before_any_evidence_read_and_failure_retained (test_phase7_bench.PoolTests.test_pool_budget_validated_before_any_evidence_read_and_failure_retained)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7_bench.py\", line 1421, in test_pool_budget_validated_before_any_evidence_read_and_failure_retained\n    guard.assert_called_once_with(1)\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"/usr/lib/python3.14/unittest/mock.py\", line 997, in assert_called_once_with\n    raise AssertionError(msg)\nAssertionError: Expected 'FunctionalGuard' to be called once. Called 0 times.\n\n----------------------------------------------------------------------\nRan 1 test in 0.003s\n\nFAILED (failures=1)\n",
+        "killed": true
+      }
+    },
+    "chunk_label_probe": {
+      "synthetic_values_only": true,
+      "chunk_options": {
+        "pool_id": "probe-pool",
+        "pool_chunk": 2,
+        "sessions": 3
+      },
+      "as_called_by_run_and_interpret": {
+        "context": "primary_first_expected_potential_regression",
+        "material_potential_regression": true,
+        "descriptive_crossing_requires_confirmation": true,
+        "latency_trigger_eligible": false,
+        "accepted_trigger": false,
+        "budget_pass": null,
+        "required_action": "fresh-seed confirmation AND investigation; cannot dismiss as observer artifact without further control"
+      },
+      "with_pooled_true": {
+        "context": "descriptive_pooled_latency",
+        "material_potential_regression": null,
+        "required_action": "descriptive investigate note outside primary first-expected trigger family; no candidate-regression decision"
+      },
+      "run_campaign_calls_summaries_without_pooled": true,
+      "interpret_calls_summaries_without_pooled": true
+    },
+    "pool_summary_bootstrap_source": true,
+    "source_after": {
+      "harness/phase7_bench.py": {
+        "size_bytes": 190969,
+        "sha256": "b59cf46e346bfa94cba2cdc08040e1335a218713794051e73c321dd6d97c6b3c"
+      },
+      "harness/test_phase7_bench.py": {
+        "size_bytes": 167954,
+        "sha256": "66520ee052e810e8d58f64f25855d7b884b6e5cf1745b4227fa22d577ab2e00f"
+      },
+      "harness/phase7_profile.py": {
+        "size_bytes": 43899,
+        "sha256": "cd064da4a3f192a64c9e015a12d2ec5cbc6b305b3ca992d95f3641d83e5b2385"
+      },
+      "harness/test_phase7_profile.py": {
+        "size_bytes": 37130,
+        "sha256": "75bb14229f18b212cd234e9d2d4af5ad8cef3eb290f2c483d45e6e1c2e6443dd"
+      },
+      "harness/phase7.py": {
+        "size_bytes": 90070,
+        "sha256": "dc7574f058b9ff6ae7b77a912847fdbe02d8b68baab8728237d6ef040e6a44fa"
+      },
+      "harness/phase7_spawn.c": {
+        "size_bytes": 9383,
+        "sha256": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4"
+      }
+    },
+    "source_unchanged": true
+  }
+}

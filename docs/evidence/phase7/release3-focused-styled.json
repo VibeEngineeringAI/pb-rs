@@ -1,0 +1,179 @@
+{
+  "kind": "three focused actual-process styled Go/release3 controls; no performance claim",
+  "comparisons": [
+    {
+      "case": "builder",
+      "oracle_record": "/home/ajs/.cache/pb-phase7/styled-release3-focused/builder-go-1791985772497948847",
+      "oracle_passed": true,
+      "normalization": "only digits in the exact ephemeral fixture URL, preserving styles/layout",
+      "chunk_limit": "sidebar C1 can split pyte draw calls; actual-read-only differences require scoped review",
+      "candidate_record": "/home/ajs/.cache/pb-phase7/styled-release3-focused/builder-candidate-1791985773047278281",
+      "candidate_passed": true,
+      "comparisons": [
+        {
+          "mode": "actual_reads",
+          "equal": true,
+          "cell_difference_count": 0,
+          "cell_differences": [],
+          "go_cursor": {
+            "x": 0,
+            "y": 29,
+            "visible": false,
+            "shape": 0
+          },
+          "candidate_cursor": {
+            "x": 0,
+            "y": 29,
+            "visible": false,
+            "shape": 0
+          }
+        },
+        {
+          "mode": "one_chunk",
+          "equal": true,
+          "cell_difference_count": 0,
+          "cell_differences": [],
+          "go_cursor": {
+            "x": 0,
+            "y": 29,
+            "visible": false,
+            "shape": 0
+          },
+          "candidate_cursor": {
+            "x": 0,
+            "y": 29,
+            "visible": false,
+            "shape": 0
+          }
+        }
+      ],
+      "passed": true
+    },
+    {
+      "case": "saved",
+      "oracle_record": "/home/ajs/.cache/pb-phase7/styled-release3-focused/saved-go-1791985773782179599",
+      "oracle_passed": true,
+      "normalization": "only digits in the exact ephemeral fixture URL, preserving styles/layout",
+      "chunk_limit": "sidebar C1 can split pyte draw calls; actual-read-only differences require scoped review",
+      "candidate_record": "/home/ajs/.cache/pb-phase7/styled-release3-focused/saved-candidate-1791985774326358977",
+      "candidate_passed": true,
+      "comparisons": [
+        {
+          "mode": "actual_reads",
+          "equal": true,
+          "cell_difference_count": 0,
+          "cell_differences": [],
+          "go_cursor": {
+            "x": 0,
+            "y": 19,
+            "visible": false,
+            "shape": 0
+          },
+          "candidate_cursor": {
+            "x": 0,
+            "y": 19,
+            "visible": false,
+            "shape": 0
+          }
+        },
+        {
+          "mode": "one_chunk",
+          "equal": true,
+          "cell_difference_count": 0,
+          "cell_differences": [],
+          "go_cursor": {
+            "x": 0,
+            "y": 19,
+            "visible": false,
+            "shape": 0
+          },
+          "candidate_cursor": {
+            "x": 0,
+            "y": 19,
+            "visible": false,
+            "shape": 0
+          }
+        }
+      ],
+      "passed": true
+    },
+    {
+      "case": "sidebar",
+      "oracle_record": "/home/ajs/.cache/pb-phase7/styled-release3-focused/sidebar-go-1791985770839264392",
+      "oracle_passed": true,
+      "normalization": "only digits in the exact ephemeral fixture URL, preserving styles/layout",
+      "chunk_limit": "sidebar C1 can split pyte draw calls; actual-read-only differences require scoped review",
+      "candidate_record": "/home/ajs/.cache/pb-phase7/styled-release3-focused/sidebar-candidate-1791985771613757560",
+      "candidate_passed": true,
+      "comparisons": [
+        {
+          "mode": "actual_reads",
+          "equal": true,
+          "cell_difference_count": 0,
+          "cell_differences": [],
+          "go_cursor": {
+            "x": 0,
+            "y": 34,
+            "visible": true,
+            "shape": 0
+          },
+          "candidate_cursor": {
+            "x": 0,
+            "y": 34,
+            "visible": true,
+            "shape": 0
+          }
+        },
+        {
+          "mode": "one_chunk",
+          "equal": true,
+          "cell_difference_count": 0,
+          "cell_differences": [],
+          "go_cursor": {
+            "x": 0,
+            "y": 34,
+            "visible": true,
+            "shape": 0
+          },
+          "candidate_cursor": {
+            "x": 0,
+            "y": 34,
+            "visible": true,
+            "shape": 0
+          }
+        }
+      ],
+      "passed": true
+    }
+  ],
+  "artifacts": {
+    "/home/ajs/.cache/pb-phase7/styled-release3-focused/builder-candidate-1791985773047278281.frames.json": "f631cfec6db32789d23db2449a056ad4ea5feab2a9b7885ec65dd595b83fa8dc",
+    "/home/ajs/.cache/pb-phase7/styled-release3-focused/builder-candidate-1791985773047278281.json": "303e7223c2177053211f55dede86ee440a944b43e137e31f16f444e2d73dcb1f",
+    "/home/ajs/.cache/pb-phase7/styled-release3-focused/builder-candidate-1791985773047278281.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/ajs/.cache/pb-phase7/styled-release3-focused/builder-candidate-1791985773047278281.stdout": "7dd54c11a4568c3ef1d6f716fb4fb833e6a2ccee65d0a29f0630d073990c9ec6",
+    "/home/ajs/.cache/pb-phase7/styled-release3-focused/builder-comparison-1791985773600954561.json": "e6eb4cd1ffa9a391e4032e3d6388dfe97ec5c754e2e2c0787971fe6096148222",
+    "/home/ajs/.cache/pb-phase7/styled-release3-focused/builder-go-1791985772497948847.frames.json": "7f84d6a5d94863cdfe54ea6e2615febf68cacf0992007ab52a552361c00a0fa5",
+    "/home/ajs/.cache/pb-phase7/styled-release3-focused/builder-go-1791985772497948847.json": "6f3a00c051bbcafc4027a1ba25c018fae74075edbadf67c01fe1a35993e43604",
+    "/home/ajs/.cache/pb-phase7/styled-release3-focused/builder-go-1791985772497948847.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/ajs/.cache/pb-phase7/styled-release3-focused/builder-go-1791985772497948847.stdout": "f6c3e6c7404d84174700ca5b15e78e881b2fa76e008dcb7042daa09f57eee3f5",
+    "/home/ajs/.cache/pb-phase7/styled-release3-focused/saved-candidate-1791985774326358977.frames.json": "14d301c22701a4ad2e10a7cd35dcc42d9a9a87b0e4be6c3afd174aa5c89ae7be",
+    "/home/ajs/.cache/pb-phase7/styled-release3-focused/saved-candidate-1791985774326358977.json": "f2b910f1ac388ca9c84bb398dc2248b22c0d0cec650ef5210d27de947d4151cb",
+    "/home/ajs/.cache/pb-phase7/styled-release3-focused/saved-candidate-1791985774326358977.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/ajs/.cache/pb-phase7/styled-release3-focused/saved-candidate-1791985774326358977.stdout": "6b151c3d1d245add86df930188525385fa3e190ef4c54046fa2083ec319c0a22",
+    "/home/ajs/.cache/pb-phase7/styled-release3-focused/saved-comparison-1791985774836061876.json": "ec1bfd64f23a715650e112ba1badf5d144d2207e9af2688aca47d9679e8d376f",
+    "/home/ajs/.cache/pb-phase7/styled-release3-focused/saved-go-1791985773782179599.frames.json": "14d301c22701a4ad2e10a7cd35dcc42d9a9a87b0e4be6c3afd174aa5c89ae7be",
+    "/home/ajs/.cache/pb-phase7/styled-release3-focused/saved-go-1791985773782179599.json": "788506c450fc4a06377ebd7043395d16d6893222a244d13f917fa7a50011da51",
+    "/home/ajs/.cache/pb-phase7/styled-release3-focused/saved-go-1791985773782179599.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/ajs/.cache/pb-phase7/styled-release3-focused/saved-go-1791985773782179599.stdout": "5f913a8f0fd565fa2df2ad4c80594e6c9b3a4853feff9af51439ebb77790b645",
+    "/home/ajs/.cache/pb-phase7/styled-release3-focused/sidebar-candidate-1791985771613757560.frames.json": "f6e80916c1d870a7877ca2a18bef24328b6d7ed407b782091db0219eab7e8807",
+    "/home/ajs/.cache/pb-phase7/styled-release3-focused/sidebar-candidate-1791985771613757560.json": "51118743f6e5bb3af36982ab90f0a398b7be718c06812e0871c172149bcc23d7",
+    "/home/ajs/.cache/pb-phase7/styled-release3-focused/sidebar-candidate-1791985771613757560.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/ajs/.cache/pb-phase7/styled-release3-focused/sidebar-candidate-1791985771613757560.stdout": "abdbf0884f6e95091cb444635b8106a852eab1ee4c59e24a680c3bca698f581a",
+    "/home/ajs/.cache/pb-phase7/styled-release3-focused/sidebar-comparison-1791985772275647153.json": "b5c5cf023d512854d8586429b9a57270ea7b0f24ffa91db031d50221d1668704",
+    "/home/ajs/.cache/pb-phase7/styled-release3-focused/sidebar-go-1791985770839264392.frames.json": "f6e80916c1d870a7877ca2a18bef24328b6d7ed407b782091db0219eab7e8807",
+    "/home/ajs/.cache/pb-phase7/styled-release3-focused/sidebar-go-1791985770839264392.json": "2a4f733f7b72e72988aa9987e89a85ad058f64beff1b9110da6dcf8910d528b4",
+    "/home/ajs/.cache/pb-phase7/styled-release3-focused/sidebar-go-1791985770839264392.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/ajs/.cache/pb-phase7/styled-release3-focused/sidebar-go-1791985770839264392.stdout": "6b3e7207900425d47cd48e79928f673f9f24b08892d44fda28af9d6a73e15461"
+  },
+  "candidate_sha256": "aceb58bd412e8fbf34f603d247c68e87e69897356cefd5aad19ab6a92484db28"
+}

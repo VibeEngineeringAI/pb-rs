@@ -1,0 +1,47 @@
+{
+  "review": "docs/phase7-review-measurement-opus-r6.md",
+  "review_sha256": "3ca9d31c1efa0f319facd0a6b76b1217ac4b63b3f11096ba2058159fd78f9ba3",
+  "review_scope": "Source-only after one EDQUOT shell attempt; no reviewer tests or hashes. Exact read/unread/inherited scope in report. Root79bench+24profile execution remains separate.",
+  "review_task": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-tooling-final-review-r6",
+  "implementation_task": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-collector-opus-r6-corrections",
+  "status": "corrections assigned, not yet implemented or validated",
+  "R5": "All four R5 findings and retained preflight end-binding objection resolved at source per independent R6; original records preserved.",
+  "decisions": {
+    "R6-M1": "Retain matched-delta screen plus absolute max role-median total replay work <=1ms; equal role median evaluation counts; report both. No universal observer-bias bound because omitted loop/syscall costs remain unknown. Positive and negative5+30 tests required.",
+    "R6-M2": "One forward prefix traversal per session with independently cloned exact parser/UTF8/SGR/alternate/resize state. Stream sessions, per-session progress, declared bounded interpret budget, diagnostic work/feasibility evidence before booking. Source complexity objection accepted; actual timing magnitude remains unknown.",
+    "R6-L1": "Report median evaluation counts and require equal medians for eligibility; retain other-loop overhead unknown.",
+    "R6-L2": "Add60s issuance/launch allowance without reducing existing reserves; actual admission checks remaining approval lifetime covers conservative allocation.",
+    "R6-L3": "Do not retain evaluation histories for never-replayed idle/anchor checkpoints; no shared helper change.",
+    "R6-L4": "Heavy offline modes acquire nonblocking FunctionalOwnership; coordination remains required.",
+    "R6-L5": "NO COMMIT declared through whole measurement program; HEAD remains bound. No merge/main/release.",
+    "R6-L6": "Exact mutation error and causal disabled-check mutant; synthetic5+30 positive/threshold/AA/attribution/stamping controls.",
+    "I1": "Bind validated preflight identity to snapshot; avoid silent second-read rebinding.",
+    "I2": "Ordinary non-atomic raw path TOCTOU remains disclosed.",
+    "I3": "Parent records diagnostic output hash immediately at completion before interpret.",
+    "I4": "Attribution/pool diagnostics optional and descriptive; no mandatory52 ineligible diagnostic windows.",
+    "I5": "Remove stale live-sounding unimplemented contract claim; preserve historical evidence."
+  },
+  "limits": [
+    "No production/helper/C changes authorized.",
+    "No actual Phase7 functional preflight, timing, diagnostic or profiler campaign yet.",
+    "Long-idle pool latency remains descriptive.",
+    "No phase or performance acceptance."
+  ],
+  "replay_design": {
+    "streaming": "At most2 raw captures for required pair comparison; one role/session for replay; forward raw/resize cursor, fresh clones at phase starts.",
+    "clone": "Fresh Terminal and streams; deep-copy screen state; preserve codec state/pending ANSI/SGR/buffers/cursor/modes/history/queries. Nonground pyte parser state explicitly non-interpretable, not silently reset.",
+    "feasibility": "CLI preflight wall and structural counts do not measure decoder throughput. Actual bounded first-pair decoder calibration required before a fit claim; retain wall/work counts and finite guard. Insufficient/unknown remaining allocation means incomplete diagnostics with preserved raw evidence, no valid-subset interpretation.",
+    "status": "design approved, implementation pending"
+  },
+  "pilot_contract": {
+    "status": "approved design; not implemented/validated or executed",
+    "structural_plan": "Full matching preflight-bound exact work counts; calibrated wall/fit unknown; no CLI wall decoder proxy.",
+    "pilot": "First actual measured pair, both roles, completely replayed within own separately approved <=3600s diagnostic guard. Original complete-campaign validation consumes same guard.",
+    "estimate": "3x maximum observed whole-session pilot wall multiplied by max(1, remaining/pilot work-dimension ratios), plus8s/remaining-role cleanup,30+5*pairs serialization/finalization and60s issuance/launch allowance. Observed scheduling extrapolation, not guaranteed rate or bias bound.",
+    "dimensions": "Raw/prefix/feed bytes; evaluations/phases/clones; checkpoint geometry/cell volume; diagnostic serialization volume. Any positive remaining dimension without positive known pilot basis rejects extrapolation.",
+    "gate": "Recheck both remaining finite guard budget and approval lifetime before each remaining session; insufficient/unknown fit yields retained diagnostic-incomplete and no eligible interpretation or valid subset.",
+    "recording": "Complete per-session pilot wall includes reconstruction/cloning/replay/validation/progress; final actual diagnostic wall/budget retained.",
+    "matrix": "24 nonlong primary potentially eligible diagnostic windows;52 attribution/pool optional descriptive windows.",
+    "actual_pilot_run": false
+  }
+}

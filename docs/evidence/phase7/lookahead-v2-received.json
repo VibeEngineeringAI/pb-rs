@@ -1,0 +1,25 @@
+{
+  "status": "3 lookahead v2 hashes verified; not applied or independently executed here",
+  "files": {
+    "/home/ajs/.cache/pb-phase6/lookahead-deadline-proposal-v2/proposal.patch": "68d5baa1bf38bdf7f59a7e5f05979f62d870f762b062cccafb623ec0ea1aa140",
+    "/home/ajs/.cache/pb-phase6/lookahead-deadline-proposal-v2/phase3.proposed.py": "03ede18edfddbfabc0f65eaee940acf852cbb40db01f28da1d26294f0588fb8e",
+    "/home/ajs/.cache/pb-phase6/lookahead-deadline-proposal-v2/test_phase3.proposed.py": "48b6a8e9cd1389108de2256ee3b38e0ac90e163f2fe90fbec67ca94285ed547e"
+  },
+  "base_identities": {
+    "harness/phase3.py": {
+      "phase6_base": "7f8deaf00185b94cd5934fbe6542e0393ded5f25aadd918012bd2f072d222f9d",
+      "phase7_base": "39d16e2ba220aad27ec0e67646e04aacbcdd9a9c28d3013f3f04ddefec789099"
+    },
+    "harness/test_phase3.py": {
+      "phase6_base": "f11f07cd571fe9d8b3c364c20a93aaf6cbd81b999dc077b2126374c5488deb59",
+      "phase7_base": "0bea853fcedcf6dd2724d057d88813440454183a64f643c944321c624f414e95"
+    }
+  },
+  "base_diffs": {
+    "harness/phase3.py": "--- phase6/harness/phase3.py\n+++ phase7/harness/phase3.py\n@@ -2685,6 +2685,15 @@\n # Candidate-only deferred boundaries: interactive mode. Saving is phase four.\n \n def deferred_boundaries():\n+    \"\"\"Interactive workflows graduated to the phase-seven PTY/effect gate.\n+\n+    Retain historical definitions below for old evidence readers, never select\n+    coverage by inspecting the candidate binary. Ordinary cases are unchanged.\n+    \"\"\"\n+    return []\n+\n+\n+def historical_deferred_boundaries():\n     \"\"\"No Go parity claim: an explicit unimplemented error before any request or HOME change.\"\"\"\n     checks = []\n     for label, argv, structured in (\n@@ -2983,7 +2992,7 @@\n     elif report[\"partial\"]:\n         report[\"boundaries_status\"] = \"not run (case/group filter)\"\n     else:\n-        report[\"boundaries_status\"] = \"run\"\n+        report[\"boundaries_status\"] = \"promoted to phase7 PTY/effect gate\"\n         for check in deferred_boundaries():\n             actual = sample(binaries[\"candidate\"][\"path\"], check, out / \"boundaries\" / check[\"name\"], args.timeout, meter)\n             issues = boundary_issues(check, actual)\n",
+    "harness/test_phase3.py": "--- phase6/harness/test_phase3.py\n+++ phase7/harness/test_phase3.py\n@@ -143,7 +143,8 @@\n         self.assertIn(\"p3-text-empty-array-then-fault\", cases)\n \n     def test_boundaries_and_scope(self):\n-        checks = phase3.deferred_boundaries()\n+        self.assertEqual([], phase3.deferred_boundaries())\n+        checks = phase3.historical_deferred_boundaries()\n         argv = [\" \".join(c[\"argv\"]) for c in checks]\n         self.assertTrue(any(\"-i\" in a.split() for a in argv))\n         self.assertTrue(any(\"--save-as\" in a and \"json\" in a for a in argv))\n@@ -318,7 +319,7 @@\n         self.assertTrue(any(\"stub\" in i for i in phase3.differences(by_name()[\"p3-text-empty\"], fake_result(), stub)))\n \n     def test_boundary_check_rejects_go_like_behavior(self):\n-        check = phase3.deferred_boundaries()[0]\n+        check = phase3.historical_deferred_boundaries()[0]\n         go_like = {**fake_result(stdout=b\"rows\\n\"), \"trace\": [{\"method\": \"POST\"}], \"requests\": [{\"method\": \"POST\", \"target\": \"/x\"}]}\n         issues = phase3.boundary_issues(check, go_like)\n         self.assertTrue(any(\"network\" in i for i in issues) and any(\"stdout\" in i for i in issues))\n"
+  },
+  "base_difference": "expected phase7-only interactive deferred guard promotion; do not copy whole phase6 file over phase7",
+  "initial_check": "all 3 hashes passed, exact base equality assertion failed; read full diff and identified guard promotion in source/test",
+  "scope": "separate exact-case rule; compose by change contract against each own base, exact diff/review/tests pending"
+}

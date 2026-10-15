@@ -1,0 +1,451 @@
+{
+  "kind": "R3-F1 controlled held-schema before-fix characterization",
+  "at": "2026-10-14T14:44:34.104575+00:00",
+  "worktree": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive",
+  "production_and_tests_frozen": true,
+  "production_map_sha256": "3f36bb91a9d82e996c001c74523fa494ecf1f821338b2a63552f10bcbb467c34",
+  "owned_file_sha256": {
+    "src/tui/sql.rs": "a0f2adbe60c95af41b9b04892310c4dc625485c3c958224006d603c7a4a337c2",
+    "src/tui/sql_service.rs": "5dfd0509aee4b82ce923bfc74bc8b4e10318a500d14ea08153f097e80ef46bc7",
+    "tests/interactive_effects.rs": "5334d8471c2bbe2735afcfa2435c87c8af18f0b2012785d0bde924646ded8d76",
+    "docs/phase7-sql.md": "b33f71560bdf090c8b7679a55cbad5d9f76175f2f7347d6cd628a0f2db4fc51e",
+    "docs/phase7-effects.md": "43232058c3c9f3000c4051727d38a75bb6c2ab274ced4f6d7098aa1170a75331"
+  },
+  "go_query_source_path": "/home/ajs/.cache/pb-phase7/sql-lower-oracle/tree/pkg/model/query.go",
+  "go_query_source_sha256": "e902816d2c78163cfcdb6a5d272ae750f5beae533c1d01fa50e13eb9715c781d",
+  "go_query_source_pin": "07af390ab09bda8ac9e427ffc6310077bace0125",
+  "go_clock_source_lines": "3081-3087",
+  "runner_path": "docs/evidence/phase7/schema-fallback-clock-process.py",
+  "runner_sha256": "45cfc9895d18f6021f1168503adf42a7f06e16aaee0b4b8df208b2d9458cc037",
+  "proposed_patch_path": "/home/ajs/.cache/pb-phase7/schema-fallback-clock/proposed.patch",
+  "proposed_patch_sha256": "ec3cac098371f98a3bde06abf7e140d35fa7bf49dc57c622a0c7e98701f56751",
+  "proposed_file_sha256": {
+    "src/tui/sql.rs": "98eb54071505344d5c42f3fd32e221d1d86664ebd4623a6af884c85d7d2fcb1f",
+    "src/tui/sql_service.rs": "2f3c1cf76f6e2e4ee947018c336e83becefed76175dd3f287aa943aef7a57095",
+    "tests/interactive_effects.rs": "afda9f2d98eb92adcc15fcf67697b39a60a0af593d7010a56281ac1157821cc3",
+    "docs/phase7-sql.md": "8fa97b5bb6e737505b3f835a60c4bf168dd790dc34955a2c92f6bbb58245e055",
+    "docs/phase7-effects.md": "8eab35e1317671709b14cebc5d81f78d3e720d5f8b71f413e29daaff489eb43d"
+  },
+  "assertions": "Exact request graph/auth/headers/query/range; held GET released >= two observed UTC seconds later; release_second <= fallback endTime <= POST observation second, with no tolerance; timestamp-dependent unique visible column; exit 0/full termios restore/config unchanged.",
+  "results": [
+    {
+      "kind": "bounded actual-process SQL fallback clock regression/control",
+      "case": "sql_schema_fallback_clock",
+      "role": "go",
+      "binary": "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+      "binary_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "source_pin": "07af390ab09bda8ac9e427ffc6310077bace0125",
+      "provenance": {
+        "fixture_path": "/home/ajs/.cache/pb-phase7/schema-fallback-clock/prepared/tests/interactive_effects.rs",
+        "fixture_sha256": "a0dccd5b91416ec05268d61a9fe9080c50bc953f33781bf4cd8c384954093ae3",
+        "fixture_file_sha256": "afda9f2d98eb92adcc15fcf67697b39a60a0af593d7010a56281ac1157821cc3"
+      },
+      "runner_sha256": "45cfc9895d18f6021f1168503adf42a7f06e16aaee0b4b8df208b2d9458cc037",
+      "rust_tests_executed": false,
+      "crate_builds_executed": false,
+      "scope": "held GET clock position and exact effects; no performance or styled-frame claim",
+      "passed": true,
+      "fixture_stdout_path": "/home/ajs/.cache/pb-phase7/schema-fallback-clock/go/sql_schema_fallback_clock-1791989001070315245/fixture.stdout.log",
+      "fixture_stderr_path": "/home/ajs/.cache/pb-phase7/schema-fallback-clock/go/sql_schema_fallback_clock-1791989001070315245/fixture.stderr.log",
+      "clock": {
+        "held_observed_epoch": 1791989006.1154222,
+        "release_epoch": 1791989008.015527,
+        "release_second": 1791989008,
+        "end_second": 1791989008.0,
+        "post_observed_epoch": 1791989008.016467,
+        "marker": "CLOCK_AT_RELEASE",
+        "terminal_restored": true,
+        "config_unchanged": true,
+        "returncode": 0
+      },
+      "process_record_path": "/home/ajs/.cache/pb-phase7/schema-fallback-clock/go/sql_schema_fallback_clock-1791989001070315245/sql_schema_fallback_clock-1791989008043475191.json",
+      "returncode": 0,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/prism/v1/home",
+          "params": {},
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:36435",
+            "User-Agent": "Go-http-client/1.1",
+            "Content-Type": "application/json",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 1000364.496664611,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"datasets\": [{\"title\": \"logs\", \"datasetType\": \"logs\"}]}",
+          "response_bytes": 56,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/logstream/logs/schema",
+          "params": {},
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:36435",
+            "User-Agent": "Go-http-client/1.1",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 1000364.500502804,
+          "protocol": "HTTP/1.1",
+          "clock": {
+            "held_observed_epoch": 1791989006.1154222,
+            "release_epoch": 1791989008.015527,
+            "release_second": 1791989008
+          },
+          "closed_before_response": false,
+          "response_status": 404,
+          "response_preview": "{\"error\": \"schema unavailable\"}",
+          "response_bytes": 31,
+          "done": true
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/query",
+          "params": {
+            "fields": [
+              "true"
+            ]
+          },
+          "body": "{\"endTime\":\"2026-10-14T14:43:28Z\",\"query\":\"SELECT * FROM 'logs' LIMIT 1\",\"startTime\":\"2000-01-01T00:00:00+00:00\"}",
+          "headers": {
+            "Host": "127.0.0.1:36435",
+            "User-Agent": "Go-http-client/1.1",
+            "Content-Length": "113",
+            "Content-Type": "application/json",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 1000366.401524945,
+          "protocol": "HTTP/1.1",
+          "clock": {
+            "held_observed_epoch": 1791989006.1154222,
+            "release_epoch": 1791989008.015527,
+            "release_second": 1791989008,
+            "end_second": 1791989008.0,
+            "post_observed_epoch": 1791989008.016467,
+            "marker": "CLOCK_AT_RELEASE"
+          },
+          "response_status": 200,
+          "response_preview": "{\"fields\": [\"CLOCK_AT_RELEASE\"], \"records\": []}",
+          "response_bytes": 47,
+          "done": true
+        }
+      ],
+      "raw_stdout_path": "/home/ajs/.cache/pb-phase7/schema-fallback-clock/go/sql_schema_fallback_clock-1791989001070315245/sql_schema_fallback_clock-1791989008043475191.stdout",
+      "stdout_sha256": "de9e88b23f29dc30b27ab89c383fe24399a0fcbd5bd4f3a55e0fa7ad861235b2",
+      "raw_stderr_path": "/home/ajs/.cache/pb-phase7/schema-fallback-clock/go/sql_schema_fallback_clock-1791989001070315245/sql_schema_fallback_clock-1791989008043475191.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "binary_unchanged": true,
+      "fixture_unchanged": true,
+      "result_path": "/home/ajs/.cache/pb-phase7/schema-fallback-clock/go/sql_schema_fallback_clock-1791989001070315245/result.json",
+      "result_sha256": "d21aed8ca4aa3e3ee367396fdcbc64c60929c3a2ae25fa52b28c3a754f537d90",
+      "process_record_sha256": "244f9c0f708e0dea47adc4742e61ccd880e83602492d9721b21fb74cdc1c14ff",
+      "fixture_stdout_sha256": "892e9ddd8472ed8c90d3cdeab2de707ad12dcf280312a0ca8a3df0667b25545c",
+      "fixture_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "kind": "bounded actual-process SQL fallback clock regression/control",
+      "case": "sql_schema_primary_no_fallback",
+      "role": "go",
+      "binary": "/home/ajs/.cache/pb-phase7/baselines/pb-go",
+      "binary_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "source_pin": "07af390ab09bda8ac9e427ffc6310077bace0125",
+      "provenance": {
+        "fixture_path": "/home/ajs/.cache/pb-phase7/schema-fallback-clock/prepared/tests/interactive_effects.rs",
+        "fixture_sha256": "a0dccd5b91416ec05268d61a9fe9080c50bc953f33781bf4cd8c384954093ae3",
+        "fixture_file_sha256": "afda9f2d98eb92adcc15fcf67697b39a60a0af593d7010a56281ac1157821cc3"
+      },
+      "runner_sha256": "45cfc9895d18f6021f1168503adf42a7f06e16aaee0b4b8df208b2d9458cc037",
+      "rust_tests_executed": false,
+      "crate_builds_executed": false,
+      "scope": "held GET clock position and exact effects; no performance or styled-frame claim",
+      "passed": true,
+      "fixture_stdout_path": "/home/ajs/.cache/pb-phase7/schema-fallback-clock/go/sql_schema_primary_no_fallback-1791989008605972092/fixture.stdout.log",
+      "fixture_stderr_path": "/home/ajs/.cache/pb-phase7/schema-fallback-clock/go/sql_schema_primary_no_fallback-1791989008605972092/fixture.stderr.log",
+      "clock": {
+        "held_observed_epoch": 1791989013.655754,
+        "release_epoch": 1791989015.011435,
+        "release_second": 1791989015,
+        "terminal_restored": true,
+        "config_unchanged": true,
+        "returncode": 0
+      },
+      "process_record_path": "/home/ajs/.cache/pb-phase7/schema-fallback-clock/go/sql_schema_primary_no_fallback-1791989008605972092/sql_schema_primary_no_fallback-1791989015032198436.json",
+      "returncode": 0,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/prism/v1/home",
+          "params": {},
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:39895",
+            "User-Agent": "Go-http-client/1.1",
+            "Content-Type": "application/json",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 1000372.036831078,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"datasets\": [{\"title\": \"logs\", \"datasetType\": \"logs\"}]}",
+          "response_bytes": 56,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/logstream/logs/schema",
+          "params": {},
+          "body": "",
+          "headers": {
+            "Host": "127.0.0.1:39895",
+            "User-Agent": "Go-http-client/1.1",
+            "X-Api-Key": "fixture-key",
+            "Accept-Encoding": "gzip"
+          },
+          "received": 1000372.040827608,
+          "protocol": "HTTP/1.1",
+          "clock": {
+            "held_observed_epoch": 1791989013.655754,
+            "release_epoch": 1791989015.011435,
+            "release_second": 1791989015
+          },
+          "closed_before_response": false,
+          "response_status": 200,
+          "response_preview": "{\"fields\": [{\"name\": \"CLOCK_PRIMARY_OK\"}]}",
+          "response_bytes": 42,
+          "done": true
+        }
+      ],
+      "raw_stdout_path": "/home/ajs/.cache/pb-phase7/schema-fallback-clock/go/sql_schema_primary_no_fallback-1791989008605972092/sql_schema_primary_no_fallback-1791989015032198436.stdout",
+      "stdout_sha256": "746c948ab87e4622ebc71bc4c103a82cc669ab2d8169e9f9bd2b866ae7ca35de",
+      "raw_stderr_path": "/home/ajs/.cache/pb-phase7/schema-fallback-clock/go/sql_schema_primary_no_fallback-1791989008605972092/sql_schema_primary_no_fallback-1791989015032198436.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "binary_unchanged": true,
+      "fixture_unchanged": true,
+      "result_path": "/home/ajs/.cache/pb-phase7/schema-fallback-clock/go/sql_schema_primary_no_fallback-1791989008605972092/result.json",
+      "result_sha256": "b9152e1835a0ab43b06dd75b3f861e047816618057c37b34171a1a6d60a57656",
+      "process_record_sha256": "d77ce14c4fe1ef5fc0360be19b7682667e6b7b7a0a11cc362f80b4d9bda150c7",
+      "fixture_stdout_sha256": "bac9927a1e7389fd3ae9169797358cde091ff875ea7cc5ecf17f0be3b7bb2b9a",
+      "fixture_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "kind": "bounded actual-process SQL fallback clock regression/control",
+      "case": "sql_schema_fallback_clock",
+      "role": "candidate",
+      "binary": "/home/ajs/.cache/pb-phase7/candidates/release3/pb-normal",
+      "binary_sha256": "aceb58bd412e8fbf34f603d247c68e87e69897356cefd5aad19ab6a92484db28",
+      "source_pin": null,
+      "provenance": {
+        "fixture_path": "/home/ajs/.cache/pb-phase7/schema-fallback-clock/prepared/tests/interactive_effects.rs",
+        "fixture_sha256": "a0dccd5b91416ec05268d61a9fe9080c50bc953f33781bf4cd8c384954093ae3",
+        "fixture_file_sha256": "afda9f2d98eb92adcc15fcf67697b39a60a0af593d7010a56281ac1157821cc3"
+      },
+      "runner_sha256": "45cfc9895d18f6021f1168503adf42a7f06e16aaee0b4b8df208b2d9458cc037",
+      "rust_tests_executed": false,
+      "crate_builds_executed": false,
+      "scope": "held GET clock position and exact effects; no performance or styled-frame claim",
+      "passed": false,
+      "failure": "AssertionError(('fallback endTime must be sampled after primary release', {'held_observed_epoch': 1791989028.4811208, 'release_epoch': 1791989030.0098526, 'release_second': 1791989030, 'end_second': 1791989028.0, 'post_observed_epoch': 1791989030.0107853, 'marker': 'CLOCK_BEFORE_GET'}, {'endTime': '2026-10-14T14:43:48Z', 'query': \"SELECT * FROM 'logs' LIMIT 1\", 'startTime': '2000-01-01T00:00:00+00:00'}))",
+      "fixture_stdout_path": "/home/ajs/.cache/pb-phase7/schema-fallback-clock/release3-before/sql_schema_fallback_clock-1791989023462285379/fixture.stdout.log",
+      "fixture_stderr_path": "/home/ajs/.cache/pb-phase7/schema-fallback-clock/release3-before/sql_schema_fallback_clock-1791989023462285379/fixture.stderr.log",
+      "clock": {
+        "held_observed_epoch": 1791989028.4811208,
+        "release_epoch": 1791989030.0098526,
+        "release_second": 1791989030,
+        "end_second": 1791989028.0,
+        "post_observed_epoch": 1791989030.0107853,
+        "marker": "CLOCK_BEFORE_GET",
+        "terminal_restored": true,
+        "config_unchanged": true,
+        "returncode": 0
+      },
+      "process_record_path": "/home/ajs/.cache/pb-phase7/schema-fallback-clock/release3-before/sql_schema_fallback_clock-1791989023462285379/sql_schema_fallback_clock-1791989030025774610.json",
+      "returncode": 0,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/prism/v1/home",
+          "params": {},
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "content-type": "application/json",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:41763"
+          },
+          "received": 1000386.863651972,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"datasets\": [{\"title\": \"logs\", \"datasetType\": \"logs\"}]}",
+          "response_bytes": 56,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/logstream/logs/schema",
+          "params": {},
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:41763"
+          },
+          "received": 1000386.866191792,
+          "protocol": "HTTP/1.1",
+          "clock": {
+            "held_observed_epoch": 1791989028.4811208,
+            "release_epoch": 1791989030.0098526,
+            "release_second": 1791989030
+          },
+          "closed_before_response": false,
+          "response_status": 404,
+          "response_preview": "{\"error\": \"schema unavailable\"}",
+          "response_bytes": 31,
+          "done": true
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/query",
+          "params": {
+            "fields": [
+              "true"
+            ]
+          },
+          "body": "{\"endTime\":\"2026-10-14T14:43:48Z\",\"query\":\"SELECT * FROM 'logs' LIMIT 1\",\"startTime\":\"2000-01-01T00:00:00+00:00\"}",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "content-type": "application/json",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "content-length": "113",
+            "host": "127.0.0.1:41763"
+          },
+          "received": 1000388.39584136,
+          "protocol": "HTTP/1.1",
+          "clock": {
+            "held_observed_epoch": 1791989028.4811208,
+            "release_epoch": 1791989030.0098526,
+            "release_second": 1791989030,
+            "end_second": 1791989028.0,
+            "post_observed_epoch": 1791989030.0107853,
+            "marker": "CLOCK_BEFORE_GET"
+          },
+          "response_status": 200,
+          "response_preview": "{\"fields\": [\"CLOCK_BEFORE_GET\"], \"records\": []}",
+          "response_bytes": 47,
+          "done": true
+        }
+      ],
+      "raw_stdout_path": "/home/ajs/.cache/pb-phase7/schema-fallback-clock/release3-before/sql_schema_fallback_clock-1791989023462285379/sql_schema_fallback_clock-1791989030025774610.stdout",
+      "stdout_sha256": "b0b4a14760628b617411aedf56f3644535a86ba7a4395372ea11f7a72d251f1c",
+      "raw_stderr_path": "/home/ajs/.cache/pb-phase7/schema-fallback-clock/release3-before/sql_schema_fallback_clock-1791989023462285379/sql_schema_fallback_clock-1791989030025774610.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "binary_unchanged": true,
+      "fixture_unchanged": true,
+      "result_path": "/home/ajs/.cache/pb-phase7/schema-fallback-clock/release3-before/sql_schema_fallback_clock-1791989023462285379/result.json",
+      "result_sha256": "da9fc7ec6ac9e01bdecc583f29049e5fb72cc15fb6acd91ba4b1a08c9688e396",
+      "process_record_sha256": "cf5f07f05053c13e3387b3a2bef802d5ab8810278a88ca8ebd7fbe13e670ff93",
+      "fixture_stdout_sha256": "b4845c48f41d01a7b4be57d5c13ca3d6ad2010fc69d53e376d1d8d1fc889e773",
+      "fixture_stderr_sha256": "edb6e35a2592796a484d573560ea7cea0d96cf65cc4a8bd5b93fc7f433bb3a74"
+    },
+    {
+      "kind": "bounded actual-process SQL fallback clock regression/control",
+      "case": "sql_schema_primary_no_fallback",
+      "role": "candidate",
+      "binary": "/home/ajs/.cache/pb-phase7/candidates/release3/pb-normal",
+      "binary_sha256": "aceb58bd412e8fbf34f603d247c68e87e69897356cefd5aad19ab6a92484db28",
+      "source_pin": null,
+      "provenance": {
+        "fixture_path": "/home/ajs/.cache/pb-phase7/schema-fallback-clock/prepared/tests/interactive_effects.rs",
+        "fixture_sha256": "a0dccd5b91416ec05268d61a9fe9080c50bc953f33781bf4cd8c384954093ae3",
+        "fixture_file_sha256": "afda9f2d98eb92adcc15fcf67697b39a60a0af593d7010a56281ac1157821cc3"
+      },
+      "runner_sha256": "45cfc9895d18f6021f1168503adf42a7f06e16aaee0b4b8df208b2d9458cc037",
+      "rust_tests_executed": false,
+      "crate_builds_executed": false,
+      "scope": "held GET clock position and exact effects; no performance or styled-frame claim",
+      "passed": true,
+      "fixture_stdout_path": "/home/ajs/.cache/pb-phase7/schema-fallback-clock/release3-before/sql_schema_primary_no_fallback-1791989030540477211/fixture.stdout.log",
+      "fixture_stderr_path": "/home/ajs/.cache/pb-phase7/schema-fallback-clock/release3-before/sql_schema_primary_no_fallback-1791989030540477211/fixture.stderr.log",
+      "clock": {
+        "held_observed_epoch": 1791989035.561581,
+        "release_epoch": 1791989037.0090287,
+        "release_second": 1791989037,
+        "terminal_restored": true,
+        "config_unchanged": true,
+        "returncode": 0
+      },
+      "process_record_path": "/home/ajs/.cache/pb-phase7/schema-fallback-clock/release3-before/sql_schema_primary_no_fallback-1791989030540477211/sql_schema_primary_no_fallback-1791989037025638209.json",
+      "returncode": 0,
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/api/prism/v1/home",
+          "params": {},
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "content-type": "application/json",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:44271"
+          },
+          "received": 1000393.943339998,
+          "protocol": "HTTP/1.1",
+          "response_status": 200,
+          "response_preview": "{\"datasets\": [{\"title\": \"logs\", \"datasetType\": \"logs\"}]}",
+          "response_bytes": 56,
+          "done": true
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/logstream/logs/schema",
+          "params": {},
+          "body": "",
+          "headers": {
+            "x-api-key": "fixture-key",
+            "user-agent": "Go-http-client/1.1",
+            "accept-encoding": "gzip",
+            "host": "127.0.0.1:44271"
+          },
+          "received": 1000393.946657864,
+          "protocol": "HTTP/1.1",
+          "clock": {
+            "held_observed_epoch": 1791989035.561581,
+            "release_epoch": 1791989037.0090287,
+            "release_second": 1791989037
+          },
+          "closed_before_response": false,
+          "response_status": 200,
+          "response_preview": "{\"fields\": [{\"name\": \"CLOCK_PRIMARY_OK\"}]}",
+          "response_bytes": 42,
+          "done": true
+        }
+      ],
+      "raw_stdout_path": "/home/ajs/.cache/pb-phase7/schema-fallback-clock/release3-before/sql_schema_primary_no_fallback-1791989030540477211/sql_schema_primary_no_fallback-1791989037025638209.stdout",
+      "stdout_sha256": "ef8f1eabcca50298fd78780541ddcae31b7cfcc4653f60d7981b4e8ee4683232",
+      "raw_stderr_path": "/home/ajs/.cache/pb-phase7/schema-fallback-clock/release3-before/sql_schema_primary_no_fallback-1791989030540477211/sql_schema_primary_no_fallback-1791989037025638209.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "binary_unchanged": true,
+      "fixture_unchanged": true,
+      "result_path": "/home/ajs/.cache/pb-phase7/schema-fallback-clock/release3-before/sql_schema_primary_no_fallback-1791989030540477211/result.json",
+      "result_sha256": "39e4b25148106016b657c9f5ae2478fdc04ad1ed46648df96389bc767dbdba1d",
+      "process_record_sha256": "05b7acfece87b804bc26fad5ab813ce0dda198c8ac55f51bf84fb82347d79b6e",
+      "fixture_stdout_sha256": "2062cdc1a45e29b56c071e69e9bc170205fbc0645811f3b8b3d8de811faf7759",
+      "fixture_stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "conclusion": "Pinned Go passes clock and primary control. Immutable release3 fails specifically clock position, displaying CLOCK_BEFORE_GET, but exits/restores/preserves config and passes primary no-fallback control.",
+  "successor_candidate_executed": false,
+  "rust_builds_or_tests_executed": false,
+  "limits": "Loopback HTTP/1.1 functional controls only; 15s request deadlines and shared OAuth scope retained by narrow source diff and require central existing gates; no fairness/performance/styled-frame claim."
+}

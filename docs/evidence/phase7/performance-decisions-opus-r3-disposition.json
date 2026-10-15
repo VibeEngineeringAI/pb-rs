@@ -1,0 +1,31 @@
+{
+  "review": {
+    "path": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/docs/phase7-review-performance-decisions-opus-r3.md",
+    "size_bytes": 24638,
+    "sha256": "44e079c0a6fc505105907c16c5f316e5cd4650e060459284f0fdb61a43dc428d"
+  },
+  "status": "root read FULL; source-only Opus finds prospective fitness with3low code-hardening findings; successor corrections assigned, no accepted declaration",
+  "review_execution": "one EDQUOT shell attempt, output lost and no redirected record; underlying execution unknown; no own tests/hash evidence; no retry",
+  "prior_findings": "PD2-M1/L1-L5 and PI1-M1/L1/L2 closed at protocol/design level per review; supplied evidence limitations retained",
+  "findings": {
+    "PD3-L1": "root reproduced potentially-slower row with triggeredFalse leaving whole-case rows final; derive trigger and independent strict-lower screen in code",
+    "PD3-L2": "root reproduced descriptive-source-idle-screen crossing rejected by confirmation_required; validate linked decision scope/case/policy/hash",
+    "PD3-L3": "root confirmed CPU arbitrary q entrypoint/source; add ACTIVE declaration-bound CPU/RSS provenance checks and derive uncertainty"
+  },
+  "root_pure_reproductions": {
+    "count": 2,
+    "source_changes": false,
+    "native_work": false,
+    "note": "tiny Python import/arithmetic only; not full suite or independent acceptance"
+  },
+  "P1": "No shifted brackets or numerical delta adopted. Separate bounded primary-source and read-only host provenance investigation assigned. Snapshot/actual accounting remain explicit failclosed prerequisites, not assumed finished idle budgets.",
+  "tasks": {
+    "correction": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-decisions-r4-low-corrections",
+    "research": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-sol-accounting-prerequisite-research-r1"
+  },
+  "scope": "owned decision doc/newR4cache only; R3 preserved, collector/production/helper unchanged",
+  "accepted_protocol": false,
+  "actual_preflight": false,
+  "admission": false,
+  "commit": false
+}

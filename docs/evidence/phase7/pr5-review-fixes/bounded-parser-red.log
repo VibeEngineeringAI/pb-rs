@@ -1,0 +1,17 @@
+test_legacy_mode_recovery_bounds_pending_while_preserving_fragmented_utf8_and_ansi (test_phase7.ContractsTests.test_legacy_mode_recovery_bounds_pending_while_preserving_fragmented_utf8_and_ansi) ... FAIL
+test_full_history_without_eviction_survives_non_scrolling_controls (test_phase7.TerminalTests.test_full_history_without_eviction_survives_non_scrolling_controls) ... ok
+test_history_eviction_uses_declared_scrolling_region_bottom (test_phase7.TerminalTests.test_history_eviction_uses_declared_scrolling_region_bottom) ... ok
+
+======================================================================
+FAIL: test_legacy_mode_recovery_bounds_pending_while_preserving_fragmented_utf8_and_ansi (test_phase7.ContractsTests.test_legacy_mode_recovery_bounds_pending_while_preserving_fragmented_utf8_and_ansi)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7.py", line 1351, in test_legacy_mode_recovery_bounds_pending_while_preserving_fragmented_utf8_and_ansi
+    self.assertLessEqual(max(pending_sizes), 65536 + 16)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 464910 not less than or equal to 65552
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.780s
+
+FAILED (failures=1)

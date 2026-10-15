@@ -1,0 +1,9 @@
+
+running 4 tests
+test oauth_promql_both_effects ... ok
+test oauth_saved_menu_apply_scope ... ok
+test oauth_schema_fallback_scope ... ok
+test oauth_sql_window_effects ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 38 filtered out; finished in 16.19s
+

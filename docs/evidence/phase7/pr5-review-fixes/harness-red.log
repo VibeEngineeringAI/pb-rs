@@ -1,0 +1,98 @@
+test_history_eviction_in_last_token_is_independent_of_feed_boundaries (test_phase7.TerminalTests.test_history_eviction_in_last_token_is_independent_of_feed_boundaries) ... 
+  test_history_eviction_in_last_token_is_independent_of_feed_boundaries (test_phase7.TerminalTests.test_history_eviction_in_last_token_is_independent_of_feed_boundaries) (chunk_sizes=[60012]) ... FAIL
+  test_history_eviction_in_last_token_is_independent_of_feed_boundaries (test_phase7.TerminalTests.test_history_eviction_in_last_token_is_independent_of_feed_boundaries) (chunk_sizes=[60000, 12]) ... FAIL
+test_full_history_without_eviction_survives_non_scrolling_controls (test_phase7.TerminalTests.test_full_history_without_eviction_survives_non_scrolling_controls) ... FAIL
+test_reverse_index_detects_actual_bottom_history_eviction (test_phase7.TerminalTests.test_reverse_index_detects_actual_bottom_history_eviction) ... FAIL
+test_private_mode_cleanup_is_validated_and_compared_before_alt_exit (test_phase7.ContractsTests.test_private_mode_cleanup_is_validated_and_compared_before_alt_exit) ... 
+  test_private_mode_cleanup_is_validated_and_compared_before_alt_exit (test_phase7.ContractsTests.test_private_mode_cleanup_is_validated_and_compared_before_alt_exit) (alternate=False) ... FAIL
+  test_private_mode_cleanup_is_validated_and_compared_before_alt_exit (test_phase7.ContractsTests.test_private_mode_cleanup_is_validated_and_compared_before_alt_exit) (alternate=True) ... FAIL
+test_nonrestoring_exit_keeps_private_modes_but_still_compares_them (test_phase7.ContractsTests.test_nonrestoring_exit_keeps_private_modes_but_still_compares_them) ... ERROR
+test_legacy_capture_reconstructs_modes_without_changing_retained_bytes (test_phase7.ContractsTests.test_legacy_capture_reconstructs_modes_without_changing_retained_bytes) ... ERROR
+test_terminal_mode_payload_cannot_hide_modes_in_osc_text (test_phase7.ContractsTests.test_terminal_mode_payload_cannot_hide_modes_in_osc_text) ... ok
+test_history_loss_fails_validation_and_comparison_even_with_equal_frames (test_phase7.ContractsTests.test_history_loss_fails_validation_and_comparison_even_with_equal_frames) ... FAIL
+
+======================================================================
+ERROR: test_nonrestoring_exit_keeps_private_modes_but_still_compares_them (test_phase7.ContractsTests.test_nonrestoring_exit_keeps_private_modes_but_still_compares_them)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7.py", line 1255, in test_nonrestoring_exit_keeps_private_modes_but_still_compares_them
+    changed['terminal_modes']['final'].append(1002)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^
+KeyError: 'terminal_modes'
+
+======================================================================
+ERROR: test_legacy_capture_reconstructs_modes_without_changing_retained_bytes (test_phase7.ContractsTests.test_legacy_capture_reconstructs_modes_without_changing_retained_bytes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7.py", line 1274, in test_legacy_capture_reconstructs_modes_without_changing_retained_bytes
+    self.assertEqual(loaded['terminal_modes']['final'], [] if name == 'good' else [2004])
+                     ~~~~~~^^^^^^^^^^^^^^^^^^
+KeyError: 'terminal_modes'
+
+======================================================================
+FAIL: test_history_eviction_in_last_token_is_independent_of_feed_boundaries (test_phase7.TerminalTests.test_history_eviction_in_last_token_is_independent_of_feed_boundaries) (chunk_sizes=[60012])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7.py", line 189, in test_history_eviction_in_last_token_is_independent_of_feed_boundaries
+    self.assertTrue(terminal.history_overflow)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_history_eviction_in_last_token_is_independent_of_feed_boundaries (test_phase7.TerminalTests.test_history_eviction_in_last_token_is_independent_of_feed_boundaries) (chunk_sizes=[60000, 12])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7.py", line 189, in test_history_eviction_in_last_token_is_independent_of_feed_boundaries
+    self.assertTrue(terminal.history_overflow)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_full_history_without_eviction_survives_non_scrolling_controls (test_phase7.TerminalTests.test_full_history_without_eviction_survives_non_scrolling_controls)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7.py", line 198, in test_full_history_without_eviction_survives_non_scrolling_controls
+    self.assertFalse(terminal.history_overflow, repr(token))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: True is not false : b'\x1b[0m'
+
+======================================================================
+FAIL: test_reverse_index_detects_actual_bottom_history_eviction (test_phase7.TerminalTests.test_reverse_index_detects_actual_bottom_history_eviction)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7.py", line 210, in test_reverse_index_detects_actual_bottom_history_eviction
+    self.assertTrue(terminal.history_overflow)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_private_mode_cleanup_is_validated_and_compared_before_alt_exit (test_phase7.ContractsTests.test_private_mode_cleanup_is_validated_and_compared_before_alt_exit) (alternate=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7.py", line 1244, in test_private_mode_cleanup_is_validated_and_compared_before_alt_exit
+    self.assertTrue(any('private modes' in issue for issue in p7.validate(leaked)))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_private_mode_cleanup_is_validated_and_compared_before_alt_exit (test_phase7.ContractsTests.test_private_mode_cleanup_is_validated_and_compared_before_alt_exit) (alternate=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7.py", line 1244, in test_private_mode_cleanup_is_validated_and_compared_before_alt_exit
+    self.assertTrue(any('private modes' in issue for issue in p7.validate(leaked)))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_history_loss_fails_validation_and_comparison_even_with_equal_frames (test_phase7.ContractsTests.test_history_loss_fails_validation_and_comparison_even_with_equal_frames)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/test_phase7.py", line 1300, in test_history_loss_fails_validation_and_comparison_even_with_equal_frames
+    self.assertTrue(any('history overflow' in issue for issue in p7.validate(capture)))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 8 tests in 5.121s
+
+FAILED (failures=7, errors=2)

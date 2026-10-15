@@ -1,0 +1,67 @@
+{
+  "collector_consumed_source_sha256": "f07826d99920ebaa45dd336869618f4ed1c3300c24d13cd30dae0c8a50730c3b",
+  "coordination_source": "/home/ajs/.cache/pb-phase7/collector-measurement-interim-sol-r2-response.json",
+  "exact_delta": {
+    "no_other_resolver_edits": true,
+    "path": "/home/ajs/.cache/pb-phase7/harness-cache-alias-review/owned.diff",
+    "resolver_added_lines": 3,
+    "sha256": "56550d7ae06b58783f918b2edb5fe258ee6455ccdc942f024153b4570fb08a14"
+  },
+  "files": {
+    "docs/phase7-harness.md": "d5871ed0f7abd12e750b6084aef6eca39e0b48bbed1e5f7e09867042c2686e3a",
+    "harness/phase7.py": "f07826d99920ebaa45dd336869618f4ed1c3300c24d13cd30dae0c8a50730c3b",
+    "harness/phase7_spawn.c": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4",
+    "harness/phase7_workloads.py": "54a9efb7767372c976b459c3e2dc59c590e0b9d6b47b4cc29e36ae81ff588d1c",
+    "harness/test_phase7.py": "23c4a5d8d32902cb229f37ca7bbdcda8590b7ad4ed6788de1fdf274519b46a13"
+  },
+  "frozen_at_utc": "2026-10-14T14:42:14.097559+00:00",
+  "helper_verified_read_only": {
+    "path": "/home/ajs/.cache/pb-phase7/tmp/phase7-spawn-d0592f15c157a359d3b1d7adf9ab0efb1cf39a3765205fe8ccde855157ed2fab",
+    "protocol_version": 2,
+    "sha256": "3b684c7b7632302725727fcc586a071c7818f43d704a8cbf4e1afc384e99f03e"
+  },
+  "not_run": [
+    "native helper or Go/Rust CLI executions",
+    "real compiler/version/capability probes",
+    "candidate/helper builds",
+    "timing",
+    "profilers"
+  ],
+  "ordinary_TOCTOU_limitation": "Only existing keyed file-component aliases are rejected; file/directory replacement between check/hash and later exec remains possible. No atomic artifact/security binding claimed.",
+  "previous_files": {
+    "docs/phase7-harness.md": "36144e4af507355a0d28dc1bd2e48a4002d971f21ce792a18a610804cbf3aa9e",
+    "harness/phase7.py": "b1d5cd2de90b32268f221c8bf7a5f584a2fa7d34eb134a21d2e3ed475e77a654",
+    "harness/test_phase7.py": "e0a3af902ba572258d96da09a0d60bb2a1e56f0e1d095d8499f278f469dcada4"
+  },
+  "prior_frozen_evidence_preserved": [
+    "/home/ajs/.cache/pb-phase7/oracle-wide-legend-release3/accepted-freeze.json",
+    "/home/ajs/.cache/pb-phase7/harness-nobuild-integration-freeze.json"
+  ],
+  "public_signatures_unchanged": true,
+  "schema_version": 1,
+  "scope": "three-line keyed binary/sidecar symlink rejection outside preparation/build fallback; focused inert tests and documentation",
+  "source_frozen": true,
+  "tests": {
+    "checks": [
+      "owned py_compile",
+      "scoped git diff --check",
+      "exact three-line resolver delta",
+      "unchanged AST public signatures",
+      "unchanged native source/helper ELF/workload SHA"
+    ],
+    "controls": [
+      "binary and sidecar target-existing/dangling links",
+      "both build modes reject before keyed alias reads or repairs",
+      "execute strict rejects before CLI acquisition",
+      "regular keyed path and canonical compiler alias resolution",
+      "strict resolver no writes",
+      "normal cache creation via mocked compiler then strict reuse"
+    ],
+    "log": "/home/ajs/.cache/pb-phase7/harness-cache-alias-review/owned-tests.log",
+    "log_sha256": "f195473209c038e02115111a0e1e5624de6dcdf1646237347af40dd0aebab6da",
+    "resolver_count": 3,
+    "scoped_count": 15,
+    "seconds": 0.566,
+    "terminal_count": 12
+  }
+}

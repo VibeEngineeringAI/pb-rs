@@ -1,0 +1,9 @@
+{
+  "task_id": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-opus-final-source-review-r2",
+  "provider": "claudeAgent",
+  "model": "claude-opus-5-5",
+  "status": "failed",
+  "error": "Claude API rate limit reached. Try again later.",
+  "review_occurred": false,
+  "final_opus_requirement": "outstanding"
+}

@@ -1,0 +1,133 @@
+{
+  "status": "frozen OFFTREEproposal identityverified for freshreview only; notaccepted/applied",
+  "manifest_sha256": "46530942886497251f544d889f82e78040777009fb3e7ad704949a8b568e3fef",
+  "artifacts": [
+    {
+      "path": "/home/ajs/.cache/pb-phase7/postidle-bracket-proposal/proposal.md",
+      "size_bytes": 13851,
+      "sha256": "1fb5767834129f9ea9027e9beb534803af9fe2e8654b832432aacafa88b726a1"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/postidle-bracket-proposal/proposal.patch",
+      "size_bytes": 20660,
+      "sha256": "d197c7038fb4bd25e9dba42eeb4db90a79f0bdbd85d3cb212600d3cfee08b47b"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/postidle-bracket-proposal/bench-only.patch",
+      "size_bytes": 3007,
+      "sha256": "95d2606b30aaf313567f2f3117b6188859945d344e16ff68580b6444a217ab82"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/postidle-bracket-proposal/test-only.patch",
+      "size_bytes": 11383,
+      "sha256": "8c8f5707746a975b02e690565b813bceed24c067582b335622be5e5b998e0ad4"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/postidle-bracket-proposal/docs-only.patch",
+      "size_bytes": 6270,
+      "sha256": "6c18991ab91a38da2fefc32a52bde530c5e403470c3a1a649b0770dd4cb7b58d"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/postidle-bracket-proposal/candidate/docs/phase7-measurement.md",
+      "size_bytes": 93556,
+      "sha256": "b7cf42f568aab801970fa03c484ce7553f900b5184eb4e0d24ea89a6c440543a"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/postidle-bracket-proposal/candidate/harness/contracts/phase7.md",
+      "size_bytes": 34757,
+      "sha256": "56f61da40691414964f14d7c0f37852141d28e57093c579580b2bc705a34cfe4"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/postidle-bracket-proposal/candidate/harness/phase7_bench.py",
+      "size_bytes": 192294,
+      "sha256": "bf630d9ac4dd4e615f221e218cfce7cbb99438c2de1bf5cfdc388941eef013c2"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/postidle-bracket-proposal/candidate/harness/test_phase7_bench.py",
+      "size_bytes": 187694,
+      "sha256": "861e42bfe32202e9946717056e437c1f75ff8ed4a4ef9ecebc4f5eadf77d953f"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/postidle-bracket-proposal/actual-checks.json",
+      "size_bytes": 8884,
+      "sha256": "8dcf0406f0a63af39f291325ffe9922601c0dc4acbd40af35439133f7b420ae7"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/postidle-bracket-proposal/pure-checks.log",
+      "size_bytes": 1422,
+      "sha256": "a79f741ce8ae3cc4afdee2545e5086bbd2e7a6c97d323f77c23e4d6f3b58f3b8"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/postidle-bracket-proposal/execution-typed-bindings.json",
+      "size_bytes": 464441,
+      "sha256": "2c1e512d889252419c77525509981464d3db612987c6df0afa9266882b1c336a"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/postidle-bracket-proposal/definition-hashes-and-matrix-impact.json",
+      "size_bytes": 43641,
+      "sha256": "a5e6d925e32d96c9614263c805617981f26b2125f4e1b3d7bf788adc91789565"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/postidle-bracket-proposal/synthetic-allocation.json",
+      "size_bytes": 3387,
+      "sha256": "9c905b64d0752c25cf7bfe40480eed97a3276e78897765ae4150f159a3a9f459"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/postidle-bracket-proposal/protocol-owner-handoff.md",
+      "size_bytes": 1597,
+      "sha256": "4c16ef066bec392120774ec97c88edf163831a2a258f1ab5dafb1ee6b929bee4"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/postidle-bracket-proposal/frozen-before.json",
+      "size_bytes": 2625,
+      "sha256": "dfa13eeefeccfb9976648681dab277dc17ecc5d44c439e575c9c51cc6f4bd5a0"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/postidle-bracket-proposal/frozen-after.json",
+      "size_bytes": 2625,
+      "sha256": "dfa13eeefeccfb9976648681dab277dc17ecc5d44c439e575c9c51cc6f4bd5a0"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/postidle-bracket-proposal/prepare.py",
+      "size_bytes": 4197,
+      "sha256": "ae845c26bd53c58834dc9ebccdb42ebc2e033c7022b3e630354ff5d24740b680"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/postidle-bracket-proposal/checks.py",
+      "size_bytes": 14348,
+      "sha256": "e055e3ac0b42914629470d8ed72f977db9a0dadb42555a3abd7c84e71ec5fadc"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/postidle-bracket-proposal/typed-definitions.py",
+      "size_bytes": 8832,
+      "sha256": "8cc425f07bc18afedc62b29b3291d2fa81d5cc2c4677406f6492157e9ff112fb"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/postidle-bracket-proposal/finish.py",
+      "size_bytes": 21377,
+      "sha256": "57b6e9acfd6c6891ef35a7f19cbba383c0181e81293845b40c39833b5f70efe4"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/postidle-bracket-proposal/actual-checks.json.first1",
+      "size_bytes": 8885,
+      "sha256": "73bf2a1f05fe7e6664bd7bc34f97e810928cf41e534d7c9b693f98d89dc51b78"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/postidle-bracket-proposal/checks-result.json.first1",
+      "size_bytes": 99,
+      "sha256": "657d44570691b8f767cef719bd83ba0886eab47f0b95b30665968feaeb7d19a1"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/postidle-bracket-proposal/pure-checks.log.first1",
+      "size_bytes": 2602,
+      "sha256": "154469a166170dcfb0bea0619af07c7f467ca682b712e9cc3d74781aaffccf72"
+    },
+    {
+      "path": "/home/ajs/.cache/pb-phase7/postidle-bracket-proposal/typed-definitions-result.json.first1",
+      "size_bytes": 748,
+      "sha256": "c7b90cffbd3cc4b2ceb9f6d8702f88da328c7eefc4d2bc407dbe79091528e8db"
+    }
+  ],
+  "root_read": "Fullproposal, builder/retainedvalidation/docpatch; newtestpatch reviewed. Actualtypeprofile issue preserved, no source normalization.",
+  "next": "Independent scoped Opus review before explicit edit window"
+}

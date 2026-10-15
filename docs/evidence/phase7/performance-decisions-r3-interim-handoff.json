@@ -1,0 +1,33 @@
+{
+  "status": "unfrozen implementation handoff only; M1 disposition/case hashes and fresh review pending",
+  "task_id": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-decisions-r3-corrections",
+  "author_reports": "122 targeted pure checks plus8focusedfollowups; no root rerun/acceptedhash",
+  "root_read": "Entire first draft decision_math.py; README; actualcollector pool schema/order paths. Subsequent splitargv edits need finalreview.",
+  "draft_identities": {
+    "README.md": {
+      "sha256": "f4a9e0688b938f6bd07ea48dac1e82d08ebdd975cea318f9b759780c2b151327",
+      "bytes": 4170
+    },
+    "decision_math.py": {
+      "sha256": "e9def8979fd6a5236a22e64b944fd454cbb06e7bc1ef2b26cd8ea75091cd0702",
+      "bytes": 22513
+    },
+    "revision-checks.json": {
+      "sha256": "25578eb2bff6b9c3c6ae759ee5ccbacbf59e63f95ea24d216e56b1ed473fd47a",
+      "bytes": 19686
+    },
+    "focused-followup-checks.json": {
+      "sha256": "7f0ec9ceb0bad41bb7e2544496d6c7773ec4bf7d0022ab763a0855dd09a40878",
+      "bytes": 929
+    },
+    "findings-response-draft.json": {
+      "sha256": "581020b230cf61723a1b54b4d9c343680a15e808e13909ff51a529813f5ae3cb",
+      "bytes": 1615
+    },
+    "M1-disposition-pending.json": {
+      "sha256": "9b755e1e8ebdf05cd77cbe6249002758148f80355f52321eeb0dc2f90cc7e823",
+      "bytes": 1080
+    }
+  },
+  "no_acceptance": true
+}

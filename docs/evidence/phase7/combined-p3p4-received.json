@@ -1,0 +1,92 @@
+{
+  "status": "received exact phase7 patch verified in own cache; no live promotion",
+  "manifest_sha256": "c107d260e814f845787008968873d93819d556d7433fcc398484216a443b998e",
+  "patch_sha256": "b7b9e37c6e19442cd0c8c162218b4d349f4f118f8204095210c7c2fe645346e2",
+  "variant": {
+    "root": "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive",
+    "before": {
+      "phase3.py": "39d16e2ba220aad27ec0e67646e04aacbcdd9a9c28d3013f3f04ddefec789099",
+      "test_phase3.py": "0bea853fcedcf6dd2724d057d88813440454183a64f643c944321c624f414e95",
+      "test_phase4.py": "1404a43de6552c1d9b7060acb319d699cabdbd2d3813624339e8eae3968e9278"
+    },
+    "after": {
+      "phase3.py": "33be7605b2e3ea44712a8118b8909b129d00ef3f46c7f4d3932a522351e2b7bd",
+      "test_phase3.py": "ef1a47dc263d18ed94fac7577a7e2597699973e74a4b42d3cbdc598cca9fab59",
+      "test_phase4.py": "b1ed46ac5530a344f408303a1c09e4f4f0eaaaa50c2304b7f7984a592b7c34fb"
+    },
+    "patch": "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase7/combined.patch",
+    "patch_sha256": "b7b9e37c6e19442cd0c8c162218b4d349f4f118f8204095210c7c2fe645346e2",
+    "apply": [
+      {
+        "argv": [
+          "git",
+          "apply",
+          "--check",
+          "--verbose",
+          "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase7/combined.patch"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": "Checking patch harness/phase3.py...\nChecking patch harness/test_phase3.py...\nChecking patch harness/test_phase4.py...\n"
+      },
+      {
+        "argv": [
+          "git",
+          "apply",
+          "--verbose",
+          "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase7/combined.patch"
+        ],
+        "exit": 0,
+        "stdout": "",
+        "stderr": "Checking patch harness/phase3.py...\nChecking patch harness/test_phase3.py...\nChecking patch harness/test_phase4.py...\nApplied patch harness/phase3.py cleanly.\nApplied patch harness/test_phase3.py cleanly.\nApplied patch harness/test_phase4.py cleanly.\n"
+      }
+    ],
+    "ast_changed": [
+      "normalize_timeout"
+    ],
+    "dependencies": {
+      "phase1.py": "26ca8380b608a49404da1f8bc7233e577b2d48044d5194cdba20186b38ffaca5",
+      "phase2.py": "66568cd9b0663011547763a258875f45949b21f5ed4c05fe9a695cebdc89cfbd",
+      "phase4.py": "e5105ae22b0c599901d8622adf4e2942abb05a8c38bd220e8f685cae58782213",
+      "phase5.py": "2bd03937195ea26b07faffa9281d109013d0b785fe33c63fa10905ce262d4c85",
+      "run.py": "b280d1295a4b351e6f2d838c56acaac58b2247bb77fc9881587bb7bbe849a076",
+      "cases.py": "b892e1b592111d8115ceddac61ca732942dd6b9b7ef900ce4a023cff8420ebfa",
+      "test_phase5.py": "8cca27426188362019b3314dc765e8fd4789f07d67a26cdea75c184899c4b53f"
+    },
+    "p4_block_sha256": "07d14ebc2b612a507e9e8a6d541a23b06aebd075ce6844b9153977bd2fdfdc86",
+    "p4_test_addition_sha256": "d190de932672ad8c9a9dcb9ba9e4f0616f595cc0ff22362fc8725ae8c014544e"
+  },
+  "executed_apply": [
+    {
+      "argv": [
+        "git",
+        "apply",
+        "--check",
+        "--verbose",
+        "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase7/combined.patch"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "Checking patch harness/phase3.py...\nChecking patch harness/test_phase3.py...\nChecking patch harness/test_phase4.py...\n"
+    },
+    {
+      "argv": [
+        "git",
+        "apply",
+        "--verbose",
+        "/home/ajs/.cache/pb-phase6/combined-deadlines-p3-p4-r1/phase7/combined.patch"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": "Checking patch harness/phase3.py...\nChecking patch harness/test_phase3.py...\nChecking patch harness/test_phase4.py...\nApplied patch harness/phase3.py cleanly.\nApplied patch harness/test_phase3.py cleanly.\nApplied patch harness/test_phase4.py cleanly.\n"
+    }
+  ],
+  "ast_changed": [
+    "normalize_timeout"
+  ],
+  "LF_only_regeneration_exact": true,
+  "live_files_unchanged": true,
+  "review_status": "companion fresh Opus composition R3 active; shared suites owned by companion",
+  "tests_rerun": false,
+  "performance_claim": false
+}

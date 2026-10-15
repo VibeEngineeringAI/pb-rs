@@ -1,0 +1,53 @@
+{
+  "kind": "first actual combined A1 functional preflight; FAILED and unadmitted",
+  "result": {
+    "start_utc": "2026-10-15T12:37:37.408781+00:00",
+    "end_utc": "2026-10-15T12:38:41.207755+00:00",
+    "cleanup_utc": "2026-10-15T12:38:41.290964+00:00",
+    "elapsed_through_cleanup": 63.88220377499238,
+    "actual_exit": 2,
+    "supervisor_verdict": "child_failed",
+    "echild_verified": true,
+    "owned_remaining": [],
+    "lock_reacquired_released": true,
+    "end_identities_unchanged": true,
+    "collector_valid": false,
+    "collector_admission": {
+      "lock": "$HOME/.cache/pb-rs-performance.lock",
+      "mode": "nonblocking exclusive full functional scope; unmeasured; no quiet approval"
+    },
+    "expected_case_hashes_match": true,
+    "cases": 1,
+    "roles": 1,
+    "report_sha256": "f3e40e83612bbe5202510da3bd1d9638f9fa0188659882edbf1a02d852f83ee9",
+    "supervision_sha256": "b91eca1834c0199ca327d191d57186b69e72d8d631701454b01d149b773df8e4",
+    "errors": [
+      "ValueError('captured resize sequence differs from declared script')"
+    ],
+    "performance_claim": false,
+    "cleanup_pass": true,
+    "functional_pass": false
+  },
+  "artifacts": {
+    "/home/ajs/.cache/pb-phase7/under30-combined-a1-primary-dark-01/report.json": "f3e40e83612bbe5202510da3bd1d9638f9fa0188659882edbf1a02d852f83ee9",
+    "/home/ajs/.cache/pb-phase7/under30-combined-a1-primary-dark-01/sql-scroll-500-120x40-dark/reference/config-after.toml": "99fa59e0edd3b95b427045389011fa72b21621a3b178b57ccb5025046b74dc80",
+    "/home/ajs/.cache/pb-phase7/under30-combined-a1-primary-dark-01/sql-scroll-500-120x40-dark/reference/stdout.bin": "2524289b1f62556ade81159f34fb528b18f8b0c12a912dc51357b1f81c9af0fa",
+    "/home/ajs/.cache/pb-phase7/under30-combined-a1-primary-dark-01/sql-scroll-500-120x40-dark/reference/stderr.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/ajs/.cache/pb-phase7/under30-combined-a1-primary-dark-01/sql-scroll-500-120x40-dark/reference/session.json": "b0a6919c04a9c157d15101dfabaff64f2e546364e5c841a4d5149aaf1029ce6b",
+    "/home/ajs/.cache/pb-phase7/under30-combined-a1-primary-dark-01/sql-scroll-500-120x40-dark/reference/execute/stdout.bin": "2524289b1f62556ade81159f34fb528b18f8b0c12a912dc51357b1f81c9af0fa",
+    "/home/ajs/.cache/pb-phase7/under30-combined-a1-primary-dark-01/sql-scroll-500-120x40-dark/reference/execute/stderr.bin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/ajs/.cache/pb-phase7/under30-combined-a1-primary-dark-01/sql-scroll-500-120x40-dark/reference/execute/session.json": "ea407b7dc5c292ca86b6ee2324f150f883e94c88860f8f959b4f541d528fcf52",
+    "/home/ajs/.cache/pb-phase7/under30-combined-a1-primary-dark-01-coordination/launch.json": "180b2bd0b0140bdd66afd8734d9ad3c7388a12b91f26a5f06cc2c35ca72581d3",
+    "/home/ajs/.cache/pb-phase7/under30-combined-a1-primary-dark-01-coordination/supervisor.log": "3e5e3bb0a7c7cee927681c888b9e0fa438d6c2fb070724201afdc2dec673084b",
+    "/home/ajs/.cache/pb-phase7/under30-combined-a1-primary-dark-01-coordination/cleanup.json": "fd14b88dbd6698572b73236366e974826d0aa11a6a6cf8f7f87939463f7d411a",
+    "/home/ajs/.cache/pb-phase7/under30-combined-a1-primary-dark-01-supervision/events.jsonl": "bd5c4437c330e9a82db55bc5e157e18d92f8e2863672900032a5c2dc7d713b49",
+    "/home/ajs/.cache/pb-phase7/under30-combined-a1-primary-dark-01-supervision/child.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/ajs/.cache/pb-phase7/under30-combined-a1-primary-dark-01-supervision/child.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/ajs/.cache/pb-phase7/under30-combined-a1-primary-dark-01-supervision/watchdog.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/home/ajs/.cache/pb-phase7/under30-combined-a1-primary-dark-01-supervision/report.json": "b91eca1834c0199ca327d191d57186b69e72d8d631701454b01d149b773df8e4"
+  },
+  "diagnosis": "fresh independent Opus retained-capture/source diagnosis pending; missing resize sequence may be downstream of readiness timeout",
+  "no_candidate_session": true,
+  "no_performance_claim": true,
+  "review_task": "node:delegated-task:command%3Amcp%3Aebc48407-0657-4b52-9309-ad3d5d9fe842%3Adelegate-task%3Aphase7-opus-a1-functional-failure-r1"
+}

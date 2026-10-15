@@ -1,0 +1,8 @@
+{
+  "finding": "Sol R3-F1 fallback endTime sampled before primary GET",
+  "source_confirmed_by_parent": true,
+  "task_id": "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Adelegate-task%3Aphase7-sol-schema-fallback-clock-fix-r1",
+  "state": "prepare held-response oracle/release3 regression and narrow patch; production edit window not open",
+  "fairness": "source precondition only, actual PTY characterization pending",
+  "final_opus": "active independent review"
+}

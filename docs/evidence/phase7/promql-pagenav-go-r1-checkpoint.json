@@ -1,0 +1,53 @@
+{
+  "status": "actual functional control complete; independent review pending; no page-step adoption or performance claim",
+  "actual_coordinator_exit": 0,
+  "receipt": {
+    "path": "/home/ajs/.cache/pb-phase7/promql-pagenav-root-preparation-r1/coordination/receipt.json",
+    "sha256": "15e3699f180e5890595a214de36aab5b39997a73115d57d62ad3fe81361d8088"
+  },
+  "report": {
+    "available": true,
+    "sha256": "010881265fb5a977b80ec47e04ae1a08e8d8c4e849a50d966c16205dda17d3c4",
+    "bytes": 20584,
+    "resolved_path": "/home/ajs/.cache/pb-phase7/promql-pagenav-go-r1/report.json",
+    "symlink": false,
+    "link_target": null
+  },
+  "start_utc": "2026-10-15T16:29:43.643051+00:00",
+  "cleanup_utc_before_final_receipt": "2026-10-15T16:29:47.493513+00:00",
+  "elapsed_before_final_receipt": 3.850467345910147,
+  "sequence_one_based": [
+    1,
+    16,
+    31,
+    46,
+    256,
+    241,
+    1
+  ],
+  "helper_checks": {
+    "report_helper_present": true,
+    "session_fingerprints": {
+      "reference/session.json": true,
+      "reference/execute/session.json": true
+    },
+    "resolved_path_exact": true,
+    "reported_elf_sha256_exact": true,
+    "actual_file_identity_exact": true,
+    "actual_file_is_elf": true,
+    "provenance_path_exact": true,
+    "provenance_sha256_exact": true,
+    "pinned_provenance_fields_exact": true,
+    "capability_present": true
+  },
+  "end_identities_unchanged": true,
+  "supervisor_echild_verified": true,
+  "coordinator_echild_verified": true,
+  "passive_lock_release_verified": true,
+  "token": "phase6-quiet-phase7-pagenav-go-r1-20261015T162917Z",
+  "token_released": true,
+  "unused_prior_token": "phase6-quiet-phase7-pagenav-go-r1-20261015T162649Z",
+  "prior_token_disposition": "expired before launch; no workload or lock acquisition",
+  "independent_review_task": "node:delegated-task:command%3Amcp%3A78a62eba-9e95-4ed0-8754-e373aac96a0d%3Adelegate-task%3Aphase7-opus-pagenav-evidence-composition-review-r1",
+  "live_source_applied": false
+}

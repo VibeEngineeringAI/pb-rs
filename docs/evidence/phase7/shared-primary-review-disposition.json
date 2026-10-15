@@ -1,0 +1,30 @@
+{
+  "status": "scoped primary evidence integrity accepted; historical combined gates not crossed; separate >5% confirmations required; no performance acceptance",
+  "review": "docs/phase7-review-shared-primary-sol-r1.md",
+  "review_sha256": "e816de99049f8c83d3b4fca038586509aaae1a68384f9b716f52c2067fd06e0b",
+  "primary_report_sha256": "92975e27d756cbe701bb3ca0fb818e36655b0a5876b2a0d3a7723dbd6e81a0ff",
+  "verified_runs": 1575,
+  "protected_originals": 24501,
+  "historical_combined_gate_crossings": 0,
+  "historical_combined_cells": 45,
+  "separate_confirmation_cells": 30,
+  "confirmation_cases": 15,
+  "flagged_counts": {
+    "peak_rss_bytes": 15,
+    "wall_ms": 7,
+    "cpu_ms": 8
+  },
+  "reported_peak_rss_increase_mib": [
+    1.01,
+    1.746
+  ],
+  "reported_peak_rss_increase_percent": [
+    20.47,
+    27.94
+  ],
+  "cause": "unattributed; investigate, do not waive using absolute allowances",
+  "physical_accounting_proof": null,
+  "raw_native_payload_retained": false,
+  "first_useful_result_available": false,
+  "confirmation_rule": "Fresh case-alone 5 warmups/30 measured per original3roles. Flagged median ratio>1.05 AND entire independent seed1/2000draw ratio CI>1.05; no absolute allowance. Never pool primary and confirmation."
+}

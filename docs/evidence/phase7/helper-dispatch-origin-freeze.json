@@ -1,0 +1,99 @@
+{
+  "checks": [
+    "owned py_compile",
+    "scoped git diff --check",
+    "AST invariants above"
+  ],
+  "exact_delta": {
+    "path": "/home/ajs/.cache/pb-phase7/harness-dispatch-origin-r3/owned.diff",
+    "sha256": "fe12354bcab88280a3c406620c7a3192201db0028f379061fb01269c1a56f4de"
+  },
+  "files": {
+    "docs/phase7-harness.md": "6c3c79dd0f159632d9983654a1c4f8e10ebc0032a67dd8a4ff7810f2c7d34882",
+    "harness/phase7.py": "26895f680be00ba1f65440a4e7097ee8d94027e15c64bd7fb317691700f7da0a",
+    "harness/phase7_spawn.c": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4",
+    "harness/phase7_workloads.py": "54a9efb7767372c976b459c3e2dc59c590e0b9d6b47b4cc29e36ae81ff588d1c",
+    "harness/test_phase7.py": "e25bd26ff4229e1487f2492647addf7f778e048f47bba3d19359adc10b535d37"
+  },
+  "frozen_at_utc": "2026-10-14T15:09:26.335749+00:00",
+  "not_run": [
+    "Go/Rust/candidate CLI sessions",
+    "native helper executions",
+    "compiler/version/capability probes",
+    "builds",
+    "profilers",
+    "timing or observer floor",
+    "quiet-window or lock acquisition"
+  ],
+  "pending": [
+    "parent full helper suite if needed",
+    "services-owned consumer/docs/test freeze",
+    "fresh parent-owned functional collector preflight",
+    "any independent review required by coordinator"
+  ],
+  "previous_files": {
+    "docs/phase7-harness.md": "d5871ed0f7abd12e750b6084aef6eca39e0b48bbed1e5f7e09867042c2686e3a",
+    "harness/phase7.py": "f07826d99920ebaa45dd336869618f4ed1c3300c24d13cd30dae0c8a50730c3b",
+    "harness/test_phase7.py": "23c4a5d8d32902cb229f37ca7bbdcda8590b7ad4ed6788de1fdf274519b46a13"
+  },
+  "prior_freeze_preserved": "/home/ajs/.cache/pb-phase7/harness-cache-alias-review/freeze.json",
+  "review": {
+    "actual_H1_magnitude": "unknown; artificial clock increments are not measured costs",
+    "implementation_not_review_acceptance": true,
+    "reference": "docs/phase7-review-measurement-opus-r3.md R3-H1"
+  },
+  "schema_version": 1,
+  "scope": "R3-H1 additive action dispatch origin; explicit legacy evaluation alias; deterministic inert action-loop tests and documentation",
+  "seam": {
+    "checkpoint_readiness_and_coordinates": "preaction evaluation semantics unchanged",
+    "collector_agreement": "owner confirmed single dispatch type per measured action, uses dispatch origin and rejects missing stamps",
+    "combined_dispatch_actions": "existing order unchanged; scalar stamp records last dispatched key/send, resize or signal",
+    "key_send_boundary": "after readiness/frame/hash/substitution/UTF8 encoding, immediately before os.write",
+    "legacy_evaluation": "event.monotonic_ns remains unchanged; event.evaluated_monotonic_ns is its explicit equal alias",
+    "new_latency_origin": "event.dispatch_monotonic_ns",
+    "non_dispatch_events": "no dispatch origin for checkpoint/wait/fixture-release only",
+    "resize_boundary": "after terminal.resize, immediately before winsize/ioctl + SIGWINCH sequence",
+    "signal_boundary": "immediately before group signal dispatch"
+  },
+  "source_frozen": true,
+  "static_invariants": {
+    "C_and_workloads_hashes_unchanged": true,
+    "all_other_phase7_functions_classes_constants_unchanged": true,
+    "frame_stamp_AST_unchanged": true,
+    "helper_ELF_verified_read_only": "3b684c7b7632302725727fcc586a071c7818f43d704a8cbf4e1afc384e99f03e",
+    "public_signatures_unchanged": true,
+    "resource_metrics_AST_unchanged": true
+  },
+  "tests": {
+    "dispatch_regressions": 3,
+    "log": "/home/ajs/.cache/pb-phase7/harness-dispatch-origin-r3/owned-tests-final.log",
+    "models": "named key, Unicode send, resize, signal; actual pyte with inert OS/native/selector and a manually advanced logical clock; complete synthetic metric dict equality",
+    "mutation_controls": {
+      "kind": "in-memory negative controls, no source edits or real dispatch",
+      "mutations": [
+        {
+          "detected": true,
+          "errors": 0,
+          "expected_failures": 4,
+          "name": "early-evaluation-origin",
+          "tests": 3
+        },
+        {
+          "detected": true,
+          "errors": 0,
+          "expected_failures": 1,
+          "name": "before-emulator-resize",
+          "tests": 3
+        }
+      ]
+    },
+    "mutation_log": "/home/ajs/.cache/pb-phase7/harness-dispatch-origin-r3/mutation-controls.log",
+    "mutation_log_sha256": "b716f937875cc7c502d5f4c8a7d37da8dc2e8d1dd7decee20b1a5e9ab14303d0",
+    "owned_scoped": 18,
+    "prior_fixture_setup_log_retained": "/home/ajs/.cache/pb-phase7/harness-dispatch-origin-r3/dispatch-tests-1.log",
+    "resolver": 3,
+    "seconds": 0.549,
+    "sha256": "0df2a1ffd20718bb7218b7323ee61b7b3fbf2433a783fb111f49c7139c8b8aca",
+    "terminal": 12
+  }
+}

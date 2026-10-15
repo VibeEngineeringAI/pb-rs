@@ -1,0 +1,49 @@
+// G10 oracle: Go 1.25 sort.Slice on the chart points of one merged series.
+// Two series a{job="x"} and b{job="x"} share the label set, so
+// extractChartData merges them into one series whose points arrive as
+// a0..a6 then b0..b6 with pairwise equal timestamps (t0..t6).
+//
+// Stored as .go.txt so `go test ./...` never sees a second main package.
+// Run: copy to an empty scratch directory as main.go, then `go run main.go`
+// (pinned toolchain go1.25.4 linux/amd64). Recorded output:
+// promql-sort-oracle-result.txt.
+//
+// Expected (hand-derived from sort/zsortfunc.go pdqsort_func, see
+// docs/phase7-promql.md G10):
+//   b0 a0 a1 b1 a2 b2 a3 b3 a4 b4 a5 b5 a6 b6
+// plus the n <= 12 control, which insertion-sorts and so is stable:
+//   a0 b0 a1 b1 a2 b2 a3 b3 a4 b4 a5 b5
+package main
+
+import (
+	"fmt"
+	"sort"
+	"strings"
+	"time"
+)
+
+type point struct {
+	name string
+	t    time.Time
+}
+
+func run(perSeries int) string {
+	base := time.Unix(1704067200, 0)
+	var points []point
+	for _, s := range []string{"a", "b"} {
+		for i := 0; i < perSeries; i++ {
+			points = append(points, point{fmt.Sprintf("%s%d", s, i), base.Add(time.Duration(i) * time.Minute)})
+		}
+	}
+	sort.Slice(points, func(i, j int) bool { return points[i].t.Before(points[j].t) })
+	names := make([]string, len(points))
+	for i, p := range points {
+		names[i] = p.name
+	}
+	return strings.Join(names, " ")
+}
+
+func main() {
+	fmt.Println(run(7)) // 14 points: pdqsort partition path
+	fmt.Println(run(6)) // 12 points: insertion sort (stable)
+}

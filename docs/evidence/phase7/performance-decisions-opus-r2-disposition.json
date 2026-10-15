@@ -1,0 +1,21 @@
+{
+  "review": "docs/phase7-review-performance-decisions-opus-r2.md",
+  "review_sha256": "26ccdfb99f851d1c0619efd557c1d99689946a7dd7ac0878dad1ef9d24d43f33",
+  "review_evidence_sha256": "93360f62754812c481cfde0ec8254a8c2f54f744cc98b66aff28de68250e5fe1",
+  "root_read": "Full report; independently inspected Phases.idle/quit, SQL action sequence, readiness and execute sampling/action loops",
+  "status": "R2 not accepted; corrections assigned",
+  "review_scope": "Source/manual arithmetic only; one failed EDQUOT shell, no reviewer tests/hash execution claimed",
+  "findings": {
+    "PD2-M1": "Exact requirement two post-E retained samples; immediatequit structural risk confirmed. Review40\u2013110ms is scheduling heuristic, not hardbound/measurement. Root commissions separate OFFTREE postidlehold proposal before sourcefreeze/preflight; no edit authorized and no idleinterval change.",
+    "PD2-L1": "Regenerate derived idle metric/ledger and retain source idle as descriptive screen",
+    "PD2-L2": "Specify/bind exactFraction total envelope vsIEEEu+s coordinator-raw CI and crossingfunctions",
+    "PD2-L3": "Require retained measured pool order equal chunk1..9; bind exactargv",
+    "PD2-L4": "All decision rows provisional when scheduledconfirmation pending/declined/infeasible; explicittradeoff neverfakepass",
+    "PD2-L5": "Checkactiveprovenance, correct claimedmutants todiscriminatingboundarycases and syntheticcheckcounts"
+  },
+  "task_ids": [
+    "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-decisions-r3-corrections",
+    "node:delegated-task:command%3Amcp%3A245f7194-2732-4b67-ac9f-f5e734b5da17%3Athread-send%3Aphase7-postidle-bracket-proposal"
+  ],
+  "limits": "No protocol/source binding, preflight, campaign, accounting verification, performance acceptance or commit"
+}

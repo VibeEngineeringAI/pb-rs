@@ -15,11 +15,12 @@ enum Operation {
     UserList,
     RoleDelete,
     RoleList,
+    RoleCreate,
 }
 impl Operation {
     fn parse(parsed: &ParsedInvocation) -> Option<Self> {
         Some(match parsed.command_path.as_str() {
-            "pb dataset add" if !trim(parsed.text("type")).is_empty() => Self::Dataset,
+            "pb dataset add" => Self::Dataset,
             "pb dataset remove" => Self::Dataset,
             "pb user add" => Self::UserCreate,
             "pb user remove" => Self::UserDelete,
@@ -27,6 +28,7 @@ impl Operation {
             "pb user list" => Self::UserList,
             "pb role remove" => Self::RoleDelete,
             "pb role list" => Self::RoleList,
+            "pb role add" => Self::RoleCreate,
             _ => return None,
         })
     }
@@ -58,6 +60,29 @@ pub(crate) fn execute(
             .build()
             .map_err(|e| CliError::new(ErrorCode::CommandFailed, e.to_string()))?;
         crate::metrics::output::style::with_process_render(|| {
+            let service = AdminService::new(&client);
+            if matches!(operation, Operation::RoleCreate) {
+                let name = &parsed.positionals[0];
+                runtime.block_on(service.check_role_name(name))?;
+                let privilege = crate::tui::admin::select_privilege()?;
+                let Some(privilege) = privilege else {
+                    return Ok(CommandOutput::Mutation(b"aborted by user\n".to_vec()));
+                };
+                return runtime
+                    .block_on(service.create_role(name, privilege))
+                    .map(CommandOutput::Mutation);
+            }
+            if matches!(operation, Operation::Dataset) && admin_datasets::deferred(parsed) {
+                let kind = crate::tui::admin::select_dataset_kind()?;
+                let Some(kind) = kind else {
+                    return Ok(CommandOutput::Mutation(
+                        b"Dataset creation canceled\n".to_vec(),
+                    ));
+                };
+                return runtime
+                    .block_on(service.create_dataset(&parsed.positionals[0], kind))
+                    .map(CommandOutput::Mutation);
+            }
             runtime.block_on(async {
                 match operation {
                     Operation::Dataset => admin_datasets::execute(parsed, &client)
@@ -85,6 +110,7 @@ pub(crate) fn execute(
                     Operation::RoleDelete => delete_role(parsed, &client)
                         .await
                         .map(CommandOutput::Mutation),
+                    Operation::RoleCreate => unreachable!("interactive role handled above"),
                 }
             })
         })
@@ -108,6 +134,59 @@ pub(crate) fn execute(
             error.raw_stdout = None;
             error.render(command, path, structured)
         }
+    }
+}
+
+/// Concrete service used by administration sessions. It preserves each
+/// operation's preflight and response-body policy rather than unifying them.
+pub(crate) struct AdminService<'a> {
+    client: &'a ApiClient,
+}
+impl<'a> AdminService<'a> {
+    pub(crate) fn new(client: &'a ApiClient) -> Self {
+        Self { client }
+    }
+    pub(crate) async fn check_role_name(&self, name: &str) -> Result<(), CliError> {
+        if admin_inventory::role_names(self.client)
+            .await?
+            .iter()
+            .any(|r| r == name)
+        {
+            return Err(CliError::new(
+                ErrorCode::Conflict,
+                format!("role {name} already exists; use a different name"),
+            ));
+        }
+        Ok(())
+    }
+    pub(crate) async fn create_role(
+        &self,
+        name: &str,
+        privilege: crate::tui::admin::Privilege,
+    ) -> Result<Vec<u8>, CliError> {
+        let body = serde_json::to_vec(&[serde_json::json!({"privilege": privilege.as_str()})])
+            .expect("static privilege serializes");
+        // Role creation reads even a successful body, unlike dataset creation.
+        let response = self
+            .client
+            .standard(Method::PUT, &format!("role/{name}"), Some(body))
+            .await?;
+        if response.status != 200 {
+            return Err(CliError::status(
+                "create role",
+                response.status,
+                &response.status_text(),
+                &response.body,
+            ));
+        }
+        Ok(format!("Added role {name}").into_bytes())
+    }
+    pub(crate) async fn create_dataset(
+        &self,
+        name: &str,
+        kind: admin_datasets::DatasetKind,
+    ) -> Result<Vec<u8>, CliError> {
+        admin_datasets::create_selected(self.client, name, kind).await
     }
 }
 
@@ -277,6 +356,75 @@ fn bold(name: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn role_preflight_and_single_privilege_mutation_use_existing_service() {
+        use std::{
+            io::{Read, Write},
+            net::TcpListener,
+            thread,
+        };
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let client = ApiClient::new(
+            crate::config::ProfileRecord {
+                url: format!("http://{}", listener.local_addr().unwrap()),
+                username: "u".into(),
+                password: "p".into(),
+                ..Default::default()
+            },
+            ProfileStore::new("/nonexistent/role-test"),
+        )
+        .unwrap();
+        let server = thread::spawn(move || {
+            let mut requests = Vec::new();
+            for body in ["{}", "done"] {
+                let (mut socket, _) = listener.accept().unwrap();
+                socket
+                    .set_read_timeout(Some(std::time::Duration::from_secs(2)))
+                    .unwrap();
+                let mut head = Vec::new();
+                while !head.ends_with(b"\r\n\r\n") {
+                    let mut byte = [0];
+                    socket.read_exact(&mut byte).unwrap();
+                    head.push(byte[0]);
+                }
+                let head = String::from_utf8(head).unwrap();
+                let length: usize = head
+                    .lines()
+                    .find_map(|line| {
+                        line.to_ascii_lowercase()
+                            .strip_prefix("content-length: ")
+                            .map(str::parse)
+                    })
+                    .transpose()
+                    .unwrap()
+                    .unwrap_or(0);
+                let mut payload = vec![0; length];
+                socket.read_exact(&mut payload).unwrap();
+                requests.push((head, payload));
+                write!(
+                    socket,
+                    "HTTP/1.1 200 OK\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{body}",
+                    body.len()
+                )
+                .unwrap();
+            }
+            requests
+        });
+        let runtime = tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .unwrap();
+        let service = AdminService::new(&client);
+        runtime.block_on(service.check_role_name("new")).unwrap();
+        let output = runtime
+            .block_on(service.create_role("new", crate::tui::admin::Privilege::Ingestor))
+            .unwrap();
+        assert_eq!(output, b"Added role new");
+        let requests = server.join().unwrap();
+        assert!(requests[0].0.starts_with("GET /api/v1/roles HTTP/1.1"));
+        assert!(requests[1].0.starts_with("PUT /api/v1/role/new HTTP/1.1"));
+        assert_eq!(requests[1].1, br#"[{"privilege":"ingestor"}]"#);
+    }
     #[test]
     fn role_payload_preserves_order_duplicates_empty_and_go_escaping() {
         let input = RoleInput::new(" reader,reader, ,<admin>&\u{2028}x ");

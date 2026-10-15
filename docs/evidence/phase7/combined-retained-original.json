@@ -1,0 +1,199 @@
+{
+  "kind": "original complete combined retained replay, preserved before reviewed normalization",
+  "status": "3267/3268 selected cases passed, one actual Go A/A header-stall spelling race; four historical completion guards pass",
+  "execution": {
+    "path": "/home/ajs/.cache/pb-phase7/retained-release6-combined/execution.json",
+    "sha256": "1c4b5d8db89b6a78f699669c87cf442a0d61a24aa4347fc5f02b558873c83a91"
+  },
+  "cases": 3268,
+  "passed": 3267,
+  "failed": 1,
+  "historical_guards": 4,
+  "partitions": [
+    {
+      "partition": "phase1",
+      "cases": 2018,
+      "failed": 0,
+      "report": "/home/ajs/.cache/pb-phase7/retained-release6-combined/phase1/report.json",
+      "sha256": "6be8a13b01c907a24f30ac97240fc36780730a069e8687411ce6f39eea82c384",
+      "source_end_verified": true,
+      "supervision_timeout": false,
+      "functional_elapsed_seconds": 70.13693451904692
+    },
+    {
+      "partition": "phase2",
+      "cases": 219,
+      "failed": 0,
+      "report": "/home/ajs/.cache/pb-phase7/retained-release6-combined/phase2/report.json",
+      "sha256": "8ecece006f3c4d36667cc53c1e17ee8d8ded52a06a7db8e3e84805b1decf4790",
+      "source_end_verified": true,
+      "supervision_timeout": false,
+      "functional_elapsed_seconds": 28.111817309167236
+    },
+    {
+      "partition": "phase3-default",
+      "cases": 675,
+      "failed": 0,
+      "report": "/home/ajs/.cache/pb-phase7/retained-release6-combined/phase3-default/report.json",
+      "sha256": "53b5a4f97696ad6325d702f12850cb8ee75dcf242834efd88023f6478c0dbb30",
+      "source_end_verified": true,
+      "supervision_timeout": false,
+      "functional_elapsed_seconds": 312.9728975449689
+    },
+    {
+      "partition": "p3-deadline-header-stall-text",
+      "cases": 1,
+      "failed": 1,
+      "report": "/home/ajs/.cache/pb-phase7/retained-release6-combined/p3-deadline-header-stall-text/report.json",
+      "sha256": "2918475d79c127da2fa5473d3e32155ea2c0f84a4514a170688acae59d01ddb3",
+      "source_end_verified": true,
+      "supervision_timeout": false,
+      "functional_elapsed_seconds": 185.94811892695725
+    },
+    {
+      "partition": "p3-deadline-body-stall-text",
+      "cases": 1,
+      "failed": 0,
+      "report": "/home/ajs/.cache/pb-phase7/retained-release6-combined/p3-deadline-body-stall-text/report.json",
+      "sha256": "d5b2690d0737ba5c1d24dba3ef9ed27e1ca5cfd0494aaaa1d778b8f5ae968eef",
+      "source_end_verified": true,
+      "supervision_timeout": false,
+      "functional_elapsed_seconds": 185.2460184439551
+    },
+    {
+      "partition": "p3-deadline-header-stall-json",
+      "cases": 1,
+      "failed": 0,
+      "report": "/home/ajs/.cache/pb-phase7/retained-release6-combined/p3-deadline-header-stall-json/report.json",
+      "sha256": "84a460db91ff0bd877fb4be6ac5f50a93a3b0d4891042cc25075db85704e2286",
+      "source_end_verified": true,
+      "supervision_timeout": false,
+      "functional_elapsed_seconds": 185.12987553398125
+    },
+    {
+      "partition": "p3-deadline-body-stall-json",
+      "cases": 1,
+      "failed": 0,
+      "report": "/home/ajs/.cache/pb-phase7/retained-release6-combined/p3-deadline-body-stall-json/report.json",
+      "sha256": "9a27e108dad9ae43faf607c224346a8539cd9938f4fec8a3e158322d41cf0437",
+      "source_end_verified": true,
+      "supervision_timeout": false,
+      "functional_elapsed_seconds": 185.2955953280907
+    },
+    {
+      "partition": "p3-deadline-text-empty-array-lookahead",
+      "cases": 1,
+      "failed": 0,
+      "report": "/home/ajs/.cache/pb-phase7/retained-release6-combined/p3-deadline-text-empty-array-lookahead/report.json",
+      "sha256": "552045a9406bcbba134f4ba6d9cbe89676f93a1957a4e3680a15bcbf5f55cdaa",
+      "source_end_verified": true,
+      "supervision_timeout": false,
+      "functional_elapsed_seconds": 185.04492511390708
+    },
+    {
+      "partition": "p3-deadline-not-reset-per-chunk",
+      "cases": 1,
+      "failed": 0,
+      "report": "/home/ajs/.cache/pb-phase7/retained-release6-combined/p3-deadline-not-reset-per-chunk/report.json",
+      "sha256": "0f6b9fccedeab68f87c6acd3f2fc9e94b0a6919c0787f02c61677b96b395418a",
+      "source_end_verified": true,
+      "supervision_timeout": false,
+      "functional_elapsed_seconds": 185.05569999990985
+    },
+    {
+      "partition": "p3-deadline-spans-redirects",
+      "cases": 1,
+      "failed": 0,
+      "report": "/home/ajs/.cache/pb-phase7/retained-release6-combined/p3-deadline-spans-redirects/report.json",
+      "sha256": "197e97fb69ffb0b9ec8e2a615f0bcaa5597c033f6d25703b75dd2c51eede9355",
+      "source_end_verified": true,
+      "supervision_timeout": false,
+      "functional_elapsed_seconds": 184.99828021996655
+    },
+    {
+      "partition": "p3-deadline-spans-refresh",
+      "cases": 1,
+      "failed": 0,
+      "report": "/home/ajs/.cache/pb-phase7/retained-release6-combined/p3-deadline-spans-refresh/report.json",
+      "sha256": "70c1a862d9f5987b9b757d542950ba827f86eb8aaf49f3e97a5a3d4a501c58cc",
+      "source_end_verified": true,
+      "supervision_timeout": false,
+      "functional_elapsed_seconds": 185.17748672002926
+    },
+    {
+      "partition": "p3-deadline-preview-needs-one-more-byte",
+      "cases": 1,
+      "failed": 0,
+      "report": "/home/ajs/.cache/pb-phase7/retained-release6-combined/p3-deadline-preview-needs-one-more-byte/report.json",
+      "sha256": "2c902a051f395a2668d1be5be936b98c668ca081656e1f4e495bf96b34d42acf",
+      "source_end_verified": true,
+      "supervision_timeout": false,
+      "functional_elapsed_seconds": 184.8773762921337
+    },
+    {
+      "partition": "phase4-default",
+      "cases": 159,
+      "failed": 0,
+      "report": "/home/ajs/.cache/pb-phase7/retained-release6-combined/phase4-default/report.json",
+      "sha256": "45c2e5c26738f8028134606ca89c66a9a94d3fbaa61ef09c559f114fc33c2cc0",
+      "source_end_verified": true,
+      "supervision_timeout": false,
+      "functional_elapsed_seconds": 66.5713452489581
+    },
+    {
+      "partition": "p4-deadline-header",
+      "cases": 1,
+      "failed": 0,
+      "report": "/home/ajs/.cache/pb-phase7/retained-release6-combined/p4-deadline-header/report.json",
+      "sha256": "ef7e637e7f91f0d850d2e1dd7132e763e3c567831b24f48a838d5e3f4e13b417",
+      "source_end_verified": true,
+      "supervision_timeout": false,
+      "functional_elapsed_seconds": 361.1664854430128
+    },
+    {
+      "partition": "p4-deadline-body",
+      "cases": 1,
+      "failed": 0,
+      "report": "/home/ajs/.cache/pb-phase7/retained-release6-combined/p4-deadline-body/report.json",
+      "sha256": "1f8b09ede5b6c51dd315f5676ba4d0caa5e4df3f710f147875ed28c8904278a1",
+      "source_end_verified": true,
+      "supervision_timeout": false,
+      "functional_elapsed_seconds": 361.29482724005356
+    },
+    {
+      "partition": "phase5-full",
+      "cases": 186,
+      "failed": 0,
+      "report": "/home/ajs/.cache/pb-phase7/retained-release6-combined/phase5-full/report.json",
+      "sha256": "9ecdb3012bc6b41116e535f8d5e6cbb744a0ba5b152aa63eb05f741d8e588ae4",
+      "source_end_verified": true,
+      "supervision_timeout": false,
+      "functional_elapsed_seconds": 257.42638419009745
+    }
+  ],
+  "build_manifest_sha256": "c1aabd24afc0ed82e9bcd1a5028bc52c5cc507113a826119fabd91d7b63fc56c",
+  "artifacts": {
+    "/home/ajs/.cache/pb-phase7/candidates/release6-combined/pb-normal": "6d80054f5d87b081bfe51bed014a6f64c8e9a01c2c7f7fcb4c6434e221868443",
+    "/home/ajs/.cache/pb-phase7/candidates/release6-combined/pb-cloud": "a675e0f7fcca77d223c93aff1a1b861021da261d72f340561838ad46d806cae5",
+    "/home/ajs/.cache/pb-phase7/candidates/release6-combined/pb-login": "73a26353444d6621a9c5c6e71b0e96744d9f82947c8af1a0dfdd9b29a7ffab57",
+    "/home/ajs/.cache/pb-phase7/baselines/pb-go": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+    "/home/ajs/.cache/pb-phase7/baselines/pb-go-cloud": "622d4144b7e354c0ee4036244ba719cbbaf8357710804b1d733cd421a0dc227e"
+  },
+  "runners": {
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase2.py": "66568cd9b0663011547763a258875f45949b21f5ed4c05fe9a695cebdc89cfbd",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase4.py": "e5105ae22b0c599901d8622adf4e2942abb05a8c38bd220e8f685cae58782213",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase5.py": "2bd03937195ea26b07faffa9281d109013d0b785fe33c63fa10905ce262d4c85",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase1.py": "840c98a003c2caa4abc51a234090b49f3b24774e57a141f1ac995977b5902edd",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/phase3.py": "33be7605b2e3ea44712a8118b8909b129d00ef3f46c7f4d3932a522351e2b7bd",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/run.py": "b280d1295a4b351e6f2d838c56acaac58b2247bb77fc9881587bb7bbe849a076",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/harness/cases.py": "b892e1b592111d8115ceddac61ca732942dd6b9b7ef900ce4a023cff8420ebfa",
+    "/home/ajs/.t3/worktrees/pb-rs/feat-phase7-interactive/bin/pb-fixture": "fa8b4711ce6c901fc2b277318337268b45953e9868d4bc1b24407b274cc9ec5c"
+  },
+  "production_source_end_reverified": true,
+  "all16_partition_identities_unchanged": true,
+  "all16_without_supervision_timeout": true,
+  "maximum_partition_seconds": 361.29482724005356,
+  "perf_claim": false,
+  "normalization_review": "docs/phase7-review-combined-header-deadline-opus-r1.md",
+  "successor_replay": "pending separate exactcase report, original unchanged"
+}
