@@ -1301,6 +1301,7 @@ dependencies = [
  "hyper-rustls",
  "hyper-util",
  "libc",
+ "lz4_flex",
  "prost",
  "prost-types",
  "rustls",
@@ -1317,6 +1318,7 @@ dependencies = [
  "unicode-width",
  "url",
  "zmij",
+ "zstd",
 ]
 
 [[package]]

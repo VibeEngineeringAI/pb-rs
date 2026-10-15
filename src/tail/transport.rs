@@ -130,7 +130,7 @@ impl FlightStatus {
 /// credentials (invalid URL / scheme) -> client -> tailAuthMetadata.
 pub(super) async fn discover(
     store: &ProfileStore,
-    dataset: &str,
+    dataset: &[u8],
 ) -> Result<FlightConnection, CliError> {
     let ticket = ticket(dataset);
     let profile = store
@@ -498,8 +498,8 @@ fn receive_limit_exceeded(status: &Status) -> Option<(u64, u64)> {
 }
 
 /// Go `json.Marshal(struct{Stream string `json:"stream"`})`, HTML-escaped.
-fn ticket(dataset: &str) -> Bytes {
-    let quoted = serde_json::to_string(dataset).expect("strings serialize");
+fn ticket(dataset: impl AsRef<[u8]>) -> Bytes {
+    let quoted = crate::error::json_string_bytes(dataset.as_ref());
     let quoted = quoted
         .replace('&', "\\u0026")
         .replace('<', "\\u003c")

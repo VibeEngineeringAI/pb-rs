@@ -1123,15 +1123,8 @@
       "role"
     ],
     "profile_required_parent_reason": "Successful direct parent -o json invokes combinedPreRun and requires a configured profile before rendering metadata. Empty-profile preflight errors are covered; help PATH -o json inspects metadata without prerequisites.",
-    "hidden_completion_execution": [
-      "completion bash",
-      "completion fish",
-      "completion powershell",
-      "completion zsh",
-      "__complete",
-      "__completeNoDesc"
-    ],
-    "hidden_completion_reason": "Completion command help and parser failures are covered. Generated shell scripts and dynamic completion protocol execution are deferred.",
+    "hidden_completion_execution": [],
+    "hidden_completion_reason": "Promoted: Bash, Fish, PowerShell and Zsh scripts (including no-descriptions variants) and both Cobra completion protocols are exercised with exact stdout/stderr/exit parity in this offline gate.",
     "unreachable_commands": [
       "schema",
       "cluster",
@@ -1142,7 +1135,7 @@
     ],
     "unreachable_reason": "Defined in source but not added to the root command in main.go.",
     "terminal_presentation": "PTY/TTY colors, styles, terminal capability probes and interactive screens are deferred; exact plain pipe output including trailing spaces is covered.",
-    "byte_valued_argv": "The corpus covers Unicode argv only. Go accepts raw non-UTF-8 argv bytes; Rust currently rejects them explicitly at its String parser boundary. Byte-valued argv parity remains unresolved and is not normalized away.",
+    "byte_valued_argv": "The phase-one JSON corpus represents Unicode argv. Unix byte-valued argv is implemented with raw sidecars and covered separately by process, network and interactive oracle regressions; phase three retains the raw SQL request case in its required gate. Consumers choose Go-compatible byte, rune, URL or JSON semantics explicitly.",
     "native_platform_coverage": "Native process coverage is verified only on Linux. macOS and Windows execution, termination and platform-specific presentation remain unverified."
   }
 }

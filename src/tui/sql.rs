@@ -63,24 +63,25 @@ pub(crate) fn execute(
     stdout: &mut (dyn Write + Send),
     stderr: &mut (dyn Write + Send),
 ) -> Result<i32, CliError> {
-    let raw = parsed.positionals.first().map(String::as_str).unwrap_or("");
+    let raw = parsed.positional_bytes(0);
     let from = if !parsed.explicit("from") {
-        "1h"
-    } else if parsed.text("from").is_empty() {
-        "1m"
+        b"1h".as_slice()
+    } else if parsed.text_bytes("from").is_empty() {
+        b"1m".as_slice()
     } else {
-        parsed.text("from")
+        parsed.text_bytes("from")
     };
-    let to = if parsed.text("to").is_empty() {
-        "now"
+    let to = if parsed.text_bytes("to").is_empty() {
+        b"now".as_slice()
     } else {
-        parsed.text("to")
+        parsed.text_bytes("to")
     };
     // quoteStreamNames, quoteFieldsWithDots and ensureDefaultLimit run
     // before the editor, so the initial editor text carries "LIMIT 500".
-    let query = rewrite::prepare_query(raw);
-    let start = parse_cli_time(from).map_err(|e| failure(format!("invalid --from value: {e}")))?;
-    let end = parse_cli_time(to).map_err(|e| failure(format!("invalid --to value: {e}")))?;
+    let query = rewrite::prepare_query_bytes(raw);
+    let start =
+        parse_cli_time_bytes(from).map_err(|e| failure(format!("invalid --from value: {e}")))?;
+    let end = parse_cli_time_bytes(to).map_err(|e| failure(format!("invalid --to value: {e}")))?;
     // NewQueryModel runs before tea.Program.Run: a Go panic there (L-SQL-4)
     // is unrecovered. The runtime prints the value and the goroutine dump
     // (not reproducible; ledgered) to stderr and the process exits 2; the
@@ -105,7 +106,7 @@ pub(crate) fn execute(
     let size = session
         .size()
         .map(|s| (i64::from(s.width), i64::from(s.height)));
-    let mut state = QueryState::new(profile_url, &query, start, end, size);
+    let mut state = QueryState::new_raw(profile_url, &query, start, end, size);
     let end = runtime.block_on(drive(&mut session, &mut state, service));
     let result = match end {
         DriveEnd::Quit => {
@@ -593,6 +594,15 @@ fn go_date_utc(wall: NaiveDateTime, offset_at: impl Fn(NaiveDateTime) -> i64) ->
 /// cmd/query.go parseTimeStr, keeping time.Parse's location choice:
 /// "Z" is UTC, an offset equal to Local's at that instant is Local, any
 /// other offset is a fixed zone; now/durations are Local.
+pub(crate) fn parse_cli_time_bytes(value: &[u8]) -> Result<GoTime, String> {
+    // Keep exact Go quoting on malformed CLI bytes before constructing the
+    // location-preserving time picker value (valid input is necessarily UTF-8).
+    match std::str::from_utf8(value) {
+        Ok(value) => parse_cli_time(value),
+        Err(_) => crate::time_compat::parse_time_bytes(value).map(GoTime::local),
+    }
+}
+
 pub(crate) fn parse_cli_time(value: &str) -> Result<GoTime, String> {
     let instant = crate::time_compat::parse_time(value)?;
     if value == "now" || !value.contains('T') {
@@ -1219,8 +1229,10 @@ fn is_sql_space(c: u8) -> bool {
 /// lowered text, which query.go then applies to the ORIGINAL bytes. Letters
 /// whose lowercase has another UTF-8 length (KELVIN SIGN 3→1, 'İ' 2→1,
 /// 'Ⱥ' 2→3) shift that offset, exactly as in Go.
-fn go_lower_index(s: &str, needle: &str) -> Option<usize> {
-    super::unicode::lower(s).find(needle)
+fn go_lower_index(s: impl AsRef<[u8]>, needle: &str) -> Option<usize> {
+    // Go ToLower ranges over raw bytes: every invalid byte becomes RuneError,
+    // expanding the lowered string's offsets before slicing the original.
+    super::unicode::lower(&crate::error::go_string(s.as_ref())).find(needle)
 }
 
 /// Go `s[low:]`, including its runtime panic text when `low` is past the end.
@@ -1263,17 +1275,19 @@ fn go_trim_space(mut bytes: &[u8]) -> &[u8] {
 }
 
 /// extractDataset as display text: invalid bytes become one U+FFFD each.
+#[cfg(test)]
 pub(crate) fn extract_dataset(sql: &str) -> Result<String, GoPanic> {
     extract_dataset_bytes(sql).map(|bytes| crate::error::go_string(&bytes))
 }
 
 /// extractDataset's exact Go bytes, which can start or end inside a rune.
-fn extract_dataset_bytes(sql: &str) -> Result<Vec<u8>, GoPanic> {
+fn extract_dataset_bytes(sql: impl AsRef<[u8]>) -> Result<Vec<u8>, GoPanic> {
+    let sql = sql.as_ref();
     let index = go_lower_index(sql, " from ").or_else(|| go_lower_index(sql, "\nfrom "));
     let Some(index) = index else {
         return Ok("—".as_bytes().to_vec());
     };
-    let rest = go_trim_space(go_slice_from(sql.as_bytes(), index + 6)?);
+    let rest = go_trim_space(go_slice_from(sql, index + 6)?);
     for quote in [b'"', b'\''] {
         if rest.first() == Some(&quote) {
             let mut out = Vec::new();
@@ -1330,13 +1344,22 @@ pub(crate) fn resolve_dataset_placeholder(query: &str, dataset: &str) -> Result<
 
 /// The panicking calls NewQueryModel makes before tea.Program.Run: Go has no
 /// recover there, so a panic is an ordinary unrecovered runtime panic.
-pub(crate) fn new_model_preflight(query: &str) -> Result<(), GoPanic> {
-    if query.trim().is_empty() {
+pub(crate) fn new_model_preflight(query: impl AsRef<[u8]>) -> Result<(), GoPanic> {
+    let query = query.as_ref();
+    if go_trim_space(query).is_empty() {
         return Ok(());
     }
-    let extracted = extract_dataset(query)?;
+    let extracted = extract_dataset_bytes(query)?;
+    let (extracted, _) = split_name(extracted);
     let dataset = initial_dataset(&extracted);
-    resolve_dataset_placeholder(query, &dataset).map(drop)
+    // The second extraction/slice is also over the original query, before the
+    // editor's per-rune normalization can change its byte offsets.
+    if !dataset.is_empty()
+        && let Some(index) = go_lower_index(query, " from ")
+    {
+        go_slice_from(query, index + 6)?;
+    }
+    Ok(())
 }
 
 /// A dataset name with its Go bytes when they are not valid UTF-8 (only
@@ -2441,6 +2464,7 @@ fn filter_names(all: &[String], query: &str) -> Vec<String> {
 
 impl QueryState {
     /// NewQueryModel. `size` is term.GetSize(stdout) (absent off a TTY).
+    #[cfg(test)]
     pub(crate) fn new(
         profile_url: String,
         query: &str,
@@ -2448,6 +2472,18 @@ impl QueryState {
         end: GoTime,
         size: Option<(i64, i64)>,
     ) -> Self {
+        Self::new_raw(profile_url, query.as_bytes(), start, end, size)
+    }
+
+    fn new_raw(
+        profile_url: String,
+        query: &[u8],
+        start: GoTime,
+        end: GoTime,
+        size: Option<(i64, i64)>,
+    ) -> Self {
+        let raw_query = query;
+        let query = crate::error::go_string(raw_query);
         let (width, height) = size.unwrap_or((0, 0));
         let mut editor = TextArea::new();
         editor.set_max_height(0);
@@ -2455,7 +2491,7 @@ impl QueryState {
         editor.set_size(70, 10);
         editor.set_show_line_numbers(true);
         editor.set_end_of_buffer(' ');
-        editor.set_value(query);
+        editor.set_value(&query);
         editor.set_placeholder(EDITOR_PLACEHOLDER);
         editor.set_keymap(&PB_AREA_KEYS);
         editor.set_prompt("  ");
@@ -2469,7 +2505,7 @@ impl QueryState {
         if has_query {
             // execute() runs new_model_preflight first, so a Go panic here is
             // only recorded for direct (test) construction.
-            match extract_dataset_bytes(query) {
+            match extract_dataset_bytes(raw_query) {
                 Ok(bytes) => {
                     let (text, raw) = split_name(bytes);
                     dataset = initial_dataset(&text);
@@ -2632,7 +2668,7 @@ impl QueryState {
         }
         let mut selected = self.dataset_bytes();
         if selected.is_empty() {
-            match extract_dataset_bytes(&self.editor.value()) {
+            match extract_dataset_bytes(self.editor.value()) {
                 Ok(bytes) if bytes != "—".as_bytes() && !bytes.is_empty() => {
                     selected = bytes.clone();
                     (self.dataset, self.dataset_raw) = split_name(bytes);
@@ -3460,7 +3496,7 @@ impl QueryState {
         if let Some(raw) = &self.dataset_raw {
             dataset = DatasetValue::Raw(raw.clone());
         } else if self.dataset.is_empty() {
-            match extract_dataset_bytes(&self.editor.value()) {
+            match extract_dataset_bytes(self.editor.value()) {
                 Ok(bytes) if bytes != "—".as_bytes() && !bytes.is_empty() => {
                     dataset = match String::from_utf8(bytes) {
                         Ok(text) => DatasetValue::Text(text),
@@ -5055,6 +5091,36 @@ mod tests {
         assert_eq!(
             resolve_dataset_placeholder(query, "logs").unwrap(),
             "select '\u{a7cb}' from 'logs'"
+        );
+    }
+
+    #[test]
+    fn cli_raw_query_preflight_and_initial_dataset_precede_editor_normalization() {
+        let query = [vec![0xff; 8], b" select * from x".to_vec()].concat();
+        let prepared = rewrite::prepare_query_bytes(&query);
+        assert_eq!(
+            new_model_preflight(&prepared).unwrap_err().0,
+            "runtime error: slice bounds out of range [39:34]"
+        );
+        let prepared = rewrite::prepare_query_bytes(b"select * from 'raw\xff'");
+        let mut s = QueryState::new_raw(
+            "http://pb.test".into(),
+            &prepared,
+            GoTime::local(fixed_now()),
+            GoTime::local(fixed_now()),
+            Some((120, 40)),
+        );
+        assert_eq!(s.dataset_bytes(), b"raw\xff");
+        assert_eq!(s.dataset_raw.as_deref(), Some(b"raw\xff".as_slice()));
+        s.columns_drawer_open = false;
+        assert_eq!(
+            s.toggle_columns_drawer(),
+            vec![Effect::FetchSchema(b"raw\xff".to_vec())]
+        );
+        assert!(
+            parse_cli_time_bytes(b"\xff")
+                .unwrap_err()
+                .contains("\"\\xff\"")
         );
     }
 

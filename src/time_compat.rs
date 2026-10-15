@@ -5,6 +5,16 @@ pub fn parse_time(value: &str) -> Result<DateTime<Utc>, String> {
     parse_time_with(value, Utc::now)
 }
 
+pub fn parse_time_bytes(value: &[u8]) -> Result<DateTime<Utc>, String> {
+    if let Ok(text) = std::str::from_utf8(value) {
+        return parse_time(text);
+    }
+    Err(format!(
+        "unrecognized time format {} (use: now, 10m, 2h, 1d, or RFC3339)",
+        crate::argv::quote(value)
+    ))
+}
+
 pub fn parse_time_with(
     value: &str,
     mut clock: impl FnMut() -> DateTime<Utc>,

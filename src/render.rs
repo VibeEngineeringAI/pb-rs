@@ -119,20 +119,48 @@ pub fn root_help(root: &CommandSpec, initialized: bool) -> String {
 | |_) / _ \ | |_) \___ \|  _|   / _ \ |  _ \| |   |  _|
 |  __/ ___ \|  _ < ___) | |___ / ___ \| |_) | |___| |___
 |_| /_/   \_\_| \_\____/|_____/_/   \_\____/|_____|_____|";
-    let width = art.lines().map(str::len).max().unwrap();
-    let mut output: String = art.lines().map(|line| format!("{line:width$}\n")).collect();
-    output.push_str("Parseable CLI\n\npb is the command line interface for Parseable.\nQuery logs with SQL, explore metrics with PromQL, tail live events,\nand manage datasets, users, roles, and profiles from your terminal.\n\nUsage:\n  pb [command] [flags]\n\nAvailable Commands:\n");
+    use crate::tui::style::{Color, Role, Style};
+    let accent = Style::new().fg(Color::active(Role::Accent)).bold(true);
+    let faint = Style::new().fg(Color::active(Role::Faint));
+    let body = Style::new().fg(Color::active(Role::Body));
+    let command_style = body.bold(true);
+    let mut output = format!(
+        "{}\n{}\n\n",
+        accent.render(art),
+        faint.render("Parseable CLI")
+    );
+    for line in [
+        "pb is the command line interface for Parseable.",
+        "Query logs with SQL, explore metrics with PromQL, tail live events,",
+        "and manage datasets, users, roles, and profiles from your terminal.",
+    ] {
+        output.push_str(&body.render(line));
+        output.push('\n');
+    }
+    output.push_str(&format!(
+        "\n{}\n  pb [command] [flags]\n\n{}\n",
+        accent.render("Usage:"),
+        accent.render("Available Commands:")
+    ));
     for name in [
         "sql", "promql", "tail", "dataset", "login", "cloud", "logout", "profile", "user", "role",
         "status", "version", "help",
     ] {
         if let Some(c) = root.child(name) {
-            output.push_str(&format!("  {name:10}{}\n", c.short));
+            output.push_str(&format!(
+                "  {}{}{}\n",
+                command_style.render(name),
+                " ".repeat(10_usize.saturating_sub(name.len()).max(1)),
+                faint.render(&c.short)
+            ));
         }
     }
-    output.push_str("\nFlags:\n");
+    output.push_str(&format!("\n{}\n", accent.render("Flags:")));
     output.push_str(&flags(root, initialized));
-    output.push_str("\nUse \"pb [command] --help\" for more information about a command.\n");
+    output.push_str(&format!(
+        "\n{}\n",
+        faint.render(r#"Use "pb [command] --help" for more information about a command."#)
+    ));
     output
 }
 

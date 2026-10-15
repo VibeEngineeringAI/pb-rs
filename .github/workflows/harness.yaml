@@ -34,6 +34,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Install terminal harness dependencies
+        run: python3 -m pip install --requirement harness/requirements.txt
       - name: Build measurement tools and Go reference
         run: make -f harness/Makefile build
       - name: Test the harness

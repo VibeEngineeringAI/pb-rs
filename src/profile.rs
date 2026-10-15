@@ -58,6 +58,7 @@ pub struct ProfileError {
     /// A Go runtime panic rather than a command error: stderr text written
     /// verbatim (no `Error:` rendering) and exit status 2.
     pub fatal: Option<String>,
+    pub(crate) raw_message: Option<Vec<u8>>,
 }
 impl ProfileError {
     pub(crate) fn new(code: ErrorCode, message: impl Into<String>) -> Self {
@@ -66,13 +67,59 @@ impl ProfileError {
             message: message.into(),
             stdout: String::new(),
             fatal: None,
+            raw_message: None,
         }
     }
     fn context(mut self, prefix: &str) -> Self {
         self.message = format!("{prefix}{}", self.message);
+        if let Some(raw) = self.raw_message.as_mut() {
+            *raw = [prefix.as_bytes(), raw.as_slice()].concat();
+        }
         self
     }
 }
+fn raw_profile_error(code: ErrorCode, prefix: &[u8], value: &[u8], suffix: &[u8]) -> ProfileError {
+    let raw = [prefix, value, suffix].concat();
+    let mut error = ProfileError::new(code, crate::error::go_string(&raw));
+    error.raw_message = Some(raw);
+    error
+}
+
+pub(crate) fn output_bytes(parsed: &ParsedInvocation, output: String) -> Vec<u8> {
+    if parsed.text("output") == "json"
+        || parsed.command_path == "pb cloud profile add"
+            && parsed.text("output").trim().eq_ignore_ascii_case("json")
+    {
+        return output.into_bytes();
+    }
+    match parsed.command_path.as_str() {
+        "pb profile add" => [
+            b"Profile ".as_slice(),
+            parsed.positional_bytes(0),
+            b" added successfully\n",
+        ]
+        .concat(),
+        "pb profile update" => [
+            b"Profile '".as_slice(),
+            parsed.positional_bytes(0),
+            b"' URL updated to ",
+            parsed.positional_bytes(1),
+            b"\n",
+        ]
+        .concat(),
+        "pb cloud profile add" if !trim_raw(parsed.text_bytes("name")).is_empty() => [
+            b"Cloud profile ".as_slice(),
+            trim_raw(parsed.text_bytes("name")),
+            b" added successfully\n",
+            output
+                .split_once('\n')
+                .map_or(b"".as_slice(), |(_, rest)| rest.as_bytes()),
+        ]
+        .concat(),
+        _ => output.into_bytes(),
+    }
+}
+
 impl From<ConfigError> for ProfileError {
     fn from(error: ConfigError) -> Self {
         Self::new(error.code, error.message)
@@ -176,7 +223,22 @@ pub fn cloud_add_input(parsed: &ParsedInvocation) -> Result<(String, String), Pr
     } else {
         endpoint
     };
-    Ok((key.to_owned(), endpoint.to_owned()))
+    let endpoint = if std::str::from_utf8(trim_raw(parsed.text_bytes("orchestrator-url"))).is_err()
+    {
+        let bytes = parse_profile_url_bytes(trim_raw(parsed.text_bytes("orchestrator-url")))
+            .map_err(|raw| {
+                raw_profile_error(
+                    ErrorCode::CommandFailed,
+                    b"invalid orchestrator URL: ",
+                    &raw,
+                    b"",
+                )
+            })?;
+        crate::error::go_string(&bytes)
+    } else {
+        endpoint.to_owned()
+    };
+    Ok((key.to_owned(), endpoint))
 }
 
 /// Called only after the HTTP adapter validates the workspace/key response.
@@ -200,17 +262,63 @@ pub fn cloud_profile_add(
     } else {
         explicit_name.to_owned()
     };
-    save_cloud_profile(store, &name, profile.clone(), parsed.boolean("force"), true)?;
+    if parsed
+        .raw
+        .flags
+        .values()
+        .flatten()
+        .any(|raw| std::str::from_utf8(raw).is_err())
+    {
+        let config = match store.read() {
+            Ok(config) => config,
+            Err(error) if error.is_not_found() => Config::default(),
+            Err(error) => return Err(ProfileError::from(error).context("failed to read config: ")),
+        };
+        let raw_name = if explicit_name.is_empty() {
+            name.as_bytes()
+        } else {
+            trim_raw(parsed.text_bytes("name"))
+        };
+        if config
+            .profiles
+            .keys()
+            .any(|name| name.as_bytes() == raw_name)
+            && !parsed.boolean("force")
+        {
+            return Err(ProfileError::new(
+                ErrorCode::CommandFailed,
+                format!(
+                    "profile {} already exists. use --force to overwrite",
+                    crate::argv::quote(raw_name)
+                ),
+            ));
+        }
+        store.save_raw_profile(
+            &config,
+            raw_name,
+            &profile,
+            &[("apiKey", trim_raw(parsed.text_bytes("api-key")))],
+            raw_name,
+        )?;
+    } else {
+        save_cloud_profile(store, &name, profile.clone(), parsed.boolean("force"), true)?;
+    }
     if parsed.text("output").trim().eq_ignore_ascii_case("json") {
         #[derive(Serialize)]
         struct Added<'a> {
             status: &'a str,
-            name: &'a str,
+            name: &'a serde_json::value::RawValue,
             profile: ProfileOutput<'a>,
         }
+        let raw_name = if explicit_name.is_empty() {
+            name.as_bytes()
+        } else {
+            trim_raw(parsed.text_bytes("name"))
+        };
+        let name_json = crate::error::raw_json_string(raw_name);
         let output = serde_json::to_string(&Added {
             status: "success",
-            name: &name,
+            name: &name_json,
             profile: safe_profile_output(&profile),
         })
         .expect("owned output");
@@ -258,9 +366,10 @@ pub(crate) fn execute_with(
     let output = match parsed.command_path.as_str() {
         "pb profile add" => {
             let name = &args[0];
-            let url = parse_profile_url(&args[1]).map_err(|e| {
-                ProfileError::new(ErrorCode::CommandFailed, format!("error parsing URL: {e}"))
+            let raw_url = parse_profile_url_bytes(parsed.positional_bytes(1)).map_err(|raw| {
+                raw_profile_error(ErrorCode::CommandFailed, b"error parsing URL: ", &raw, b"")
             })?;
+            let url = crate::error::go_string(&raw_url);
             let mut profile = ProfileRecord {
                 url,
                 ..ProfileRecord::default()
@@ -286,9 +395,54 @@ pub(crate) fn execute_with(
                 profile.username = args[2].clone();
                 profile.password = args[3].clone();
             }
-            save_login_profile(store, name, profile.clone())?;
+            if parsed
+                .raw
+                .positionals
+                .iter()
+                .chain(parsed.raw.flags.values().flatten())
+                .any(|raw| std::str::from_utf8(raw).is_err())
+            {
+                let config = store.read().unwrap_or_default();
+                let mut overrides = vec![("url", raw_url.as_slice())];
+                if !key.is_empty() {
+                    overrides.push(("apiKey", trim_raw(parsed.text_bytes("api-key"))));
+                } else if args.len() >= 4 {
+                    overrides.push(("username", parsed.positional_bytes(2)));
+                    overrides.push(("password", parsed.positional_bytes(3)));
+                }
+                store.save_raw_profile(
+                    &config,
+                    parsed.positional_bytes(0),
+                    &profile,
+                    &overrides,
+                    parsed.positional_bytes(0),
+                )?;
+            } else {
+                save_login_profile(store, name, profile.clone())?;
+            }
             if json {
-                render::json(&safe_profile_output(&profile), true)
+                #[derive(Serialize)]
+                struct RawProfile<'a> {
+                    url: &'a serde_json::value::RawValue,
+                    #[serde(skip_serializing_if = "Option::is_none")]
+                    username: Option<&'a serde_json::value::RawValue>,
+                    cloud: bool,
+                }
+                let url = crate::error::raw_json_string(&raw_url);
+                let username =
+                    crate::error::raw_json_string(if args.len() >= 4 && key.is_empty() {
+                        parsed.positional_bytes(2)
+                    } else {
+                        profile.username.as_bytes()
+                    });
+                render::json(
+                    &RawProfile {
+                        url: &url,
+                        username: (!profile.username.is_empty()).then_some(&username),
+                        cloud: false,
+                    },
+                    true,
+                )
             } else {
                 format!("Profile {name} added successfully\n")
             }
@@ -344,12 +498,20 @@ pub(crate) fn execute_with(
         "pb profile update" => {
             let name = &args[0];
             let url = &args[1];
-            parse_profile_url(url).map_err(|e| {
-                ProfileError::new(ErrorCode::CommandFailed, format!("invalid URL: {e}"))
+            parse_profile_url_bytes(parsed.positional_bytes(1)).map_err(|raw| {
+                raw_profile_error(ErrorCode::CommandFailed, b"invalid URL: ", &raw, b"")
             })?;
             let mut config = store
                 .read()
                 .map_err(|e| ProfileError::from(e).context("error reading config: "))?;
+            if std::str::from_utf8(parsed.positional_bytes(0)).is_err() {
+                return Err(raw_profile_error(
+                    ErrorCode::CommandFailed,
+                    b"no profile found with the name: ",
+                    parsed.positional_bytes(0),
+                    b"",
+                ));
+            }
             let profile = config.profiles.get_mut(name).ok_or_else(|| {
                 ProfileError::new(
                     ErrorCode::CommandFailed,
@@ -357,7 +519,17 @@ pub(crate) fn execute_with(
                 )
             })?;
             profile.url = url.clone();
-            store.write(&config)?;
+            if std::str::from_utf8(parsed.positional_bytes(1)).is_err() {
+                store.save_raw_profile(
+                    &config,
+                    name.as_bytes(),
+                    config.profiles.get(name).unwrap(),
+                    &[("url", parsed.positional_bytes(1))],
+                    config.default_profile.as_bytes(),
+                )?;
+            } else {
+                store.write(&config)?;
+            }
             format!("Profile '{name}' URL updated to {url}\n")
         }
         "pb profile default" => {
@@ -377,6 +549,14 @@ pub(crate) fn execute_with(
                 },
             };
             let name = &name;
+            if !args.is_empty() && std::str::from_utf8(parsed.positional_bytes(0)).is_err() {
+                return Err(raw_profile_error(
+                    ErrorCode::NotFound,
+                    b"profile ",
+                    parsed.positional_bytes(0),
+                    b" does not exist",
+                ));
+            }
             if !config.profiles.contains_key(name) {
                 return Err(ProfileError::new(
                     ErrorCode::NotFound,
@@ -395,6 +575,14 @@ pub(crate) fn execute_with(
         "pb profile remove" => {
             let name = &args[0];
             let mut config = store.read()?;
+            if std::str::from_utf8(parsed.positional_bytes(0)).is_err() {
+                return Err(raw_profile_error(
+                    ErrorCode::NotFound,
+                    b"no profile found with the name: ",
+                    parsed.positional_bytes(0),
+                    b"",
+                ));
+            }
             if config.profiles.remove(name).is_none() {
                 return Err(ProfileError::new(
                     ErrorCode::NotFound,
@@ -826,6 +1014,130 @@ fn escape_bytes(value: &[u8], safe: &[u8]) -> String {
         }
     }
     out
+}
+
+fn trim_raw(raw: &[u8]) -> &[u8] {
+    crate::error::trim_bytes(raw)
+}
+
+/// Parse URL components without converting malformed path bytes into U+FFFD.
+fn parse_profile_url_bytes(raw: &[u8]) -> Result<Vec<u8>, Vec<u8>> {
+    if let Ok(text) = std::str::from_utf8(raw) {
+        return parse_profile_url(text)
+            .map(String::into_bytes)
+            .map_err(String::into_bytes);
+    }
+    let fragment_at = raw.iter().position(|&b| b == b'#').unwrap_or(raw.len());
+    let query_at = raw[..fragment_at]
+        .iter()
+        .position(|&b| b == b'?')
+        .unwrap_or(fragment_at);
+    let base = &raw[..query_at];
+    let opaque = base.iter().position(|&b| b == b':').is_some_and(|colon| {
+        colon > 0
+            && base[..colon].iter().enumerate().all(|(i, b)| {
+                b.is_ascii_alphabetic() || i > 0 && (b.is_ascii_digit() || b"+-.".contains(b))
+            })
+            && base.get(colon + 1) != Some(&b'/')
+    });
+    let encode = |bytes: &[u8]| {
+        let mut output = String::new();
+        let mut rest = bytes;
+        while !rest.is_empty() {
+            match std::str::from_utf8(rest) {
+                Ok(text) => {
+                    output.push_str(text);
+                    break;
+                }
+                Err(error) => {
+                    let n = error.valid_up_to();
+                    output.push_str(std::str::from_utf8(&rest[..n]).unwrap());
+                    output.push_str(&format!("%{:02X}", rest[n]));
+                    rest = &rest[n + 1..];
+                }
+            }
+        }
+        output
+    };
+    if let Some(authority) = base.windows(2).position(|s| s == b"//") {
+        let end = base[authority + 2..]
+            .iter()
+            .position(|&b| b == b'/')
+            .map_or(base.len(), |at| authority + 2 + at);
+        if let Some(at) = base[authority + 2..end].iter().rposition(|&b| b == b'@') {
+            let userinfo = &base[authority + 2..authority + 2 + at];
+            if userinfo
+                .iter()
+                .any(|b| !b.is_ascii_alphanumeric() && !b"-._~!$&'()*+,;=:%@".contains(b))
+            {
+                return Err(format!(
+                    "parse {}: net/url: invalid userinfo",
+                    crate::argv::quote(raw)
+                )
+                .into_bytes());
+            }
+        }
+    }
+    for component in [
+        if opaque { b"".as_slice() } else { base },
+        if fragment_at < raw.len() {
+            &raw[fragment_at + 1..]
+        } else {
+            b""
+        },
+    ] {
+        let mut at = 0;
+        while at < component.len() {
+            if component[at] == b'%' {
+                if component.get(at + 1).is_none_or(|b| !b.is_ascii_hexdigit())
+                    || component.get(at + 2).is_none_or(|b| !b.is_ascii_hexdigit())
+                {
+                    return Err(format!(
+                        "parse {}: invalid URL escape {}",
+                        crate::argv::quote(raw),
+                        crate::argv::quote(&component[at..component.len().min(at + 3)])
+                    )
+                    .into_bytes());
+                }
+                at += 2;
+            }
+            at += 1;
+        }
+    }
+    let normalized = encode(raw);
+    let mut parsed = parse_profile_url(&normalized)
+        .map_err(|message| {
+            let head = format!("parse {}: ", quote(&normalized));
+            let detail = message.strip_prefix(&head).unwrap_or(&message);
+            format!("parse {}: {detail}", crate::argv::quote(raw)).into_bytes()
+        })?
+        .into_bytes();
+    // Go preserves raw query/opaque data; path, host and fragment are escaped.
+    if opaque || query_at < fragment_at {
+        let fragment = if fragment_at < raw.len() {
+            Some(encode(&raw[fragment_at + 1..]))
+        } else {
+            None
+        };
+        let query = (query_at < fragment_at).then(|| &raw[query_at + 1..fragment_at]);
+        let end = parsed
+            .iter()
+            .position(|&b| b == b'?' || b == b'#')
+            .unwrap_or(parsed.len());
+        parsed.truncate(end);
+        if opaque {
+            parsed = base.to_vec();
+        }
+        if let Some(query) = query {
+            parsed.push(b'?');
+            parsed.extend(query);
+        }
+        if let Some(fragment) = fragment.filter(|f| !f.is_empty()) {
+            parsed.push(b'#');
+            parsed.extend_from_slice(fragment.as_bytes());
+        }
+    }
+    Ok(parsed)
 }
 
 #[cfg(test)]

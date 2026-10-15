@@ -242,6 +242,19 @@ def corpus(surface=None):
     for chunk in unicode_quote_chunks():
         add("unicode-scalar-quote-sweep", ["version", "-o", chunk], "unicode", "offline-action")
         cases[-1]["unicode_scalar_range"] = [ord(chunk[0]), ord(chunk[-1])]
+    # Completion generation and protocol execution are offline operations.
+    # Append these cases so historical phase-one case identifiers stay stable.
+    for shell in ("bash", "fish", "powershell", "zsh"):
+        for option in ([], ["--no-descriptions"], ["--no-descriptions=false"]):
+            add("completion-script-" + shell, ["completion", shell, *option],
+                "completion", "offline-action")
+    for protocol in ("__complete", "__completeNoDesc"):
+        add("completion-protocol-missing", [protocol], "completion", "arity-invalid")
+        for node in surface["nodes"]:
+            for tail in ([""], ["-"], ["--h"], ["--help=false", ""],
+                         ["--", "-"], ["--unknown-phase1="], ["--unknown-phase1", ""]):
+                add("completion-protocol-" + ("-".join(node["path"]) or "root"),
+                    [protocol, *node["path"], *tail], "completion", "offline-action")
     return cases
 
 
@@ -433,6 +446,8 @@ PHASE6_OPERATIONS = {"tail"}
 # Interactive contracts are now asserted by phase7.py and interactive_effects.rs.
 PHASE7_OPERATIONS = {"login", "role add", "dataset add", "sql list"}
 
+COMPLETION_OPERATIONS = {"completion " + shell for shell in ("bash", "fish", "powershell", "zsh")}
+
 
 def deferred_guards(surface=None):
     """Candidate safety assertions, never Go parity or benchmark workloads."""
@@ -445,7 +460,7 @@ def deferred_guards(surface=None):
     nodes = surface["nodes"]
     for node in nodes:
         path = node["path"]
-        if " ".join(path) in PHASE2_OPERATIONS | PHASE4_OPERATIONS | PHASE5_OPERATIONS | PHASE6_OPERATIONS | PHASE7_OPERATIONS:
+        if " ".join(path) in PHASE2_OPERATIONS | PHASE4_OPERATIONS | PHASE5_OPERATIONS | PHASE6_OPERATIONS | PHASE7_OPERATIONS | COMPLETION_OPERATIONS:
             continue
         if not path or path in (["help"], ["agent"], ["version"]):
             continue

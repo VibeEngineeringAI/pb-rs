@@ -111,7 +111,7 @@ class CorpusTests(unittest.TestCase):
         for case in cases:
             self.assertEqual(case["tier"] == "known-divergence", "divergence" in case)
         gate = {c["name"] for c in cases if c["tier"] == "gate"}
-        for fixable in ("p3-text-truncated-chunked", "p3-json-truncated-after-elements", "p3-text-truncated-length"):
+        for fixable in ("p3-text-truncated-chunked", "p3-json-truncated-after-elements", "p3-text-truncated-length", "p3-argv-invalid-utf8-sql"):
             self.assertIn(fixable, gate, "fixable body-EOF diagnostics must stay in the gate")
         for case in cases:
             if case["tier"] == "full60s":

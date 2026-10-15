@@ -68,7 +68,6 @@ TIERS = {
 EMPTY_REASON = ("HTTP/1.1 status line with an empty reason phrase: Go keeps the raw delimiter ('200 '), "
                 "hyper does not expose it ('200')")
 KNOWN_DIVERGENCES = {
-    "p3-argv-invalid-utf8-sql": "non-UTF-8 argv rejected at the Rust String parser boundary (phase-one limitation)",
     "p3-text-status-empty-reason-empty": EMPTY_REASON, "p3-text-status-empty-reason-no-rows": EMPTY_REASON,
     "p3-json-status-empty-reason-empty": EMPTY_REASON, "p3-status-empty-reason-text": EMPTY_REASON,
     "p3-status-empty-reason-json": EMPTY_REASON, "p3-status-empty-reason-empty-body": EMPTY_REASON,
@@ -2550,9 +2549,9 @@ def _build_corpus():
         group="deadline", tier="full60s",
         routes=[route(b"p" * PREVIEW_LIMIT, 500, framing="chunked", script=[{"send": "rest"}, {"stall": True}])])
 
-    # ----- known divergence: non-UTF-8 argv (phase-one limitation) ------------------------------
+    # ----- byte-valued argv: retain the original Go wire-body expectation ---------------------
     add("argv-invalid-utf8-sql", ["sql", "run", B(b"SELECT '\xff' FROM logs"), "--from", START, "--to", END],
-        expect(0, request_bodies={"0": pin(request_body(b"SELECT '\xff' FROM logs"))}), group="argv", tier="known-divergence",
+        expect(0, request_bodies={"0": pin(request_body(b"SELECT '\xff' FROM logs"))}), group="argv",
         routes=[route()])
     return cases
 

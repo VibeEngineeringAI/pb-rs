@@ -48,7 +48,8 @@ const RETAINED_STAGING: usize = 4 << 20;
 const FLIGHT_READER: &str = "arrow/flight: could not create flight reader: ";
 const UNKNOWN_READ: &str = "arrow/ipc: unknown error while reading: ";
 const NESTING_LIMIT: &str = "arrow/ipc: nested type limit reached";
-const NON_NATIVE_ENDIAN: &str = "arrow/ipc: IPC data in non-native byte order is not supported";
+#[path = "endian.rs"]
+mod endian;
 const NATIVE_ENDIAN: arrow_ipc::Endianness = if cfg!(target_endian = "big") {
     arrow_ipc::Endianness::Big
 } else {
@@ -78,7 +79,7 @@ fn failed(message: Vec<u8>) -> Terminal {
 
 pub(super) fn run(
     store: &ProfileStore,
-    dataset: &str,
+    dataset: &[u8],
     json: bool,
     stdout: &mut (dyn Write + Send),
     stderr: &mut (dyn Write + Send),
@@ -192,7 +193,7 @@ impl Handoff {
     }
 }
 
-async fn drive(store: &ProfileStore, dataset: &str, json: bool, mut handoff: Handoff) -> Terminal {
+async fn drive(store: &ProfileStore, dataset: &[u8], json: bool, mut handoff: Handoff) -> Terminal {
     if let Err(terminal) = handoff.status(json, Event::Spin).await {
         return terminal;
     }
@@ -372,6 +373,7 @@ struct Decoder {
     /// Utf8/LargeUtf8 rewritten to Binary/LargeBinary; see [`wire_schema`].
     /// The renderer keeps the original schema's plan.
     wire: SchemaRef,
+    swap_endian: bool,
     /// The value layout for every dictionary ID Go's memo registers. An ID
     /// reachable from the columns keeps the last compatible column-path
     /// occurrence (Go's post-order memo), which also supplies the nested IDs
@@ -424,19 +426,34 @@ impl Decoder {
         let decode_error = |e: &dyn std::fmt::Display| {
             format!("arrow/ipc: could not decode schema from message schema: {e}")
         };
-        let (ids, orphans) = ipc_dictionary_ids(&schema);
-        validation::ipc_schema(&schema)?;
-        // Arrow's low-level decoder reads buffers in native byte order and
-        // never consults the schema's endianness, so a big-endian stream
-        // would render silently wrong numbers. Go byte-swaps such streams;
-        // rejecting them here is a declared capability limitation.
         let endianness = schema.endianness();
-        if endianness != NATIVE_ENDIAN {
-            return Err(NON_NATIVE_ENDIAN.into());
+        let swap_endian = endianness != NATIVE_ENDIAN;
+        // arrow-rs rejects big-endian decimal schemas before reading buffers.
+        // Conversion only needs the logical schema; body normalization below
+        // handles its original byte order. Retain all original field metadata.
+        let mut logical_header = header.to_vec();
+        // Go treats every non-native enum value as requiring a byte swap,
+        // including unknown values. Conversion always uses a little-endian
+        // logical schema regardless of that original wire declaration.
+        if endianness != arrow_ipc::Endianness::Little {
+            let slot = schema._tab.vtable().get(arrow_ipc::Schema::VT_ENDIANNESS);
+            let offset = schema._tab.loc() + usize::from(slot);
+            logical_header[offset..offset + 2].copy_from_slice(&0_i16.to_le_bytes());
         }
-        let schema =
-            Arc::new(arrow_ipc::convert::try_fb_to_schema(schema).map_err(|e| decode_error(&e))?);
-        let orphans = orphan_schema(&orphans, endianness).map_err(|e| decode_error(&e))?;
+        let logical_message = ipc_message(&logical_header)?;
+        let logical_schema = logical_message.header_as_schema().unwrap();
+        if logical_schema.endianness() != arrow_ipc::Endianness::Little {
+            return Err(decode_error(&"logical schema is not little endian"));
+        }
+        // The patch can overlap another FlatBuffer field. Validate and collect
+        // dictionaries from exactly the verified copy used for conversion.
+        validation::ipc_schema(&logical_schema)?;
+        let (ids, orphans) = ipc_dictionary_ids(&logical_schema);
+        let schema = Arc::new(
+            arrow_ipc::convert::try_fb_to_schema(logical_schema).map_err(|e| decode_error(&e))?,
+        );
+        let orphans =
+            orphan_schema(&orphans, arrow_ipc::Endianness::Little).map_err(|e| decode_error(&e))?;
         validation::schema_types(schema.fields()).map_err(|e| decode_error(&e))?;
         validation::schema_types(orphans.fields()).map_err(|e| decode_error(&e))?;
         // Go rejects types it cannot represent while decoding the schema.
@@ -453,6 +470,7 @@ impl Decoder {
         }
         Ok(Self {
             wire,
+            swap_endian,
             dictionary_types,
             ids,
             dictionary_order,
@@ -559,8 +577,29 @@ impl Decoder {
                 } else {
                     &self.dictionaries
                 };
+                // Normalize only once this message has passed pending-dictionary,
+                // layout and dictionary-binding checks. NoRows never reads buffers.
+                let (normalized_header, body) = if self.swap_endian {
+                    let types = self
+                        .wire
+                        .fields()
+                        .iter()
+                        .map(|f| f.data_type())
+                        .collect::<Vec<_>>();
+                    let (header, body) = endian::normalize(message, batch, &types, &data.data_body)
+                        .map_err(|e| format!("{UNKNOWN_READ}{e}"))?;
+                    (Some(header), bytes::Bytes::from(body))
+                } else {
+                    (None, data.data_body)
+                };
+                let normalized_message =
+                    normalized_header.as_deref().map(ipc_message).transpose()?;
+                let batch = normalized_message
+                    .as_ref()
+                    .and_then(|m| m.header_as_record_batch())
+                    .unwrap_or(batch);
                 let batch = arrow_ipc::reader::read_record_batch(
-                    &ipc_body(data.data_body),
+                    &ipc_body(body),
                     batch,
                     Arc::clone(&self.wire),
                     dictionaries,
@@ -617,6 +656,21 @@ impl Decoder {
                 batch.id()
             ));
         }
+        // Match the native ordering: body bounds, dictionary ID, nesting,
+        // structural guards and missing-delta checks precede decompression.
+        let (normalized_header, body) = if self.swap_endian {
+            let (header, body) = endian::normalize(*message, record, &[&layout.values], &body)
+                .map_err(|e| format!("{UNKNOWN_READ}{e}"))?;
+            (Some(header), bytes::Bytes::from(body))
+        } else {
+            (None, body)
+        };
+        let normalized_message = normalized_header.as_deref().map(ipc_message).transpose()?;
+        let batch = normalized_message
+            .as_ref()
+            .and_then(|m| m.header_as_dictionary_batch())
+            .unwrap_or(batch);
+        let record = batch.data().unwrap();
         if batch.isDelta() && layout.nested {
             // Go retains each unresolved delta piece without concatenating it.
             // Reification fails only at a record; replacement or EOF can occur
@@ -1333,7 +1387,7 @@ fn copy_type<'b>(
 struct Worker<'a> {
     stdout: &'a mut (dyn Write + Send),
     stderr: &'a mut (dyn Write + Send),
-    dataset: &'a str,
+    dataset: &'a [u8],
     json: bool,
     staging: Vec<u8>,
     /// Tests hold the worker inside reader initialization: it signals the
@@ -1346,13 +1400,13 @@ impl<'a> Worker<'a> {
     fn new(
         stdout: &'a mut (dyn Write + Send),
         stderr: &'a mut (dyn Write + Send),
-        dataset: &'a str,
+        dataset: &'a (impl AsRef<[u8]> + ?Sized),
         json: bool,
     ) -> Self {
         Self {
             stdout,
             stderr,
-            dataset,
+            dataset: dataset.as_ref(),
             json,
             staging: Vec::new(),
             #[cfg(test)]
@@ -1385,10 +1439,14 @@ impl<'a> Worker<'a> {
                     Ack::Written
                 }
                 Event::Watching => {
-                    let _ = write!(
-                        self.stderr,
-                        "\r\x1b[K● watching {}... (ctrl+c to stop)",
-                        self.dataset
+                    let _ = self.stderr.write_all(
+                        &[
+                            b"\r\x1b[K".as_slice(),
+                            "● watching ".as_bytes(),
+                            self.dataset,
+                            b"... (ctrl+c to stop)",
+                        ]
+                        .concat(),
                     );
                     Ack::Written
                 }

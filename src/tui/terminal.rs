@@ -79,19 +79,24 @@ impl std::error::Error for SessionError {}
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) struct Closed;
 
-/// Go's syscall.Errno text: strerror without the Rust " (os error N)" suffix
-/// and with a lowercase first letter (matches Linux and macOS tables for the
-/// errors seen here).
+/// Go syscall.Errno text without Rust's " (os error N)" suffix. Unix uses
+/// lowercase strerror tables; Go syscall_windows.go Errno.error preserves
+/// FormatMessage's capitalization and punctuation.
 pub(crate) fn go_errno(error: &std::io::Error) -> String {
     let text = error.to_string();
-    let mut message = text
+    let message = text
         .split(" (os error ")
         .next()
         .unwrap_or(&text)
         .to_string();
-    if let Some(first) = message.get_mut(..1) {
-        first.make_ascii_lowercase();
-    }
+    #[cfg(unix)]
+    let message = {
+        let mut message = message;
+        if let Some(first) = message.get_mut(..1) {
+            first.make_ascii_lowercase();
+        }
+        message
+    };
     message
 }
 
@@ -197,6 +202,8 @@ impl Queue {
     }
 
     /// Never blocks: a SIGWINCH while one resize is pending is coalesced.
+    /// (The Windows reader delivers console resizes as input instead.)
+    #[cfg(any(unix, test))]
     fn push_resize(&self, event: Event) {
         let mut lanes = lock(&self.lanes);
         if lanes.resize.is_some() {
@@ -208,6 +215,8 @@ impl Queue {
         self.wake_consumer();
     }
 
+    /// SIGINT/SIGTERM; Windows has no such sender yet.
+    #[cfg(any(unix, test))]
     fn push_quit(&self) {
         lock(&self.lanes).quit = Some((Instant::now(), Event::Quit));
         self.wake_consumer();
@@ -729,6 +738,8 @@ pub(crate) struct Endpoints {
 }
 
 impl Endpoints {
+    // Windows' Output is a unit struct; Unix's defaults to stdout.
+    #[allow(clippy::default_constructed_unit_structs)]
     fn process() -> Endpoints {
         Endpoints {
             input: sys::InputSource::Process,
@@ -745,6 +756,16 @@ impl Endpoints {
             input: sys::InputSource::Fd(fd),
             output: sys::Output(fd),
             fail_before_threads,
+        }
+    }
+
+    /// `terminal`, but the reader waits with select(2) as for macOS /dev/tty.
+    #[cfg(all(test, unix))]
+    fn terminal_select(fd: std::os::fd::RawFd) -> Endpoints {
+        Endpoints {
+            input: sys::InputSource::SelectFd(fd),
+            output: sys::Output(fd),
+            fail_before_threads: false,
         }
     }
 }
@@ -946,7 +967,7 @@ impl TerminalSession {
     /// Blocking wait bounded by `timeout`: Ok(None) on timeout, Err(Closed)
     /// after the producers stopped. Test-only until a blocking flow needs
     /// ticks; async flows combine `next_event` with Tokio timers.
-    #[cfg(test)]
+    #[cfg(all(test, unix))]
     pub(crate) fn next_event_timeout(
         &mut self,
         timeout: Duration,
@@ -1046,11 +1067,36 @@ mod sys {
         Process,
         #[cfg(test)]
         Fd(RawFd),
+        /// A descriptor waited on with select(2), as macOS /dev/tty is.
+        #[cfg(test)]
+        SelectFd(RawFd),
+    }
+
+    /// How the reader waits for input alongside the wake pipe. Go's
+    /// cancelreader uses epoll/kqueue, except for a file named /dev/tty on
+    /// BSD/macOS: kqueue (and Darwin's kqueue-backed poll, which reports
+    /// POLLNVAL) cannot wait on it, so it falls back to select.
+    #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+    pub(super) enum Readiness {
+        Poll,
+        Select,
+    }
+
+    impl Readiness {
+        /// cancelreader_bsd.go `NewReader`'s choice for a file of this name.
+        pub(super) fn for_name(name: &str) -> Readiness {
+            if cfg!(target_os = "macos") && name == "/dev/tty" {
+                Readiness::Select
+            } else {
+                Readiness::Poll
+            }
+        }
     }
 
     pub(super) struct Input {
         fd: RawFd,
         name: &'static str,
+        readiness: Readiness,
     }
 
     pub(super) struct RawState {
@@ -1231,6 +1277,7 @@ mod sys {
                     return Ok(Input {
                         fd: libc::STDIN_FILENO,
                         name: "/dev/stdin",
+                        readiness: Readiness::for_name("/dev/stdin"),
                     });
                 }
                 let tty = File::open("/dev/tty").map_err(|e| {
@@ -1244,12 +1291,20 @@ mod sys {
                 Ok(Input {
                     fd,
                     name: "/dev/tty",
+                    readiness: Readiness::for_name("/dev/tty"),
                 })
             }
             #[cfg(test)]
             InputSource::Fd(fd) => Ok(Input {
                 fd,
                 name: "/dev/stdin",
+                readiness: Readiness::Poll,
+            }),
+            #[cfg(test)]
+            InputSource::SelectFd(fd) => Ok(Input {
+                fd,
+                name: "/dev/tty",
+                readiness: Readiness::Select,
             }),
         }
     }
@@ -1430,8 +1485,13 @@ mod sys {
         std::process::exit(1)
     }
 
-    /// Wait for `fd` or the wake pipe; false when woken (or poll failed).
-    fn wait_readable(fd: RawFd, wake: RawFd) -> bool {
+    /// Wait for `fd` or the wake pipe; false when woken (or the wait failed).
+    pub(super) fn wait_readable(fd: RawFd, wake: RawFd, readiness: &mut Readiness) -> bool {
+        if *readiness == Readiness::Select {
+            // A descriptor beyond FD_SETSIZE cannot be waited on safely by
+            // this backend. End the producer rather than admit a blocking read.
+            return select_readable(fd, wake).unwrap_or(false);
+        }
         loop {
             let mut fds = [
                 libc::pollfd {
@@ -1455,8 +1515,67 @@ mod sys {
             if fds[0].revents != 0 {
                 return false;
             }
+            // Darwin's poll reports POLLNVAL for an open descriptor whose
+            // device it cannot wait on (/dev/tty, even when it is stdin);
+            // reading would then block past cancellation, so select instead.
+            // A closed descriptor (F_GETFD fails) keeps the read error path.
+            #[cfg(target_os = "macos")]
+            // SAFETY: F_GETFD only queries the descriptor.
+            if fds[1].revents & libc::POLLNVAL != 0
+                && unsafe { libc::fcntl(fd, libc::F_GETFD) } >= 0
+            {
+                *readiness = Readiness::Select;
+                return select_readable(fd, wake).unwrap_or(false);
+            }
             if fds[1].revents != 0 {
                 return true;
+            }
+        }
+    }
+
+    /// select(2) form of `wait_readable`: Some(false) when woken or select
+    /// failed, Some(true) when `fd` is readable, None when a descriptor is
+    /// outside FD_SETSIZE.
+    pub(super) fn select_readable(fd: RawFd, wake: RawFd) -> Option<bool> {
+        let fits = |d: RawFd| (0..libc::FD_SETSIZE as RawFd).contains(&d);
+        if !fits(fd) || (wake >= 0 && !fits(wake)) {
+            return None;
+        }
+        loop {
+            // SAFETY: both descriptors are within FD_SETSIZE; the set is
+            // initialized by FD_ZERO before use.
+            let (ready, woken, readable) = unsafe {
+                let mut set = std::mem::MaybeUninit::<libc::fd_set>::uninit();
+                libc::FD_ZERO(set.as_mut_ptr());
+                let mut set = set.assume_init();
+                libc::FD_SET(fd, &mut set);
+                if wake >= 0 {
+                    libc::FD_SET(wake, &mut set);
+                }
+                let ready = libc::select(
+                    fd.max(wake) + 1,
+                    &mut set,
+                    std::ptr::null_mut(),
+                    std::ptr::null_mut(),
+                    std::ptr::null_mut(),
+                );
+                (
+                    ready,
+                    wake >= 0 && libc::FD_ISSET(wake, &set),
+                    libc::FD_ISSET(fd, &set),
+                )
+            };
+            if ready < 0 {
+                if io::Error::last_os_error().kind() == io::ErrorKind::Interrupted {
+                    continue;
+                }
+                return Some(false);
+            }
+            if woken {
+                return Some(false);
+            }
+            if readable {
+                return Some(true);
             }
         }
     }
@@ -1473,7 +1592,8 @@ mod sys {
         spawn_producer("pb-tui-input", queue, move |queue| {
             let mut parser = Parser::new();
             let mut buffer = [0u8; READ_BUFFER];
-            while wait_readable(input.fd, wake) {
+            let mut readiness = input.readiness;
+            while wait_readable(input.fd, wake, &mut readiness) {
                 // SAFETY: valid buffer.
                 let n = unsafe { libc::read(input.fd, buffer.as_mut_ptr().cast(), buffer.len()) };
                 if n > 0 {
@@ -1515,7 +1635,7 @@ mod sys {
         let signals = io.signal_read.unwrap_or(-1);
         spawn_producer("pb-tui-signals", queue, move |queue| {
             let mut quit_sent = false;
-            while wait_readable(signals, wake) {
+            while wait_readable(signals, wake, &mut Readiness::Poll) {
                 let mut received = [0u8; 16];
                 // SAFETY: valid buffer; the read end is nonblocking.
                 let n =
@@ -1885,9 +2005,17 @@ mod tests {
 
     #[test]
     fn errno_text_matches_go() {
+        // Go1.25.4 syscall/zerrors_darwin_arm64.go errno 6 differs from
+        // Linux; Windows Errno.error keeps the English FormatMessage text.
         assert_eq!(
             go_errno(&std::io::Error::from_raw_os_error(enxio())),
-            "no such device or address"
+            if cfg!(windows) {
+                "The handle is invalid."
+            } else if cfg!(target_os = "macos") {
+                "device not configured"
+            } else {
+                "no such device or address"
+            }
         );
     }
 
@@ -1900,15 +2028,160 @@ mod tests {
         6
     }
 
+    /// Go's cancelreader picks select only for macOS /dev/tty.
+    #[cfg(unix)]
+    #[test]
+    fn readiness_follows_cancelreader_per_platform() {
+        use sys::Readiness;
+        assert_eq!(Readiness::for_name("/dev/stdin"), Readiness::Poll);
+        let tty = if cfg!(target_os = "macos") {
+            Readiness::Select
+        } else {
+            Readiness::Poll
+        };
+        assert_eq!(Readiness::for_name("/dev/tty"), tty);
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn select_waits_for_input_or_wake_and_rejects_large_descriptors() {
+        use std::os::fd::AsRawFd;
+        let pair = || {
+            let mut fds = [0; 2];
+            // SAFETY: fds has room for two descriptors, owned below.
+            assert_eq!(unsafe { libc::pipe(fds.as_mut_ptr()) }, 0);
+            // SAFETY: fresh descriptors from pipe(2).
+            unsafe {
+                use std::os::fd::FromRawFd;
+                (
+                    std::os::fd::OwnedFd::from_raw_fd(fds[0]),
+                    std::os::fd::OwnedFd::from_raw_fd(fds[1]),
+                )
+            }
+        };
+        let put = |fd: &std::os::fd::OwnedFd| {
+            // SAFETY: valid one-byte buffer.
+            assert_eq!(
+                unsafe { libc::write(fd.as_raw_fd(), b"x".as_ptr().cast(), 1) },
+                1
+            );
+        };
+        let (input, input_write) = pair();
+        let (wake, wake_write) = pair();
+        put(&input_write);
+        assert_eq!(
+            sys::select_readable(input.as_raw_fd(), wake.as_raw_fd()),
+            Some(true)
+        );
+        // The wake pipe wins even when input is also readable.
+        put(&wake_write);
+        assert_eq!(
+            sys::select_readable(input.as_raw_fd(), wake.as_raw_fd()),
+            Some(false)
+        );
+        // A blocked select returns once woken from another thread.
+        let (idle, _idle_write) = pair();
+        let (wake, wake_write) = pair();
+        let waiter = std::thread::spawn({
+            let (idle, wake) = (idle.as_raw_fd(), wake.as_raw_fd());
+            move || sys::select_readable(idle, wake)
+        });
+        std::thread::sleep(Duration::from_millis(50));
+        assert!(!waiter.is_finished());
+        put(&wake_write);
+        assert_eq!(waiter.join().unwrap(), Some(false));
+        drop((idle, wake));
+        let limit = libc::FD_SETSIZE as i32;
+        assert_eq!(sys::select_readable(limit, -1), None);
+        assert_eq!(sys::select_readable(0, limit), None);
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn select_backend_never_admits_high_descriptor_reads() {
+        use std::os::fd::{AsRawFd, FromRawFd, OwnedFd};
+        // Darwin commonly starts below FD_SETSIZE. Raise only the soft limit
+        // for this test, restoring it even if an assertion fails.
+        struct Limit(libc::rlimit);
+        impl Drop for Limit {
+            fn drop(&mut self) {
+                // SAFETY: restoring the successfully read process limit.
+                unsafe {
+                    libc::setrlimit(libc::RLIMIT_NOFILE, &self.0);
+                }
+            }
+        }
+        let limit = libc::FD_SETSIZE as libc::rlim_t;
+        let mut saved = std::mem::MaybeUninit::uninit();
+        // SAFETY: valid output storage.
+        assert_eq!(
+            unsafe { libc::getrlimit(libc::RLIMIT_NOFILE, saved.as_mut_ptr()) },
+            0
+        );
+        // SAFETY: initialized by getrlimit.
+        let saved = unsafe { saved.assume_init() };
+        let _restore = Limit(saved);
+        if saved.rlim_cur <= limit {
+            assert!(
+                saved.rlim_max > limit,
+                "high-descriptor test needs a sufficient hard limit"
+            );
+            let raised = libc::rlimit {
+                rlim_cur: limit + 1,
+                rlim_max: saved.rlim_max,
+            };
+            // SAFETY: raises the soft limit within its hard limit.
+            assert_eq!(unsafe { libc::setrlimit(libc::RLIMIT_NOFILE, &raised) }, 0);
+        }
+        let mut pipe = [0; 2];
+        // SAFETY: valid two-descriptor storage.
+        assert_eq!(unsafe { libc::pipe(pipe.as_mut_ptr()) }, 0);
+        // SAFETY: fresh pipe descriptors become owned here.
+        let (read, write) =
+            unsafe { (OwnedFd::from_raw_fd(pipe[0]), OwnedFd::from_raw_fd(pipe[1])) };
+        // SAFETY: duplicate a valid descriptor into a select-inexpressible slot.
+        let high = unsafe { libc::fcntl(read.as_raw_fd(), libc::F_DUPFD, limit as i32) };
+        assert!(high >= limit as i32, "{}", std::io::Error::last_os_error());
+        // SAFETY: the successful duplicate is uniquely owned.
+        let high = unsafe { OwnedFd::from_raw_fd(high) };
+        // Make poll report readable: an accidental poll fallback would admit
+        // this read, whereas a select-only backend must reject the descriptor.
+        // SAFETY: valid one-byte buffer and open pipe.
+        assert_eq!(
+            unsafe { libc::write(write.as_raw_fd(), b"x".as_ptr().cast(), 1) },
+            1
+        );
+        assert!(!sys::wait_readable(
+            high.as_raw_fd(),
+            -1,
+            &mut sys::Readiness::Select
+        ));
+        // A high wake descriptor is equally inexpressible, even with low input.
+        assert!(!sys::wait_readable(
+            read.as_raw_fd(),
+            high.as_raw_fd(),
+            &mut sys::Readiness::Select
+        ));
+        let mut byte = [0];
+        // SAFETY: the byte remains pending because readiness rejected the read.
+        assert_eq!(
+            unsafe { libc::read(read.as_raw_fd(), byte.as_mut_ptr().cast(), 1) },
+            1
+        );
+        assert_eq!(byte, *b"x");
+    }
+
     /// Lifecycle tests share the process-wide restoration record and signal
     /// dispositions, so they run one at a time on a private pseudo-terminal.
-    #[cfg(target_os = "linux")]
+    #[cfg(unix)]
     mod pty {
         use super::super::*;
         use crate::tui::input::{Key, KeyCode};
         use std::os::fd::{AsRawFd, FromRawFd, OwnedFd, RawFd};
 
         static SERIAL: Mutex<()> = Mutex::new(());
+        #[cfg(not(target_os = "linux"))]
+        static PTY_NAME: Mutex<()> = Mutex::new(());
 
         const TEARDOWN: &[u8] = b"\x1b[2K\r\x1b[?2004l\x1b[?25h\x1b[?1002l\x1b[?1003l\x1b[?1006l";
         const ALT_EXIT: &[u8] = b"\x1b[?1049l\x1b[?25h";
@@ -1930,10 +2203,23 @@ mod tests {
                     assert_eq!(libc::grantpt(master.as_raw_fd()), 0);
                     assert_eq!(libc::unlockpt(master.as_raw_fd()), 0);
                     let mut name = [0 as libc::c_char; 128];
+                    #[cfg(target_os = "linux")]
                     assert_eq!(
                         libc::ptsname_r(master.as_raw_fd(), name.as_mut_ptr(), name.len()),
                         0
                     );
+                    #[cfg(not(target_os = "linux"))]
+                    {
+                        // Serialized by PTY_NAME: ptsname's buffer is static.
+                        let _name = lock(&PTY_NAME);
+                        let shared = libc::ptsname(master.as_raw_fd());
+                        assert!(!shared.is_null());
+                        let bytes = std::ffi::CStr::from_ptr(shared).to_bytes_with_nul();
+                        assert!(bytes.len() <= name.len());
+                        for (slot, byte) in name.iter_mut().zip(bytes) {
+                            *slot = *byte as libc::c_char;
+                        }
+                    }
                     let slave = libc::open(name.as_ptr(), libc::O_RDWR | libc::O_NOCTTY);
                     assert!(slave >= 0);
                     let flags = libc::fcntl(master.as_raw_fd(), libc::F_GETFL);
@@ -2008,12 +2294,35 @@ mod tests {
                 libc::tcflag_t,
                 libc::tcflag_t,
             ) {
+                Self::flags_at(self.slave())
+            }
+
+            fn flags_at(
+                fd: RawFd,
+            ) -> (
+                libc::tcflag_t,
+                libc::tcflag_t,
+                libc::tcflag_t,
+                libc::tcflag_t,
+            ) {
                 let mut termios = std::mem::MaybeUninit::<libc::termios>::uninit();
                 // SAFETY: written by tcgetattr on success.
                 unsafe {
-                    assert_eq!(libc::tcgetattr(self.slave(), termios.as_mut_ptr()), 0);
+                    assert_eq!(
+                        libc::tcgetattr(fd, termios.as_mut_ptr()),
+                        0,
+                        "{}",
+                        std::io::Error::last_os_error()
+                    );
                     let t = termios.assume_init();
-                    (t.c_iflag, t.c_oflag, t.c_cflag, t.c_lflag)
+                    // XNU tty.c TIOCSETA sets PENDIN when restoring ICANON and
+                    // ORs it into c_lflag. It tracks queued-input reprocessing,
+                    // not the saved configuration; all other bits must match.
+                    #[cfg(target_os = "macos")]
+                    let lflag = t.c_lflag & !libc::PENDIN;
+                    #[cfg(not(target_os = "macos"))]
+                    let lflag = t.c_lflag;
+                    (t.c_iflag, t.c_oflag, t.c_cflag, lflag)
                 }
             }
         }
@@ -2222,6 +2531,7 @@ mod tests {
             let pty = Pty::new(40, 10);
             let before = pty.flags();
             let mut session = open(&pty, Screen::Inline);
+            assert!(matches!(wait(&mut session), Event::Resize(_)));
             pty.type_bytes(b"x");
             wait_pending(&session);
             let worker = std::thread::spawn(|| panic!("background boom"));
@@ -2336,7 +2646,10 @@ mod tests {
                     .is_some()
             );
             pty.resize(120, 40);
-            for _ in 0..3 {
+            // Exactly two signals: seeing resize_again proves both were
+            // consumed. A third could arrive after acceptance and legitimately
+            // create another resize, making the old test timing-dependent.
+            for _ in 0..2 {
                 // SAFETY: the session's handler is installed.
                 unsafe { libc::raise(libc::SIGWINCH) };
             }
@@ -2470,6 +2783,144 @@ mod tests {
             assert_ne!(pty.flags(), before);
             let out = pty.drain();
             assert!(out.ends_with(&[TEARDOWN, ALT_EXIT].concat()), "{out:?}");
+        }
+
+        /// The select reader (macOS /dev/tty) delivers keys and is cancelled
+        /// by close with nothing typed, like cancelreader's select path.
+        #[test]
+        fn select_reader_reads_and_close_cancels_it() {
+            let _serial = lock(&SERIAL);
+            let pty = Pty::new(40, 10);
+            let before = pty.flags();
+            let mut session =
+                TerminalSession::open_with(Screen::Inline, Endpoints::terminal_select(pty.slave()))
+                    .unwrap();
+            assert!(matches!(wait(&mut session), Event::Resize(_)));
+            pty.type_bytes(b"\x1b[A");
+            assert_eq!(wait(&mut session), Event::Key(Key::new(KeyCode::Up)));
+            // The reader is now blocked in select with no input pending.
+            std::thread::sleep(Duration::from_millis(20));
+            // Bounded: a reader that ignores the wake would hang close.
+            let (done, closed) = std::sync::mpsc::channel();
+            std::thread::spawn(move || done.send(session.close("")).unwrap());
+            let result = closed
+                .recv_timeout(Duration::from_secs(5))
+                .expect("close did not cancel the select reader");
+            result.unwrap();
+            assert_eq!(pty.flags(), before);
+            // Nothing was consumed after the cancellation.
+            // The restored terminal is canonical again, so send a full line.
+            pty.type_bytes(b"z\n");
+            let mut leftover = [0u8; 8];
+            // SAFETY: valid buffer; the slave is blocking but has a line.
+            let n =
+                unsafe { libc::read(pty.slave(), leftover.as_mut_ptr().cast(), leftover.len()) };
+            assert_eq!(&leftover[..n.max(0) as usize], b"z\n");
+        }
+
+        /// Environment variable naming the PTY slave for the /dev/tty child.
+        const DEV_TTY_CHILD: &str = "PB_TUI_TEST_DEV_TTY_SLAVE";
+
+        /// Child half of `process_input_from_dev_tty_reads_and_cancels`: stdin
+        /// is not a terminal, so the production path opens /dev/tty (the
+        /// controlling PTY the parent assigned). A no-op in ordinary runs.
+        #[test]
+        fn dev_tty_child() {
+            if std::env::var_os(DEV_TTY_CHILD).is_none() {
+                return;
+            }
+            let tty = std::fs::File::open("/dev/tty").unwrap();
+            let before = Pty::flags_at(tty.as_raw_fd());
+            let mut session = TerminalSession::open(Screen::Inline).unwrap();
+            assert_eq!(wait(&mut session), Event::Key(Key::runes("x")));
+            let started = Instant::now();
+            session.close("").unwrap();
+            let elapsed = started.elapsed();
+            assert!(elapsed < Duration::from_secs(2), "close took {elapsed:?}");
+            assert_eq!(
+                Pty::flags_at(tty.as_raw_fd()),
+                before,
+                "restored before session-leader exit"
+            );
+            eprintln!("dev-tty-child: closed in {elapsed:?}; flags restored");
+        }
+
+        /// The real /dev/tty input path (Go opens it when stdin is not a
+        /// terminal): a key typed on the controlling terminal arrives, and
+        /// close cancels the idle reader instead of waiting for another
+        /// key. On macOS this is the select fallback; elsewhere poll.
+        #[test]
+        fn process_input_from_dev_tty_reads_and_cancels() {
+            use std::os::unix::process::CommandExt;
+            let pty = Pty::new(40, 10);
+            let path = pty.path.clone();
+            let mut command = std::process::Command::new(std::env::current_exe().unwrap());
+            command
+                .args([
+                    "--exact",
+                    "tui::terminal::tests::pty::dev_tty_child",
+                    "--test-threads=1",
+                    "--nocapture",
+                ])
+                .env(DEV_TTY_CHILD, "1")
+                .stdin(std::process::Stdio::null())
+                .stdout(std::process::Stdio::piped())
+                .stderr(std::process::Stdio::piped());
+            // SAFETY: only async-signal-safe calls between fork and exec.
+            unsafe {
+                command.pre_exec(move || {
+                    if libc::setsid() < 0 {
+                        return Err(std::io::Error::last_os_error());
+                    }
+                    let fd = libc::open(path.as_ptr(), libc::O_RDWR);
+                    if fd < 0 || libc::ioctl(fd, libc::TIOCSCTTY as _, 0) < 0 {
+                        return Err(std::io::Error::last_os_error());
+                    }
+                    libc::close(fd);
+                    Ok(())
+                });
+            }
+            let mut child = command.spawn().unwrap();
+            // Type once the child has made its /dev/tty raw.
+            let deadline = Instant::now() + Duration::from_secs(20);
+            while pty.flags().3 & libc::ICANON != 0 {
+                if Instant::now() >= deadline {
+                    let _ = child.kill();
+                    panic!(
+                        "child never entered raw mode: {:?}",
+                        child.wait_with_output()
+                    );
+                }
+                std::thread::sleep(Duration::from_millis(10));
+            }
+            pty.type_bytes(b"x");
+            let deadline = Instant::now() + Duration::from_secs(20);
+            while child.try_wait().unwrap().is_none() {
+                if Instant::now() >= deadline {
+                    let _ = child.kill();
+                    panic!(
+                        "/dev/tty reader was not cancelled: {:?}",
+                        child.wait_with_output()
+                    );
+                }
+                std::thread::sleep(Duration::from_millis(10));
+            }
+            let output = child.wait_with_output().unwrap();
+            let stderr = String::from_utf8_lossy(&output.stderr);
+            let stdout = String::from_utf8_lossy(&output.stdout);
+            assert!(
+                output.status.success(),
+                "stdout: {stdout}\nstderr: {stderr}"
+            );
+            assert!(
+                stderr.contains("dev-tty-child: closed in"),
+                "stderr: {stderr}"
+            );
+            assert!(stdout.contains("1 passed"), "stdout: {stdout}");
+            // Darwin kern_exit.c revokes the controlling tty when the
+            // session leader exits. The child therefore checks restoration
+            // while its descriptor is still live, before that kernel revoke.
+            assert!(stderr.contains("flags restored"), "stderr: {stderr}");
         }
 
         /// Closing the master races two kernel states on Linux: pty_close sets

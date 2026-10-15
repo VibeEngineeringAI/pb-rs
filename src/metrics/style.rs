@@ -173,6 +173,7 @@ fn read_terminal_byte() -> Option<u8> {
         Some(byte)
     }
 }
+#[cfg(any(unix, test))]
 fn read_response(mut next: impl FnMut() -> Option<u8>) -> Option<(Vec<u8>, bool)> {
     while next()? != 0x1b {}
     let kind = next()?;
@@ -193,6 +194,7 @@ fn read_response(mut next: impl FnMut() -> Option<u8>) -> Option<(Vec<u8>, bool)
         }
     }
 }
+#[cfg(any(unix, test))]
 fn parse_background(response: &[u8]) -> Option<(u8, u8, u8)> {
     if !(24..=25).contains(&response.len()) {
         return None;

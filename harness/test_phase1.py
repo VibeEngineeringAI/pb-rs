@@ -47,13 +47,16 @@ class CorpusTests(unittest.TestCase):
 
     def test_deferred_guards_are_separate_and_exclude_promoted_operations(self):
         guards = phase1.deferred_guards()
-        self.assertTrue(guards)
+        self.assertEqual([], guards)
         self.assertTrue(all(not g["argv"][:1] in (["help"], ["agent"], ["version"]) for g in guards))
         self.assertFalse(any(g["argv"][:1] == ["profile"] for g in guards))
         self.assertFalse(any(g["canonical_path"][3:] in phase1.PHASE2_OPERATIONS for g in guards))
         self.assertFalse(any(g["canonical_path"][3:] in phase1.PHASE7_OPERATIONS for g in guards))
         self.assertFalse(any(g["canonical_path"] == "pb tail" for g in guards))
-        self.assertTrue(any(g["argv"][:2] == ["completion", "bash"] for g in guards))
+        self.assertFalse(any(g["argv"][:1] == ["completion"] for g in guards))
+        corpus = phase1.corpus()
+        self.assertTrue(any(c["argv"] == ["completion", "bash"] for c in corpus))
+        self.assertTrue(any(c["argv"] == ["__completeNoDesc", "sql", "run", "--h"] for c in corpus))
         benchmark_names = {c["name"] for c in phase1.corpus() if c["benchmark"]}
         self.assertFalse(benchmark_names.intersection(g["name"] for g in guards))
 

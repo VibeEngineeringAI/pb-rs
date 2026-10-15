@@ -2119,13 +2119,10 @@ mod fbx {
     }
 }
 
-/// Go v13 byte-swaps a big-endian stream (go1.25.4 probe: Int64 1, -2, 300
-/// render correctly, plain and LZ4; strings and dictionaries too). Arrow's
-/// low-level decoder would read the buffers as little-endian and print
-/// `72057594037927936` for 1, so a non-native schema fails initialization:
-/// a declared capability limitation, never silently wrong values.
+/// Schema initialization accepts foreign byte order; buffer normalization is
+/// exercised by endian module tests before any offsets reach arrow-rs.
 #[test]
-fn non_native_byte_order_fails_initialization() {
+fn non_native_byte_order_initializes() {
     use arrow_ipc::Endianness;
     let declared = |endianness| {
         let mut fbb = fbx::Build::new();
@@ -2137,10 +2134,9 @@ fn non_native_byte_order_fails_initialization() {
     } else {
         Endianness::Big
     };
-    assert_eq!(
-        open_error(vec![Ok(declared(foreign))]),
-        format!("{FLIGHT_READER}{NON_NATIVE_ENDIAN}")
-    );
+    assert!(Decoder::new(&declared(foreign).data_header).is_ok());
+    let unknown = Decoder::new(&declared(Endianness(2)).data_header).unwrap();
+    assert!(unknown.swap_endian);
     // The same schema in native order initializes and decodes.
     let mut data = int_stream(&[&[1, -2, 300]]);
     data[0] = declared(NATIVE_ENDIAN);
@@ -3330,4 +3326,39 @@ fn inflight_guard_spans_the_real_open_handoff() {
     let snapshot = serde_json::to_value(resources::finish().unwrap()).unwrap();
     assert_eq!(snapshot["max_application_messages_inflight"], 1);
     assert_eq!(stdout, b"{\"n\":1}\n\n");
+}
+
+#[test]
+fn logical_endian_schema_dictionary_ids_use_the_patched_copy() {
+    let mut b = fbx::Build::new();
+    let field = fbx::leaf(&mut b, "d", fbx::Leaf::Utf8, true, Some(1));
+    let data = fbx::schema(b, &[field], arrow_ipc::Endianness::Big);
+    let mut header = data.data_header.to_vec();
+    let schema = ipc_message(&header).unwrap().header_as_schema().unwrap();
+    let dictionary = schema.fields().unwrap().get(0).dictionary().unwrap();
+    let dictionary_id_at = dictionary._tab.loc()
+        + usize::from(
+            dictionary
+                ._tab
+                .vtable()
+                .get(arrow_ipc::DictionaryEncoding::VT_ID),
+        );
+    let schema_at = schema._tab.loc();
+    // FlatBuffers permits field storage to overlap other verified tables.
+    // Make endianness alias the dictionary ID's low two bytes (currently 1).
+    let vtable_distance = i32::from_le_bytes(header[schema_at..schema_at + 4].try_into().unwrap());
+    let vtable_at = (schema_at as isize - vtable_distance as isize) as usize;
+    let entry = vtable_at + usize::from(arrow_ipc::Schema::VT_ENDIANNESS);
+    header[entry..entry + 2].copy_from_slice(
+        &u16::try_from(dictionary_id_at - schema_at)
+            .unwrap()
+            .to_le_bytes(),
+    );
+    let original = ipc_message(&header).unwrap().header_as_schema().unwrap();
+    assert_eq!(original.endianness(), arrow_ipc::Endianness::Big);
+    assert_eq!(ipc_dictionary_ids(&original).0, BTreeSet::from([1]));
+    let decoder = Decoder::new(&header).unwrap();
+    assert_eq!(decoder.ids, BTreeSet::from([0]));
+    assert!(decoder.dictionary_types.contains_key(&0));
+    assert!(!decoder.dictionary_types.contains_key(&1));
 }

@@ -62,7 +62,7 @@ pub(crate) fn execute(
         crate::metrics::output::style::with_process_render(|| {
             let service = AdminService::new(&client);
             if matches!(operation, Operation::RoleCreate) {
-                let name = &parsed.positionals[0];
+                let name = parsed.positional_bytes(0);
                 runtime.block_on(service.check_role_name(name))?;
                 let privilege = crate::tui::admin::select_privilege()?;
                 let Some(privilege) = privilege else {
@@ -80,7 +80,7 @@ pub(crate) fn execute(
                     ));
                 };
                 return runtime
-                    .block_on(service.create_dataset(&parsed.positionals[0], kind))
+                    .block_on(service.create_dataset(parsed.positional_bytes(0), kind))
                     .map(CommandOutput::Mutation);
             }
             runtime.block_on(async {
@@ -98,10 +98,15 @@ pub(crate) fn execute(
                         .await
                         .map(CommandOutput::Mutation),
                     Operation::UserDelete => {
-                        let name = &parsed.positionals[0];
-                        delete(&client, &format!("user/{name}"), "delete user").await?;
+                        let name = parsed.positional_bytes(0);
+                        delete(
+                            &client,
+                            &[b"user/".as_slice(), name].concat(),
+                            "delete user",
+                        )
+                        .await?;
                         Ok(CommandOutput::Mutation(
-                            format!("Removed user {}\n", bold(name)).into_bytes(),
+                            [b"Removed user ".as_slice(), &bold_bytes(name), b"\n"].concat(),
                         ))
                     }
                     Operation::UserAddRoles => add_roles(parsed, &client)
@@ -146,22 +151,29 @@ impl<'a> AdminService<'a> {
     pub(crate) fn new(client: &'a ApiClient) -> Self {
         Self { client }
     }
-    pub(crate) async fn check_role_name(&self, name: &str) -> Result<(), CliError> {
+    pub(crate) async fn check_role_name(&self, name: &[u8]) -> Result<(), CliError> {
         if admin_inventory::role_names(self.client)
             .await?
             .iter()
-            .any(|r| r == name)
+            .any(|r| r.as_bytes() == name)
         {
             return Err(CliError::new(
                 ErrorCode::Conflict,
-                format!("role {name} already exists; use a different name"),
+                crate::error::go_string(
+                    &[
+                        b"role ".as_slice(),
+                        name,
+                        b" already exists; use a different name",
+                    ]
+                    .concat(),
+                ),
             ));
         }
         Ok(())
     }
     pub(crate) async fn create_role(
         &self,
-        name: &str,
+        name: &[u8],
         privilege: crate::tui::admin::Privilege,
     ) -> Result<Vec<u8>, CliError> {
         let body = serde_json::to_vec(&[serde_json::json!({"privilege": privilege.as_str()})])
@@ -169,7 +181,11 @@ impl<'a> AdminService<'a> {
         // Role creation reads even a successful body, unlike dataset creation.
         let response = self
             .client
-            .standard(Method::PUT, &format!("role/{name}"), Some(body))
+            .standard_bytes(
+                Method::PUT,
+                &[b"role/".as_slice(), name].concat(),
+                Some(body),
+            )
             .await?;
         if response.status != 200 {
             return Err(CliError::status(
@@ -179,36 +195,38 @@ impl<'a> AdminService<'a> {
                 &response.body,
             ));
         }
-        Ok(format!("Added role {name}").into_bytes())
+        Ok([b"Added role ".as_slice(), name].concat())
     }
     pub(crate) async fn create_dataset(
         &self,
-        name: &str,
+        name: &[u8],
         kind: admin_datasets::DatasetKind,
     ) -> Result<Vec<u8>, CliError> {
         admin_datasets::create_selected(self.client, name, kind).await
     }
 }
 
-// Go strings.TrimSpace uses the Unicode White_Space property.
-fn trim(value: &str) -> &str {
-    value.trim_matches(|c: char| matches!(c, '\t'..='\r' | ' ' | '\u{85}' | '\u{a0}' | '\u{1680}' | '\u{2000}'..='\u{200a}' | '\u{2028}' | '\u{2029}' | '\u{202f}' | '\u{205f}' | '\u{3000}'))
-}
-
 struct RoleInput<'a> {
-    display: &'a str,
-    names: Vec<&'a str>,
+    display: &'a [u8],
+    names: Vec<&'a [u8]>,
 }
 impl<'a> RoleInput<'a> {
-    fn new(display: &'a str) -> Self {
+    fn new(display: &'a [u8]) -> Self {
         Self {
             display,
-            names: display.split(',').map(trim).collect(),
+            names: display
+                .split(|&b| b == b',')
+                .map(crate::error::trim_bytes)
+                .collect(),
         }
     }
     fn body(&self) -> Vec<u8> {
-        // encoding/json.Marshal escapes HTML and line separators in requests.
-        serde_json::to_string(&self.names)
+        let names: Vec<_> = self
+            .names
+            .iter()
+            .map(|name| crate::error::go_string(name))
+            .collect();
+        serde_json::to_string(&names)
             .expect("string list serializes")
             .replace('&', "\\u0026")
             .replace('<', "\\u003c")
@@ -218,48 +236,73 @@ impl<'a> RoleInput<'a> {
             .into_bytes()
     }
 }
+fn bytes_error(code: ErrorCode, parts: &[&[u8]]) -> CliError {
+    let bytes = parts.concat();
+    CliError::new(code, crate::error::go_string(&bytes)).with_raw_message(bytes)
+}
 async fn create_user(parsed: &ParsedInvocation, client: &ApiClient) -> Result<Vec<u8>, CliError> {
-    let name = &parsed.positionals[0];
+    let name = parsed.positional_bytes(0);
     if client.profile().cloud {
         return Err(CliError::new(
             ErrorCode::InvalidInput,
             "`pb user add` is not available for Parseable Cloud. Please invite the user from the Parseable Cloud dashboard",
         ));
     }
-    if admin_inventory::user_ids(client).await?.contains(name) {
-        return Err(CliError::new(
+    if admin_inventory::user_ids(client)
+        .await?
+        .iter()
+        .any(|id| id.as_bytes() == name)
+    {
+        return Err(bytes_error(
             ErrorCode::Conflict,
-            format!("user {name} already exists"),
+            &[b"user ", name, b" already exists"],
         ));
     }
-    let input = RoleInput::new(trim(parsed.text("role")));
+    let input = RoleInput::new(crate::error::trim_bytes(parsed.text_bytes("role")));
     let mut available = admin_inventory::role_names(client).await?;
     if input.display.is_empty() {
         available.sort();
-        let message = if let Some(first) = available.first() {
-            format!(
-                "a role is required to create user {name}.\nAvailable roles: {}\nAssign one, for example: `pb user add {name} --role {first}`",
-                available.join(", ")
+        return Err(if let Some(first) = available.first() {
+            bytes_error(
+                ErrorCode::InvalidInput,
+                &[
+                    b"a role is required to create user ",
+                    name,
+                    b".\nAvailable roles: ",
+                    available.join(", ").as_bytes(),
+                    b"\nAssign one, for example: `pb user add ",
+                    name,
+                    b" --role ",
+                    first.as_bytes(),
+                    b"`",
+                ],
             )
         } else {
-            format!(
-                "a role is required to create user {name}. No roles are available. Create one first with `pb role add <role>`, then run `pb user add {name} --role <role>`"
-            )
-        };
-        return Err(CliError::new(ErrorCode::InvalidInput, message));
+            bytes_error(ErrorCode::InvalidInput,&[b"a role is required to create user ",name,b". No roles are available. Create one first with `pb role add <role>`, then run `pb user add ",name,b" --role <role>`"])
+        });
     }
     for role in &input.names {
-        if !available.iter().any(|r| r == role) {
-            return Err(CliError::new(
+        if !available.iter().any(|r| r.as_bytes() == *role) {
+            return Err(bytes_error(
                 ErrorCode::NotFound,
-                format!(
-                    "role {role} doesn't exist; create it first with `pb role add {role}`, or use an existing role with `pb user add {name} --role <role>`"
-                ),
+                &[
+                    b"role ",
+                    role,
+                    b" doesn't exist; create it first with `pb role add ",
+                    role,
+                    b"`, or use an existing role with `pb user add ",
+                    name,
+                    b" --role <role>`",
+                ],
             ));
         }
     }
     let response = client
-        .standard(Method::POST, &format!("user/{name}"), Some(input.body()))
+        .standard_bytes(
+            Method::POST,
+            &[b"user/".as_slice(), name].concat(),
+            Some(input.body()),
+        )
         .await?;
     if response.status != 200 {
         return Err(CliError::status(
@@ -269,37 +312,57 @@ async fn create_user(parsed: &ParsedInvocation, client: &ApiClient) -> Result<Ve
             &response.body,
         ));
     }
-    let mut output = format!("Added user: {name} \nPassword is: ").into_bytes();
-    output.extend(response.body);
-    output.extend(format!("\nRole(s) assigned: {}\n", input.display).bytes());
-    Ok(output)
+    Ok([
+        b"Added user: ".as_slice(),
+        name,
+        b" \nPassword is: ",
+        &response.body,
+        b"\nRole(s) assigned: ",
+        input.display,
+        b"\n",
+    ]
+    .concat())
 }
 async fn add_roles(parsed: &ParsedInvocation, client: &ApiClient) -> Result<Vec<u8>, CliError> {
-    let name = &parsed.positionals[0];
-    if !admin_inventory::user_ids(client).await?.contains(name) {
-        let message = if client.profile().cloud {
-            format!(
-                "user doesn't exist. Please invite the user from the Parseable Cloud dashboard first, then set the role with `pb user set-role {name} <role>`"
-            )
+    let name = parsed.positional_bytes(0);
+    if !admin_inventory::user_ids(client)
+        .await?
+        .iter()
+        .any(|id| id.as_bytes() == name)
+    {
+        return Err(if client.profile().cloud {
+            bytes_error(ErrorCode::NotFound,&[b"user doesn't exist. Please invite the user from the Parseable Cloud dashboard first, then set the role with `pb user set-role ",name,b" <role>`"])
         } else {
-            format!("user doesn't exist. Please create the user with `pb user add {name}`")
-        };
-        return Err(CliError::new(ErrorCode::NotFound, message));
+            bytes_error(
+                ErrorCode::NotFound,
+                &[
+                    b"user doesn't exist. Please create the user with `pb user add ",
+                    name,
+                    b"`",
+                ],
+            )
+        });
     }
-    let input = RoleInput::new(&parsed.positionals[1]);
+    let input = RoleInput::new(parsed.positional_bytes(1));
     let available = admin_inventory::role_names(client).await?;
     for role in &input.names {
-        if !available.iter().any(|r| r == role) {
-            return Err(CliError::new(
+        if !available.iter().any(|r| r.as_bytes() == *role) {
+            return Err(bytes_error(
                 ErrorCode::NotFound,
-                format!("role {role} doesn't exist; create it using `pb role add {role}`"),
+                &[
+                    b"role ",
+                    role,
+                    b" doesn't exist; create it using `pb role add ",
+                    role,
+                    b"`",
+                ],
             ));
         }
     }
     let response = client
-        .standard(
+        .standard_bytes(
             Method::PATCH,
-            &format!("user/{name}/role/add"),
+            &[b"user/".as_slice(), name, b"/role/add"].concat(),
             Some(input.body()),
         )
         .await?;
@@ -311,28 +374,35 @@ async fn add_roles(parsed: &ParsedInvocation, client: &ApiClient) -> Result<Vec<
             &response.body,
         ));
     }
-    Ok(format!("Added role(s) {} to user {name}\n", input.display).into_bytes())
+    Ok([
+        b"Added role(s) ".as_slice(),
+        input.display,
+        b" to user ",
+        name,
+        b"\n",
+    ]
+    .concat())
 }
 async fn delete_role(parsed: &ParsedInvocation, client: &ApiClient) -> Result<Vec<u8>, CliError> {
-    let name = &parsed.positionals[0];
+    let name = parsed.positional_bytes(0);
     let mut available = admin_inventory::role_names(client).await?;
-    if !available.contains(name) {
+    if !available.iter().any(|role| role.as_bytes() == name) {
         available.sort();
         let guidance = if available.is_empty() {
             "No roles are available".into()
         } else {
             format!("Available role names: {}", available.join(", "))
         };
-        return Err(CliError::new(
+        return Err(bytes_error(
             ErrorCode::NotFound,
-            format!("role {name} doesn't exist. {guidance}"),
+            &[b"role ", name, b" doesn't exist. ", guidance.as_bytes()],
         ));
     }
-    delete(client, &format!("role/{name}"), "delete role").await?;
-    Ok(format!("Removed role {}\n", bold(name)).into_bytes())
+    delete(client, &[b"role/".as_slice(), name].concat(), "delete role").await?;
+    Ok([b"Removed role ".as_slice(), &bold_bytes(name), b"\n"].concat())
 }
-async fn delete(client: &ApiClient, path: &str, action: &str) -> Result<(), CliError> {
-    let request = client.prepare_standard(Method::DELETE, path, None)?;
+async fn delete(client: &ApiClient, path: &[u8], action: &str) -> Result<(), CliError> {
+    let request = client.prepare_standard_bytes(Method::DELETE, path, None)?;
     let response = client.send_streaming(request).await?;
     if response.status == 200 {
         return Ok(());
@@ -345,11 +415,10 @@ async fn delete(client: &ApiClient, path: &str, action: &str) -> Result<(), CliE
         &response.body,
     ))
 }
-fn bold(name: &str) -> String {
-    crate::metrics::output::style::BOLD.render(
+fn bold_bytes(name: &[u8]) -> Vec<u8> {
+    crate::metrics::output::style::BOLD.render_bytes(
         name,
         &crate::metrics::output::style::Terminal::from_process(),
-        crate::metrics::output::line_width,
     )
 }
 
@@ -415,9 +484,9 @@ mod tests {
             .build()
             .unwrap();
         let service = AdminService::new(&client);
-        runtime.block_on(service.check_role_name("new")).unwrap();
+        runtime.block_on(service.check_role_name(b"new")).unwrap();
         let output = runtime
-            .block_on(service.create_role("new", crate::tui::admin::Privilege::Ingestor))
+            .block_on(service.create_role(b"new", crate::tui::admin::Privilege::Ingestor))
             .unwrap();
         assert_eq!(output, b"Added role new");
         let requests = server.join().unwrap();
@@ -427,11 +496,14 @@ mod tests {
     }
     #[test]
     fn role_payload_preserves_order_duplicates_empty_and_go_escaping() {
-        let input = RoleInput::new(" reader,reader, ,<admin>&\u{2028}x ");
+        let input = RoleInput::new(" reader,reader, ,<admin>&\u{2028}x ".as_bytes());
         assert_eq!(
             input.body(),
             br#"["reader","reader","","\u003cadmin\u003e\u0026\u2028x"]"#
         );
-        assert_eq!(input.display, " reader,reader, ,<admin>&\u{2028}x ");
+        assert_eq!(
+            input.display,
+            " reader,reader, ,<admin>&\u{2028}x ".as_bytes()
+        );
     }
 }

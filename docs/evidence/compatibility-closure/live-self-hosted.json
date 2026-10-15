@@ -1,0 +1,27 @@
+{
+  "binary_sha256": "976f293a3dcf7a2660433ffe3c481e7c6fe070be7501344009895264f1f89b7c",
+  "datasets": {
+    "exit": 0,
+    "stderr_empty": true,
+    "json_valid": true,
+    "count": 5
+  },
+  "sql": {
+    "exit": 0,
+    "stderr_empty": true,
+    "expected_probe": true
+  },
+  "http2": {
+    "response_code": 200,
+    "http_version": "2",
+    "ssl_verify_result": 0,
+    "expected_probe": true
+  },
+  "flight": {
+    "exit_after_interrupt": -2,
+    "records": 2,
+    "valid_json_records": 2,
+    "stderr_empty": true
+  },
+  "passed": true
+}

@@ -39,6 +39,8 @@ arrow-schema = "60"
 arrow-buffer = "60"
 arrow-ipc = { version = "=60.0.0", features = ["lz4", "zstd"] }
 flatbuffers = "=25.12.19"
+lz4_flex = "=0.14.0"
+zstd = "=0.14.2"
 tonic = "0.14"
 futures-util = "0.3"
 h2 = "0.4"

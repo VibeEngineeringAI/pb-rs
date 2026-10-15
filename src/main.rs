@@ -6,44 +6,27 @@ use std::io::{self, IsTerminal, Write};
 static DIAGNOSTIC_ALLOCATOR: pb::diagnostics::CountingAllocator =
     pb::diagnostics::CountingAllocator;
 
-fn invalid_utf8(args: &[OsString], index: usize) -> pb::Outcome {
-    // The library's phase-one boundary is UTF-8. Keep byte-valued argv an
-    // explicit unsupported case until the parser and Outcome can own bytes.
-    // Lossy strings are used only for the raw JSON-output request scan.
-    let scan: Vec<String> = args
-        .iter()
-        .map(|arg| arg.to_string_lossy().into_owned())
-        .collect();
-    let message = format!("argument {} is not valid UTF-8", index + 1);
-    let stderr = if pb::parser::requests_json(&scan) {
-        let detail = serde_json::json!({
-            "error": {
-                "code": "INVALID_INPUT",
-                "message": message,
-                "retryable": false,
-            }
-        });
-        format!(
-            "{}\n",
-            serde_json::to_string_pretty(&detail).expect("serializable error")
-        )
-    } else {
-        format!("Error: {message}\n")
-    };
-    pb::Outcome {
-        stdout: Vec::new(),
-        stderr: stderr.into_bytes(),
-        exit_code: 1,
-    }
-}
-
 fn invocation() -> pb::Outcome {
     let raw: Vec<OsString> = std::env::args_os().skip(1).collect();
     let mut args = Vec::with_capacity(raw.len());
-    for (index, arg) in raw.iter().enumerate() {
+    for arg in &raw {
         match arg.to_str() {
             Some(arg) => args.push(arg.to_owned()),
-            None => return invalid_utf8(&raw, index),
+            #[cfg(not(unix))]
+            None => args.push(arg.to_string_lossy().into_owned()),
+            #[cfg(unix)]
+            None => {
+                let bytes: Vec<Vec<u8>> = raw
+                    .iter()
+                    .map(|arg| arg.as_encoded_bytes().to_vec())
+                    .collect();
+                return pb::run_with_bytes(
+                    &bytes,
+                    &mut SignalWriter(StreamingStdout::new(), "stdout"),
+                    &mut SignalWriter(io::stderr(), "stderr"),
+                    io::stderr().is_terminal(),
+                );
+            }
         }
     }
     pb::run_with_writers(
@@ -126,6 +109,8 @@ fn output_retry<T>(
     stream: &'static str,
     mut operation: impl FnMut() -> io::Result<T>,
 ) -> io::Result<T> {
+    #[cfg(not(unix))]
+    let _ = stream;
     loop {
         match operation() {
             Err(error) if error.kind() == io::ErrorKind::Interrupted => continue,

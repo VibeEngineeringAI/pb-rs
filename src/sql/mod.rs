@@ -153,6 +153,7 @@ pub(crate) fn execute_saved(
     let _ = writeln!(stdout, "Query: {normalized}");
     let wire_query = rewrite::ensure_default_limit(normalized);
     let mut parsed = ParsedInvocation {
+        raw: Default::default(),
         command_path: "pb sql list".into(),
         positionals: Vec::new(),
         flags: Default::default(),
@@ -222,20 +223,42 @@ fn fetch_query(
     };
     #[derive(serde::Serialize)]
     struct Request<'a> {
-        query: &'a str,
+        query: &'a serde_json::value::RawValue,
         #[serde(rename = "startTime")]
-        start: &'a str,
+        start: &'a serde_json::value::RawValue,
         #[serde(rename = "endTime")]
-        end: &'a str,
+        end: &'a serde_json::value::RawValue,
     }
-    let body = serde_json::to_string(&Request { query, start, end })
-        .expect("SQL request strings")
-        .replace('&', "\\u0026")
-        .replace('<', "\\u003c")
-        .replace('>', "\\u003e")
-        .replace('\u{2028}', "\\u2028")
-        .replace('\u{2029}', "\\u2029")
-        .into_bytes();
+    let raw_query = if parsed.raw.positionals.is_empty() {
+        query.as_bytes().to_vec()
+    } else {
+        rewrite::ensure_default_limit_bytes(&rewrite::prepare_query_bytes(
+            parsed.positional_bytes(0),
+        ))
+    };
+    let query = crate::error::raw_json_string(&raw_query);
+    let start = crate::error::raw_json_string(if parsed.text("from").is_empty() {
+        start.as_bytes()
+    } else {
+        parsed.text_bytes("from")
+    });
+    let end = crate::error::raw_json_string(if parsed.text("to").is_empty() {
+        end.as_bytes()
+    } else {
+        parsed.text_bytes("to")
+    });
+    let body = serde_json::to_string(&Request {
+        query: &query,
+        start: &start,
+        end: &end,
+    })
+    .expect("SQL request strings")
+    .replace('&', "\\u0026")
+    .replace('<', "\\u003c")
+    .replace('>', "\\u003e")
+    .replace('\u{2028}', "\\u2028")
+    .replace('\u{2029}', "\\u2029")
+    .into_bytes();
     (|| -> Result<(), Failure> {
         let (store, profile) = match supplied_profile {
             Some(profile) => profile,
@@ -318,7 +341,14 @@ fn fetch_query(
                 &runtime,
             ) {
                 Ok(()) => {
-                    let _ = writeln!(stderr, "Query saved as '{name}'");
+                    let _ = stderr.write_all(
+                        &[
+                            b"Query saved as '".as_slice(),
+                            parsed.text_bytes("save-as"),
+                            b"'\n",
+                        ]
+                        .concat(),
+                    );
                 }
                 Err(error) => {
                     let _ = writeln!(stderr, "warning: could not save query: {}", error.message);
