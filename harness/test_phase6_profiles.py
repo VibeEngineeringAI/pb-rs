@@ -26,7 +26,7 @@ def _refuse(name):
 ORIGINALS = {}
 for _module, _names in (
         (subprocess, ('Popen', 'run', 'call', 'check_call', 'check_output', 'getoutput', 'getstatusoutput',
-                      '_fork_exec')),
+                      '_fork_exec', '_waitpid')),
         (_posixsubprocess, ('fork_exec',)),
         (os, ('system', 'popen', 'fork', 'forkpty', 'posix_spawn', 'posix_spawnp', 'execv', 'execve', 'execvp',
               'execvpe', 'execl', 'execle', 'execlp', 'execlpe', 'spawnv', 'spawnve', 'spawnvp', 'spawnvpe',
