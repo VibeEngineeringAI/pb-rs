@@ -79,7 +79,7 @@ enum Failure {
     Output(output::OutputError),
     Status {
         status: u16,
-        reason: String,
+        status_text: String,
         preview: Vec<u8>,
     },
     Preview(io::Error),
@@ -366,11 +366,7 @@ fn render_response(
     mut stdout: &mut (dyn Write + Send),
 ) -> Result<(), Failure> {
     let status = response.status;
-    let reason = if response.reason.is_empty() {
-        status.to_string()
-    } else {
-        format!("{status} {}", response.reason)
-    };
+    let status_text = response.status_text.clone();
     std::thread::scope(|scope| {
         let (sender, receiver) = mpsc::channel(1);
         let (finished, completion) = oneshot::channel();
@@ -390,14 +386,14 @@ fn render_response(
                     .and_then(|preview| {
                         Err(Failure::Status {
                             status,
-                            reason,
+                            status_text,
                             preview,
                         })
                     })
             } else if format == "json" {
-                output::stream_json(&mut reader, &mut stdout, &reason).map_err(Failure::Output)
+                output::stream_json(&mut reader, &mut stdout, &status_text).map_err(Failure::Output)
             } else {
-                output::stream_text(&mut reader, &mut stdout, &reason).map_err(Failure::Output)
+                output::stream_text(&mut reader, &mut stdout, &status_text).map_err(Failure::Output)
             };
             let _ = finished.send(());
             result
@@ -468,10 +464,10 @@ fn render_failure(
     match failure {
         Failure::Status {
             status,
-            reason,
+            status_text,
             preview,
         } => {
-            let public = format!("query failed: server returned {reason}");
+            let public = format!("query failed: server returned {status_text}");
             if structured {
                 return CliError::http(status, &public, &public).render(command, path, true);
             }

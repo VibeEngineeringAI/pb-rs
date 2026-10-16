@@ -15,6 +15,29 @@ FIXTURE_SHA = 'c85f63f9f01a1be6eaa66e6802dae0c3f08409be2ad538d358a7e70f2f5ce314'
 CAPACITY = 4096
 
 
+def historical_diagnostics(case, reference, candidate, delta):
+    """The malformed-header diagnostic retained historical captures carry.
+
+    Live comparisons no longer waive it (docs/pr7-remaining-differences.md);
+    this exact pair only lets historical291 re-validate unchanged.
+    """
+    if case['name'] != 'p6-corrupt-garbage_header':
+        return delta, []
+    prefix = 'arrow/flight: could not create flight reader: arrow/ipc: unknown error while reading: '
+    messages = [prefix + 'runtime error: slice bounds out of range [4022250974:12]',
+                prefix + 'Type `i32` at position 4022250974 is unaligned.\n\n']
+    try:
+        for result, message in zip((reference, candidate), messages):
+            expected = (json.dumps({'error': {'code': 'COMMAND_FAILED', 'message': message,
+                                            'retryable': False}}, indent=2) + '\n').encode()
+            if base64.b64decode(result['stderr_contract_b64'], validate=True) != expected:
+                return delta, []
+    except (ValueError, KeyError):
+        return delta, []
+    return ([i for i in delta if i != 'stderr_contract_b64 differs'],
+            ['P6-DIAG-GARBAGE-HEADER: ' + i for i in delta if i == 'stderr_contract_b64 differs'])
+
+
 def wide_output(payload, seed=7):
     """Independent Go uint64 xorshift/payload and sorted JSON model."""
     mask = (1 << 64) - 1
@@ -126,7 +149,7 @@ def reduce_saved(root, out):
             second = p6.expectation_issues(case, rust)
             delta = p6.differences(go, rust)
             second, delta, wire = p6.split_wire_ua(go, rust, second, delta)
-            delta, diagnostic = p6.split_diagnostics(case, go, rust, delta)
+            delta, diagnostic = historical_diagnostics(case, go, rust, delta)
             errors = first + second + delta
             report['entries'][name] = dict(issues=errors, wire=wire, diagnostic=diagnostic,
                 independent_selected_port_provenance=False)

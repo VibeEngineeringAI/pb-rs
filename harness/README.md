@@ -10,6 +10,33 @@ Linux and macOS are supported by the runner; Linux is verified in this change.
 Windows measurement is not implemented. This harness is not a production client
 or a complete replacement for integration tests against Parseable.
 
+## Real-shell completion checks
+
+Completion runtime tests are separate from performance measurements. Install
+Zsh, Fish, PowerShell (`pwsh`) and Python 3, then run:
+
+```sh
+make -f harness/Makefile baseline GO=/path/to/go1.25.4
+PB_GO_ORACLE="$PWD/bin/pb-go" PB_REQUIRE_COMPLETION_SHELLS=1 \
+  cargo test --locked --test completion -- --nocapture
+```
+
+The tests execute generated scripts through Zsh's ZLE, Fish's `complete -C` and
+PowerShell's `TabExpansion2`, with descriptions enabled and disabled. They check
+completion results and argument boundaries with spaces, quotes and Unicode.
+`PB_GO_ORACLE` adds an actual Go-script runtime comparison; without it the
+explicit runtime expectations still run. Unavailable shells skip locally unless
+required. `PB_REQUIRE_COMPLETION_SHELLS` accepts `1` (all) or a comma-separated
+list. Executable overrides are `PB_COMPLETION_ZSH`, `PB_COMPLETION_FISH` and
+`PB_COMPLETION_POWERSHELL`.
+
+The [completion workflow](../.github/workflows/completion-runtime.yaml) requires
+all three runtimes on Linux and PowerShell on Windows, and retains test logs.
+On Windows, run `cargo test --locked --test completion runtime -- --nocapture`
+with `PB_REQUIRE_COMPLETION_SHELLS=powershell`; the full target also contains
+the existing Bash test. See [PR #7 validation](../docs/pr7-validation.md) for
+scope and remaining platform work.
+
 ## Build once, measure separately
 
 Requirements: Python 3.11+, a POSIX C compiler (`cc`), and a working Go toolchain
@@ -236,9 +263,11 @@ make -f harness/Makefile phase3-deadline-check \
   OUT=harness/results/phase3-deadlines
 ```
 
-`phase3-check` excludes the explicitly recorded `known-divergence` tier for
-non-UTF-8 argv and the opt-in `full60s` tier. Its report names the exclusions;
-they are not passing cases. Standard and Cloud binaries are supplied together,
+`phase3-check` runs 688 required cases, including non-UTF-8 argv and all twelve
+former SQL diagnostic exclusions. The `known-divergence` tier is now empty;
+the real `full60s` deadline tier remains opt-in. See the
+[remaining-difference audit](../docs/pr7-remaining-differences.md).
+Standard and Cloud binaries are supplied together,
 and skipped requirements fail the gate. `phase3-reference-check` validates the
 Go expectations separately. All result directories must be new.
 

@@ -6890,15 +6890,111 @@
    "previous_selected_sha256": "c533acee584c61a3779ce2b8e86d4b8369a757a942c924b4329726ad44f8c900",
    "reason": "Raw SQL argv now passes the unchanged pinned Go request/output expectations; only tier metadata changes.",
    "to": "gate"
+  },
+  {
+   "case": "p3-text-status-empty-reason-empty",
+   "from": "known-divergence",
+   "previous_corpus_sha256": "f6f2896eeaa5b87a76a13aa39146787289b89f050771d16bdd9b78f77011fddb",
+   "previous_selected_sha256": "d85f08dbd02c7ff9aed035935084113e39b8a97594d6abee90730fce5aab8b86",
+   "reason": "Go Response.Status is now taken from the received HTTP/1 status line (empty reason keeps its delimiter); the unchanged pinned Go output passes; only tier metadata changes.",
+   "to": "gate"
+  },
+  {
+   "case": "p3-text-status-empty-reason-no-rows",
+   "from": "known-divergence",
+   "previous_corpus_sha256": "f6f2896eeaa5b87a76a13aa39146787289b89f050771d16bdd9b78f77011fddb",
+   "previous_selected_sha256": "d85f08dbd02c7ff9aed035935084113e39b8a97594d6abee90730fce5aab8b86",
+   "reason": "Go Response.Status is now taken from the received HTTP/1 status line (empty reason keeps its delimiter); the unchanged pinned Go output passes; only tier metadata changes.",
+   "to": "gate"
+  },
+  {
+   "case": "p3-json-status-empty-reason-empty",
+   "from": "known-divergence",
+   "previous_corpus_sha256": "f6f2896eeaa5b87a76a13aa39146787289b89f050771d16bdd9b78f77011fddb",
+   "previous_selected_sha256": "d85f08dbd02c7ff9aed035935084113e39b8a97594d6abee90730fce5aab8b86",
+   "reason": "Go Response.Status is now taken from the received HTTP/1 status line (empty reason keeps its delimiter); the unchanged pinned Go output passes; only tier metadata changes.",
+   "to": "gate"
+  },
+  {
+   "case": "p3-status-empty-reason-text",
+   "from": "known-divergence",
+   "previous_corpus_sha256": "f6f2896eeaa5b87a76a13aa39146787289b89f050771d16bdd9b78f77011fddb",
+   "previous_selected_sha256": "d85f08dbd02c7ff9aed035935084113e39b8a97594d6abee90730fce5aab8b86",
+   "reason": "Go Response.Status is now taken from the received HTTP/1 status line (empty reason keeps its delimiter); the unchanged pinned Go output passes; only tier metadata changes.",
+   "to": "gate"
+  },
+  {
+   "case": "p3-status-empty-reason-json",
+   "from": "known-divergence",
+   "previous_corpus_sha256": "f6f2896eeaa5b87a76a13aa39146787289b89f050771d16bdd9b78f77011fddb",
+   "previous_selected_sha256": "d85f08dbd02c7ff9aed035935084113e39b8a97594d6abee90730fce5aab8b86",
+   "reason": "Go Response.Status is now taken from the received HTTP/1 status line (empty reason keeps its delimiter); the unchanged pinned Go output passes; only tier metadata changes.",
+   "to": "gate"
+  },
+  {
+   "case": "p3-status-empty-reason-empty-body",
+   "from": "known-divergence",
+   "previous_corpus_sha256": "f6f2896eeaa5b87a76a13aa39146787289b89f050771d16bdd9b78f77011fddb",
+   "previous_selected_sha256": "d85f08dbd02c7ff9aed035935084113e39b8a97594d6abee90730fce5aab8b86",
+   "reason": "Go Response.Status is now taken from the received HTTP/1 status line (empty reason keeps its delimiter); the unchanged pinned Go output passes; only tier metadata changes.",
+   "to": "gate"
+  },
+  {
+   "case": "p3-status-299-text",
+   "from": "known-divergence",
+   "previous_corpus_sha256": "f6f2896eeaa5b87a76a13aa39146787289b89f050771d16bdd9b78f77011fddb",
+   "previous_selected_sha256": "d85f08dbd02c7ff9aed035935084113e39b8a97594d6abee90730fce5aab8b86",
+   "reason": "Go Response.Status is now taken from the received HTTP/1 status line (empty reason keeps its delimiter); the unchanged pinned Go output passes; only tier metadata changes.",
+   "to": "gate"
+  },
+  {
+   "case": "p3-status-299-json",
+   "from": "known-divergence",
+   "previous_corpus_sha256": "f6f2896eeaa5b87a76a13aa39146787289b89f050771d16bdd9b78f77011fddb",
+   "previous_selected_sha256": "d85f08dbd02c7ff9aed035935084113e39b8a97594d6abee90730fce5aab8b86",
+   "reason": "Go Response.Status is now taken from the received HTTP/1 status line (empty reason keeps its delimiter); the unchanged pinned Go output passes; only tier metadata changes.",
+   "to": "gate"
+  },
+  {
+   "case": "p3-text-reset-mid-body",
+   "from": "known-divergence",
+   "previous_corpus_sha256": "f6f2896eeaa5b87a76a13aa39146787289b89f050771d16bdd9b78f77011fddb",
+   "previous_selected_sha256": "d85f08dbd02c7ff9aed035935084113e39b8a97594d6abee90730fce5aab8b86",
+   "reason": "Socket read resets now use Go's net.OpError wording naming both ends; the unchanged pinned Go output passes; only tier metadata changes.",
+   "to": "gate"
+  },
+  {
+   "case": "p3-json-reset-mid-body",
+   "from": "known-divergence",
+   "previous_corpus_sha256": "f6f2896eeaa5b87a76a13aa39146787289b89f050771d16bdd9b78f77011fddb",
+   "previous_selected_sha256": "d85f08dbd02c7ff9aed035935084113e39b8a97594d6abee90730fce5aab8b86",
+   "reason": "Socket read resets now use Go's net.OpError wording naming both ends; the unchanged pinned Go output passes; only tier metadata changes.",
+   "to": "gate"
+  },
+  {
+   "case": "p3-text-close-before-headers",
+   "from": "known-divergence",
+   "previous_corpus_sha256": "f6f2896eeaa5b87a76a13aa39146787289b89f050771d16bdd9b78f77011fddb",
+   "previous_selected_sha256": "d85f08dbd02c7ff9aed035935084113e39b8a97594d6abee90730fce5aab8b86",
+   "reason": "Already passed against the frozen PR #6 release (head EOF classification); only tier metadata changes.",
+   "to": "gate"
+  },
+  {
+   "case": "p3-text-malformed-status-line",
+   "from": "known-divergence",
+   "previous_corpus_sha256": "f6f2896eeaa5b87a76a13aa39146787289b89f050771d16bdd9b78f77011fddb",
+   "previous_selected_sha256": "d85f08dbd02c7ff9aed035935084113e39b8a97594d6abee90730fce5aab8b86",
+   "reason": "Rejected status lines now report Go's ReadResponse error with the quoted token; the unchanged pinned Go output passes; only tier metadata changes.",
+   "to": "gate"
   }
  ],
  "cloud_reference": "622d4144b7e354c0ee4036244ba719cbbaf8357710804b1d733cd421a0dc227e",
- "corpus_sha256": "f6f2896eeaa5b87a76a13aa39146787289b89f050771d16bdd9b78f77011fddb",
+ "corpus_sha256": "0182ce6ad6ecaa537d19d5e177123dcb2516d9be7840366c44f0cd3836b93b45",
  "go_toolchain": "go1.25.4",
  "platform": "linux-x86_64",
  "reference": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
  "schema_version": 1,
- "selected_sha256": "d85f08dbd02c7ff9aed035935084113e39b8a97594d6abee90730fce5aab8b86",
+ "selected_sha256": "b807fcbc200fba3beae9197d0244e9772f32dac8f19b118ceb05111b3a5b6798",
  "selected_tiers": [
   "gate",
   "known-divergence"

@@ -4,6 +4,10 @@ This checkpoint tracks work after PR #5 merged. Implementation, local validation
 native platform validation, and live service evidence are separate gates. Earlier
 reports do not establish results for the binary being changed here.
 
+The subsequent [PR #7 validation](pr7-validation.md) adds real-shell completion
+coverage and audits the remaining SQL/Flight differences. The results below
+remain the historical PR #6 checkpoint, bound to its recorded binary hashes.
+
 ## Completion and remaining coverage
 
 | Area | Completed work | Still required | Owner |

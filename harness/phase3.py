@@ -63,23 +63,12 @@ TIERS = {
     "full60s": "real 60-second client deadline; opt-in with --include-full60s (per-case timeout 80 s)",
     "known-divergence": "documented unresolved Go/Rust diagnostics (see KNOWN_DIVERGENCES); opt-in, never counted as passes",
 }
-# Accepted residuals (docs/rust-phase3.md, final review): Go expectations stay pinned and the
-# cases stay runnable with --include-known-divergence, but they are outside the default gate.
-EMPTY_REASON = ("HTTP/1.1 status line with an empty reason phrase: Go keeps the raw delimiter ('200 '), "
-                "hyper does not expose it ('200')")
-KNOWN_DIVERGENCES = {
-    "p3-text-status-empty-reason-empty": EMPTY_REASON, "p3-text-status-empty-reason-no-rows": EMPTY_REASON,
-    "p3-json-status-empty-reason-empty": EMPTY_REASON, "p3-status-empty-reason-text": EMPTY_REASON,
-    "p3-status-empty-reason-json": EMPTY_REASON, "p3-status-empty-reason-empty-body": EMPTY_REASON,
-    "p3-status-299-text": EMPTY_REASON + " (299 has no standard reason)",
-    "p3-status-299-json": EMPTY_REASON + " (299 has no standard reason)",
-    "p3-text-reset-mid-body": "OS connection-reset wording: Go 'read tcp A->B: read: connection reset by peer', "
-                              "Rust 'Connection reset by peer (os error 104)'; code/retryability match",
-    "p3-json-reset-mid-body": "OS connection-reset wording (see p3-text-reset-mid-body); partial stdout and code match",
-    "p3-text-close-before-headers": "premature EOF before response headers: Go distinguishes diagnostics hyper cannot",
-    "p3-text-malformed-status-line": "malformed status code: Go echoes the raw token ('abc'), hyper reports only "
-                                     "'invalid HTTP status-code parsed'",
-}
+# Accepted residuals: Go expectations stay pinned and the cases stay runnable with
+# --include-known-divergence, but they are outside the default gate. Empty: PR #7 promoted the last
+# twelve (empty/absent reason phrases, connection-reset wording, header EOF, malformed status code)
+# with unchanged Go pins; see docs/pr7-remaining-differences.md and the manifest's
+# classification_changes.
+KNOWN_DIVERGENCES = {}
 AUTH = phase2.AUTH
 HEADERS = phase2.HEADERS
 SPINNER_FRAME = re.compile(rb"\r([|/\\-]) fetching\.\.\.")
@@ -2875,8 +2864,8 @@ SCOPE_EXCLUSIONS = [
     "TLS, certificate trust and HTTP proxies: covered by native Rust transport tests; loopback proxies are bypassed by Go.",
     "HTTP/2, 1xx informational responses, Expect/100-continue and trailers are not scripted.",
     "Spinner frame counts and timing are scheduler-dependent; frames are collapsed, order and cleanup are checked.",
-    "Known-divergence tier (opt-in, Go-pinned): empty HTTP reason phrases, OS connection-reset wording, premature "
-    "header EOF and malformed status-code diagnostics, non-UTF-8 argv (see KNOWN_DIVERGENCES).",
+    "Known-divergence tier (opt-in, Go-pinned): currently empty; every former residual is in the gate "
+    "(see KNOWN_DIVERGENCES and docs/pr7-remaining-differences.md).",
     "SIGQUIT and HTTP/2 are outside the current fixtures.",
     "Real 60-second deadlines run only with --include-full60s (80 s per-case timeout).",
     "Peak RSS/CPU are recorded per sample but do not gate; run.py benchmark workloads measure them.",

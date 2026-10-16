@@ -1,0 +1,34 @@
+{
+  "full-rust-tests.log": {
+    "artifact": "full-rust-tests.log.gz",
+    "uncompressed_sha256": "9d36e6362b1310d92a1c8a6e162e337e664893e4225808c24a30c111669fd390"
+  },
+  "python-tests.log": {
+    "artifact": "python-tests.log.gz",
+    "uncompressed_sha256": "a66243f84a230b80aa9f30d17d09c2e4acb0c0818cb0f4dd192e812d56717961"
+  },
+  "python-skip-followup.log": {
+    "artifact": "python-skip-followup.log.gz",
+    "uncompressed_sha256": "a951bdcd54b1f2a25a6319b1c0441535f8e6a5c72c6e0e6ed4acea6301f1948a"
+  },
+  "python-phase5-followup.log": {
+    "artifact": "python-phase5-followup.log.gz",
+    "uncompressed_sha256": "15d0fabcdfc7925b1d569f727310c73aa3a91712b85f8a438137ed805f49b1a6"
+  },
+  "completion-runtime.log": {
+    "artifact": "completion-runtime.log.gz",
+    "uncompressed_sha256": "ae30418e1f614c99a29306a7fa97c4ea22e7b57ff691dedb29d7258cc21841d3"
+  },
+  "completion-missing-runtime.log": {
+    "artifact": "completion-missing-runtime.log.gz",
+    "uncompressed_sha256": "23dd25bd5c68dfb248268cb4c3edd2444975f467dc91bb421f4bd2735ca41f9c"
+  },
+  "clippy.log": {
+    "artifact": "clippy.log.gz",
+    "uncompressed_sha256": "f0788aa36d1c86b6ccdfb7f4042a5574102d82061c046422a2d42e008a1e4710"
+  },
+  "fmt.log": {
+    "artifact": "fmt.log.gz",
+    "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

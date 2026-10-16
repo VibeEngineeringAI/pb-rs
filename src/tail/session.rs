@@ -1068,21 +1068,64 @@ fn validate_body(batch: &arrow_ipc::RecordBatch<'_>, body_len: usize) -> Result<
     Ok(())
 }
 
-/// Go's unverified flatbuffer root read panics below four bytes and the
-/// reader recovers that panic into this text. Rust verifies longer headers,
-/// so other malformed headers produce a different (documented) diagnostic.
+/// Go's unverified flatbuffer reads panic on out-of-range offsets and the
+/// reader recovers the panic into this text. The first reads are the root
+/// offset and then `Message.HeaderType()`, which every message path calls
+/// first; their panics are reproduced here. Rust verifies a header that
+/// survives them, so deeper malformations keep a different (documented)
+/// diagnostic.
 fn ipc_message(header: &[u8]) -> Result<arrow_ipc::Message<'_>, String> {
-    if header.len() < 4 {
-        return Err(format!(
-            "{UNKNOWN_READ}runtime error: index out of range [3] with length {}",
-            header.len()
-        ));
-    }
+    go_header_type(header).map_err(|panic| format!("{UNKNOWN_READ}runtime error: {panic}"))?;
     let options = flatbuffers::VerifierOptions {
         max_depth: VERIFIER_MAX_DEPTH,
         ..Default::default()
     };
     arrow_ipc::root_as_message_with_opts(&options, header).map_err(|e| format!("{UNKNOWN_READ}{e}"))
+}
+
+/// Go flatbuffers v23.1.21 `GetRootAsMessage(buf, 0).HeaderType()` with its
+/// runtime bounds checks: `t.Bytes[off:]` slices with a uint32 offset and the
+/// fixed-width getters touch their last byte first. Offsets wrap as Go's
+/// UOffsetT/SOffsetT conversions do.
+fn go_header_type(buf: &[u8]) -> Result<u8, String> {
+    let length = buf.len();
+    let slice = |off: u32| -> Result<&[u8], String> {
+        buf.get(off as usize..)
+            .ok_or_else(|| format!("slice bounds out of range [{off}:{length}]"))
+    };
+    let fixed = |bytes: &[u8], width: usize| -> Result<(), String> {
+        if bytes.len() < width {
+            return Err(format!(
+                "index out of range [{}] with length {}",
+                width - 1,
+                bytes.len()
+            ));
+        }
+        Ok(())
+    };
+    let u32_at = |off: u32| -> Result<u32, String> {
+        let bytes = slice(off)?;
+        fixed(bytes, 4)?;
+        Ok(u32::from_le_bytes([bytes[0], bytes[1], bytes[2], bytes[3]]))
+    };
+    let u16_at = |off: u32| -> Result<u16, String> {
+        let bytes = slice(off)?;
+        fixed(bytes, 2)?;
+        Ok(u16::from_le_bytes([bytes[0], bytes[1]]))
+    };
+    let position = u32_at(0)?;
+    // Table.Offset(6): vtable := UOffsetT(SOffsetT(t.Pos) - t.GetSOffsetT(t.Pos))
+    let vtable = (position as i32).wrapping_sub(u32_at(position)? as i32) as u32;
+    if 6 >= u16_at(vtable)? {
+        return Ok(0);
+    }
+    let field = u16_at(vtable.wrapping_add(6))?;
+    if field == 0 {
+        return Ok(0);
+    }
+    let bytes = slice(u32::from(field).wrapping_add(position))?;
+    fixed(bytes, 1)?;
+    Ok(bytes[0])
 }
 
 /// Go's flatbuf.EnumNamesMessageHeader, falling back to MessageType(N).

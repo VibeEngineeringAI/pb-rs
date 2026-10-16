@@ -403,18 +403,14 @@ fn create_with_raw(
         return Ok(());
     } // Go closes success without reading it.
     let status = response.status;
-    let reason = if response.reason.is_empty() {
-        status.to_string()
-    } else {
-        format!("{status} {}", response.reason)
-    };
+    let status_text = response.status_text.clone();
     let mut body = Vec::new();
     runtime.block_on(async {
         while let Ok(Some(chunk)) = response.chunk().await {
             body.extend_from_slice(&chunk);
         }
     });
-    let public = format!("server returned {reason}");
+    let public = format!("server returned {status_text}");
     Err(CliError::http(
         status,
         format!("{public}: {}", trim(&String::from_utf8_lossy(&body))),
