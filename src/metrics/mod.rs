@@ -337,6 +337,9 @@ pub(crate) fn execute(
             }
             e
         })?;
+        if format == "json" {
+            return write_json(&body, stdout);
+        }
         let label = if operation == "tsdb" {
             parsed.text_bytes("focus-label")
         } else {
@@ -346,23 +349,31 @@ pub(crate) fn execute(
             output::render_styled_bytes(
                 operation,
                 &body,
-                format == "json",
+                false,
                 label,
                 &output::style::Terminal::from_process(),
             )
         })
         .map_err(|e| CliError::new(ErrorCode::InvalidResponse, e))?;
-        if let Err(e) = stdout.write_all(&bytes)
-            && format == "json"
-        {
-            return Err(CliError::output("failed to encode JSON output", e));
-        }
+        // Go ignores text write errors.
+        let _ = stdout.write_all(&bytes);
         Ok(())
     })();
     match result {
         Ok(()) => Outcome::default(),
         Err(e) => e.render(command, path, structured),
     }
+}
+
+/// JSON output is the same for every operation. The status and envelope
+/// checks have already accepted `body`; the complete-body validation below is
+/// the last failure that is not a write error, so nothing reaches stdout
+/// unless the whole response is accepted. Rendering then streams through a
+/// bounded buffer instead of holding a second, larger copy of the response.
+fn write_json(body: &[u8], stdout: &mut (dyn Write + Send)) -> Result<(), CliError> {
+    output::validate_raw_json(body).map_err(|e| CliError::new(ErrorCode::InvalidResponse, e))?;
+    raw_json::write_validated(body, stdout)
+        .map_err(|e| CliError::output("failed to encode JSON output", e))
 }
 
 fn envelope_error(body: &[u8]) -> Option<String> {
@@ -405,4 +416,87 @@ fn envelope_error(body: &[u8]) -> Option<String> {
             format!("PromQL error ({kind}): {error}")
         }
     })
+}
+
+#[cfg(test)]
+mod json_output_tests {
+    use super::*;
+
+    fn written(body: &[u8]) -> (Result<(), CliError>, Vec<u8>) {
+        let mut stdout = Vec::new();
+        let result = write_json(body, &mut stdout);
+        (result, stdout)
+    }
+
+    fn large_prefix(points: usize) -> String {
+        let values = (0..points)
+            .map(|index| format!("[{index},\"{index}\"]"))
+            .collect::<Vec<_>>()
+            .join(",");
+        format!(
+            r#"{{"status":"success","data":{{"resultType":"matrix","result":[{{"metric":{{}},"values":[{values}]}}]}}}}"#
+        )
+    }
+
+    #[test]
+    fn late_failures_publish_nothing_to_stdout() {
+        let complete = large_prefix(20_000);
+        let (result, stdout) = written(complete.as_bytes());
+        assert!(result.is_ok());
+        assert_eq!(
+            stdout,
+            output::render("run", complete.as_bytes(), true, "").unwrap()
+        );
+        let truncated = &complete[..complete.len() - 1];
+        for (body, message) in [
+            (
+                format!("{complete} {{}}"),
+                "server returned multiple JSON values",
+            ),
+            (
+                format!("{complete}x"),
+                "server returned invalid JSON: invalid character 'x' looking for beginning of value",
+            ),
+            (
+                truncated.to_owned(),
+                "server returned invalid JSON: unexpected EOF",
+            ),
+            (
+                complete.replacen("[19999,", "[19999,,", 1),
+                "server returned invalid JSON: invalid character ',' looking for beginning of value",
+            ),
+        ] {
+            let (result, stdout) = written(body.as_bytes());
+            let error = result.unwrap_err();
+            assert_eq!(error.code, ErrorCode::InvalidResponse);
+            assert_eq!(error.message, message);
+            assert!(stdout.is_empty(), "{message}");
+        }
+    }
+
+    #[test]
+    fn json_write_errors_keep_output_error_policy() {
+        struct Closed;
+        impl Write for Closed {
+            fn write(&mut self, _: &[u8]) -> std::io::Result<usize> {
+                Err(std::io::Error::new(
+                    std::io::ErrorKind::BrokenPipe,
+                    crate::OutputWriteError {
+                        stream: "stdout",
+                        source: std::io::ErrorKind::BrokenPipe.into(),
+                    },
+                ))
+            }
+            fn flush(&mut self) -> std::io::Result<()> {
+                Ok(())
+            }
+        }
+        let error = write_json(b"[1]", &mut Closed).unwrap_err();
+        assert_eq!(error.code, ErrorCode::ConnectionFailed);
+        assert!(
+            error.message.starts_with("failed to encode JSON output: "),
+            "{}",
+            error.message
+        );
+    }
 }

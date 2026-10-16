@@ -281,7 +281,7 @@ fn run(
         }
         let mut collector =
             FileCollector::new(options.clone(), checkpoint.files.clone()).map_err(invalid)?;
-        let batch = match collector.scan() {
+        let mut batch = match collector.scan() {
             Ok(batch) => batch,
             Err(error) if follow && error.retryable() => {
                 writeln!(stderr, "Source changed during scan; retrying: {error}")
@@ -306,10 +306,8 @@ fn run(
             let collected_at = chrono::Utc::now().to_rfc3339();
             let mut sequence = checkpoint.next_sequence;
             let mut rows = Vec::with_capacity(batch.records.len());
-            for record in &batch.records {
-                let payload =
-                    serde_json::to_string(&record.payload).map_err(|e| invalid(e.to_string()))?;
-                rows.push(serde_json::json!({
+            for record in std::mem::take(&mut batch.records) {
+                let mut row = serde_json::json!({
                     "pb_session": checkpoint.binding.session,
                     "pb_collector": checkpoint.collector,
                     "pb_seq": sequence,
@@ -320,8 +318,12 @@ fn run(
                     "pb_source_seq": record.source_sequence,
                     "pb_host": checkpoint.host,
                     "pb_collected_at": collected_at,
-                    "pb_payload": payload,
-                }));
+                });
+                row.as_object_mut().expect("event row is an object").insert(
+                    "pb_payload".into(),
+                    serde_json::Value::String(record.payload_json),
+                );
+                rows.push(row);
                 sequence = sequence
                     .checked_add(1)
                     .filter(|n| *n <= MAX_SEQUENCE)
@@ -329,11 +331,7 @@ fn run(
             }
             // Include source offsets in the outbox before HTTP, even on the
             // first batch: changed or removed source files cannot change replay.
-            if serde_json::to_vec(&rows)
-                .map_err(|e| invalid(e.to_string()))?
-                .len()
-                > MAX_UPLOAD
-            {
+            if encoded_len(&rows).map_err(|e| invalid(e.to_string()))? > MAX_UPLOAD {
                 return Err(invalid(
                     "encoded ingestion batch exceeds 16 MiB; reduce --batch-size and retry (source offsets have not advanced)",
                 ));
@@ -475,4 +473,43 @@ fn report(
     }
     .and_then(|()| stdout.flush())
     .map_err(|e| CliError::output("write ingestion result", e))
+}
+
+// Measure the encoded outbox without allocating a second complete batch.
+fn encoded_len(value: &impl Serialize) -> Result<usize, serde_json::Error> {
+    struct Counter(usize);
+    impl Write for Counter {
+        fn write(&mut self, bytes: &[u8]) -> std::io::Result<usize> {
+            self.0 = self
+                .0
+                .checked_add(bytes.len())
+                .ok_or_else(|| std::io::Error::other("encoded ingestion batch size overflow"))?;
+            Ok(bytes.len())
+        }
+        fn flush(&mut self) -> std::io::Result<()> {
+            Ok(())
+        }
+    }
+    let mut counter = Counter(0);
+    serde_json::to_writer(&mut counter, value)?;
+    Ok(counter.0)
+}
+
+#[cfg(test)]
+mod encoding_tests {
+    use super::*;
+    #[test]
+    fn encoded_length_matches_wire_bytes() {
+        for raw in [
+            r#"[]"#,
+            r#"[{"pb_payload":"{\"message\":\"雪\\n\"}","n":1e100}]"#,
+            r#"[{"a":[null,true,-123.45],"b":"\u0000\t"}]"#,
+        ] {
+            let value: serde_json::Value = serde_json::from_str(raw).unwrap();
+            assert_eq!(
+                encoded_len(&value).unwrap(),
+                serde_json::to_vec(&value).unwrap().len()
+            );
+        }
+    }
 }

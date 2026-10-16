@@ -24,7 +24,7 @@ use chrono::{
     DateTime, Datelike, Duration as ChronoDuration, FixedOffset, Local, NaiveDate, NaiveDateTime,
     Offset, TimeZone, Utc,
 };
-use std::{cell::Cell as StdCell, collections::BTreeMap, io::Write, time::Instant};
+use std::{cell::Cell as StdCell, collections::BTreeMap, io::Write, sync::Arc, time::Instant};
 
 const DATE_TIME_KEY: &str = "p_timestamp";
 const TAG_KEY: &str = "p_tags";
@@ -1720,7 +1720,7 @@ type Row = BTreeMap<String, Cell>;
 #[derive(Clone)]
 struct Table {
     columns: Vec<Column>,
-    rows: Vec<Row>,
+    rows: Arc<[Row]>,
     focused: bool,
     /// The filter input is never displayed (footer hidden) and, with
     /// FilterBlur unbound, keeps focus once '/' is pressed.
@@ -1760,7 +1760,7 @@ impl Table {
                 width: 5,
                 filterable: false,
             }],
-            rows: Vec::new(),
+            rows: Arc::default(),
             focused: false,
             filter,
             cursor: 0,
@@ -1818,8 +1818,8 @@ impl Table {
         self.page = self.max_pages() - 1;
         self.cursor = self.page * self.page_size;
     }
-    fn set_rows(&mut self, rows: Vec<Row>) {
-        self.rows = rows;
+    fn set_rows(&mut self, rows: impl Into<Arc<[Row]>>) {
+        self.rows = rows.into();
         if self.cursor >= self.rows.len() as i64 {
             self.cursor = self.rows.len() as i64 - 1;
         }
@@ -2391,7 +2391,7 @@ pub(crate) struct QueryState {
     has_queried: bool,
     overlay: Overlay,
     focused: usize,
-    data_rows: Vec<Row>,
+    data_rows: Arc<[Row]>,
     fetch_error: String,
     table_rows_base: i64,
 
@@ -2531,7 +2531,7 @@ impl QueryState {
             has_queried: has_query,
             overlay: Overlay::None,
             focused: 0,
-            data_rows: Vec::new(),
+            data_rows: Arc::default(),
             fetch_error: String::new(),
             table_rows_base: 0,
             window_size: SQL_WINDOW_SIZE,
@@ -2708,7 +2708,7 @@ impl QueryState {
         self.global_offset = 0;
         self.viewport_start = 0;
         self.table_rows_base = 0;
-        self.data_rows.clear();
+        self.data_rows = Arc::default();
         self.windows.clear();
         self.loading_windows.clear();
         self.cache_clock = 0;
@@ -2793,7 +2793,7 @@ impl QueryState {
                     message = "query failed".into();
                 }
                 if self.windows.is_empty() {
-                    self.data_rows.clear();
+                    self.data_rows = Arc::default();
                     self.table.set_rows(Vec::new());
                     self.fetch_error = message;
                     self.status.error = "query failed".into();
@@ -2826,7 +2826,7 @@ impl QueryState {
             let sample = self
                 .windows
                 .get(&index)
-                .map(|w| w.data.clone())
+                .map(|w| w.data.iter().take(100).cloned().collect::<Vec<_>>())
                 .unwrap_or_default();
             self.update_table_columns(&fields, &sample);
         }
@@ -2889,7 +2889,7 @@ impl QueryState {
     fn refresh_visible_rows(&mut self) {
         let total = self.current_total();
         if total == 0 {
-            self.data_rows.clear();
+            self.data_rows = Arc::default();
             self.table.set_rows(Vec::new());
             self.viewport_start = 0;
             return;
@@ -2911,8 +2911,8 @@ impl QueryState {
                 let clock = self.cache_clock;
                 let window = self.windows.get_mut(&window_index).expect("present");
                 window.last_used = clock;
-                let record = window.data[local].clone();
-                rows.push(self.format_row(&record));
+                let record = &self.windows[&window_index].data[local];
+                rows.push(self.format_row(record));
             } else {
                 rows.push(self.placeholder_row(absolute));
             }
@@ -2920,12 +2920,12 @@ impl QueryState {
         }
         self.table_rows_base = start;
         let row_count = rows.len() as i64;
-        self.data_rows = rows.clone();
+        self.data_rows = rows.into();
         let mut highlight = (self.global_offset - start).max(0);
         if highlight >= row_count && row_count > 0 {
             highlight = row_count - 1;
         }
-        self.table.set_rows(rows);
+        self.table.set_rows(Arc::clone(&self.data_rows));
         self.table.set_highlighted(highlight);
     }
 
@@ -4351,6 +4351,35 @@ mod tests {
             }),
             fixed_now(),
         )
+    }
+
+    #[test]
+    fn visible_row_snapshots_share_storage_and_keep_independent_filters() {
+        let mut s = state("select * from logs");
+        let request = windows(&s.init()).remove(0);
+        complete(&mut s, &request, 3);
+        assert!(Arc::ptr_eq(&s.data_rows, &s.table.rows));
+        let mut snapshot = s.table.clone();
+        assert!(Arc::ptr_eq(&snapshot.rows, &s.table.rows));
+
+        snapshot.filter.set_value("1");
+        snapshot.set_highlighted(2);
+        assert_eq!(snapshot.visible_rows().len(), 1);
+        assert_eq!(snapshot.cursor, 0);
+        assert_eq!(s.table.visible_rows().len(), 3);
+        assert_eq!(snapshot.visible_rows()[0]["a"].display(), "1");
+
+        s.windows.get_mut(&0).unwrap().data[1].insert("a".into(), Cell::Value("fresh".into()));
+        s.refresh_visible_rows();
+        assert!(Arc::ptr_eq(&s.data_rows, &s.table.rows));
+        assert!(!Arc::ptr_eq(&snapshot.rows, &s.table.rows));
+        assert_eq!(s.data_rows[1]["a"].display(), "fresh");
+        assert_eq!(snapshot.visible_rows()[0]["a"].display(), "1");
+
+        assert!(s.prepare_run());
+        assert!(s.data_rows.is_empty());
+        assert_eq!(snapshot.rows.len(), 3);
+        assert_eq!(snapshot.visible_rows()[0]["a"].display(), "1");
     }
 
     #[test]

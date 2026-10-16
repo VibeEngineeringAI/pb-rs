@@ -78,7 +78,8 @@ struct Checkpoint {
 
 #[derive(Clone, Debug)]
 pub(crate) struct FileRecord {
-    pub payload: Map<String, Value>,
+    /// Canonical JSON retained from the batch-size check for the durable outbox.
+    pub payload_json: String,
     pub source_path: String,
     pub source_generation: String,
     pub source_sequence: u64,
@@ -440,9 +441,9 @@ impl FileCollector {
                         );
                     }
                 };
-                let bytes = serde_json::to_vec(&payload)
-                    .map_err(|error| error.to_string())?
-                    .len();
+                let payload_json =
+                    serde_json::to_string(&payload).map_err(|error| error.to_string())?;
+                let bytes = payload_json.len();
                 if bytes > self.options.max_batch_bytes {
                     return Err(format!(
                         "{} at byte {line_start}: record is {bytes} bytes, exceeding the {} byte batch limit",
@@ -459,7 +460,7 @@ impl FileCollector {
                 checkpoint.sequence += 1;
                 payload_bytes += bytes;
                 records.push(FileRecord {
-                    payload,
+                    payload_json,
                     source_path: key.clone(),
                     source_generation: checkpoint.generation.clone(),
                     source_sequence: checkpoint.sequence,

@@ -13,10 +13,11 @@ use crate::{
     parser::{ParsedInvocation, quote},
     render,
 };
+use futures_util::{StreamExt, stream::FuturesUnordered};
 use http::Method;
 use serde::Serialize;
 use std::io::Write as _;
-use std::{collections::BTreeMap, future::Future, pin::Pin, task::Poll};
+use std::{collections::BTreeMap, future::Future};
 use style::{BODY, HEADER, MUTED, RULE, Style, pad_right, truncate_cell, width};
 use wire::Action;
 
@@ -171,27 +172,17 @@ where
     F: Future<Output = T>,
 {
     let mut results: Vec<Option<T>> = std::iter::repeat_with(|| None).take(count).collect();
-    let mut active: Vec<(usize, Pin<Box<F>>)> = (0..count)
-        .map(|index| (index, Box::pin(start(index))))
+    let mut active: FuturesUnordered<_> = (0..count)
+        .map(|index| {
+            let future = start(index);
+            async move { (index, future.await) }
+        })
         .collect();
-    std::future::poll_fn(|cx| {
-        let mut position = 0;
-        while position < active.len() {
-            match active[position].1.as_mut().poll(cx) {
-                Poll::Ready(value) => {
-                    let (index, _) = active.swap_remove(position);
-                    results[index] = Some(value);
-                }
-                Poll::Pending => position += 1,
-            }
-        }
-        if active.is_empty() {
-            Poll::Ready(())
-        } else {
-            Poll::Pending
-        }
-    })
-    .await;
+    // The ready queue polls a pending read again only after its own wake.
+    // All reads remain owned here, so dropping the gather cancels them all.
+    while let Some((index, value)) = active.next().await {
+        results[index] = Some(value);
+    }
     results
         .into_iter()
         .map(|result| result.expect("every indexed future completed"))

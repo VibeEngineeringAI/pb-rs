@@ -112,7 +112,8 @@ impl PromqlSessionService {
             } else {
                 String::new()
             },
-            chart_rows: if matrix { rows.clone() } else { Vec::new() },
+            // The reducer shares the table rows for a single matrix result.
+            chart_rows: Vec::new(),
             result_type: result.result_type,
             rows,
             series_count,
