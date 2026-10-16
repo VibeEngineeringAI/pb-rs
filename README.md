@@ -1,10 +1,10 @@
 # pb — Parseable CLI
 
 <p>
-<a href="https://github.com/parseablehq/pb/actions/workflows/build.yaml"><img src="https://github.com/parseablehq/pb/actions/workflows/build.yaml/badge.svg?branch=main" alt="Build"></a>
-<a href="https://go.dev/"><img src="https://img.shields.io/github/go-mod/go-version/parseablehq/pb?logo=go" alt="Go"></a>
+<a href="https://github.com/VibeEngineeringAI/pb-rs/actions/workflows/release.yaml"><img src="https://github.com/VibeEngineeringAI/pb-rs/actions/workflows/release.yaml/badge.svg?branch=main" alt="Build"></a>
+<a href="https://www.rust-lang.org/"><img src="https://img.shields.io/badge/Rust-1.96-orange?logo=rust" alt="Rust 1.96"></a>
 <a href="LICENSE"><img src="https://img.shields.io/badge/license-AGPL--3.0-blue.svg" alt="License"></a>
-<a href="https://github.com/parseablehq/pb/releases/latest"><img src="https://img.shields.io/github/v/release/parseablehq/pb" alt="Latest release"></a>
+<a href="https://github.com/VibeEngineeringAI/pb-rs/releases"><img src="https://img.shields.io/github/v/release/VibeEngineeringAI/pb-rs?include_prereleases" alt="Latest release"></a>
 </p>
 
 ![pb onboard](docs/images/pb-onboard.png)
@@ -20,7 +20,7 @@ Query production logs. Explore metrics. Stream new events. Save repeatable inves
 `pb` is the command line interface for [Parseable](https://github.com/parseablehq/parseable). It gives operators and developers a fast terminal workflow for:
 
 - SQL log queries with text or JSON output
-- Interactive Bubble Tea table views for large result sets
+- Interactive terminal table views for large result sets
 - PromQL range and instant queries
 - Metrics metadata exploration: labels, series, cardinality, and TSDB stats
 - Live event tailing from Parseable datasets
@@ -37,7 +37,8 @@ and [phase-two profiles, authentication, status and dataset reads](docs/rust-pha
 plus [phase-three noninteractive SQL with streaming text/JSON output](docs/rust-phase3.md)
 and [phase-four PromQL, metrics metadata, and saved SQL](docs/rust-phase4.md),
 plus [phase-five dataset, user, and role administration](docs/rust-phase5.md).
-The Go CLI remains the complete implementation during the port.
+This repository publishes the native Rust implementation. The retained Go sources
+serve as the compatibility reference for the port.
 
 The Rust candidate also adds [file collection and bounded session observation](docs/shoulder.md):
 collect JSONL or text files on one machine, then let an external agent read and
@@ -68,71 +69,82 @@ pb tail backend
 
 ## Installation
 
-**Quick install (Linux/macOS):**
+The native Rust builds are distributed through
+[GitHub Releases](https://github.com/VibeEngineeringAI/pb-rs/releases).
+The [installation page](https://vibeengineeringai.github.io/pb-rs/) provides platform-specific commands
+and copy buttons. The first Rust release is **v0.1.0-rc.1**, a preview release.
+The commands below pin that prerelease; GitHub’s `latest` URL only includes stable releases.
+
+**Linux / macOS:**
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/parseablehq/pb/main/scripts/install.sh | sh
+curl -fsSL https://github.com/VibeEngineeringAI/pb-rs/releases/download/v0.1.0-rc.1/install.sh | VERSION=0.1.0-rc.1 sh
 ```
 
-Downloads the latest release, verifies the SHA-256 checksum, and installs to
-`~/.local/bin`. Override the location with `INSTALL_DIR`:
+The installer detects your architecture, verifies the archive's SHA-256 checksum,
+and installs `pb` to `~/.local/bin`. Follow its printed instructions if that directory
+is not on your `PATH`. No Rust toolchain is needed.
 
-```sh
-curl -fsSL https://raw.githubusercontent.com/parseablehq/pb/main/scripts/install.sh | INSTALL_DIR=/usr/local/bin sh
-```
-
-**Quick install (Windows PowerShell):**
+**Windows (PowerShell):**
 
 ```powershell
-powershell -ExecutionPolicy Bypass -c "irm https://raw.githubusercontent.com/parseablehq/pb/main/scripts/install.ps1 | iex"
+$env:VERSION = '0.1.0-rc.1'
+try { irm https://github.com/VibeEngineeringAI/pb-rs/releases/download/v0.1.0-rc.1/install.ps1 | iex }
+finally { Remove-Item Env:VERSION }
 ```
 
-Downloads the latest release, verifies the SHA-256 checksum, installs to
-`%USERPROFILE%\bin`, and adds that folder to your user `PATH`. Open a new
-PowerShell window after installation.
+Installs `pb.exe` to `%LOCALAPPDATA%\Programs\pb\bin` and adds that directory to your user `PATH`.
 
-**Homebrew (macOS and Linux):**
+**Choose a version or directory:**
 
-```bash
-brew install parseablehq/tap/pb
+Use the installer from the desired release to pin both the script and binary:
+
+```sh
+curl -fsSL https://github.com/VibeEngineeringAI/pb-rs/releases/download/v0.1.0-rc.1/install.sh | VERSION=0.1.0-rc.1 INSTALL_DIR="$HOME/.local/bin" sh
 ```
 
-> Use the full tap name above. `brew install pb` installs an unrelated Homebrew cask.
-
-**Pre-built binary (Linux/macOS/Windows):**
-
-Download the latest archive for your OS and architecture from the
-[releases page](https://github.com/parseablehq/pb/releases/latest),
-extract it, and move the binary to your `PATH`:
-
-```bash
-tar xzf pb_*.tar.gz
-chmod +x pb && sudo mv pb /usr/local/bin/
+```powershell
+$env:VERSION = '0.1.0-rc.1'
+irm https://github.com/VibeEngineeringAI/pb-rs/releases/download/v0.1.0-rc.1/install.ps1 | iex
+Remove-Item Env:VERSION
 ```
 
-Windows archives contain `pb.exe`; extract the `.zip` and move `pb.exe` to a
-folder in your `PATH`.
+Replace `0.1.0-rc.1` with an available release version. `INSTALL_DIR` is also supported
+as an environment variable on Windows.
 
-Available archives:
+**Manual installation:**
 
-| Platform | Archive |
-|---|---|
-| macOS Apple Silicon | `pb_<version>_darwin_arm64.tar.gz` |
-| macOS Intel | `pb_<version>_darwin_amd64.tar.gz` |
-| Linux x86 64-bit | `pb_<version>_linux_amd64.tar.gz` |
-| Linux ARM 64-bit | `pb_<version>_linux_arm64.tar.gz` |
-| Windows x86 64-bit | `pb_<version>_windows_amd64.zip` |
-| Windows ARM 64-bit | `pb_<version>_windows_arm64.zip` |
+Download the archive for your system and the matching `pb_<version>_checksums.txt`
+from the [releases page](https://github.com/VibeEngineeringAI/pb-rs/releases),
+verify its SHA-256 hash, then extract `pb` (or `pb.exe`) into a directory on your `PATH`.
+Unix archives use `.tar.gz`; Windows archives use `.zip`.
 
-On macOS, a manually downloaded binary may be blocked on first run. Allow it once with:
+**Verify and connect:**
 
-```bash
-xattr -d com.apple.quarantine /usr/local/bin/pb
+```sh
+pb --version
+pb --help
+pb login
 ```
 
-**Verify:** `pb --help`
+**Build from source:**
+
+Install Rust 1.96 or later and the native C/C++ build tools required by the TLS and
+compression dependencies, then run:
+
+```sh
+cargo build --locked --release
+# Binary: target/release/pb (Windows: target/release/pb.exe)
+```
+
+The upstream `parseablehq/tap/pb` Homebrew formula distributes the upstream CLI;
+use this repository's releases to install this Rust build.
 
 ## Authentication
+
+The initial Rust prerelease supports self-hosted connections. Cloud device login
+requires release-time orchestrator configuration; this repository currently has
+no such configuration.
 
 `pb` supports self-hosted Parseable and Parseable Cloud. Authentication details
 are stored in a named local profile so subsequent commands can connect without
@@ -411,7 +423,7 @@ with Ctrl+C.
 | Topic | Description |
 |---|---|
 | [Parseable](https://github.com/parseablehq/parseable) | Parseable server repository |
-| [Releases](https://github.com/parseablehq/pb/releases/latest) | Download pre-built binaries |
+| [Releases](https://github.com/VibeEngineeringAI/pb-rs/releases) | Download pre-built binaries |
 | [File collection and session observation](docs/shoulder.md) | Collect on one machine and drive an external agent with bounded, acknowledged reads |
 | `pb --help` | List command groups |
 | `pb <command> --help` | Command-specific help |
