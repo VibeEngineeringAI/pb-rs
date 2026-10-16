@@ -51,6 +51,336 @@ fn append(path: &Path, contents: &str) {
     file.write_all(contents.as_bytes()).unwrap();
 }
 
+fn restart(collector: &FileCollector) -> FileCollector {
+    let saved = serde_json::to_vec(collector.state()).unwrap();
+    FileCollector::new(
+        collector.options.clone(),
+        serde_json::from_slice(&saved).unwrap(),
+    )
+    .unwrap()
+}
+
+fn check_alias_switch(truncate: bool, legacy_stale_state: bool) {
+    let dir = Directory::new();
+    let path = dir.file("b.log", "first\n");
+    let alias = dir.0.join("a.log");
+    let mut options = dir.options();
+    options.format = FileFormat::Text;
+    let mut collector = FileCollector::new(options, FileState::default()).unwrap();
+    let first = collector.scan().unwrap();
+    collector.commit(&first).unwrap();
+    let stale = collector.state().files[&path_key(&path).unwrap()].clone();
+    collector = restart(&collector);
+    fs::hard_link(&path, &alias).unwrap();
+    append(&path, "second\n");
+    let second = collector.scan().unwrap();
+    assert_eq!(second.records.len(), 1);
+    assert_eq!(second.records[0].payload["message"], "second");
+    collector.commit(&second).unwrap();
+    if legacy_stale_state {
+        // Persist exactly the duplicate checkpoint shape written by the old
+        // collector, even after the fix starts removing superseded aliases.
+        collector
+            .state
+            .files
+            .insert(path_key(&path).unwrap(), stale);
+    }
+    collector = restart(&collector);
+    fs::remove_file(&alias).unwrap();
+    if truncate {
+        // Same length as the old contents: only the latest byte probes expose
+        // the rewrite. The stale checkpoint's "first\n" probe still matches.
+        fs::write(&path, "first\nCHANGED\n").unwrap();
+    } else {
+        append(&path, "third\n");
+    }
+    let third = collector.scan().unwrap();
+    let prior_ids = [&first.records[0].event_id, &second.records[0].event_id];
+    assert!(
+        third
+            .records
+            .iter()
+            .all(|r| !prior_ids.contains(&&r.event_id)),
+        "alias switching reused a previously committed event ID: {:?}",
+        third.records
+    );
+    if truncate {
+        assert_eq!(third.records.len(), 2);
+        assert_eq!(third.records[1].payload["message"], "CHANGED");
+        assert_ne!(
+            third.records[1].source_generation,
+            second.records[0].source_generation
+        );
+        assert_eq!(third.records[1].source_sequence, 2);
+    } else {
+        assert_eq!(third.records.len(), 1);
+        assert_eq!(third.records[0].payload["message"], "third");
+        assert_eq!(
+            third.records[0].source_generation,
+            second.records[0].source_generation
+        );
+        assert_eq!(third.records[0].source_sequence, 3);
+    }
+    collector.commit(&third).unwrap();
+    assert!(restart(&collector).scan().unwrap().records.is_empty());
+}
+
+#[test]
+fn hardlink_alias_switch_append_survives_serialized_restart() {
+    check_alias_switch(false, false);
+}
+
+#[test]
+fn hardlink_alias_switch_truncation_preserves_event_id_uniqueness() {
+    check_alias_switch(true, false);
+}
+
+#[test]
+fn legacy_stale_alias_append_uses_latest_committed_progress() {
+    check_alias_switch(false, true);
+}
+
+#[test]
+fn legacy_stale_alias_truncation_uses_latest_generation_probes() {
+    check_alias_switch(true, true);
+}
+
+#[test]
+fn skipped_input_is_bounded_and_next_scan_serves_another_file() {
+    let dir = Directory::new();
+    let busy = dir.file("a.log", "[]\nnot json\n[]\n");
+    dir.file("b.log", "{\"source\":\"b\"}\n");
+    let mut options = dir.options();
+    options.invalid_json = InvalidJsonPolicy::Skip;
+    options.max_events = 1;
+    let mut collector = FileCollector::new(options, FileState::default()).unwrap();
+    let first = collector.scan().unwrap();
+    assert_eq!(
+        first.skipped_lines, 1,
+        "skipped lines must consume scan budget"
+    );
+    assert!(first.records.is_empty());
+    assert!(first.has_state_changes());
+    let saved = &first.next_state().files[&path_key(&busy).unwrap()];
+    assert_eq!((saved.offset, saved.sequence), (3, 1));
+    assert_eq!(collector.scan().unwrap().next_state(), first.next_state());
+    assert_eq!(collector.state(), &FileState::default());
+    collector.commit(&first).unwrap();
+    append(&busy, "[]\n");
+    collector = restart(&collector);
+    let second = collector.scan().unwrap();
+    assert_eq!(second.skipped_lines, 0);
+    assert_eq!(second.records.len(), 1);
+    assert_eq!(second.records[0].payload["source"], "b");
+    collector.commit(&second).unwrap();
+    // Bounded skipped-only progress must remain durable across every restart.
+    for expected_sequence in 2..=4 {
+        collector = restart(&collector);
+        let batch = collector.scan().unwrap();
+        assert!(batch.records.is_empty());
+        assert_eq!(batch.skipped_lines, 1);
+        assert_eq!(
+            batch.next_state().files[&path_key(&busy).unwrap()].sequence,
+            expected_sequence
+        );
+        collector.commit(&batch).unwrap();
+    }
+    assert!(!restart(&collector).scan().unwrap().has_state_changes());
+}
+
+#[test]
+fn missing_source_io_errors_are_retryable() {
+    let error = ScanError::io(
+        Path::new("disappeared-directory"),
+        std::io::Error::from(std::io::ErrorKind::NotFound),
+    );
+    assert!(
+        error.retryable(),
+        "discovery must preserve transient I/O errors: {error}"
+    );
+}
+
+#[cfg(unix)]
+fn rerun_without_root_permissions(test_name: &str) -> bool {
+    use std::os::unix::fs::PermissionsExt;
+    use std::os::unix::process::CommandExt;
+
+    if unsafe { libc::geteuid() } != 0 {
+        return false;
+    }
+    // Root bypasses both read and search permissions. Require a real
+    // unprivileged run, including the permission assertions in the child.
+    let scratch = Directory::new();
+    fs::set_permissions(&scratch.0, fs::Permissions::from_mode(0o777)).unwrap();
+    let output = std::process::Command::new(std::env::current_exe().unwrap())
+        .args([
+            "--exact",
+            &format!("ingest::files::tests::{test_name}"),
+            "--nocapture",
+        ])
+        .env("TMPDIR", &scratch.0)
+        .gid(65534)
+        .uid(65534)
+        .output()
+        .unwrap();
+    assert!(
+        output.status.success(),
+        "unprivileged test failed: {}{}",
+        String::from_utf8_lossy(&output.stdout),
+        String::from_utf8_lossy(&output.stderr)
+    );
+    true
+}
+
+#[cfg(unix)]
+fn check_recursive_exclusion(test_name: &str, exclude: &str, whole_subtree: bool) {
+    use std::os::unix::fs::PermissionsExt;
+
+    if rerun_without_root_permissions(test_name) {
+        return;
+    }
+    let dir = Directory::new();
+    dir.file("good.log", "{}\n");
+    // A filename glob can match an ancestor without excluding its children.
+    let directory_name = if exclude == "*.tmp" {
+        "locked.tmp"
+    } else {
+        "locked"
+    };
+    let locked = dir.0.join(directory_name);
+    fs::create_dir(&locked).unwrap();
+    let hidden = locked.join("hidden.log");
+    fs::write(&hidden, "{}\n").unwrap();
+    if exclude == "*.tmp" {
+        fs::write(locked.join("discarded.tmp"), "{}\n").unwrap();
+    }
+    struct Unlock(PathBuf);
+    impl Drop for Unlock {
+        fn drop(&mut self) {
+            fs::set_permissions(&self.0, fs::Permissions::from_mode(0o700)).unwrap();
+        }
+    }
+    let _unlock = Unlock(locked.clone());
+    let mut options = dir.options();
+    options.includes = vec![format!("{}/**/*", dir.0.display())];
+    options.excludes = vec![exclude.into()];
+    fs::set_permissions(&locked, fs::Permissions::from_mode(0o700)).unwrap();
+    let control = FileCollector::new(options.clone(), FileState::default())
+        .unwrap()
+        .scan()
+        .unwrap();
+    assert_eq!(control.records.len(), if whole_subtree { 1 } else { 2 });
+    assert!(
+        control
+            .records
+            .iter()
+            .any(|r| r.source_path.ends_with("good.log"))
+    );
+    assert_eq!(
+        control
+            .records
+            .iter()
+            .any(|r| r.source_path.ends_with("hidden.log")),
+        !whole_subtree,
+        "readable control for {exclude}"
+    );
+
+    let mut unexpected = Vec::new();
+    for mode in [0o000, 0o444] {
+        fs::set_permissions(&locked, fs::Permissions::from_mode(mode)).unwrap();
+        if mode == 0o000 {
+            assert_eq!(
+                fs::read_dir(&locked).unwrap_err().kind(),
+                std::io::ErrorKind::PermissionDenied
+            );
+        } else {
+            // Listing succeeds and glob yields the child, but canonicalizing
+            // that child fails because the directory lacks search permission.
+            assert!(
+                fs::read_dir(&locked)
+                    .unwrap()
+                    .any(|entry| entry.unwrap().file_name() == "hidden.log")
+            );
+            assert!(
+                glob::glob(&options.includes[0])
+                    .unwrap()
+                    .any(|entry| entry.is_ok_and(|p| p == hidden))
+            );
+        }
+        assert_eq!(
+            fs::canonicalize(&hidden).unwrap_err().kind(),
+            std::io::ErrorKind::PermissionDenied
+        );
+        let mut unexcluded_options = options.clone();
+        unexcluded_options.excludes.clear();
+        let error = FileCollector::new(unexcluded_options, FileState::default())
+            .unwrap()
+            .scan()
+            .unwrap_err();
+        assert!(!error.retryable());
+        assert!(error.to_string().contains(directory_name));
+
+        let result = FileCollector::new(options.clone(), FileState::default())
+            .unwrap()
+            .scan();
+        match result {
+            Ok(batch) if whole_subtree => {
+                assert_eq!(batch.records.len(), 1);
+                assert!(batch.records[0].source_path.ends_with("good.log"));
+            }
+            Err(error) if !whole_subtree => {
+                assert!(!error.retryable());
+                assert!(error.to_string().contains(directory_name));
+            }
+            other => unexpected.push(format!("mode {mode:o}, exclude {exclude:?}: {other:?}")),
+        }
+    }
+    assert!(
+        unexpected.is_empty(),
+        "incorrect exclusion behavior: {unexpected:#?}"
+    );
+}
+
+#[cfg(unix)]
+#[test]
+fn recursive_glob_honors_excluded_unreadable_subtrees() {
+    check_recursive_exclusion(
+        "recursive_glob_honors_excluded_unreadable_subtrees",
+        "**/locked/**",
+        true,
+    );
+}
+
+#[cfg(unix)]
+#[test]
+fn recursive_glob_directory_only_exclude_preserves_traversal_errors() {
+    check_recursive_exclusion(
+        "recursive_glob_directory_only_exclude_preserves_traversal_errors",
+        "**/locked",
+        false,
+    );
+}
+
+#[cfg(unix)]
+#[test]
+fn recursive_glob_directory_slash_only_exclude_preserves_traversal_errors() {
+    check_recursive_exclusion(
+        "recursive_glob_directory_slash_only_exclude_preserves_traversal_errors",
+        "**/locked/",
+        false,
+    );
+}
+
+#[cfg(unix)]
+#[test]
+fn recursive_glob_filename_exclude_preserves_traversal_errors() {
+    check_recursive_exclusion(
+        "recursive_glob_filename_exclude_preserves_traversal_errors",
+        "*.tmp",
+        false,
+    );
+}
+
 #[test]
 fn retry_restart_and_acknowledgement_preserve_identity_and_offsets() {
     let dir = Directory::new();

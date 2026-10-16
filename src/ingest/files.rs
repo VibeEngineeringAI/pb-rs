@@ -42,6 +42,7 @@ pub(crate) struct FileOptions {
     pub max_line_bytes: usize,
     /// Maximum serialized payload bytes in one proposed batch.
     pub max_batch_bytes: usize,
+    /// Complete source lines per scan, including explicitly skipped JSONL.
     pub max_events: usize,
 }
 
@@ -91,6 +92,8 @@ pub(crate) struct PendingBatch {
     #[cfg(test)]
     pub payload_bytes: usize,
     pub has_incomplete_lines: bool,
+    /// A scan budget boundary is not evidence that all sources are drained.
+    pub scan_limit_reached: bool,
     base_state: FileState,
     next_state: FileState,
 }
@@ -136,7 +139,9 @@ impl ScanError {
     fn read(error: std::io::Error) -> Self {
         let retryable = matches!(
             error.kind(),
-            std::io::ErrorKind::Interrupted | std::io::ErrorKind::UnexpectedEof
+            std::io::ErrorKind::Interrupted
+                | std::io::ErrorKind::UnexpectedEof
+                | std::io::ErrorKind::NotFound
         );
         Self {
             message: error.to_string(),
@@ -226,6 +231,20 @@ impl FileCollector {
         }
         let mut sources = Vec::new();
         let mut seen_identities = BTreeSet::new();
+        // Index current identity progress once rather than searching all saved
+        // paths every time a discovered file is opened.
+        let mut latest: BTreeMap<&str, &Checkpoint> = BTreeMap::new();
+        for checkpoint in self.state.files.values().filter(|c| c.missing_scans == 0) {
+            let saved = latest.entry(&checkpoint.identity).or_insert(checkpoint);
+            if (
+                checkpoint.generation_number,
+                checkpoint.sequence,
+                checkpoint.offset,
+            ) > (saved.generation_number, saved.sequence, saved.offset)
+            {
+                *saved = checkpoint;
+            }
+        }
 
         // Initialize every discovered file before enforcing the batch limit, so
         // --from=end applies to all files present on the initial scan.
@@ -245,14 +264,15 @@ impl FileCollector {
             }
             let key = path_key(&path)?;
             let at_path = self.state.files.get(&key);
-            let previous = at_path
-                .filter(|checkpoint| checkpoint.identity == identity)
-                .or_else(|| {
-                    self.state
-                        .files
-                        .values()
-                        .find(|c| c.identity == identity && c.missing_scans == 0)
-                });
+            // Older states may contain stale hardlink aliases. The latest
+            // generation/progress is authoritative even if an older alias's
+            // byte probes still match after a rewrite.
+            let previous = latest
+                .get(identity.as_str())
+                .copied()
+                .into_iter()
+                .chain(at_path.filter(|c| c.identity == identity))
+                .max_by_key(|c| (c.generation_number, c.sequence, c.offset));
             let checkpoint = match previous {
                 Some(saved)
                     if checkpoint_matches(&mut file, saved, metadata.len())
@@ -302,6 +322,12 @@ impl FileCollector {
             next_state.files.insert(key.clone(), checkpoint);
             sources.push((path, key));
         }
+        // Keep one checkpoint per discovered identity so future alias switches
+        // cannot select superseded progress. This also repairs legacy states.
+        let source_keys = sources.iter().map(|(_, key)| key).collect::<BTreeSet<_>>();
+        next_state.files.retain(|key, checkpoint| {
+            !seen_identities.contains(&checkpoint.identity) || source_keys.contains(key)
+        });
         next_state.initialized = true;
 
         // Only acknowledged checkpoints advance revision. Retries therefore
@@ -316,7 +342,7 @@ impl FileCollector {
         let mut skipped_lines = 0;
         let mut has_incomplete_lines = false;
         for (path, key) in sources {
-            if records.len() >= self.options.max_events
+            if records.len() as u64 + skipped_lines >= self.options.max_events as u64
                 || payload_bytes >= self.options.max_batch_bytes
             {
                 break;
@@ -353,7 +379,7 @@ impl FileCollector {
             let starting_checkpoint = checkpoint.clone();
             let mut proof = ReadProof::new(checkpoint);
             loop {
-                if records.len() >= self.options.max_events
+                if records.len() as u64 + skipped_lines >= self.options.max_events as u64
                     || payload_bytes >= self.options.max_batch_bytes
                 {
                     break;
@@ -448,6 +474,9 @@ impl FileCollector {
             next_state.revision = self.state.revision.saturating_add(1);
         }
         Ok(PendingBatch {
+            scan_limit_reached: records.len() as u64 + skipped_lines
+                >= self.options.max_events as u64
+                || payload_bytes >= self.options.max_batch_bytes,
             records,
             skipped_lines,
             #[cfg(test)]
@@ -468,22 +497,47 @@ impl FileCollector {
         Ok(())
     }
 
-    fn discover(&self) -> Result<BTreeSet<PathBuf>, String> {
+    fn discover(&self) -> Result<BTreeSet<PathBuf>, ScanError> {
         let mut paths = BTreeSet::new();
         for include in &self.options.includes {
             let matches = glob::glob(include)
                 .map_err(|e| format!("invalid include glob {include:?}: {e}"))?;
             for path in matches {
-                let path = path.map_err(|e| format!("discover files: {e}"))?;
+                let path = match path {
+                    Ok(path) => path,
+                    Err(error) => {
+                        let path = error.path().to_owned();
+                        let canonical = fs::canonicalize(&path).ok();
+                        if self.excluded_directory(&path)
+                            || canonical
+                                .as_deref()
+                                .is_some_and(|p| self.excluded_directory(p))
+                        {
+                            continue;
+                        }
+                        return Err(
+                            ScanError::io(&path, error.into()).context("discover files".into())
+                        );
+                    }
+                };
+                // A listable directory can still deny search permission on
+                // its children. Honor lexical exclusions before resolving them.
+                if self
+                    .excludes
+                    .iter()
+                    .any(|pattern| pattern.matches_path(&path))
+                {
+                    continue;
+                }
                 let canonical = match fs::canonicalize(&path) {
                     Ok(path) => path,
                     Err(error) if error.kind() == std::io::ErrorKind::NotFound => continue,
-                    Err(error) => return Err(file_error(&path, error)),
+                    Err(error) => return Err(ScanError::io(&path, error)),
                 };
                 if self
                     .excludes
                     .iter()
-                    .any(|pattern| pattern.matches_path(&path) || pattern.matches_path(&canonical))
+                    .any(|pattern| pattern.matches_path(&canonical))
                 {
                     continue;
                 }
@@ -494,17 +548,27 @@ impl FileCollector {
                     Ok(metadata) if !metadata.is_file() => continue,
                     Ok(_) => {}
                     Err(error) if error.kind() == std::io::ErrorKind::NotFound => continue,
-                    Err(error) => return Err(file_error(&path, error)),
+                    Err(error) => return Err(ScanError::io(&path, error)),
                 }
                 paths.insert(canonical);
             }
         }
         Ok(paths)
     }
-}
 
-fn file_error(path: &Path, error: std::io::Error) -> String {
-    format!("{}: {error}", path.display())
+    fn excluded_directory(&self, path: &Path) -> bool {
+        path.ancestors().any(|directory| {
+            self.excludes.iter().any(|pattern| {
+                // Suppress traversal errors only when a terminal recursive
+                // wildcard excludes every descendant. Matching a directory
+                // itself (with or without a trailing slash) is insufficient.
+                pattern.as_str().rsplit(std::path::is_separator).next() == Some("**")
+                    && directory.to_str().is_some_and(|name| {
+                        pattern.matches(&format!("{name}{}", std::path::MAIN_SEPARATOR))
+                    })
+            })
+        })
+    }
 }
 
 fn path_key(path: &Path) -> Result<String, String> {

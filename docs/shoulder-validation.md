@@ -58,3 +58,39 @@ Linux runtime validation is complete. The Windows collector identity code passed
 an isolated cross-target compile check; full native Windows and macOS runtime
 validation remains for platform CI. No exactly-once guarantee is made for
 external agent actions.
+
+## PR #8 strict TDD follow-up (2026-10-15)
+
+The checks above retain the original validation history. Review then reproduced
+four additional issues: stale hardlink alias progress, unbounded skipped JSONL,
+inaccessible excluded subtrees, and missing OS hostname fallback. Round 1
+recorded assertion failures before production changes in the
+[collector log](evidence/pr8-tdd/red-collector.log) (seven failures) and
+[process log](evidence/pr8-tdd/red-process.log) (three failures). The
+[initial test patch](evidence/pr8-tdd/initial-regression-tests.patch.gz) applies to
+`d0a65c07cfe0140d822ac2010d0710833cecc680` and preserves the test-first state.
+
+Round 2 added four exclusion regressions against the unchanged round 1
+production code. All four failed on assertions: a mode `0444` directory yielded
+a child that failed canonicalization despite `**/locked/**`, while mode `000`
+traversal errors were incorrectly suppressed by `**/locked`, `**/locked/`, and
+`*.tmp` matching an ancestor. Readable controls and actual read/search permission
+failures are asserted for both modes. Tests re-execute under uid/gid 65534 when
+run as root, so privilege bypass cannot produce a false pass.
+
+The [round 2 failure log](evidence/pr8-tdd/red-exclusions.log) and
+[test patch](evidence/pr8-tdd/exclusion-regression-tests.patch.gz) preserve that
+second red phase. No production files changed between the first-round fixes and
+this failing test run. The fix checks raw exclusions before canonicalization and suppresses
+traversal failures only for a matching subtree pattern ending in a recursive
+`**` component. Narrow patterns still surface errors for unexcluded children.
+Additional integration guards cover skipped-only batches before an unfinished
+tail and before the follow polling sleep; these already-correct behaviors needed
+no further production changes.
+
+Final round 2 validation passed: 32 collector tests, 22 process tests, and
+`cargo test --all-targets --features diagnostics` with 835 passed, zero failed,
+and ten existing opt-in tests ignored across 20 suites. Strict
+`cargo clippy --all-targets --all-features -- -D warnings`, rustfmt, and the diff
+check passed. Runs used Linux uid 1000; the root re-execution branch and native
+Windows/macOS runtime were not exercised. The regression tests remain in the collector and process suites.

@@ -442,6 +442,183 @@ fn event(sequence: u64, payload: Value) -> Value {
     })
 }
 
+fn check_skipped_only_batches_drain(complete: bool) {
+    let fixture = Fixture::new();
+    let sandbox = Sandbox::new(&fixture);
+    sandbox.write("a.log", b"[]\ninvalid\n[]\n{\"ok\":true}\n[]\n");
+    let mut args = vec![
+        "--format",
+        "jsonl",
+        "--on-invalid",
+        "skip",
+        "--batch-size",
+        "1",
+    ];
+    if complete {
+        args.push("--complete");
+    }
+    let report = success(&sandbox.ingest(&args));
+    assert_eq!(report["ingested"], 1);
+    assert_eq!(report["skipped"], 4);
+    assert_eq!(report["session_complete"], complete);
+    let rows = fixture.rows();
+    assert_eq!(rows.len(), if complete { 2 } else { 1 });
+    assert_eq!(rows[0]["pb_source_seq"], 4);
+    assert_eq!(rows[0]["pb_seq"], 1);
+    if complete {
+        assert_eq!(rows[1]["pb_kind"], "complete");
+        assert_eq!(rows[1]["pb_seq"], 2);
+    }
+    let state = sandbox.state("ingest.json");
+    let file = state["files"]["files"]
+        .as_object()
+        .unwrap()
+        .values()
+        .next()
+        .unwrap();
+    assert_eq!(
+        file["offset"],
+        fs::metadata(sandbox.0.join("a.log")).unwrap().len()
+    );
+    assert_eq!(file["sequence"], 5);
+    assert!(
+        state["files"]["revision"].as_u64().unwrap() >= 5,
+        "five source lines with batch-size=1 must require at least five committed scans: {state}"
+    );
+    assert_eq!(success(&sandbox.ingest(&args))["ingested"], 0);
+    assert_eq!(fixture.rows(), rows);
+}
+
+#[test]
+fn ingest_one_shot_drains_bounded_skipped_only_batches() {
+    check_skipped_only_batches_drain(false);
+}
+
+#[test]
+fn ingest_complete_drains_bounded_skipped_only_batches_before_marker() {
+    check_skipped_only_batches_drain(true);
+}
+
+#[test]
+fn ingest_skipped_only_batches_do_not_complete_an_unfinished_tail() {
+    let fixture = Fixture::new();
+    let sandbox = Sandbox::new(&fixture);
+    let prefix = b"[]\ninvalid\n[]\n";
+    sandbox.write("a.log", b"[]\ninvalid\n[]\n{\"pending\":true}");
+    let args = [
+        "--format",
+        "jsonl",
+        "--on-invalid",
+        "skip",
+        "--batch-size",
+        "1",
+        "--complete",
+    ];
+    let output = sandbox.ingest(&args);
+    failure(&output);
+    assert!(String::from_utf8_lossy(&output.stderr).contains("unfinished line"));
+    assert!(
+        fixture.rows().is_empty(),
+        "unfinished input must not upload a completion marker"
+    );
+    let state = sandbox.state("ingest.json");
+    let file = state["files"]["files"]
+        .as_object()
+        .unwrap()
+        .values()
+        .next()
+        .unwrap();
+    assert_eq!(file["offset"], prefix.len());
+    assert_eq!(file["sequence"], 3);
+    sandbox.append("a.log", b"\n");
+    assert_eq!(success(&sandbox.ingest(&args))["ingested"], 1);
+    let rows = fixture.rows();
+    assert_eq!(rows.len(), 2);
+    assert_eq!(rows[0]["pb_source_seq"], 4);
+    assert_eq!(rows[0]["pb_seq"], 1);
+    assert_eq!(rows[1]["pb_kind"], "complete");
+    assert_eq!(rows[1]["pb_seq"], 2);
+}
+
+#[test]
+fn ingest_follow_drains_skipped_only_budget_boundaries_before_sleeping() {
+    let fixture = Fixture::new();
+    let sandbox = Sandbox::new(&fixture);
+    sandbox.write("a.log", b"[]\ninvalid\n[]\n{\"ready\":true}\n");
+    let mut follower = Running(Some(
+        sandbox
+            .command(&[
+                "ingest",
+                "files",
+                "*.log",
+                "--dataset",
+                "fixture",
+                "--session",
+                "run-1",
+                "--state-file",
+                "ingest.json",
+                "--from",
+                "beginning",
+                "--format",
+                "jsonl",
+                "--on-invalid",
+                "skip",
+                "--batch-size",
+                "1",
+                "--follow",
+                "--poll-interval",
+                "300s",
+            ])
+            .spawn()
+            .unwrap(),
+    ));
+    // This is a control-flow guard: a misplaced sleep waits 300 seconds.
+    // Reuse the fixture's generous process deadline, not a throughput target.
+    let deadline = Instant::now() + DEADLINE;
+    while fixture.rows().is_empty() {
+        assert!(
+            follower.0.as_mut().unwrap().try_wait().unwrap().is_none(),
+            "follower exited before uploading"
+        );
+        assert!(
+            Instant::now() < deadline,
+            "follower slept at a skipped-only scan budget boundary"
+        );
+        thread::sleep(Duration::from_millis(5));
+    }
+    let rows = fixture.rows();
+    assert_eq!(rows.len(), 1);
+    assert_eq!(rows[0]["pb_source_seq"], 4);
+    assert_eq!(rows[0]["pb_seq"], 1);
+    assert_eq!(rows[0]["pb_kind"], "event");
+}
+
+#[cfg(unix)]
+#[test]
+fn ingest_host_falls_back_to_os_hostname_without_environment_variables() {
+    // The executable's environment is cleared by Sandbox::command. No global
+    // process environment mutation races other tests in this test runner.
+    let mut name = [0u8; 1024];
+    assert_eq!(
+        unsafe { libc::gethostname(name.as_mut_ptr().cast(), name.len()) },
+        0
+    );
+    let length = name.iter().position(|&byte| byte == 0).unwrap();
+    let expected = std::str::from_utf8(&name[..length]).unwrap();
+    assert!(!expected.is_empty());
+    assert_ne!(expected, "unknown");
+    let fixture = Fixture::new();
+    let sandbox = Sandbox::new(&fixture);
+    sandbox.write("app.log", b"first\n");
+    success(&sandbox.ingest(&[]));
+    assert_eq!(sandbox.state("ingest.json")["host"], expected);
+    assert_eq!(fixture.rows()[0]["pb_host"], expected);
+    sandbox.append("app.log", b"second\n");
+    success(&sandbox.ingest(&["--complete"]));
+    assert!(fixture.rows().iter().all(|row| row["pb_host"] == expected));
+    assert_eq!(sandbox.state("ingest.json")["host"], expected);
+}
+
 #[test]
 fn ingest_jsonl_snapshot_append_restart_has_no_duplicates() {
     let fixture = Fixture::new();

@@ -226,6 +226,7 @@ fn run(
                 collector: uuid::Uuid::new_v4().to_string(),
                 host: std::env::var("HOSTNAME")
                     .or_else(|_| std::env::var("COMPUTERNAME"))
+                    .or_else(|_| hostname::get().map(|name| name.to_string_lossy().into_owned()))
                     .unwrap_or_else(|_| "unknown".into()),
                 next_sequence: 1,
                 files: FileState::default(),
@@ -360,6 +361,9 @@ fn run(
                 batch.skipped_lines
             )
             .map_err(|e| CliError::output("write ingestion diagnostics", e))?;
+        }
+        if batch.scan_limit_reached {
+            continue;
         }
         if complete {
             if batch.has_incomplete_lines {

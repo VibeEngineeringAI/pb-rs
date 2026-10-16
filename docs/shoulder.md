@@ -32,9 +32,12 @@ pb ingest files './logs/**/*.jsonl' './workers/**/*.jsonl' \
 ```
 
 Quote globs so `pb` can discover newly matching files on later scans. Add
-`--exclude '**/archive/**'` to omit paths; exclusions can be repeated. The current
-working directory, endpoint, cloud tenant/workspace, dataset, session, glob arguments, exclusions, and
-format are bound to the state file. Resume with the same values.
+`--exclude '**/archive/**'` to omit paths; exclusions can be repeated. Full
+subtree patterns ending in `/**` also isolate inaccessible descendants during
+discovery. Directory-only patterns such as `**/archive` or `**/archive/` do not
+exclude their children; traversal errors for unexcluded paths still fail the
+scan. The current working directory, endpoint, cloud tenant/workspace, dataset,
+session, glob arguments, exclusions, and format are bound to the state file. Resume with the same values.
 
 `--format text` and `--from end` are the defaults. Text lines become
 `{"message":"the original line"}` payloads. JSONL requires one JSON object per
@@ -52,9 +55,12 @@ The default invalid JSONL policy is `--on-invalid error`, which stops with a
 source path and byte offset. `--on-invalid skip` explicitly discards malformed
 complete JSONL lines and reports the skipped count on stderr. Invalid UTF-8 text
 and oversized lines still fail. `--max-line-bytes` defaults to 1 MiB and accepts
-values up to 4 MiB. `--batch-size` defaults to 100 events, with a maximum of 1000;
-the collector also bounds payload bytes per batch. `--poll-interval` defaults to
-`1s` and accepts integer durations from `10ms` through `300s`.
+values up to 4 MiB. `--batch-size` defaults to 100 complete source lines per scan,
+with a maximum of 1000; explicitly skipped JSONL lines count against that budget.
+The collector also bounds payload bytes per batch. Skipped-only budget boundaries
+are checkpointed and scanning continues before completion or the follow-mode
+polling sleep. `--poll-interval` defaults to `1s` and accepts integer durations
+from `10ms` through `300s`.
 
 Without `--follow`, the command drains available complete lines and exits, leaving
 the session open. In follow mode, stop the writers, then stop the follower and
@@ -126,9 +132,12 @@ fields do not force a shared Parseable column type:
 | `pb_source` | Canonical source path; empty for the final marker |
 | `pb_generation` | Source generation identity |
 | `pb_source_seq` | Source line sequence within that generation |
-| `pb_host` | Collector host label |
+| `pb_host` | Collector host label: `HOSTNAME`, then `COMPUTERNAME`, then the OS hostname; `unknown` if all lookups fail |
 | `pb_collected_at` | Collection timestamp, preserved when retrying a batch |
 | `pb_payload` | JSON string containing the original payload object |
+
+The host label is saved when the collector state is created and retained on
+restart.
 
 For example, a JSONL payload `{"attempt":2,"result":{"ok":true}}` is stored as
 the string `"{\"attempt\":2,\"result\":{\"ok\":true}}"` in `pb_payload`.
@@ -248,15 +257,15 @@ is normal.
 | Area | Progress | Validation |
 |---|---|---|
 | CLI declarations, help, and agent catalog | Complete | Four declaration tests; 2760 retained Go/Rust differential cases |
-| Append collection, discovery, line parsing, and source checkpoints | Complete | 22 collector tests, including fairness, rotation, truncation, and retry classification |
-| Durable upload outbox and explicit session finalization | Complete | 17 process tests cover this and the observer flow, including HTTP 413 splitting |
+| Append collection, discovery, line parsing, and source checkpoints | Complete | Collector regressions cover aliases, bounded skipped input, exclusion permissions, fairness, rotation, truncation, and retry classification |
+| Durable upload outbox and explicit session finalization | Complete | Process regressions cover this and the observer flow, including skipped-only batches, hostname fallback, and HTTP 413 splitting |
 | Bounded reads, durable receipts, deduplication, gaps, and independent cursors | Complete | 22 observer tests, including HTTP deadlines, lowered replay budgets, and large responses |
 | Checkpoint locking, permissions, and atomic replacement | Complete | Eight state tests |
 | Parseable ingestion and observation | Verified on standalone 3.2.4 | Disposable-server roundtrip: seven events, three batches, replay, acknowledgments, and completion |
 | Native platform coverage | Linux verified; Windows/macOS runtime remains open | Windows collector identity cross-check passed; native platform CI is still required |
 
-The diagnostics-enabled Rust suite passes 820 tests with ten existing opt-in tests
-ignored. Strict all-target/all-feature Clippy, rustfmt, and the Go verifier pass.
+The diagnostics-enabled Rust suite, strict all-target/all-feature Clippy, and
+rustfmt pass; the validation record retains the earlier Go verifier results.
 The Go compatibility comparison explicitly projects out only the new Rust
 command entries while preserving raw transcripts and exact legacy comparisons.
 The interactive HTML remains a conceptual demo; this document is the command contract.
