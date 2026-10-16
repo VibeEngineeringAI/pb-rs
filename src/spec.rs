@@ -34,6 +34,8 @@ pub enum Operation {
     Agent,
     Status,
     Metadata,
+    IngestFiles,
+    Observe,
     CompletionGroup,
     Administration,
     Deferred,

@@ -143,8 +143,8 @@ pub fn root_help(root: &CommandSpec, initialized: bool) -> String {
         accent.render("Available Commands:")
     ));
     for name in [
-        "sql", "promql", "tail", "dataset", "login", "cloud", "logout", "profile", "user", "role",
-        "status", "version", "help",
+        "sql", "promql", "tail", "ingest", "observe", "dataset", "login", "cloud", "logout",
+        "profile", "user", "role", "status", "version", "help",
     ] {
         if let Some(c) = root.child(name) {
             output.push_str(&format!(

@@ -1,4 +1,4 @@
-//! Root help uses the same terminal palette and color negotiation as Go.
+//! Root help retains Go's palette and legacy rows alongside Rust extensions.
 #![cfg(unix)]
 
 #[test]
