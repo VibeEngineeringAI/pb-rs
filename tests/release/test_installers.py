@@ -159,8 +159,11 @@ class InstallerCase(unittest.TestCase):
         return ReleaseServer(self.releases, latest)
 
     def environment(self, server, **extra):
+        # Python may inherit PowerShell 7 module paths from the CI step.
+        # Let the selected PowerShell rebuild its own paths (especially 5.1).
         env = {k: v for k, v in os.environ.items()
-               if k not in ("PB_VERSION", "VERSION", "PB_INSTALL_DIR", "INSTALL_DIR", "SHELL")}
+               if k.upper() not in ("PB_VERSION", "VERSION", "PB_INSTALL_DIR",
+                                    "INSTALL_DIR", "SHELL", "PSMODULEPATH")}
         env.update(PB_INSTALL_GITHUB_URL=server.base, HOME=str(self.work), TMPDIR=str(self.work))
         env.update(extra)
         return env
@@ -485,7 +488,8 @@ def e2e(dist, version):
                                     if p.is_file()), encoding="utf-8", newline="\n")
         dist = tag_dir
         install_dir = Path(tmp) / "bin"
-        env = {k: v for k, v in os.environ.items() if k not in ("PB_VERSION", "VERSION")}
+        env = {k: v for k, v in os.environ.items()
+               if k.upper() not in ("PB_VERSION", "VERSION", "PSMODULEPATH")}
         env.update(PB_INSTALL_DIR=str(install_dir), PB_NO_MODIFY_PATH="1")
         with ReleaseServer(releases, f"v{version}") as server:
             env["PB_INSTALL_GITHUB_URL"] = server.base
