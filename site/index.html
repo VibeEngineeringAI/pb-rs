@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f3ec">
+  <meta name="description" content="Install pb, the native Parseable command line interface for macOS, Linux, and Windows. Query logs, explore metrics, and work from your terminal.">
+  <title>Install pb · Parseable in your terminal</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231e2925'/%3E%3Ctext x='9' y='44' font-family='monospace' font-size='38' fill='%23e6f29a'%3Epb%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+  <script src="install.js" defer></script>
+</head>
+<body>
+  <header class="site-header wrap">
+    <a class="wordmark" href="./" aria-label="pb home">pb<span> / Parseable CLI</span></a>
+    <a class="source-link" href="https://github.com/VibeEngineeringAI/pb-rs">View source <span aria-hidden="true">↗</span></a>
+  </header>
+  <main class="wrap">
+    <section class="intro" aria-labelledby="title">
+      <div class="intro-copy">
+        <p class="eyebrow"><span class="signal" aria-hidden="true"></span> YOUR DATA. YOUR TERMINAL.</p>
+        <h1 id="title">Less clicking.<br>More <span class="accent">querying.</span></h1>
+        <p class="lead">Meet <strong>pb</strong>, the native command line interface for Parseable. Query logs with SQL, explore metrics with PromQL, and follow events as they happen.</p>
+        <div class="platforms" aria-label="Supported platforms"><span>macOS</span><span>Linux</span><span>Windows</span><span class="rust">Built with Rust</span></div>
+      </div>
+      <div class="install-card">
+        <div class="card-heading"><span class="step-label">01 / INSTALL</span><span class="shell-label" id="shell-label">TERMINAL</span></div>
+        <div class="os-tabs" role="tablist" aria-label="Choose your operating system">
+          <button id="tab-macos" role="tab" aria-selected="true" aria-controls="install-panel" data-os="macos">macOS</button>
+          <button id="tab-linux" role="tab" aria-selected="false" aria-controls="install-panel" tabindex="-1" data-os="linux">Linux</button>
+          <button id="tab-windows" role="tab" aria-selected="false" aria-controls="install-panel" tabindex="-1" data-os="windows">Windows</button>
+        </div>
+        <div id="install-panel" role="tabpanel" aria-labelledby="tab-macos">
+          <p class="install-instruction" id="install-instruction">Paste this into your terminal.</p>
+          <div class="command-box"><pre><code id="install-command">curl -fsSL https://github.com/VibeEngineeringAI/pb-rs/releases/download/v0.1.0-rc.1/install.sh | VERSION=0.1.0-rc.1 sh</code></pre><button class="copy-button" data-copy="install-command" aria-label="Copy install command">Copy <span aria-hidden="true">↗</span></button></div>
+          <p class="install-detail" id="install-detail">Detects Apple Silicon or Intel automatically. Installs to <code>~/.local/bin</code>.</p>
+        </div>
+        <p class="release-note"><strong>v0.1.0-rc.1 · Preview release</strong><br>This installs the native Rust prerelease. Downloads become available when the release is published. <a href="https://github.com/VibeEngineeringAI/pb-rs/releases/tag/v0.1.0-rc.1">View release details</a>.</p>
+        <a class="manual-link" href="https://github.com/VibeEngineeringAI/pb-rs/releases">Prefer a manual download? Browse releases <span aria-hidden="true">→</span></a>
+      </div>
+    </section>
+    <section class="next-steps" aria-labelledby="next-title">
+      <div class="section-intro"><p class="eyebrow">A SMALL TOOL. A DIRECT WORKFLOW.</p><h2 id="next-title">From install to insight.</h2><p>Connect to your Parseable server.</p></div>
+      <div class="steps-grid">
+        <article><span class="step-label">02 / VERIFY</span><h3>Make sure you're ready.</h3><p>Open a new terminal after installation, then check your version and available commands.</p><div class="small-command"><pre><code id="verify-command">pb --version
+pb --help</code></pre><button class="copy-button" data-copy="verify-command" aria-label="Copy verification commands">Copy</button></div></article>
+        <article><span class="step-label">03 / CONNECT</span><h3>Bring your data.</h3><p>The login flow guides you through connecting and creating a profile for your environment.</p><div class="small-command"><pre><code id="login-command">pb login</code></pre><button class="copy-button" data-copy="login-command" aria-label="Copy login command">Copy</button></div></article>
+      </div>
+    </section>
+    <section class="details" aria-label="Installation details">
+      <details><summary>Need to update your PATH?</summary><div id="path-guidance"><p>On macOS or Linux, add this line to your shell configuration (for example, <code>~/.zshrc</code> or <code>~/.bashrc</code>), then open a new terminal:</p><pre><code>export PATH="$HOME/.local/bin:$PATH"</code></pre><p>On Windows, the installer adds its installation directory to your user PATH. Open a new PowerShell window before running <code>pb</code>.</p></div></details>
+      <details><summary>Want a specific version?</summary><p>Set <code>VERSION</code> to a published release tag, such as <code>v1.2.3</code> (example only). The installer downloads that release.</p><div class="small-command"><pre><code id="pinned-command">curl -fsSL https://github.com/VibeEngineeringAI/pb-rs/releases/download/v1.2.3/install.sh | VERSION=v1.2.3 sh</code></pre><button class="copy-button" data-copy="pinned-command" aria-label="Copy version-pinned install command">Copy</button></div></details>
+      <details><summary>Prefer to inspect the installer first?</summary><p>Review the <a href="https://github.com/VibeEngineeringAI/pb-rs/blob/main/scripts/install.sh">shell installer</a> or <a href="https://github.com/VibeEngineeringAI/pb-rs/blob/main/scripts/install.ps1">PowerShell installer</a> in the repository. Release archives and checksums are available on each <a href="https://github.com/VibeEngineeringAI/pb-rs/releases">release page</a>.</p></details>
+    </section>
+  </main>
+  <footer class="wrap"><a class="wordmark" href="./">pb<span> / Parseable CLI</span></a><div><a href="https://github.com/VibeEngineeringAI/pb-rs#readme">Documentation</a><a href="https://github.com/VibeEngineeringAI/pb-rs/issues">Report an issue</a></div><span>Keep the investigation moving.</span></footer>
+  <div id="copy-status" class="copy-status" role="status" aria-live="polite"></div>
+  <noscript><p class="noscript wrap">The macOS and Linux command above works without JavaScript. For Windows, open PowerShell and run: <code>$env:VERSION = '0.1.0-rc.1'; try { irm https://github.com/VibeEngineeringAI/pb-rs/releases/download/v0.1.0-rc.1/install.ps1 | iex } finally { Remove-Item Env:VERSION -ErrorAction SilentlyContinue }</code></p></noscript>
+</body>
+</html>
