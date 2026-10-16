@@ -278,6 +278,108 @@ fn indexed_results_ignore_completion_order_and_start_every_read() {
     assert!(runtime().block_on(indexed(0, |_| async { 0 })).is_empty());
 }
 
+#[test]
+fn indexed_polls_only_ready_reads_and_preserves_error_order() {
+    use std::{
+        cell::RefCell,
+        task::{Context, Poll, Waker},
+    };
+
+    #[derive(Default)]
+    struct Read {
+        polls: usize,
+        ready: bool,
+        waker: Option<Waker>,
+    }
+    let reads = Rc::new(RefCell::new(
+        (0..8).map(|_| Read::default()).collect::<Vec<_>>(),
+    ));
+    let mut gather = Box::pin(indexed(8, |index| {
+        let reads = reads.clone();
+        std::future::poll_fn(move |cx| {
+            let mut reads = reads.borrow_mut();
+            let read = &mut reads[index];
+            read.polls += 1;
+            read.waker = Some(cx.waker().clone());
+            if read.ready {
+                Poll::Ready(if index % 2 == 0 {
+                    Ok(index)
+                } else {
+                    Err(vec![index as u8])
+                })
+            } else {
+                Poll::Pending
+            }
+        })
+    }));
+    let mut cx = Context::from_waker(futures_util::task::noop_waker_ref());
+    assert!(gather.as_mut().poll(&mut cx).is_pending());
+    assert!(reads.borrow().iter().all(|read| read.polls == 1));
+
+    // An unrelated parent poll must not re-poll any sleeping detail read.
+    assert!(gather.as_mut().poll(&mut cx).is_pending());
+    assert!(reads.borrow().iter().all(|read| read.polls == 1));
+    for index in (0..8).rev() {
+        let waker = {
+            let mut reads = reads.borrow_mut();
+            reads[index].ready = true;
+            reads[index].waker.take().unwrap()
+        };
+        waker.wake();
+        let result = gather.as_mut().poll(&mut cx);
+        assert!(
+            reads
+                .borrow()
+                .iter()
+                .enumerate()
+                .all(|(i, read)| { read.polls == if i >= index { 2 } else { 1 } })
+        );
+        if index == 0 {
+            assert_eq!(
+                result,
+                Poll::Ready(
+                    (0..8)
+                        .map(|i| {
+                            if i % 2 == 0 {
+                                Ok(i)
+                            } else {
+                                Err(vec![i as u8])
+                            }
+                        })
+                        .collect()
+                )
+            );
+        } else {
+            assert!(result.is_pending());
+        }
+    }
+}
+
+#[test]
+fn dropping_indexed_cancels_every_pending_read() {
+    use std::task::{Context, Poll};
+
+    struct PendingRead(Rc<Cell<usize>>);
+    impl Future for PendingRead {
+        type Output = ();
+        fn poll(self: std::pin::Pin<&mut Self>, _: &mut Context<'_>) -> Poll<()> {
+            Poll::Pending
+        }
+    }
+    impl Drop for PendingRead {
+        fn drop(&mut self) {
+            self.0.set(self.0.get() + 1);
+        }
+    }
+    let dropped = Rc::new(Cell::new(0));
+    let mut gather = Box::pin(indexed(40, |_| PendingRead(dropped.clone())));
+    let mut cx = Context::from_waker(futures_util::task::noop_waker_ref());
+    assert!(gather.as_mut().poll(&mut cx).is_pending());
+    assert_eq!(dropped.get(), 0);
+    drop(gather);
+    assert_eq!(dropped.get(), 40);
+}
+
 /// A loopback fixture answering by request target; it records each target.
 struct Fixture {
     url: String,

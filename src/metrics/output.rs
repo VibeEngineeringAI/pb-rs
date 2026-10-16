@@ -52,7 +52,10 @@ pub(super) fn render_styled_bytes(
     t: &Terminal,
 ) -> Result<Vec<u8>, String> {
     if json {
-        return raw_json(body).map(String::into_bytes);
+        validate_raw_json(body)?;
+        let mut out = Vec::new();
+        super::raw_json::write_validated(body, &mut out).expect("in-memory JSON output");
+        return Ok(out);
     }
     match operation {
         "run" => text_stream::run(body).map_or_else(|| run(body), Ok),
@@ -78,7 +81,9 @@ pub(super) fn render_styled_bytes(
 // Raw JSON (json.Decoder with UseNumber, single value, sorted re-encoding)
 // ---------------------------------------------------------------------------
 
-fn raw_json(body: &[u8]) -> Result<String, String> {
+/// Every failure JSON output can report besides writing: rendering a body
+/// accepted here has no error path, so callers may stream it afterwards.
+pub(super) fn validate_raw_json(body: &[u8]) -> Result<(), String> {
     let invalid = |e: String| format!("server returned invalid JSON: {}", stream_error(e));
     match gojson::validate(body) {
         Ok(()) => (),
@@ -99,7 +104,7 @@ fn raw_json(body: &[u8]) -> Result<String, String> {
         }
         Err(error) => return Err(invalid(error)),
     };
-    Ok(super::raw_json::render_validated(body))
+    Ok(())
 }
 
 /// json.Decoder reports truncated values as io.ErrUnexpectedEOF.

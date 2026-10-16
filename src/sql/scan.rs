@@ -18,9 +18,13 @@ pub(super) fn space(byte: u8) -> bool {
 
 pub(super) fn nonspace<R: BufRead>(reader: &mut R) -> io::Result<Option<u8>> {
     loop {
-        match peek(reader)? {
-            Some(byte) if space(byte) => reader.consume(1),
-            other => return Ok(other),
+        let buffer = reader.fill_buf()?;
+        let count = buffer.iter().take_while(|&&byte| space(byte)).count();
+        let next = buffer.get(count).copied();
+        let done = next.is_some() || buffer.is_empty();
+        reader.consume(count);
+        if done {
+            return Ok(next);
         }
     }
 }
@@ -93,7 +97,24 @@ impl Scanner {
         let frames = &mut self.frames;
         let mut lexeme = Lexeme::Value;
         loop {
-            let byte = match peek(reader).map_err(ScanError::Io)? {
+            // Scan runs within the current buffer, leaving syntax-sensitive bytes
+            // to the state machine below. In particular, controls and escapes
+            // must be checked before requesting any more input.
+            let buffer = reader.fill_buf().map_err(ScanError::Io)?;
+            let count = match lexeme {
+                Lexeme::String { .. } => buffer
+                    .iter()
+                    .position(|&byte| byte < 0x20 || byte == b'"' || byte == b'\\')
+                    .unwrap_or(buffer.len()),
+                Lexeme::Value => buffer.iter().take_while(|&&byte| space(byte)).count(),
+                _ => 0,
+            };
+            if count != 0 {
+                bytes.extend_from_slice(&buffer[..count]);
+                reader.consume(count);
+                continue;
+            }
+            let byte = match buffer.first().copied() {
                 Some(byte) => byte,
                 None => {
                     if matches!(lexeme, Lexeme::End)
@@ -351,6 +372,146 @@ impl Scanner {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// Expose fixed-size fragments and optionally fail at the next refill.
+    struct Fragments<'a> {
+        input: &'a [u8],
+        position: usize,
+        width: usize,
+        fail_at_end: bool,
+        fills: usize,
+    }
+
+    impl io::Read for Fragments<'_> {
+        fn read(&mut self, output: &mut [u8]) -> io::Result<usize> {
+            let buffer = self.fill_buf()?;
+            let count = output.len().min(buffer.len());
+            output[..count].copy_from_slice(&buffer[..count]);
+            self.consume(count);
+            Ok(count)
+        }
+    }
+
+    impl BufRead for Fragments<'_> {
+        fn fill_buf(&mut self) -> io::Result<&[u8]> {
+            self.fills += 1;
+            if self.position == self.input.len() && self.fail_at_end {
+                return Err(io::Error::new(io::ErrorKind::TimedOut, "deadline"));
+            }
+            let end = (self.position + self.width).min(self.input.len());
+            Ok(&self.input[self.position..end])
+        }
+
+        fn consume(&mut self, count: usize) {
+            self.position += count;
+        }
+    }
+
+    fn fragments(input: &[u8], width: usize, fail_at_end: bool) -> Fragments<'_> {
+        Fragments {
+            input,
+            position: 0,
+            width,
+            fail_at_end,
+            fills: 0,
+        }
+    }
+
+    #[test]
+    fn framing_is_independent_of_fragment_boundaries() {
+        let cases: &[(&[u8], usize)] = &[
+            (
+                r#"  {"a":"hello\nworld\u1234é","a":[true,false,null,-12.34e+5]}tail"#.as_bytes(),
+                0,
+            ),
+            (br#""hello\\\"world"!"#, 0),
+            (b" \t\r\n[ 1 , { \"key\" : \"text\" } ]tail", 0),
+            (b"123.5e-2,", 8),
+        ];
+        for &(input, explicit_end) in cases {
+            let expected_end = if explicit_end == 0 {
+                if input.ends_with(b"tail") {
+                    input.len() - 4
+                } else {
+                    input.len() - 1
+                }
+            } else {
+                explicit_end
+            };
+            for width in 1..=input.len() {
+                let mut reader = fragments(input, width, false);
+                let scanned = value(&mut reader).unwrap();
+                assert_eq!(scanned, &input[..expected_end], "width {width}");
+                assert_eq!(reader.position, expected_end, "width {width}");
+            }
+        }
+    }
+
+    #[test]
+    fn string_errors_leave_the_offending_byte_unconsumed() {
+        for control in 0..=31 {
+            let input = [b'"', b'a', control];
+            for width in 1..=input.len() {
+                let mut reader = fragments(&input, width, true);
+                let mut scanner = Scanner::default();
+                let error = scanner.value(&mut reader).unwrap_err();
+                assert!(matches!(error, ScanError::Syntax(ref message)
+                    if message == &invalid(control, "in string literal")));
+                assert_eq!(scanner.bytes, b"\"a");
+                assert_eq!(reader.position, 2);
+            }
+        }
+        for (input, context) in [
+            (&b"\"abc\\q"[..], "in string escape code"),
+            (&b"\"abc\\u12q"[..], "in \\u hexadecimal character escape"),
+        ] {
+            for width in 1..=input.len() {
+                let mut reader = fragments(input, width, true);
+                let error = value(&mut reader).unwrap_err();
+                assert!(matches!(error, ScanError::Syntax(ref message)
+                    if message == &invalid(b'q', context)));
+                assert_eq!(reader.position, input.len() - 1);
+            }
+        }
+    }
+
+    #[test]
+    fn eof_and_read_errors_after_bulk_spans_preserve_framing() {
+        for input in [&b"\"ordinary text"[..], &b" \t\r\n"[..]] {
+            for width in 1..=input.len() {
+                let mut reader = fragments(input, width, true);
+                assert!(matches!(value(&mut reader), Err(ScanError::Io(error))
+                    if error.kind() == io::ErrorKind::TimedOut));
+                let mut reader = fragments(input, width, false);
+                let expected = if input[0] == b'"' {
+                    "unexpected EOF"
+                } else {
+                    "EOF"
+                };
+                assert!(matches!(value(&mut reader), Err(ScanError::Syntax(message))
+                    if message == expected));
+            }
+        }
+        // A closed container returns without a refill; a root string still
+        // requests its established one-byte lookahead, propagating failure.
+        let mut reader = fragments(b"[\"abc\"]", 32, true);
+        assert!(value(&mut reader).is_ok());
+        let mut reader = fragments(b"\"abc\"", 32, true);
+        assert!(matches!(value(&mut reader), Err(ScanError::Io(_))));
+    }
+
+    #[test]
+    fn ordinary_spans_use_buffer_sized_reads() {
+        let input = format!("[{}\"{}\"]", " ".repeat(4096), "x".repeat(8192));
+        let mut reader = fragments(input.as_bytes(), 1024, false);
+        assert_eq!(value(&mut reader).unwrap(), input.as_bytes());
+        assert!(reader.fills < 32, "{} refill calls", reader.fills);
+        let input = format!("{}x", " \t\r\n".repeat(1024));
+        let mut reader = fragments(input.as_bytes(), 128, false);
+        assert_eq!(nonspace(&mut reader).unwrap(), Some(b'x'));
+        assert_eq!(reader.position, input.len() - 1);
+        assert!(reader.fills < 40);
+    }
 
     #[test]
     fn reused_scanner_keeps_capacity_and_leaves_delimiters_unread() {
