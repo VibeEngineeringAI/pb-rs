@@ -12,7 +12,9 @@ pub mod datasets;
 pub mod diagnostics;
 pub mod error;
 pub mod gojson;
+mod ingest;
 mod metrics;
+mod observe;
 pub mod parser;
 mod printable;
 #[doc(hidden)]
@@ -20,6 +22,7 @@ pub mod process;
 pub mod profile;
 mod render;
 mod saved_queries;
+mod shoulder_state;
 pub mod spec;
 mod sql;
 mod status;
@@ -297,6 +300,12 @@ fn run_arguments(
             structured,
             false,
         );
+    }
+    if path == "pb ingest files" {
+        return ingest::execute(&parsed, command, &path, structured, stdout, stderr);
+    }
+    if path == "pb observe" {
+        return observe::execute(&parsed, command, &path, structured, stdout);
     }
     if path == "pb tail" {
         return tail::execute(&parsed, command, &path, structured, stdout, stderr);

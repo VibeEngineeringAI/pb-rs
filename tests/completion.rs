@@ -1,6 +1,9 @@
 use std::io::Write;
 use std::process::{Command, Output, Stdio};
 
+#[path = "support/legacy_surface.rs"]
+mod legacy_surface;
+
 fn process(binary: &std::ffi::OsStr, args: &[String]) -> Output {
     Command::new(binary)
         .args(args)
@@ -73,8 +76,9 @@ fn generated_bash_is_valid_and_drives_the_native_completion_protocol() {
     assert_eq!(output.stdout, b"--output\tOutput format (text|json)\n\n4\n");
 }
 
-/// Set PB_GO_ORACLE to replay against the pinned Go executable. Every command
-/// path is exercised, including hidden completion generation and flag errors.
+/// Set PB_GO_ORACLE to replay against the pinned Go executable. Every legacy
+/// command path is exercised, including hidden completion generation and
+/// flag errors. Rust-only extensions have independent protocol tests.
 #[test]
 fn completion_matches_go_oracle() {
     let Some(oracle) = std::env::var_os("PB_GO_ORACLE") else {
@@ -118,6 +122,9 @@ fn completion_matches_go_oracle() {
             }
         }
         for child in &node.children {
+            if path.is_empty() && legacy_surface::extension(&child.name) {
+                continue;
+            }
             let mut path = path.to_vec();
             path.push(child.name.clone());
             walk(child, &path, cases);
@@ -138,9 +145,19 @@ fn completion_matches_go_oracle() {
     for case in cases {
         let expected = process(&oracle, &case);
         let actual = process(binary, &case);
+        let root_completion =
+            case.len() == 2 && matches!(case[0].as_str(), "__complete" | "__completeNoDesc");
         assert_eq!(
-            (actual.status.code(), actual.stdout, actual.stderr),
-            (expected.status.code(), expected.stdout, expected.stderr),
+            (
+                actual.status.code(),
+                legacy_surface::project_rows(&actual.stdout, root_completion),
+                actual.stderr
+            ),
+            (
+                expected.status.code(),
+                legacy_surface::project_rows(&expected.stdout, root_completion),
+                expected.stderr
+            ),
             "{case:?}"
         );
     }

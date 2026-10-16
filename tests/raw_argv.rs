@@ -1,4 +1,6 @@
 #![cfg(unix)]
+#[path = "support/legacy_surface.rs"]
+mod legacy_surface;
 use std::{
     ffi::OsString,
     os::unix::ffi::OsStringExt,
@@ -122,6 +124,9 @@ fn raw_argv_matches_go_oracle() {
             cases.push(case);
         }
         for child in &node.children {
+            if path.is_empty() && legacy_surface::extension(&child.name) {
+                continue;
+            }
             let mut path = path.to_vec();
             path.push(child.name.as_bytes().to_vec());
             walk(child, &path, cases);
@@ -132,8 +137,16 @@ fn raw_argv_matches_go_oracle() {
         let expected = sandbox.run(&oracle, &case);
         let actual = sandbox.run(binary, &case);
         assert_eq!(
-            (actual.status.code(), actual.stdout, actual.stderr),
-            (expected.status.code(), expected.stdout, expected.stderr),
+            (
+                actual.status.code(),
+                legacy_surface::project_rows(&actual.stdout, false),
+                legacy_surface::project_rows(&actual.stderr, false)
+            ),
+            (
+                expected.status.code(),
+                legacy_surface::project_rows(&expected.stdout, false),
+                legacy_surface::project_rows(&expected.stderr, false)
+            ),
             "{case:?}"
         );
     }

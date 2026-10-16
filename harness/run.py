@@ -24,6 +24,7 @@ import urllib.parse
 import urllib.request
 
 from cases import suite
+import compatibility
 
 
 HERE = Path(__file__).resolve().parent
@@ -653,6 +654,14 @@ def sample(binary, case, fixture_binary, artifact, timeout, read_delay_ms=0, met
             contract = {"stdout_sha256": digest(normalized_out), "stderr_sha256": digest(normalized_err),
                         "termination": result["termination"], "requests": request_contract(trace),
                         "config_before": before, "config_after": config_snapshot(root, replacements)}
+            if case.get("compatibility_projection"):
+                if case["compatibility_projection"] != compatibility.PROJECTION:
+                    raise ValueError("unknown compatibility projection")
+                contract.update(compatibility_projection=compatibility.PROJECTION,
+                    stdout_normalized_sha256=contract["stdout_sha256"],
+                    stderr_normalized_sha256=contract["stderr_sha256"],
+                    stdout_sha256=digest(compatibility.project(normalized_out, case["argv"])),
+                    stderr_sha256=digest(compatibility.project(normalized_err, case["argv"])))
             if "phase4" in case:
                 import phase4_workloads
                 phase4_issues = phase4_workloads.validate(case, contract)
@@ -715,6 +724,9 @@ def compare_samples(reference, candidate, metric="wall_ms", seed=1):
     differences = []
     if not reference or not candidate or not all(s["valid"] for s in reference + candidate):
         differences.append("invalid or missing samples")
+    if reference and any(s["contract"].get("compatibility_projection") != reference[0]["contract"].get("compatibility_projection")
+                         for s in reference + candidate):
+        differences.append("compatibility_projection")
     for field in ("stdout_sha256", "stderr_sha256", "termination", "requests", "config_before", "config_after"):
         if reference and any(s["contract"][field] != reference[0]["contract"][field] for s in reference + candidate):
             differences.append(field)
@@ -811,6 +823,10 @@ def render_report(report, out):
               "Only fixture URL and temporary HOME are normalized. Each run retains the original bytes and requests.",
               "Phase-four pipe observations require fixture milestones and compare stdout against the start of the final body write, a delivery lower bound. Exact complete-body ordering and command-specific useful-result timing remain N/A; delayed-EOF and body-fault differential cases establish buffering correctness.",
               "This corpus is not complete parity: PTY/TUI, OAuth refresh, TLS, reconnect and other uncovered paths need additional cases."]
+    if any(case.get("spec", {}).get("compatibility_projection") for case in report["cases"].values()):
+        lines += ["", "Phase-one cases explicitly use rust-ingest-observe-v1: only the declared Rust extension "
+                  "help/discovery/completion/catalog additions are projected out of comparison hashes. "
+                  "Original and normalized output bytes and their hashes remain in artifacts."]
     (out / "report.md").write_text("\n".join(lines) + "\n")
     write_json(out / "report.json", report)
 
@@ -853,6 +869,8 @@ def run(args):
             raise ValueError(f"{name}: argv must be a list of strings")
         if "expected_exit" not in case or "expected_requests" not in case:
             raise ValueError(f"{name}: expected_exit and expected_requests are required")
+        if "compatibility_projection" in case and case["compatibility_projection"] != compatibility.PROJECTION:
+            raise ValueError(f"{name}: unknown compatibility projection")
         cap = case.get("max_output_bytes", DEFAULT_OUTPUT_CAP)
         if not isinstance(cap, int) or isinstance(cap, bool) or not 0 < cap <= ((1 << 30) if case.get("spool_output") else MAX_OUTPUT_CAP):
             raise ValueError(f"{name}: max_output_bytes must be an integer from 1 through 100 MiB")

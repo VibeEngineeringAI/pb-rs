@@ -39,6 +39,11 @@ and [phase-four PromQL, metrics metadata, and saved SQL](docs/rust-phase4.md),
 plus [phase-five dataset, user, and role administration](docs/rust-phase5.md).
 The Go CLI remains the complete implementation during the port.
 
+The Rust candidate also adds [file collection and bounded session observation](docs/shoulder.md):
+collect JSONL or text files on one machine, then let an external agent read and
+acknowledge batches on another. Each observer keeps an independent cursor; the
+agent supplies reasoning and delegation.
+
 ## Quick Start
 
 ```sh
@@ -347,6 +352,8 @@ pb promql ps
 | Query logs | `pb sql` | Run SQL, save queries, open interactive result tables |
 | Query metrics | `pb promql` | Run PromQL, inspect labels/series/cardinality |
 | Stream events | `pb tail` | Watch new events from a dataset |
+| Collect files (Rust) | `pb ingest files` | Upload appended JSONL/text files with durable checkpoints |
+| Observe a session (Rust) | `pb observe` | Read bounded batches and acknowledge local receipt progress |
 | Datasets | `pb dataset` | List, inspect, create, and remove datasets |
 | Profiles | `pb login`, `pb cloud profile`, `pb profile`, `pb logout` | Manage self-hosted and Parseable Cloud connections |
 | Access control | `pb user`, `pb role` | Manage users and roles |
@@ -405,6 +412,7 @@ with Ctrl+C.
 |---|---|
 | [Parseable](https://github.com/parseablehq/parseable) | Parseable server repository |
 | [Releases](https://github.com/parseablehq/pb/releases/latest) | Download pre-built binaries |
+| [File collection and session observation](docs/shoulder.md) | Collect on one machine and drive an external agent with bounded, acknowledged reads |
 | `pb --help` | List command groups |
 | `pb <command> --help` | Command-specific help |
 

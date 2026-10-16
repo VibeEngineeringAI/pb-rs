@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse, errno, json, os, pty, select, subprocess, tempfile, time, tty
 from pathlib import Path
+import compatibility
 
 def capture(binary, terminal, variables, args):
     with tempfile.TemporaryDirectory() as home:
@@ -60,11 +61,16 @@ for args in ([], ['--help'], ['help']):
             actual = capture(candidate, terminal, env, args)
             assert (b'\x1b[' in actual) == colored, (args, env, actual[:150])
             assert b'Parseable CLI' in actual and b'Available Commands:' in actual
+            plain = compatibility.ANSI.sub(b'', actual)
+            for name, description in compatibility.COMMANDS.items():
+                row = f"  {name}{' ' * (10 - len(name))}{description}\n".encode()
+                assert plain.count(row) == 1, (args, env, name, plain)
             if oracle:
                 expected = capture(oracle, terminal, env, args)
-                assert actual == expected, (args, terminal, env, actual[:350], expected[:350])
+                assert compatibility.project(actual) == compatibility.project(expected), (args, terminal, env, actual[:350], expected[:350])
             count += 1
 print(f'{count} root-help cases passed; Go differential={bool(oracle)}')
 if output:
     output.mkdir(parents=True, exist_ok=False)
-    (output / 'report.json').write_text(json.dumps({'passed': count, 'go_differential': bool(oracle)}) + '\n')
+    (output / 'report.json').write_text(json.dumps({'passed': count, 'go_differential': bool(oracle),
+        'compatibility_projection': compatibility.PROJECTION}) + '\n')
