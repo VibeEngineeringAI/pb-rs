@@ -579,7 +579,7 @@ func TestRunReadyLineAndShutdown(t *testing.T) {
 	if ready.PID != os.Getpid() {
 		t.Fatal("pid")
 	}
-	// A stream parked in a long delay must be cancelled by shutdown.
+	// A stream parked in a long delay must be canceled by shutdown.
 	req, _ := http.NewRequest(http.MethodPost, ready.URL+queryPath, nil)
 	req.SetBasicAuth("harness", "harness")
 	resp, err := http.DefaultClient.Do(req)

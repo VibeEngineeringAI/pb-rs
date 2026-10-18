@@ -294,11 +294,11 @@ func appendPayload(dst []byte, p *pattern, i int64, n int) []byte {
 
 // rowLen is the generated length of row i.
 func rowLen(i int64, rowBytes int) int {
-	min := rowOverhead + len(strconv.AppendInt(nil, i, 10))
-	if rowBytes > min {
+	minimum := rowOverhead + len(strconv.AppendInt(nil, i, 10))
+	if rowBytes > minimum {
 		return rowBytes
 	}
-	return min
+	return minimum
 }
 
 // appendRow appends row i of the given shape.
@@ -344,7 +344,6 @@ type emitter struct {
 	chunks      int64
 	writeNs     int64
 	delayNs     int64
-	err         error
 }
 
 func newEmitter(ctx context.Context, cfg Config, sink func([]byte) error) *emitter {
