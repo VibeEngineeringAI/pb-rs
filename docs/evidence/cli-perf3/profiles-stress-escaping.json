@@ -1,0 +1,730 @@
+{
+  "schema": "pb-perf3-stress-row-profile/1",
+  "scope": "Instrumented CPU attribution of the exact stress ASCII JSON workload. CLI stdout=/dev/null; no output parity, native CPU/RSS measurement, throughput or timing-performance admission. Percentages are perf sample self overhead, not uninstrumented CPU time or call counts.",
+  "complete": true,
+  "passed": true,
+  "binaries": {
+    "baseline": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf2-final-symbolized",
+      "sha256": "8b31cc2471279c76034c440adfb00aa193c0035dd8cdc33f596a835390f08fdc",
+      "size_bytes": 147932872
+    },
+    "candidate": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf3-final-symbolized",
+      "sha256": "96c3fc605d1f051e1f6c00a70458d6a7756d4fefc1982fad270445fbe576521e",
+      "size_bytes": 148044672
+    }
+  },
+  "fixture": {
+    "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-stress-fixture",
+    "sha256": "fa775eb46c9a5277ef17ccf35ba171c958c70d256929b72ef9a27346f5decabc",
+    "size_bytes": 8714925
+  },
+  "perf": {
+    "path": "/usr/bin/perf",
+    "sha256": "e5957af6bd1533f3206be3a1378c1dc22114296d234d2bd7908edf462302a12e",
+    "size_bytes": 12807560
+  },
+  "fixture_config": {
+    "rows": 8,
+    "row_bytes": 8388608,
+    "shape": "ascii"
+  },
+  "expected_source_bytes": 67108873,
+  "method": {
+    "event": "cycles:u",
+    "frequency": 999,
+    "call_graph": "dwarf,16384",
+    "repetitions": 2,
+    "capture_before_analysis": true,
+    "stdout_sink": "/dev/null",
+    "output_parity": false,
+    "performance_admitted": false,
+    "timeout": 180,
+    "affinity": [
+      2,
+      4,
+      6,
+      8
+    ],
+    "DEBUGINFOD_URLS": ""
+  },
+  "errors": [],
+  "runs": [
+    {
+      "label": "baseline",
+      "repetition": 0,
+      "valid": true,
+      "issues": [],
+      "artifact_dir": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/profiles-stress-escaping/capture-00-baseline",
+      "analysis": {
+        "command": [
+          "/usr/bin/perf",
+          "report",
+          "--stdio",
+          "--no-children",
+          "--percent-limit",
+          "0.5",
+          "-i",
+          "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/profiles-stress-escaping/capture-00-baseline/perf.data"
+        ],
+        "scope": "Instrumented CPU attribution of the exact stress ASCII JSON workload. CLI stdout=/dev/null; no output parity, native CPU/RSS measurement, throughput or timing-performance admission. Percentages are perf sample self overhead, not uninstrumented CPU time or call counts.",
+        "valid": true,
+        "issues": [],
+        "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/profiles-stress-escaping/capture-00-baseline/analysis.txt",
+        "exit_code": 0,
+        "header_lines": [
+          "# Total Lost Samples: 0",
+          "# Samples: 241  of event 'cpu_core/cycles/u'",
+          "# Event count (approx.): 567762630"
+        ],
+        "reported_samples": 241.0,
+        "sample_count_precision": "perf report human-readable header; K/M/G values can be rounded",
+        "approximate_event_count": 567762630,
+        "reported_lost_samples": 0,
+        "top_symbols": [
+          {
+            "self_overhead_percent": 27.5,
+            "command": "pb-perf2-final-",
+            "dso": "pb-perf2-final-symbolized",
+            "mode": "[.]",
+            "symbol": "pb::sql::output::scan::Scanner::value_impl"
+          },
+          {
+            "self_overhead_percent": 25.99,
+            "command": "pb-perf2-final-",
+            "dso": "pb-perf2-final-symbolized",
+            "mode": "[.]",
+            "symbol": "pb::gojson::Decoder::string"
+          },
+          {
+            "self_overhead_percent": 23.77,
+            "command": "pb-perf2-final-",
+            "dso": "pb-perf2-final-symbolized",
+            "mode": "[.]",
+            "symbol": "pb::sql::output::string"
+          },
+          {
+            "self_overhead_percent": 5.78,
+            "command": "pb-perf2-final-",
+            "dso": "libc.so.6",
+            "mode": "[.]",
+            "symbol": "0x0000000000176707"
+          },
+          {
+            "self_overhead_percent": 3.02,
+            "command": "pb-perf2-final-",
+            "dso": "pb-perf2-final-symbolized",
+            "mode": "[.]",
+            "symbol": "<pb::sql::BodyReader as std::io::BufRead>::fill_buf"
+          },
+          {
+            "self_overhead_percent": 2.35,
+            "command": "pb-perf2-final-",
+            "dso": "libc.so.6",
+            "mode": "[.]",
+            "symbol": "0x000000000017645b"
+          },
+          {
+            "self_overhead_percent": 1.79,
+            "command": "pb-perf2-final-",
+            "dso": "pb-perf2-final-symbolized",
+            "mode": "[.]",
+            "symbol": "core::str::converts::from_utf8"
+          },
+          {
+            "self_overhead_percent": 1.3,
+            "command": "pb-perf2-final-",
+            "dso": "pb-perf2-final-symbolized",
+            "mode": "[.]",
+            "symbol": "pb::sql::render_response::{{closure}}::{{closure}}"
+          },
+          {
+            "self_overhead_percent": 1.15,
+            "command": "pb-perf2-final-",
+            "dso": "libc.so.6",
+            "mode": "[.]",
+            "symbol": "0x0000000000176446"
+          },
+          {
+            "self_overhead_percent": 1.07,
+            "command": "pb-perf2-final-",
+            "dso": "libc.so.6",
+            "mode": "[.]",
+            "symbol": "0x0000000000176400"
+          },
+          {
+            "self_overhead_percent": 1.02,
+            "command": "pb-perf2-final-",
+            "dso": "[unknown]",
+            "mode": "[k]",
+            "symbol": "0xffffffffac201280"
+          },
+          {
+            "self_overhead_percent": 0.62,
+            "command": "pb-perf2-final-",
+            "dso": "libc.so.6",
+            "mode": "[.]",
+            "symbol": "0x0000000000176466"
+          },
+          {
+            "self_overhead_percent": 0.6,
+            "command": "pb-perf2-final-",
+            "dso": "pb-perf2-final-symbolized",
+            "mode": "[.]",
+            "symbol": "tokio::util::wake::wake_arc_raw"
+          },
+          {
+            "self_overhead_percent": 0.55,
+            "command": "pb-perf2-final-",
+            "dso": "pb-perf2-final-symbolized",
+            "mode": "[.]",
+            "symbol": "tokio::runtime::time::<impl tokio::runtime::time::handle::Handle>::reregister"
+          }
+        ],
+        "row_buffer_symbols": [
+          {
+            "self_overhead_percent": 23.77,
+            "command": "pb-perf2-final-",
+            "dso": "pb-perf2-final-symbolized",
+            "mode": "[.]",
+            "symbol": "pb::sql::output::string"
+          }
+        ],
+        "identity": {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/profiles-stress-escaping/capture-00-baseline/analysis.txt",
+          "sha256": "3d1552bcbb1e8e8eda3b73ed8695dbc9aaec42d68bb9fa4c445b4d6eed6e1ef1",
+          "size_bytes": 2900
+        },
+        "stderr_identity": {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/profiles-stress-escaping/capture-00-baseline/analysis.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "size_bytes": 0
+        }
+      }
+    },
+    {
+      "label": "candidate",
+      "repetition": 0,
+      "valid": true,
+      "issues": [],
+      "artifact_dir": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/profiles-stress-escaping/capture-00-candidate",
+      "analysis": {
+        "command": [
+          "/usr/bin/perf",
+          "report",
+          "--stdio",
+          "--no-children",
+          "--percent-limit",
+          "0.5",
+          "-i",
+          "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/profiles-stress-escaping/capture-00-candidate/perf.data"
+        ],
+        "scope": "Instrumented CPU attribution of the exact stress ASCII JSON workload. CLI stdout=/dev/null; no output parity, native CPU/RSS measurement, throughput or timing-performance admission. Percentages are perf sample self overhead, not uninstrumented CPU time or call counts.",
+        "valid": true,
+        "issues": [],
+        "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/profiles-stress-escaping/capture-00-candidate/analysis.txt",
+        "exit_code": 0,
+        "header_lines": [
+          "# Total Lost Samples: 0",
+          "# Samples: 264  of event 'cpu_core/cycles/u'",
+          "# Event count (approx.): 630863071"
+        ],
+        "reported_samples": 264.0,
+        "sample_count_precision": "perf report human-readable header; K/M/G values can be rounded",
+        "approximate_event_count": 630863071,
+        "reported_lost_samples": 0,
+        "top_symbols": [
+          {
+            "self_overhead_percent": 25.92,
+            "command": "pb-perf3-final-",
+            "dso": "pb-perf3-final-symbolized",
+            "mode": "[.]",
+            "symbol": "pb::gojson::Decoder::string"
+          },
+          {
+            "self_overhead_percent": 23.98,
+            "command": "pb-perf3-final-",
+            "dso": "pb-perf3-final-symbolized",
+            "mode": "[.]",
+            "symbol": "pb::sql::output::scan::Scanner::value_impl"
+          },
+          {
+            "self_overhead_percent": 18.4,
+            "command": "pb-perf3-final-",
+            "dso": "pb-perf3-final-symbolized",
+            "mode": "[.]",
+            "symbol": "pb::sql::output::string"
+          },
+          {
+            "self_overhead_percent": 8.95,
+            "command": "pb-perf3-final-",
+            "dso": "pb-perf3-final-symbolized",
+            "mode": "[.]",
+            "symbol": "<pb::sql::output::RowBuffer<W> as pb::sql::output::RenderSink>::extend_from_slice"
+          },
+          {
+            "self_overhead_percent": 5.95,
+            "command": "pb-perf3-final-",
+            "dso": "libc.so.6",
+            "mode": "[.]",
+            "symbol": "0x0000000000176707"
+          },
+          {
+            "self_overhead_percent": 2.0,
+            "command": "pb-perf3-final-",
+            "dso": "libc.so.6",
+            "mode": "[.]",
+            "symbol": "0x0000000000176459"
+          },
+          {
+            "self_overhead_percent": 1.66,
+            "command": "pb-perf3-final-",
+            "dso": "libc.so.6",
+            "mode": "[.]",
+            "symbol": "0x000000000017645b"
+          },
+          {
+            "self_overhead_percent": 1.64,
+            "command": "pb-perf3-final-",
+            "dso": "pb-perf3-final-symbolized",
+            "mode": "[.]",
+            "symbol": "core::str::converts::from_utf8"
+          },
+          {
+            "self_overhead_percent": 1.55,
+            "command": "pb-perf3-final-",
+            "dso": "libc.so.6",
+            "mode": "[.]",
+            "symbol": "0x0000000000176446"
+          },
+          {
+            "self_overhead_percent": 1.29,
+            "command": "pb-perf3-final-",
+            "dso": "pb-perf3-final-symbolized",
+            "mode": "[.]",
+            "symbol": "tokio::runtime::time::entry::_::<impl core::ops::drop::Drop for tokio::runtime::time::entry::TimerEntry>::drop"
+          },
+          {
+            "self_overhead_percent": 0.97,
+            "command": "pb-perf3-final-",
+            "dso": "pb-perf3-final-symbolized",
+            "mode": "[.]",
+            "symbol": "<tokio::sync::batch_semaphore::Acquire as core::future::future::Future>::poll"
+          },
+          {
+            "self_overhead_percent": 0.95,
+            "command": "pb-perf3-final-",
+            "dso": "pb-perf3-final-symbolized",
+            "mode": "[.]",
+            "symbol": "<pb::sql::BodyReader as std::io::BufRead>::fill_buf"
+          },
+          {
+            "self_overhead_percent": 0.7,
+            "command": "pb-perf3-final-",
+            "dso": "[unknown]",
+            "mode": "[k]",
+            "symbol": "0xffffffffac201280"
+          },
+          {
+            "self_overhead_percent": 0.57,
+            "command": "pb-perf3-final-",
+            "dso": "libc.so.6",
+            "mode": "[.]",
+            "symbol": "0x0000000000176400"
+          },
+          {
+            "self_overhead_percent": 0.54,
+            "command": "pb-perf3-final-",
+            "dso": "pb-perf3-final-symbolized",
+            "mode": "[.]",
+            "symbol": "tokio::util::wake::wake_arc_raw"
+          },
+          {
+            "self_overhead_percent": 0.53,
+            "command": "pb-perf3-final-",
+            "dso": "libc.so.6",
+            "mode": "[.]",
+            "symbol": "write"
+          },
+          {
+            "self_overhead_percent": 0.52,
+            "command": "pb-perf3-final-",
+            "dso": "pb-perf3-final-symbolized",
+            "mode": "[.]",
+            "symbol": "<std::sys::pal::unix::time::Timespec>::sub_timespec"
+          }
+        ],
+        "row_buffer_symbols": [
+          {
+            "self_overhead_percent": 18.4,
+            "command": "pb-perf3-final-",
+            "dso": "pb-perf3-final-symbolized",
+            "mode": "[.]",
+            "symbol": "pb::sql::output::string"
+          },
+          {
+            "self_overhead_percent": 8.95,
+            "command": "pb-perf3-final-",
+            "dso": "pb-perf3-final-symbolized",
+            "mode": "[.]",
+            "symbol": "<pb::sql::output::RowBuffer<W> as pb::sql::output::RenderSink>::extend_from_slice"
+          }
+        ],
+        "identity": {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/profiles-stress-escaping/capture-00-candidate/analysis.txt",
+          "sha256": "f31c9a410e837a1d2cba19df8b571b1e737f317092207def74304a2e41539806",
+          "size_bytes": 2344
+        },
+        "stderr_identity": {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/profiles-stress-escaping/capture-00-candidate/analysis.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "size_bytes": 0
+        }
+      }
+    },
+    {
+      "label": "candidate",
+      "repetition": 1,
+      "valid": true,
+      "issues": [],
+      "artifact_dir": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/profiles-stress-escaping/capture-01-candidate",
+      "analysis": {
+        "command": [
+          "/usr/bin/perf",
+          "report",
+          "--stdio",
+          "--no-children",
+          "--percent-limit",
+          "0.5",
+          "-i",
+          "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/profiles-stress-escaping/capture-01-candidate/perf.data"
+        ],
+        "scope": "Instrumented CPU attribution of the exact stress ASCII JSON workload. CLI stdout=/dev/null; no output parity, native CPU/RSS measurement, throughput or timing-performance admission. Percentages are perf sample self overhead, not uninstrumented CPU time or call counts.",
+        "valid": true,
+        "issues": [],
+        "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/profiles-stress-escaping/capture-01-candidate/analysis.txt",
+        "exit_code": 0,
+        "header_lines": [
+          "# Total Lost Samples: 0",
+          "# Samples: 252  of event 'cpu_core/cycles/u'",
+          "# Event count (approx.): 622069265"
+        ],
+        "reported_samples": 252.0,
+        "sample_count_precision": "perf report human-readable header; K/M/G values can be rounded",
+        "approximate_event_count": 622069265,
+        "reported_lost_samples": 0,
+        "top_symbols": [
+          {
+            "self_overhead_percent": 24.9,
+            "command": "pb-perf3-final-",
+            "dso": "pb-perf3-final-symbolized",
+            "mode": "[.]",
+            "symbol": "pb::gojson::Decoder::string"
+          },
+          {
+            "self_overhead_percent": 24.73,
+            "command": "pb-perf3-final-",
+            "dso": "pb-perf3-final-symbolized",
+            "mode": "[.]",
+            "symbol": "pb::sql::output::scan::Scanner::value_impl"
+          },
+          {
+            "self_overhead_percent": 18.67,
+            "command": "pb-perf3-final-",
+            "dso": "pb-perf3-final-symbolized",
+            "mode": "[.]",
+            "symbol": "pb::sql::output::string"
+          },
+          {
+            "self_overhead_percent": 8.84,
+            "command": "pb-perf3-final-",
+            "dso": "pb-perf3-final-symbolized",
+            "mode": "[.]",
+            "symbol": "<pb::sql::output::RowBuffer<W> as pb::sql::output::RenderSink>::extend_from_slice"
+          },
+          {
+            "self_overhead_percent": 4.62,
+            "command": "pb-perf3-final-",
+            "dso": "libc.so.6",
+            "mode": "[.]",
+            "symbol": "0x0000000000176707"
+          },
+          {
+            "self_overhead_percent": 2.89,
+            "command": "pb-perf3-final-",
+            "dso": "[unknown]",
+            "mode": "[k]",
+            "symbol": "0xffffffffac201280"
+          },
+          {
+            "self_overhead_percent": 2.26,
+            "command": "pb-perf3-final-",
+            "dso": "libc.so.6",
+            "mode": "[.]",
+            "symbol": "0x0000000000176400"
+          },
+          {
+            "self_overhead_percent": 2.21,
+            "command": "pb-perf3-final-",
+            "dso": "pb-perf3-final-symbolized",
+            "mode": "[.]",
+            "symbol": "core::str::converts::from_utf8"
+          },
+          {
+            "self_overhead_percent": 1.61,
+            "command": "pb-perf3-final-",
+            "dso": "libc.so.6",
+            "mode": "[.]",
+            "symbol": "0x000000000017645b"
+          },
+          {
+            "self_overhead_percent": 1.27,
+            "command": "pb-perf3-final-",
+            "dso": "pb-perf3-final-symbolized",
+            "mode": "[.]",
+            "symbol": "<pb::sql::BodyReader as std::io::BufRead>::fill_buf"
+          },
+          {
+            "self_overhead_percent": 1.17,
+            "command": "pb-perf3-final-",
+            "dso": "libc.so.6",
+            "mode": "[.]",
+            "symbol": "0x0000000000176411"
+          },
+          {
+            "self_overhead_percent": 0.81,
+            "command": "pb-perf3-final-",
+            "dso": "pb-perf3-final-symbolized",
+            "mode": "[.]",
+            "symbol": "pb::api::StreamingResponse::chunk_limit::{{closure}}"
+          },
+          {
+            "self_overhead_percent": 0.74,
+            "command": "pb-perf3-final-",
+            "dso": "pb-perf3-final-symbolized",
+            "mode": "[.]",
+            "symbol": "pb::sql::render_response::{{closure}}::{{closure}}"
+          },
+          {
+            "self_overhead_percent": 0.68,
+            "command": "pb-perf3-final-",
+            "dso": "[vdso]",
+            "mode": "[.]",
+            "symbol": "__vdso_clock_gettime"
+          },
+          {
+            "self_overhead_percent": 0.56,
+            "command": "pb-perf3-final-",
+            "dso": "pb-perf3-final-symbolized",
+            "mode": "[.]",
+            "symbol": "pb::gojson::drop_node"
+          },
+          {
+            "self_overhead_percent": 0.56,
+            "command": "pb-perf3-final-",
+            "dso": "[unknown]",
+            "mode": "[k]",
+            "symbol": "0xffffffffac200080"
+          }
+        ],
+        "row_buffer_symbols": [
+          {
+            "self_overhead_percent": 18.67,
+            "command": "pb-perf3-final-",
+            "dso": "pb-perf3-final-symbolized",
+            "mode": "[.]",
+            "symbol": "pb::sql::output::string"
+          },
+          {
+            "self_overhead_percent": 8.84,
+            "command": "pb-perf3-final-",
+            "dso": "pb-perf3-final-symbolized",
+            "mode": "[.]",
+            "symbol": "<pb::sql::output::RowBuffer<W> as pb::sql::output::RenderSink>::extend_from_slice"
+          }
+        ],
+        "identity": {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/profiles-stress-escaping/capture-01-candidate/analysis.txt",
+          "sha256": "9b0947a1595752c449a6d5942c8f93f3bcb0acca9e8a5c94b868afc2f7cecce7",
+          "size_bytes": 8635
+        },
+        "stderr_identity": {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/profiles-stress-escaping/capture-01-candidate/analysis.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "size_bytes": 0
+        }
+      }
+    },
+    {
+      "label": "baseline",
+      "repetition": 1,
+      "valid": true,
+      "issues": [],
+      "artifact_dir": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/profiles-stress-escaping/capture-01-baseline",
+      "analysis": {
+        "command": [
+          "/usr/bin/perf",
+          "report",
+          "--stdio",
+          "--no-children",
+          "--percent-limit",
+          "0.5",
+          "-i",
+          "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/profiles-stress-escaping/capture-01-baseline/perf.data"
+        ],
+        "scope": "Instrumented CPU attribution of the exact stress ASCII JSON workload. CLI stdout=/dev/null; no output parity, native CPU/RSS measurement, throughput or timing-performance admission. Percentages are perf sample self overhead, not uninstrumented CPU time or call counts.",
+        "valid": true,
+        "issues": [],
+        "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/profiles-stress-escaping/capture-01-baseline/analysis.txt",
+        "exit_code": 0,
+        "header_lines": [
+          "# Total Lost Samples: 0",
+          "# Samples: 239  of event 'cpu_core/cycles/u'",
+          "# Event count (approx.): 599194278"
+        ],
+        "reported_samples": 239.0,
+        "sample_count_precision": "perf report human-readable header; K/M/G values can be rounded",
+        "approximate_event_count": 599194278,
+        "reported_lost_samples": 0,
+        "top_symbols": [
+          {
+            "self_overhead_percent": 28.61,
+            "command": "pb-perf2-final-",
+            "dso": "pb-perf2-final-symbolized",
+            "mode": "[.]",
+            "symbol": "pb::sql::output::scan::Scanner::value_impl"
+          },
+          {
+            "self_overhead_percent": 26.86,
+            "command": "pb-perf2-final-",
+            "dso": "pb-perf2-final-symbolized",
+            "mode": "[.]",
+            "symbol": "pb::gojson::Decoder::string"
+          },
+          {
+            "self_overhead_percent": 22.39,
+            "command": "pb-perf2-final-",
+            "dso": "pb-perf2-final-symbolized",
+            "mode": "[.]",
+            "symbol": "pb::sql::output::string"
+          },
+          {
+            "self_overhead_percent": 6.04,
+            "command": "pb-perf2-final-",
+            "dso": "libc.so.6",
+            "mode": "[.]",
+            "symbol": "0x0000000000176707"
+          },
+          {
+            "self_overhead_percent": 2.71,
+            "command": "pb-perf2-final-",
+            "dso": "libc.so.6",
+            "mode": "[.]",
+            "symbol": "0x000000000017645b"
+          },
+          {
+            "self_overhead_percent": 1.72,
+            "command": "pb-perf2-final-",
+            "dso": "pb-perf2-final-symbolized",
+            "mode": "[.]",
+            "symbol": "core::str::converts::from_utf8"
+          },
+          {
+            "self_overhead_percent": 1.59,
+            "command": "pb-perf2-final-",
+            "dso": "[unknown]",
+            "mode": "[k]",
+            "symbol": "0xffffffffac201280"
+          },
+          {
+            "self_overhead_percent": 1.2,
+            "command": "pb-perf2-final-",
+            "dso": "libc.so.6",
+            "mode": "[.]",
+            "symbol": "0x00000000001764cd"
+          },
+          {
+            "self_overhead_percent": 0.92,
+            "command": "pb-perf2-final-",
+            "dso": "pb-perf2-final-symbolized",
+            "mode": "[.]",
+            "symbol": "<pb::sql::BodyReader as std::io::BufRead>::fill_buf"
+          },
+          {
+            "self_overhead_percent": 0.7,
+            "command": "pb-perf2-final-",
+            "dso": "libc.so.6",
+            "mode": "[.]",
+            "symbol": "0x0000000000176400"
+          },
+          {
+            "self_overhead_percent": 0.62,
+            "command": "pb-perf2-final-",
+            "dso": "[unknown]",
+            "mode": "[k]",
+            "symbol": "0xffffffffac2015f0"
+          },
+          {
+            "self_overhead_percent": 0.6,
+            "command": "pb-perf2-final-",
+            "dso": "pb-perf2-final-symbolized",
+            "mode": "[.]",
+            "symbol": "core::ptr::drop_in_place<core::option::Option<tokio::runtime::Timer>>"
+          },
+          {
+            "self_overhead_percent": 0.6,
+            "command": "pb-perf2-final-",
+            "dso": "libc.so.6",
+            "mode": "[.]",
+            "symbol": "0x0000000000176411"
+          },
+          {
+            "self_overhead_percent": 0.56,
+            "command": "pb-perf2-final-",
+            "dso": "pb-perf2-final-symbolized",
+            "mode": "[.]",
+            "symbol": "tokio::util::wake::wake_arc_raw"
+          },
+          {
+            "self_overhead_percent": 0.54,
+            "command": "pb-perf2-final-",
+            "dso": "libc.so.6",
+            "mode": "[.]",
+            "symbol": "0x0000000000176446"
+          },
+          {
+            "self_overhead_percent": 0.5,
+            "command": "pb-perf2-final-",
+            "dso": "pb-perf2-final-symbolized",
+            "mode": "[.]",
+            "symbol": "tokio::runtime::time::<impl tokio::runtime::time::handle::Handle>::process_at_time"
+          }
+        ],
+        "row_buffer_symbols": [
+          {
+            "self_overhead_percent": 22.39,
+            "command": "pb-perf2-final-",
+            "dso": "pb-perf2-final-symbolized",
+            "mode": "[.]",
+            "symbol": "pb::sql::output::string"
+          }
+        ],
+        "identity": {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/profiles-stress-escaping/capture-01-baseline/analysis.txt",
+          "sha256": "c95b569aeefe98b4a8696a413d12939ca183392a9415871eee705f019bef4d7a",
+          "size_bytes": 2677
+        },
+        "stderr_identity": {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/profiles-stress-escaping/capture-01-baseline/analysis.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "size_bytes": 0
+        }
+      }
+    }
+  ],
+  "source_summary": {
+    "path": "harness/results/perf3/profiles-stress-escaping/summary.json",
+    "sha256": "400d9ed941d94c49d2f46b7010dfb9fe855de97ccb193013d8eb44db9507287d"
+  }
+}

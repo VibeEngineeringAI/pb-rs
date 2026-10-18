@@ -1,0 +1,306 @@
+{
+  "schema_version": 1,
+  "kind": "retained Go compatibility replay, no performance claim",
+  "passed_within_declared_scope": true,
+  "all_23_gates_completed": true,
+  "requirement_skips": 0,
+  "candidate_and_recorded_inputs_unchanged": true,
+  "binary_sha256": {
+    "pb-perf2-final": "8124d157236e215d2068ce4dadf97ebe08043a1a1c327d5dc3a69806785e12a1",
+    "pb-perf2-final-cloud": "0ee2897618f718aadc443a71a76287fad010300bb8b2745412b2e9e71e34b034",
+    "pb-go": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+    "pb-go-cloud": "622d4144b7e354c0ee4036244ba719cbbaf8357710804b1d733cd421a0dc227e"
+  },
+  "launcher_sha256": "8720a02074ab2122c31ce4c57794a283bcd049f5577fd233f3ced4dafcdfa78d",
+  "replay_report": "harness/results/perf2/go-final/replay.json",
+  "replay_report_sha256": "fae4169408c754c974a96becb962689e04fecbe5a2cf519890ef3ca69253b099",
+  "gates": [
+    {
+      "gate": "phase1",
+      "evaluations": 2760,
+      "unit": "declared corpus cases",
+      "report": "harness/results/perf2/go-final/phase1/report.json",
+      "report_sha256": "c02ff48fc02e56feb1fa606126d50ce636ec7ae4c7677a56872083a7aa727457",
+      "strict_passed": 2760,
+      "historical_stub_guards_excluded": true
+    },
+    {
+      "gate": "phase2",
+      "evaluations": 219,
+      "unit": "declared corpus cases",
+      "report": "harness/results/perf2/go-final/phase2/report.json",
+      "report_sha256": "9a1d7d0151dc22f16ea9318e81e45573cf2308fec2a50e688a1ca9d7c8f1f07b",
+      "strict_passed": 219
+    },
+    {
+      "gate": "phase3",
+      "evaluations": 688,
+      "unit": "declared corpus cases",
+      "report": "harness/results/perf2/go-final/phase3/report.json",
+      "report_sha256": "be2604fce496b2d4d5562104db501d7831d87a601d94e42d63bdb0c9b4483f2c",
+      "strict_passed": 688
+    },
+    {
+      "gate": "p3-deadline-header-stall-text",
+      "evaluations": 1,
+      "unit": "declared corpus cases",
+      "report": "harness/results/perf2/go-final/p3-deadline-header-stall-text/report.json",
+      "report_sha256": "256f36898ff37bdf82b2696fee746da2c29ee8bdce6cc85e8e7f97563ed9a41a",
+      "strict_passed": 1,
+      "deadline_seconds": 60,
+      "go_reference_runs": 2,
+      "candidate_runs": 1
+    },
+    {
+      "gate": "p3-deadline-body-stall-text",
+      "evaluations": 1,
+      "unit": "declared corpus cases",
+      "report": "harness/results/perf2/go-final/p3-deadline-body-stall-text/report.json",
+      "report_sha256": "9b98b701cde84b6a74f58b13c94856f712d173604523159577b983c60c7fcdd6",
+      "strict_passed": 1,
+      "deadline_seconds": 60,
+      "go_reference_runs": 2,
+      "candidate_runs": 1
+    },
+    {
+      "gate": "p3-deadline-header-stall-json",
+      "evaluations": 1,
+      "unit": "declared corpus cases",
+      "report": "harness/results/perf2/go-final/p3-deadline-header-stall-json/report.json",
+      "report_sha256": "af84f71040f69f8806bbdc7d76a34b6d2f07683952b02c4f85f4c8013a7fb462",
+      "strict_passed": 1,
+      "deadline_seconds": 60,
+      "go_reference_runs": 2,
+      "candidate_runs": 1
+    },
+    {
+      "gate": "p3-deadline-body-stall-json",
+      "evaluations": 1,
+      "unit": "declared corpus cases",
+      "report": "harness/results/perf2/go-final/p3-deadline-body-stall-json/report.json",
+      "report_sha256": "e951bd1e7825981ef431041148725efc148c886c6c5100cd71040197b9e96427",
+      "strict_passed": 1,
+      "deadline_seconds": 60,
+      "go_reference_runs": 2,
+      "candidate_runs": 1
+    },
+    {
+      "gate": "p3-deadline-text-empty-array-lookahead",
+      "evaluations": 1,
+      "unit": "declared corpus cases",
+      "report": "harness/results/perf2/go-final/p3-deadline-text-empty-array-lookahead/report.json",
+      "report_sha256": "5a58b0d582b0ce3cc45a110f1f9ac0a7aa19e34b8cf286a0f8ea3c4d77549b7d",
+      "strict_passed": 1,
+      "deadline_seconds": 60,
+      "go_reference_runs": 2,
+      "candidate_runs": 1
+    },
+    {
+      "gate": "p3-deadline-not-reset-per-chunk",
+      "evaluations": 1,
+      "unit": "declared corpus cases",
+      "report": "harness/results/perf2/go-final/p3-deadline-not-reset-per-chunk/report.json",
+      "report_sha256": "b20935cf6f1406e2506b4c4ebded1917e53d274aca575013fbf0f5dab3b26ce9",
+      "strict_passed": 1,
+      "deadline_seconds": 60,
+      "go_reference_runs": 2,
+      "candidate_runs": 1
+    },
+    {
+      "gate": "p3-deadline-spans-redirects",
+      "evaluations": 1,
+      "unit": "declared corpus cases",
+      "report": "harness/results/perf2/go-final/p3-deadline-spans-redirects/report.json",
+      "report_sha256": "6820c7c984a31a7978e89a20ecab70d3e7a65202ff22da1fac912404a1013e9b",
+      "strict_passed": 1,
+      "deadline_seconds": 60,
+      "go_reference_runs": 2,
+      "candidate_runs": 1
+    },
+    {
+      "gate": "p3-deadline-spans-refresh",
+      "evaluations": 1,
+      "unit": "declared corpus cases",
+      "report": "harness/results/perf2/go-final/p3-deadline-spans-refresh/report.json",
+      "report_sha256": "a8b16d5520a36091d4c0c6e5a34833002e8452de9612e4ecd1931e533a609387",
+      "strict_passed": 1,
+      "deadline_seconds": 60,
+      "go_reference_runs": 2,
+      "candidate_runs": 1
+    },
+    {
+      "gate": "p3-deadline-preview-needs-one-more-byte",
+      "evaluations": 1,
+      "unit": "declared corpus cases",
+      "report": "harness/results/perf2/go-final/p3-deadline-preview-needs-one-more-byte/report.json",
+      "report_sha256": "d299fba51bd074a002fecec06ea836d81d76e376dcba1cf57122f4f12eef5679",
+      "strict_passed": 1,
+      "deadline_seconds": 60,
+      "go_reference_runs": 2,
+      "candidate_runs": 1
+    },
+    {
+      "gate": "phase4",
+      "evaluations": 159,
+      "unit": "declared corpus cases",
+      "report": "harness/results/perf2/go-final/phase4/report.json",
+      "report_sha256": "60c820edc1f9833108ce5398276eede5f03d2153748bdade2effd4faefa35a42",
+      "strict_passed": 159
+    },
+    {
+      "gate": "p4-deadline-header",
+      "evaluations": 1,
+      "unit": "declared corpus cases",
+      "report": "harness/results/perf2/go-final/p4-deadline-header/report.json",
+      "report_sha256": "8f3bf7e3c3c22367987a62559daa259eeeea8a5d2860add8ae8d5144c03394af",
+      "strict_passed": 1,
+      "deadline_seconds": 120,
+      "go_reference_runs": 2,
+      "candidate_runs": 1
+    },
+    {
+      "gate": "p4-deadline-body",
+      "evaluations": 1,
+      "unit": "declared corpus cases",
+      "report": "harness/results/perf2/go-final/p4-deadline-body/report.json",
+      "report_sha256": "401f21b765730dc7dd4287129c392ca98135485bc371933dcf28ac249f3956f2",
+      "strict_passed": 1,
+      "deadline_seconds": 120,
+      "go_reference_runs": 2,
+      "candidate_runs": 1
+    },
+    {
+      "gate": "phase5",
+      "evaluations": 185,
+      "unit": "declared corpus cases",
+      "report": "harness/results/perf2/go-final/phase5/report.json",
+      "report_sha256": "46665abae443c026d78775bee9d6f6894d8dd9d85af34b924ef7df5a352ce98e",
+      "strict_passed": 185
+    },
+    {
+      "gate": "p5-user-add-stalled-body-deadline",
+      "evaluations": 1,
+      "unit": "declared corpus cases",
+      "report": "harness/results/perf2/go-final/p5-user-add-stalled-body-deadline/report.json",
+      "report_sha256": "17479a2394d85c0f8e8c6cf5455447a682eb618a2f66188bcceff7d4e00c164b",
+      "strict_passed": 1,
+      "deadline_seconds": 60,
+      "go_reference_runs": 2,
+      "candidate_runs": 1
+    },
+    {
+      "gate": "flight-main",
+      "evaluations": 219,
+      "unit": "declared corpus cases",
+      "report": "/home/ajs/.cache/pb-phase6/tmp/perf2-go-final/main/report.json",
+      "report_sha256": "5e86cf583ea5f5af5d8947ed5c5738711d52c3cf23d51293db0f31b9cabd2372",
+      "strict_passed": 36,
+      "payload_auth_passed": 219,
+      "existing_user_agent_divergences": 183
+    },
+    {
+      "gate": "flight-trailer-followup",
+      "evaluations": 16,
+      "unit": "declared corpus cases",
+      "report": "/home/ajs/.cache/pb-phase6/tmp/perf2-go-final/trailer-followup/report.json",
+      "report_sha256": "675aa78e64a90b8055a48acd4ae59c953f3834a7df4893d3c23657be54d41c0d",
+      "strict_passed": 0,
+      "payload_auth_passed": 16,
+      "existing_user_agent_divergences": 16
+    },
+    {
+      "gate": "flight-review3-followup",
+      "evaluations": 56,
+      "unit": "declared corpus cases",
+      "report": "/home/ajs/.cache/pb-phase6/tmp/perf2-go-final/review3-followup/report.json",
+      "report_sha256": "a489f77a105b57ce310947144c285624f98f5b857447f842d42f0d707c3b776d",
+      "strict_passed": 0,
+      "payload_auth_passed": 56,
+      "existing_user_agent_divergences": 56
+    },
+    {
+      "gate": "flight-decoder14",
+      "evaluations": 14,
+      "unit": "IPC stream/output-mode pairs",
+      "report": "harness/results/perf2/go-final/flight-decoder14/proof.json",
+      "report_sha256": "10b04cf7daaa960f165c6f66850d655cb85395dabc7f68305cfd3193ed6e9a33",
+      "strict_passed": 14
+    },
+    {
+      "gate": "interactive-sql-saved",
+      "evaluations": 68,
+      "unit": "Go/Rust terminal-session pairs, split by theme",
+      "report": "harness/results/perf2/go-final/interactive-sql-saved/report.json",
+      "report_sha256": "a7b1cfeccbdb111e81c795fc59d7137757509a81c6bff6712914202eb5e3fbce",
+      "strict_passed": 60,
+      "documentary_cases": [
+        {
+          "name": "p7-nonTTY-sql-dark",
+          "issues": [],
+          "reference_issues": []
+        },
+        {
+          "name": "p7-nonTTY-saved-dark",
+          "issues": [],
+          "reference_issues": []
+        },
+        {
+          "name": "p7-sql-signal-sigint-dark",
+          "issues": [],
+          "reference_issues": []
+        },
+        {
+          "name": "p7-sql-signal-sigterm-dark",
+          "issues": [],
+          "reference_issues": []
+        },
+        {
+          "name": "p7-nonTTY-sql-light",
+          "issues": [],
+          "reference_issues": []
+        },
+        {
+          "name": "p7-nonTTY-saved-light",
+          "issues": [],
+          "reference_issues": []
+        },
+        {
+          "name": "p7-sql-signal-sigint-light",
+          "issues": [],
+          "reference_issues": []
+        },
+        {
+          "name": "p7-sql-signal-sigterm-light",
+          "issues": [],
+          "reference_issues": []
+        }
+      ]
+    },
+    {
+      "gate": "root-help",
+      "evaluations": 48,
+      "unit": "invocation/theme/terminal-environment checks",
+      "report": "harness/results/perf2/go-final/root-help/report.json",
+      "report_sha256": "d0143d6db4b759bda2dbda475a21c8a43e024fa85e74fb9a84de65446ab98c3d",
+      "strict_passed": 48
+    }
+  ],
+  "totals": {
+    "heterogeneous_corpus_and_check_evaluations": 4444,
+    "strict_passed": 4181,
+    "documentary_cases": 8,
+    "existing_flight_user_agent_divergences": 255,
+    "real_deadline_cases": 12
+  },
+  "caveats": [
+    "Historical phase1 deferred-stub guards are excluded; parser/help/completion parity runs.",
+    "Phase2 future-terminal cases are outside its ordinary gate; selected SQL/saved PTY cases run separately.",
+    "Non-SQL/saved interactive workflows, device-login and interactive-effects are outside this replay.",
+    "Phase6 native tonic User-Agent differences retain their existing explicit divergence ledger; they are not strict passes.",
+    "Rust ingest/observe additions use only existing discovery/help/catalog projections.",
+    "All twelve retained 60/120-second deadline cases ran separately with the existing expectations and reference repetitions.",
+    "Interactive documentary cases are retained observations and are excluded from strict pass counts.",
+    "Counts describe the finite declared corpus; they do not establish every possible Go behavior.",
+    "The aggregate combines declared cases, terminal-session pairs, IPC stream/output-mode pairs and root-help checks; per-gate units are explicit."
+  ]
+}

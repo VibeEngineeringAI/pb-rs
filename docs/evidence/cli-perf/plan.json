@@ -1,0 +1,62 @@
+{
+  "baseline_commit": "dd436da",
+  "primary_resource": "cpu_ms",
+  "secondary_resources": [
+    "peak_rss_bytes",
+    "wall_ms"
+  ],
+  "target_ratio": 0.9,
+  "scope": "Report geometric mean over fixed suite and per-operation gains; do not claim every operation gains 10%. All stdout/stderr/request/config contracts must match.",
+  "warmup": 3,
+  "repetitions": 20,
+  "confirmation_seed": 2027,
+  "suite_sha256": "f68168823ceedeacda703f29d6ef01a5fa89644b90dcea4b6300cba45a55dbd6",
+  "startup_control": "Same binary 20 repetitions, 3 warmups, A/A SQL CPU ratio 0.981 and RSS 1.001; version CPU ratio 1.077 and RSS 1.003",
+  "hardware_counter_control": "perf stat taskset CPU2, 20 repeats; baseline version 1,840,535 user instructions +/-0.01%; round1 918,709 +/-0.01%",
+  "measurement_limitation": "Shared host with unrelated workloads. No builds during final measurements. Full synthetic harness finished as timing started; no test processes remained when affinity isolation was applied. Measurements use CPUs 2,4,6,8 to avoid hybrid-core migration.",
+  "case_names": [
+    "version-text",
+    "version-json",
+    "root-help",
+    "command-tree",
+    "agent-catalog",
+    "sql-help-json",
+    "missing-profile",
+    "profile-list",
+    "profile-add",
+    "status-basic",
+    "dataset-list",
+    "dataset-schema",
+    "sql-500-json",
+    "sql-10000-text",
+    "sql-10000-json",
+    "promql-range",
+    "tail-4096",
+    "p3-100000-json",
+    "p3-single-8MiB-item"
+  ],
+  "binaries": {
+    "baseline": {
+      "sha256": "475fabaab8b22796089f370b49ad07e5a92bd4c554376fef62465e9500080467",
+      "size_bytes": 13525640
+    },
+    "round1": {
+      "sha256": "05238525e7ad38947c5efd800f937ccec64519bf6e9a4423425f51dd4b8ddcc6",
+      "size_bytes": 13550280
+    },
+    "round2": {
+      "sha256": "f0c251ae7be859f47eaa67363ada95e0d4d0a8f252e07e892690f4cc1fd26858",
+      "size_bytes": 13564360
+    },
+    "final": {
+      "sha256": "6be0db3a7c5f145ed75d0522b288c8ff69289c5f0bf8fe34c1622fcb180fe37c",
+      "size_bytes": 13564360
+    }
+  },
+  "timing_affinity": [
+    2,
+    4,
+    6,
+    8
+  ]
+}

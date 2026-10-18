@@ -1,0 +1,34 @@
+--- a/src/sql/output.rs
++++ b/src/sql/output.rs
+@@ -354,6 +354,7 @@
+         self.buffer.clear();
+     }
+ 
++    #[inline(always)]
+     fn reserve(&mut self, length: usize) {
+         let needed = self.buffer.len() + length;
+         if needed > self.buffer.capacity() {
+@@ -383,6 +384,7 @@
+         }
+     }
+ 
++    #[inline(always)]
+     fn extend_from_slice(&mut self, mut bytes: &[u8]) {
+         #[cfg(any(feature = "diagnostics", test))]
+         {
+@@ -411,6 +413,7 @@
+         }
+     }
+ 
++    #[inline(always)]
+     fn spaces(&mut self, mut count: usize) {
+         #[cfg(any(feature = "diagnostics", test))]
+         {
+@@ -438,6 +441,7 @@
+         }
+     }
+ 
++    #[inline(always)]
+     fn push(&mut self, byte: u8) {
+         #[cfg(any(feature = "diagnostics", test))]
+         {

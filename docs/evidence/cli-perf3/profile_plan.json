@@ -1,0 +1,284 @@
+{
+  "schema_version": 1,
+  "kind": "perf3 executed CPU/allocation attribution plan; build examples distinguished from execution records",
+  "prepared_by": "review sub-agent (read-only; no builds, captures or benchmarks run)",
+  "harness": {
+    "use": "harness/profile_external.py",
+    "why": "Same collector that produced docs/evidence/cli-perf2/profiles-{before,final}.json (source report harness/results/perf2/profiles-final/report.json, sha256 7d77d8e1604e...). It runs unprofiled controls first for go-release, rust-release, go-symbolized and rust-symbolized, checks every profiled Rust/Go contract against the first unprofiled Go control, records binary/fixture/meter/tool identities and the source snapshot, and analyzes only after every capture.",
+    "not_used": "harness/phase7_profile.py only supports PTY/TUI cases (sql-window20000, dense-metrics1000, editor) and needs QuietWindow approval plus symbol-evidence manifests. It has no SQL JSON/text pipeline cases.",
+    "summarizer": "docs/evidence/cli-perf2/profile_summary.py <report.json> <summary.json> (asserts valid && complete && no errors, rehashes each analysis.txt)",
+    "fixed_harness_parameters": {
+      "perf": "perf record -q -e cycles:u -F 999 --call-graph dwarf,16384 (frequency/stack size are hardcoded, so they are identical across runs)",
+      "heaptrack": "LD_PRELOAD=/usr/lib/heaptrack/libheaptrack_preload.so on the Rust symbolized binary only; heaptrack_interpret then heaptrack_print -m 0",
+      "perf_report": "perf report --stdio --no-children --percent-limit 0.5",
+      "session_order": "per case: controls first, then each mode; repetition 1 reverses the language order",
+      "timeout_seconds": 180
+    }
+  },
+  "artifacts": {
+    "go-release": {
+      "path": "bin/pb-go",
+      "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314"
+    },
+    "go-symbolized": {
+      "path": "bin/pb-go-symbolized",
+      "sha256": "4b512b5a103f9dbb67258f99ba48631b9993ffe7eb360125363d4d3e85cda414"
+    },
+    "baseline-release": {
+      "path": "bin/pb-perf2-final",
+      "sha256": "8124d157236e215d2068ce4dadf97ebe08043a1a1c327d5dc3a69806785e12a1"
+    },
+    "baseline-symbolized": {
+      "path": "bin/pb-perf2-final-symbolized",
+      "sha256": "8b31cc2471279c76034c440adfb00aa193c0035dd8cdc33f596a835390f08fdc"
+    },
+    "candidate-release": {
+      "path": "bin/pb-perf3-final",
+      "sha256": "0dd77ed8adb4545294559bc1770648476b6d2f27c396a73ab05f398426854ad5"
+    },
+    "candidate-symbolized": {
+      "path": "bin/pb-perf3-final-symbolized",
+      "sha256": "96c3fc605d1f051e1f6c00a70458d6a7756d4fefc1982fad270445fbe576521e"
+    },
+    "fixture": {
+      "path": "bin/pb-fixture",
+      "sha256": "629689bf35d265ef46c2d2aecba95cdb7275c1767c0b3f2c83a2fdc32a9679e7"
+    },
+    "meter": {
+      "path": "bin/pb-meter",
+      "sha256": "17c3b73491b2a31e465f58eda9f210000b5cd886a4ba9fc0764dc3576899127c"
+    },
+    "note": "The baseline, Go, fixture and meter hashes were checked on 2026-10-17 and equal the identities in harness/results/perf2/profiles-final/report.json."
+  },
+  "candidate_build": {
+    "precondition": "Candidate source frozen. No other owned cargo/go/test/bench jobs. Build before taking the lock; never build while a capture runs.",
+    "commands": [
+      "mkdir -p target/tmp",
+      "TMPDIR=$PWD/target/tmp PB_VERSION=v0.0.0-harness PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN= cargo +1.96.0 build --locked --release --target-dir target/perf3-final",
+      "TMPDIR=$PWD/target/tmp PB_VERSION=v0.0.0-harness PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN= cargo +1.96.0 build --locked --profile profiling --target-dir target/perf3-profile",
+      "cp --no-preserve=mode target/perf3-final/release/pb bin/pb-perf3-final && chmod 0755 bin/pb-perf3-final",
+      "cp --no-preserve=mode target/perf3-profile/profiling/pb bin/pb-perf3-final-symbolized && chmod 0755 bin/pb-perf3-final-symbolized",
+      "sha256sum bin/pb-perf3-final bin/pb-perf3-final-symbolized"
+    ],
+    "provenance": "Record docs/evidence/cli-perf3/final-candidate.json in the same shape as text-candidate.json: binary paths, sha256, per-file source hashes, and build {toolchain 1.96.0, profile release|profiling, locked, PB_VERSION, PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN ''}. Both binaries must come from one source hash set. Cargo.toml [profile.profiling] inherits release and only sets debug=2 and strip=none.",
+    "commands_are": "Planning examples, not an execution transcript. Actual frozen build identities and settings are in final-candidate.json; profiling build used target/symbolized."
+  },
+  "preflight_read_only": [
+    "sha256sum bin/pb-go bin/pb-go-symbolized bin/pb-perf2-final bin/pb-perf2-final-symbolized bin/pb-perf3-final bin/pb-perf3-final-symbolized bin/pb-fixture bin/pb-meter  # compare with artifacts above",
+    "readelf -SW bin/pb-perf3-final-symbolized | grep -E '\\.debug_info|\\.debug_line|\\.symtab'  # the harness also enforces this",
+    "cat /proc/sys/kernel/perf_event_paranoid  # 2 measured on 2026-10-17; cycles:u works",
+    "pgrep -a -u \"$USER\" -f 'cargo|rustc|go build|harness/run.py|profile_external' || true  # must show no owned jobs",
+    "df -h .  # about 0.85 GiB per JSON run (prior profiles-final was 829M); budget about 3 GiB for all four runs"
+  ],
+  "wrapping": {
+    "lock_and_pin": "flock -n ~/.cache/pb-rs-performance.lock taskset -c 2,4,6,8",
+    "rationale": "Same lock and CPU set as docs/evidence/cli-perf2/measure.sh. Other jobs on the shared host can shift sample counts; allocation counts and contract checks are not affected."
+  },
+  "runs": [
+    {
+      "id": "A-json-baseline",
+      "order": 1,
+      "purpose": "Re-capture the baseline on today's host, so the comparison does not rest only on the 2026-10-17 cli-perf2 capture",
+      "sessions": 28,
+      "command": "flock -n ~/.cache/pb-rs-performance.lock taskset -c 2,4,6,8 python3 harness/profile_external.py --out harness/results/perf3/profiles-baseline-json --mode perf --mode heaptrack --case p3-100000-json --case p3-single-8MiB-item --repetitions 2 --perf-event cycles:u --go bin/pb-go-symbolized --go-release bin/pb-go --rust bin/pb-perf2-final-symbolized --rust-release bin/pb-perf2-final",
+      "summary": "python3 docs/evidence/cli-perf2/profile_summary.py harness/results/perf3/profiles-baseline-json/report.json docs/evidence/cli-perf3/profiles-baseline-json.json"
+    },
+    {
+      "id": "B-json-candidate",
+      "order": 2,
+      "sessions": 28,
+      "command": "flock -n ~/.cache/pb-rs-performance.lock taskset -c 2,4,6,8 python3 harness/profile_external.py --out harness/results/perf3/profiles-candidate-json --mode perf --mode heaptrack --case p3-100000-json --case p3-single-8MiB-item --repetitions 2 --perf-event cycles:u --go bin/pb-go-symbolized --go-release bin/pb-go --rust bin/pb-perf3-final-symbolized --rust-release bin/pb-perf3-final",
+      "summary": "python3 docs/evidence/cli-perf2/profile_summary.py harness/results/perf3/profiles-candidate-json/report.json docs/evidence/cli-perf3/profiles-candidate-json.json"
+    },
+    {
+      "id": "B-text-candidate",
+      "order": 3,
+      "optional": true,
+      "purpose": "Raw-text CPU attribution for the 128KiB non-JSON SQL bridge. Both cases are existing harness cases: p3-100000-text comes from phase3_workloads, and diagnose.workload_cases derives p3-single-8MiB-text from p3-single-8MiB-item. Both are in profile_external --case choices.",
+      "sessions": 24,
+      "command": "flock -n ~/.cache/pb-rs-performance.lock taskset -c 2,4,6,8 python3 harness/profile_external.py --out harness/results/perf3/profiles-candidate-text --mode perf --case p3-100000-text --case p3-single-8MiB-text --repetitions 2 --perf-event cycles:u --go bin/pb-go-symbolized --go-release bin/pb-go --rust bin/pb-perf3-final-symbolized --rust-release bin/pb-perf3-final",
+      "summary": "python3 docs/evidence/cli-perf2/profile_summary.py harness/results/perf3/profiles-candidate-text/report.json docs/evidence/cli-perf3/profiles-candidate-text.json"
+    },
+    {
+      "id": "A-text-baseline",
+      "order": 4,
+      "optional": true,
+      "purpose": "Text runs use the reverse order (B then A), so neither binary always runs first in a host session",
+      "sessions": 24,
+      "command": "flock -n ~/.cache/pb-rs-performance.lock taskset -c 2,4,6,8 python3 harness/profile_external.py --out harness/results/perf3/profiles-baseline-text --mode perf --case p3-100000-text --case p3-single-8MiB-text --repetitions 2 --perf-event cycles:u --go bin/pb-go-symbolized --go-release bin/pb-go --rust bin/pb-perf2-final-symbolized --rust-release bin/pb-perf2-final",
+      "summary": "python3 docs/evidence/cli-perf2/profile_summary.py harness/results/perf3/profiles-baseline-text/report.json docs/evidence/cli-perf3/profiles-baseline-text.json"
+    }
+  ],
+  "session_accounting": "Per case: controls 4 artifacts x 2 reps = 8, perf 2 languages x 2 = 4, heaptrack Rust x 2 = 2. JSON runs: 2 cases x 14 = 28. Text runs (perf only): 2 x 12 = 24. Total 104. The harness always adds controls and has no session cap flag, so these are the bounds.",
+  "optional_text_allocations": "If allocation attribution of the 128KiB bridge is also wanted, add --mode heaptrack to runs 3 and 4 (+4 sessions each). This is not needed for the CPU question.",
+  "post_capture_supplementary_read_only": {
+    "when": "After all four runs finish, still under the lock, before any rebuild touches bin/",
+    "verify_first": "sha256sum each perf.data against report.json samples[].profiles[0].sha256, and the binaries against report.json binaries",
+    "commands": [
+      "DEBUGINFOD_URLS= perf diff --stdio harness/results/perf3/profiles-baseline-json/p3-single-8MiB-item/perf/00-rust/perf.data harness/results/perf3/profiles-candidate-json/p3-single-8MiB-item/perf/00-rust/perf.data > harness/results/perf3/perf-diff-8MiB-rep0.txt",
+      "DEBUGINFOD_URLS= perf diff --stdio harness/results/perf3/profiles-baseline-json/p3-100000-json/perf/00-rust/perf.data harness/results/perf3/profiles-candidate-json/p3-100000-json/perf/00-rust/perf.data > harness/results/perf3/perf-diff-100k-rep0.txt",
+      "DEBUGINFOD_URLS= perf report --stdio --children --percent-limit 2 -i harness/results/perf3/profiles-candidate-json/<case>/perf/<rep>-rust/perf.data  # inclusive call-graph view, if needed"
+    ],
+    "scope": "perf diff matches symbols by name across the two binaries. Use it only for hotspot attribution. Repeat for rep 01 and for the text runs if those were captured."
+  },
+  "claims_policy": {
+    "allowed": [
+      "heaptrack 'calls to allocation functions' baseline vs candidate per case. Deterministic enough to compare; cli-perf2 reps differed by 170 out of 1.23M",
+      "heaptrack 'peak heap memory consumption', reported as allocator-tracked heap only, not RSS",
+      "perf self-percent symbol rankings and perf-diff deltas as hotspot attribution, with the sample population stated (cli-perf2 Go 100k had only 744 samples)",
+      "contract/output parity of every profiled session against unprofiled Go (enforced by the harness)"
+    ],
+    "forbidden": [
+      "Any wall time, RSS, CPU seconds or '# Samples' count from profiled sessions presented as a release speedup or memory improvement",
+      "Control rows in these reports as release timing. They are single short runs under the profiling campaign; release timing comes only from an unprofiled harness/run.py campaign of bin/pb-perf3-final vs bin/pb-perf2-final",
+      "Go heap claims from heaptrack (only Rust is preloaded; Go's managed heap is invisible to it)",
+      "PB diagnostics-feature timing sidecars (harness/diagnose.py timing modes) as performance claims"
+    ]
+  },
+  "provenance_caveats": [
+    "report.source is a snapshot of the working tree at capture time. For baseline runs A that is the candidate tree, not the source of pb-perf2-final-symbolized. Baseline provenance rests on the binary sha256s, which equal the cli-perf2 profiles-final binaries and docs/evidence/cli-perf3/baseline.json. State this in the write-up.",
+    "Do not edit sources between the candidate build and runs B, so the run-B source snapshot matches the candidate build's hash set.",
+    "profile_external writes with exist_ok=False. Choose fresh --out directories on every retry; never delete a failed run's directory before recording why it failed.",
+    "-F 999 and dwarf stack size are fixed in the harness. Short workloads produce small sample populations; do not raise repetitions above 2 without a new decision."
+  ],
+  "failure_handling": "A non-zero exit or valid=false means stop and keep the directory. If the failure is a contract difference between candidate and Go, it is a correctness regression, not a profiling problem, and blocks the freeze.",
+  "execution": {
+    "status": "completed",
+    "sessions": 104,
+    "scope": "These captures describe the round4 candidate. They do not describe subsequent unselected inline experiments.",
+    "records": [
+      {
+        "path": "harness/results/perf3/profile-A-json-baseline.json",
+        "sha256": "1db11f5239b5b615dfa77b76a0f6fcb6e2d7e9ded0bdbb2cc435544e5d5abf72",
+        "command": [
+          "python3",
+          "harness/profile_external.py",
+          "--out",
+          "harness/results/perf3/profiles-baseline-json",
+          "--mode",
+          "perf",
+          "--mode",
+          "heaptrack",
+          "--case",
+          "p3-100000-json",
+          "--case",
+          "p3-single-8MiB-item",
+          "--repetitions",
+          "2",
+          "--perf-event",
+          "cycles:u",
+          "--go",
+          "bin/pb-go-symbolized",
+          "--go-release",
+          "bin/pb-go",
+          "--rust",
+          "bin/pb-perf2-final-symbolized",
+          "--rust-release",
+          "bin/pb-perf2-final"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 89.09090852737427,
+        "log": "harness/results/perf3/profile-A-json-baseline.log",
+        "log_sha256": "e8f3c7d31fd68deaeb54bc955e380c592f8e21af4d697f06038fa6fad5aef4eb"
+      },
+      {
+        "path": "harness/results/perf3/profile-B-json-candidate.json",
+        "sha256": "63126816da797fbb823ee50cae9b2c9dd08899a2b37fad03ad43296d54323774",
+        "command": [
+          "python3",
+          "harness/profile_external.py",
+          "--out",
+          "harness/results/perf3/profiles-candidate-json",
+          "--mode",
+          "perf",
+          "--mode",
+          "heaptrack",
+          "--case",
+          "p3-100000-json",
+          "--case",
+          "p3-single-8MiB-item",
+          "--repetitions",
+          "2",
+          "--perf-event",
+          "cycles:u",
+          "--go",
+          "bin/pb-go-symbolized",
+          "--go-release",
+          "bin/pb-go",
+          "--rust",
+          "bin/pb-perf3-final-symbolized",
+          "--rust-release",
+          "bin/pb-perf3-final"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 98.07161331176758,
+        "log": "harness/results/perf3/profile-B-json-candidate.log",
+        "log_sha256": "eff31d70ead001ae10cfd0470337d07099cf2ee669cf1c701852f7352da1b23a"
+      },
+      {
+        "path": "harness/results/perf3/profile-B-text-candidate.json",
+        "sha256": "db858f55f7ea49e7cd75388bc977e1cd9a3e7de3abbaf979c49ef7e32887330c",
+        "command": [
+          "python3",
+          "harness/profile_external.py",
+          "--out",
+          "harness/results/perf3/profiles-candidate-text",
+          "--mode",
+          "perf",
+          "--case",
+          "p3-100000-text",
+          "--case",
+          "p3-single-8MiB-text",
+          "--repetitions",
+          "2",
+          "--perf-event",
+          "cycles:u",
+          "--go",
+          "bin/pb-go-symbolized",
+          "--go-release",
+          "bin/pb-go",
+          "--rust",
+          "bin/pb-perf3-final-symbolized",
+          "--rust-release",
+          "bin/pb-perf3-final"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 60.11611557006836,
+        "log": "harness/results/perf3/profile-B-text-candidate.log",
+        "log_sha256": "88d53682c6b0f60a4d5cc6495414164bfd129bc09815e4e28f3d84f3cd989f3f"
+      },
+      {
+        "path": "harness/results/perf3/profile-A-text-baseline.json",
+        "sha256": "a34cb3f49cfbd653ed829d5f8b194db890fa792b3f764830c169c4f6767761bd",
+        "command": [
+          "python3",
+          "harness/profile_external.py",
+          "--out",
+          "harness/results/perf3/profiles-baseline-text",
+          "--mode",
+          "perf",
+          "--case",
+          "p3-100000-text",
+          "--case",
+          "p3-single-8MiB-text",
+          "--repetitions",
+          "2",
+          "--perf-event",
+          "cycles:u",
+          "--go",
+          "bin/pb-go-symbolized",
+          "--go-release",
+          "bin/pb-go",
+          "--rust",
+          "bin/pb-perf2-final-symbolized",
+          "--rust-release",
+          "bin/pb-perf2-final"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 53.88007187843323,
+        "log": "harness/results/perf3/profile-A-text-baseline.log",
+        "log_sha256": "364bdce1e735997641d0841e2765360fc395b151c8d91932401f8d24968e36b3"
+      }
+    ]
+  }
+}

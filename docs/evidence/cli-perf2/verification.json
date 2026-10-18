@@ -1,0 +1,59 @@
+{
+  "logs": {
+    "rust_tests": {
+      "path": "/tmp/pb-perf2-rust-tests.log",
+      "sha256": "09438b370f04790939fa547c9a29d4a60bed486db2ad54db078b3fbfdfbe9a4e",
+      "suites": 21,
+      "passed": 861,
+      "failed": 0,
+      "ignored": 9
+    },
+    "diagnostics": {
+      "path": "/tmp/pb-perf2-diagnostics.log",
+      "sha256": "9bf86fb0ae04e24219dc4c7423b0048bfebc150223b5bbfeb33a47b4a0187b79",
+      "suites": 1,
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    "clippy": {
+      "path": "/tmp/pb-perf2-clippy-final.log",
+      "sha256": "a4ab6e9c2fc33ddc8c641a9ad2f4f51b245de36112126ce581d7ec7751a71e3b"
+    },
+    "fmt": {
+      "path": "/tmp/pb-perf2-fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "python_harness": {
+      "path": "/tmp/pb-perf2-harness-tests.log",
+      "sha256": "a7c900cbe5c1400fe886451a295c35c5d4925d9505d578c69147de024173bac5",
+      "modules": 35,
+      "tests_run": 986,
+      "skipped": 5,
+      "failed": 0,
+      "skip_reasons": [
+        {
+          "test": "test_cloud_build_refreshes_and_persists_rotated_tokens (test_phase2.GoOracleTests.test_cloud_build_refreshes_and_persists_rotated_tokens)",
+          "reason": "Go reference with harness orchestrator token not built"
+        },
+        {
+          "test": "test_go_fixture_generate_parity (test_phase3.FixtureTests.test_go_fixture_generate_parity)",
+          "reason": "phase-three pb-fixture not built"
+        },
+        {
+          "test": "test_go_lifecycle_and_self_compare (test_phase5.GoSmokeTests.test_go_lifecycle_and_self_compare)",
+          "reason": "pinned Go reference not built"
+        },
+        {
+          "test": "test_mutated_candidate_state_is_detected (test_phase5.GoSmokeTests.test_mutated_candidate_state_is_detected)",
+          "reason": "pinned Go reference not built"
+        },
+        {
+          "test": "test_grow_shrink_notifications_sizes_restoration_wait4_and_pid_bound_cleanup (test_phase7.ResizeNativeControlTests.test_grow_shrink_notifications_sizes_restoration_wait4_and_pid_bound_cleanup)",
+          "reason": "requires the root-authorized native execution window"
+        }
+      ]
+    }
+  },
+  "scope": "Final source verification; pinned Go replay evidence is separate."
+}

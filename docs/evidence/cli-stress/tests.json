@@ -1,0 +1,274 @@
+{
+  "python": {
+    "ran_after_corrected_module": 1058,
+    "passed": 1053,
+    "skipped": 5,
+    "modules": [
+      {
+        "module": "test_compatibility.py",
+        "ran": 7,
+        "status": "passed",
+        "skipped": 0
+      },
+      {
+        "module": "test_diagnose.py",
+        "ran": 14,
+        "status": "passed",
+        "skipped": 0
+      },
+      {
+        "module": "test_final_replay.py",
+        "ran": 8,
+        "status": "passed",
+        "skipped": 0
+      },
+      {
+        "module": "test_go_diagnostics.py",
+        "ran": 6,
+        "status": "failed_toolchain_path",
+        "skipped": 0
+      },
+      {
+        "module": "test_harness.py",
+        "ran": 49,
+        "status": "passed",
+        "skipped": 0
+      },
+      {
+        "module": "test_ingest_perf.py",
+        "ran": 15,
+        "status": "passed",
+        "skipped": 0
+      },
+      {
+        "module": "test_manifest.py",
+        "ran": 6,
+        "status": "passed",
+        "skipped": 0
+      },
+      {
+        "module": "test_meter_io.py",
+        "ran": 7,
+        "status": "passed",
+        "skipped": 0
+      },
+      {
+        "module": "test_phase1.py",
+        "ran": 19,
+        "status": "passed",
+        "skipped": 0
+      },
+      {
+        "module": "test_phase2.py",
+        "ran": 29,
+        "status": "passed",
+        "skipped": 1
+      },
+      {
+        "module": "test_phase3.py",
+        "ran": 43,
+        "status": "passed",
+        "skipped": 1
+      },
+      {
+        "module": "test_phase4.py",
+        "ran": 29,
+        "status": "passed",
+        "skipped": 0
+      },
+      {
+        "module": "test_phase4_workloads.py",
+        "ran": 9,
+        "status": "passed",
+        "skipped": 0
+      },
+      {
+        "module": "test_phase5.py",
+        "ran": 36,
+        "status": "passed",
+        "skipped": 2
+      },
+      {
+        "module": "test_phase5_workloads.py",
+        "ran": 36,
+        "status": "passed",
+        "skipped": 0
+      },
+      {
+        "module": "test_phase6.py",
+        "ran": 36,
+        "status": "passed",
+        "skipped": 0
+      },
+      {
+        "module": "test_phase6_blocked_writer.py",
+        "ran": 4,
+        "status": "passed",
+        "skipped": 0
+      },
+      {
+        "module": "test_phase6_build_cost.py",
+        "ran": 106,
+        "status": "passed",
+        "skipped": 0
+      },
+      {
+        "module": "test_phase6_dictionary_cases.py",
+        "ran": 10,
+        "status": "passed",
+        "skipped": 0
+      },
+      {
+        "module": "test_phase6_duration_gate.py",
+        "ran": 19,
+        "status": "passed",
+        "skipped": 0
+      },
+      {
+        "module": "test_phase6_h2_limits.py",
+        "ran": 7,
+        "status": "passed",
+        "skipped": 0
+      },
+      {
+        "module": "test_phase6_paths.py",
+        "ran": 1,
+        "status": "passed",
+        "skipped": 0
+      },
+      {
+        "module": "test_phase6_process_cleanup.py",
+        "ran": 5,
+        "status": "passed",
+        "skipped": 0
+      },
+      {
+        "module": "test_phase6_profiles.py",
+        "ran": 66,
+        "status": "passed",
+        "skipped": 0
+      },
+      {
+        "module": "test_phase6_protocol_limits.py",
+        "ran": 5,
+        "status": "passed",
+        "skipped": 0
+      },
+      {
+        "module": "test_phase6_provenance.py",
+        "ran": 4,
+        "status": "passed",
+        "skipped": 0
+      },
+      {
+        "module": "test_phase6_resource_summary.py",
+        "ran": 35,
+        "status": "passed",
+        "skipped": 0
+      },
+      {
+        "module": "test_phase6_transport_wave.py",
+        "ran": 5,
+        "status": "passed",
+        "skipped": 0
+      },
+      {
+        "module": "test_phase6_workloads.py",
+        "ran": 94,
+        "status": "passed",
+        "skipped": 0
+      },
+      {
+        "module": "test_phase7.py",
+        "ran": 98,
+        "status": "passed",
+        "skipped": 1
+      },
+      {
+        "module": "test_phase7_bench.py",
+        "ran": 132,
+        "status": "passed",
+        "skipped": 0
+      },
+      {
+        "module": "test_phase7_device.py",
+        "ran": 3,
+        "status": "passed",
+        "skipped": 0
+      },
+      {
+        "module": "test_phase7_profile.py",
+        "ran": 24,
+        "status": "passed",
+        "skipped": 0
+      },
+      {
+        "module": "test_profile_external.py",
+        "ran": 8,
+        "status": "passed",
+        "skipped": 0
+      },
+      {
+        "module": "test_stress.py",
+        "ran": 15,
+        "status": "passed",
+        "skipped": 0
+      },
+      {
+        "module": "test_stress_ingest.py",
+        "ran": 29,
+        "status": "passed",
+        "skipped": 0
+      },
+      {
+        "module": "test_stress_process.py",
+        "ran": 28,
+        "status": "passed",
+        "skipped": 0
+      },
+      {
+        "module": "test_test_runner.py",
+        "ran": 4,
+        "status": "passed",
+        "skipped": 0
+      }
+    ],
+    "corrective_run": {
+      "module": "test_go_diagnostics.py",
+      "ran": 13,
+      "passed": 13,
+      "reason": "Initial Go shim failed to build diagnostic sidecar. Pinned Go1.25.4 executable rerun passed."
+    }
+  },
+  "go_stress_fixture": {
+    "tests": 18,
+    "status": "passed",
+    "prior_review_checks": [
+      "race",
+      "vet",
+      "gofmt"
+    ]
+  },
+  "new_python_stress_tests": 72,
+  "logs": [
+    {
+      "path": "harness/results/stress/validation/pb-stress-all-tests.log",
+      "sha256": "fddf631bdf4147b7d6437ea9e7d47cb43275c2825150a6b05c61f7f1249fb9f7"
+    },
+    {
+      "path": "harness/results/stress/validation/pb-stress-diagnostics-tests.log",
+      "sha256": "9b42237914457eb2d4ee6f8c80ddb9015d95418ccb6bb42d30f8f7de1bf105d9"
+    }
+  ],
+  "final_gate_rerun": {
+    "module": "test_stress.py",
+    "tests": 15,
+    "status": "passed",
+    "reason": "Added native write accounting guard after report review",
+    "log": "harness/results/stress/validation/pb-stress-final-gates-tests.log",
+    "sha256": "9350b76de4fe0046ff5b2d049166f6100ebdcbc702783b1e3ece0ee1f7127970"
+  },
+  "write_accounting_integration": "harness/results/stress/write-accounting-check/report.json",
+  "all_harness_tests_passed_after_corrective_runs": true,
+  "write_accounting_integration_sha256": "61790ad031345c8f0d0f281e08b0b1283b204eb9f4081e58d4805a0b6e5ab946"
+}

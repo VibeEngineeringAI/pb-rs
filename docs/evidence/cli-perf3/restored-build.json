@@ -1,0 +1,18 @@
+{
+  "command": [
+    "/home/ajs/.cargo/bin/cargo",
+    "+1.96.0",
+    "build",
+    "--locked",
+    "--release"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 0.5778601169586182,
+  "before_sha256": "717409badd79315c22cff13552cabaf6f436da0dfc6599f6b4515767d018ee0e",
+  "after_sha256": "717409badd79315c22cff13552cabaf6f436da0dfc6599f6b4515767d018ee0e",
+  "expected_sha256": "0dd77ed8adb4545294559bc1770648476b6d2f27c396a73ab05f398426854ad5",
+  "source_match": true,
+  "passed": false,
+  "log": "harness/results/perf3/restore-selected-build.log",
+  "log_sha256": "9a37812c135c5e82e96a6c59a266592728a1efd091d11994a459bbcc3d1dfd5f"
+}
