@@ -1037,11 +1037,13 @@ fn wire_type(data_type: &DataType, dictionary_value: bool) -> DataType {
 
 /// Protobuf `Bytes` can start at any byte address. Arrow's dense-union reader
 /// constructs typed offsets directly, unlike its other array builders which
-/// realign buffers. Copy an unaligned body into Arrow-owned aligned storage
-/// before decoding; already aligned bodies keep their existing owner. This is
-/// the same aligned-copy boundary used by arrow-flight's decoding utility.
+/// realign buffers. Its only direct casts are i8 type IDs and i32 offsets;
+/// validation has already checked that the offsets buffer's relative offset
+/// is a multiple of four (including stored-uncompressed buffers' 8-byte prefix).
+/// A four-byte-aligned base therefore suffices; other arrays copy only their
+/// individual buffers when they need stricter alignment.
 fn ipc_body(body: bytes::Bytes) -> Buffer {
-    if (body.as_ptr() as usize).is_multiple_of(64) {
+    if (body.as_ptr() as usize).is_multiple_of(std::mem::align_of::<i32>()) {
         Buffer::from(body)
     } else {
         Buffer::from(body.as_ref())
@@ -1571,3 +1573,171 @@ impl<'a> Worker<'a> {
 
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+mod ipc_body_tests {
+    use super::*;
+    use arrow_array::{
+        Array, Decimal128Array, DictionaryArray, Float64Array, Int64Array, LargeStringArray,
+        StringArray, UnionArray, types::Int64Type,
+    };
+    use arrow_buffer::MutableBuffer;
+    use arrow_ipc::{
+        CompressionType, MetadataVersion,
+        writer::{DictionaryTracker, IpcDataGenerator, IpcWriteContext, IpcWriteOptions},
+    };
+    use arrow_schema::UnionFields;
+    use bytes::Bytes;
+
+    fn shifted(body: &[u8], prefix: usize) -> Bytes {
+        // MutableBuffer guarantees a 64-byte base, so prefix identifies the
+        // precise alignment rather than relying on the system allocator.
+        let mut storage = MutableBuffer::with_capacity(body.len() + prefix);
+        storage.extend_from_slice(&vec![0_u8; prefix]);
+        storage.extend_from_slice(body);
+        Bytes::from(Buffer::from(storage)).slice(prefix..)
+    }
+
+    fn batch() -> RecordBatch {
+        let fields = UnionFields::try_new(
+            vec![0, 1],
+            vec![
+                Field::new("i", DataType::Int64, true),
+                Field::new("s", DataType::Utf8, true),
+            ],
+        )
+        .unwrap();
+        let union = UnionArray::try_new(
+            fields,
+            vec![0_i8, 1, 0, 1].into(),
+            Some(vec![0_i32, 0, 1, 1].into()),
+            vec![
+                Arc::new(Int64Array::from(vec![42, 43])),
+                Arc::new(StringArray::from(vec!["first", "second"])),
+            ],
+        )
+        .unwrap();
+        let columns: Vec<ArrayRef> = vec![
+            Arc::new(union),
+            Arc::new(Int64Array::from(vec![Some(1), None, Some(3), Some(4)])),
+            Arc::new(Float64Array::from(vec![1.25, 2.5, 3.75, 4.0])),
+            Arc::new(
+                Decimal128Array::from(vec![123, 456, 789, 0])
+                    .with_precision_and_scale(10, 2)
+                    .unwrap(),
+            ),
+            Arc::new(StringArray::from(vec![
+                Some("a"),
+                Some("b"),
+                None,
+                Some("c"),
+            ])),
+            Arc::new(LargeStringArray::from(vec!["large text".repeat(128); 4])),
+            Arc::new(DictionaryArray::<Int64Type>::new(
+                vec![0, 1, 0, 1].into(),
+                Arc::new(StringArray::from(vec![
+                    "dictionary a".repeat(128),
+                    "dictionary b".repeat(128),
+                ])),
+            )),
+        ];
+        let schema = Arc::new(Schema::new(
+            columns
+                .iter()
+                .enumerate()
+                .map(|(i, column)| Field::new(format!("c{i}"), column.data_type().clone(), true))
+                .collect::<Vec<_>>(),
+        ));
+        RecordBatch::try_new(schema, columns).unwrap()
+    }
+
+    fn encoded(
+        batch: &RecordBatch,
+        version: MetadataVersion,
+        codec: Option<CompressionType>,
+    ) -> Vec<FlightData> {
+        let options = IpcWriteOptions::try_new(64, false, version)
+            .unwrap()
+            .try_with_compression(codec)
+            .unwrap();
+        let generator = IpcDataGenerator::default();
+        let mut tracker = DictionaryTracker::new(false);
+        let mut context = IpcWriteContext::default();
+        let schema = generator.schema_to_bytes_with_dictionary_tracker(
+            &batch.schema(),
+            &mut tracker,
+            &options,
+        );
+        let (dictionaries, record) = generator
+            .encode(batch, &mut tracker, &options, &mut context)
+            .unwrap();
+        let mut messages = vec![schema.into()];
+        messages.extend(dictionaries.into_iter().map(FlightData::from));
+        messages.push(record.into());
+        messages
+    }
+
+    fn decode(messages: &[FlightData], prefix: usize) -> Result<Vec<RecordBatch>, String> {
+        let mut decoder = Decoder::new(&messages[0].data_header)?;
+        let mut batches = Vec::new();
+        for message in &messages[1..] {
+            let mut message = message.clone();
+            message.data_body = shifted(&message.data_body, prefix);
+            if let Decoded::Batch(batch) = decoder.decode(message)? {
+                batches.push(batch);
+            }
+        }
+        Ok(batches)
+    }
+
+    #[test]
+    fn ipc_body_shares_four_byte_aligned_storage_and_copies_other_bases() {
+        for prefix in 0..64 {
+            let body = shifted(b"nonempty IPC body", prefix);
+            let original = body.as_ptr();
+            let decoded = ipc_body(body);
+            assert_eq!(decoded.as_ref(), b"nonempty IPC body");
+            assert_eq!(decoded.as_ptr() == original, prefix % 4 == 0);
+            assert!((decoded.as_ptr() as usize).is_multiple_of(4));
+        }
+    }
+
+    #[test]
+    fn ipc_body_alignment_preserves_union_numeric_string_and_dictionary_decoding() {
+        let batch = batch();
+        for (version, codec) in [
+            (MetadataVersion::V4, None),
+            (MetadataVersion::V5, None),
+            (MetadataVersion::V5, Some(CompressionType::LZ4_FRAME)),
+            (MetadataVersion::V5, Some(CompressionType::ZSTD)),
+        ] {
+            let messages = encoded(&batch, version, codec);
+            // Prefix zero supplies the former whole-body 64-byte alignment.
+            // Decoder deliberately normalizes string types to Binary, so
+            // compare decoded arrays against that path rather than the schema
+            // used by the IPC writer.
+            let expected = decode(&messages, 0).unwrap();
+            assert_eq!(expected.len(), 1);
+            assert_eq!(expected[0].column(1), batch.column(1));
+            for prefix in 0..64 {
+                let decoded = decode(&messages, prefix).unwrap();
+                assert_eq!(decoded.len(), 1);
+                assert_eq!(
+                    decoded[0].columns(),
+                    expected[0].columns(),
+                    "prefix={prefix}, codec={codec:?}"
+                );
+            }
+            // A body range failure must retain its exact diagnostic at every
+            // base alignment, before Arrow attempts any typed conversion.
+            let mut truncated = messages;
+            let last = truncated.last_mut().unwrap();
+            last.data_body = last.data_body.slice(..last.data_body.len() / 2);
+            let expected = decode(&truncated, 0).unwrap_err();
+            assert_eq!(expected, format!("{UNKNOWN_READ}EOF"));
+            for prefix in 1..64 {
+                assert_eq!(decode(&truncated, prefix).unwrap_err(), expected);
+            }
+        }
+    }
+}

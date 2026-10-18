@@ -8,23 +8,29 @@ use crate::{
 };
 
 fn protocol_spec() -> CommandSpec {
-    let mut command = command_spec().clone();
-    command.name = "__complete".into();
-    command.r#use = "__complete [command-line]".into();
-    command.short = "Request shell completion choices for the specified command-line".into();
-    command.long = "__complete is a special command that is used by the shell completion logic\nto request completion choices for the specified command-line.".into();
-    command.aliases = vec!["__completeNoDesc".into()];
-    command.flags.clear();
-    command.children.clear();
-    command.args = ArgsRule {
-        kind: ArgsKind::Min,
-        counts: vec![1],
-    };
-    command.disable_flags_in_use_line = true;
-    command.silence_usage = false;
-    command.hidden = true;
-    command.operation = Operation::Deferred;
-    command
+    // Built field by field from the root so the 55-command tree is never
+    // deep-cloned only to discard flags and children.
+    let root = command_spec();
+    CommandSpec {
+        name: "__complete".into(),
+        operation: Operation::Deferred,
+        disable_flags_in_use_line: true,
+        r#use: "__complete [command-line]".into(),
+        short: "Request shell completion choices for the specified command-line".into(),
+        long: "__complete is a special command that is used by the shell completion logic\nto request completion choices for the specified command-line.".into(),
+        example: root.example.clone(),
+        aliases: vec!["__completeNoDesc".into()],
+        flags: Vec::new(),
+        children: Vec::new(),
+        args: ArgsRule {
+            kind: ArgsKind::Min,
+            counts: vec![1],
+        },
+        silence_usage: false,
+        requires_profile: root.requires_profile,
+        wrapped_preflight: root.wrapped_preflight,
+        hidden: true,
+    }
 }
 
 /// The protocol command disables flag parsing: every trailing token, including
@@ -36,8 +42,8 @@ pub(crate) fn request(args: &[String], raw: Option<&[Vec<u8>]>) -> Option<Outcom
     {
         return None;
     }
-    let mut root = command_spec().clone();
-    root.children.push(protocol_spec());
+    let root = command_spec();
+    let protocol = protocol_spec();
     let owned;
     let bytes = if let Some(raw) = raw {
         raw
@@ -48,7 +54,8 @@ pub(crate) fn request(args: &[String], raw: Option<&[Vec<u8>]>) -> Option<Outcom
             .collect::<Vec<_>>();
         &owned
     };
-    let (command, _, remaining) = crate::argv::discover(&root, bytes).ok()?;
+    let (command, _, remaining) =
+        crate::argv::discover_with_root_child(root, bytes, Some(&protocol)).ok()?;
     if command.name != "__complete" {
         return None;
     }
@@ -68,7 +75,7 @@ pub(crate) fn request(args: &[String], raw: Option<&[Vec<u8>]>) -> Option<Outcom
         .position(|(arg, remaining)| arg != remaining)
         .unwrap_or(args.len() - 1);
     let no_desc = args[called_index] == "__completeNoDesc" || descriptions_disabled();
-    let (choices, directive, error) = choices(&root, &remaining);
+    let (choices, directive, error) = choices(root, &protocol, &remaining);
     let mut stdout = String::new();
     for choice in choices {
         let choice = if no_desc {
@@ -125,28 +132,33 @@ fn go_args(args: &[Vec<u8>]) -> Vec<u8> {
     result.push(b']');
     result
 }
-fn choices(root: &CommandSpec, args: &[Vec<u8>]) -> (Vec<String>, u8, Option<Vec<u8>>) {
+fn choices(
+    root: &CommandSpec,
+    protocol: &CommandSpec,
+    args: &[Vec<u8>],
+) -> (Vec<String>, u8, Option<Vec<u8>>) {
     let (last, before) = args.split_last().expect("at least one argument");
-    let (command, path, mut remaining) = match crate::argv::discover(root, before) {
-        Ok(found) => found,
-        Err(_) => {
-            return (
-                vec![],
-                0,
-                Some(
-                    [
-                        b"unable to find a command for arguments: ".as_slice(),
-                        &go_args(before),
-                    ]
-                    .concat(),
-                ),
-            );
-        }
-    };
+    let (command, path, mut remaining) =
+        match crate::argv::discover_with_root_child(root, before, Some(protocol)) {
+            Ok(found) => found,
+            Err(_) => {
+                return (
+                    vec![],
+                    0,
+                    Some(
+                        [
+                            b"unable to find a command for arguments: ".as_slice(),
+                            &go_args(before),
+                        ]
+                        .concat(),
+                    ),
+                );
+            }
+        };
     if command.name == "__complete" {
         return (vec![], 0, None);
     }
-    let flags = command.local_flags(true);
+    let flags = command.local_flags_borrowed(true);
     let mut value_flag = false;
     let mut flag_error = None;
     let mut prefix = last.as_slice();
@@ -345,4 +357,64 @@ fn render_template(template: &str, parameters: &[&str]) -> String {
     }
     output.push_str(rest);
     output
+}
+
+#[cfg(test)]
+mod protocol_spec_tests {
+    use super::*;
+
+    #[test]
+    fn protocol_spec_matches_root_clone_with_overrides() {
+        let mut expected = command_spec().clone();
+        expected.name = "__complete".into();
+        expected.r#use = "__complete [command-line]".into();
+        expected.short = "Request shell completion choices for the specified command-line".into();
+        expected.long = "__complete is a special command that is used by the shell completion logic\nto request completion choices for the specified command-line.".into();
+        expected.aliases = vec!["__completeNoDesc".into()];
+        expected.flags.clear();
+        expected.children.clear();
+        expected.args = ArgsRule {
+            kind: ArgsKind::Min,
+            counts: vec![1],
+        };
+        expected.disable_flags_in_use_line = true;
+        expected.silence_usage = false;
+        expected.hidden = true;
+        expected.operation = Operation::Deferred;
+        assert_eq!(protocol_spec(), expected);
+    }
+
+    #[test]
+    fn root_child_overlay_matches_cloned_tree_discovery() {
+        let root = command_spec();
+        let protocol = protocol_spec();
+        let mut cloned = root.clone();
+        cloned.children.push(protocol_spec());
+        for args in crate::argv::discovery_tests::cases(&cloned) {
+            let expected = crate::argv::discovery_tests::legacy_discover(&cloned, &args)
+                .map(|(command, path, remaining)| (command.name.as_str(), path, remaining))
+                .map_err(|e| (e.message, e.root_find));
+            let actual = crate::argv::discover_with_root_child(root, &args, Some(&protocol))
+                .map(|(command, path, remaining)| (command.name.as_str(), path, remaining))
+                .map_err(|e| (e.message, e.root_find));
+            assert_eq!(actual, expected, "args={args:?}");
+        }
+    }
+
+    #[test]
+    fn root_child_overlay_preserves_existing_name_and_alias_precedence() {
+        let root = command_spec();
+        let mut protocol = protocol_spec();
+        protocol.name = "sql".into();
+        protocol.aliases.push("version".into());
+        for args in [
+            vec![b"sql".to_vec(), b"run".to_vec()],
+            vec![b"version".to_vec()],
+        ] {
+            let actual =
+                crate::argv::discover_with_root_child(root, &args, Some(&protocol)).unwrap();
+            let expected = crate::argv::discover(root, &args).unwrap();
+            assert_eq!(actual, expected);
+        }
+    }
 }

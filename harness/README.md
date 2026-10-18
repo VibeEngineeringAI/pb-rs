@@ -441,3 +441,184 @@ previous Rust binary is an unmeasured deferred-command guard for new commands;
 use `run.py` with the same three binaries for already implemented workloads.
 Cloud replay cases require both Cloud artifacts. Loopback data does not establish
 production server performance or live mutation semantics.
+
+## Before/after file ingestion measurements
+
+`ingest_perf.py` compares two prebuilt Rust CLI revisions with native child
+CPU, wall time and peak RSS measurements. It uses a local HTTP fixture and
+fresh files, profiles and checkpoints for every sample; no Parseable account
+is needed. Normalized request bytes, batching, payloads and persisted state
+must match. Separate probes check resume, completion, durable 503 replay and
+413 splitting. Only generated identities, paths and collection timestamps are
+normalized; `--allow-wire-byte-differences` is an explicit relaxation and should
+not be used for a byte-compatible optimization.
+
+```sh
+python3 -m unittest discover -s harness -p test_ingest_perf.py
+flock -n ~/.cache/pb-rs-performance.lock python3 harness/ingest_perf.py run \
+  --baseline /absolute/path/to/baseline/pb \
+  --candidate /absolute/path/to/candidate/pb --meter bin/pb-meter \
+  --records 20000 --record-bytes 500 --batch-size 1000 \
+  --probe-fail-upload 1 --warmup 1 --repetitions 7 \
+  --out harness/results/ingest-before-after
+```
+
+The default resource gate requires a 10% median improvement in at least one
+of CPU, RSS or wall time per workload, a bootstrap interval below parity,
+and no metric regression over 5%. See `report.json` for raw samples, exact
+compatibility failures, intervals and gate decisions. Keep builds and tests
+outside measurement windows. The fixture persists requests before responding,
+so wall time includes local fixture and checkpoint filesystem work; CPU and
+RSS cover only the CLI child. See [the measured CLI optimizations](../docs/cli-performance.md)
+for the broader startup/SQL/ingestion campaign and its limits.
+
+## Streaming stress, large datasets and sustained ingestion
+
+`stress.py` compares prebuilt Go and Rust binaries against a separate, loopback
+Go fixture that generates responses incrementally. Neither the fixture nor the
+collector retains the whole dataset. The collector stores exact stdout/stderr
+digests, byte counts, bounded diagnostic samples, native child CPU/peak RSS, and
+a sampled `/proc` timeline. New output directories are required; interrupted
+SQL campaigns retain a partial `report.json`.
+
+Build and test the infrastructure without rebuilding either CLI:
+
+```sh
+make -f harness/Makefile stress-tools GO=/absolute/path/to/go
+make -f harness/Makefile stress-test GO=/absolute/path/to/go
+```
+
+Use the pinned Go toolchain for the reference build (this campaign uses 1.25.4).
+The fixture uses only the standard library. `stress-tools` creates a separate
+meter so it does not overwrite an earlier campaign's frozen measurement tool.
+
+| SQL profile | Coverage | Intended use |
+| --- | --- | --- |
+| `smoke` | Tiny/text/mixed rows, empty results, fragmented UTF-8/gzip, malformed/truncated prefixes, 503, pause/throttle, broken pipe, SIGINT | Small correctness and process-cleanup checks |
+| `scale` | 1M/10M tiny rows, roughly 1 GiB text, 1M escaped rows, an 8 MiB item | Resource scaling and throughput |
+| `soak` | Repeated bounded queries, including paced delivery | Host/runtime variation over a requested duration |
+| `backpressure` | 20-second stdout pause with a large text result | Memory and completion under a stopped reader |
+| `deadline` | Deliberately paced SQL crossing its real 60-second deadline | Error/exit parity with timing-dependent partial output |
+| `extended` | Roughly 10 GiB text and 50M tiny JSON rows | Explicit capacity probing; may exceed a CLI deadline |
+| `large` | One and eight 8 MiB JSON rows, including gzip | Per-item allocation and repeated-row peak RSS; not a leak test |
+| `transport` | Highly compressible gzip text and fragmented plain/gzip text | Decode/reassembly and resource checks; fragmented runs do not admit throughput claims |
+
+```sh
+flock -n ~/.cache/pb-rs-performance.lock taskset -c 2,4,6,8 \
+  python3 harness/stress.py --go bin/pb-go --rust bin/pb-perf2-final \
+  --meter bin/pb-stress-meter --profile smoke --calibrate \
+  --out harness/results/stress-smoke
+
+flock -n ~/.cache/pb-rs-performance.lock taskset -c 2,4,6,8 \
+  python3 harness/stress.py --go bin/pb-go --rust bin/pb-perf2-final \
+  --meter bin/pb-stress-meter --profile scale --sink null --calibrate \
+  --repetitions 3 --warmup 1 --out harness/results/stress-scale
+
+flock -n ~/.cache/pb-rs-performance.lock taskset -c 2,4,6,8 \
+  python3 harness/stress.py --go bin/pb-go --rust bin/pb-perf2-final \
+  --meter bin/pb-stress-meter --profile soak --sink null --duration 300 \
+  --out harness/results/stress-soak
+```
+
+`--case NAME` selects cases within a profile. Soak duration is a minimum **per
+case**, rounded up to whole Go/Rust rounds. Each SQL request retains the normal
+60-second CLI deadline; the runner does not extend it. Every query carries an
+explicit `LIMIT`, and the expected wire request is hashed independently. Larger
+capacity probes can fail because the Go or Rust binary reaches its deadline;
+that is not automatically a newly introduced compatibility regression.
+
+For two Rust revisions, pass `--reference-label baseline --candidate-label candidate`
+alongside `--go OLD --rust NEW`. The report records that this comparison has no
+Go oracle; run the same cases against Go separately for compatibility evidence.
+
+`perf3_cached.py prepare` can freeze a bounded response from the original Go
+fixture, and `perf3_cached.py run` replays it to Go and both Rust revisions. The
+replay verifies the file before each server start and uses bounded `sendfile`
+writes. It is a separate HTTP/1.0 Content-Length diagnostic, capped at 2 GiB,
+with full three-binary output validation before null-sink resource samples.
+Its Python hashing calibration can limit the reported throughput ceiling.
+Use generated-fixture results for chunked-response coverage; cached replay
+does not replace those tests.
+
+Ingestion resource comparisons should pass `--work-dir` on the intended
+filesystem. `/tmp` may be tmpfs, where charged storage-write bytes and fsync
+costs do not describe disk-backed checkpoints. The ingestion harness's default
+probe contains 3,000 rows so its third-upload failure is reachable with the
+CLI's default batch size of 1,000.
+
+Success and deterministic failure cases compare whole stdout digests, normalized
+stderr and exit codes. Only known sandbox/endpoint strings are normalized.
+Malformed/truncated JSON must publish exactly the valid prefix rows. Broken
+pipes and timed cancellation are labeled observations rather than exact-output
+parity passes. Deadline cases compare exit/error/request contracts and validate
+partial row framing; their output lengths depend on timing.
+Their initial bounded output prefixes must also match; later deadline output is
+not compared byte for byte because the delivered row counts depend on timing.
+
+The small smoke suite counts output rows with a bounded framing scanner. Scale
+and soak use hash-only collection because Python token scanning can limit tiny
+record throughput. Their row-rate numerator comes from the fixture's completed
+source rows, and comparison is admitted only after exact full Go/Rust output
+hash agreement. Text runs with `--calibrate` additionally match an independent
+raw response digest plus the CLI's trailing newline. The scanner checks framing,
+not complete JSON semantics; existing decoder/Go parity corpora remain necessary.
+
+For dense records even hash-only pipe collection can saturate the observer.
+`--sink null` first compares full Go/Rust output through the pipe, then runs
+separate resource measurements with stdout sent to `/dev/null`. Each measured
+run must match the prior deterministic source digest and request, finish normally
+and reap cleanly. Native write accounting must also cover at least the previously
+validated output byte count. This is a lower-bound check on all writes, not an stdout digest.
+Its output counts/hashes are explicitly unavailable; it is not
+described as capturing or comparing output on every measured invocation. The
+report retains the prior full-output validation separately. This fast-sink
+throughput is distinct from terminal, pipe, filesystem or slow-consumer throughput.
+
+Report CPU per million records, native peak RSS, sampled RSS over time, syscall
+counters, time to first output and output throughput. The 10–90% output window
+is a pipe-drain observation, not a parser-only measurement. Collector CPU and an
+optional raw-drain calibration expose observer/producer limits. Runs that approach
+those limits are not admitted as unconstrained throughput comparisons.
+Uncalibrated runs are also excluded from throughput admission. The calibration
+includes its Python reader, so a flagged result may reflect that reader's limit.
+Throttled and interrupted runs are correctness/resource probes, not speedup evidence.
+`/proc` CPU has tick granularity; sampled RSS differs from native lifetime peak.
+Increasing RSS alone does not prove a leak. Sequential SQL soak starts a new CLI
+for each query, so it cannot detect a leak in a single persistent CLI process.
+
+`stress_ingest.py` covers that persistent-process case using Rust's `--follow`
+extension. It has no Go equivalent. The writer and bounded HTTP sink run in
+separate processes. Source files and durable state stay on the filesystem of
+`--out`; use a real disk when studying checkpoint/fsync cost. Its backlog CSV
+and fixed-bin latency histogram measure production through sink acceptance,
+including poll, retry and sink delay. Histogram percentiles are bin upper bounds.
+
+```sh
+flock -n ~/.cache/pb-rs-performance.lock taskset -c 2,4,6,8 \
+  python3 harness/stress_ingest.py --binary bin/pb-perf2-final \
+  --meter bin/pb-stress-meter --duration 300 --rate 1000 \
+  --record-bytes 64 --batch-size 1000 \
+  --out harness/results/ingest-tiny-soak
+```
+
+Use `--shape mixed --record-bytes 256` for changing record sizes; use a new run
+with `--fail-upload 2`, `--ack-loss-upload 2`, or `--reject-over-rows 100` for the
+three separate fault modes. The suite verifies same-state lock rejection,
+contiguous sequences, record content, bounded replay identity, checkpoint offsets,
+resume/completion and idempotent repeated completion. An accepted batch replayed
+after a lost acknowledgement is expected at-least-once delivery, not deduplication.
+These controlled failures do not prove correctness at every possible crash point.
+Rotation, copytruncate, many-file discovery and different-state concurrency are
+outside this initial suite. Existing ingestion unit and replay tests still apply.
+
+The ingestion report records achieved producer rate and schedule lag. A writer
+that misses the requested rate fails that workload's admission check; the report
+retains its actual rate. An unexpected follower exit, escalation, timeout or
+unreaped process also fails, even if a later completion succeeds. Reports include
+binary/source hashes, filesystem identity, bounded validation errors and partial
+results when interrupted or unsuccessful. Input bounds and a disk-space preflight
+run before starting the workload.
+
+The completed characterization and retained load-admission failures are recorded
+in [the performance report](../docs/cli-performance.md#stress-and-sustained-load-characterization)
+and [interactive stress evidence](../docs/evidence/cli-stress/results.html).

@@ -48,11 +48,83 @@ struct Checkpoint {
 
 #[derive(Serialize, Deserialize)]
 struct Outbox {
-    rows: Vec<serde_json::Value>,
+    rows: Vec<OutboxRow>,
     next_files: FileState,
     next_sequence: u64,
     complete: bool,
     skipped_lines: u64,
+}
+
+/// Keep the durable row's JSON bytes, rather than a tree that must escape the
+/// payload again for size budgeting, checkpointing, and every upload attempt.
+/// The checkpoint representation remains an array of ordinary JSON values.
+struct OutboxRow {
+    json: Box<serde_json::value::RawValue>,
+    is_event: bool,
+}
+
+impl OutboxRow {
+    fn new(row: &EventRow<'_>) -> Result<Self, serde_json::Error> {
+        Ok(Self {
+            json: serde_json::value::to_raw_value(row)?,
+            is_event: row.pb_kind == "event",
+        })
+    }
+}
+
+impl Serialize for OutboxRow {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        self.json.serialize(serializer)
+    }
+}
+
+impl<'de> Deserialize<'de> for OutboxRow {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        // Older version-1 checkpoints allowed any JSON row. Decode through the
+        // same Value representation to retain duplicate-key normalization,
+        // numeric lexemes, field order, and the existing recursion limit/errors.
+        let row = serde_json::Value::deserialize(deserializer)?;
+        Ok(Self {
+            is_event: row["pb_kind"] == "event",
+            json: serde_json::value::to_raw_value(&row).map_err(serde::de::Error::custom)?,
+        })
+    }
+}
+
+// Field order matches the former json! rows, including pb_payload appended last.
+#[derive(Serialize)]
+struct EventRow<'a> {
+    pb_session: &'a str,
+    pb_collector: &'a str,
+    pb_seq: u64,
+    pb_event_id: &'a str,
+    pb_kind: &'a str,
+    pb_source: &'a str,
+    pb_generation: &'a str,
+    pb_source_seq: u64,
+    pb_host: &'a str,
+    pb_collected_at: &'a str,
+    pb_payload: &'a str,
+}
+
+fn encoded_rows_len(rows: &[OutboxRow]) -> usize {
+    rows.iter()
+        .fold(2 + rows.len().saturating_sub(1), |len, row| {
+            len.saturating_add(row.json.get().len())
+        })
+}
+
+fn encode_rows(rows: &[OutboxRow]) -> Vec<u8> {
+    let mut body = Vec::with_capacity(encoded_rows_len(rows));
+    body.push(b'[');
+    for (index, row) in rows.iter().enumerate() {
+        if index != 0 {
+            body.push(b',');
+        }
+        body.extend_from_slice(row.json.get().as_bytes());
+    }
+    body.push(b']');
+    body
 }
 
 pub(super) fn execute(
@@ -256,11 +328,7 @@ fn run(
         if let Some(pending) = checkpoint.pending.as_ref() {
             runtime.block_on(upload(&client, dataset_header.clone(), &pending.rows))?;
             let pending = checkpoint.pending.take().expect("pending batch was sent");
-            uploaded += pending
-                .rows
-                .iter()
-                .filter(|row| row["pb_kind"] == "event")
-                .count() as u64;
+            uploaded += pending.rows.iter().filter(|row| row.is_event).count() as u64;
             skipped += pending.skipped_lines;
             checkpoint.files = pending.next_files;
             checkpoint.next_sequence = pending.next_sequence;
@@ -281,7 +349,7 @@ fn run(
         }
         let mut collector =
             FileCollector::new(options.clone(), checkpoint.files.clone()).map_err(invalid)?;
-        let batch = match collector.scan() {
+        let mut batch = match collector.scan() {
             Ok(batch) => batch,
             Err(error) if follow && error.retryable() => {
                 writeln!(stderr, "Source changed during scan; retrying: {error}")
@@ -305,23 +373,27 @@ fn run(
         if !batch.records.is_empty() {
             let collected_at = chrono::Utc::now().to_rfc3339();
             let mut sequence = checkpoint.next_sequence;
-            let mut rows = Vec::with_capacity(batch.records.len());
-            for record in &batch.records {
-                let payload =
-                    serde_json::to_string(&record.payload).map_err(|e| invalid(e.to_string()))?;
-                rows.push(serde_json::json!({
-                    "pb_session": checkpoint.binding.session,
-                    "pb_collector": checkpoint.collector,
-                    "pb_seq": sequence,
-                    "pb_event_id": format!("{}:{}", checkpoint.collector, record.event_id),
-                    "pb_kind": "event",
-                    "pb_source": record.source_path,
-                    "pb_generation": record.source_generation,
-                    "pb_source_seq": record.source_sequence,
-                    "pb_host": checkpoint.host,
-                    "pb_collected_at": collected_at,
-                    "pb_payload": payload,
-                }));
+            // Serialize borrowed metadata and payload directly, without building
+            // a per-row JSON map or cloning its keys and values.
+            let records = std::mem::take(&mut batch.records);
+            let mut rows = Vec::with_capacity(records.len());
+            for record in records {
+                rows.push(
+                    OutboxRow::new(&EventRow {
+                        pb_session: &checkpoint.binding.session,
+                        pb_collector: &checkpoint.collector,
+                        pb_seq: sequence,
+                        pb_event_id: &format!("{}:{}", checkpoint.collector, record.event_id),
+                        pb_kind: "event",
+                        pb_source: &record.source_path,
+                        pb_generation: &record.source_generation,
+                        pb_source_seq: record.source_sequence,
+                        pb_host: &checkpoint.host,
+                        pb_collected_at: &collected_at,
+                        pb_payload: &record.payload,
+                    })
+                    .map_err(|e| invalid(e.to_string()))?,
+                );
                 sequence = sequence
                     .checked_add(1)
                     .filter(|n| *n <= MAX_SEQUENCE)
@@ -329,11 +401,7 @@ fn run(
             }
             // Include source offsets in the outbox before HTTP, even on the
             // first batch: changed or removed source files cannot change replay.
-            if serde_json::to_vec(&rows)
-                .map_err(|e| invalid(e.to_string()))?
-                .len()
-                > MAX_UPLOAD
-            {
+            if encoded_rows_len(&rows) > MAX_UPLOAD {
                 return Err(invalid(
                     "encoded ingestion batch exceeds 16 MiB; reduce --batch-size and retry (source offsets have not advanced)",
                 ));
@@ -372,19 +440,22 @@ fn run(
                 ));
             }
             checkpoint.pending = Some(Outbox {
-                rows: vec![serde_json::json!({
-                    "pb_session": checkpoint.binding.session,
-                    "pb_collector": checkpoint.collector,
-                    "pb_seq": checkpoint.next_sequence,
-                    "pb_event_id": format!("{}:complete", checkpoint.collector),
-                    "pb_kind": "complete",
-                    "pb_source": "",
-                    "pb_generation": "",
-                    "pb_source_seq": 0,
-                    "pb_host": checkpoint.host,
-                    "pb_collected_at": chrono::Utc::now().to_rfc3339(),
-                    "pb_payload": "{}",
-                })],
+                rows: vec![
+                    OutboxRow::new(&EventRow {
+                        pb_session: &checkpoint.binding.session,
+                        pb_collector: &checkpoint.collector,
+                        pb_seq: checkpoint.next_sequence,
+                        pb_event_id: &format!("{}:complete", checkpoint.collector),
+                        pb_kind: "complete",
+                        pb_source: "",
+                        pb_generation: "",
+                        pb_source_seq: 0,
+                        pb_host: &checkpoint.host,
+                        pb_collected_at: &chrono::Utc::now().to_rfc3339(),
+                        pb_payload: "{}",
+                    })
+                    .map_err(|e| invalid(e.to_string()))?,
+                ],
                 next_files: checkpoint.files.clone(),
                 next_sequence: checkpoint
                     .next_sequence
@@ -406,16 +477,16 @@ fn run(
 async fn upload(
     client: &ApiClient,
     dataset: http::HeaderValue,
-    rows: &[serde_json::Value],
+    rows: &[OutboxRow],
 ) -> Result<(), CliError> {
     let mut pieces = vec![rows];
     while let Some(piece) = pieces.pop() {
-        let body = serde_json::to_vec(piece).map_err(|e| invalid(e.to_string()))?;
-        if body.len() > MAX_REQUEST && piece.len() > 1 {
+        if encoded_rows_len(piece) > MAX_REQUEST && piece.len() > 1 {
             let (left, right) = piece.split_at(piece.len() / 2);
             pieces.extend([right, left]);
             continue;
         }
+        let body = encode_rows(piece);
         let mut request = client
             .prepare_standard(http::Method::POST, "ingest", Some(body))
             .map_err(api_error)?;
@@ -476,3 +547,6 @@ fn report(
     .and_then(|()| stdout.flush())
     .map_err(|e| CliError::output("write ingestion result", e))
 }
+
+#[cfg(test)]
+mod outbox_tests;

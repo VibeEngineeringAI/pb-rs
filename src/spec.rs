@@ -2,9 +2,9 @@
 //! and cmd/*.go; it is input to parsing and rendering, never captured CLI output.
 use serde::Deserialize;
 use serde_json::Value;
-use std::sync::OnceLock;
+use std::{borrow::Cow, sync::OnceLock};
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize, PartialEq)]
 pub struct CommandSpec {
     pub name: String,
     pub operation: Operation,
@@ -41,7 +41,7 @@ pub enum Operation {
     Deferred,
 }
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize, PartialEq)]
 pub struct ArgsRule {
     pub kind: ArgsKind,
     #[serde(default)]
@@ -60,7 +60,7 @@ pub enum ArgsKind {
     ProfileAdd,
 }
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize, PartialEq)]
 pub struct FlagSpec {
     pub name: String,
     pub shorthand: String,
@@ -105,6 +105,22 @@ impl CommandSpec {
         flags.sort_by(|a, b| a.name.cmp(&b.name));
         flags
     }
+    /// Internal consumers borrow declarations; only the synthesized help flag
+    /// needs ownership. Keep the public owned adapter and its ordering intact.
+    pub(crate) fn local_flags_borrowed(&self, help: bool) -> Vec<Cow<'_, FlagSpec>> {
+        let mut flags: Vec<_> = self.flags.iter().map(Cow::Borrowed).collect();
+        if help {
+            flags.push(Cow::Owned(FlagSpec {
+                name: "help".into(),
+                shorthand: "h".into(),
+                kind: FlagKind::Bool,
+                default: Value::Bool(false),
+                usage: format!("help for {}", self.name),
+            }));
+        }
+        flags.sort_by(|a, b| a.name.cmp(&b.name));
+        flags
+    }
     pub fn usage(&self, path: &str, help: bool) -> String {
         let suffix = self.r#use.strip_prefix(&self.name).unwrap_or("");
         let mut usage = format!("{path}{suffix}");
@@ -118,9 +134,112 @@ impl CommandSpec {
     }
 }
 
+// Defines `generated_command_spec()`, built by build.rs from spec.json so the
+// specification is not parsed from JSON on every invocation.
+include!(concat!(env!("OUT_DIR"), "/command_spec.rs"));
+
 pub fn command_spec() -> &'static CommandSpec {
     static ROOT: OnceLock<CommandSpec> = OnceLock::new();
-    ROOT.get_or_init(|| {
+    ROOT.get_or_init(generated_command_spec)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn parsed() -> CommandSpec {
         serde_json::from_str(include_str!("spec.json")).expect("valid owned command specification")
-    })
+    }
+
+    fn count(spec: &CommandSpec) -> (usize, usize) {
+        spec.children
+            .iter()
+            .map(count)
+            .fold((1, spec.flags.len()), |(c, f), (cc, cf)| (c + cc, f + cf))
+    }
+
+    #[test]
+    fn generated_spec_matches_runtime_json_parse() {
+        let parsed = parsed();
+        let generated = generated_command_spec();
+        let (commands, flags) = count(&parsed);
+        assert!(commands > 1 && flags > 0, "spec.json unexpectedly empty");
+        assert_eq!(count(&generated), (commands, flags));
+        assert_eq!(generated, parsed);
+        assert_eq!(command_spec(), &parsed);
+    }
+
+    #[test]
+    fn generated_defaults_render_like_parsed_defaults() {
+        // Value equality under arbitrary_precision compares number text; also
+        // check the Display form that parsing and help rendering consume.
+        fn walk(a: &CommandSpec, b: &CommandSpec) {
+            for (x, y) in a.flags.iter().zip(&b.flags) {
+                assert_eq!(x.default.to_string(), y.default.to_string(), "{}", x.name);
+                assert_eq!(x.default.as_i64(), y.default.as_i64(), "{}", x.name);
+            }
+            a.children
+                .iter()
+                .zip(&b.children)
+                .for_each(|(x, y)| walk(x, y));
+        }
+        walk(&generated_command_spec(), &parsed());
+    }
+
+    #[test]
+    fn borrowed_local_flags_match_owned_fields_order_and_help() {
+        fn check(command: &CommandSpec) {
+            for help in [false, true] {
+                let owned = command.local_flags(help);
+                let borrowed = command.local_flags_borrowed(help);
+                assert_eq!(
+                    borrowed.iter().map(Cow::as_ref).collect::<Vec<_>>(),
+                    owned.iter().collect::<Vec<_>>()
+                );
+                let mut synthesized = 0;
+                for flag in &borrowed {
+                    match flag {
+                        Cow::Borrowed(flag) => assert!(
+                            command
+                                .flags
+                                .iter()
+                                .any(|source| std::ptr::eq(source, *flag)),
+                            "declared flags must retain their source allocation"
+                        ),
+                        Cow::Owned(flag) => {
+                            synthesized += 1;
+                            assert_eq!(flag.name, "help");
+                            assert_eq!(flag.usage, format!("help for {}", command.name));
+                        }
+                    }
+                }
+                assert_eq!(synthesized, usize::from(help));
+            }
+            command.children.iter().for_each(check);
+        }
+        check(command_spec());
+
+        // Public declarations need not be sorted or have unique flag names.
+        // Retain the stable ordering of duplicates, including a declared help.
+        let mut custom = command_spec().clone();
+        custom.children.clear();
+        custom.flags.reverse();
+        custom.flags.extend([
+            FlagSpec {
+                name: "help".into(),
+                shorthand: "custom".into(),
+                kind: FlagKind::String,
+                default: Value::String("custom default".into()),
+                usage: "declared help".into(),
+            },
+            FlagSpec {
+                name: "help".into(),
+                shorthand: "second".into(),
+                kind: FlagKind::Strings,
+                default: Value::Null,
+                usage: "second declared help".into(),
+            },
+        ]);
+        check(&custom);
+    }
 }

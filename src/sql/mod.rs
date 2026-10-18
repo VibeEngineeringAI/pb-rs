@@ -15,9 +15,13 @@ use std::io::{self, BufRead, Read, Write};
 use tokio::sync::{mpsc, oneshot};
 
 type Chunk = Result<Bytes, ApiError>;
+const TEXT_BRIDGE_CHUNK: usize = 128 * 1024;
 
-/// The bridge holds at most a consumed, queued, and producer-held 8KiB chunk.
-/// Transport framing may additionally retain its current frame; no whole-response buffer.
+/// The bridge holds at most a consumed, queued, and producer-held chunk:
+/// at most TEXT_BRIDGE_CHUNK logical bytes each for successful text, 8KiB
+/// for JSON and error previews. Slices retain their Hyper backing allocations;
+/// transport buffers and flow-control windows add memory beyond this bridge.
+/// Neither the bridge nor the transport buffers the whole response.
 struct BodyReader {
     receiver: mpsc::Receiver<Chunk>,
     current: Bytes,
@@ -367,6 +371,14 @@ fn render_response(
 ) -> Result<(), Failure> {
     let status = response.status;
     let status_text = response.status_text.clone();
+    // Return available data immediately rather than waiting to fill a chunk.
+    // Cheap text copies need fewer cross-thread handoffs; JSON and preview
+    // read-ahead retain their existing limits.
+    let chunk_limit = if status == 200 && format != "json" {
+        TEXT_BRIDGE_CHUNK
+    } else {
+        8192
+    };
     std::thread::scope(|scope| {
         let (sender, receiver) = mpsc::channel(1);
         let (finished, completion) = oneshot::channel();
@@ -404,7 +416,7 @@ fn render_response(
             let pump = async {
                 let deadline = response.deadline();
                 loop {
-                    let chunk = response.chunk_limit(8192).await;
+                    let chunk = response.chunk_limit(chunk_limit).await;
                     let (item, last) = match chunk {
                         Ok(Some(bytes)) => (Ok(bytes), false),
                         Ok(None) => break,
@@ -643,7 +655,7 @@ mod tests {
             bytes.extend(vec![b'x'; 256 * 1024]);
             bytes
         } else {
-            vec![b'x'; 256 * 1024]
+            vec![b'x'; 1024 * 1024]
         };
         let body_len = body.len();
         let server = thread::spawn(move || {
@@ -732,6 +744,7 @@ mod tests {
         } else {
             assert!(!writer.bytes.is_empty());
             assert!(writer.bytes.len() < body_len);
+            assert!(writer.bytes.len() <= 2 * TEXT_BRIDGE_CHUNK + 16);
             let Err(Failure::Output(output::OutputError {
                 kind: output::OutputErrorKind::Io(error),
                 ..

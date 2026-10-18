@@ -12,7 +12,7 @@ use std::io::{BufRead, BufReader, Read, Seek, SeekFrom};
 use std::path::{Path, PathBuf};
 
 use serde::{Deserialize, Serialize};
-use serde_json::{Map, Value};
+use serde_json::Value;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum FileFormat {
@@ -78,11 +78,18 @@ struct Checkpoint {
 
 #[derive(Clone, Debug)]
 pub(crate) struct FileRecord {
-    pub payload: Map<String, Value>,
+    /// Canonical JSON object text, serialized once for both budgeting and upload.
+    pub payload: String,
     pub source_path: String,
     pub source_generation: String,
     pub source_sequence: u64,
     pub event_id: String,
+}
+
+/// Serializes exactly like a one-entry `message` map without allocating one.
+#[derive(Serialize)]
+struct TextPayload<'a> {
+    message: &'a str,
 }
 
 #[derive(Clone, Debug)]
@@ -411,14 +418,12 @@ impl FileCollector {
                 let contents = line.strip_suffix(b"\r").unwrap_or(&line);
                 let parsed = match self.options.format {
                     FileFormat::Jsonl => match serde_json::from_slice::<Value>(contents) {
-                        Ok(Value::Object(object)) => Ok(object),
+                        Ok(Value::Object(object)) => Ok(serde_json::to_string(&object)),
                         Ok(_) => Err("JSONL records must be JSON objects".to_owned()),
                         Err(error) => Err(format!("invalid JSONL: {error}")),
                     },
                     FileFormat::Text => std::str::from_utf8(contents)
-                        .map(|message| {
-                            Map::from_iter([("message".into(), Value::String(message.to_owned()))])
-                        })
+                        .map(|message| serde_json::to_string(&TextPayload { message }))
                         .map_err(|error| format!("invalid UTF-8 text: {error}")),
                 };
                 let payload = match parsed {
@@ -440,9 +445,9 @@ impl FileCollector {
                         );
                     }
                 };
-                let bytes = serde_json::to_vec(&payload)
-                    .map_err(|error| error.to_string())?
-                    .len();
+                // Serialization failures are not invalid input, so never skip them.
+                let payload = payload.map_err(|error| error.to_string())?;
+                let bytes = payload.len();
                 if bytes > self.options.max_batch_bytes {
                     return Err(format!(
                         "{} at byte {line_start}: record is {bytes} bytes, exceeding the {} byte batch limit",

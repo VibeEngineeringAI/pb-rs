@@ -119,7 +119,7 @@ impl StateFile {
         let mut temporary = TemporaryFile::create(&self.parent)?;
         {
             let file = temporary.file.as_mut().expect("temporary file is open");
-            let mut buffered = BufWriter::new(file);
+            let mut buffered = BufWriter::with_capacity(64 * 1024, file);
             let mut writer = BoundedWriter {
                 inner: &mut buffered,
                 remaining: MAX_STATE_BYTES,

@@ -87,13 +87,39 @@ pub(super) struct Scanner {
 
 impl Scanner {
     pub(super) fn value<R: BufRead>(&mut self, reader: &mut R) -> Result<(), ScanError> {
+        self.value_impl::<R, true>(reader)
+    }
+
+    fn value_impl<R: BufRead, const BULK_STRINGS: bool>(
+        &mut self,
+        reader: &mut R,
+    ) -> Result<(), ScanError> {
         self.bytes.clear();
         self.frames.clear();
         let bytes = &mut self.bytes;
         let frames = &mut self.frames;
         let mut lexeme = Lexeme::Value;
         loop {
-            let byte = match peek(reader).map_err(ScanError::Io)? {
+            let next = if BULK_STRINGS && matches!(lexeme, Lexeme::String { .. }) {
+                let available = reader.fill_buf().map_err(ScanError::Io)?;
+                // Ordinary string bytes do not change scanner state. Copy a
+                // whole buffered run, leaving escapes, quotes and invalid
+                // control bytes to the original state machine below. A run
+                // reaching the buffer boundary still refills on the next turn.
+                let count = available
+                    .iter()
+                    .position(|&byte| byte < 0x20 || byte == b'"' || byte == b'\\')
+                    .unwrap_or(available.len());
+                if count != 0 {
+                    bytes.extend_from_slice(&available[..count]);
+                    reader.consume(count);
+                    continue;
+                }
+                available.first().copied()
+            } else {
+                peek(reader).map_err(ScanError::Io)?
+            };
+            let byte = match next {
                 Some(byte) => byte,
                 None => {
                     if matches!(lexeme, Lexeme::End)
@@ -351,6 +377,188 @@ impl Scanner {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    struct Fragmented<'a> {
+        input: &'a [u8],
+        position: usize,
+        end: usize,
+        fragment: usize,
+        error_at: Option<usize>,
+        refills: Vec<usize>,
+    }
+    impl<'a> Fragmented<'a> {
+        fn new(input: &'a [u8], fragment: usize, error_at: Option<usize>) -> Self {
+            Self {
+                input,
+                position: 0,
+                end: 0,
+                fragment,
+                error_at,
+                refills: Vec::new(),
+            }
+        }
+    }
+    impl io::Read for Fragmented<'_> {
+        fn read(&mut self, output: &mut [u8]) -> io::Result<usize> {
+            let available = self.fill_buf()?;
+            let count = output.len().min(available.len());
+            output[..count].copy_from_slice(&available[..count]);
+            self.consume(count);
+            Ok(count)
+        }
+    }
+    impl BufRead for Fragmented<'_> {
+        fn fill_buf(&mut self) -> io::Result<&[u8]> {
+            if self.position == self.end {
+                self.refills.push(self.position);
+                if self.error_at == Some(self.position) {
+                    return Err(io::Error::new(io::ErrorKind::TimedOut, "injected read"));
+                }
+                self.end = (self.position + self.fragment).min(self.input.len());
+                if let Some(error_at) = self.error_at {
+                    self.end = self.end.min(error_at);
+                }
+            }
+            Ok(&self.input[self.position..self.end])
+        }
+        fn consume(&mut self, count: usize) {
+            assert!(count <= self.end - self.position);
+            self.position += count;
+        }
+    }
+    #[derive(Debug, PartialEq)]
+    enum Outcome {
+        Complete,
+        Syntax(String),
+        Io(io::ErrorKind, String),
+    }
+    fn outcome(result: Result<(), ScanError>) -> Outcome {
+        match result {
+            Ok(()) => Outcome::Complete,
+            Err(ScanError::Syntax(error)) => Outcome::Syntax(error),
+            Err(ScanError::Io(error)) => Outcome::Io(error.kind(), error.to_string()),
+        }
+    }
+    fn differential(input: &[u8], fragment: usize, error_at: Option<usize>) {
+        let mut original_reader = Fragmented::new(input, fragment, error_at);
+        let mut optimized_reader = Fragmented::new(input, fragment, error_at);
+        let mut original = Scanner::default();
+        let mut optimized = Scanner::default();
+        // Disabling the run copy keeps the former one-byte state machine.
+        let expected = outcome(original.value_impl::<_, false>(&mut original_reader));
+        let actual = outcome(optimized.value(&mut optimized_reader));
+        assert_eq!(
+            actual, expected,
+            "input={input:?}, fragment={fragment}, error_at={error_at:?}"
+        );
+        assert_eq!(optimized.bytes, original.bytes);
+        assert_eq!(optimized_reader.position, original_reader.position);
+        assert_eq!(optimized_reader.refills, original_reader.refills);
+        assert_eq!(optimized.frames.len(), original.frames.len());
+    }
+    fn next_random(state: &mut u32) -> u8 {
+        *state ^= *state << 13;
+        *state ^= *state >> 17;
+        *state ^= *state << 5;
+        *state as u8
+    }
+
+    #[test]
+    fn string_runs_match_bytewise_scanning_for_all_bytes_and_fragment_boundaries() {
+        let mut corpus = Vec::new();
+        for byte in 0..=255 {
+            for (prefix, suffix) in [
+                (b"\"ordinary".as_slice(), b"tail\",unread".as_slice()),
+                (b"{\"ordinary", b"tail\":1}unread"),
+                (b"[\"ordinary\\", b"tail\"]unread"),
+                (b"[\"ordinary\\u0", b"00tail\"]unread"),
+                (b"[\"ordinary\",", b"]unread"),
+                (b"[12", b"]unread"),
+            ] {
+                corpus.push([prefix, &[byte], suffix].concat());
+            }
+        }
+        let mut state = 0x1234_5678;
+        for _ in 0..2048 {
+            let length = usize::from(next_random(&mut state));
+            let mut input = Vec::with_capacity(length + 16);
+            input.extend_from_slice(b"[\"prefix");
+            for _ in 0..length {
+                // Long ordinary runs, interspersed with arbitrary malformed
+                // bytes, exercise successful and rejected prefixes alike.
+                let byte = next_random(&mut state);
+                input.push(if byte.is_multiple_of(8) {
+                    byte
+                } else {
+                    byte | 0x20
+                });
+            }
+            input.extend_from_slice(b"\",null,1.2e+3]unread");
+            corpus.push(input);
+        }
+        for input in corpus {
+            for fragment in [1, 2, 3, 7, 31, 8192] {
+                differential(&input, fragment, None);
+            }
+        }
+        for depth in [9999, 10000, 10001] {
+            let input = format!(
+                "{}\"{}\"{}tail",
+                "[".repeat(depth),
+                "x".repeat(20000),
+                "]".repeat(depth)
+            );
+            for fragment in [1, 7, 8192, 65536] {
+                differential(input.as_bytes(), fragment, None);
+            }
+        }
+    }
+
+    #[test]
+    fn string_runs_preserve_refill_errors_scalar_lookahead_and_container_boundaries() {
+        for input in [
+            b"\"ordinary string\"".as_slice(),
+            b"\"escaped\\u1234\\\"tail\"",
+            b"[\"ordinary string\"]",
+            b"{\"ordinary key\":\"ordinary value\"}",
+            b"\"ordinary string\",unread",
+            b"true",
+            b"false",
+            b"null",
+            b"12.3e-4",
+            b"[true,false,null,12.3e-4]tail",
+            b"\"invalid\x01tail",
+            b"\"invalid\\qtail",
+            b"\"invalid\\u12Qtail",
+            b"\"unfinished",
+            b"\"escape\\",
+            b"[]unread",
+            b"{}unread",
+            b" \t\r\n",
+        ] {
+            for error_at in 0..=input.len() {
+                for fragment in [1, 2, 7, 8192] {
+                    differential(input, fragment, Some(error_at));
+                }
+            }
+        }
+        // A root scalar must attempt one more refill even after its closing
+        // quote/literal. Root containers return before reading any tail byte.
+        for (input, expected) in [
+            (b"\"text\"".as_slice(), false),
+            (b"true", false),
+            (b"[]", true),
+            (b"{}", true),
+        ] {
+            let mut reader = Fragmented::new(input, 8192, Some(input.len()));
+            assert_eq!(Scanner::default().value(&mut reader).is_ok(), expected);
+        }
+        let mut reader = Fragmented::new(b"123,unread", 8192, None);
+        let mut scanner = Scanner::default();
+        scanner.value(&mut reader).unwrap();
+        assert_eq!(scanner.bytes, b"123");
+        assert_eq!(reader.fill_buf().unwrap(), b",unread");
+    }
 
     #[test]
     fn reused_scanner_keeps_capacity_and_leaves_delimiters_unread() {

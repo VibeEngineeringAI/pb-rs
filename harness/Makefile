@@ -29,7 +29,18 @@ self-check:
 
 test:
 	cd $(ROOT) && $(GO) test ./harness/fixture
+	cd $(ROOT) && $(GO) test -timeout 60s ./harness/stress_fixture
 	$(PYTHON) $(ROOT)/harness/run_tests.py
+
+.PHONY: stress-tools stress-test
+stress-tools:
+	mkdir -p $(ROOT)/bin
+	$(CC) -O2 -Wall -Wextra -Werror -o $(ROOT)/bin/pb-stress-meter $(ROOT)/harness/meter.c
+	cd $(ROOT) && $(GO) build -trimpath -o bin/pb-stress-fixture ./harness/stress_fixture
+
+stress-test:
+	cd $(ROOT) && $(GO) test -timeout 60s ./harness/stress_fixture
+	$(PYTHON) -m unittest discover -s $(ROOT)/harness -p 'test_stress*.py' -v
 
 # Keep candidate binaries separate from the Go reference and installed CLI.
 rust-build:
