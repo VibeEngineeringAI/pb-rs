@@ -1,0 +1,790 @@
+{
+  "schema": "pb-perf3-text-syscall-attribution/1",
+  "scope": "One strace-instrumented raw-text run per binary, all followed threads aggregated. Counts are diagnostic syscall observations, not native timing or performance evidence. CLI stdout was discarded; no output-parity claim.",
+  "candidate_scope": "Unchanged final R4 candidate, before uniform-artifact rerun; binary hashes identify the traced programs.",
+  "method": {
+    "tracer": "strace -f -c -qq",
+    "output": "text",
+    "stdout_sink": "/dev/null",
+    "repetitions_per_binary": 1,
+    "timing_gain_claim": false,
+    "output_parity": false,
+    "count_limit": "write counts aggregate all descriptors, including runtime wakeups; fd-specific stdout counts and bytes are unavailable. Tracing affects scheduling/coalescing."
+  },
+  "runs": {
+    "go": {
+      "binary_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "command": [
+        "/usr/bin/strace",
+        "-f",
+        "-c",
+        "-qq",
+        "-o",
+        "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/trace-final/go/strace.txt",
+        "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-go",
+        "sql",
+        "run",
+        "SELECT * FROM logs LIMIT 131072",
+        "--from",
+        "2024-01-01T00:00:00Z",
+        "--to",
+        "2024-01-01T01:00:00Z",
+        "-o",
+        "text"
+      ],
+      "exit_code": 0,
+      "source_admitted": true,
+      "fixture_config": {
+        "rows": 131072,
+        "row_bytes": 1024,
+        "shape": "ascii",
+        "chunk_bytes": 65536,
+        "chunk_delay_ms": 0,
+        "gzip": false,
+        "failure": "none",
+        "fail_after_rows": 0,
+        "fragment_pattern": [],
+        "flush": false
+      },
+      "rows_written": 131072,
+      "source_bytes": 134348801,
+      "wire_bytes": 134348801,
+      "source_response_sha256": "d494bb2827a3417cf45adce548992c448b69ea4217efa5098ec8c7c4a8a56df9",
+      "query_body_sha256": "bd13a22a807d75c0d7bce613d101b2ac1643eb018ec9c683ace1cda29ad1bffb",
+      "syscalls": {
+        "futex": {
+          "calls": 356,
+          "errors": 30
+        },
+        "nanosleep": {
+          "calls": 2862,
+          "errors": 0
+        },
+        "epoll_pwait": {
+          "calls": 1212,
+          "errors": 1
+        },
+        "read": {
+          "calls": 32882,
+          "errors": 6
+        },
+        "write": {
+          "calls": 32805,
+          "errors": 0
+        },
+        "tgkill": {
+          "calls": 42,
+          "errors": 0
+        },
+        "prctl": {
+          "calls": 37,
+          "errors": 0
+        },
+        "getpid": {
+          "calls": 45,
+          "errors": 0
+        },
+        "rt_sigaction": {
+          "calls": 114,
+          "errors": 0
+        },
+        "sched_yield": {
+          "calls": 20,
+          "errors": 0
+        },
+        "rt_sigreturn": {
+          "calls": 42,
+          "errors": 2
+        },
+        "clone": {
+          "calls": 6,
+          "errors": 0
+        },
+        "mmap": {
+          "calls": 38,
+          "errors": 0
+        },
+        "rt_sigprocmask": {
+          "calls": 20,
+          "errors": 0
+        },
+        "sigaltstack": {
+          "calls": 14,
+          "errors": 0
+        },
+        "gettid": {
+          "calls": 13,
+          "errors": 0
+        },
+        "openat": {
+          "calls": 7,
+          "errors": 1
+        },
+        "sched_getaffinity": {
+          "calls": 2,
+          "errors": 0
+        },
+        "close": {
+          "calls": 6,
+          "errors": 0
+        },
+        "fcntl": {
+          "calls": 18,
+          "errors": 0
+        },
+        "madvise": {
+          "calls": 2,
+          "errors": 0
+        },
+        "fstat": {
+          "calls": 3,
+          "errors": 0
+        },
+        "ioctl": {
+          "calls": 3,
+          "errors": 3
+        },
+        "pread64": {
+          "calls": 8,
+          "errors": 0
+        },
+        "socket": {
+          "calls": 1,
+          "errors": 0
+        },
+        "connect": {
+          "calls": 1,
+          "errors": 1
+        },
+        "getsockname": {
+          "calls": 1,
+          "errors": 0
+        },
+        "getpeername": {
+          "calls": 1,
+          "errors": 0
+        },
+        "setsockopt": {
+          "calls": 5,
+          "errors": 0
+        },
+        "getsockopt": {
+          "calls": 1,
+          "errors": 0
+        },
+        "execve": {
+          "calls": 1,
+          "errors": 0
+        },
+        "uname": {
+          "calls": 1,
+          "errors": 0
+        },
+        "statfs": {
+          "calls": 1,
+          "errors": 0
+        },
+        "arch_prctl": {
+          "calls": 1,
+          "errors": 0
+        },
+        "epoll_ctl": {
+          "calls": 5,
+          "errors": 3
+        },
+        "newfstatat": {
+          "calls": 9,
+          "errors": 8
+        },
+        "readlinkat": {
+          "calls": 1,
+          "errors": 0
+        },
+        "eventfd2": {
+          "calls": 1,
+          "errors": 0
+        },
+        "epoll_create1": {
+          "calls": 1,
+          "errors": 0
+        },
+        "prlimit64": {
+          "calls": 1,
+          "errors": 0
+        }
+      },
+      "total": {
+        "calls": 70589,
+        "errors": 55
+      },
+      "report": {
+        "path": "harness/results/perf3/trace-final/go/report.json",
+        "sha256": "2fd0afd40780e0a55fa3a94d05e324892e9bfca8ac1a2dfb3bb28b89b6171416"
+      },
+      "strace_summary": {
+        "path": "harness/results/perf3/trace-final/go/strace.txt",
+        "sha256": "8a7310ccfc0b652266c19dc20097037bfe7186d64a0162ecace7ae50a4353437"
+      }
+    },
+    "baseline": {
+      "binary_sha256": "8124d157236e215d2068ce4dadf97ebe08043a1a1c327d5dc3a69806785e12a1",
+      "command": [
+        "/usr/bin/strace",
+        "-f",
+        "-c",
+        "-qq",
+        "-o",
+        "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/trace-final/baseline/strace.txt",
+        "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf2-final",
+        "sql",
+        "run",
+        "SELECT * FROM logs LIMIT 131072",
+        "--from",
+        "2024-01-01T00:00:00Z",
+        "--to",
+        "2024-01-01T01:00:00Z",
+        "-o",
+        "text"
+      ],
+      "exit_code": 0,
+      "source_admitted": true,
+      "fixture_config": {
+        "rows": 131072,
+        "row_bytes": 1024,
+        "shape": "ascii",
+        "chunk_bytes": 65536,
+        "chunk_delay_ms": 0,
+        "gzip": false,
+        "failure": "none",
+        "fail_after_rows": 0,
+        "fragment_pattern": [],
+        "flush": false
+      },
+      "rows_written": 131072,
+      "source_bytes": 134348801,
+      "wire_bytes": 134348801,
+      "source_response_sha256": "d494bb2827a3417cf45adce548992c448b69ea4217efa5098ec8c7c4a8a56df9",
+      "query_body_sha256": "bd13a22a807d75c0d7bce613d101b2ac1643eb018ec9c683ace1cda29ad1bffb",
+      "syscalls": {
+        "epoll_wait": {
+          "calls": 17871,
+          "errors": 0
+        },
+        "write": {
+          "calls": 32540,
+          "errors": 0
+        },
+        "futex": {
+          "calls": 1471,
+          "errors": 46
+        },
+        "recvfrom": {
+          "calls": 373,
+          "errors": 0
+        },
+        "brk": {
+          "calls": 12,
+          "errors": 0
+        },
+        "munmap": {
+          "calls": 9,
+          "errors": 0
+        },
+        "mmap": {
+          "calls": 27,
+          "errors": 0
+        },
+        "read": {
+          "calls": 11,
+          "errors": 0
+        },
+        "connect": {
+          "calls": 1,
+          "errors": 1
+        },
+        "mprotect": {
+          "calls": 8,
+          "errors": 0
+        },
+        "close": {
+          "calls": 12,
+          "errors": 0
+        },
+        "clone3": {
+          "calls": 1,
+          "errors": 0
+        },
+        "rt_sigprocmask": {
+          "calls": 7,
+          "errors": 0
+        },
+        "openat": {
+          "calls": 7,
+          "errors": 0
+        },
+        "set_robust_list": {
+          "calls": 2,
+          "errors": 0
+        },
+        "lseek": {
+          "calls": 2,
+          "errors": 0
+        },
+        "epoll_ctl": {
+          "calls": 4,
+          "errors": 0
+        },
+        "rt_sigaction": {
+          "calls": 6,
+          "errors": 0
+        },
+        "sendto": {
+          "calls": 1,
+          "errors": 0
+        },
+        "sigaltstack": {
+          "calls": 6,
+          "errors": 0
+        },
+        "madvise": {
+          "calls": 2,
+          "errors": 0
+        },
+        "fcntl": {
+          "calls": 4,
+          "errors": 0
+        },
+        "socketpair": {
+          "calls": 1,
+          "errors": 0
+        },
+        "setsockopt": {
+          "calls": 3,
+          "errors": 0
+        },
+        "prlimit64": {
+          "calls": 3,
+          "errors": 0
+        },
+        "ioctl": {
+          "calls": 2,
+          "errors": 2
+        },
+        "socket": {
+          "calls": 1,
+          "errors": 0
+        },
+        "rseq": {
+          "calls": 2,
+          "errors": 0
+        },
+        "gettid": {
+          "calls": 2,
+          "errors": 0
+        },
+        "sched_getaffinity": {
+          "calls": 2,
+          "errors": 0
+        },
+        "eventfd2": {
+          "calls": 1,
+          "errors": 0
+        },
+        "epoll_create1": {
+          "calls": 1,
+          "errors": 0
+        },
+        "getrandom": {
+          "calls": 3,
+          "errors": 0
+        },
+        "statx": {
+          "calls": 2,
+          "errors": 0
+        },
+        "poll": {
+          "calls": 1,
+          "errors": 0
+        },
+        "getsockname": {
+          "calls": 1,
+          "errors": 0
+        },
+        "getsockopt": {
+          "calls": 1,
+          "errors": 0
+        },
+        "fstat": {
+          "calls": 5,
+          "errors": 0
+        },
+        "getpeername": {
+          "calls": 1,
+          "errors": 0
+        },
+        "access": {
+          "calls": 1,
+          "errors": 1
+        },
+        "execve": {
+          "calls": 1,
+          "errors": 0
+        },
+        "arch_prctl": {
+          "calls": 1,
+          "errors": 0
+        },
+        "set_tid_address": {
+          "calls": 1,
+          "errors": 0
+        },
+        "newfstatat": {
+          "calls": 4,
+          "errors": 0
+        }
+      },
+      "total": {
+        "calls": 52417,
+        "errors": 50
+      },
+      "report": {
+        "path": "harness/results/perf3/trace-final/baseline/report.json",
+        "sha256": "b6d738b9d9364e0156d1c73c353f47b38762739bb5a8cfb51962019a947003fe"
+      },
+      "strace_summary": {
+        "path": "harness/results/perf3/trace-final/baseline/strace.txt",
+        "sha256": "1d5834d6172d39967744f0a49b11fa26d99bea9e44a96ab152b857ffb679da5c"
+      }
+    },
+    "candidate": {
+      "binary_sha256": "0dd77ed8adb4545294559bc1770648476b6d2f27c396a73ab05f398426854ad5",
+      "command": [
+        "/usr/bin/strace",
+        "-f",
+        "-c",
+        "-qq",
+        "-o",
+        "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/trace-final/candidate/strace.txt",
+        "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf3-final",
+        "sql",
+        "run",
+        "SELECT * FROM logs LIMIT 131072",
+        "--from",
+        "2024-01-01T00:00:00Z",
+        "--to",
+        "2024-01-01T01:00:00Z",
+        "-o",
+        "text"
+      ],
+      "exit_code": 0,
+      "source_admitted": true,
+      "fixture_config": {
+        "rows": 131072,
+        "row_bytes": 1024,
+        "shape": "ascii",
+        "chunk_bytes": 65536,
+        "chunk_delay_ms": 0,
+        "gzip": false,
+        "failure": "none",
+        "fail_after_rows": 0,
+        "fragment_pattern": [],
+        "flush": false
+      },
+      "rows_written": 131072,
+      "source_bytes": 134348801,
+      "wire_bytes": 134348801,
+      "source_response_sha256": "d494bb2827a3417cf45adce548992c448b69ea4217efa5098ec8c7c4a8a56df9",
+      "query_body_sha256": "bd13a22a807d75c0d7bce613d101b2ac1643eb018ec9c683ace1cda29ad1bffb",
+      "syscalls": {
+        "futex": {
+          "calls": 3748,
+          "errors": 122
+        },
+        "epoll_wait": {
+          "calls": 3774,
+          "errors": 0
+        },
+        "recvfrom": {
+          "calls": 1701,
+          "errors": 0
+        },
+        "write": {
+          "calls": 2293,
+          "errors": 0
+        },
+        "brk": {
+          "calls": 78,
+          "errors": 0
+        },
+        "munmap": {
+          "calls": 9,
+          "errors": 0
+        },
+        "mmap": {
+          "calls": 27,
+          "errors": 0
+        },
+        "connect": {
+          "calls": 1,
+          "errors": 1
+        },
+        "close": {
+          "calls": 12,
+          "errors": 0
+        },
+        "mprotect": {
+          "calls": 8,
+          "errors": 0
+        },
+        "openat": {
+          "calls": 7,
+          "errors": 0
+        },
+        "read": {
+          "calls": 11,
+          "errors": 0
+        },
+        "clone3": {
+          "calls": 1,
+          "errors": 0
+        },
+        "rt_sigprocmask": {
+          "calls": 7,
+          "errors": 0
+        },
+        "set_robust_list": {
+          "calls": 2,
+          "errors": 0
+        },
+        "sigaltstack": {
+          "calls": 6,
+          "errors": 0
+        },
+        "epoll_ctl": {
+          "calls": 4,
+          "errors": 0
+        },
+        "lseek": {
+          "calls": 2,
+          "errors": 0
+        },
+        "fstat": {
+          "calls": 5,
+          "errors": 0
+        },
+        "madvise": {
+          "calls": 2,
+          "errors": 0
+        },
+        "sendto": {
+          "calls": 1,
+          "errors": 0
+        },
+        "rt_sigaction": {
+          "calls": 6,
+          "errors": 0
+        },
+        "rseq": {
+          "calls": 2,
+          "errors": 0
+        },
+        "socketpair": {
+          "calls": 1,
+          "errors": 0
+        },
+        "fcntl": {
+          "calls": 4,
+          "errors": 0
+        },
+        "setsockopt": {
+          "calls": 3,
+          "errors": 0
+        },
+        "sched_getaffinity": {
+          "calls": 2,
+          "errors": 0
+        },
+        "prlimit64": {
+          "calls": 3,
+          "errors": 0
+        },
+        "getrandom": {
+          "calls": 3,
+          "errors": 0
+        },
+        "ioctl": {
+          "calls": 2,
+          "errors": 2
+        },
+        "socket": {
+          "calls": 1,
+          "errors": 0
+        },
+        "newfstatat": {
+          "calls": 4,
+          "errors": 0
+        },
+        "arch_prctl": {
+          "calls": 1,
+          "errors": 0
+        },
+        "gettid": {
+          "calls": 2,
+          "errors": 0
+        },
+        "epoll_create1": {
+          "calls": 1,
+          "errors": 0
+        },
+        "statx": {
+          "calls": 2,
+          "errors": 0
+        },
+        "poll": {
+          "calls": 1,
+          "errors": 0
+        },
+        "access": {
+          "calls": 1,
+          "errors": 1
+        },
+        "getsockname": {
+          "calls": 1,
+          "errors": 0
+        },
+        "getpeername": {
+          "calls": 1,
+          "errors": 0
+        },
+        "getsockopt": {
+          "calls": 1,
+          "errors": 0
+        },
+        "set_tid_address": {
+          "calls": 1,
+          "errors": 0
+        },
+        "eventfd2": {
+          "calls": 1,
+          "errors": 0
+        },
+        "execve": {
+          "calls": 1,
+          "errors": 0
+        }
+      },
+      "total": {
+        "calls": 11744,
+        "errors": 126
+      },
+      "report": {
+        "path": "harness/results/perf3/trace-final/candidate/report.json",
+        "sha256": "d71761a3711f516ab98bee59892a68068e879e82c5cf5a1bc44704cfb5f7a996"
+      },
+      "strace_summary": {
+        "path": "harness/results/perf3/trace-final/candidate/strace.txt",
+        "sha256": "9f3895d7b1212426bd20da83a49d48ce5ee2e98c24f015c7c19f19ff12dc1f9d"
+      }
+    }
+  },
+  "comparisons": {
+    "rust_revision_counts": {
+      "write": {
+        "before_calls": 32540,
+        "after_calls": 2293,
+        "count_ratio": 0.07046711739397664
+      },
+      "epoll_wait": {
+        "before_calls": 17871,
+        "after_calls": 3774,
+        "count_ratio": 0.2111801242236025
+      },
+      "epoll_pwait": {
+        "before_calls": 0,
+        "after_calls": 0,
+        "count_ratio": null
+      },
+      "futex": {
+        "before_calls": 1471,
+        "after_calls": 3748,
+        "count_ratio": 2.547926580557444
+      },
+      "recvfrom": {
+        "before_calls": 373,
+        "after_calls": 1701,
+        "count_ratio": 4.560321715817694
+      },
+      "read": {
+        "before_calls": 11,
+        "after_calls": 11,
+        "count_ratio": 1.0
+      }
+    },
+    "rust_over_go_counts": {
+      "write": {
+        "before_calls": 32805,
+        "after_calls": 2293,
+        "count_ratio": 0.06989788142051516
+      },
+      "epoll_wait": {
+        "before_calls": 0,
+        "after_calls": 3774,
+        "count_ratio": null
+      },
+      "epoll_pwait": {
+        "before_calls": 1212,
+        "after_calls": 0,
+        "count_ratio": 0.0
+      },
+      "futex": {
+        "before_calls": 356,
+        "after_calls": 3748,
+        "count_ratio": 10.52808988764045
+      },
+      "recvfrom": {
+        "before_calls": 0,
+        "after_calls": 1701,
+        "count_ratio": null
+      },
+      "read": {
+        "before_calls": 32882,
+        "after_calls": 11,
+        "count_ratio": 0.0003345295298339517
+      }
+    }
+  },
+  "sources": [
+    {
+      "path": "harness/results/perf3/trace-final/go/report.json",
+      "sha256": "2fd0afd40780e0a55fa3a94d05e324892e9bfca8ac1a2dfb3bb28b89b6171416"
+    },
+    {
+      "path": "harness/results/perf3/trace-final/go/strace.txt",
+      "sha256": "8a7310ccfc0b652266c19dc20097037bfe7186d64a0162ecace7ae50a4353437"
+    },
+    {
+      "path": "harness/results/perf3/trace-final/baseline/report.json",
+      "sha256": "b6d738b9d9364e0156d1c73c353f47b38762739bb5a8cfb51962019a947003fe"
+    },
+    {
+      "path": "harness/results/perf3/trace-final/baseline/strace.txt",
+      "sha256": "1d5834d6172d39967744f0a49b11fa26d99bea9e44a96ab152b857ffb679da5c"
+    },
+    {
+      "path": "harness/results/perf3/trace-final/candidate/report.json",
+      "sha256": "d71761a3711f516ab98bee59892a68068e879e82c5cf5a1bc44704cfb5f7a996"
+    },
+    {
+      "path": "harness/results/perf3/trace-final/candidate/strace.txt",
+      "sha256": "9f3895d7b1212426bd20da83a49d48ce5ee2e98c24f015c7c19f19ff12dc1f9d"
+    }
+  ],
+  "matching_source_and_request_identity": true,
+  "all_sources_completed": true,
+  "limitations": [
+    "No traced duration or syscall-time ratio is used to claim a speedup.",
+    "Matching fixture response hashes identify input; they do not validate discarded CLI output.",
+    "Single traced runs are attribution evidence, with no paired-distribution or confidence claim.",
+    "Capture-time fixture binary hash was not retained by trace_text.py; fixture configuration and emitted source hashes are retained."
+  ]
+}

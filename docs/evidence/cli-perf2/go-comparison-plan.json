@@ -1,0 +1,27 @@
+{
+  "scope": "Current frozen Rust versus pinned Go, unchanged fixed19 suite; identical placement on executable tmpfs; warm local fixtures, no profilers",
+  "suite": "harness/results/perf-campaign/suite.json",
+  "seed": 2041,
+  "repetitions": 20,
+  "warmup": 3,
+  "cpu_affinity": [
+    2,
+    4,
+    6,
+    8
+  ],
+  "binaries": {
+    "go": {
+      "path": "/dev/shm/pb-go-compare-s5trjdld/go",
+      "source": "bin/pb-go",
+      "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "size_bytes": 71807160
+    },
+    "rust": {
+      "path": "/dev/shm/pb-go-compare-s5trjdld/rust",
+      "source": "bin/pb-perf2-final",
+      "sha256": "8124d157236e215d2068ce4dadf97ebe08043a1a1c327d5dc3a69806785e12a1",
+      "size_bytes": 13547528
+    }
+  }
+}

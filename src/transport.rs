@@ -1,5 +1,5 @@
 //! Concrete pooled HTTP transport with explicit Go-compatible wire policy.
-use bytes::Bytes;
+use bytes::{BufMut, Bytes, BytesMut};
 use http::{
     Method, Request, StatusCode, Uri,
     header::{
@@ -305,12 +305,13 @@ impl Transport {
             })
             .await
     }
+    /// Shares owned request bytes across redirects and authenticated replays.
     pub async fn send(
         &self,
         method: &Method,
         raw_url: &str,
         headers: &HeaderMap,
-        body: &Option<Vec<u8>>,
+        body: &Option<Bytes>,
     ) -> Result<Response, TransportError> {
         let url_without_fragment = raw_url.split('#').next().unwrap_or(raw_url);
         let (uri_string, userinfo) = strip_userinfo(url_without_fragment);
@@ -341,7 +342,7 @@ impl Transport {
             || method == Method::PATCH
             || body.as_ref().is_some_and(|b| !b.is_empty())
         {
-            let length = body.as_ref().map_or(0, Vec::len);
+            let length = body.as_ref().map_or(0, Bytes::len);
             prepared.insert(
                 CONTENT_LENGTH,
                 HeaderValue::from_str(&length.to_string()).expect("integer is a valid header"),
@@ -363,7 +364,7 @@ impl Transport {
         } else {
             None
         };
-        let payload = Bytes::from(body.clone().unwrap_or_default());
+        let payload = body.clone().unwrap_or_default();
         // Retries happen inside this future, so the caller's absolute request
         // deadline bounds every attempt together. Like Go there is no count
         // limit: each retry consumes a pooled connection that already
@@ -459,9 +460,9 @@ impl Transport {
                 BodyDataStream::new(body),
                 started.clone(),
             ));
-            let mut decoder = async_compression::tokio::bufread::GzipDecoder::new(
-                tokio::io::BufReader::new(reader),
-            );
+            // StreamReader already buffers each Hyper Bytes frame and implements
+            // AsyncBufRead. Another BufReader allocates and copies the input.
+            let mut decoder = async_compression::tokio::bufread::GzipDecoder::new(reader);
             decoder.multiple_members(true);
             (None, Some(decoder), Some(started))
         } else {
@@ -977,9 +978,8 @@ impl futures_core::Stream for BodyStream {
         polled.map(|item| item.map(|result| result.map_err(io::Error::other)))
     }
 }
-type GzipReader = async_compression::tokio::bufread::GzipDecoder<
-    tokio::io::BufReader<tokio_util::io::StreamReader<BodyStream, Bytes>>,
->;
+type GzipReader =
+    async_compression::tokio::bufread::GzipDecoder<tokio_util::io::StreamReader<BodyStream, Bytes>>;
 pub struct Response {
     status: StatusCode,
     status_text: String,
@@ -1023,8 +1023,12 @@ impl Response {
             return Ok(Some(self.pending.split_to(count)));
         }
         if let Some(gzip) = &mut self.gzip {
-            let mut buffer = vec![0; maximum];
-            let count = match gzip.read(&mut buffer).await {
+            // Keep compressed reads small: the miniz backend initializes its
+            // output slice on each decode, including fragmented input. BytesMut
+            // avoids an additional initialization here, not inside the codec.
+            let maximum = maximum.min(8192);
+            let mut buffer = BytesMut::with_capacity(maximum);
+            let count = match gzip.read_buf(&mut (&mut buffer).limit(maximum)).await {
                 Err(error)
                     if error.kind() == io::ErrorKind::UnexpectedEof
                         && self.gzip_input.as_ref().is_some_and(|started| {
@@ -1038,8 +1042,7 @@ impl Response {
             if count == 0 {
                 return Ok(None);
             }
-            buffer.truncate(count);
-            return Ok(Some(buffer.into()));
+            return Ok(Some(buffer.freeze()));
         }
         let Some(body) = self.body.as_mut() else {
             return Ok(None);
@@ -1608,6 +1611,8 @@ pub(crate) fn load_tls_config() -> io::Result<rustls::ClientConfig> {
     #[cfg(target_os = "linux")]
     {
         let mut roots = rustls::RootCertStore::empty();
+        // Bundles and hashed directory aliases repeat the same roots; parse each DER once.
+        let mut seen = std::collections::HashSet::new();
         let files = std::env::var_os("SSL_CERT_FILE")
             .filter(|value| !value.is_empty())
             .map(|file| vec![std::path::PathBuf::from(file)])
@@ -1626,7 +1631,7 @@ pub(crate) fn load_tls_config() -> io::Result<rustls::ClientConfig> {
             });
         for path in files {
             if let Ok(bytes) = std::fs::read(path) {
-                append_pem_roots(&mut roots, &bytes);
+                append_pem_roots(&mut roots, &mut seen, &bytes);
                 break;
             }
         }
@@ -1645,7 +1650,7 @@ pub(crate) fn load_tls_config() -> io::Result<rustls::ClientConfig> {
                         continue;
                     }
                     if let Ok(bytes) = std::fs::read(path) {
-                        append_pem_roots(&mut roots, &bytes);
+                        append_pem_roots(&mut roots, &mut seen, &bytes);
                     }
                 }
             }
@@ -1662,7 +1667,11 @@ pub(crate) fn load_tls_config() -> io::Result<rustls::ClientConfig> {
     }
 }
 #[cfg(target_os = "linux")]
-fn append_pem_roots(roots: &mut rustls::RootCertStore, bytes: &[u8]) {
+fn append_pem_roots(
+    roots: &mut rustls::RootCertStore,
+    seen: &mut std::collections::HashSet<Vec<u8>>,
+    bytes: &[u8],
+) {
     use base64::Engine;
     let text = String::from_utf8_lossy(bytes);
     for block in text.split("-----BEGIN CERTIFICATE-----").skip(1) {
@@ -1674,7 +1683,11 @@ fn append_pem_roots(roots: &mut rustls::RootCertStore, bytes: &[u8]) {
             .filter(|character| !character.is_ascii_whitespace())
             .collect();
         if let Ok(der) = base64::engine::general_purpose::STANDARD.decode(encoded) {
-            let _ = roots.add(rustls::pki_types::CertificateDer::from(der));
+            if seen.contains(&der) {
+                continue;
+            }
+            let _ = roots.add(rustls::pki_types::CertificateDer::from(der.as_slice()));
+            seen.insert(der);
         }
     }
 }
@@ -1686,6 +1699,46 @@ mod tests {
     const CA: &[u8] = include_bytes!("../tests/fixtures/tls/ca.der");
     const CERT: &[u8] = include_bytes!("../tests/fixtures/tls/server.der");
     const KEY: &[u8] = include_bytes!("../tests/fixtures/tls/server-key.der");
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn pem_roots_skip_duplicate_der_and_malformed_blocks() {
+        use base64::Engine;
+        let pem = |der: &[u8]| {
+            let encoded = base64::engine::general_purpose::STANDARD.encode(der);
+            let lines: Vec<&str> = encoded
+                .as_bytes()
+                .chunks(64)
+                .map(|line| std::str::from_utf8(line).unwrap())
+                .collect();
+            format!(
+                "-----BEGIN CERTIFICATE-----\n{}\n-----END CERTIFICATE-----\n",
+                lines.join("\n")
+            )
+        };
+        let bundle = [
+            pem(CA),
+            pem(CA),
+            "-----BEGIN CERTIFICATE-----\n!!!not base64!!!\n-----END CERTIFICATE-----\n".into(),
+            pem(b"not a certificate"),
+            pem(CERT),
+            pem(b"not a certificate"),
+            pem(CA),
+            "-----BEGIN CERTIFICATE-----\nunterminated\n".into(),
+        ]
+        .concat();
+        let mut roots = rustls::RootCertStore::empty();
+        let mut seen = std::collections::HashSet::new();
+        append_pem_roots(&mut roots, &mut seen, bundle.as_bytes());
+        // A second file (e.g. a hashed alias of the same bundle) adds nothing new.
+        append_pem_roots(&mut roots, &mut seen, bundle.as_bytes());
+        append_pem_roots(&mut roots, &mut seen, pem(CA).as_bytes());
+
+        let mut expected = rustls::RootCertStore::empty();
+        expected.add(CertificateDer::from(CA)).unwrap();
+        expected.add(CertificateDer::from(CERT)).unwrap();
+        assert_eq!(roots.roots, expected.roots);
+    }
 
     fn runtime() -> tokio::runtime::Runtime {
         tokio::runtime::Builder::new_current_thread()
@@ -1909,9 +1962,9 @@ mod tests {
                 .count()
         }
     }
-    fn body_for(method: &Method) -> Option<Vec<u8>> {
+    fn body_for(method: &Method) -> Option<Bytes> {
         (method == Method::POST || method == Method::PUT || method == Method::PATCH)
-            .then(|| b"[\"admin\"]".to_vec())
+            .then(|| Bytes::from_static(b"[\"admin\"]"))
     }
     async fn exchange(
         transport: &Transport,
@@ -2519,6 +2572,107 @@ mod tests {
             let request = task.await.unwrap().to_ascii_lowercase();
             assert!(!request.contains("\r\naccept:")); assert!(request.contains("accept-encoding: gzip"));
             assert!(!transport.tls.initialized()); assert!(!transport.https.initialized());
+        });
+    }
+    fn gzip_bytes(bytes: &[u8]) -> Vec<u8> {
+        let mut encoder = flate2::write::GzEncoder::new(Vec::new(), flate2::Compression::default());
+        std::io::Write::write_all(&mut encoder, bytes).unwrap();
+        encoder.finish().unwrap()
+    }
+    async fn chunked_gzip_response(compressed: Vec<u8>, frame_size: usize) -> Response {
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let port = listener.local_addr().unwrap().port();
+        tokio::spawn(async move {
+            let (mut stream, _) = listener.accept().await.unwrap();
+            headers(&mut stream).await.unwrap();
+            stream.write_all(b"HTTP/1.1 200 OK\r\nContent-Encoding: gzip\r\nTransfer-Encoding: chunked\r\nConnection: close\r\n\r\n").await.unwrap();
+            for chunk in compressed.chunks(frame_size) {
+                stream
+                    .write_all(format!("{:x}\r\n", chunk.len()).as_bytes())
+                    .await
+                    .unwrap();
+                stream.write_all(chunk).await.unwrap();
+                stream.write_all(b"\r\n").await.unwrap();
+            }
+            stream.write_all(b"0\r\n\r\n").await.unwrap();
+        });
+        Transport::with_policy(policy("", "", ""))
+            .unwrap()
+            .send(
+                &Method::GET,
+                &format!("http://127.0.0.1:{port}/"),
+                &HeaderMap::new(),
+                &None,
+            )
+            .await
+            .unwrap()
+    }
+    #[test]
+    fn gzip_streaming_handles_fragmented_members_and_bounded_reads() {
+        runtime().block_on(async {
+            // Incompressible input exercises frames beyond the former 8 KiB
+            // buffer; small HTTP chunks split gzip headers, trailers and members.
+            let mut state = 1_u32;
+            let expected: Vec<u8> = (0..20000)
+                .map(|_| {
+                    state ^= state << 13;
+                    state ^= state >> 17;
+                    state ^= state << 5;
+                    state as u8
+                })
+                .collect();
+            let mut compressed = gzip_bytes(&expected[..10000]);
+            compressed.extend(gzip_bytes(&[]));
+            compressed.extend(gzip_bytes(&expected[10000..]));
+            assert!(compressed.len() > 8192);
+            for frame_size in [7, 65536] {
+                let mut response = chunked_gzip_response(compressed.clone(), frame_size).await;
+                assert!(!response.headers().contains_key(CONTENT_ENCODING));
+                assert_eq!(response.content_length(), None);
+                let mut actual = Vec::new();
+                let mut limits = [1, 17, 8192, 65536].into_iter().cycle();
+                loop {
+                    assert!(response.chunk_limit(0).await.unwrap().unwrap().is_empty());
+                    let limit = limits.next().unwrap();
+                    let Some(chunk) = response.chunk_limit(limit).await.unwrap() else {
+                        break;
+                    };
+                    assert!(chunk.len() <= limit.min(8192));
+                    actual.extend_from_slice(&chunk);
+                }
+                assert_eq!(actual, expected, "HTTP chunk size {frame_size}");
+            }
+        });
+    }
+    #[test]
+    fn gzip_streaming_retains_header_checksum_and_truncation_errors() {
+        runtime().block_on(async {
+            let valid = gzip_bytes(b"response body");
+            let truncated = valid[..valid.len() - 4].to_vec();
+            let mut checksum = valid.clone();
+            checksum[valid.len() - 8] ^= 1;
+            for (compressed, expected) in [
+                (b"invalid gzip header".to_vec(), "gzip: invalid header"),
+                (truncated, "unexpected EOF"),
+                (checksum, "gzip: invalid checksum"),
+            ] {
+                for frame_size in [1, 65536] {
+                    for limit in [8192, 65536] {
+                        let mut response =
+                            chunked_gzip_response(compressed.clone(), frame_size).await;
+                        let error = loop {
+                            match response.chunk_limit(limit).await {
+                                Ok(Some(chunk)) => assert!(chunk.len() <= 8192),
+                                Ok(None) => panic!("corrupt gzip response completed"),
+                                Err(error) => break error,
+                            }
+                        };
+                        assert!(error.is_body());
+                        assert!(!error.is_connection_error());
+                        assert_eq!(error.to_string(), expected);
+                    }
+                }
+            }
         });
     }
     #[test]

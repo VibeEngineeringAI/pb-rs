@@ -58,11 +58,22 @@ pub(crate) fn discover<'a>(
     root: &'a CommandSpec,
     args: &[Vec<u8>],
 ) -> Result<(&'a CommandSpec, String, Vec<Vec<u8>>), Error> {
+    discover_with_root_child(root, args, None)
+}
+
+/// Resolve against the ordinary tree with an optional hidden synthetic root child.
+/// Existing children retain precedence; the child is never added to nested
+/// commands. Completion uses this instead of cloning the entire owned tree.
+pub(crate) fn discover_with_root_child<'a>(
+    root: &'a CommandSpec,
+    args: &[Vec<u8>],
+    extra: Option<&'a CommandSpec>,
+) -> Result<(&'a CommandSpec, String, Vec<Vec<u8>>), Error> {
     let mut command = root;
     let mut path = root.name.clone();
     let mut remaining = args.to_vec();
     loop {
-        let mut words = Vec::new();
+        let mut first = None;
         let mut i = 0;
         while i < remaining.len() {
             let word = remaining[i].as_slice();
@@ -93,17 +104,19 @@ pub(crate) fn discover<'a>(
                 continue;
             }
             if !word.is_empty() && !word.starts_with(b"-") {
-                words.push(i);
+                first = Some(i);
+                break;
             }
             i += 1;
         }
-        let Some(&index) = words.first() else {
+        let Some(index) = first else {
             break;
         };
         let word = &remaining[index];
         let child = command
             .children
             .iter()
+            .chain(extra.filter(|_| std::ptr::eq(command, root)))
             .find(|c| c.name.as_bytes() == word || c.aliases.iter().any(|a| a.as_bytes() == word));
         let Some(child) = child else {
             if path == root.name && command.args.kind == ArgsKind::Arbitrary {
@@ -194,7 +207,7 @@ pub(crate) fn parse(
     args: &[Vec<u8>],
 ) -> Result<ParsedInvocation, Error> {
     let mut parsed = parser::parse(command, path, &[]).expect("valid command defaults");
-    let flags = command.local_flags(true);
+    let flags = command.local_flags_borrowed(true);
     let mut index = 0;
     while index < args.len() {
         let token = args[index].as_slice();
@@ -303,4 +316,190 @@ pub(crate) fn render_error(
     crate::error::CliError::new(crate::input_code(&display), display)
         .with_raw_message(error.message)
         .render(command, path, structured)
+}
+
+#[cfg(test)]
+pub(crate) mod discovery_tests {
+    use super::*;
+
+    // Snapshot of discovery before the first-index/overlay optimization. Keep
+    // the full nonflag scan as an independent oracle for token skip rules.
+    pub(crate) fn legacy_discover<'a>(
+        root: &'a CommandSpec,
+        args: &[Vec<u8>],
+    ) -> Result<(&'a CommandSpec, String, Vec<Vec<u8>>), Error> {
+        let mut command = root;
+        let mut path = root.name.clone();
+        let mut remaining = args.to_vec();
+        loop {
+            let mut words = Vec::new();
+            let mut i = 0;
+            while i < remaining.len() {
+                let word = remaining[i].as_slice();
+                if word == b"--" {
+                    break;
+                }
+                let is_bool = if let Some(long) = word.strip_prefix(b"--") {
+                    command
+                        .flags
+                        .iter()
+                        .any(|f| f.name.as_bytes() == long && f.kind == FlagKind::Bool)
+                } else if word.len() == 2 && word[0] == b'-' {
+                    command
+                        .flags
+                        .iter()
+                        .any(|f| f.shorthand.as_bytes() == &word[1..] && f.kind == FlagKind::Bool)
+                } else {
+                    false
+                };
+                if !word.contains(&b'=')
+                    && (word.starts_with(b"--") && !is_bool
+                        || word.starts_with(b"-") && word.len() == 2 && !is_bool)
+                {
+                    if remaining.len() - i - 1 <= 1 {
+                        break;
+                    }
+                    i += 2;
+                    continue;
+                }
+                if !word.is_empty() && !word.starts_with(b"-") {
+                    words.push(i);
+                }
+                i += 1;
+            }
+            let Some(&index) = words.first() else {
+                break;
+            };
+            let word = &remaining[index];
+            let child = command.children.iter().find(|c| {
+                c.name.as_bytes() == word || c.aliases.iter().any(|a| a.as_bytes() == word)
+            });
+            let Some(child) = child else {
+                if path == root.name && command.args.kind == ArgsKind::Arbitrary {
+                    // Reuse the Unicode suggestion rules when the token is valid;
+                    // malformed bytes cannot be equal to command identifiers.
+                    if let Ok(text) = std::str::from_utf8(word)
+                        && let Err(error) = parser::discover(root, &[text.into()])
+                    {
+                        return Err(Error {
+                            message: error.message.into_bytes(),
+                            root_find: true,
+                        });
+                    }
+                    return Err(Error {
+                        message: format!(
+                            "unknown command {} for {}",
+                            quote(word),
+                            parser::quote(&path)
+                        )
+                        .into_bytes(),
+                        root_find: true,
+                    });
+                }
+                break;
+            };
+            remaining.remove(index);
+            path.push(' ');
+            path.push_str(&child.name);
+            command = child;
+        }
+        Ok((command, path, remaining))
+    }
+
+    pub(crate) fn cases(root: &CommandSpec) -> Vec<Vec<Vec<u8>>> {
+        let tokens: &[&[u8]] = &[
+            b"sql",
+            b"run",
+            b"help",
+            b"version",
+            b"vers",
+            b"profil",
+            b"completion",
+            b"bash",
+            b"__complete",
+            b"__completeNoDesc",
+            b"--",
+            b"",
+            b"--help",
+            b"-h",
+            b"--version",
+            b"--output",
+            b"-o",
+            b"json",
+            b"--output=json",
+            b"--unknown",
+            b"-x",
+            b"--=",
+            b"--help=false",
+            b"-",
+            b"-h=false",
+            b"--top=x",
+            b"--top",
+            b"-test.foo",
+            b"\xff",
+            b"--\xff",
+            b"-\xc3\xa9",
+            "jſon".as_bytes(),
+        ];
+        let mut result = vec![Vec::new()];
+        for a in tokens {
+            result.push(vec![a.to_vec()]);
+            for b in tokens {
+                result.push(vec![a.to_vec(), b.to_vec()]);
+                for c in tokens {
+                    result.push(vec![a.to_vec(), b.to_vec(), c.to_vec()]);
+                }
+            }
+        }
+        fn walk(command: &CommandSpec, path: &[Vec<u8>], result: &mut Vec<Vec<Vec<u8>>>) {
+            for tail in [
+                vec![],
+                vec![b"--help".to_vec()],
+                vec![b"--".to_vec(), b"run".to_vec()],
+                vec![b"--unknown".to_vec(), b"value".to_vec(), b"run".to_vec()],
+            ] {
+                let mut case = path.to_vec();
+                case.extend(tail);
+                result.push(case);
+            }
+            for flag in &command.flags {
+                let mut case = path.to_vec();
+                case.extend([
+                    format!("--{}", flag.name).into_bytes(),
+                    b"value".to_vec(),
+                    b"run".to_vec(),
+                ]);
+                result.push(case);
+            }
+            for child in &command.children {
+                for name in std::iter::once(&child.name).chain(&child.aliases) {
+                    let mut path = path.to_vec();
+                    path.push(name.as_bytes().to_vec());
+                    walk(child, &path, result);
+                }
+            }
+        }
+        walk(root, &[], &mut result);
+        result
+    }
+
+    #[test]
+    fn first_nonflag_discovery_matches_legacy_for_text_bytes_aliases_and_flags() {
+        let root = crate::spec::command_spec();
+        for args in cases(root) {
+            let expected = legacy_discover(root, &args).map_err(|e| (e.message, e.root_find));
+            let actual = discover(root, &args).map_err(|e| (e.message, e.root_find));
+            assert_eq!(actual, expected, "byte args={args:?}");
+            if let Ok(text) = args
+                .iter()
+                .map(|s| String::from_utf8(s.clone()))
+                .collect::<Result<Vec<_>, _>>()
+            {
+                let textual = parser::discover(root, &text)
+                    .map(|(c, p, a)| (c, p, a.into_iter().map(String::into_bytes).collect()))
+                    .map_err(|e| (e.message.into_bytes(), e.root_find));
+                assert_eq!(textual, expected, "text args={args:?}");
+            }
+        }
+    }
 }

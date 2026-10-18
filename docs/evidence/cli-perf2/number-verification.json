@@ -1,0 +1,36 @@
+{
+  "source_report_sha256": "7b9e6876e391fe8a99f57959180d3c254d0fb82fdd481b20ba26385e09a41910",
+  "finite_lexemes": 33272,
+  "cases": {
+    "sql-number-corpus-json": {
+      "valid": true,
+      "contract_hashes": [
+        "38a0d34bfa2a0d237f93e85959e57e614885e8abe7b3157880f69f4bd26420b9"
+      ]
+    },
+    "sql-number-overflow-0-json": {
+      "valid": true,
+      "contract_hashes": [
+        "a67b03375b2cef0a68ae313e120a751524705fd6d6bcfa503c06167b16e2a3b6"
+      ]
+    },
+    "sql-number-overflow-1-json": {
+      "valid": true,
+      "contract_hashes": [
+        "d5621cd8d24fe4e474cf5198da3443b1235cd7d678b6fc5ec219de12f6cd19c9"
+      ]
+    },
+    "sql-number-overflow-2-json": {
+      "valid": true,
+      "contract_hashes": [
+        "c6e08793b5fcded9a96755806e8fee84fcef75ec579bba35f963149f282ef2d8"
+      ]
+    },
+    "sql-number-overflow-3-json": {
+      "valid": true,
+      "contract_hashes": [
+        "4345fb84f57d6b6624b0f13c783a47d0990ab4228ec91743831451920dc6e039"
+      ]
+    }
+  }
+}

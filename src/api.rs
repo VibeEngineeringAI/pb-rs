@@ -247,7 +247,7 @@ pub struct PreparedRequest {
     method: Method,
     raw_endpoint: String,
     headers: HeaderMap,
-    body: Option<Vec<u8>>,
+    body: Option<Bytes>,
     timeout: Duration,
     metrics: bool,
 }
@@ -586,7 +586,7 @@ impl ApiClient {
             method,
             raw_endpoint,
             headers,
-            body,
+            body: body.map(Bytes::from),
             timeout,
             metrics: false,
         })
@@ -614,7 +614,7 @@ impl ApiClient {
             method,
             raw_endpoint,
             headers,
-            body,
+            body: body.map(Bytes::from),
             timeout,
             metrics: false,
         })
@@ -710,7 +710,7 @@ impl ApiClient {
         method: Method,
         endpoint: Endpoint,
         headers: HeaderMap,
-        body: Option<Vec<u8>>,
+        body: Option<Bytes>,
         headers_received: &AtomicBool,
         timeout_url: &Mutex<String>,
     ) -> Result<RawResponse, ApiError> {
@@ -795,7 +795,7 @@ impl ApiClient {
         method: &Method,
         endpoint: &Endpoint,
         headers: &HeaderMap,
-        body: &Option<Vec<u8>>,
+        body: &Option<Bytes>,
     ) -> Result<RawResponse, ApiError> {
         let response = send_raw(transport, method, endpoint, headers, body).await?;
         let profile = self.profile();
@@ -848,7 +848,7 @@ impl ApiClient {
             &Method::POST,
             &endpoint,
             &headers,
-            &Some(payload),
+            &Some(Bytes::from(payload)),
         )
         .await?;
         let response = buffer_response(response).await?;
@@ -897,7 +897,7 @@ async fn send_raw(
     method: &Method,
     endpoint: &Endpoint,
     headers: &HeaderMap,
-    body: &Option<Vec<u8>>,
+    body: &Option<Bytes>,
 ) -> Result<RawResponse, ApiError> {
     Ok(client.send(method, &endpoint.raw, headers, body).await?)
 }
@@ -1651,7 +1651,7 @@ async fn send_cloud_request(
 ) -> Result<RawResponse, ApiError> {
     let mut current = endpoint.clone();
     let mut current_method = method.clone();
-    let mut current_body = body;
+    let mut current_body = body.map(Bytes::from);
     let mut current_headers = headers.clone();
     let mut stripped = false;
     for hop in 0..10 {
@@ -3067,6 +3067,61 @@ mod tests {
             assert!(call.contains("x-p-telemetry-type: metrics\r\n"), "{call}");
             assert!(call.contains("content-type: application/json\r\n"));
         }
+        std::fs::remove_dir_all(store.path().parent().unwrap()).unwrap();
+    }
+    #[test]
+    fn large_body_survives_307_308_and_oauth_replay_then_drops_after_303() {
+        let redirect = |status, location: &str| {
+            let mut reply = Reply::new(status, "");
+            reply.location = Some(location.into());
+            reply
+        };
+        let (workspace, calls, workspace_task) = server(vec![
+            redirect(307, "/first"),
+            redirect(308, "/second"),
+            Reply::new(401, "unauthorized"),
+            redirect(303, "/done"),
+            Reply::new(200, "{}"),
+        ]);
+        let (orchestrator, _, refresh_task) = server(vec![Reply::new(
+            200,
+            r#"{"access_token":"new-session","refresh_token":"new-refresh"}"#,
+        )]);
+        let profile = oauth(workspace, orchestrator);
+        let store = store(&profile);
+        let client =
+            ApiClient::with_orchestrator_token(profile, store.clone(), "release-token").unwrap();
+        let payload = format!("{{\"data\":\"{}\"}}", "0123456789abcdef".repeat(16384));
+        let response = runtime()
+            .block_on(client.standard(Method::POST, "query", Some(payload.as_bytes().to_vec())))
+            .unwrap();
+        assert_eq!(response.status, 200);
+        workspace_task.join().unwrap();
+        refresh_task.join().unwrap();
+        let calls = calls.lock().unwrap();
+        assert_eq!(calls.len(), 5);
+        for (index, path) in ["/api/v1/query", "/first", "/second", "/second"]
+            .iter()
+            .enumerate()
+        {
+            let (head, body) = calls[index].split_once("\r\n\r\n").unwrap();
+            assert!(head.starts_with(&format!("POST {path} HTTP/1.1")));
+            assert!(
+                head.lines()
+                    .any(|line| line == format!("content-length: {}", payload.len()))
+            );
+            assert_eq!(body, payload);
+            let token = if index < 3 {
+                "old-session"
+            } else {
+                "new-session"
+            };
+            assert!(head.contains(&format!("session={token}")));
+        }
+        let (head, body) = calls[4].split_once("\r\n\r\n").unwrap();
+        assert!(head.starts_with("GET /done HTTP/1.1"));
+        assert!(!head.contains("content-length:"));
+        assert!(body.is_empty());
         std::fs::remove_dir_all(store.path().parent().unwrap()).unwrap();
     }
     #[test]

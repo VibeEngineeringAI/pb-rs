@@ -1,0 +1,69 @@
+{
+  "scope": "Continue CLI CPU/memory optimization while preserving Go behavior and ingestion durability",
+  "agent_concurrency_limit": 4,
+  "requested_parallelism": 20,
+  "approach": "3 workers at a time in focused waves; do not claim 20 concurrent",
+  "decisions": [
+    {
+      "change": "plain-text bridge 8KiB ->64KiB ->128KiB",
+      "status": "accepted: 128KiB logical chunk cap",
+      "evidence": "Frozen R4 tests passed. Original five-pair1GiB CPU ratio0.4429; controlled five-pair0.4291. All paired ranges below1; backpressure/deadline behavior retained.",
+      "compatibility": "channel1, deadline cancellation, immediate ready-frame delivery retained; logical chunk bound is not an RSS bound"
+    },
+    {
+      "change": "gzip BytesMut read_buf",
+      "status": "8KiB output cap retained",
+      "reason": "flate2 miniz backend initializes output internally; larger gzip buffer could add memset work; avoid additional outer zero fill only"
+    },
+    {
+      "change": "defer acknowledged checkpoint save",
+      "status": "rejected",
+      "reason": "increases duplicate replay window after interruption and combined-save failure"
+    },
+    {
+      "change": "64KiB checkpoint write buffer",
+      "status": "accepted: durable save ordering unchanged",
+      "evidence": "Both real-btrfs campaigns pass exact normalized wire/state and retry/split probes, with ~87% lower writecalls. ControlledtextCPU pairedmedian -11.8%. Overall resource gate FAILS in both campaigns due RSS guard; unresolved tradeoff.",
+      "scope": "same file sync/rename/directory sync, no physical storage-wear claim"
+    },
+    {
+      "change": "1MiB bounded rendered JSON row buffer",
+      "status": "accepted with explicit CPU/memory tradeoff",
+      "evidence": "Original large-row peakRSS -21% to -22%, controlled -23% to -24%. Repeated8x8CPU +10.2%original(all5ratios>1), +5.8%controlled(range crosses1); controlledgzipCPU+9.1%(range crosses1). 24releaseoutputtestspass. No uniform speedup claim."
+    },
+    {
+      "change": "bulk gojson string span scanning",
+      "status": "rejected after direct on/off comparison",
+      "reason": "No established benefit on repeated8MiB rows; mixed small-row results. Retain original bytewise decoder.",
+      "evidence": "decoder-on-vs-off-large and decoder-on-vs-off-small reports"
+    },
+    {
+      "change": "borrowed SQL tree",
+      "status": "deferred",
+      "reason": "broader decoder architecture change; bounded renderer gives material memory savings without it"
+    },
+    {
+      "change": "four RowBuffer inline(always) attributes",
+      "status": "rejected after isolated on/off experiment",
+      "evidence": "inline-on-off-results/results.json: full-output preflights passed all five cases, but all CPU paired ranges crossed1 and gzip median regressed3.1%. Apparent small-row RSS reduction also affected by executable-file residency. No production attrs adopted."
+    },
+    {
+      "change": "uniform executable materialization for second measurement campaign",
+      "status": "completed controlled diagnostic; original failed gates retained",
+      "evidence": "Initial3same-order identical-copy snapshots differed~1.3MiB file residency; later6balancedpairs did not reproducegap. Controllednativecomparison still showscachedtextand ingestionRSSincreases. No directheap/causalcopyclaim. All13controlledjobsdone; failedingestresourceguard and sustainedproducerpacinggatepreserved."
+    },
+    {
+      "change": "split hot append path from cold chunk-publish path",
+      "status": "deferred",
+      "reason": "Plausible narrower future optimization after blanket inlining failed to establish CPU benefit. Requires direct on/off measurements and full row/error-boundary validation; no claim implemented."
+    }
+  ],
+  "selected_candidate": "final-candidate.json (R4, unchanged by rejected inline experiment)",
+  "final_results": "results.json",
+  "unresolved": [
+    "Repeated large-row CPU/memory tradeoff",
+    "Cached-text and ingestion RSS increases; ingestion resource gate fails",
+    "Sustained producer pacing miss and large backlog/latency variance on shared host",
+    "Go timeout-string nondeterminism retained alongside passing bounded repeats; no universal compatibility guarantee"
+  ]
+}

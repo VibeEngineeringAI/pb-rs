@@ -1,0 +1,1464 @@
+{
+  "all_attempts_passed": false,
+  "benchmarks_run": false,
+  "binaries_after": {
+    "pb-perf3-final": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf3-final",
+      "sha256": "0dd77ed8adb4545294559bc1770648476b6d2f27c396a73ab05f398426854ad5"
+    },
+    "pb-perf3-final-cloud": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf3-final-cloud",
+      "sha256": "02a080d0d8a18194f673c58db44e354d1e7294fd687d3257345790fb073c9cd4"
+    }
+  },
+  "binaries_before": {
+    "pb-perf3-final": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf3-final",
+      "sha256": "0dd77ed8adb4545294559bc1770648476b6d2f27c396a73ab05f398426854ad5"
+    },
+    "pb-perf3-final-cloud": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf3-final-cloud",
+      "sha256": "02a080d0d8a18194f673c58db44e354d1e7294fd687d3257345790fb073c9cd4"
+    }
+  },
+  "binary_identities_unchanged": true,
+  "commands": [
+    {
+      "argv": [
+        "/home/ajs/.cargo/bin/cargo",
+        "+1.96.0",
+        "fmt",
+        "--check"
+      ],
+      "command": "PB_VERSION=v0.0.0-harness PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN= /home/ajs/.cargo/bin/cargo +1.96.0 fmt --check",
+      "cwd": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b",
+      "elapsed_seconds": 1.1638103579171002,
+      "ended_at": "2026-10-18T04:10:51.751417+00:00",
+      "environment": {
+        "PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN": "",
+        "PB_VERSION": "v0.0.0-harness"
+      },
+      "exit_code": 0,
+      "log": "/tmp/pb-perf3-final-fmt.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "log_size_bytes": 0,
+      "name": "fmt",
+      "passed": true,
+      "started_at": "2026-10-18T04:10:50.587592+00:00"
+    },
+    {
+      "argv": [
+        "/home/ajs/.cargo/bin/cargo",
+        "+1.96.0",
+        "test",
+        "--locked"
+      ],
+      "command": "PB_VERSION=v0.0.0-harness PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN= /home/ajs/.cargo/bin/cargo +1.96.0 test --locked",
+      "counts": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 9,
+        "measured": 0,
+        "passed": 867
+      },
+      "cwd": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b",
+      "elapsed_seconds": 55.97465818701312,
+      "ended_at": "2026-10-18T04:11:47.727173+00:00",
+      "environment": {
+        "PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN": "",
+        "PB_VERSION": "v0.0.0-harness"
+      },
+      "exit_code": 0,
+      "log": "/tmp/pb-perf3-final-cargo-test.log",
+      "log_sha256": "a7606a9748405f78477e11aab9459da936b296459c1d1d0229eb9484dc854145",
+      "log_size_bytes": 72811,
+      "name": "cargo-test",
+      "passed": true,
+      "started_at": "2026-10-18T04:10:51.752495+00:00",
+      "test_result_groups": [
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 1,
+          "measured": 0,
+          "passed": 705,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 0,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 4,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 3,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 6,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 19,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 0,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 4,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 8,
+          "measured": 0,
+          "passed": 51,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 4,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 14,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 9,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 4,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 2,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 22,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 16,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 0,
+          "status": "ok"
+        }
+      ]
+    },
+    {
+      "argv": [
+        "/home/ajs/.cargo/bin/cargo",
+        "+1.96.0",
+        "test",
+        "--locked",
+        "--features",
+        "diagnostics"
+      ],
+      "command": "PB_VERSION=v0.0.0-harness PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN= /home/ajs/.cargo/bin/cargo +1.96.0 test --locked --features diagnostics",
+      "counts": {
+        "failed": 0,
+        "filtered_out": 0,
+        "ignored": 10,
+        "measured": 0,
+        "passed": 873
+      },
+      "cwd": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b",
+      "elapsed_seconds": 74.45069654402323,
+      "ended_at": "2026-10-18T04:13:02.179066+00:00",
+      "environment": {
+        "PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN": "",
+        "PB_VERSION": "v0.0.0-harness"
+      },
+      "exit_code": 0,
+      "log": "/tmp/pb-perf3-final-diagnostics.log",
+      "log_sha256": "811be84da1b2c603b4c8b28eec9a8ecbbc32bc9205432fa2b5ccb0185b81acc6",
+      "log_size_bytes": 73503,
+      "name": "diagnostics",
+      "passed": true,
+      "started_at": "2026-10-18T04:11:47.728352+00:00",
+      "test_result_groups": [
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 2,
+          "measured": 0,
+          "passed": 709,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 0,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 4,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 3,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 6,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 19,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 2,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 4,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 8,
+          "measured": 0,
+          "passed": 51,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 4,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 14,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 9,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 4,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 2,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 1,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 22,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 16,
+          "status": "ok"
+        },
+        {
+          "failed": 0,
+          "filtered_out": 0,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 0,
+          "status": "ok"
+        }
+      ]
+    },
+    {
+      "argv": [
+        "/home/ajs/.cargo/bin/cargo",
+        "+1.96.0",
+        "clippy",
+        "--locked",
+        "--all-targets",
+        "--all-features",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "command": "PB_VERSION=v0.0.0-harness PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN= /home/ajs/.cargo/bin/cargo +1.96.0 clippy --locked --all-targets --all-features -- -D warnings",
+      "cwd": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b",
+      "elapsed_seconds": 11.490309885935858,
+      "ended_at": "2026-10-18T04:13:13.671146+00:00",
+      "environment": {
+        "PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN": "",
+        "PB_VERSION": "v0.0.0-harness"
+      },
+      "exit_code": 0,
+      "log": "/tmp/pb-perf3-final-clippy.log",
+      "log_sha256": "124fa03ce0dac9f091d3f92d8a08b12d39019accc57e1711488d2b66a02e537c",
+      "log_size_bytes": 140,
+      "name": "clippy",
+      "passed": true,
+      "started_at": "2026-10-18T04:13:02.180736+00:00"
+    },
+    {
+      "argv": [
+        "/home/ajs/.cargo/bin/cargo",
+        "+1.96.0",
+        "test",
+        "--locked",
+        "--release",
+        "--lib",
+        "sql::output"
+      ],
+      "command": "PB_VERSION=v0.0.0-harness PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN= /home/ajs/.cargo/bin/cargo +1.96.0 test --locked --release --lib sql::output",
+      "counts": {
+        "failed": 0,
+        "filtered_out": 682,
+        "ignored": 0,
+        "measured": 0,
+        "passed": 24
+      },
+      "cwd": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b",
+      "elapsed_seconds": 174.54574636602774,
+      "ended_at": "2026-10-18T04:16:08.217799+00:00",
+      "environment": {
+        "PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN": "",
+        "PB_VERSION": "v0.0.0-harness"
+      },
+      "exit_code": 0,
+      "log": "/tmp/pb-perf3-final-release-output.log",
+      "log_sha256": "ebbba23af1f116ebfa5bd259c2cd8b35a821a1c2777360ef88deec56f4429479",
+      "log_size_bytes": 2394,
+      "name": "release-output",
+      "passed": true,
+      "started_at": "2026-10-18T04:13:13.672035+00:00",
+      "test_result_groups": [
+        {
+          "failed": 0,
+          "filtered_out": 682,
+          "ignored": 0,
+          "measured": 0,
+          "passed": 24,
+          "status": "ok"
+        }
+      ]
+    },
+    {
+      "argv": [
+        "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+        "-m",
+        "unittest",
+        "-v",
+        "test_stress",
+        "test_perf3_cached",
+        "test_ingest_perf",
+        "test_stress_process",
+        "test_stress_ingest"
+      ],
+      "command": "PB_VERSION=v0.0.0-harness PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN= /home/ajs/.cache/pb-phase7/harness-venv/bin/python -m unittest -v test_stress test_perf3_cached test_ingest_perf test_stress_process test_stress_ingest",
+      "counts": {
+        "result_line": "FAILED (failures=1)",
+        "tests": 107
+      },
+      "cwd": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness",
+      "elapsed_seconds": 25.370670821052045,
+      "ended_at": "2026-10-18T04:16:33.589472+00:00",
+      "environment": {
+        "PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN": "",
+        "PB_VERSION": "v0.0.0-harness"
+      },
+      "exit_code": 1,
+      "failure_classification": "test assertion incorrectly assumes env python3 fixture must equal parent sys.executable",
+      "log": "/tmp/pb-perf3-final-python.log",
+      "log_sha256": "a257e0844e9a7bfbedbbf1ca0a3e14130d609dcc0023f4d6494f44417ebb46b4",
+      "log_size_bytes": 17201,
+      "name": "python",
+      "passed": false,
+      "started_at": "2026-10-18T04:16:08.218802+00:00",
+      "superseded_by": "python-testfix"
+    },
+    {
+      "argv": [
+        "/home/ajs/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.4.linux-amd64/bin/go",
+        "test",
+        "-timeout",
+        "60s",
+        "./harness/stress_fixture"
+      ],
+      "command": "PB_VERSION=v0.0.0-harness PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN= /home/ajs/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.4.linux-amd64/bin/go test -timeout 60s ./harness/stress_fixture",
+      "counts": {
+        "individual_test_count": null,
+        "note": "Requested non-verbose Go command reports package status only.",
+        "packages": 1,
+        "passed_packages": 1
+      },
+      "cwd": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b",
+      "elapsed_seconds": 0.6155098089948297,
+      "ended_at": "2026-10-18T04:16:34.205817+00:00",
+      "environment": {
+        "PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN": "",
+        "PB_VERSION": "v0.0.0-harness"
+      },
+      "exit_code": 0,
+      "log": "/tmp/pb-perf3-final-go-stress-fixture.log",
+      "log_sha256": "5bd0978dae74c8894a89786e95ffa8e45429a3c6a95134c17945963958d42714",
+      "log_size_bytes": 63,
+      "name": "go-stress-fixture",
+      "package_result_lines": [
+        "ok  \tgithub.com/parseablehq/pb/harness/stress_fixture\t(cached)"
+      ],
+      "passed": true,
+      "started_at": "2026-10-18T04:16:33.590288+00:00"
+    },
+    {
+      "argv": [
+        "python3",
+        "docs/evidence/cli-perf2/go_compatibility.py",
+        "--candidate",
+        "bin/pb-perf3-final",
+        "--cloud-candidate",
+        "bin/pb-perf3-final-cloud",
+        "--out",
+        "harness/results/perf3/go-replay",
+        "--jobs",
+        "4",
+        "--run"
+      ],
+      "command": "PB_VERSION=v0.0.0-harness PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN= python3 docs/evidence/cli-perf2/go_compatibility.py --candidate bin/pb-perf3-final --cloud-candidate bin/pb-perf3-final-cloud --out harness/results/perf3/go-replay --jobs 4 --run",
+      "counts": {
+        "completed_groups": 23,
+        "failed_groups": 2,
+        "passed_groups": 21,
+        "planned_groups": 23
+      },
+      "cwd": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b",
+      "elapsed_seconds": 973.3509980400559,
+      "ended_at": "2026-10-18T04:32:47.557418+00:00",
+      "environment": {
+        "PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN": "",
+        "PB_VERSION": "v0.0.0-harness"
+      },
+      "exit_code": 1,
+      "log": "/tmp/pb-perf3-final-go-replay.log",
+      "log_sha256": "27e04b70c1f99c9eaf254941c1c6ecc06e1a3f04ddc933632242431466f75923",
+      "log_size_bytes": 4192,
+      "name": "go-replay",
+      "passed": false,
+      "started_at": "2026-10-18T04:16:34.206589+00:00"
+    },
+    {
+      "argv": [
+        "python3",
+        "docs/evidence/cli-perf2/go_compatibility.py",
+        "--candidate",
+        "bin/pb-perf3-final",
+        "--cloud-candidate",
+        "bin/pb-perf3-final-cloud",
+        "--out",
+        "harness/results/perf3/go-replay-refresh-repeat",
+        "--jobs",
+        "2",
+        "--gate",
+        "p3-deadline-spans-refresh",
+        "--gate",
+        "p4-deadline-body",
+        "--run"
+      ],
+      "command": "PB_VERSION=v0.0.0-harness PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN= python3 docs/evidence/cli-perf2/go_compatibility.py --candidate bin/pb-perf3-final --cloud-candidate bin/pb-perf3-final-cloud --out harness/results/perf3/go-replay-refresh-repeat --jobs 2 --gate p3-deadline-spans-refresh --gate p4-deadline-body --run",
+      "counts": {
+        "completed_groups": 2,
+        "failed_groups": 0,
+        "passed_groups": 2,
+        "planned_groups": 2
+      },
+      "cwd": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b",
+      "elapsed_seconds": 366.94996078684926,
+      "ended_at": "2026-10-18T04:55:33.819165+00:00",
+      "environment": {
+        "PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN": "",
+        "PB_VERSION": "v0.0.0-harness"
+      },
+      "exit_code": 0,
+      "log": "/tmp/pb-perf3-final-go-refresh-repeat.log",
+      "log_sha256": "68c64d32e7fe621921218b0352af839cbd7e980d3440fdc416b871de2e552daf",
+      "log_size_bytes": 402,
+      "name": "go-refresh-repeat",
+      "passed": true,
+      "started_at": "2026-10-18T04:49:26.869131+00:00"
+    },
+    {
+      "argv": [
+        "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+        "harness/phase3.py",
+        "compare",
+        "--reference",
+        "bin/pb-perf2-final",
+        "--candidate",
+        "bin/pb-perf3-final",
+        "--cloud-reference",
+        "bin/pb-perf2-final-cloud",
+        "--cloud-candidate",
+        "bin/pb-perf3-final-cloud",
+        "--manifest",
+        "none",
+        "--meter",
+        "bin/pb-meter",
+        "--include-full60s",
+        "--case",
+        "p3-deadline-spans-refresh",
+        "--out",
+        "harness/results/perf3/rust-refresh-regression"
+      ],
+      "command": "PB_VERSION=v0.0.0-harness PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN= /home/ajs/.cache/pb-phase7/harness-venv/bin/python harness/phase3.py compare --reference bin/pb-perf2-final --candidate bin/pb-perf3-final --cloud-reference bin/pb-perf2-final-cloud --cloud-candidate bin/pb-perf3-final-cloud --manifest none --meter bin/pb-meter --include-full60s --case p3-deadline-spans-refresh --out harness/results/perf3/rust-refresh-regression",
+      "counts": {
+        "failed": 0,
+        "passed": 1,
+        "skipped": 0,
+        "total": 1
+      },
+      "cwd": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b",
+      "elapsed_seconds": 185.7558068309445,
+      "ended_at": "2026-10-18T04:52:32.625552+00:00",
+      "environment": {
+        "PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN": "",
+        "PB_VERSION": "v0.0.0-harness"
+      },
+      "exit_code": 0,
+      "log": "/tmp/pb-perf3-final-rust-refresh-regression.log",
+      "log_sha256": "e364d32a5105f742edbac31ef02a834058eb58f82139e990de96aafc98e99db3",
+      "log_size_bytes": 204,
+      "name": "rust-refresh-regression",
+      "passed": true,
+      "scope": "prior Rust vs final Rust diagnostic; not a Go oracle; full60s tier not frozen",
+      "started_at": "2026-10-18T04:49:26.869723+00:00"
+    },
+    {
+      "argv": [
+        "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+        "harness/phase4.py",
+        "compare",
+        "--reference",
+        "bin/pb-perf2-final",
+        "--candidate",
+        "bin/pb-perf3-final",
+        "--cloud-reference",
+        "bin/pb-perf2-final-cloud",
+        "--cloud-candidate",
+        "bin/pb-perf3-final-cloud",
+        "--manifest",
+        "none",
+        "--include-full120s",
+        "--case",
+        "p4-deadline-body",
+        "--out",
+        "harness/results/perf3/rust-body-regression"
+      ],
+      "command": "PB_VERSION=v0.0.0-harness PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN= /home/ajs/.cache/pb-phase7/harness-venv/bin/python harness/phase4.py compare --reference bin/pb-perf2-final --candidate bin/pb-perf3-final --cloud-reference bin/pb-perf2-final-cloud --cloud-candidate bin/pb-perf3-final-cloud --manifest none --include-full120s --case p4-deadline-body --out harness/results/perf3/rust-body-regression",
+      "counts": {
+        "passed_cases": 1,
+        "total_cases": 1,
+        "total_failures_including_boundaries": 0
+      },
+      "cwd": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b",
+      "elapsed_seconds": 360.6818361771293,
+      "ended_at": "2026-10-18T04:55:27.552609+00:00",
+      "environment": {
+        "PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN": "",
+        "PB_VERSION": "v0.0.0-harness"
+      },
+      "exit_code": 0,
+      "log": "/tmp/pb-perf3-final-rust-body-regression.log",
+      "log_sha256": "e75cf32067f05dbcc310ca25251c5ab9d762c97eda05fa4196a5b53b5e499048",
+      "log_size_bytes": 129,
+      "name": "rust-body-regression",
+      "passed": true,
+      "scope": "prior Rust vs final Rust diagnostic; not a Go oracle; full120s tier not frozen",
+      "started_at": "2026-10-18T04:49:26.870763+00:00"
+    },
+    {
+      "argv": [
+        "/home/ajs/.cache/pb-phase7/harness-venv/bin/python",
+        "-m",
+        "unittest",
+        "-v",
+        "test_stress",
+        "test_perf3_cached",
+        "test_ingest_perf",
+        "test_stress_process",
+        "test_stress_ingest"
+      ],
+      "command": "PB_VERSION=v0.0.0-harness PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN= /home/ajs/.cache/pb-phase7/harness-venv/bin/python -m unittest -v test_stress test_perf3_cached test_ingest_perf test_stress_process test_stress_ingest",
+      "counts": {
+        "result_line": "OK",
+        "tests": 107
+      },
+      "cwd": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness",
+      "elapsed_seconds": 23.679033944848925,
+      "ended_at": "2026-10-18T04:55:57.634423+00:00",
+      "environment": {
+        "PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN": "",
+        "PB_VERSION": "v0.0.0-harness"
+      },
+      "exit_code": 0,
+      "log": "/tmp/pb-perf3-final-python-testfix.log",
+      "log_sha256": "3fecaa3b695a0eaae4a1092ea7a6040a7f9ed0f34c1f543e863880ad1ea78116",
+      "log_size_bytes": 16363,
+      "name": "python-testfix",
+      "passed": true,
+      "started_at": "2026-10-18T04:55:33.955372+00:00"
+    }
+  ],
+  "complete": true,
+  "environment": {
+    "PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN": "",
+    "PB_VERSION": "v0.0.0-harness"
+  },
+  "followup_scope": "One targeted Go repeat for refresh and body (jobs=2) plus prior-Rust/final-Rust refresh and body diagnostics concurrently, then only the authorized cached-test interpreter assertion correction and original Python rerun. No benchmarks; production remains frozen. No retry-until-green.",
+  "go_refresh_repeat": {
+    "all_gates": [
+      "phase1",
+      "phase2",
+      "phase3",
+      "p3-deadline-header-stall-text",
+      "p3-deadline-body-stall-text",
+      "p3-deadline-header-stall-json",
+      "p3-deadline-body-stall-json",
+      "p3-deadline-text-empty-array-lookahead",
+      "p3-deadline-not-reset-per-chunk",
+      "p3-deadline-spans-redirects",
+      "p3-deadline-spans-refresh",
+      "p3-deadline-preview-needs-one-more-byte",
+      "phase4",
+      "p4-deadline-header",
+      "p4-deadline-body",
+      "phase5",
+      "p5-user-add-stalled-body-deadline",
+      "flight-main",
+      "flight-trailer-followup",
+      "flight-review3-followup",
+      "flight-decoder14",
+      "interactive-sql-saved",
+      "root-help"
+    ],
+    "checks": [
+      {
+        "artifacts": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay-refresh-repeat/p3-deadline-spans-refresh",
+        "exit": 0,
+        "gate": "p3-deadline-spans-refresh",
+        "seconds": 186.7401112250518
+      },
+      {
+        "artifacts": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay-refresh-repeat/p4-deadline-body",
+        "exit": 0,
+        "gate": "p4-deadline-body",
+        "seconds": 361.0862490690779
+      }
+    ],
+    "complete_planned_coverage": true,
+    "counts": {
+      "completed_groups": 2,
+      "failed_groups": 0,
+      "passed_groups": 2,
+      "planned_groups": 2
+    },
+    "coverage": {
+      "flight-main": {
+        "defined_cases": 219,
+        "existing_declared_user_agent_divergence": true
+      },
+      "flight-review3-followup": {
+        "defined_cases": 56,
+        "existing_declared_user_agent_divergence": true
+      },
+      "flight-trailer-followup": {
+        "defined_cases": 16,
+        "existing_declared_user_agent_divergence": true
+      },
+      "interactive-sql-saved": {
+        "cases": [
+          "p7-nonTTY-sql-dark",
+          "p7-nonTTY-saved-dark",
+          "p7-sql-empty-quit-dark",
+          "p7-sql-signal-sigint-dark",
+          "p7-sql-signal-sigterm-dark",
+          "p7-sql-signal-sigquit-dark",
+          "p7-sql-resize-dark",
+          "p7-saved-quit-ctrl-c-dark",
+          "p7-saved-filter-a-dark",
+          "p7-saved-filter-b-dark",
+          "p7-saved-filter-enter-dark",
+          "p7-saved-non2xx-dark",
+          "p7-saved-malformed-dark",
+          "p7-saved-empty-dark",
+          "p7-sql-promoted-short-empty-dark",
+          "p7-sql-promoted-short-query-dark",
+          "p7-sql-promoted-long-empty-dark",
+          "p7-sql-promoted-long-true-query-dark",
+          "p7-sql-promoted-ignored-yaml-dark",
+          "p7-sql-promoted-ignored-save-as-dark",
+          "p7-sql-promoted-compact-json-dark",
+          "p7-sql-dataset-placeholder-dark",
+          "p7-sql-editor-key-precedence-dark",
+          "p7-sql-time-overlay-cancel-dark",
+          "p7-sql-window-partial-final-dark",
+          "p7-saved-empty-output-dark",
+          "p7-clipboard-sql-dark",
+          "p7-clipboard-saved-filter-dark",
+          "p7-sql-result-empty-dark",
+          "p7-sql-result-error-dark",
+          "p7-sql-delayed-window-guard-dark",
+          "p7-sql-alt-enter-dark",
+          "p7-sql-hang-double-sigterm-dark",
+          "p7-sql-wide-dataset-truncation-dark",
+          "p7-nonTTY-sql-light",
+          "p7-nonTTY-saved-light",
+          "p7-sql-empty-quit-light",
+          "p7-sql-signal-sigint-light",
+          "p7-sql-signal-sigterm-light",
+          "p7-sql-signal-sigquit-light",
+          "p7-sql-resize-light",
+          "p7-saved-quit-ctrl-c-light",
+          "p7-saved-filter-a-light",
+          "p7-saved-filter-b-light",
+          "p7-saved-filter-enter-light",
+          "p7-saved-non2xx-light",
+          "p7-saved-malformed-light",
+          "p7-saved-empty-light",
+          "p7-sql-promoted-short-empty-light",
+          "p7-sql-promoted-short-query-light",
+          "p7-sql-promoted-long-empty-light",
+          "p7-sql-promoted-long-true-query-light",
+          "p7-sql-promoted-ignored-yaml-light",
+          "p7-sql-promoted-ignored-save-as-light",
+          "p7-sql-promoted-compact-json-light",
+          "p7-sql-dataset-placeholder-light",
+          "p7-sql-editor-key-precedence-light",
+          "p7-sql-time-overlay-cancel-light",
+          "p7-sql-window-partial-final-light",
+          "p7-saved-empty-output-light",
+          "p7-clipboard-sql-light",
+          "p7-clipboard-saved-filter-light",
+          "p7-sql-result-empty-light",
+          "p7-sql-result-error-light",
+          "p7-sql-delayed-window-guard-light",
+          "p7-sql-alt-enter-light",
+          "p7-sql-hang-double-sigterm-light",
+          "p7-sql-wide-dataset-truncation-light"
+        ],
+        "documentary": [
+          "p7-nonTTY-sql-dark",
+          "p7-nonTTY-saved-dark",
+          "p7-sql-signal-sigint-dark",
+          "p7-sql-signal-sigterm-dark",
+          "p7-nonTTY-sql-light",
+          "p7-nonTTY-saved-light",
+          "p7-sql-signal-sigint-light",
+          "p7-sql-signal-sigterm-light"
+        ]
+      },
+      "phase1": {
+        "ordinary_cases": 2760,
+        "total_defined_cases": 2760
+      },
+      "phase2": {
+        "ordinary_cases": 219,
+        "total_defined_cases": 225
+      },
+      "phase3": {
+        "ordinary_cases": 688,
+        "total_defined_cases": 697
+      },
+      "phase4": {
+        "ordinary_cases": 159,
+        "total_defined_cases": 161
+      },
+      "phase5": {
+        "ordinary_cases": 185,
+        "total_defined_cases": 186
+      }
+    },
+    "gaps": [
+      "Historical phase1 deferred-stub guards are excluded; parser/help/completion parity runs.",
+      "Phase2 future-terminal cases are outside its ordinary gate; selected SQL/saved PTY cases run separately.",
+      "Non-SQL/saved interactive workflows, device-login and interactive-effects are outside this replay.",
+      "Phase6 native tonic User-Agent differences retain their existing explicit divergence ledger; they are not strict passes.",
+      "Rust ingest/observe additions use only existing discovery/help/catalog projections."
+    ],
+    "identities_unchanged": true,
+    "passed": true,
+    "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay-refresh-repeat/replay.json",
+    "selected_gates": [
+      "p3-deadline-spans-refresh",
+      "p4-deadline-body"
+    ],
+    "sha256": "cd2c56448e911d1a5a48c51cada3907a08adc2d32efc0a3f354c52e68b694852"
+  },
+  "go_replay": {
+    "all_gates": [
+      "phase1",
+      "phase2",
+      "phase3",
+      "p3-deadline-header-stall-text",
+      "p3-deadline-body-stall-text",
+      "p3-deadline-header-stall-json",
+      "p3-deadline-body-stall-json",
+      "p3-deadline-text-empty-array-lookahead",
+      "p3-deadline-not-reset-per-chunk",
+      "p3-deadline-spans-redirects",
+      "p3-deadline-spans-refresh",
+      "p3-deadline-preview-needs-one-more-byte",
+      "phase4",
+      "p4-deadline-header",
+      "p4-deadline-body",
+      "phase5",
+      "p5-user-add-stalled-body-deadline",
+      "flight-main",
+      "flight-trailer-followup",
+      "flight-review3-followup",
+      "flight-decoder14",
+      "interactive-sql-saved",
+      "root-help"
+    ],
+    "checks": [
+      {
+        "artifacts": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay/phase2",
+        "exit": 0,
+        "gate": "phase2",
+        "seconds": 36.826943709049374
+      },
+      {
+        "artifacts": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay/phase1",
+        "exit": 0,
+        "gate": "phase1",
+        "seconds": 140.9676038119942
+      },
+      {
+        "artifacts": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay/p3-deadline-header-stall-text",
+        "exit": 0,
+        "gate": "p3-deadline-header-stall-text",
+        "seconds": 187.75627438398078
+      },
+      {
+        "artifacts": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay/p3-deadline-body-stall-text",
+        "exit": 0,
+        "gate": "p3-deadline-body-stall-text",
+        "seconds": 187.91349168191664
+      },
+      {
+        "artifacts": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay/p3-deadline-header-stall-json",
+        "exit": 0,
+        "gate": "p3-deadline-header-stall-json",
+        "seconds": 188.20084032509476
+      },
+      {
+        "artifacts": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay/p3-deadline-body-stall-json",
+        "exit": 0,
+        "gate": "p3-deadline-body-stall-json",
+        "seconds": 187.6206961660646
+      },
+      {
+        "artifacts": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay/p3-deadline-text-empty-array-lookahead",
+        "exit": 0,
+        "gate": "p3-deadline-text-empty-array-lookahead",
+        "seconds": 187.9349720380269
+      },
+      {
+        "artifacts": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay/phase3",
+        "exit": 0,
+        "gate": "phase3",
+        "seconds": 416.53031460382044
+      },
+      {
+        "artifacts": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay/p3-deadline-not-reset-per-chunk",
+        "exit": 0,
+        "gate": "p3-deadline-not-reset-per-chunk",
+        "seconds": 186.64511413592845
+      },
+      {
+        "artifacts": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay/p3-deadline-spans-redirects",
+        "exit": 0,
+        "gate": "p3-deadline-spans-redirects",
+        "seconds": 187.8852677589748
+      },
+      {
+        "artifacts": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay/p3-deadline-spans-refresh",
+        "exit": 1,
+        "gate": "p3-deadline-spans-refresh",
+        "seconds": 188.04257111786865
+      },
+      {
+        "artifacts": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay/phase4",
+        "exit": 0,
+        "gate": "phase4",
+        "seconds": 84.90645121410489
+      },
+      {
+        "artifacts": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay/p3-deadline-preview-needs-one-more-byte",
+        "exit": 0,
+        "gate": "p3-deadline-preview-needs-one-more-byte",
+        "seconds": 187.93016822403297
+      },
+      {
+        "artifacts": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay/phase5",
+        "exit": 0,
+        "gate": "phase5",
+        "seconds": 98.10796240600757
+      },
+      {
+        "artifacts": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay/p5-user-add-stalled-body-deadline",
+        "exit": 0,
+        "gate": "p5-user-add-stalled-body-deadline",
+        "seconds": 181.30233630607836
+      },
+      {
+        "artifacts": "/home/ajs/.cache/pb-phase6/tmp/perf2-go-replay/trailer-followup",
+        "exit": 0,
+        "gate": "flight-trailer-followup",
+        "seconds": 19.398753172019497
+      },
+      {
+        "artifacts": "/home/ajs/.cache/pb-phase6/tmp/perf2-go-replay/review3-followup",
+        "exit": 0,
+        "gate": "flight-review3-followup",
+        "seconds": 25.692522988189012
+      },
+      {
+        "artifacts": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay/flight-decoder14",
+        "exit": 0,
+        "gate": "flight-decoder14",
+        "seconds": 4.488442230038345
+      },
+      {
+        "artifacts": "/home/ajs/.cache/pb-phase6/tmp/perf2-go-replay/main",
+        "exit": 0,
+        "gate": "flight-main",
+        "seconds": 198.98281603190117
+      },
+      {
+        "artifacts": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay/root-help",
+        "exit": 0,
+        "gate": "root-help",
+        "seconds": 1.9837181100156158
+      },
+      {
+        "artifacts": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay/p4-deadline-header",
+        "exit": 0,
+        "gate": "p4-deadline-header",
+        "seconds": 361.1645705809351
+      },
+      {
+        "artifacts": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay/p4-deadline-body",
+        "exit": 1,
+        "gate": "p4-deadline-body",
+        "seconds": 361.19410506403074
+      },
+      {
+        "artifacts": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay/interactive-sql-saved",
+        "exit": 0,
+        "gate": "interactive-sql-saved",
+        "seconds": 132.33737419592217
+      }
+    ],
+    "complete_planned_coverage": true,
+    "counts": {
+      "completed_groups": 23,
+      "failed_groups": 2,
+      "passed_groups": 21,
+      "planned_groups": 23
+    },
+    "coverage": {
+      "flight-main": {
+        "defined_cases": 219,
+        "existing_declared_user_agent_divergence": true
+      },
+      "flight-review3-followup": {
+        "defined_cases": 56,
+        "existing_declared_user_agent_divergence": true
+      },
+      "flight-trailer-followup": {
+        "defined_cases": 16,
+        "existing_declared_user_agent_divergence": true
+      },
+      "interactive-sql-saved": {
+        "cases": [
+          "p7-nonTTY-sql-dark",
+          "p7-nonTTY-saved-dark",
+          "p7-sql-empty-quit-dark",
+          "p7-sql-signal-sigint-dark",
+          "p7-sql-signal-sigterm-dark",
+          "p7-sql-signal-sigquit-dark",
+          "p7-sql-resize-dark",
+          "p7-saved-quit-ctrl-c-dark",
+          "p7-saved-filter-a-dark",
+          "p7-saved-filter-b-dark",
+          "p7-saved-filter-enter-dark",
+          "p7-saved-non2xx-dark",
+          "p7-saved-malformed-dark",
+          "p7-saved-empty-dark",
+          "p7-sql-promoted-short-empty-dark",
+          "p7-sql-promoted-short-query-dark",
+          "p7-sql-promoted-long-empty-dark",
+          "p7-sql-promoted-long-true-query-dark",
+          "p7-sql-promoted-ignored-yaml-dark",
+          "p7-sql-promoted-ignored-save-as-dark",
+          "p7-sql-promoted-compact-json-dark",
+          "p7-sql-dataset-placeholder-dark",
+          "p7-sql-editor-key-precedence-dark",
+          "p7-sql-time-overlay-cancel-dark",
+          "p7-sql-window-partial-final-dark",
+          "p7-saved-empty-output-dark",
+          "p7-clipboard-sql-dark",
+          "p7-clipboard-saved-filter-dark",
+          "p7-sql-result-empty-dark",
+          "p7-sql-result-error-dark",
+          "p7-sql-delayed-window-guard-dark",
+          "p7-sql-alt-enter-dark",
+          "p7-sql-hang-double-sigterm-dark",
+          "p7-sql-wide-dataset-truncation-dark",
+          "p7-nonTTY-sql-light",
+          "p7-nonTTY-saved-light",
+          "p7-sql-empty-quit-light",
+          "p7-sql-signal-sigint-light",
+          "p7-sql-signal-sigterm-light",
+          "p7-sql-signal-sigquit-light",
+          "p7-sql-resize-light",
+          "p7-saved-quit-ctrl-c-light",
+          "p7-saved-filter-a-light",
+          "p7-saved-filter-b-light",
+          "p7-saved-filter-enter-light",
+          "p7-saved-non2xx-light",
+          "p7-saved-malformed-light",
+          "p7-saved-empty-light",
+          "p7-sql-promoted-short-empty-light",
+          "p7-sql-promoted-short-query-light",
+          "p7-sql-promoted-long-empty-light",
+          "p7-sql-promoted-long-true-query-light",
+          "p7-sql-promoted-ignored-yaml-light",
+          "p7-sql-promoted-ignored-save-as-light",
+          "p7-sql-promoted-compact-json-light",
+          "p7-sql-dataset-placeholder-light",
+          "p7-sql-editor-key-precedence-light",
+          "p7-sql-time-overlay-cancel-light",
+          "p7-sql-window-partial-final-light",
+          "p7-saved-empty-output-light",
+          "p7-clipboard-sql-light",
+          "p7-clipboard-saved-filter-light",
+          "p7-sql-result-empty-light",
+          "p7-sql-result-error-light",
+          "p7-sql-delayed-window-guard-light",
+          "p7-sql-alt-enter-light",
+          "p7-sql-hang-double-sigterm-light",
+          "p7-sql-wide-dataset-truncation-light"
+        ],
+        "documentary": [
+          "p7-nonTTY-sql-dark",
+          "p7-nonTTY-saved-dark",
+          "p7-sql-signal-sigint-dark",
+          "p7-sql-signal-sigterm-dark",
+          "p7-nonTTY-sql-light",
+          "p7-nonTTY-saved-light",
+          "p7-sql-signal-sigint-light",
+          "p7-sql-signal-sigterm-light"
+        ]
+      },
+      "phase1": {
+        "ordinary_cases": 2760,
+        "total_defined_cases": 2760
+      },
+      "phase2": {
+        "ordinary_cases": 219,
+        "total_defined_cases": 225
+      },
+      "phase3": {
+        "ordinary_cases": 688,
+        "total_defined_cases": 697
+      },
+      "phase4": {
+        "ordinary_cases": 159,
+        "total_defined_cases": 161
+      },
+      "phase5": {
+        "ordinary_cases": 185,
+        "total_defined_cases": 186
+      }
+    },
+    "gaps": [
+      "Historical phase1 deferred-stub guards are excluded; parser/help/completion parity runs.",
+      "Phase2 future-terminal cases are outside its ordinary gate; selected SQL/saved PTY cases run separately.",
+      "Non-SQL/saved interactive workflows, device-login and interactive-effects are outside this replay.",
+      "Phase6 native tonic User-Agent differences retain their existing explicit divergence ledger; they are not strict passes.",
+      "Rust ingest/observe additions use only existing discovery/help/catalog projections."
+    ],
+    "identities_unchanged": true,
+    "passed": false,
+    "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay/replay.json",
+    "selected_gates": [
+      "phase1",
+      "phase2",
+      "phase3",
+      "p3-deadline-header-stall-text",
+      "p3-deadline-body-stall-text",
+      "p3-deadline-header-stall-json",
+      "p3-deadline-body-stall-json",
+      "p3-deadline-text-empty-array-lookahead",
+      "p3-deadline-not-reset-per-chunk",
+      "p3-deadline-spans-redirects",
+      "p3-deadline-spans-refresh",
+      "p3-deadline-preview-needs-one-more-byte",
+      "phase4",
+      "p4-deadline-header",
+      "p4-deadline-body",
+      "phase5",
+      "p5-user-add-stalled-body-deadline",
+      "flight-main",
+      "flight-trailer-followup",
+      "flight-review3-followup",
+      "flight-decoder14",
+      "interactive-sql-saved",
+      "root-help"
+    ],
+    "sha256": "e03ab5a4b7ff5d03221f5e9e1fa0c0d30936002e92bf842872332a5a60a20a8e"
+  },
+  "go_replay_artifacts": [
+    {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay/replay.json",
+      "sha256": "e03ab5a4b7ff5d03221f5e9e1fa0c0d30936002e92bf842872332a5a60a20a8e"
+    }
+  ],
+  "initial_batch_passed": false,
+  "initial_go_reference_instability": [
+    {
+      "gate": "p3-deadline-spans-refresh",
+      "gate_log": {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay/p3-deadline-spans-refresh.log",
+        "sha256": "1c422c2818be89b082c3692154cd67f9f9afc257081a87b193289f783ed90379",
+        "text": "FAIL p3-deadline-spans-refresh: reference unstable: stderr differs at byte 71: candidate 97 bytes, reference 137 bytes\nphase3 compare: 0 passed, 1 failed, 0 skipped of 1; boundaries 0/0 (not run (case/group filter)); report: /home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay/p3-deadline-spans-refresh/report.md\n"
+      },
+      "report_path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay/p3-deadline-spans-refresh/report.json",
+      "report_sha256": "7a0f86c816348afb71c8fab92fbc6c38bd9913cb0b31819a4c807a1bad59cfee",
+      "stderr_captures": [
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay/p3-deadline-spans-refresh/cases/p3-deadline-spans-refresh/candidate/stderr.normalized",
+          "role": "candidate",
+          "sha256": "52328828a7525feb210b6c662a992dd4a82f11df6e98fac2d5098376d49c26c4",
+          "text": "Error: request execution failed: Post \"http://<FIXTURE>/api/v1/query\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)\n"
+        },
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay/p3-deadline-spans-refresh/cases/p3-deadline-spans-refresh/reference/stderr.normalized",
+          "role": "reference",
+          "sha256": "6e28b28a82185320ed26da7d58a0f701d176d9a5e3b93b4f90739a933fa9e4be",
+          "text": "Error: request execution failed: Post \"http://<FIXTURE>/api/v1/query\": net/http: request canceled (Client.Timeout exceeded while awaiting headers)\n"
+        },
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay/p3-deadline-spans-refresh/cases/p3-deadline-spans-refresh/reference-repeat-1/stderr.normalized",
+          "role": "reference-repeat-1",
+          "sha256": "6257708f195b35fe9c18dfbfcb705b768e25e02397fca9f2b2e0a689a2446a24",
+          "text": "Error: request execution failed: Post \"http://<FIXTURE>/api/v1/query\": context deadline exceeded\n"
+        }
+      ]
+    },
+    {
+      "gate": "p4-deadline-body",
+      "gate_log": {
+        "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay/p4-deadline-body.log",
+        "sha256": "7d2a08daa7613abf3c6b5a51395dae751f32bf3eb026297bf68694c2a7eed0ff",
+        "text": "p4-deadline-body: stderr lacks b'Client.Timeout'; stderr differs at byte 7: candidate 506 bytes, reference 455 bytes; stderr differs at byte 7: candidate 506 bytes, reference 455 bytes\nphase4: 0/1 cases passed; 1 total failures including boundaries/identity; /home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay/p4-deadline-body/report.json\n"
+      },
+      "report_path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay/p4-deadline-body/report.json",
+      "report_sha256": "4e7dc217acd4d303f245090c69a6b3e841e03cee638a0049e6f89040997737be",
+      "stderr_captures": [
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay/p4-deadline-body/p4-deadline-body/candidate/stderr.normalized",
+          "role": "candidate",
+          "sha256": "830e078e8fc31dedc74744f2c9ea00ddec8f3b1cea2d00bb7ec6a94ce6c8d12b",
+          "text": "Error: context deadline exceeded (Client.Timeout or context cancellation while reading body)\nUsage:\n  pb promql labels [stream] [flags]\n\nExamples:\n  pb promql labels otel_metrics\n  pb promql labels --dataset otel_metrics\n\nFlags:\n  -d, --dataset string   Metrics dataset (default \"select-dataset\")\n  -f, --from string      Start time filter (optional)\n  -h, --help             help for labels\n  -o, --output string    Output format: text or json (default \"text\")\n  -t, --to string        End time filter (optional)\n\n"
+        },
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay/p4-deadline-body/p4-deadline-body/reference/stderr.normalized",
+          "role": "reference",
+          "sha256": "a9d214f2821a092939195d0ceea1d14a6f0f464dc0fc348f1f310353feadd211",
+          "text": "Error: context deadline exceeded\nUsage:\n  pb promql labels [stream] [flags]\n\nExamples:\n  pb promql labels otel_metrics\n  pb promql labels --dataset otel_metrics\n\nFlags:\n  -d, --dataset string   Metrics dataset (default \"select-dataset\")\n  -f, --from string      Start time filter (optional)\n  -h, --help             help for labels\n  -o, --output string    Output format: text or json (default \"text\")\n  -t, --to string        End time filter (optional)\n\n"
+        },
+        {
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/go-replay/p4-deadline-body/p4-deadline-body/repeat/stderr.normalized",
+          "role": "repeat",
+          "sha256": "1c637626cee97e65474ed7cd624922aeb37342e16c198b9471f4cee2086bbcb2",
+          "text": "Error: net/http: request canceled (Client.Timeout or context cancellation while reading body)\nUsage:\n  pb promql labels [stream] [flags]\n\nExamples:\n  pb promql labels otel_metrics\n  pb promql labels --dataset otel_metrics\n\nFlags:\n  -d, --dataset string   Metrics dataset (default \"select-dataset\")\n  -f, --from string      Start time filter (optional)\n  -h, --help             help for labels\n  -o, --output string    Output format: text or json (default \"text\")\n  -t, --to string        End time filter (optional)\n\n"
+        }
+      ]
+    }
+  ],
+  "lock": "/home/ajs/.cache/pb-rs-performance.lock",
+  "lock_acquired_at": "2026-10-18T04:10:50.546839+00:00",
+  "lock_intervals": [
+    {
+      "acquired_at": "2026-10-18T04:10:50.546839+00:00",
+      "release_requested_at": "2026-10-18T04:32:47.584386+00:00"
+    },
+    {
+      "acquired_at": "2026-10-18T04:49:26.865500+00:00",
+      "release_requested_at": "2026-10-18T04:55:57.652665+00:00"
+    }
+  ],
+  "lock_release_requested_at": "2026-10-18T04:55:57.652681+00:00",
+  "passed": false,
+  "rust_body_regression": {
+    "binary_identities": {
+      "candidate": {
+        "bytes": 13555336,
+        "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf3-final",
+        "sha256": "0dd77ed8adb4545294559bc1770648476b6d2f27c396a73ab05f398426854ad5"
+      },
+      "cloud_candidate": {
+        "bytes": 13555784,
+        "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf3-final-cloud",
+        "sha256": "02a080d0d8a18194f673c58db44e354d1e7294fd687d3257345790fb073c9cd4"
+      },
+      "cloud_reference": {
+        "bytes": 13547976,
+        "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf2-final-cloud",
+        "sha256": "0ee2897618f718aadc443a71a76287fad010300bb8b2745412b2e9e71e34b034"
+      },
+      "reference": {
+        "bytes": 13547528,
+        "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf2-final",
+        "sha256": "8124d157236e215d2068ce4dadf97ebe08043a1a1c327d5dc3a69806785e12a1"
+      }
+    },
+    "go_manifest_disabled_for_rust_to_rust_diagnostic": true,
+    "passed": true,
+    "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/rust-body-regression/report.json",
+    "sample_roles_verified": [
+      "reference",
+      "repeat",
+      "candidate"
+    ],
+    "scope": "prior Rust vs final Rust diagnostic; not a Go oracle; full120s tier not frozen",
+    "selected_case_executed_without_skips": true,
+    "sha256": "08e90e394cecf1d3c3e08ffcc9eeec616b21f1b2e16a764559ea67fbe62a0684"
+  },
+  "rust_refresh_regression": {
+    "binary_identities": {
+      "candidate": {
+        "bytes": 13555336,
+        "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf3-final",
+        "sha256": "0dd77ed8adb4545294559bc1770648476b6d2f27c396a73ab05f398426854ad5"
+      },
+      "cloud_candidate": {
+        "bytes": 13555784,
+        "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf3-final-cloud",
+        "sha256": "02a080d0d8a18194f673c58db44e354d1e7294fd687d3257345790fb073c9cd4"
+      },
+      "cloud_reference": {
+        "bytes": 13547976,
+        "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf2-final-cloud",
+        "sha256": "0ee2897618f718aadc443a71a76287fad010300bb8b2745412b2e9e71e34b034"
+      },
+      "reference": {
+        "bytes": 13547528,
+        "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf2-final",
+        "sha256": "8124d157236e215d2068ce4dadf97ebe08043a1a1c327d5dc3a69806785e12a1"
+      }
+    },
+    "go_manifest_disabled_for_rust_to_rust_diagnostic": true,
+    "passed": true,
+    "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/rust-refresh-regression/report.json",
+    "sample_roles_verified": [
+      "reference",
+      "reference-repeat-1",
+      "candidate"
+    ],
+    "scope": "prior Rust vs final Rust diagnostic; not a Go oracle; full60s tier not frozen",
+    "selected_case_executed_without_skips": true,
+    "sha256": "e8d8661e0067270d09aa0402a9ed6d72d11673c4a933ca29125f15af433d5203"
+  },
+  "schema": "pb-cli-perf3-final-tests/1",
+  "test_only_resolution": {
+    "added_import": "shutil",
+    "after_sha256": "8056fb47d7d1b0ba0af09b545737f197e2efd9d4bbc44c974fae15222614e768",
+    "applied_after_go_identity_audits": true,
+    "before_sha256": "a8178a3b729e6f0399e428119aba2dd7903f7d6202c801519c07d4a74d30576a",
+    "new_assertion": "self.assertEqual(Path(ready['python']['executable']).resolve(), Path(shutil.which('python3')).resolve())",
+    "old_assertion": "self.assertEqual(ready['python']['executable'], cached.sys.executable)",
+    "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/test_perf3_cached.py",
+    "production_sources_changed": false,
+    "reason": "The fixture uses env python3 and records its exact executable. Compare the resolved recorded executable with resolved shutil.which(python3), allowing valid direct venv launch and aliases."
+  },
+  "validation_note": "Initial failed Python assertion retained and superseded only by the authorized test fix/rerun. All Go attempts and exact comparator failures remain visible; passed excludes only that superseded Python attempt. Targeted Rust-to-Rust diagnostic is not a Go compatibility pass."
+}

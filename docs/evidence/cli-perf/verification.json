@@ -1,0 +1,36 @@
+{
+  "rust": {
+    "passed": 843,
+    "ignored": 9,
+    "failed": 0,
+    "command": "PB_VERSION=v0.0.0-harness cargo +1.96.0 test --locked"
+  },
+  "diagnostics": {
+    "passed": 2,
+    "failed": 0,
+    "command": "PB_VERSION=v0.0.0-harness cargo +1.96.0 test --locked --features diagnostics --test diagnostics_process"
+  },
+  "harness": {
+    "passed_or_skipped_tests": 986,
+    "modules": 35,
+    "failed": 0,
+    "command": "PB_DIAGNOSTIC_GO=/path/to/go /home/ajs/.cache/pb-phase7/harness-venv/bin/python harness/run_tests.py"
+  },
+  "go_parser_help": {
+    "passed": 2760,
+    "cases": 2760,
+    "scope": "parity-only; deferred guards excluded",
+    "go_version": "1.25.4",
+    "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+    "candidate_sha256": "6be0db3a7c5f145ed75d0522b288c8ff69289c5f0bf8fe34c1622fcb180fe37c",
+    "report_sha256": "2ff7aa2185d9a34965b7931a3b35a29b88edaefde853e42c0805eef9fd451f1b"
+  },
+  "other_checks": [
+    "cargo +1.96.0 fmt --check",
+    "git diff --check",
+    "cargo +1.96.0 clippy --locked --all-targets --all-features -- -D warnings",
+    "Go completion parity",
+    "Pinned Go/Rust interactive sql_duplicate_first_error replay"
+  ],
+  "review_tasks": 17
+}

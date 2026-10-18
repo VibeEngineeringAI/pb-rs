@@ -4,6 +4,10 @@ use std::sync::atomic::{AtomicU64, Ordering};
 
 struct Directory(PathBuf);
 
+fn payload(record: &FileRecord) -> Value {
+    serde_json::from_str(&record.payload).unwrap()
+}
+
 impl Directory {
     fn new() -> Self {
         static COUNTER: AtomicU64 = AtomicU64::new(0);
@@ -75,7 +79,7 @@ fn check_alias_switch(truncate: bool, legacy_stale_state: bool) {
     append(&path, "second\n");
     let second = collector.scan().unwrap();
     assert_eq!(second.records.len(), 1);
-    assert_eq!(second.records[0].payload["message"], "second");
+    assert_eq!(payload(&second.records[0])["message"], "second");
     collector.commit(&second).unwrap();
     if legacy_stale_state {
         // Persist exactly the duplicate checkpoint shape written by the old
@@ -106,7 +110,7 @@ fn check_alias_switch(truncate: bool, legacy_stale_state: bool) {
     );
     if truncate {
         assert_eq!(third.records.len(), 2);
-        assert_eq!(third.records[1].payload["message"], "CHANGED");
+        assert_eq!(payload(&third.records[1])["message"], "CHANGED");
         assert_ne!(
             third.records[1].source_generation,
             second.records[0].source_generation
@@ -114,7 +118,7 @@ fn check_alias_switch(truncate: bool, legacy_stale_state: bool) {
         assert_eq!(third.records[1].source_sequence, 2);
     } else {
         assert_eq!(third.records.len(), 1);
-        assert_eq!(third.records[0].payload["message"], "third");
+        assert_eq!(payload(&third.records[0])["message"], "third");
         assert_eq!(
             third.records[0].source_generation,
             second.records[0].source_generation
@@ -171,7 +175,7 @@ fn skipped_input_is_bounded_and_next_scan_serves_another_file() {
     let second = collector.scan().unwrap();
     assert_eq!(second.skipped_lines, 0);
     assert_eq!(second.records.len(), 1);
-    assert_eq!(second.records[0].payload["source"], "b");
+    assert_eq!(payload(&second.records[0])["source"], "b");
     collector.commit(&second).unwrap();
     // Bounded skipped-only progress must remain durable across every restart.
     for expected_sequence in 2..=4 {
@@ -425,7 +429,7 @@ fn incomplete_lines_wait_for_newline_and_crlf_is_supported() {
     assert!(collector.scan().unwrap().records.is_empty());
     append(&path, "\n");
     let second = collector.scan().unwrap();
-    assert_eq!(second.records[0].payload["n"], 2);
+    assert_eq!(payload(&second.records[0])["n"], 2);
     assert_eq!(second.records[0].source_sequence, 2);
     assert!(!second.has_incomplete_lines);
 }
@@ -446,12 +450,12 @@ fn end_skips_initial_files_but_discovers_new_files_from_beginning() {
     append(&path, "{\"new\":1}\n");
     let batch = collector.scan().unwrap();
     assert_eq!(batch.records.len(), 1);
-    assert_eq!(batch.records[0].payload["new"], 1);
+    assert_eq!(payload(&batch.records[0])["new"], 1);
     collector.commit(&batch).unwrap();
     dir.file("c.log", "{\"new\":2}\n");
     let batch = collector.scan().unwrap();
     assert_eq!(batch.records.len(), 1);
-    assert_eq!(batch.records[0].payload["new"], 2);
+    assert_eq!(payload(&batch.records[0])["new"], 2);
 }
 
 #[test]
@@ -474,7 +478,7 @@ fn end_discards_fragment_continuation_across_restarts() {
     append(&path, " end\nnext\n");
     let batch = restarted.scan().unwrap();
     assert_eq!(batch.records.len(), 1);
-    assert_eq!(batch.records[0].payload["message"], "next");
+    assert_eq!(payload(&batch.records[0])["message"], "next");
     assert!(!batch.has_incomplete_lines);
     restarted.commit(&batch).unwrap();
 }
@@ -505,7 +509,7 @@ fn changing_start_policy_preserves_existing_saved_offsets() {
     options.from = StartPosition::End;
     let restarted = FileCollector::new(options, collector.state().clone()).unwrap();
     let second = restarted.scan().unwrap();
-    assert_eq!(second.records[0].payload["n"], 2);
+    assert_eq!(payload(&second.records[0])["n"], 2);
     assert_eq!(second.records[0].source_sequence, 2);
 }
 
@@ -559,14 +563,14 @@ fn rename_rotation_reads_old_remainder_and_new_file() {
     let old = batch
         .records
         .iter()
-        .find(|record| record.payload["n"] == 2)
+        .find(|record| payload(record)["n"] == 2)
         .unwrap();
     assert_eq!(old.source_generation, original.records[0].source_generation);
     assert_eq!(old.source_sequence, 2);
     let new = batch
         .records
         .iter()
-        .find(|record| record.payload["n"] == 3)
+        .find(|record| payload(record)["n"] == 3)
         .unwrap();
     assert_ne!(new.source_generation, original.records[0].source_generation);
     assert_eq!(new.source_sequence, 1);
@@ -653,8 +657,8 @@ fn text_preserves_empty_lines_and_rejects_invalid_utf8() {
     let mut collector = FileCollector::new(options, FileState::default()).unwrap();
     let batch = collector.scan().unwrap();
     assert_eq!(batch.records.len(), 3);
-    assert_eq!(batch.records[1].payload["message"], "");
-    assert_eq!(batch.records[2].payload["message"], "third");
+    assert_eq!(payload(&batch.records[1])["message"], "");
+    assert_eq!(payload(&batch.records[2])["message"], "third");
     collector.commit(&batch).unwrap();
     let mut file = fs::OpenOptions::new().append(true).open(path).unwrap();
     file.write_all(&[0xff, b'\n']).unwrap();
@@ -666,6 +670,60 @@ fn text_preserves_empty_lines_and_rejects_invalid_utf8() {
             .to_string()
             .contains("invalid UTF-8")
     );
+}
+
+#[test]
+fn jsonl_payloads_are_canonical_text_sized_by_their_exact_bytes() {
+    let dir = Directory::new();
+    dir.file(
+        "run.log",
+        concat!(
+            r#"{ "b" : 1, "a": 2, "b": 3 }"#,
+            "\n",
+            r#"{"big":123456789012345678901234567890,"frac":0.1000000000000000055511151231257827}"#,
+            "\n",
+            r#"{"s":"A\/\té\u0001\"\\"}"#,
+            "\n",
+        ),
+    );
+    let collector = FileCollector::new(dir.options(), FileState::default()).unwrap();
+    let batch = collector.scan().unwrap();
+    let payloads: Vec<&str> = batch.records.iter().map(|r| r.payload.as_str()).collect();
+    assert_eq!(
+        payloads,
+        [
+            // A duplicate key keeps its first position and its last value.
+            r#"{"b":3,"a":2}"#,
+            r#"{"big":123456789012345678901234567890,"frac":0.1000000000000000055511151231257827}"#,
+            "{\"s\":\"A/\\t\u{e9}\\u0001\\\"\\\\\"}",
+        ]
+    );
+    assert_eq!(
+        batch.payload_bytes,
+        payloads.iter().map(|p| p.len()).sum::<usize>()
+    );
+}
+
+#[test]
+fn text_payloads_match_a_serialized_message_map() {
+    let dir = Directory::new();
+    dir.file("run.log", "say \"hi\"\t\\ \u{e9}\u{1}\r\n");
+    let mut options = dir.options();
+    options.format = FileFormat::Text;
+    let collector = FileCollector::new(options, FileState::default()).unwrap();
+    let batch = collector.scan().unwrap();
+    let message = "say \"hi\"\t\\ \u{e9}\u{1}";
+    let expected = serde_json::to_string(&serde_json::Map::from_iter([(
+        "message".to_owned(),
+        Value::String(message.to_owned()),
+    )]))
+    .unwrap();
+    assert_eq!(
+        expected,
+        "{\"message\":\"say \\\"hi\\\"\\t\\\\ \u{e9}\\u0001\"}"
+    );
+    assert_eq!(batch.records[0].payload, expected);
+    assert_eq!(batch.payload_bytes, expected.len());
 }
 
 #[cfg(unix)]
@@ -768,7 +826,7 @@ fn busy_first_source_cannot_starve_a_second_source() {
     options.max_events = 1;
     let mut collector = FileCollector::new(options.clone(), FileState::default()).unwrap();
     let first = collector.scan().unwrap();
-    assert_eq!(first.records[0].payload["source"], "a");
+    assert_eq!(payload(&first.records[0])["source"], "a");
     append(&busy, "{\"source\":\"a\"}\n");
     assert_eq!(
         collector.scan().unwrap().records[0].event_id,
@@ -779,7 +837,7 @@ fn busy_first_source_cannot_starve_a_second_source() {
     let restarted = FileCollector::new(options, state).unwrap();
     let second = restarted.scan().unwrap();
     assert_eq!(second.records.len(), 1);
-    assert_eq!(second.records[0].payload["source"], "b");
+    assert_eq!(payload(&second.records[0])["source"], "b");
     assert!(second.records[0].source_path.ends_with("b.log"));
 }
 
