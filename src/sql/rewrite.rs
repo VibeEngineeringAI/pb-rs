@@ -10,7 +10,10 @@ pub fn prepare_query(query: &str) -> String {
 }
 
 pub fn quote_stream_names(query: &str) -> String {
-    let bytes = query.as_bytes();
+    String::from_utf8(quote_stream_names_bytes(query.as_bytes()))
+        .expect("SQL quoting preserves UTF-8")
+}
+pub(crate) fn quote_stream_names_bytes(bytes: &[u8]) -> Vec<u8> {
     let mut result = Vec::with_capacity(bytes.len());
     let mut i = 0;
     while i < bytes.len() {
@@ -55,12 +58,14 @@ pub fn quote_stream_names(query: &str) -> String {
             }
         }
     }
-    // Every original byte survives in order; all insertions are ASCII.
-    String::from_utf8(result).expect("SQL quoting preserves UTF-8")
+    result
 }
 
 pub fn quote_fields_with_dots(query: &str) -> String {
-    let bytes = query.as_bytes();
+    String::from_utf8(quote_fields_with_dots_bytes(query.as_bytes()))
+        .expect("SQL quoting preserves UTF-8")
+}
+pub(crate) fn quote_fields_with_dots_bytes(bytes: &[u8]) -> Vec<u8> {
     let mut result = Vec::with_capacity(bytes.len());
     let mut i = 0;
     while i < bytes.len() {
@@ -102,28 +107,37 @@ pub fn quote_fields_with_dots(query: &str) -> String {
             }
         }
     }
-    String::from_utf8(result).expect("SQL quoting preserves UTF-8")
+    result
 }
 
 /// The request boundary applies this again after `prepare_query`, as Go does.
 /// A bare trailing `--` is one deliberate exception to idempotence.
 pub fn ensure_default_limit(query: &str) -> String {
-    let mut trimmed = trim_sql_space(query);
-    if trimmed.is_empty() || has_top_level_limit(trimmed.as_bytes()) {
-        return query.to_owned();
+    String::from_utf8(ensure_default_limit_bytes(query.as_bytes()))
+        .expect("SQL limits preserve UTF-8")
+}
+pub(crate) fn prepare_query_bytes(query: &[u8]) -> Vec<u8> {
+    ensure_default_limit_bytes(&quote_fields_with_dots_bytes(&quote_stream_names_bytes(
+        query,
+    )))
+}
+pub(crate) fn ensure_default_limit_bytes(query: &[u8]) -> Vec<u8> {
+    let mut trimmed = crate::error::trim_bytes(query);
+    if trimmed.is_empty() || has_top_level_limit(trimmed) {
+        return query.to_vec();
     }
-    let suffix = if let Some(without_semicolon) = trimmed.strip_suffix(';') {
-        trimmed = trim_sql_space(without_semicolon);
-        ";"
+    let suffix = if let Some(without) = trimmed.strip_suffix(b";") {
+        trimmed = crate::error::trim_bytes(without);
+        b";".as_slice()
     } else {
-        ""
+        b""
     };
     let separator = if ends_in_line_comment(trimmed) {
-        "\n"
+        b"\n".as_slice()
     } else {
-        " "
+        b" "
     };
-    format!("{trimmed}{separator}LIMIT 500{suffix}")
+    [trimmed, separator, b"LIMIT 500", suffix].concat()
 }
 
 fn ident_start(byte: u8) -> bool {
@@ -276,8 +290,7 @@ fn has_top_level_limit(bytes: &[u8]) -> bool {
     false
 }
 
-fn ends_in_line_comment(query: &str) -> bool {
-    let bytes = query.as_bytes();
+fn ends_in_line_comment(bytes: &[u8]) -> bool {
     let mut in_single = false;
     let mut in_double = false;
     let mut in_block = false;
@@ -317,7 +330,7 @@ fn ends_in_line_comment(query: &str) -> bool {
         }
         i += 1;
     }
-    line_start.is_some_and(|start| !trim_sql_space(&query[start + 2..]).is_empty())
+    line_start.is_some_and(|start| !crate::error::trim_bytes(&bytes[start + 2..]).is_empty())
 }
 
 pub(crate) fn trim_sql_space(query: &str) -> &str {

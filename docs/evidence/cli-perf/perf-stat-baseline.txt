@@ -1,0 +1,10 @@
+
+ Performance counter stats for 'bin/pb-perf-baseline version' (20 runs):
+
+     <not counted>      cpu_atom/instructions/u                                                 (0.00%)
+           1840535      cpu_core/instructions/u                                                 ( +-  0.01% )
+     <not counted>      cpu_atom/cycles/u                                                       (0.00%)
+           2200943      cpu_core/cycles/u                                                       ( +-  1.17% )
+
+       0.004153813 +- 0.001058262 seconds time elapsed  ( +- 25.48% )
+

@@ -1,0 +1,3372 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CLI performance evidence</title><style>:root{color-scheme:light dark;font-family:var(--font-sans,system-ui,sans-serif);--evidence-fg:var(--text-primary,var(--foreground,#202a36));--evidence-muted:var(--text-secondary,var(--muted-foreground,#576477));--evidence-border:var(--border-color,var(--border,#d9dfe6));--evidence-surface:var(--background-secondary,var(--muted,#f3f5f7));--evidence-before:var(--text-tertiary,#a3acba);--evidence-after:var(--accent-color,#248670);--evidence-warning:var(--warning-color,#a04c16);color:var(--evidence-fg)}*{box-sizing:border-box}html,body,:root,main{background:transparent}body{margin:0;padding:0}main{width:100%;padding:0}h2{font-size:1.2rem;margin:1.3rem 0 .7rem}p{line-height:1.55;margin:.6rem 0}.intro,.note,.meta{color:var(--evidence-muted)}.note,.meta{font-size:.85rem}article{padding:.5rem 0 .9rem}.scroll{overflow:auto;max-width:100%}table{width:100%;border-collapse:collapse;font-size:.88rem;font-variant-numeric:tabular-nums}th,td{padding:.6rem .65rem;text-align:right;border-bottom:1px solid var(--evidence-border);white-space:nowrap}th{background:var(--evidence-surface);color:var(--evidence-muted);font-weight:600}th:first-child,td:first-child{text-align:left}a{color:inherit;text-decoration-color:var(--evidence-muted);text-underline-offset:.15em}.overview table{font-size:.84rem}.overview th,.overview td{padding:.5rem .45rem}.overview td:first-child{white-space:normal;min-width:8rem}.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));gap:1rem}figure{margin:.5rem 0 1rem}figcaption{font-weight:600;font-size:.9rem}figcaption span{font-weight:400;color:var(--evidence-muted)}.bar-labels{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-top:.7rem;font-size:.85rem}.bar-labels strong{display:block;font-size:.95rem;margin-top:.15rem;font-variant-numeric:tabular-nums}.bar-labels i{display:inline-block;width:10px;height:10px;margin-right:.35rem;border-radius:2px}.before{fill:var(--evidence-before);background:var(--evidence-before)}.after{fill:var(--evidence-after);background:var(--evidence-after)}svg{display:block;width:100%;height:80px}details{margin-top:.75rem}summary{cursor:pointer;font-size:.9rem}summary .meta{margin-left:.4rem}.case-detail{border-top:1px solid var(--evidence-border)}.case-detail>summary{padding:.7rem 0}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:.78rem;max-height:32rem;overflow:auto}code{font-size:.78rem;overflow-wrap:anywhere}.warning{color:var(--evidence-warning)}@media(prefers-color-scheme:dark){:root{--evidence-fg:var(--text-primary,var(--foreground,#e1e8f0));--evidence-muted:var(--text-secondary,var(--muted-foreground,#a8b4c4));--evidence-border:var(--border-color,var(--border,#354050));--evidence-surface:var(--background-secondary,var(--muted,#202a36));--evidence-warning:var(--warning-color,#f4b078)}}</style><main><details><summary>Measurement method and limits</summary><p class="intro">Descriptive small-sample measurements on a shared host, not confidence intervals or a population speedup claim. Warmups are excluded. Samples pair only within the same source report, case, and round; no pairing across reports. The main ratio is the median of candidate/baseline (or Rust/Go) round ratios, with observed minimum and maximum. Ratio of medians is supplemental. CPU is the native child CPU total and RSS is native lifetime peak; neither is Python collector usage. Null-sink runs are resource diagnostics admitted only after separate full-output pipe parity. Throughput is withheld unless the source report explicitly admits performance and the sink is a pipe. Write syscall counts, wchar, and charged storage bytes measure different things; none estimates physical SSD wear.</p></details><p class="note">Inputs were explicitly selected. Each report retains its own binary identities; the generator does not infer that different candidate binaries are the same final revision.</p><section><h2>BEFORE → AFTER: Rust revisions</h2><div class="overview"><div class="scroll"><table><thead><tr><th>Case</th><th>CPU Δ</th><th>RSS Δ</th><th>n</th><th>Compatibility</th></tr></thead><tbody><tr><td><a href="#case-0">large-item-8mib</a></td><td>-9.7%</td><td>-0.8%</td><td>5</td><td>passed</td></tr><tr><td><a href="#case-1">large-items-8x8mib</a></td><td>-3.3%</td><td>-7.9%</td><td>5</td><td>passed</td></tr><tr><td><a href="#case-2">large-items-gzip-8x8mib</a></td><td>+3.1%</td><td>-4.6%</td><td>5</td><td>passed</td></tr><tr><td><a href="#case-3">escaped-1m</a></td><td>-2.9%</td><td>-10.9%</td><td>5</td><td>passed</td></tr><tr><td><a href="#case-4">tiny-1m</a></td><td>-3.6%</td><td>-14.9%</td><td>5</td><td>passed</td></tr></tbody></table></div></div><p class="note">Δ is the median paired percent change; negative means less resource use. n counts paired rounds. Withheld comparisons show —. Expand a case for values, charts, and admission evidence.</p><details class="case-detail" id="case-0" open><summary><strong>large-item-8mib</strong> <span class="meta">inline-on-off-large · resource comparison admitted</span></summary><article><p class="meta">inline-on-off-large · null · 5 paired rounds · resource comparison admitted</p><p>Valid: True · Compatible: True · Throughput admitted: False</p><div class="charts"><figure><figcaption>CPU <span>(ms; lower is better)</span></figcaption><div class="bar-labels"><span><i class="before"></i>BEFORE Rust<strong>32.364 ms</strong></span><span><i class="after"></i>AFTER Rust<strong>28.735 ms</strong></span></div><svg viewBox="0 0 320 80" preserveAspectRatio="none" role="img" aria-label="CPU: BEFORE Rust 32.364 ms, AFTER Rust 28.735 ms"><rect class="before" x="0" y="8" width="320.000" height="24" rx="3"/><rect class="after" x="0" y="48" width="284.118" height="24" rx="3"/></svg></figure><figure><figcaption>Peak RSS <span>(MiB; lower is better)</span></figcaption><div class="bar-labels"><span><i class="before"></i>BEFORE Rust<strong>26.891 MiB</strong></span><span><i class="after"></i>AFTER Rust<strong>26.980 MiB</strong></span></div><svg viewBox="0 0 320 80" preserveAspectRatio="none" role="img" aria-label="Peak RSS: BEFORE Rust 26.891 MiB, AFTER Rust 26.980 MiB"><rect class="before" x="0" y="8" width="318.934" height="24" rx="3"/><rect class="after" x="0" y="48" width="320.000" height="24" rx="3"/></svg></figure></div><div class="scroll"><table><thead><tr><th>Metric</th><th>BEFORE Rust median</th><th>AFTER Rust median</th><th>Paired median ratio</th><th>Paired ratio min–max</th><th>Ratio n</th><th>Ratio of medians</th></tr></thead><tbody><tr><td>CPU (ms)</td><td>32.364</td><td>28.735</td><td>0.903×</td><td>0.792× – 1.058×</td><td>5</td><td>0.888×</td></tr><tr><td>Peak RSS (MiB)</td><td>26.891</td><td>26.980</td><td>0.992×</td><td>0.968× – 1.027×</td><td>5</td><td>1.003×</td></tr><tr><td>Wall time (ms)</td><td>33.912</td><td>29.986</td><td>0.878×</td><td>0.730× – 1.014×</td><td>5</td><td>0.884×</td></tr><tr><td>Write syscalls (syscw) (calls)</td><td>1,049.000</td><td>1,054.000</td><td>0.994×</td><td>0.969× – 1.072×</td><td>5</td><td>1.005×</td></tr><tr><td>Bytes passed to writes (wchar) (MiB)</td><td>9.298</td><td>9.298</td><td>1.000×</td><td>1.000× – 1.000×</td><td>5</td><td>1.000×</td></tr><tr><td>Storage bytes charged (write_bytes) (MiB)</td><td>0.000</td><td>0.000</td><td>—</td><td>— – —</td><td>0</td><td>—</td></tr><tr><td>Voluntary context switches (switches)</td><td>1,148.000</td><td>1,128.000</td><td>0.945×</td><td>0.870× – 1.093×</td><td>5</td><td>0.983×</td></tr><tr><td>Involuntary context switches (switches)</td><td>228.000</td><td>63.000</td><td>0.250×</td><td>0.012× – 3.761×</td><td>5</td><td>0.276×</td></tr></tbody></table></div><p class="note">Withheld: null-sink resource-only, ingest report, invalid samples, or source performance admission false/missing. Ratios are AFTER / BEFORE or Rust / Go; values below 1 mean less resource use. Zero reference values have no defined ratio.</p><details><summary>Binary identities, case metadata, and individual paired samples</summary><div class="scroll"><table><thead><tr><th>Label</th><th>Binary</th><th>SHA-256</th></tr></thead><tbody><tr><td>baseline</td><td><code>/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf3-final</code></td><td><code>0dd77ed8adb4545294559bc1770648476b6d2f27c396a73ab05f398426854ad5</code></td></tr><tr><td>candidate</td><td><code>/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf3-inline-1</code></td><td><code>717409badd79315c22cff13552cabaf6f436da0dfc6599f6b4515767d018ee0e</code></td></tr></tbody></table></div><pre>{
+  &quot;case&quot;: {
+    &quot;consumer&quot;: {},
+    &quot;expectation&quot;: &quot;success&quot;,
+    &quot;fixture&quot;: {
+      &quot;row_bytes&quot;: 8388608,
+      &quot;rows&quot;: 1,
+      &quot;shape&quot;: &quot;ascii&quot;
+    },
+    &quot;name&quot;: &quot;large-item-8mib&quot;,
+    &quot;output&quot;: &quot;json&quot;,
+    &quot;scan_json&quot;: false
+  },
+  &quot;output_validation_verdict&quot;: {
+    &quot;compatible&quot;: true,
+    &quot;deadline_prefix_comparison&quot;: null,
+    &quot;different_contracts&quot;: 1,
+    &quot;medians&quot;: {
+      &quot;baseline&quot;: {
+        &quot;cpu_ms&quot;: 31.262,
+        &quot;cpu_ms_per_million_rows&quot;: 31262000.0,
+        &quot;output_mib_per_second&quot;: 238.35690172723923,
+        &quot;peak_rss_bytes&quot;: 29413376,
+        &quot;rows_per_second&quot;: 25.656417517965846,
+        &quot;runs&quot;: 1,
+        &quot;wall_ms&quot;: 38.976603
+      },
+      &quot;candidate&quot;: {
+        &quot;cpu_ms&quot;: 31.345,
+        &quot;cpu_ms_per_million_rows&quot;: 31345000.0,
+        &quot;output_mib_per_second&quot;: 247.44315491801427,
+        &quot;peak_rss_bytes&quot;: 26853376,
+        &quot;rows_per_second&quot;: 26.634449636386492,
+        &quot;runs&quot;: 1,
+        &quot;wall_ms&quot;: 37.54536
+      }
+    },
+    &quot;observation_only&quot;: false,
+    &quot;observer_bound_runs&quot;: 0,
+    &quot;performance_admitted&quot;: true,
+    &quot;performance_note&quot;: &quot;descriptive local fixture measurement; pacing, observer or producer may cap throughput&quot;,
+    &quot;valid&quot;: true
+  },
+  &quot;samples&quot;: [
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;7d97cbb3453665b730df03af33053407d31fc2d063206d9c0e7d6a02a68c1a40&quot;,
+        &quot;response_sha256&quot;: &quot;1900a4554ea1d4225a1ee324fbbb24d5128ff2e662d39bde2365782b0d31435d&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;candidate&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.016998216880511122,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 408.88312227739965,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 242.14855172495032
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 31.953999999999997,
+        &quot;involuntary_context_switches&quot;: 63,
+        &quot;peak_rss_bytes&quot;: 28737536,
+        &quot;proc_io_syscw&quot;: 1047,
+        &quot;proc_io_wchar&quot;: 9749910,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 1093,
+        &quot;wall_ms&quot;: 33.037579
+      },
+      &quot;round&quot;: 0,
+      &quot;source_sample_index&quot;: 2,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;1900a4554ea1d4225a1ee324fbbb24d5128ff2e662d39bde2365782b0d31435d&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 9741630,
+        &quot;stdout_sha256&quot;: &quot;6988ead3711efc43cfa0a23f22094d2fb598028b398939fa73a69ab2269bef3d&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;7d97cbb3453665b730df03af33053407d31fc2d063206d9c0e7d6a02a68c1a40&quot;,
+        &quot;response_sha256&quot;: &quot;1900a4554ea1d4225a1ee324fbbb24d5128ff2e662d39bde2365782b0d31435d&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;baseline&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.007675299496823367,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 408.88312227739965,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 245.41979759156214
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 30.19,
+        &quot;involuntary_context_switches&quot;: 228,
+        &quot;peak_rss_bytes&quot;: 27987968,
+        &quot;proc_io_syscw&quot;: 1074,
+        &quot;proc_io_wchar&quot;: 9750126,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 1157,
+        &quot;wall_ms&quot;: 32.597215
+      },
+      &quot;round&quot;: 0,
+      &quot;source_sample_index&quot;: 3,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;1900a4554ea1d4225a1ee324fbbb24d5128ff2e662d39bde2365782b0d31435d&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 9741630,
+        &quot;stdout_sha256&quot;: &quot;6988ead3711efc43cfa0a23f22094d2fb598028b398939fa73a69ab2269bef3d&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;7d97cbb3453665b730df03af33053407d31fc2d063206d9c0e7d6a02a68c1a40&quot;,
+        &quot;response_sha256&quot;: &quot;1900a4554ea1d4225a1ee324fbbb24d5128ff2e662d39bde2365782b0d31435d&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;baseline&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.017033182190476656,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 408.88312227739965,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 235.9081176833449
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 32.364000000000004,
+        &quot;involuntary_context_switches&quot;: 172,
+        &quot;peak_rss_bytes&quot;: 28442624,
+        &quot;proc_io_syscw&quot;: 1049,
+        &quot;proc_io_wchar&quot;: 9749926,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 1142,
+        &quot;wall_ms&quot;: 33.911516
+      },
+      &quot;round&quot;: 1,
+      &quot;source_sample_index&quot;: 4,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;1900a4554ea1d4225a1ee324fbbb24d5128ff2e662d39bde2365782b0d31435d&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 9741630,
+        &quot;stdout_sha256&quot;: &quot;6988ead3711efc43cfa0a23f22094d2fb598028b398939fa73a69ab2269bef3d&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;7d97cbb3453665b730df03af33053407d31fc2d063206d9c0e7d6a02a68c1a40&quot;,
+        &quot;response_sha256&quot;: &quot;1900a4554ea1d4225a1ee324fbbb24d5128ff2e662d39bde2365782b0d31435d&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;candidate&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.018410450212366276,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 408.88312227739965,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 323.11785338598077
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 25.619,
+        &quot;involuntary_context_switches&quot;: 2,
+        &quot;peak_rss_bytes&quot;: 27529216,
+        &quot;proc_io_syscw&quot;: 1054,
+        &quot;proc_io_wchar&quot;: 9749966,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 1074,
+        &quot;wall_ms&quot;: 24.758774
+      },
+      &quot;round&quot;: 1,
+      &quot;source_sample_index&quot;: 5,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;1900a4554ea1d4225a1ee324fbbb24d5128ff2e662d39bde2365782b0d31435d&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 9741630,
+        &quot;stdout_sha256&quot;: &quot;6988ead3711efc43cfa0a23f22094d2fb598028b398939fa73a69ab2269bef3d&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;7d97cbb3453665b730df03af33053407d31fc2d063206d9c0e7d6a02a68c1a40&quot;,
+        &quot;response_sha256&quot;: &quot;1900a4554ea1d4225a1ee324fbbb24d5128ff2e662d39bde2365782b0d31435d&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;candidate&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.013614240049222008,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 408.88312227739965,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 241.98912311628172
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 31.872,
+        &quot;involuntary_context_switches&quot;: 118,
+        &quot;peak_rss_bytes&quot;: 27328512,
+        &quot;proc_io_syscw&quot;: 1061,
+        &quot;proc_io_wchar&quot;: 9750022,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 1129,
+        &quot;wall_ms&quot;: 33.059345
+      },
+      &quot;round&quot;: 2,
+      &quot;source_sample_index&quot;: 6,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;1900a4554ea1d4225a1ee324fbbb24d5128ff2e662d39bde2365782b0d31435d&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 9741630,
+        &quot;stdout_sha256&quot;: &quot;6988ead3711efc43cfa0a23f22094d2fb598028b398939fa73a69ab2269bef3d&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;7d97cbb3453665b730df03af33053407d31fc2d063206d9c0e7d6a02a68c1a40&quot;,
+        &quot;response_sha256&quot;: &quot;1900a4554ea1d4225a1ee324fbbb24d5128ff2e662d39bde2365782b0d31435d&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;baseline&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.019416576279389964,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 408.88312227739965,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 185.69230688442534
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 35.305,
+        &quot;involuntary_context_switches&quot;: 472,
+        &quot;peak_rss_bytes&quot;: 28053504,
+        &quot;proc_io_syscw&quot;: 1067,
+        &quot;proc_io_wchar&quot;: 9750070,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 1297,
+        &quot;wall_ms&quot;: 43.082032
+      },
+      &quot;round&quot;: 2,
+      &quot;source_sample_index&quot;: 7,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;1900a4554ea1d4225a1ee324fbbb24d5128ff2e662d39bde2365782b0d31435d&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 9741630,
+        &quot;stdout_sha256&quot;: &quot;6988ead3711efc43cfa0a23f22094d2fb598028b398939fa73a69ab2269bef3d&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;7d97cbb3453665b730df03af33053407d31fc2d063206d9c0e7d6a02a68c1a40&quot;,
+        &quot;response_sha256&quot;: &quot;1900a4554ea1d4225a1ee324fbbb24d5128ff2e662d39bde2365782b0d31435d&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;baseline&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.015211226081728622,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 408.88312227739965,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 235.19092492950395
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 34.174,
+        &quot;involuntary_context_switches&quot;: 117,
+        &quot;peak_rss_bytes&quot;: 28196864,
+        &quot;proc_io_syscw&quot;: 1045,
+        &quot;proc_io_wchar&quot;: 9749894,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 1113,
+        &quot;wall_ms&quot;: 34.014926
+      },
+      &quot;round&quot;: 3,
+      &quot;source_sample_index&quot;: 8,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;1900a4554ea1d4225a1ee324fbbb24d5128ff2e662d39bde2365782b0d31435d&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 9741630,
+        &quot;stdout_sha256&quot;: &quot;6988ead3711efc43cfa0a23f22094d2fb598028b398939fa73a69ab2269bef3d&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;7d97cbb3453665b730df03af33053407d31fc2d063206d9c0e7d6a02a68c1a40&quot;,
+        &quot;response_sha256&quot;: &quot;1900a4554ea1d4225a1ee324fbbb24d5128ff2e662d39bde2365782b0d31435d&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;candidate&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.017325196442303927,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 408.88312227739965,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 266.7887772175722
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 28.735,
+        &quot;involuntary_context_switches&quot;: 440,
+        &quot;peak_rss_bytes&quot;: 28291072,
+        &quot;proc_io_syscw&quot;: 1013,
+        &quot;proc_io_wchar&quot;: 9749638,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 1216,
+        &quot;wall_ms&quot;: 29.986276
+      },
+      &quot;round&quot;: 3,
+      &quot;source_sample_index&quot;: 9,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;1900a4554ea1d4225a1ee324fbbb24d5128ff2e662d39bde2365782b0d31435d&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 9741630,
+        &quot;stdout_sha256&quot;: &quot;6988ead3711efc43cfa0a23f22094d2fb598028b398939fa73a69ab2269bef3d&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;7d97cbb3453665b730df03af33053407d31fc2d063206d9c0e7d6a02a68c1a40&quot;,
+        &quot;response_sha256&quot;: &quot;1900a4554ea1d4225a1ee324fbbb24d5128ff2e662d39bde2365782b0d31435d&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;candidate&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.017018696675184443,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 408.88312227739965,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 272.4666274388144
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 28.497999999999998,
+        &quot;involuntary_context_switches&quot;: 49,
+        &quot;peak_rss_bytes&quot;: 28385280,
+        &quot;proc_io_syscw&quot;: 1071,
+        &quot;proc_io_wchar&quot;: 9750102,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 1128,
+        &quot;wall_ms&quot;: 29.361401
+      },
+      &quot;round&quot;: 4,
+      &quot;source_sample_index&quot;: 10,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;1900a4554ea1d4225a1ee324fbbb24d5128ff2e662d39bde2365782b0d31435d&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 9741630,
+        &quot;stdout_sha256&quot;: &quot;6988ead3711efc43cfa0a23f22094d2fb598028b398939fa73a69ab2269bef3d&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;7d97cbb3453665b730df03af33053407d31fc2d063206d9c0e7d6a02a68c1a40&quot;,
+        &quot;response_sha256&quot;: &quot;1900a4554ea1d4225a1ee324fbbb24d5128ff2e662d39bde2365782b0d31435d&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;baseline&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.024670250702203182,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 408.88312227739965,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 239.27537823890947
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 29.553,
+        &quot;involuntary_context_switches&quot;: 622,
+        &quot;peak_rss_bytes&quot;: 28622848,
+        &quot;proc_io_syscw&quot;: 999,
+        &quot;proc_io_wchar&quot;: 9749526,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 1148,
+        &quot;wall_ms&quot;: 33.434288
+      },
+      &quot;round&quot;: 4,
+      &quot;source_sample_index&quot;: 11,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;1900a4554ea1d4225a1ee324fbbb24d5128ff2e662d39bde2365782b0d31435d&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 9741630,
+        &quot;stdout_sha256&quot;: &quot;6988ead3711efc43cfa0a23f22094d2fb598028b398939fa73a69ab2269bef3d&quot;
+      }
+    }
+  ]
+}</pre></details></article></details><details class="case-detail" id="case-1"><summary><strong>large-items-8x8mib</strong> <span class="meta">inline-on-off-large · resource comparison admitted</span></summary><article><p class="meta">inline-on-off-large · null · 5 paired rounds · resource comparison admitted</p><p>Valid: True · Compatible: True · Throughput admitted: False</p><div class="charts"><figure><figcaption>CPU <span>(ms; lower is better)</span></figcaption><div class="bar-labels"><span><i class="before"></i>BEFORE Rust<strong>226.247 ms</strong></span><span><i class="after"></i>AFTER Rust<strong>210.169 ms</strong></span></div><svg viewBox="0 0 320 80" preserveAspectRatio="none" role="img" aria-label="CPU: BEFORE Rust 226.247 ms, AFTER Rust 210.169 ms"><rect class="before" x="0" y="8" width="320.000" height="24" rx="3"/><rect class="after" x="0" y="48" width="297.260" height="24" rx="3"/></svg></figure><figure><figcaption>Peak RSS <span>(MiB; lower is better)</span></figcaption><div class="bar-labels"><span><i class="before"></i>BEFORE Rust<strong>28.328 MiB</strong></span><span><i class="after"></i>AFTER Rust<strong>25.523 MiB</strong></span></div><svg viewBox="0 0 320 80" preserveAspectRatio="none" role="img" aria-label="Peak RSS: BEFORE Rust 28.328 MiB, AFTER Rust 25.523 MiB"><rect class="before" x="0" y="8" width="320.000" height="24" rx="3"/><rect class="after" x="0" y="48" width="288.318" height="24" rx="3"/></svg></figure></div><div class="scroll"><table><thead><tr><th>Metric</th><th>BEFORE Rust median</th><th>AFTER Rust median</th><th>Paired median ratio</th><th>Paired ratio min–max</th><th>Ratio n</th><th>Ratio of medians</th></tr></thead><tbody><tr><td>CPU (ms)</td><td>226.247</td><td>210.169</td><td>0.967×</td><td>0.886× – 1.002×</td><td>5</td><td>0.929×</td></tr><tr><td>Peak RSS (MiB)</td><td>28.328</td><td>25.523</td><td>0.921×</td><td>0.891× – 0.959×</td><td>5</td><td>0.901×</td></tr><tr><td>Wall time (ms)</td><td>225.869</td><td>223.709</td><td>0.970×</td><td>0.834× – 1.146×</td><td>5</td><td>0.990×</td></tr><tr><td>Write syscalls (syscw) (calls)</td><td>8,039.000</td><td>8,020.000</td><td>1.002×</td><td>0.981× – 1.038×</td><td>5</td><td>0.998×</td></tr><tr><td>Bytes passed to writes (wchar) (MiB)</td><td>74.383</td><td>74.383</td><td>1.000×</td><td>1.000× – 1.000×</td><td>5</td><td>1.000×</td></tr><tr><td>Storage bytes charged (write_bytes) (MiB)</td><td>0.000</td><td>0.000</td><td>—</td><td>— – —</td><td>0</td><td>—</td></tr><tr><td>Voluntary context switches (switches)</td><td>9,709.000</td><td>9,915.000</td><td>0.999×</td><td>0.915× – 1.108×</td><td>5</td><td>1.021×</td></tr><tr><td>Involuntary context switches (switches)</td><td>3,688.000</td><td>3,963.000</td><td>0.967×</td><td>0.475× – 1.541×</td><td>5</td><td>1.075×</td></tr></tbody></table></div><p class="note">Withheld: null-sink resource-only, ingest report, invalid samples, or source performance admission false/missing. Ratios are AFTER / BEFORE or Rust / Go; values below 1 mean less resource use. Zero reference values have no defined ratio.</p><details><summary>Binary identities, case metadata, and individual paired samples</summary><div class="scroll"><table><thead><tr><th>Label</th><th>Binary</th><th>SHA-256</th></tr></thead><tbody><tr><td>baseline</td><td><code>/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf3-final</code></td><td><code>0dd77ed8adb4545294559bc1770648476b6d2f27c396a73ab05f398426854ad5</code></td></tr><tr><td>candidate</td><td><code>/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf3-inline-1</code></td><td><code>717409badd79315c22cff13552cabaf6f436da0dfc6599f6b4515767d018ee0e</code></td></tr></tbody></table></div><pre>{
+  &quot;case&quot;: {
+    &quot;consumer&quot;: {},
+    &quot;expectation&quot;: &quot;success&quot;,
+    &quot;fixture&quot;: {
+      &quot;row_bytes&quot;: 8388608,
+      &quot;rows&quot;: 8,
+      &quot;shape&quot;: &quot;ascii&quot;
+    },
+    &quot;name&quot;: &quot;large-items-8x8mib&quot;,
+    &quot;output&quot;: &quot;json&quot;,
+    &quot;scan_json&quot;: false
+  },
+  &quot;output_validation_verdict&quot;: {
+    &quot;compatible&quot;: true,
+    &quot;deadline_prefix_comparison&quot;: null,
+    &quot;different_contracts&quot;: 1,
+    &quot;medians&quot;: {
+      &quot;baseline&quot;: {
+        &quot;cpu_ms&quot;: 206.77200000000002,
+        &quot;cpu_ms_per_million_rows&quot;: 25846500.000000004,
+        &quot;output_mib_per_second&quot;: 275.9413880107642,
+        &quot;peak_rss_bytes&quot;: 29032448,
+        &quot;rows_per_second&quot;: 29.70197307533962,
+        &quot;runs&quot;: 1,
+        &quot;wall_ms&quot;: 269.342376
+      },
+      &quot;candidate&quot;: {
+        &quot;cpu_ms&quot;: 216.639,
+        &quot;cpu_ms_per_million_rows&quot;: 27079875.0,
+        &quot;output_mib_per_second&quot;: 260.22368654022097,
+        &quot;peak_rss_bytes&quot;: 28831744,
+        &quot;rows_per_second&quot;: 28.01014007685485,
+        &quot;runs&quot;: 1,
+        &quot;wall_ms&quot;: 285.610853
+      }
+    },
+    &quot;observation_only&quot;: false,
+    &quot;observer_bound_runs&quot;: 0,
+    &quot;performance_admitted&quot;: true,
+    &quot;performance_note&quot;: &quot;descriptive local fixture measurement; pacing, observer or producer may cap throughput&quot;,
+    &quot;valid&quot;: true
+  },
+  &quot;samples&quot;: [
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;63de0f7caa5f53f68450a05ae9fc3b1bb666ecbe4d09563255fcca034cbc2530&quot;,
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;baseline&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.0053361445954819234,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 1075.2324375644196,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 283.35047647642523
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 226.439,
+        &quot;involuntary_context_switches&quot;: 2951,
+        &quot;peak_rss_bytes&quot;: 29073408,
+        &quot;proc_io_syscw&quot;: 8178,
+        &quot;proc_io_wchar&quot;: 77997777,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 9529,
+        &quot;wall_ms&quot;: 225.868717
+      },
+      &quot;round&quot;: 0,
+      &quot;source_sample_index&quot;: 14,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 77933009,
+        &quot;stdout_sha256&quot;: &quot;c063128a2e51aedb6f8ea8a8fa8c0d49ff25fb29de1ec538c40c96b222021400&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;63de0f7caa5f53f68450a05ae9fc3b1bb666ecbe4d09563255fcca034cbc2530&quot;,
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;candidate&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.005627868610919214,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 1075.2324375644196,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 247.2123110689585
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 226.978,
+        &quot;involuntary_context_switches&quot;: 4547,
+        &quot;peak_rss_bytes&quot;: 26763264,
+        &quot;proc_io_syscw&quot;: 8020,
+        &quot;proc_io_wchar&quot;: 77996513,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 10559,
+        &quot;wall_ms&quot;: 258.886818
+      },
+      &quot;round&quot;: 0,
+      &quot;source_sample_index&quot;: 15,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 77933009,
+        &quot;stdout_sha256&quot;: &quot;c063128a2e51aedb6f8ea8a8fa8c0d49ff25fb29de1ec538c40c96b222021400&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;63de0f7caa5f53f68450a05ae9fc3b1bb666ecbe4d09563255fcca034cbc2530&quot;,
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;baseline&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.006248953727461287,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 1075.2324375644196,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 299.38574745837366
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 211.165,
+        &quot;involuntary_context_switches&quot;: 2871,
+        &quot;peak_rss_bytes&quot;: 29032448,
+        &quot;proc_io_syscw&quot;: 8039,
+        &quot;proc_io_wchar&quot;: 77996665,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 9591,
+        &quot;wall_ms&quot;: 213.77106
+      },
+      &quot;round&quot;: 1,
+      &quot;source_sample_index&quot;: 16,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 77933009,
+        &quot;stdout_sha256&quot;: &quot;c063128a2e51aedb6f8ea8a8fa8c0d49ff25fb29de1ec538c40c96b222021400&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;63de0f7caa5f53f68450a05ae9fc3b1bb666ecbe4d09563255fcca034cbc2530&quot;,
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;candidate&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.006181551140571624,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 1075.2324375644196,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 308.79400124824576
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 196.99499999999998,
+        &quot;involuntary_context_switches&quot;: 4186,
+        &quot;peak_rss_bytes&quot;: 27844608,
+        &quot;proc_io_syscw&quot;: 8000,
+        &quot;proc_io_wchar&quot;: 77996353,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 10062,
+        &quot;wall_ms&quot;: 207.25794
+      },
+      &quot;round&quot;: 1,
+      &quot;source_sample_index&quot;: 17,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 77933009,
+        &quot;stdout_sha256&quot;: &quot;c063128a2e51aedb6f8ea8a8fa8c0d49ff25fb29de1ec538c40c96b222021400&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;63de0f7caa5f53f68450a05ae9fc3b1bb666ecbe4d09563255fcca034cbc2530&quot;,
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;candidate&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.006534954364871234,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 1075.2324375644196,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 286.0860251312183
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 210.169,
+        &quot;involuntary_context_switches&quot;: 3568,
+        &quot;peak_rss_bytes&quot;: 26763264,
+        &quot;proc_io_syscw&quot;: 8084,
+        &quot;proc_io_wchar&quot;: 77997025,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 9702,
+        &quot;wall_ms&quot;: 223.708965
+      },
+      &quot;round&quot;: 2,
+      &quot;source_sample_index&quot;: 18,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 77933009,
+        &quot;stdout_sha256&quot;: &quot;c063128a2e51aedb6f8ea8a8fa8c0d49ff25fb29de1ec538c40c96b222021400&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;63de0f7caa5f53f68450a05ae9fc3b1bb666ecbe4d09563255fcca034cbc2530&quot;,
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;baseline&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.00549429447577288,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 1075.2324375644196,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 285.8030633309085
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 217.264,
+        &quot;involuntary_context_switches&quot;: 3688,
+        &quot;peak_rss_bytes&quot;: 30023680,
+        &quot;proc_io_syscw&quot;: 8066,
+        &quot;proc_io_wchar&quot;: 77996881,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 9709,
+        &quot;wall_ms&quot;: 223.93045
+      },
+      &quot;round&quot;: 2,
+      &quot;source_sample_index&quot;: 19,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 77933009,
+        &quot;stdout_sha256&quot;: &quot;c063128a2e51aedb6f8ea8a8fa8c0d49ff25fb29de1ec538c40c96b222021400&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;63de0f7caa5f53f68450a05ae9fc3b1bb666ecbe4d09563255fcca034cbc2530&quot;,
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;candidate&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.005779017209311572,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 1075.2324375644196,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 307.3194699701612
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 206.8,
+        &quot;involuntary_context_switches&quot;: 2156,
+        &quot;peak_rss_bytes&quot;: 26517504,
+        &quot;proc_io_syscw&quot;: 8245,
+        &quot;proc_io_wchar&quot;: 77998313,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 9230,
+        &quot;wall_ms&quot;: 208.252372
+      },
+      &quot;round&quot;: 3,
+      &quot;source_sample_index&quot;: 20,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 77933009,
+        &quot;stdout_sha256&quot;: &quot;c063128a2e51aedb6f8ea8a8fa8c0d49ff25fb29de1ec538c40c96b222021400&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;63de0f7caa5f53f68450a05ae9fc3b1bb666ecbe4d09563255fcca034cbc2530&quot;,
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;baseline&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.006664761901330086,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 1075.2324375644196,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 256.32623612567386
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 233.406,
+        &quot;involuntary_context_switches&quot;: 4540,
+        &quot;peak_rss_bytes&quot;: 29712384,
+        &quot;proc_io_syscw&quot;: 7942,
+        &quot;proc_io_wchar&quot;: 77995889,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 10083,
+        &quot;wall_ms&quot;: 249.681849
+      },
+      &quot;round&quot;: 3,
+      &quot;source_sample_index&quot;: 21,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 77933009,
+        &quot;stdout_sha256&quot;: &quot;c063128a2e51aedb6f8ea8a8fa8c0d49ff25fb29de1ec538c40c96b222021400&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;63de0f7caa5f53f68450a05ae9fc3b1bb666ecbe4d09563255fcca034cbc2530&quot;,
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;baseline&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.004941826655515285,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 1075.2324375644196,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 247.4128700054871
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 226.24699999999999,
+        &quot;involuntary_context_switches&quot;: 4889,
+        &quot;peak_rss_bytes&quot;: 29704192,
+        &quot;proc_io_syscw&quot;: 7862,
+        &quot;proc_io_wchar&quot;: 77995249,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 10588,
+        &quot;wall_ms&quot;: 258.676958
+      },
+      &quot;round&quot;: 4,
+      &quot;source_sample_index&quot;: 22,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 77933009,
+        &quot;stdout_sha256&quot;: &quot;c063128a2e51aedb6f8ea8a8fa8c0d49ff25fb29de1ec538c40c96b222021400&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;63de0f7caa5f53f68450a05ae9fc3b1bb666ecbe4d09563255fcca034cbc2530&quot;,
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;candidate&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.00570909378619442,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 1075.2324375644196,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 264.9846428504913
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 219.04,
+        &quot;involuntary_context_switches&quot;: 3963,
+        &quot;peak_rss_bytes&quot;: 28479488,
+        &quot;proc_io_syscw&quot;: 7982,
+        &quot;proc_io_wchar&quot;: 77996209,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 9915,
+        &quot;wall_ms&quot;: 241.523463
+      },
+      &quot;round&quot;: 4,
+      &quot;source_sample_index&quot;: 23,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 77933009,
+        &quot;stdout_sha256&quot;: &quot;c063128a2e51aedb6f8ea8a8fa8c0d49ff25fb29de1ec538c40c96b222021400&quot;
+      }
+    }
+  ]
+}</pre></details></article></details><details class="case-detail" id="case-2"><summary><strong>large-items-gzip-8x8mib</strong> <span class="meta">inline-on-off-large · resource comparison admitted</span></summary><article><p class="meta">inline-on-off-large · null · 5 paired rounds · resource comparison admitted</p><p>Valid: True · Compatible: True · Throughput admitted: False</p><div class="charts"><figure><figcaption>CPU <span>(ms; lower is better)</span></figcaption><div class="bar-labels"><span><i class="before"></i>BEFORE Rust<strong>211.518 ms</strong></span><span><i class="after"></i>AFTER Rust<strong>210.935 ms</strong></span></div><svg viewBox="0 0 320 80" preserveAspectRatio="none" role="img" aria-label="CPU: BEFORE Rust 211.518 ms, AFTER Rust 210.935 ms"><rect class="before" x="0" y="8" width="320.000" height="24" rx="3"/><rect class="after" x="0" y="48" width="319.118" height="24" rx="3"/></svg></figure><figure><figcaption>Peak RSS <span>(MiB; lower is better)</span></figcaption><div class="bar-labels"><span><i class="before"></i>BEFORE Rust<strong>28.309 MiB</strong></span><span><i class="after"></i>AFTER Rust<strong>26.973 MiB</strong></span></div><svg viewBox="0 0 320 80" preserveAspectRatio="none" role="img" aria-label="Peak RSS: BEFORE Rust 28.309 MiB, AFTER Rust 26.973 MiB"><rect class="before" x="0" y="8" width="320.000" height="24" rx="3"/><rect class="after" x="0" y="48" width="304.899" height="24" rx="3"/></svg></figure></div><div class="scroll"><table><thead><tr><th>Metric</th><th>BEFORE Rust median</th><th>AFTER Rust median</th><th>Paired median ratio</th><th>Paired ratio min–max</th><th>Ratio n</th><th>Ratio of medians</th></tr></thead><tbody><tr><td>CPU (ms)</td><td>211.518</td><td>210.935</td><td>1.031×</td><td>0.938× – 1.109×</td><td>5</td><td>0.997×</td></tr><tr><td>Peak RSS (MiB)</td><td>28.309</td><td>26.973</td><td>0.954×</td><td>0.947× – 0.961×</td><td>5</td><td>0.953×</td></tr><tr><td>Wall time (ms)</td><td>202.288</td><td>202.892</td><td>0.992×</td><td>0.918× – 1.122×</td><td>5</td><td>1.003×</td></tr><tr><td>Write syscalls (syscw) (calls)</td><td>7,098.000</td><td>7,149.000</td><td>1.007×</td><td>0.871× – 1.031×</td><td>5</td><td>1.007×</td></tr><tr><td>Bytes passed to writes (wchar) (MiB)</td><td>74.376</td><td>74.377</td><td>1.000×</td><td>1.000× – 1.000×</td><td>5</td><td>1.000×</td></tr><tr><td>Storage bytes charged (write_bytes) (MiB)</td><td>0.000</td><td>0.000</td><td>—</td><td>— – —</td><td>0</td><td>—</td></tr><tr><td>Voluntary context switches (switches)</td><td>8,302.000</td><td>8,476.000</td><td>1.037×</td><td>0.757× – 1.055×</td><td>5</td><td>1.021×</td></tr><tr><td>Involuntary context switches (switches)</td><td>2,245.000</td><td>1,947.000</td><td>1.044×</td><td>0.354× – 1.153×</td><td>5</td><td>0.867×</td></tr></tbody></table></div><p class="note">Withheld: null-sink resource-only, ingest report, invalid samples, or source performance admission false/missing. Ratios are AFTER / BEFORE or Rust / Go; values below 1 mean less resource use. Zero reference values have no defined ratio.</p><details><summary>Binary identities, case metadata, and individual paired samples</summary><div class="scroll"><table><thead><tr><th>Label</th><th>Binary</th><th>SHA-256</th></tr></thead><tbody><tr><td>baseline</td><td><code>/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf3-final</code></td><td><code>0dd77ed8adb4545294559bc1770648476b6d2f27c396a73ab05f398426854ad5</code></td></tr><tr><td>candidate</td><td><code>/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf3-inline-1</code></td><td><code>717409badd79315c22cff13552cabaf6f436da0dfc6599f6b4515767d018ee0e</code></td></tr></tbody></table></div><pre>{
+  &quot;case&quot;: {
+    &quot;consumer&quot;: {},
+    &quot;expectation&quot;: &quot;success&quot;,
+    &quot;fixture&quot;: {
+      &quot;gzip&quot;: true,
+      &quot;row_bytes&quot;: 8388608,
+      &quot;rows&quot;: 8,
+      &quot;shape&quot;: &quot;ascii&quot;
+    },
+    &quot;name&quot;: &quot;large-items-gzip-8x8mib&quot;,
+    &quot;output&quot;: &quot;json&quot;,
+    &quot;scan_json&quot;: false
+  },
+  &quot;output_validation_verdict&quot;: {
+    &quot;compatible&quot;: true,
+    &quot;deadline_prefix_comparison&quot;: null,
+    &quot;different_contracts&quot;: 1,
+    &quot;medians&quot;: {
+      &quot;baseline&quot;: {
+        &quot;cpu_ms&quot;: 243.431,
+        &quot;cpu_ms_per_million_rows&quot;: 30428875.0,
+        &quot;output_mib_per_second&quot;: 249.46032368605466,
+        &quot;peak_rss_bytes&quot;: 29601792,
+        &quot;rows_per_second&quot;: 26.85158566064641,
+        &quot;runs&quot;: 1,
+        &quot;wall_ms&quot;: 297.933988
+      },
+      &quot;candidate&quot;: {
+        &quot;cpu_ms&quot;: 234.788,
+        &quot;cpu_ms_per_million_rows&quot;: 29348500.0,
+        &quot;output_mib_per_second&quot;: 263.60278524055235,
+        &quot;peak_rss_bytes&quot;: 28033024,
+        &quot;rows_per_second&quot;: 28.37386187784921,
+        &quot;runs&quot;: 1,
+        &quot;wall_ms&quot;: 281.949635
+      }
+    },
+    &quot;observation_only&quot;: false,
+    &quot;observer_bound_runs&quot;: 0,
+    &quot;performance_admitted&quot;: true,
+    &quot;performance_note&quot;: &quot;descriptive local fixture measurement; pacing, observer or producer may cap throughput&quot;,
+    &quot;valid&quot;: true
+  },
+  &quot;samples&quot;: [
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;63de0f7caa5f53f68450a05ae9fc3b1bb666ecbe4d09563255fcca034cbc2530&quot;,
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;candidate&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.005520539975860647,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 520.5760891875324,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 325.8401525417865
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 205.85399999999998,
+        &quot;involuntary_context_switches&quot;: 1947,
+        &quot;peak_rss_bytes&quot;: 28381184,
+        &quot;proc_io_syscw&quot;: 7149,
+        &quot;proc_io_wchar&quot;: 77989545,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 8476,
+        &quot;wall_ms&quot;: 196.415353
+      },
+      &quot;round&quot;: 0,
+      &quot;source_sample_index&quot;: 26,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 77933009,
+        &quot;stdout_sha256&quot;: &quot;c063128a2e51aedb6f8ea8a8fa8c0d49ff25fb29de1ec538c40c96b222021400&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;63de0f7caa5f53f68450a05ae9fc3b1bb666ecbe4d09563255fcca034cbc2530&quot;,
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;baseline&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.00549872289322438,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 520.5760891875324,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 323.33611174872846
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 201.942,
+        &quot;involuntary_context_switches&quot;: 2245,
+        &quot;peak_rss_bytes&quot;: 29855744,
+        &quot;proc_io_syscw&quot;: 7098,
+        &quot;proc_io_wchar&quot;: 77989137,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 8177,
+        &quot;wall_ms&quot;: 197.93647
+      },
+      &quot;round&quot;: 0,
+      &quot;source_sample_index&quot;: 27,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 77933009,
+        &quot;stdout_sha256&quot;: &quot;c063128a2e51aedb6f8ea8a8fa8c0d49ff25fb29de1ec538c40c96b222021400&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;63de0f7caa5f53f68450a05ae9fc3b1bb666ecbe4d09563255fcca034cbc2530&quot;,
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;baseline&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.006324759002487068,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 520.5760891875324,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 316.38008681986906
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 211.518,
+        &quot;involuntary_context_switches&quot;: 2376,
+        &quot;peak_rss_bytes&quot;: 29433856,
+        &quot;proc_io_syscw&quot;: 7063,
+        &quot;proc_io_wchar&quot;: 77988857,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 8302,
+        &quot;wall_ms&quot;: 202.288359
+      },
+      &quot;round&quot;: 1,
+      &quot;source_sample_index&quot;: 28,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 77933009,
+        &quot;stdout_sha256&quot;: &quot;c063128a2e51aedb6f8ea8a8fa8c0d49ff25fb29de1ec538c40c96b222021400&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;63de0f7caa5f53f68450a05ae9fc3b1bb666ecbe4d09563255fcca034cbc2530&quot;,
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;candidate&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.005679159728151193,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 520.5760891875324,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 281.8814374111613
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 234.67100000000002,
+        &quot;involuntary_context_switches&quot;: 2480,
+        &quot;peak_rss_bytes&quot;: 28139520,
+        &quot;proc_io_syscw&quot;: 7252,
+        &quot;proc_io_wchar&quot;: 77990369,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 8746,
+        &quot;wall_ms&quot;: 227.045843
+      },
+      &quot;round&quot;: 1,
+      &quot;source_sample_index&quot;: 29,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 77933009,
+        &quot;stdout_sha256&quot;: &quot;c063128a2e51aedb6f8ea8a8fa8c0d49ff25fb29de1ec538c40c96b222021400&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;63de0f7caa5f53f68450a05ae9fc3b1bb666ecbe4d09563255fcca034cbc2530&quot;,
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;baseline&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.006399840145197004,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 520.5760891875324,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 330.2918408929342
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 202.34099999999998,
+        &quot;involuntary_context_switches&quot;: 2236,
+        &quot;peak_rss_bytes&quot;: 29437952,
+        &quot;proc_io_syscw&quot;: 7214,
+        &quot;proc_io_wchar&quot;: 77990065,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 8665,
+        &quot;wall_ms&quot;: 193.768058
+      },
+      &quot;round&quot;: 2,
+      &quot;source_sample_index&quot;: 30,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 77933009,
+        &quot;stdout_sha256&quot;: &quot;c063128a2e51aedb6f8ea8a8fa8c0d49ff25fb29de1ec538c40c96b222021400&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;63de0f7caa5f53f68450a05ae9fc3b1bb666ecbe4d09563255fcca034cbc2530&quot;,
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;candidate&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.005290302505144307,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 520.5760891875324,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 315.4382397568203
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 208.537,
+        &quot;involuntary_context_switches&quot;: 2577,
+        &quot;peak_rss_bytes&quot;: 28282880,
+        &quot;proc_io_syscw&quot;: 7437,
+        &quot;proc_io_wchar&quot;: 77991849,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 9145,
+        &quot;wall_ms&quot;: 202.892359
+      },
+      &quot;round&quot;: 2,
+      &quot;source_sample_index&quot;: 31,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 77933009,
+        &quot;stdout_sha256&quot;: &quot;c063128a2e51aedb6f8ea8a8fa8c0d49ff25fb29de1ec538c40c96b222021400&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;63de0f7caa5f53f68450a05ae9fc3b1bb666ecbe4d09563255fcca034cbc2530&quot;,
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;baseline&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.006952527798843174,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 520.5760891875324,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 299.44034598918495
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 224.954,
+        &quot;involuntary_context_switches&quot;: 1324,
+        &quot;peak_rss_bytes&quot;: 29716480,
+        &quot;proc_io_syscw&quot;: 6984,
+        &quot;proc_io_wchar&quot;: 77988225,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 7922,
+        &quot;wall_ms&quot;: 213.732082
+      },
+      &quot;round&quot;: 3,
+      &quot;source_sample_index&quot;: 32,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 77933009,
+        &quot;stdout_sha256&quot;: &quot;c063128a2e51aedb6f8ea8a8fa8c0d49ff25fb29de1ec538c40c96b222021400&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;63de0f7caa5f53f68450a05ae9fc3b1bb666ecbe4d09563255fcca034cbc2530&quot;,
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;candidate&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.005373754042706388,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 520.5760891875324,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 326.3432567509096
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 210.935,
+        &quot;involuntary_context_switches&quot;: 1457,
+        &quot;peak_rss_bytes&quot;: 28139520,
+        &quot;proc_io_syscw&quot;: 6893,
+        &quot;proc_io_wchar&quot;: 77987497,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 7871,
+        &quot;wall_ms&quot;: 196.112551
+      },
+      &quot;round&quot;: 3,
+      &quot;source_sample_index&quot;: 33,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 77933009,
+        &quot;stdout_sha256&quot;: &quot;c063128a2e51aedb6f8ea8a8fa8c0d49ff25fb29de1ec538c40c96b222021400&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;63de0f7caa5f53f68450a05ae9fc3b1bb666ecbe4d09563255fcca034cbc2530&quot;,
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;candidate&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.006537023794031935,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 520.5760891875324,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 289.97078052312037
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 230.453,
+        &quot;involuntary_context_switches&quot;: 1753,
+        &quot;peak_rss_bytes&quot;: 28323840,
+        &quot;proc_io_syscw&quot;: 7062,
+        &quot;proc_io_wchar&quot;: 77988849,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 8158,
+        &quot;wall_ms&quot;: 220.711923
+      },
+      &quot;round&quot;: 4,
+      &quot;source_sample_index&quot;: 34,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 77933009,
+        &quot;stdout_sha256&quot;: &quot;c063128a2e51aedb6f8ea8a8fa8c0d49ff25fb29de1ec538c40c96b222021400&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;63de0f7caa5f53f68450a05ae9fc3b1bb666ecbe4d09563255fcca034cbc2530&quot;,
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;baseline&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.0056214595288294825,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 520.5760891875324,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 275.39351440042327
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 219.439,
+        &quot;involuntary_context_switches&quot;: 4951,
+        &quot;peak_rss_bytes&quot;: 29683712,
+        &quot;proc_io_syscw&quot;: 8106,
+        &quot;proc_io_wchar&quot;: 77997201,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 10770,
+        &quot;wall_ms&quot;: 232.394756
+      },
+      &quot;round&quot;: 4,
+      &quot;source_sample_index&quot;: 35,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 77933009,
+        &quot;stdout_sha256&quot;: &quot;c063128a2e51aedb6f8ea8a8fa8c0d49ff25fb29de1ec538c40c96b222021400&quot;
+      }
+    }
+  ]
+}</pre></details></article></details><details class="case-detail" id="case-3"><summary><strong>escaped-1m</strong> <span class="meta">inline-on-off-small · resource comparison admitted</span></summary><article><p class="meta">inline-on-off-small · null · 5 paired rounds · resource comparison admitted</p><p>Valid: True · Compatible: True · Throughput admitted: False</p><div class="charts"><figure><figcaption>CPU <span>(ms; lower is better)</span></figcaption><div class="bar-labels"><span><i class="before"></i>BEFORE Rust<strong>3,845.915 ms</strong></span><span><i class="after"></i>AFTER Rust<strong>3,666.301 ms</strong></span></div><svg viewBox="0 0 320 80" preserveAspectRatio="none" role="img" aria-label="CPU: BEFORE Rust 3,845.915 ms, AFTER Rust 3,666.301 ms"><rect class="before" x="0" y="8" width="320.000" height="24" rx="3"/><rect class="after" x="0" y="48" width="305.055" height="24" rx="3"/></svg></figure><figure><figcaption>Peak RSS <span>(MiB; lower is better)</span></figcaption><div class="bar-labels"><span><i class="before"></i>BEFORE Rust<strong>9.742 MiB</strong></span><span><i class="after"></i>AFTER Rust<strong>8.680 MiB</strong></span></div><svg viewBox="0 0 320 80" preserveAspectRatio="none" role="img" aria-label="Peak RSS: BEFORE Rust 9.742 MiB, AFTER Rust 8.680 MiB"><rect class="before" x="0" y="8" width="320.000" height="24" rx="3"/><rect class="after" x="0" y="48" width="285.100" height="24" rx="3"/></svg></figure></div><div class="scroll"><table><thead><tr><th>Metric</th><th>BEFORE Rust median</th><th>AFTER Rust median</th><th>Paired median ratio</th><th>Paired ratio min–max</th><th>Ratio n</th><th>Ratio of medians</th></tr></thead><tbody><tr><td>CPU (ms)</td><td>3,845.915</td><td>3,666.301</td><td>0.971×</td><td>0.889× – 1.026×</td><td>5</td><td>0.953×</td></tr><tr><td>Peak RSS (MiB)</td><td>9.742</td><td>8.680</td><td>0.891×</td><td>0.846× – 0.935×</td><td>5</td><td>0.891×</td></tr><tr><td>Wall time (ms)</td><td>4,049.534</td><td>3,877.683</td><td>0.965×</td><td>0.869× – 1.040×</td><td>5</td><td>0.958×</td></tr><tr><td>Write syscalls (syscw) (calls)</td><td>1,032,129.000</td><td>1,032,220.000</td><td>1.000×</td><td>1.000× – 1.000×</td><td>5</td><td>1.000×</td></tr><tr><td>Bytes passed to writes (wchar) (MiB)</td><td>198.456</td><td>198.457</td><td>1.000×</td><td>1.000× – 1.000×</td><td>5</td><td>1.000×</td></tr><tr><td>Storage bytes charged (write_bytes) (MiB)</td><td>0.000</td><td>0.000</td><td>—</td><td>— – —</td><td>0</td><td>—</td></tr><tr><td>Voluntary context switches (switches)</td><td>33,211.000</td><td>33,404.000</td><td>1.005×</td><td>0.995× – 1.013×</td><td>5</td><td>1.006×</td></tr><tr><td>Involuntary context switches (switches)</td><td>26,793.000</td><td>26,136.000</td><td>0.975×</td><td>0.779× – 1.115×</td><td>5</td><td>0.975×</td></tr></tbody></table></div><p class="note">Withheld: null-sink resource-only, ingest report, invalid samples, or source performance admission false/missing. Ratios are AFTER / BEFORE or Rust / Go; values below 1 mean less resource use. Zero reference values have no defined ratio.</p><details><summary>Binary identities, case metadata, and individual paired samples</summary><div class="scroll"><table><thead><tr><th>Label</th><th>Binary</th><th>SHA-256</th></tr></thead><tbody><tr><td>baseline</td><td><code>/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf3-final</code></td><td><code>0dd77ed8adb4545294559bc1770648476b6d2f27c396a73ab05f398426854ad5</code></td></tr><tr><td>candidate</td><td><code>/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf3-inline-1</code></td><td><code>717409badd79315c22cff13552cabaf6f436da0dfc6599f6b4515767d018ee0e</code></td></tr></tbody></table></div><pre>{
+  &quot;case&quot;: {
+    &quot;consumer&quot;: {},
+    &quot;expectation&quot;: &quot;success&quot;,
+    &quot;fixture&quot;: {
+      &quot;row_bytes&quot;: 256,
+      &quot;rows&quot;: 1000000,
+      &quot;shape&quot;: &quot;escaped&quot;
+    },
+    &quot;name&quot;: &quot;escaped-1m&quot;,
+    &quot;output&quot;: &quot;json&quot;,
+    &quot;scan_json&quot;: false
+  },
+  &quot;output_validation_verdict&quot;: {
+    &quot;compatible&quot;: true,
+    &quot;deadline_prefix_comparison&quot;: null,
+    &quot;different_contracts&quot;: 1,
+    &quot;medians&quot;: {
+      &quot;baseline&quot;: {
+        &quot;cpu_ms&quot;: 4342.783,
+        &quot;cpu_ms_per_million_rows&quot;: 4342.783,
+        &quot;output_mib_per_second&quot;: 38.8857666197894,
+        &quot;peak_rss_bytes&quot;: 10641408,
+        &quot;rows_per_second&quot;: 196183.96672948124,
+        &quot;runs&quot;: 1,
+        &quot;wall_ms&quot;: 5097.256502
+      },
+      &quot;candidate&quot;: {
+        &quot;cpu_ms&quot;: 4135.76,
+        &quot;cpu_ms_per_million_rows&quot;: 4135.76,
+        &quot;output_mib_per_second&quot;: 39.4003707799189,
+        &quot;peak_rss_bytes&quot;: 8921088,
+        &quot;rows_per_second&quot;: 198780.21451383946,
+        &quot;runs&quot;: 1,
+        &quot;wall_ms&quot;: 5030.681763
+      }
+    },
+    &quot;observation_only&quot;: false,
+    &quot;observer_bound_runs&quot;: 0,
+    &quot;performance_admitted&quot;: true,
+    &quot;performance_note&quot;: &quot;descriptive local fixture measurement; pacing, observer or producer may cap throughput&quot;,
+    &quot;valid&quot;: true
+  },
+  &quot;samples&quot;: [
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;7405407d315888a545d563476a5065d6df4437b8d7e3606a5a2acea953955759&quot;,
+        &quot;response_sha256&quot;: &quot;7ee6726b36d206215fbf87abe6e3cd65cdd782ffb3f80890611578854fae54e1&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;candidate&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.004291305732422512,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 594.4112782366051,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 63.20638382603186
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 3666.301,
+        &quot;involuntary_context_switches&quot;: 26136,
+        &quot;peak_rss_bytes&quot;: 9342976,
+        &quot;proc_io_syscw&quot;: 1031985,
+        &quot;proc_io_wchar&quot;: 208094875,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 33185,
+        &quot;wall_ms&quot;: 3877.682687
+      },
+      &quot;round&quot;: 0,
+      &quot;source_sample_index&quot;: 14,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;7ee6726b36d206215fbf87abe6e3cd65cdd782ffb3f80890611578854fae54e1&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 207839011,
+        &quot;stdout_sha256&quot;: &quot;5aee157c38caa345cc1e15953b54450200798bc4e2362fa623062dc63054de62&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;7405407d315888a545d563476a5065d6df4437b8d7e3606a5a2acea953955759&quot;,
+        &quot;response_sha256&quot;: &quot;7ee6726b36d206215fbf87abe6e3cd65cdd782ffb3f80890611578854fae54e1&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;baseline&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.004232858928180163,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 594.4112782366051,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 61.99521466352276
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 3776.5190000000002,
+        &quot;involuntary_context_switches&quot;: 26793,
+        &quot;peak_rss_bytes&quot;: 9990144,
+        &quot;proc_io_syscw&quot;: 1032034,
+        &quot;proc_io_wchar&quot;: 208095267,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 33178,
+        &quot;wall_ms&quot;: 3953.439013
+      },
+      &quot;round&quot;: 0,
+      &quot;source_sample_index&quot;: 15,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;7ee6726b36d206215fbf87abe6e3cd65cdd782ffb3f80890611578854fae54e1&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 207839011,
+        &quot;stdout_sha256&quot;: &quot;5aee157c38caa345cc1e15953b54450200798bc4e2362fa623062dc63054de62&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;7405407d315888a545d563476a5065d6df4437b8d7e3606a5a2acea953955759&quot;,
+        &quot;response_sha256&quot;: &quot;7ee6726b36d206215fbf87abe6e3cd65cdd782ffb3f80890611578854fae54e1&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;baseline&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.004222808365863635,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 594.4112782366051,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 60.52407283598585
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 3823.74,
+        &quot;involuntary_context_switches&quot;: 26178,
+        &quot;peak_rss_bytes&quot;: 10297344,
+        &quot;proc_io_syscw&quot;: 1032149,
+        &quot;proc_io_wchar&quot;: 208096187,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 33211,
+        &quot;wall_ms&quot;: 4049.534157
+      },
+      &quot;round&quot;: 1,
+      &quot;source_sample_index&quot;: 16,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;7ee6726b36d206215fbf87abe6e3cd65cdd782ffb3f80890611578854fae54e1&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 207839011,
+        &quot;stdout_sha256&quot;: &quot;5aee157c38caa345cc1e15953b54450200798bc4e2362fa623062dc63054de62&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;7405407d315888a545d563476a5065d6df4437b8d7e3606a5a2acea953955759&quot;,
+        &quot;response_sha256&quot;: &quot;7ee6726b36d206215fbf87abe6e3cd65cdd782ffb3f80890611578854fae54e1&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;candidate&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.004226472316859533,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 594.4112782366051,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 58.22324156727543
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 3922.571,
+        &quot;involuntary_context_switches&quot;: 29176,
+        &quot;peak_rss_bytes&quot;: 8716288,
+        &quot;proc_io_syscw&quot;: 1032330,
+        &quot;proc_io_wchar&quot;: 208097635,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 33529,
+        &quot;wall_ms&quot;: 4209.561228
+      },
+      &quot;round&quot;: 1,
+      &quot;source_sample_index&quot;: 17,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;7ee6726b36d206215fbf87abe6e3cd65cdd782ffb3f80890611578854fae54e1&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 207839011,
+        &quot;stdout_sha256&quot;: &quot;5aee157c38caa345cc1e15953b54450200798bc4e2362fa623062dc63054de62&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;7405407d315888a545d563476a5065d6df4437b8d7e3606a5a2acea953955759&quot;,
+        &quot;response_sha256&quot;: &quot;7ee6726b36d206215fbf87abe6e3cd65cdd782ffb3f80890611578854fae54e1&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;baseline&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.004298465133570853,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 594.4112782366051,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 57.7155597171047
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 3960.947,
+        &quot;involuntary_context_switches&quot;: 29348,
+        &quot;peak_rss_bytes&quot;: 10088448,
+        &quot;proc_io_syscw&quot;: 1032129,
+        &quot;proc_io_wchar&quot;: 208096027,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 33254,
+        &quot;wall_ms&quot;: 4246.58968
+      },
+      &quot;round&quot;: 2,
+      &quot;source_sample_index&quot;: 18,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;7ee6726b36d206215fbf87abe6e3cd65cdd782ffb3f80890611578854fae54e1&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 207839011,
+        &quot;stdout_sha256&quot;: &quot;5aee157c38caa345cc1e15953b54450200798bc4e2362fa623062dc63054de62&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;7405407d315888a545d563476a5065d6df4437b8d7e3606a5a2acea953955759&quot;,
+        &quot;response_sha256&quot;: &quot;7ee6726b36d206215fbf87abe6e3cd65cdd782ffb3f80890611578854fae54e1&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;candidate&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.004248825490481814,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 594.4112782366051,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 59.79003385110649
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 3851.701,
+        &quot;involuntary_context_switches&quot;: 28785,
+        &quot;peak_rss_bytes&quot;: 9109504,
+        &quot;proc_io_syscw&quot;: 1032220,
+        &quot;proc_io_wchar&quot;: 208096755,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 33404,
+        &quot;wall_ms&quot;: 4099.250067
+      },
+      &quot;round&quot;: 2,
+      &quot;source_sample_index&quot;: 19,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;7ee6726b36d206215fbf87abe6e3cd65cdd782ffb3f80890611578854fae54e1&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 207839011,
+        &quot;stdout_sha256&quot;: &quot;5aee157c38caa345cc1e15953b54450200798bc4e2362fa623062dc63054de62&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;7405407d315888a545d563476a5065d6df4437b8d7e3606a5a2acea953955759&quot;,
+        &quot;response_sha256&quot;: &quot;7ee6726b36d206215fbf87abe6e3cd65cdd782ffb3f80890611578854fae54e1&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;baseline&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.004313473798546438,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 594.4112782366051,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 60.553049113419085
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 3845.915,
+        &quot;involuntary_context_switches&quot;: 26189,
+        &quot;peak_rss_bytes&quot;: 10448896,
+        &quot;proc_io_syscw&quot;: 1031988,
+        &quot;proc_io_wchar&quot;: 208094899,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 33170,
+        &quot;wall_ms&quot;: 4047.596345
+      },
+      &quot;round&quot;: 3,
+      &quot;source_sample_index&quot;: 20,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;7ee6726b36d206215fbf87abe6e3cd65cdd782ffb3f80890611578854fae54e1&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 207839011,
+        &quot;stdout_sha256&quot;: &quot;5aee157c38caa345cc1e15953b54450200798bc4e2362fa623062dc63054de62&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;7405407d315888a545d563476a5065d6df4437b8d7e3606a5a2acea953955759&quot;,
+        &quot;response_sha256&quot;: &quot;7ee6726b36d206215fbf87abe6e3cd65cdd782ffb3f80890611578854fae54e1&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;candidate&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.00425761239376928,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 594.4112782366051,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 63.83402994975663
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 3657.039,
+        &quot;involuntary_context_switches&quot;: 23665,
+        &quot;peak_rss_bytes&quot;: 8863744,
+        &quot;proc_io_syscw&quot;: 1032374,
+        &quot;proc_io_wchar&quot;: 208097987,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 33598,
+        &quot;wall_ms&quot;: 3839.555492
+      },
+      &quot;round&quot;: 3,
+      &quot;source_sample_index&quot;: 21,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;7ee6726b36d206215fbf87abe6e3cd65cdd782ffb3f80890611578854fae54e1&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 207839011,
+        &quot;stdout_sha256&quot;: &quot;5aee157c38caa345cc1e15953b54450200798bc4e2362fa623062dc63054de62&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;7405407d315888a545d563476a5065d6df4437b8d7e3606a5a2acea953955759&quot;,
+        &quot;response_sha256&quot;: &quot;7ee6726b36d206215fbf87abe6e3cd65cdd782ffb3f80890611578854fae54e1&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;candidate&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.0042354158732698394,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 594.4112782366051,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 67.65291556988824
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 3502.887,
+        &quot;involuntary_context_switches&quot;: 21044,
+        &quot;peak_rss_bytes&quot;: 9101312,
+        &quot;proc_io_syscw&quot;: 1032098,
+        &quot;proc_io_wchar&quot;: 208095779,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 33187,
+        &quot;wall_ms&quot;: 3622.819478
+      },
+      &quot;round&quot;: 4,
+      &quot;source_sample_index&quot;: 22,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;7ee6726b36d206215fbf87abe6e3cd65cdd782ffb3f80890611578854fae54e1&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 207839011,
+        &quot;stdout_sha256&quot;: &quot;5aee157c38caa345cc1e15953b54450200798bc4e2362fa623062dc63054de62&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;7405407d315888a545d563476a5065d6df4437b8d7e3606a5a2acea953955759&quot;,
+        &quot;response_sha256&quot;: &quot;7ee6726b36d206215fbf87abe6e3cd65cdd782ffb3f80890611578854fae54e1&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;baseline&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.004226244918369498,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 594.4112782366051,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 58.80310717519786
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 3941.354,
+        &quot;involuntary_context_switches&quot;: 27010,
+        &quot;peak_rss_bytes&quot;: 10215424,
+        &quot;proc_io_syscw&quot;: 1032174,
+        &quot;proc_io_wchar&quot;: 208096387,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 33343,
+        &quot;wall_ms&quot;: 4168.05016
+      },
+      &quot;round&quot;: 4,
+      &quot;source_sample_index&quot;: 23,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;7ee6726b36d206215fbf87abe6e3cd65cdd782ffb3f80890611578854fae54e1&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 207839011,
+        &quot;stdout_sha256&quot;: &quot;5aee157c38caa345cc1e15953b54450200798bc4e2362fa623062dc63054de62&quot;
+      }
+    }
+  ]
+}</pre></details></article></details><details class="case-detail" id="case-4"><summary><strong>tiny-1m</strong> <span class="meta">inline-on-off-small · resource comparison admitted</span></summary><article><p class="meta">inline-on-off-small · null · 5 paired rounds · resource comparison admitted</p><p>Valid: True · Compatible: True · Throughput admitted: False</p><div class="charts"><figure><figcaption>CPU <span>(ms; lower is better)</span></figcaption><div class="bar-labels"><span><i class="before"></i>BEFORE Rust<strong>738.068 ms</strong></span><span><i class="after"></i>AFTER Rust<strong>735.809 ms</strong></span></div><svg viewBox="0 0 320 80" preserveAspectRatio="none" role="img" aria-label="CPU: BEFORE Rust 738.068 ms, AFTER Rust 735.809 ms"><rect class="before" x="0" y="8" width="320.000" height="24" rx="3"/><rect class="after" x="0" y="48" width="319.021" height="24" rx="3"/></svg></figure><figure><figcaption>Peak RSS <span>(MiB; lower is better)</span></figcaption><div class="bar-labels"><span><i class="before"></i>BEFORE Rust<strong>9.734 MiB</strong></span><span><i class="after"></i>AFTER Rust<strong>8.336 MiB</strong></span></div><svg viewBox="0 0 320 80" preserveAspectRatio="none" role="img" aria-label="Peak RSS: BEFORE Rust 9.734 MiB, AFTER Rust 8.336 MiB"><rect class="before" x="0" y="8" width="320.000" height="24" rx="3"/><rect class="after" x="0" y="48" width="274.029" height="24" rx="3"/></svg></figure></div><div class="scroll"><table><thead><tr><th>Metric</th><th>BEFORE Rust median</th><th>AFTER Rust median</th><th>Paired median ratio</th><th>Paired ratio min–max</th><th>Ratio n</th><th>Ratio of medians</th></tr></thead><tbody><tr><td>CPU (ms)</td><td>738.068</td><td>735.809</td><td>0.964×</td><td>0.905× – 1.039×</td><td>5</td><td>0.997×</td></tr><tr><td>Peak RSS (MiB)</td><td>9.734</td><td>8.336</td><td>0.851×</td><td>0.811× – 0.870×</td><td>5</td><td>0.856×</td></tr><tr><td>Wall time (ms)</td><td>747.060</td><td>749.656</td><td>0.961×</td><td>0.888× – 1.053×</td><td>5</td><td>1.003×</td></tr><tr><td>Write syscalls (syscw) (calls)</td><td>1,004,206.000</td><td>1,004,116.000</td><td>1.000×</td><td>1.000× – 1.000×</td><td>5</td><td>1.000×</td></tr><tr><td>Bytes passed to writes (wchar) (MiB)</td><td>48.669</td><td>48.669</td><td>1.000×</td><td>1.000× – 1.000×</td><td>5</td><td>1.000×</td></tr><tr><td>Storage bytes charged (write_bytes) (MiB)</td><td>0.000</td><td>0.000</td><td>—</td><td>— – —</td><td>0</td><td>—</td></tr><tr><td>Voluntary context switches (switches)</td><td>4,337.000</td><td>4,265.000</td><td>0.977×</td><td>0.944× – 1.023×</td><td>5</td><td>0.983×</td></tr><tr><td>Involuntary context switches (switches)</td><td>2,586.000</td><td>3,001.000</td><td>1.074×</td><td>0.840× – 1.278×</td><td>5</td><td>1.160×</td></tr></tbody></table></div><p class="note">Withheld: null-sink resource-only, ingest report, invalid samples, or source performance admission false/missing. Ratios are AFTER / BEFORE or Rust / Go; values below 1 mean less resource use. Zero reference values have no defined ratio.</p><details><summary>Binary identities, case metadata, and individual paired samples</summary><div class="scroll"><table><thead><tr><th>Label</th><th>Binary</th><th>SHA-256</th></tr></thead><tbody><tr><td>baseline</td><td><code>/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf3-final</code></td><td><code>0dd77ed8adb4545294559bc1770648476b6d2f27c396a73ab05f398426854ad5</code></td></tr><tr><td>candidate</td><td><code>/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf3-inline-1</code></td><td><code>717409badd79315c22cff13552cabaf6f436da0dfc6599f6b4515767d018ee0e</code></td></tr></tbody></table></div><pre>{
+  &quot;case&quot;: {
+    &quot;consumer&quot;: {},
+    &quot;expectation&quot;: &quot;success&quot;,
+    &quot;fixture&quot;: {
+      &quot;row_bytes&quot;: 32,
+      &quot;rows&quot;: 1000000,
+      &quot;shape&quot;: &quot;tiny&quot;
+    },
+    &quot;name&quot;: &quot;tiny-1m&quot;,
+    &quot;output&quot;: &quot;json&quot;,
+    &quot;scan_json&quot;: false
+  },
+  &quot;output_validation_verdict&quot;: {
+    &quot;compatible&quot;: true,
+    &quot;deadline_prefix_comparison&quot;: null,
+    &quot;different_contracts&quot;: 1,
+    &quot;medians&quot;: {
+      &quot;baseline&quot;: {
+        &quot;cpu_ms&quot;: 806.96,
+        &quot;cpu_ms_per_million_rows&quot;: 806.96,
+        &quot;output_mib_per_second&quot;: 56.93602857296435,
+        &quot;peak_rss_bytes&quot;: 10473472,
+        &quot;rows_per_second&quot;: 1170622.5408834713,
+        &quot;runs&quot;: 1,
+        &quot;wall_ms&quot;: 854.246322
+      },
+      &quot;candidate&quot;: {
+        &quot;cpu_ms&quot;: 842.662,
+        &quot;cpu_ms_per_million_rows&quot;: 842.662,
+        &quot;output_mib_per_second&quot;: 54.883039292042994,
+        &quot;peak_rss_bytes&quot;: 8601600,
+        &quot;rows_per_second&quot;: 1128412.439675607,
+        &quot;runs&quot;: 1,
+        &quot;wall_ms&quot;: 886.200794
+      }
+    },
+    &quot;observation_only&quot;: false,
+    &quot;observer_bound_runs&quot;: 2,
+    &quot;performance_admitted&quot;: false,
+    &quot;performance_note&quot;: &quot;descriptive local fixture measurement; pacing, observer or producer may cap throughput&quot;,
+    &quot;valid&quot;: true
+  },
+  &quot;samples&quot;: [
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;7405407d315888a545d563476a5065d6df4437b8d7e3606a5a2acea953955759&quot;,
+        &quot;response_sha256&quot;: &quot;fe87298dee6f490f294d912e795e926af1357b490d8c782884b54761574a37de&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;baseline&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.004628975331018857,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 397.32718140157283,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 43.455028270036856
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 706.149,
+        &quot;involuntary_context_switches&quot;: 2586,
+        &quot;peak_rss_bytes&quot;: 10207232,
+        &quot;proc_io_syscw&quot;: 1004244,
+        &quot;proc_io_wchar&quot;: 51033939,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 4386,
+        &quot;wall_ms&quot;: 724.225818
+      },
+      &quot;round&quot;: 0,
+      &quot;source_sample_index&quot;: 2,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;fe87298dee6f490f294d912e795e926af1357b490d8c782884b54761574a37de&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 51000003,
+        &quot;stdout_sha256&quot;: &quot;6a54f5f0ba6df9b8fe0c452eb46b1d890096560fdf1d8496513efb80773c604d&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;7405407d315888a545d563476a5065d6df4437b8d7e3606a5a2acea953955759&quot;,
+        &quot;response_sha256&quot;: &quot;fe87298dee6f490f294d912e795e926af1357b490d8c782884b54761574a37de&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;candidate&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.004650795088210428,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 397.32718140157283,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 48.505135119182796
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 638.951,
+        &quot;involuntary_context_switches&quot;: 2171,
+        &quot;peak_rss_bytes&quot;: 8785920,
+        &quot;proc_io_syscw&quot;: 1004116,
+        &quot;proc_io_wchar&quot;: 51032915,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 4287,
+        &quot;wall_ms&quot;: 648.823126
+      },
+      &quot;round&quot;: 0,
+      &quot;source_sample_index&quot;: 3,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;fe87298dee6f490f294d912e795e926af1357b490d8c782884b54761574a37de&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 51000003,
+        &quot;stdout_sha256&quot;: &quot;6a54f5f0ba6df9b8fe0c452eb46b1d890096560fdf1d8496513efb80773c604d&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;7405407d315888a545d563476a5065d6df4437b8d7e3606a5a2acea953955759&quot;,
+        &quot;response_sha256&quot;: &quot;fe87298dee6f490f294d912e795e926af1357b490d8c782884b54761574a37de&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;candidate&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.004369872980718872,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 397.32718140157283,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 47.93304126994247
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 654.1560000000001,
+        &quot;involuntary_context_switches&quot;: 2237,
+        &quot;peak_rss_bytes&quot;: 8679424,
+        &quot;proc_io_syscw&quot;: 1004113,
+        &quot;proc_io_wchar&quot;: 51032891,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 4235,
+        &quot;wall_ms&quot;: 656.567006
+      },
+      &quot;round&quot;: 1,
+      &quot;source_sample_index&quot;: 4,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;fe87298dee6f490f294d912e795e926af1357b490d8c782884b54761574a37de&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 51000003,
+        &quot;stdout_sha256&quot;: &quot;6a54f5f0ba6df9b8fe0c452eb46b1d890096560fdf1d8496513efb80773c604d&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;7405407d315888a545d563476a5065d6df4437b8d7e3606a5a2acea953955759&quot;,
+        &quot;response_sha256&quot;: &quot;fe87298dee6f490f294d912e795e926af1357b490d8c782884b54761574a37de&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;baseline&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.004291673125348652,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 397.32718140157283,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 49.438094334731666
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 629.302,
+        &quot;involuntary_context_switches&quot;: 2082,
+        &quot;peak_rss_bytes&quot;: 10194944,
+        &quot;proc_io_syscw&quot;: 1004321,
+        &quot;proc_io_wchar&quot;: 51034555,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 4485,
+        &quot;wall_ms&quot;: 636.579015
+      },
+      &quot;round&quot;: 1,
+      &quot;source_sample_index&quot;: 5,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;fe87298dee6f490f294d912e795e926af1357b490d8c782884b54761574a37de&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 51000003,
+        &quot;stdout_sha256&quot;: &quot;6a54f5f0ba6df9b8fe0c452eb46b1d890096560fdf1d8496513efb80773c604d&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;7405407d315888a545d563476a5065d6df4437b8d7e3606a5a2acea953955759&quot;,
+        &quot;response_sha256&quot;: &quot;fe87298dee6f490f294d912e795e926af1357b490d8c782884b54761574a37de&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;baseline&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.004730867867409972,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 397.32718140157283,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 42.12679119570427
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 738.068,
+        &quot;involuntary_context_switches&quot;: 2349,
+        &quot;peak_rss_bytes&quot;: 10186752,
+        &quot;proc_io_syscw&quot;: 1004206,
+        &quot;proc_io_wchar&quot;: 51033635,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 4337,
+        &quot;wall_ms&quot;: 747.060303
+      },
+      &quot;round&quot;: 2,
+      &quot;source_sample_index&quot;: 6,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;fe87298dee6f490f294d912e795e926af1357b490d8c782884b54761574a37de&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 51000003,
+        &quot;stdout_sha256&quot;: &quot;6a54f5f0ba6df9b8fe0c452eb46b1d890096560fdf1d8496513efb80773c604d&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;7405407d315888a545d563476a5065d6df4437b8d7e3606a5a2acea953955759&quot;,
+        &quot;response_sha256&quot;: &quot;fe87298dee6f490f294d912e795e926af1357b490d8c782884b54761574a37de&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;candidate&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.004702160587241953,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 397.32718140157283,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 40.01959240909377
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 751.431,
+        &quot;involuntary_context_switches&quot;: 3001,
+        &quot;peak_rss_bytes&quot;: 8859648,
+        &quot;proc_io_syscw&quot;: 1004113,
+        &quot;proc_io_wchar&quot;: 51032891,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 4265,
+        &quot;wall_ms&quot;: 786.39615
+      },
+      &quot;round&quot;: 2,
+      &quot;source_sample_index&quot;: 7,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;fe87298dee6f490f294d912e795e926af1357b490d8c782884b54761574a37de&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 51000003,
+        &quot;stdout_sha256&quot;: &quot;6a54f5f0ba6df9b8fe0c452eb46b1d890096560fdf1d8496513efb80773c604d&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;7405407d315888a545d563476a5065d6df4437b8d7e3606a5a2acea953955759&quot;,
+        &quot;response_sha256&quot;: &quot;fe87298dee6f490f294d912e795e926af1357b490d8c782884b54761574a37de&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;baseline&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.005269285501428476,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 397.32718140157283,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 36.84903360183707
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 805.086,
+        &quot;involuntary_context_switches&quot;: 3116,
+        &quot;peak_rss_bytes&quot;: 10448896,
+        &quot;proc_io_syscw&quot;: 1004113,
+        &quot;proc_io_wchar&quot;: 51032891,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 4250,
+        &quot;wall_ms&quot;: 854.059125
+      },
+      &quot;round&quot;: 3,
+      &quot;source_sample_index&quot;: 8,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;fe87298dee6f490f294d912e795e926af1357b490d8c782884b54761574a37de&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 51000003,
+        &quot;stdout_sha256&quot;: &quot;6a54f5f0ba6df9b8fe0c452eb46b1d890096560fdf1d8496513efb80773c604d&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;7405407d315888a545d563476a5065d6df4437b8d7e3606a5a2acea953955759&quot;,
+        &quot;response_sha256&quot;: &quot;fe87298dee6f490f294d912e795e926af1357b490d8c782884b54761574a37de&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;candidate&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.0049222075956500185,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 397.32718140157283,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 38.34525830489098
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 776.472,
+        &quot;involuntary_context_switches&quot;: 3570,
+        &quot;peak_rss_bytes&quot;: 8470528,
+        &quot;proc_io_syscw&quot;: 1004190,
+        &quot;proc_io_wchar&quot;: 51033507,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 4348,
+        &quot;wall_ms&quot;: 820.7339
+      },
+      &quot;round&quot;: 3,
+      &quot;source_sample_index&quot;: 9,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;fe87298dee6f490f294d912e795e926af1357b490d8c782884b54761574a37de&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 51000003,
+        &quot;stdout_sha256&quot;: &quot;6a54f5f0ba6df9b8fe0c452eb46b1d890096560fdf1d8496513efb80773c604d&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;7405407d315888a545d563476a5065d6df4437b8d7e3606a5a2acea953955759&quot;,
+        &quot;response_sha256&quot;: &quot;fe87298dee6f490f294d912e795e926af1357b490d8c782884b54761574a37de&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;candidate&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.0045156878051813305,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 397.32718140157283,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 41.98095063716057
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 735.809,
+        &quot;involuntary_context_switches&quot;: 3214,
+        &quot;peak_rss_bytes&quot;: 8740864,
+        &quot;proc_io_syscw&quot;: 1004116,
+        &quot;proc_io_wchar&quot;: 51032915,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 4204,
+        &quot;wall_ms&quot;: 749.655568
+      },
+      &quot;round&quot;: 4,
+      &quot;source_sample_index&quot;: 10,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;fe87298dee6f490f294d912e795e926af1357b490d8c782884b54761574a37de&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 51000003,
+        &quot;stdout_sha256&quot;: &quot;6a54f5f0ba6df9b8fe0c452eb46b1d890096560fdf1d8496513efb80773c604d&quot;
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;exit_code&quot;: 0,
+        &quot;request_body_sha256&quot;: &quot;7405407d315888a545d563476a5065d6df4437b8d7e3606a5a2acea953955759&quot;,
+        &quot;response_sha256&quot;: &quot;fe87298dee6f490f294d912e795e926af1357b490d8c782884b54761574a37de&quot;,
+        &quot;stderr&quot;: {
+          &quot;bytes&quot;: 0,
+          &quot;sha256&quot;: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+        },
+        &quot;stdout_bytes&quot;: null,
+        &quot;stdout_sha256&quot;: null
+      },
+      &quot;issues&quot;: [],
+      &quot;label&quot;: &quot;baseline&quot;,
+      &quot;observation_sha256&quot;: null,
+      &quot;observer&quot;: {
+        &quot;collector_cpu_fraction_of_wall&quot;: 0.00473433705748059,
+        &quot;first_row_seconds&quot;: null,
+        &quot;first_to_last_row_seconds&quot;: null,
+        &quot;observer_bound&quot;: false,
+        &quot;scope&quot;: &quot;pipe-drain observations; dense records can be observer-bound; no per-row latency percentiles&quot;
+      },
+      &quot;producer_comparison&quot;: {
+        &quot;possibly_producer_bound&quot;: false,
+        &quot;raw_drain_mib_per_second&quot;: 397.32718140157283,
+        &quot;scope&quot;: &quot;single raw-drain calibration; producer/reader ceiling diagnostic, not a speedup claim&quot;,
+        &quot;source_mib_per_second&quot;: 37.26424306510758
+      },
+      &quot;resource_source&quot;: &quot;native_child_wait4&quot;,
+      &quot;resources&quot;: {
+        &quot;cpu_ms&quot;: 799.728,
+        &quot;involuntary_context_switches&quot;: 3797,
+        &quot;peak_rss_bytes&quot;: 10289152,
+        &quot;proc_io_syscw&quot;: 1004170,
+        &quot;proc_io_wchar&quot;: 51033347,
+        &quot;proc_io_write_bytes&quot;: 0,
+        &quot;voluntary_context_switches&quot;: 4322,
+        &quot;wall_ms&quot;: 844.54294
+      },
+      &quot;round&quot;: 4,
+      &quot;source_sample_index&quot;: 11,
+      &quot;valid&quot;: true,
+      &quot;validated_source&quot;: {
+        &quot;response_sha256&quot;: &quot;fe87298dee6f490f294d912e795e926af1357b490d8c782884b54761574a37de&quot;,
+        &quot;scope&quot;: &quot;same deterministic source and binaries validated before discard-output measurement&quot;,
+        &quot;stdout_bytes&quot;: 51000003,
+        &quot;stdout_sha256&quot;: &quot;6a54f5f0ba6df9b8fe0c452eb46b1d890096560fdf1d8496513efb80773c604d&quot;
+      }
+    }
+  ]
+}</pre></details></article></details></section><section><h2>Source provenance</h2><div class="scroll"><table><thead><tr><th>Report</th><th>SHA-256</th><th>Schema</th><th>Complete</th><th>Passed</th><th>Warmups excluded</th></tr></thead><tbody><tr><td><code>/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/inline-on-off-large/report.json</code></td><td><code>a1ba860c38e51b0ca20051fc9ec078507dc2f4e6999f684ec9a8c9b88e56d434</code></td><td>pb-stream-stress/1</td><td>True</td><td>True</td><td>6</td></tr><tr><td><code>/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/inline-on-off-small/report.json</code></td><td><code>eac4002585c21df18078981d1a97e0e9a3cd1a06a2267a36731c0bd448f3eb98</code></td><td>pb-stream-stress/1</td><td>True</td><td>True</td><td>4</td></tr></tbody></table></div><details><summary>inline-on-off-large: all binary identities and source admission evidence</summary><pre>{
+  &quot;binaries&quot;: {
+    &quot;baseline&quot;: {
+      &quot;path&quot;: &quot;/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf3-final&quot;,
+      &quot;sha256&quot;: &quot;0dd77ed8adb4545294559bc1770648476b6d2f27c396a73ab05f398426854ad5&quot;,
+      &quot;size_bytes&quot;: 13555336
+    },
+    &quot;candidate&quot;: {
+      &quot;path&quot;: &quot;/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf3-inline-1&quot;,
+      &quot;sha256&quot;: &quot;717409badd79315c22cff13552cabaf6f436da0dfc6599f6b4515767d018ee0e&quot;,
+      &quot;size_bytes&quot;: 13575816
+    }
+  },
+  &quot;calibrations&quot;: {
+    &quot;large-item-8mib&quot;: {
+      &quot;bytes&quot;: 8388610,
+      &quot;fixture_stats&quot;: {
+        &quot;active_queries&quot;: 0,
+        &quot;completed&quot;: true,
+        &quot;completed_requests&quot;: 1,
+        &quot;config&quot;: {
+          &quot;chunk_bytes&quot;: 65536,
+          &quot;chunk_delay_ms&quot;: 0,
+          &quot;fail_after_rows&quot;: 0,
+          &quot;failure&quot;: &quot;none&quot;,
+          &quot;flush&quot;: false,
+          &quot;fragment_pattern&quot;: [],
+          &quot;gzip&quot;: false,
+          &quot;row_bytes&quot;: 8388608,
+          &quot;rows&quot;: 1,
+          &quot;shape&quot;: &quot;ascii&quot;
+        },
+        &quot;cpu_ms&quot;: 15.799999999999999,
+        &quot;cpu_sys_ms&quot;: 8.008,
+        &quot;cpu_user_ms&quot;: 7.792,
+        &quot;elapsed_ms&quot;: 20.396444,
+        &quot;last_query&quot;: {
+          &quot;accept_encoding&quot;: &quot;identity&quot;,
+          &quot;auth&quot;: &quot;ok&quot;,
+          &quot;body_bytes&quot;: 106,
+          &quot;body_over_limit&quot;: false,
+          &quot;body_sha256&quot;: &quot;7d97cbb3453665b730df03af33053407d31fc2d063206d9c0e7d6a02a68c1a40&quot;,
+          &quot;chunks&quot;: 129,
+          &quot;completed&quot;: true,
+          &quot;delay_ms&quot;: 0,
+          &quot;elapsed_ms&quot;: 10.135292,
+          &quot;first_body_write_ms&quot;: 2.696625,
+          &quot;first_body_write_unix_ns&quot;: 1792299478651823679,
+          &quot;generate_ms&quot;: 7.861594,
+          &quot;last_body_write_ms&quot;: 10.131638,
+          &quot;last_body_write_unix_ns&quot;: 1792299478659259400,
+          &quot;method&quot;: &quot;POST&quot;,
+          &quot;outcome&quot;: &quot;complete&quot;,
+          &quot;path&quot;: &quot;/api/v1/query&quot;,
+          &quot;response_sha256&quot;: &quot;1900a4554ea1d4225a1ee324fbbb24d5128ff2e662d39bde2365782b0d31435d&quot;,
+          &quot;rows_written&quot;: 1,
+          &quot;seq&quot;: 1,
+          &quot;source_bytes&quot;: 8388610,
+          &quot;start_unix_ns&quot;: 1792299478649127762,
+          &quot;status&quot;: 200,
+          &quot;wire_bytes&quot;: 8388610,
+          &quot;wire_writes&quot;: 129,
+          &quot;write_errors&quot;: 0,
+          &quot;write_ms&quot;: 2.27326
+        },
+        &quot;limits&quot;: {
+          &quot;max_chunk_bytes&quot;: 16777216,
+          &quot;max_chunk_delay_ms&quot;: 60000,
+          &quot;max_fragment_entries&quot;: 1024,
+          &quot;max_fragment_size&quot;: 1048576,
+          &quot;max_request_body&quot;: 1048576,
+          &quot;max_row_bytes&quot;: 16777216,
+          &quot;recent_limit&quot;: 32
+        },
+        &quot;max_rss_kib&quot;: 29104,
+        &quot;query_requests&quot;: 1,
+        &quot;recent&quot;: [
+          {
+            &quot;accept_encoding&quot;: &quot;identity&quot;,
+            &quot;auth&quot;: &quot;ok&quot;,
+            &quot;body_bytes&quot;: 106,
+            &quot;body_over_limit&quot;: false,
+            &quot;body_sha256&quot;: &quot;7d97cbb3453665b730df03af33053407d31fc2d063206d9c0e7d6a02a68c1a40&quot;,
+            &quot;chunks&quot;: 129,
+            &quot;completed&quot;: true,
+            &quot;delay_ms&quot;: 0,
+            &quot;elapsed_ms&quot;: 10.135292,
+            &quot;first_body_write_ms&quot;: 2.696625,
+            &quot;first_body_write_unix_ns&quot;: 1792299478651823679,
+            &quot;generate_ms&quot;: 7.861594,
+            &quot;last_body_write_ms&quot;: 10.131638,
+            &quot;last_body_write_unix_ns&quot;: 1792299478659259400,
+            &quot;method&quot;: &quot;POST&quot;,
+            &quot;outcome&quot;: &quot;complete&quot;,
+            &quot;path&quot;: &quot;/api/v1/query&quot;,
+            &quot;response_sha256&quot;: &quot;1900a4554ea1d4225a1ee324fbbb24d5128ff2e662d39bde2365782b0d31435d&quot;,
+            &quot;rows_written&quot;: 1,
+            &quot;seq&quot;: 1,
+            &quot;source_bytes&quot;: 8388610,
+            &quot;start_unix_ns&quot;: 1792299478649127762,
+            &quot;status&quot;: 200,
+            &quot;wire_bytes&quot;: 8388610,
+            &quot;wire_writes&quot;: 129,
+            &quot;write_errors&quot;: 0,
+            &quot;write_ms&quot;: 2.27326
+          }
+        ],
+        &quot;requests&quot;: 1,
+        &quot;response_sha256&quot;: &quot;1900a4554ea1d4225a1ee324fbbb24d5128ff2e662d39bde2365782b0d31435d&quot;,
+        &quot;rows_written&quot;: 1,
+        &quot;source_bytes&quot;: 8388610,
+        &quot;stats_requests&quot;: 1,
+        &quot;wire_bytes&quot;: 8388610,
+        &quot;wire_writes&quot;: 129,
+        &quot;write_errors&quot;: 0
+      },
+      &quot;scope&quot;: &quot;unparsed raw stream drain; producer/reader diagnostic only&quot;,
+      &quot;seconds&quot;: 0.019565497990697622,
+      &quot;sha256&quot;: &quot;1900a4554ea1d4225a1ee324fbbb24d5128ff2e662d39bde2365782b0d31435d&quot;,
+      &quot;source_mib_per_second&quot;: 408.88312227739965,
+      &quot;text_output_sha256&quot;: &quot;789a2152ff7d7f3899651cb3e8d595030694cc8f1c171c3b1786de5cbf9cc454&quot;,
+      &quot;valid&quot;: true
+    },
+    &quot;large-items-8x8mib&quot;: {
+      &quot;bytes&quot;: 67108873,
+      &quot;fixture_stats&quot;: {
+        &quot;active_queries&quot;: 0,
+        &quot;completed&quot;: true,
+        &quot;completed_requests&quot;: 1,
+        &quot;config&quot;: {
+          &quot;chunk_bytes&quot;: 65536,
+          &quot;chunk_delay_ms&quot;: 0,
+          &quot;fail_after_rows&quot;: 0,
+          &quot;failure&quot;: &quot;none&quot;,
+          &quot;flush&quot;: false,
+          &quot;fragment_pattern&quot;: [],
+          &quot;gzip&quot;: false,
+          &quot;row_bytes&quot;: 8388608,
+          &quot;rows&quot;: 8,
+          &quot;shape&quot;: &quot;ascii&quot;
+        },
+        &quot;cpu_ms&quot;: 61.062000000000005,
+        &quot;cpu_sys_ms&quot;: 12.691,
+        &quot;cpu_user_ms&quot;: 48.371,
+        &quot;elapsed_ms&quot;: 60.126393,
+        &quot;last_query&quot;: {
+          &quot;accept_encoding&quot;: &quot;identity&quot;,
+          &quot;auth&quot;: &quot;ok&quot;,
+          &quot;body_bytes&quot;: 106,
+          &quot;body_over_limit&quot;: false,
+          &quot;body_sha256&quot;: &quot;63de0f7caa5f53f68450a05ae9fc3b1bb666ecbe4d09563255fcca034cbc2530&quot;,
+          &quot;chunks&quot;: 1025,
+          &quot;completed&quot;: true,
+          &quot;delay_ms&quot;: 0,
+          &quot;elapsed_ms&quot;: 59.010398,
+          &quot;first_body_write_ms&quot;: 1.872606,
+          &quot;first_body_write_unix_ns&quot;: 1792299479306264178,
+          &quot;generate_ms&quot;: 47.730099,
+          &quot;last_body_write_ms&quot;: 59.006028,
+          &quot;last_body_write_unix_ns&quot;: 1792299479363397607,
+          &quot;method&quot;: &quot;POST&quot;,
+          &quot;outcome&quot;: &quot;complete&quot;,
+          &quot;path&quot;: &quot;/api/v1/query&quot;,
+          &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+          &quot;rows_written&quot;: 8,
+          &quot;seq&quot;: 1,
+          &quot;source_bytes&quot;: 67108873,
+          &quot;start_unix_ns&quot;: 1792299479304391578,
+          &quot;status&quot;: 200,
+          &quot;wire_bytes&quot;: 67108873,
+          &quot;wire_writes&quot;: 1025,
+          &quot;write_errors&quot;: 0,
+          &quot;write_ms&quot;: 11.279968
+        },
+        &quot;limits&quot;: {
+          &quot;max_chunk_bytes&quot;: 16777216,
+          &quot;max_chunk_delay_ms&quot;: 60000,
+          &quot;max_fragment_entries&quot;: 1024,
+          &quot;max_fragment_size&quot;: 1048576,
+          &quot;max_request_body&quot;: 1048576,
+          &quot;max_row_bytes&quot;: 16777216,
+          &quot;recent_limit&quot;: 32
+        },
+        &quot;max_rss_kib&quot;: 31148,
+        &quot;query_requests&quot;: 1,
+        &quot;recent&quot;: [
+          {
+            &quot;accept_encoding&quot;: &quot;identity&quot;,
+            &quot;auth&quot;: &quot;ok&quot;,
+            &quot;body_bytes&quot;: 106,
+            &quot;body_over_limit&quot;: false,
+            &quot;body_sha256&quot;: &quot;63de0f7caa5f53f68450a05ae9fc3b1bb666ecbe4d09563255fcca034cbc2530&quot;,
+            &quot;chunks&quot;: 1025,
+            &quot;completed&quot;: true,
+            &quot;delay_ms&quot;: 0,
+            &quot;elapsed_ms&quot;: 59.010398,
+            &quot;first_body_write_ms&quot;: 1.872606,
+            &quot;first_body_write_unix_ns&quot;: 1792299479306264178,
+            &quot;generate_ms&quot;: 47.730099,
+            &quot;last_body_write_ms&quot;: 59.006028,
+            &quot;last_body_write_unix_ns&quot;: 1792299479363397607,
+            &quot;method&quot;: &quot;POST&quot;,
+            &quot;outcome&quot;: &quot;complete&quot;,
+            &quot;path&quot;: &quot;/api/v1/query&quot;,
+            &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+            &quot;rows_written&quot;: 8,
+            &quot;seq&quot;: 1,
+            &quot;source_bytes&quot;: 67108873,
+            &quot;start_unix_ns&quot;: 1792299479304391578,
+            &quot;status&quot;: 200,
+            &quot;wire_bytes&quot;: 67108873,
+            &quot;wire_writes&quot;: 1025,
+            &quot;write_errors&quot;: 0,
+            &quot;write_ms&quot;: 11.279968
+          }
+        ],
+        &quot;requests&quot;: 1,
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;rows_written&quot;: 8,
+        &quot;source_bytes&quot;: 67108873,
+        &quot;stats_requests&quot;: 1,
+        &quot;wire_bytes&quot;: 67108873,
+        &quot;wire_writes&quot;: 1025,
+        &quot;write_errors&quot;: 0
+      },
+      &quot;scope&quot;: &quot;unparsed raw stream drain; producer/reader diagnostic only&quot;,
+      &quot;seconds&quot;: 0.05952202179469168,
+      &quot;sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+      &quot;source_mib_per_second&quot;: 1075.2324375644196,
+      &quot;text_output_sha256&quot;: &quot;1206e83fdd73668e75cdb2ebd1fd36ae414336ab38bcfd6863c06d83f5aad009&quot;,
+      &quot;valid&quot;: true
+    },
+    &quot;large-items-gzip-8x8mib&quot;: {
+      &quot;bytes&quot;: 67108873,
+      &quot;fixture_stats&quot;: {
+        &quot;active_queries&quot;: 0,
+        &quot;completed&quot;: true,
+        &quot;completed_requests&quot;: 1,
+        &quot;config&quot;: {
+          &quot;chunk_bytes&quot;: 65536,
+          &quot;chunk_delay_ms&quot;: 0,
+          &quot;fail_after_rows&quot;: 0,
+          &quot;failure&quot;: &quot;none&quot;,
+          &quot;flush&quot;: false,
+          &quot;fragment_pattern&quot;: [],
+          &quot;gzip&quot;: true,
+          &quot;row_bytes&quot;: 8388608,
+          &quot;rows&quot;: 8,
+          &quot;shape&quot;: &quot;ascii&quot;
+        },
+        &quot;cpu_ms&quot;: 95.601,
+        &quot;cpu_sys_ms&quot;: 1.97,
+        &quot;cpu_user_ms&quot;: 93.631,
+        &quot;elapsed_ms&quot;: 123.564154,
+        &quot;last_query&quot;: {
+          &quot;accept_encoding&quot;: &quot;identity&quot;,
+          &quot;auth&quot;: &quot;ok&quot;,
+          &quot;body_bytes&quot;: 106,
+          &quot;body_over_limit&quot;: false,
+          &quot;body_sha256&quot;: &quot;63de0f7caa5f53f68450a05ae9fc3b1bb666ecbe4d09563255fcca034cbc2530&quot;,
+          &quot;chunks&quot;: 1025,
+          &quot;completed&quot;: true,
+          &quot;delay_ms&quot;: 0,
+          &quot;elapsed_ms&quot;: 92.725009,
+          &quot;first_body_write_ms&quot;: 1.365355,
+          &quot;first_body_write_unix_ns&quot;: 1792299483251119314,
+          &quot;generate_ms&quot;: 49.572803,
+          &quot;last_body_write_ms&quot;: 92.721004,
+          &quot;last_body_write_unix_ns&quot;: 1792299483342474964,
+          &quot;method&quot;: &quot;POST&quot;,
+          &quot;outcome&quot;: &quot;complete&quot;,
+          &quot;path&quot;: &quot;/api/v1/query&quot;,
+          &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+          &quot;rows_written&quot;: 8,
+          &quot;seq&quot;: 1,
+          &quot;source_bytes&quot;: 67108873,
+          &quot;start_unix_ns&quot;: 1792299483249753957,
+          &quot;status&quot;: 200,
+          &quot;wire_bytes&quot;: 447928,
+          &quot;wire_writes&quot;: 1870,
+          &quot;write_errors&quot;: 0,
+          &quot;write_ms&quot;: 43.151903
+        },
+        &quot;limits&quot;: {
+          &quot;max_chunk_bytes&quot;: 16777216,
+          &quot;max_chunk_delay_ms&quot;: 60000,
+          &quot;max_fragment_entries&quot;: 1024,
+          &quot;max_fragment_size&quot;: 1048576,
+          &quot;max_request_body&quot;: 1048576,
+          &quot;max_row_bytes&quot;: 16777216,
+          &quot;recent_limit&quot;: 32
+        },
+        &quot;max_rss_kib&quot;: 32268,
+        &quot;query_requests&quot;: 1,
+        &quot;recent&quot;: [
+          {
+            &quot;accept_encoding&quot;: &quot;identity&quot;,
+            &quot;auth&quot;: &quot;ok&quot;,
+            &quot;body_bytes&quot;: 106,
+            &quot;body_over_limit&quot;: false,
+            &quot;body_sha256&quot;: &quot;63de0f7caa5f53f68450a05ae9fc3b1bb666ecbe4d09563255fcca034cbc2530&quot;,
+            &quot;chunks&quot;: 1025,
+            &quot;completed&quot;: true,
+            &quot;delay_ms&quot;: 0,
+            &quot;elapsed_ms&quot;: 92.725009,
+            &quot;first_body_write_ms&quot;: 1.365355,
+            &quot;first_body_write_unix_ns&quot;: 1792299483251119314,
+            &quot;generate_ms&quot;: 49.572803,
+            &quot;last_body_write_ms&quot;: 92.721004,
+            &quot;last_body_write_unix_ns&quot;: 1792299483342474964,
+            &quot;method&quot;: &quot;POST&quot;,
+            &quot;outcome&quot;: &quot;complete&quot;,
+            &quot;path&quot;: &quot;/api/v1/query&quot;,
+            &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+            &quot;rows_written&quot;: 8,
+            &quot;seq&quot;: 1,
+            &quot;source_bytes&quot;: 67108873,
+            &quot;start_unix_ns&quot;: 1792299483249753957,
+            &quot;status&quot;: 200,
+            &quot;wire_bytes&quot;: 447928,
+            &quot;wire_writes&quot;: 1870,
+            &quot;write_errors&quot;: 0,
+            &quot;write_ms&quot;: 43.151903
+          }
+        ],
+        &quot;requests&quot;: 1,
+        &quot;response_sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+        &quot;rows_written&quot;: 8,
+        &quot;source_bytes&quot;: 67108873,
+        &quot;stats_requests&quot;: 1,
+        &quot;wire_bytes&quot;: 447928,
+        &quot;wire_writes&quot;: 1870,
+        &quot;write_errors&quot;: 0
+      },
+      &quot;scope&quot;: &quot;unparsed raw stream drain; producer/reader diagnostic only&quot;,
+      &quot;seconds&quot;: 0.12294073798693717,
+      &quot;sha256&quot;: &quot;779c3dc7dc4805d6e8b6d1cc4930a5ffa6faeb534a10ef781e8e49c535850408&quot;,
+      &quot;source_mib_per_second&quot;: 520.5760891875324,
+      &quot;text_output_sha256&quot;: &quot;1206e83fdd73668e75cdb2ebd1fd36ae414336ab38bcfd6863c06d83f5aad009&quot;,
+      &quot;valid&quot;: true
+    }
+  },
+  &quot;complete&quot;: true,
+  &quot;errors&quot;: [],
+  &quot;excluded_warmup_samples&quot;: 6,
+  &quot;fixture&quot;: {
+    &quot;path&quot;: &quot;/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-stress-fixture&quot;,
+    &quot;sha256&quot;: &quot;fa775eb46c9a5277ef17ccf35ba171c958c70d256929b72ef9a27346f5decabc&quot;,
+    &quot;size_bytes&quot;: 8714925
+  },
+  &quot;gate&quot;: null,
+  &quot;host&quot;: {
+    &quot;cpu_count&quot;: 20,
+    &quot;uname&quot;: [
+      &quot;Linux&quot;,
+      &quot;ajs-mini-pc-02&quot;,
+      &quot;7.2.5-3-omarchy&quot;,
+      &quot;#1 SMP PREEMPT_DYNAMIC Mon, 14 Sep 2026 19:55:01 +0000&quot;,
+      &quot;x86_64&quot;
+    ]
+  },
+  &quot;host_after&quot;: null,
+  &quot;id&quot;: &quot;a1ba860c38e51b0ca20051fc9ec078507dc2f4e6999f684ec9a8c9b88e56d434&quot;,
+  &quot;manifest_identity&quot;: null,
+  &quot;manifest_identity_end&quot;: null,
+  &quot;meter&quot;: {
+    &quot;path&quot;: &quot;/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-meter&quot;,
+    &quot;sha256&quot;: &quot;17c3b73491b2a31e465f58eda9f210000b5cd886a4ba9fc0764dc3576899127c&quot;,
+    &quot;size_bytes&quot;: 17232
+  },
+  &quot;method&quot;: {
+    &quot;affinity&quot;: [
+      2,
+      4,
+      6,
+      8
+    ],
+    &quot;go_oracle&quot;: false,
+    &quot;labels&quot;: [
+      &quot;baseline&quot;,
+      &quot;candidate&quot;
+    ],
+    &quot;profile&quot;: &quot;large&quot;,
+    &quot;repetitions&quot;: 5,
+    &quot;sample_interval&quot;: 0.1,
+    &quot;scope&quot;: &quot;local generated SQL, bounded memory; no product modifications; descriptive medians&quot;,
+    &quot;seed&quot;: 48132,
+    &quot;soak_seconds&quot;: 300,
+    &quot;timeout&quot;: 130,
+    &quot;warmup&quot;: 1
+  },
+  &quot;passed&quot;: true,
+  &quot;path&quot;: &quot;/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/inline-on-off-large/report.json&quot;,
+  &quot;schema&quot;: &quot;pb-stream-stress/1&quot;,
+  &quot;scope&quot;: null,
+  &quot;sha256&quot;: &quot;a1ba860c38e51b0ca20051fc9ec078507dc2f4e6999f684ec9a8c9b88e56d434&quot;,
+  &quot;size_bytes&quot;: 685020,
+  &quot;sources&quot;: {
+    &quot;/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/stress.py&quot;: &quot;d34190e46f2aa1e30d01fadc42acc49a45ac52cc9f58571533bd41ce31a6beba&quot;,
+    &quot;/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/stress_fixture/main.go&quot;: &quot;fa86af003b62d1263843e752137d3b0a985482f231d9f2228d3f54cca423b2f4&quot;,
+    &quot;/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/stress_process.py&quot;: &quot;fdaeca31c9cb9740860f3ccb5a82b7edb46acac61581c6a55ceaf7273ed1984e&quot;
+  }
+}</pre></details><details><summary>inline-on-off-small: all binary identities and source admission evidence</summary><pre>{
+  &quot;binaries&quot;: {
+    &quot;baseline&quot;: {
+      &quot;path&quot;: &quot;/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf3-final&quot;,
+      &quot;sha256&quot;: &quot;0dd77ed8adb4545294559bc1770648476b6d2f27c396a73ab05f398426854ad5&quot;,
+      &quot;size_bytes&quot;: 13555336
+    },
+    &quot;candidate&quot;: {
+      &quot;path&quot;: &quot;/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf3-inline-1&quot;,
+      &quot;sha256&quot;: &quot;717409badd79315c22cff13552cabaf6f436da0dfc6599f6b4515767d018ee0e&quot;,
+      &quot;size_bytes&quot;: 13575816
+    }
+  },
+  &quot;calibrations&quot;: {
+    &quot;escaped-1m&quot;: {
+      &quot;bytes&quot;: 257000001,
+      &quot;fixture_stats&quot;: {
+        &quot;active_queries&quot;: 0,
+        &quot;completed&quot;: true,
+        &quot;completed_requests&quot;: 1,
+        &quot;config&quot;: {
+          &quot;chunk_bytes&quot;: 65536,
+          &quot;chunk_delay_ms&quot;: 0,
+          &quot;fail_after_rows&quot;: 0,
+          &quot;failure&quot;: &quot;none&quot;,
+          &quot;flush&quot;: false,
+          &quot;fragment_pattern&quot;: [],
+          &quot;gzip&quot;: false,
+          &quot;row_bytes&quot;: 256,
+          &quot;rows&quot;: 1000000,
+          &quot;shape&quot;: &quot;escaped&quot;
+        },
+        &quot;cpu_ms&quot;: 301.235,
+        &quot;cpu_sys_ms&quot;: 55.421,
+        &quot;cpu_user_ms&quot;: 245.814,
+        &quot;elapsed_ms&quot;: 413.120811,
+        &quot;last_query&quot;: {
+          &quot;accept_encoding&quot;: &quot;identity&quot;,
+          &quot;auth&quot;: &quot;ok&quot;,
+          &quot;body_bytes&quot;: 112,
+          &quot;body_over_limit&quot;: false,
+          &quot;body_sha256&quot;: &quot;7405407d315888a545d563476a5065d6df4437b8d7e3606a5a2acea953955759&quot;,
+          &quot;chunks&quot;: 3922,
+          &quot;completed&quot;: true,
+          &quot;delay_ms&quot;: 0,
+          &quot;elapsed_ms&quot;: 411.716793,
+          &quot;first_body_write_ms&quot;: 0.185473,
+          &quot;first_body_write_unix_ns&quot;: 1792299515549410106,
+          &quot;generate_ms&quot;: 320.010907,
+          &quot;last_body_write_ms&quot;: 411.713372,
+          &quot;last_body_write_unix_ns&quot;: 1792299515960938011,
+          &quot;method&quot;: &quot;POST&quot;,
+          &quot;outcome&quot;: &quot;complete&quot;,
+          &quot;path&quot;: &quot;/api/v1/query&quot;,
+          &quot;response_sha256&quot;: &quot;7ee6726b36d206215fbf87abe6e3cd65cdd782ffb3f80890611578854fae54e1&quot;,
+          &quot;rows_written&quot;: 1000000,
+          &quot;seq&quot;: 1,
+          &quot;source_bytes&quot;: 257000001,
+          &quot;start_unix_ns&quot;: 1792299515549224636,
+          &quot;status&quot;: 200,
+          &quot;wire_bytes&quot;: 257000001,
+          &quot;wire_writes&quot;: 3922,
+          &quot;write_errors&quot;: 0,
+          &quot;write_ms&quot;: 91.705324
+        },
+        &quot;limits&quot;: {
+          &quot;max_chunk_bytes&quot;: 16777216,
+          &quot;max_chunk_delay_ms&quot;: 60000,
+          &quot;max_fragment_entries&quot;: 1024,
+          &quot;max_fragment_size&quot;: 1048576,
+          &quot;max_request_body&quot;: 1048576,
+          &quot;max_row_bytes&quot;: 16777216,
+          &quot;recent_limit&quot;: 32
+        },
+        &quot;max_rss_kib&quot;: 32604,
+        &quot;query_requests&quot;: 1,
+        &quot;recent&quot;: [
+          {
+            &quot;accept_encoding&quot;: &quot;identity&quot;,
+            &quot;auth&quot;: &quot;ok&quot;,
+            &quot;body_bytes&quot;: 112,
+            &quot;body_over_limit&quot;: false,
+            &quot;body_sha256&quot;: &quot;7405407d315888a545d563476a5065d6df4437b8d7e3606a5a2acea953955759&quot;,
+            &quot;chunks&quot;: 3922,
+            &quot;completed&quot;: true,
+            &quot;delay_ms&quot;: 0,
+            &quot;elapsed_ms&quot;: 411.716793,
+            &quot;first_body_write_ms&quot;: 0.185473,
+            &quot;first_body_write_unix_ns&quot;: 1792299515549410106,
+            &quot;generate_ms&quot;: 320.010907,
+            &quot;last_body_write_ms&quot;: 411.713372,
+            &quot;last_body_write_unix_ns&quot;: 1792299515960938011,
+            &quot;method&quot;: &quot;POST&quot;,
+            &quot;outcome&quot;: &quot;complete&quot;,
+            &quot;path&quot;: &quot;/api/v1/query&quot;,
+            &quot;response_sha256&quot;: &quot;7ee6726b36d206215fbf87abe6e3cd65cdd782ffb3f80890611578854fae54e1&quot;,
+            &quot;rows_written&quot;: 1000000,
+            &quot;seq&quot;: 1,
+            &quot;source_bytes&quot;: 257000001,
+            &quot;start_unix_ns&quot;: 1792299515549224636,
+            &quot;status&quot;: 200,
+            &quot;wire_bytes&quot;: 257000001,
+            &quot;wire_writes&quot;: 3922,
+            &quot;write_errors&quot;: 0,
+            &quot;write_ms&quot;: 91.705324
+          }
+        ],
+        &quot;requests&quot;: 1,
+        &quot;response_sha256&quot;: &quot;7ee6726b36d206215fbf87abe6e3cd65cdd782ffb3f80890611578854fae54e1&quot;,
+        &quot;rows_written&quot;: 1000000,
+        &quot;source_bytes&quot;: 257000001,
+        &quot;stats_requests&quot;: 1,
+        &quot;wire_bytes&quot;: 257000001,
+        &quot;wire_writes&quot;: 3922,
+        &quot;write_errors&quot;: 0
+      },
+      &quot;scope&quot;: &quot;unparsed raw stream drain; producer/reader diagnostic only&quot;,
+      &quot;seconds&quot;: 0.41233117412775755,
+      &quot;sha256&quot;: &quot;7ee6726b36d206215fbf87abe6e3cd65cdd782ffb3f80890611578854fae54e1&quot;,
+      &quot;source_mib_per_second&quot;: 594.4112782366051,
+      &quot;text_output_sha256&quot;: &quot;1369b00d1f0f8e2d5fa0e5c81bccf94cbdc14c86a0eb552ba97a0c044e93d5b5&quot;,
+      &quot;valid&quot;: true
+    },
+    &quot;tiny-1m&quot;: {
+      &quot;bytes&quot;: 33000001,
+      &quot;fixture_stats&quot;: {
+        &quot;active_queries&quot;: 0,
+        &quot;completed&quot;: true,
+        &quot;completed_requests&quot;: 1,
+        &quot;config&quot;: {
+          &quot;chunk_bytes&quot;: 65536,
+          &quot;chunk_delay_ms&quot;: 0,
+          &quot;fail_after_rows&quot;: 0,
+          &quot;failure&quot;: &quot;none&quot;,
+          &quot;flush&quot;: false,
+          &quot;fragment_pattern&quot;: [],
+          &quot;gzip&quot;: false,
+          &quot;row_bytes&quot;: 32,
+          &quot;rows&quot;: 1000000,
+          &quot;shape&quot;: &quot;tiny&quot;
+        },
+        &quot;cpu_ms&quot;: 71.515,
+        &quot;cpu_sys_ms&quot;: 13.994,
+        &quot;cpu_user_ms&quot;: 57.521,
+        &quot;elapsed_ms&quot;: 79.973593,
+        &quot;last_query&quot;: {
+          &quot;accept_encoding&quot;: &quot;identity&quot;,
+          &quot;auth&quot;: &quot;ok&quot;,
+          &quot;body_bytes&quot;: 112,
+          &quot;body_over_limit&quot;: false,
+          &quot;body_sha256&quot;: &quot;7405407d315888a545d563476a5065d6df4437b8d7e3606a5a2acea953955759&quot;,
+          &quot;chunks&quot;: 504,
+          &quot;completed&quot;: true,
+          &quot;delay_ms&quot;: 0,
+          &quot;elapsed_ms&quot;: 73.596495,
+          &quot;first_body_write_ms&quot;: 0.172335,
+          &quot;first_body_write_unix_ns&quot;: 1792299504457850286,
+          &quot;generate_ms&quot;: 65.421392,
+          &quot;last_body_write_ms&quot;: 73.594249,
+          &quot;last_body_write_unix_ns&quot;: 1792299504531272199,
+          &quot;method&quot;: &quot;POST&quot;,
+          &quot;outcome&quot;: &quot;complete&quot;,
+          &quot;path&quot;: &quot;/api/v1/query&quot;,
+          &quot;response_sha256&quot;: &quot;fe87298dee6f490f294d912e795e926af1357b490d8c782884b54761574a37de&quot;,
+          &quot;rows_written&quot;: 1000000,
+          &quot;seq&quot;: 1,
+          &quot;source_bytes&quot;: 33000001,
+          &quot;start_unix_ns&quot;: 1792299504457677953,
+          &quot;status&quot;: 200,
+          &quot;wire_bytes&quot;: 33000001,
+          &quot;wire_writes&quot;: 504,
+          &quot;write_errors&quot;: 0,
+          &quot;write_ms&quot;: 8.174784
+        },
+        &quot;limits&quot;: {
+          &quot;max_chunk_bytes&quot;: 16777216,
+          &quot;max_chunk_delay_ms&quot;: 60000,
+          &quot;max_fragment_entries&quot;: 1024,
+          &quot;max_fragment_size&quot;: 1048576,
+          &quot;max_request_body&quot;: 1048576,
+          &quot;max_row_bytes&quot;: 16777216,
+          &quot;recent_limit&quot;: 32
+        },
+        &quot;max_rss_kib&quot;: 29280,
+        &quot;query_requests&quot;: 1,
+        &quot;recent&quot;: [
+          {
+            &quot;accept_encoding&quot;: &quot;identity&quot;,
+            &quot;auth&quot;: &quot;ok&quot;,
+            &quot;body_bytes&quot;: 112,
+            &quot;body_over_limit&quot;: false,
+            &quot;body_sha256&quot;: &quot;7405407d315888a545d563476a5065d6df4437b8d7e3606a5a2acea953955759&quot;,
+            &quot;chunks&quot;: 504,
+            &quot;completed&quot;: true,
+            &quot;delay_ms&quot;: 0,
+            &quot;elapsed_ms&quot;: 73.596495,
+            &quot;first_body_write_ms&quot;: 0.172335,
+            &quot;first_body_write_unix_ns&quot;: 1792299504457850286,
+            &quot;generate_ms&quot;: 65.421392,
+            &quot;last_body_write_ms&quot;: 73.594249,
+            &quot;last_body_write_unix_ns&quot;: 1792299504531272199,
+            &quot;method&quot;: &quot;POST&quot;,
+            &quot;outcome&quot;: &quot;complete&quot;,
+            &quot;path&quot;: &quot;/api/v1/query&quot;,
+            &quot;response_sha256&quot;: &quot;fe87298dee6f490f294d912e795e926af1357b490d8c782884b54761574a37de&quot;,
+            &quot;rows_written&quot;: 1000000,
+            &quot;seq&quot;: 1,
+            &quot;source_bytes&quot;: 33000001,
+            &quot;start_unix_ns&quot;: 1792299504457677953,
+            &quot;status&quot;: 200,
+            &quot;wire_bytes&quot;: 33000001,
+            &quot;wire_writes&quot;: 504,
+            &quot;write_errors&quot;: 0,
+            &quot;write_ms&quot;: 8.174784
+          }
+        ],
+        &quot;requests&quot;: 1,
+        &quot;response_sha256&quot;: &quot;fe87298dee6f490f294d912e795e926af1357b490d8c782884b54761574a37de&quot;,
+        &quot;rows_written&quot;: 1000000,
+        &quot;source_bytes&quot;: 33000001,
+        &quot;stats_requests&quot;: 1,
+        &quot;wire_bytes&quot;: 33000001,
+        &quot;wire_writes&quot;: 504,
+        &quot;write_errors&quot;: 0
+      },
+      &quot;scope&quot;: &quot;unparsed raw stream drain; producer/reader diagnostic only&quot;,
+      &quot;seconds&quot;: 0.07920740102417767,
+      &quot;sha256&quot;: &quot;fe87298dee6f490f294d912e795e926af1357b490d8c782884b54761574a37de&quot;,
+      &quot;source_mib_per_second&quot;: 397.32718140157283,
+      &quot;text_output_sha256&quot;: &quot;a7892b862fddb43d391ffc2fc9d2ba8870e56a332ef30b50b494be20210c5659&quot;,
+      &quot;valid&quot;: true
+    }
+  },
+  &quot;complete&quot;: true,
+  &quot;errors&quot;: [],
+  &quot;excluded_warmup_samples&quot;: 4,
+  &quot;fixture&quot;: {
+    &quot;path&quot;: &quot;/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-stress-fixture&quot;,
+    &quot;sha256&quot;: &quot;fa775eb46c9a5277ef17ccf35ba171c958c70d256929b72ef9a27346f5decabc&quot;,
+    &quot;size_bytes&quot;: 8714925
+  },
+  &quot;gate&quot;: null,
+  &quot;host&quot;: {
+    &quot;cpu_count&quot;: 20,
+    &quot;uname&quot;: [
+      &quot;Linux&quot;,
+      &quot;ajs-mini-pc-02&quot;,
+      &quot;7.2.5-3-omarchy&quot;,
+      &quot;#1 SMP PREEMPT_DYNAMIC Mon, 14 Sep 2026 19:55:01 +0000&quot;,
+      &quot;x86_64&quot;
+    ]
+  },
+  &quot;host_after&quot;: null,
+  &quot;id&quot;: &quot;eac4002585c21df18078981d1a97e0e9a3cd1a06a2267a36731c0bd448f3eb98&quot;,
+  &quot;manifest_identity&quot;: null,
+  &quot;manifest_identity_end&quot;: null,
+  &quot;meter&quot;: {
+    &quot;path&quot;: &quot;/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-meter&quot;,
+    &quot;sha256&quot;: &quot;17c3b73491b2a31e465f58eda9f210000b5cd886a4ba9fc0764dc3576899127c&quot;,
+    &quot;size_bytes&quot;: 17232
+  },
+  &quot;method&quot;: {
+    &quot;affinity&quot;: [
+      2,
+      4,
+      6,
+      8
+    ],
+    &quot;go_oracle&quot;: false,
+    &quot;labels&quot;: [
+      &quot;baseline&quot;,
+      &quot;candidate&quot;
+    ],
+    &quot;profile&quot;: &quot;scale&quot;,
+    &quot;repetitions&quot;: 5,
+    &quot;sample_interval&quot;: 0.1,
+    &quot;scope&quot;: &quot;local generated SQL, bounded memory; no product modifications; descriptive medians&quot;,
+    &quot;seed&quot;: 48133,
+    &quot;soak_seconds&quot;: 300,
+    &quot;timeout&quot;: 130,
+    &quot;warmup&quot;: 1
+  },
+  &quot;passed&quot;: true,
+  &quot;path&quot;: &quot;/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/inline-on-off-small/report.json&quot;,
+  &quot;schema&quot;: &quot;pb-stream-stress/1&quot;,
+  &quot;scope&quot;: null,
+  &quot;sha256&quot;: &quot;eac4002585c21df18078981d1a97e0e9a3cd1a06a2267a36731c0bd448f3eb98&quot;,
+  &quot;size_bytes&quot;: 470037,
+  &quot;sources&quot;: {
+    &quot;/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/stress.py&quot;: &quot;d34190e46f2aa1e30d01fadc42acc49a45ac52cc9f58571533bd41ce31a6beba&quot;,
+    &quot;/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/stress_fixture/main.go&quot;: &quot;fa86af003b62d1263843e752137d3b0a985482f231d9f2228d3f54cca423b2f4&quot;,
+    &quot;/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/stress_process.py&quot;: &quot;fdaeca31c9cb9740860f3ccb5a82b7edb46acac61581c6a55ceaf7273ed1984e&quot;
+  }
+}</pre></details><p class="note">Full precision samples, source summaries, identities, and admission flags are in results.json. Source report hashes identify the exact bytes read. Missing counters are displayed as —.</p></section></main></html>

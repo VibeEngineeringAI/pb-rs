@@ -1,0 +1,69 @@
+{
+  "primary_reference": "bin/pb-perf-final (previous optimized campaign)",
+  "original_reference": "bin/pb-perf-baseline (dd436da)",
+  "candidate": "bin/pb-perf2-final",
+  "cpu_affinity": [
+    2,
+    4,
+    6,
+    8
+  ],
+  "seeds": [
+    2031,
+    2032
+  ],
+  "warmup": 3,
+  "repetitions": 20,
+  "fixed_cases": [
+    "version-text",
+    "version-json",
+    "root-help",
+    "command-tree",
+    "agent-catalog",
+    "sql-help-json",
+    "missing-profile",
+    "profile-list",
+    "profile-add",
+    "status-basic",
+    "dataset-list",
+    "dataset-schema",
+    "sql-500-json",
+    "sql-10000-text",
+    "sql-10000-json",
+    "promql-range",
+    "tail-4096",
+    "p3-100000-json",
+    "p3-single-8MiB-item"
+  ],
+  "supplement_cases": [
+    "sql-10000-json-gzip",
+    "p3-single-8MiB-item-gzip",
+    "completion-root",
+    "completion-sql-flags",
+    "sql-10000-nested-json",
+    "tail-131072-batch8191",
+    "tail-131072-batch8192"
+  ],
+  "ingest": {
+    "records": 20000,
+    "record_bytes": 500,
+    "batch_size": 1000,
+    "repetitions": 9,
+    "warmup": 2,
+    "probes": true,
+    "probe_fail_upload": 1
+  },
+  "escaped_ingest": {
+    "records": 512,
+    "record_bytes": 8192,
+    "batch_size": 100,
+    "repetitions": 7,
+    "warmup": 1,
+    "probe_records": 100,
+    "probes": true,
+    "probe_fail_upload": 1
+  },
+  "ranking_scope": "Uninstrumented fresh CLI processes only. Fixed19 remains separate from targeted supplements. All contracts must match. Do not claim every operation or whole suite improved by10%. Report material regressions using retained CI and absolute1ms/1MiB gate.",
+  "profiling_scope": "perf/heaptrack explain work only; builds/tests and audit probes overlapped exploratory captures. Retain raw reports; do not rank using instrumentation timings.",
+  "final_measurements": "Wait for owned builds/tests/compatibility jobs to finish, hold existing performance lock. Unrelated shared-host activity remains."
+}

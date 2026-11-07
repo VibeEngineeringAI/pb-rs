@@ -3,14 +3,18 @@ mod admin;
 mod admin_datasets;
 mod admin_inventory;
 pub mod api;
+pub mod argv;
 pub mod auth;
+mod completion;
 pub mod config;
 pub mod datasets;
 #[cfg(feature = "diagnostics")]
 pub mod diagnostics;
 pub mod error;
 pub mod gojson;
+mod ingest;
 mod metrics;
+mod observe;
 pub mod parser;
 mod printable;
 #[doc(hidden)]
@@ -18,6 +22,7 @@ pub mod process;
 pub mod profile;
 mod render;
 mod saved_queries;
+mod shoulder_state;
 pub mod spec;
 mod sql;
 mod status;
@@ -160,7 +165,7 @@ fn output_format(parsed: &ParsedInvocation) -> Result<&'static str, String> {
         "json" => Ok("json"),
         _ => Err(format!(
             "unsupported output format {} (expected text or json)",
-            quote(raw)
+            argv::quote(parsed.text_bytes("output"))
         )),
     }
 }
@@ -191,33 +196,70 @@ pub fn run_with_writers(
     stderr: &mut (dyn std::io::Write + Send),
     stderr_terminal: bool,
 ) -> Outcome {
+    run_arguments(args, None, stdout, stderr, stderr_terminal)
+}
+
+/// Execute OS argument bytes without replacing malformed UTF-8 at the parser boundary.
+pub fn run_with_bytes(
+    args: &[Vec<u8>],
+    stdout: &mut (dyn std::io::Write + Send),
+    stderr: &mut (dyn std::io::Write + Send),
+    stderr_terminal: bool,
+) -> Outcome {
+    let display: Vec<String> = args.iter().map(|a| error::go_string(a)).collect();
+    run_arguments(&display, Some(args), stdout, stderr, stderr_terminal)
+}
+
+fn run_arguments(
+    args: &[String],
+    raw: Option<&[Vec<u8>]>,
+    stdout: &mut (dyn std::io::Write + Send),
+    stderr: &mut (dyn std::io::Write + Send),
+    stderr_terminal: bool,
+) -> Outcome {
+    if let Some(outcome) = completion::request(args, raw) {
+        return outcome;
+    }
     let root = command_spec();
     let structured = parser::requests_json(args);
-    let (command, path, remaining) = match parser::discover(root, args) {
-        Ok(found) => found,
-        Err(err) => {
-            return failure(
-                root,
-                "pb",
-                &err.message,
-                input_code(&err.message),
-                structured,
-                err.root_find,
-            );
-        }
-    };
-    let parsed = match parser::parse(command, &path, &remaining) {
-        Ok(parsed) => parsed,
-        Err(err) => {
-            return failure(
-                command,
-                &path,
-                &err.message,
-                input_code(&err.message),
-                structured,
-                false,
-            );
-        }
+    let (command, path, parsed) = if let Some(raw) = raw {
+        let (command, path, remaining) = match argv::discover(root, raw) {
+            Ok(found) => found,
+            Err(error) => return argv::render_error(error, root, "pb", structured),
+        };
+        let parsed = match argv::parse(command, &path, &remaining) {
+            Ok(parsed) => parsed,
+            Err(error) => return argv::render_error(error, command, &path, structured),
+        };
+        (command, path, parsed)
+    } else {
+        let (command, path, remaining) = match parser::discover(root, args) {
+            Ok(found) => found,
+            Err(err) => {
+                return failure(
+                    root,
+                    "pb",
+                    &err.message,
+                    input_code(&err.message),
+                    structured,
+                    err.root_find,
+                );
+            }
+        };
+        let parsed = match parser::parse(command, &path, &remaining) {
+            Ok(parsed) => parsed,
+            Err(err) => {
+                return failure(
+                    command,
+                    &path,
+                    &err.message,
+                    input_code(&err.message),
+                    structured,
+                    false,
+                );
+            }
+        };
+        (command, path, parsed)
     };
     if parsed.boolean("help") {
         return Outcome::success(render::help(command, &path, true));
@@ -229,6 +271,9 @@ pub fn run_with_writers(
             input_code(&message)
         };
         return failure(command, &path, &message, code, structured, false);
+    }
+    if let Some(outcome) = completion::generate(&path, &parsed) {
+        return outcome;
     }
     let preflight_profile = if command.requires_profile {
         match config::ProfileStore::from_env()
@@ -255,6 +300,12 @@ pub fn run_with_writers(
             structured,
             false,
         );
+    }
+    if path == "pb ingest files" {
+        return ingest::execute(&parsed, command, &path, structured, stdout, stderr);
+    }
+    if path == "pb observe" {
+        return observe::execute(&parsed, command, &path, structured, stdout);
     }
     if path == "pb tail" {
         return tail::execute(&parsed, command, &path, structured, stdout, stderr);
@@ -361,18 +412,29 @@ pub fn run_with_writers(
         });
     }
     if command.operation == Operation::Help {
-        let (target, target_path, _) = match parser::discover(root, &parsed.positionals) {
-            Ok(found) => found,
-            Err(err) => {
-                return failure(
-                    command,
-                    &path,
-                    &err.message,
-                    input_code(&err.message),
-                    structured,
-                    false,
-                );
+        let (target, target_path) = if !parsed.raw.positionals.is_empty() {
+            match argv::discover(root, &parsed.raw.positionals) {
+                Ok((target, path, _)) => (target, path),
+                Err(mut error) => {
+                    error.root_find = false;
+                    return argv::render_error(error, command, &path, structured);
+                }
             }
+        } else {
+            let (target, target_path, _) = match parser::discover(root, &parsed.positionals) {
+                Ok(found) => found,
+                Err(err) => {
+                    return failure(
+                        command,
+                        &path,
+                        &err.message,
+                        input_code(&err.message),
+                        structured,
+                        false,
+                    );
+                }
+            };
+            (target, target_path)
         };
         return Outcome::success(if format == "json" {
             render::command_json(target, &target_path, target_path == "pb help")
@@ -474,7 +536,10 @@ fn execute_operational(
     };
     if local {
         return match profile::execute(parsed, &store) {
-            Ok(Some(stdout)) => Some(Outcome::success(stdout)),
+            Ok(Some(stdout)) => Some(Outcome {
+                stdout: profile::output_bytes(parsed, stdout),
+                ..Outcome::default()
+            }),
             Ok(None) => None,
             Err(err) if err.fatal.is_some() => Some(Outcome {
                 stdout: err.stdout.into_bytes(),
@@ -524,7 +589,11 @@ fn execute_operational(
     let result: Result<String, error::CliError> = runtime.block_on(async {
         if path == "pb cloud profile add" {
             let (api_key, orchestrator_url) = profile::cloud_add_input(parsed)?;
-            let workspace = api::validate_cloud_api_key(&orchestrator_url, &api_key).await?;
+            let workspace = api::validate_cloud_api_key_bytes(
+                &orchestrator_url,
+                error::trim_bytes(parsed.text_bytes("api-key")),
+            )
+            .await?;
             return profile::cloud_profile_add(
                 parsed,
                 &store,
@@ -548,7 +617,10 @@ fn execute_operational(
         datasets::execute(parsed, &client).await
     });
     Some(match result {
-        Ok(stdout) => Outcome::success(stdout),
+        Ok(stdout) => Outcome {
+            stdout: profile::output_bytes(parsed, stdout),
+            ..Outcome::default()
+        },
         Err(err) => err.render(command, path, structured),
     })
 }

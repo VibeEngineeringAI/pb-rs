@@ -3,11 +3,10 @@
 use std::{
     fmt,
     io::{self, BufRead, Read, Write},
-    str::FromStr,
 };
 
-use crate::gojson::{self, Document, Node};
-use serde_json::{Map, Number, Value};
+use crate::gojson::{self, Node, OrderedDocument};
+use serde_json::{Number, Value};
 
 #[path = "scan.rs"]
 mod scan;
@@ -201,7 +200,6 @@ pub fn stream_json<R: BufRead, W: Write>(
     let _ = out.flush();
     let mut first = true;
     let mut scanner = scan::Scanner::default();
-    let mut encoded = Vec::new();
     let mut indented = Vec::new();
     loop {
         #[cfg(feature = "diagnostics")]
@@ -242,25 +240,43 @@ pub fn stream_json<R: BufRead, W: Write>(
         #[cfg(feature = "diagnostics")]
         crate::diagnostics::element(bytes.len());
         let value = float_document(bytes)?;
-        measured!(Serialization, serialize_element(&value, &mut encoded));
-        // Escaping now shares the indentation pass, so its time belongs to
-        // IndentationCopy rather than Serialization. Keep the byte counters
-        // comparable to the former escaped pretty output (including newline).
+        // One pass emits the escaped, array-indented row; there is no
+        // intermediate pretty buffer, so the whole pass counts as Serialization.
         let separator: &[u8] = if first { b"\n" } else { b",\n" };
-        measured!(
-            IndentationCopy,
-            indent_element(&encoded, &mut indented, separator)
-        );
-        #[cfg(feature = "diagnostics")]
-        {
-            let indentation =
-                separator.len() + 2 + 2 * encoded.iter().filter(|byte| **byte == b'\n').count();
-            crate::diagnostics::serialized(indented.len() - indentation + 1);
-            crate::diagnostics::indented(indented.len() - separator.len() - 2);
+        if bytes.len() <= SMALL_ROW_SOURCE_BYTES {
+            // Even quadratic indentation plus float/string expansion for this
+            // source bound fits below ROW_CHUNK_BYTES. Keep the direct Vec
+            // renderer for tiny rows, without a chunk check on every append.
+            measured!(
+                Serialization,
+                render_element(&value, &mut indented, separator)
+            );
+            debug_assert!(indented.len() <= ROW_CHUNK_BYTES);
+            #[cfg(feature = "diagnostics")]
+            {
+                let body = &indented[separator.len() + 2..];
+                let newlines = body.iter().filter(|&&byte| byte == b'\n').count();
+                crate::diagnostics::serialized(body.len() - 2 * newlines + 1);
+                crate::diagnostics::indented(body.len());
+            }
+            let _ = out.write_all(&indented);
+        } else {
+            let mut row = RowBuffer::new(&mut indented, out);
+            measured!(Serialization, render_element(&value, &mut row, separator));
+            #[cfg(feature = "diagnostics")]
+            {
+                // Include the full rendered row even if a write failed and its
+                // remaining bytes were discarded.
+                let body_bytes = row.rendered_bytes - separator.len() - 2;
+                let body_newlines = row.newlines - 1;
+                crate::diagnostics::serialized(body_bytes - 2 * body_newlines + 1);
+                crate::diagnostics::indented(body_bytes);
+            }
+            row.finish();
         }
-        // Publish only a complete decoded row, including its preceding separator.
-        // The opening '[' remains immediate; no output is buffered across rows.
-        let _ = out.write_all(&indented);
+        // Decoding and all float validation finished before publishing any row
+        // bytes. Small rows keep their single write; large rows use bounded
+        // chunks, and a write failure discards only the rest of that row.
         let _ = out.flush();
         first = false;
         #[cfg(feature = "diagnostics")]
@@ -270,26 +286,329 @@ pub fn stream_json<R: BufRead, W: Write>(
     }
 }
 
-/// Serialize directly into reusable storage. HTML and separator escaping is
-/// applied together with array indentation below, avoiding repeated copies.
-fn serialize_element(value: &Document, encoded: &mut Vec<u8>) {
-    use serde::Serialize;
-    encoded.clear();
-    let mut serializer = serde_json::Serializer::pretty(encoded);
-    value
-        .serialize(serde_stacker::Serializer::new(&mut serializer))
-        .expect("serializable output");
+const ROW_CHUNK_BYTES: usize = 1024 * 1024;
+const SMALL_ROW_SOURCE_BYTES: usize = 512;
+// For n source bytes: <=6n token bytes, <=n newlines, <=n+2 indent
+// bytes per newline, and <=4 prefix bytes. Allow twice the bound for
+// geometric Vec growth; larger source rows always use the chunked sink.
+const _: () = assert!(
+    2 * (SMALL_ROW_SOURCE_BYTES * SMALL_ROW_SOURCE_BYTES + 9 * SMALL_ROW_SOURCE_BYTES + 4)
+        <= ROW_CHUNK_BYTES
+);
+
+trait RenderSink {
+    fn clear(&mut self);
+    fn extend_from_slice(&mut self, bytes: &[u8]);
+    fn spaces(&mut self, count: usize);
+
+    fn push(&mut self, byte: u8) {
+        self.extend_from_slice(&[byte]);
+    }
 }
 
-fn indent_element(encoded: &[u8], indented: &mut Vec<u8>, separator: &[u8]) {
+impl RenderSink for Vec<u8> {
+    fn clear(&mut self) {
+        Vec::clear(self);
+    }
+
+    fn extend_from_slice(&mut self, bytes: &[u8]) {
+        Vec::extend_from_slice(self, bytes);
+    }
+
+    fn spaces(&mut self, count: usize) {
+        self.resize(self.len() + count, b' ');
+    }
+
+    fn push(&mut self, byte: u8) {
+        Vec::push(self, byte);
+    }
+}
+
+struct RowBuffer<'a, W> {
+    buffer: &'a mut Vec<u8>,
+    out: &'a mut W,
+    failed: bool,
+    #[cfg(any(feature = "diagnostics", test))]
+    rendered_bytes: usize,
+    #[cfg(any(feature = "diagnostics", test))]
+    newlines: usize,
+}
+
+impl<'a, W: Write> RowBuffer<'a, W> {
+    fn new(buffer: &'a mut Vec<u8>, out: &'a mut W) -> Self {
+        Self {
+            buffer,
+            out,
+            failed: false,
+            #[cfg(any(feature = "diagnostics", test))]
+            rendered_bytes: 0,
+            #[cfg(any(feature = "diagnostics", test))]
+            newlines: 0,
+        }
+    }
+
+    fn publish(&mut self) {
+        if !self.failed && !self.buffer.is_empty() {
+            self.failed = self.out.write_all(self.buffer).is_err();
+        }
+        self.buffer.clear();
+    }
+
+    fn reserve(&mut self, length: usize) {
+        let needed = self.buffer.len() + length;
+        if needed > self.buffer.capacity() {
+            // Vec's usual doubling can overshoot the chunk limit when a long
+            // string follows a short prefix. Keep retained capacity bounded.
+            let capacity = needed
+                .max(8)
+                .max(self.buffer.capacity().saturating_mul(2))
+                .min(ROW_CHUNK_BYTES);
+            self.buffer.reserve_exact(capacity - self.buffer.len());
+        }
+    }
+
+    fn finish(mut self) {
+        self.publish();
+    }
+}
+
+impl<W: Write> RenderSink for RowBuffer<'_, W> {
+    fn clear(&mut self) {
+        self.buffer.clear();
+        self.failed = false;
+        #[cfg(any(feature = "diagnostics", test))]
+        {
+            self.rendered_bytes = 0;
+            self.newlines = 0;
+        }
+    }
+
+    fn extend_from_slice(&mut self, mut bytes: &[u8]) {
+        #[cfg(any(feature = "diagnostics", test))]
+        {
+            self.rendered_bytes += bytes.len();
+            self.newlines += bytes.iter().filter(|&&byte| byte == b'\n').count();
+        }
+        if self.failed {
+            return;
+        }
+        if bytes.len() <= ROW_CHUNK_BYTES - self.buffer.len() {
+            self.reserve(bytes.len());
+            self.buffer.extend_from_slice(bytes);
+            return;
+        }
+        while !bytes.is_empty() && !self.failed {
+            if self.buffer.len() == ROW_CHUNK_BYTES {
+                self.publish();
+                if self.failed {
+                    break;
+                }
+            }
+            let count = bytes.len().min(ROW_CHUNK_BYTES - self.buffer.len());
+            self.reserve(count);
+            self.buffer.extend_from_slice(&bytes[..count]);
+            bytes = &bytes[count..];
+        }
+    }
+
+    fn spaces(&mut self, mut count: usize) {
+        #[cfg(any(feature = "diagnostics", test))]
+        {
+            self.rendered_bytes += count;
+        }
+        if self.failed {
+            return;
+        }
+        if count <= ROW_CHUNK_BYTES - self.buffer.len() {
+            self.reserve(count);
+            self.buffer.resize(self.buffer.len() + count, b' ');
+            return;
+        }
+        while count != 0 && !self.failed {
+            if self.buffer.len() == ROW_CHUNK_BYTES {
+                self.publish();
+                if self.failed {
+                    break;
+                }
+            }
+            let length = count.min(ROW_CHUNK_BYTES - self.buffer.len());
+            self.reserve(length);
+            self.buffer.resize(self.buffer.len() + length, b' ');
+            count -= length;
+        }
+    }
+
+    fn push(&mut self, byte: u8) {
+        #[cfg(any(feature = "diagnostics", test))]
+        {
+            self.rendered_bytes += 1;
+            self.newlines += usize::from(byte == b'\n');
+        }
+        if self.failed {
+            return;
+        }
+        if self.buffer.len() == ROW_CHUNK_BYTES {
+            self.publish();
+            if self.failed {
+                return;
+            }
+        }
+        self.reserve(1);
+        self.buffer.push(byte);
+    }
+}
+
+/// Write one normalized row: the separator, then the element at the array's
+/// indentation, matching serde_json's pretty layout followed by Go's
+/// HTML/U+2028/U+2029 escaping, without building a Value tree.
+fn render_element<S: RenderSink>(node: &Node, indented: &mut S, separator: &[u8]) {
+    // Retain the diagnostics stage for staging the separator/base indentation.
+    // Escaping and continuation indentation now happen in Serialization.
+    #[cfg(feature = "diagnostics")]
+    let prefix_timer = crate::diagnostics::Timer::begin(crate::diagnostics::Stage::IndentationCopy);
     indented.clear();
     indented.extend_from_slice(separator);
     indented.extend_from_slice(b"  ");
+    #[cfg(feature = "diagnostics")]
+    drop(prefix_timer);
+    render(node, indented, 1);
+}
+
+fn render<S: RenderSink>(node: &Node, out: &mut S, depth: usize) {
+    stacker::maybe_grow(64 * 1024, 1024 * 1024, || match node {
+        Node::Scalar(value) => scalar(value, out, depth),
+        Node::Array(nodes) if nodes.is_empty() => out.extend_from_slice(b"[]"),
+        Node::Array(nodes) => {
+            out.push(b'[');
+            for (index, node) in nodes.iter().enumerate() {
+                out.extend_from_slice(if index == 0 { b"\n".as_slice() } else { b",\n" });
+                indent(out, depth + 1);
+                render(node, out, depth + 1);
+            }
+            out.push(b'\n');
+            indent(out, depth);
+            out.push(b']');
+        }
+        Node::Object(fields) if fields.is_empty() => out.extend_from_slice(b"{}"),
+        Node::Object(fields) => {
+            out.push(b'{');
+            for (index, (key, node)) in fields.iter().enumerate() {
+                out.extend_from_slice(if index == 0 { b"\n".as_slice() } else { b",\n" });
+                indent(out, depth + 1);
+                string(key, out);
+                out.extend_from_slice(b": ");
+                render(node, out, depth + 1);
+            }
+            out.push(b'\n');
+            indent(out, depth);
+            out.push(b'}');
+        }
+    })
+}
+
+fn indent<S: RenderSink>(out: &mut S, depth: usize) {
+    out.spaces(2 * depth);
+}
+
+fn scalar<S: RenderSink>(value: &Value, out: &mut S, depth: usize) {
+    match value {
+        Value::Null => out.extend_from_slice(b"null"),
+        Value::Bool(true) => out.extend_from_slice(b"true"),
+        Value::Bool(false) => out.extend_from_slice(b"false"),
+        // Normalization already stored Go's float64 text.
+        Value::Number(number) => out.extend_from_slice(number.as_str().as_bytes()),
+        Value::String(text) => string(text, out),
+        // decode_ordered represents containers as nodes; keep the former
+        // generic serialization so this match stays total.
+        container => {
+            let mut encoded = Vec::new();
+            serialize_element(container, &mut encoded);
+            escape_indented(&encoded, out, depth);
+        }
+    }
+}
+
+// Bytes serde_json escapes inside strings, plus Go's `&`, `<`, `>` and the
+// U+2028/U+2029 lead byte.
+static SPECIAL: [bool; 256] = {
+    let mut table = [false; 256];
+    let mut byte = 0;
+    while byte < 0x20 {
+        table[byte] = true;
+        byte += 1;
+    }
+    table[b'"' as usize] = true;
+    table[b'\\' as usize] = true;
+    table[b'&' as usize] = true;
+    table[b'<' as usize] = true;
+    table[b'>' as usize] = true;
+    table[0xe2] = true;
+    table
+};
+
+fn string<S: RenderSink>(text: &str, out: &mut S) {
+    const HEX: &[u8; 16] = b"0123456789abcdef";
+    let bytes = text.as_bytes();
+    out.push(b'"');
+    let mut start = 0;
+    let mut index = 0;
+    while index < bytes.len() {
+        let byte = bytes[index];
+        if !SPECIAL[byte as usize] {
+            index += 1;
+            continue;
+        }
+        let (replacement, length): (&[u8], usize) = match byte {
+            b'"' => (b"\\\"", 1),
+            b'\\' => (b"\\\\", 1),
+            b'\n' => (b"\\n", 1),
+            b'\r' => (b"\\r", 1),
+            b'\t' => (b"\\t", 1),
+            0x08 => (b"\\b", 1),
+            0x0c => (b"\\f", 1),
+            b'&' => (b"\\u0026", 1),
+            b'<' => (b"\\u003c", 1),
+            b'>' => (b"\\u003e", 1),
+            0xe2 if bytes[index..].starts_with(&[0xe2, 0x80, 0xa8]) => (b"\\u2028", 3),
+            0xe2 if bytes[index..].starts_with(&[0xe2, 0x80, 0xa9]) => (b"\\u2029", 3),
+            0xe2 => {
+                index += 1;
+                continue;
+            }
+            _ => {
+                out.extend_from_slice(&bytes[start..index]);
+                out.extend_from_slice(b"\\u00");
+                out.push(HEX[usize::from(byte >> 4)]);
+                out.push(HEX[usize::from(byte & 0xf)]);
+                index += 1;
+                start = index;
+                continue;
+            }
+        };
+        out.extend_from_slice(&bytes[start..index]);
+        out.extend_from_slice(replacement);
+        index += length;
+        start = index;
+    }
+    out.extend_from_slice(&bytes[start..]);
+    out.push(b'"');
+}
+
+/// Serialize a Value with serde_json's pretty layout (unescaped for Go).
+fn serialize_element(value: &Value, encoded: &mut Vec<u8>) {
+    encoded.clear();
+    let mut serializer = serde_json::Serializer::pretty(encoded);
+    gojson::serialize_value(value, serde_stacker::Serializer::new(&mut serializer))
+        .expect("serializable output");
+}
+
+/// Append pretty output with Go's escapes, indenting continuation lines to `depth`.
+fn escape_indented<S: RenderSink>(encoded: &[u8], out: &mut S, depth: usize) {
     let mut start = 0;
     let mut index = 0;
     while index < encoded.len() {
         let replacement: Option<(&[u8], usize)> = match encoded[index] {
-            b'\n' => Some((b"\n  ", 1)),
+            b'\n' => Some((b"\n", 1)),
             b'&' => Some((b"\\u0026", 1)),
             b'<' => Some((b"\\u003c", 1)),
             b'>' => Some((b"\\u003e", 1)),
@@ -298,15 +617,18 @@ fn indent_element(encoded: &[u8], indented: &mut Vec<u8>, separator: &[u8]) {
             _ => None,
         };
         if let Some((replacement, length)) = replacement {
-            indented.extend_from_slice(&encoded[start..index]);
-            indented.extend_from_slice(replacement);
+            out.extend_from_slice(&encoded[start..index]);
+            out.extend_from_slice(replacement);
+            if encoded[index] == b'\n' {
+                indent(out, depth);
+            }
             index += length;
             start = index;
         } else {
             index += 1;
         }
     }
-    indented.extend_from_slice(&encoded[start..]);
+    out.extend_from_slice(&encoded[start..]);
 }
 
 fn scan_error(error: scan::ScanError) -> OutputError {
@@ -316,57 +638,128 @@ fn scan_error(error: scan::ScanError) -> OutputError {
     }
 }
 
-fn float_document(bytes: &[u8]) -> Result<Document, OutputError> {
+fn float_document(bytes: &[u8]) -> Result<OrderedDocument, OutputError> {
     let mut document =
         measured!(OrderedDecode, gojson::decode_ordered(bytes)).map_err(decode_error)?;
-    let result = measured!(
-        ValueConversion,
-        convert(&mut document)
-            .map(Document::new)
-            .map_err(decode_error)
-    );
-    #[cfg(feature = "diagnostics")]
-    measured!(Drop, drop(document));
-    result
+    // On failure the document's own Drop releases deep remaining nodes.
+    measured!(ValueConversion, normalize(&mut document)).map_err(decode_error)?;
+    Ok(document)
 }
 
-fn convert(node: &mut Node) -> Result<Value, String> {
+/// Rewrite the decoded tree in place into the form the former Value conversion
+/// produced: numbers become Go float64 text, and each object's members become
+/// sorted unique keys holding the last duplicate. Every member, including an
+/// overwritten duplicate, is checked in document order before any sorting.
+fn normalize(node: &mut Node) -> Result<(), String> {
     stacker::maybe_grow(64 * 1024, 1024 * 1024, || match node {
         Node::Scalar(Value::Number(number)) => {
-            let value = number
-                .as_f64()
-                .filter(|value| value.is_finite())
-                .ok_or_else(|| {
-                    format!("json: cannot unmarshal number {number} into Go value of type float64")
-                })?;
-            Ok(Value::Number(
-                Number::from_str(&float(value)).expect("finite JSON number"),
-            ))
-        }
-        Node::Scalar(value) => Ok(std::mem::take(value)),
-        Node::Array(nodes) => {
-            let mut result = Document::new(Value::Array(Vec::with_capacity(nodes.len())));
-            for node in nodes {
-                result.as_array_mut().unwrap().push(convert(node)?);
-            }
-            Ok(result.into_inner())
-        }
-        Node::Object(nodes) => {
-            let mut result = Document::new(Value::Object(Map::with_capacity(nodes.len())));
-            for (key, node) in nodes {
-                let value = convert(node)?;
-                if let Some(old) = result
-                    .as_object_mut()
-                    .unwrap()
-                    .insert(std::mem::take(key), value)
-                {
-                    gojson::drop_value(old);
+            if let Some(length) = plain_decimal(number.as_str()) {
+                if length < number.as_str().len() {
+                    let text = number.as_str()[..length].to_owned();
+                    *number = Number::from_string_unchecked(text);
                 }
+            } else {
+                let value = number
+                    .as_f64()
+                    .filter(|value| value.is_finite())
+                    .ok_or_else(|| {
+                        format!(
+                            "json: cannot unmarshal number {number} into Go value of type float64"
+                        )
+                    })?;
+                *number = Number::from_string_unchecked(float_text(value));
             }
-            result.as_object_mut().unwrap().sort_keys();
-            Ok(result.into_inner())
+            Ok(())
+        }
+        Node::Scalar(_) => Ok(()),
+        Node::Array(nodes) => nodes.iter_mut().try_for_each(normalize),
+        Node::Object(fields) => {
+            for (_, node) in fields.iter_mut() {
+                normalize(node)?;
+            }
+            sort_members(fields);
+            Ok(())
         }
     })
+}
+
+/// Length of the lexeme prefix that is already Go's float64 text, for an
+/// exponent-free number whose digits from the first nonzero through the last
+/// kept digit number at most 15 and whose magnitude is zero or at least 1e-6.
+///
+/// Since 10^15 < 2^52, distinct decimals of at most 15 significant digits map
+/// to distinct normal float64 values, so no other decimal of that length or
+/// shorter round-trips: the shortest digits are the lexeme's own once trailing
+/// fraction zeros (and a bare point) are dropped. The span bounds magnitude
+/// below 1e15, and at most five leading fraction zeros keeps it at or above
+/// 1e-6, so Go uses fixed notation. Zero keeps its sign as `0` or `-0`.
+fn plain_decimal(lexeme: &str) -> Option<usize> {
+    let bytes = lexeme.as_bytes();
+    let sign = usize::from(bytes.first() == Some(&b'-'));
+    let (integer, fraction, point) = match bytes[sign..].iter().position(|&b| b == b'.') {
+        Some(offset) => {
+            let point = sign + offset;
+            (&bytes[sign..point], &bytes[point + 1..], Some(point))
+        }
+        None => (&bytes[sign..], &[][..], None),
+    };
+    if integer.is_empty()
+        || !integer.iter().chain(fraction).all(u8::is_ascii_digit)
+        || (point.is_some() && fraction.is_empty())
+    {
+        return None;
+    }
+    let kept = fraction.len() - fraction.iter().rev().take_while(|&&b| b == b'0').count();
+    let fraction = &fraction[..kept];
+    let span = if integer == b"0" {
+        let zeros = fraction.iter().take_while(|&&b| b == b'0').count();
+        if zeros > 5 {
+            return None;
+        }
+        fraction.len() - zeros
+    } else if integer[0] == b'0' {
+        return None;
+    } else {
+        integer.len() + fraction.len()
+    };
+    (span <= 15).then(|| match point {
+        Some(point) if kept > 0 => point + 1 + kept,
+        Some(point) => point,
+        None => bytes.len(),
+    })
+}
+
+/// `float` as `Number::from_str` stored it: a positive exponent gains `+`.
+fn float_text(value: f64) -> String {
+    let mut text = float(value);
+    if let Some(index) = text.find('e')
+        && !matches!(text.as_bytes().get(index + 1), Some(b'-' | b'+'))
+    {
+        text.insert(index + 1, '+');
+    }
+    text
+}
+
+/// Stable sort keeps duplicates in document order, so the last of each run
+/// wins as with Map::insert. Replaced values may be deep; drop them iteratively.
+fn sort_members(fields: &mut Vec<(String, Node)>) {
+    if fields.windows(2).all(|pair| pair[0].0 < pair[1].0) {
+        return;
+    }
+    fields.sort_by(|left, right| left.0.cmp(&right.0));
+    if fields.windows(2).all(|pair| pair[0].0 != pair[1].0) {
+        return;
+    }
+    let mut unique: Vec<(String, Node)> = Vec::with_capacity(fields.len());
+    for (key, node) in std::mem::take(fields) {
+        match unique.last_mut() {
+            Some(last) if last.0 == key => {
+                gojson::drop_node(std::mem::replace(&mut last.1, node));
+            }
+            _ => unique.push((key, node)),
+        }
+    }
+    *fields = unique;
 }
 
 // Rust's Display rounds shortest-decimal ties differently from Go. zmij uses
@@ -515,9 +908,90 @@ mod tests {
         );
     }
 
+    /// The former pipeline: Value conversion, serde_json pretty output, then a
+    /// separate Go-escaping and array-indentation copy.
+    fn oracle_convert(node: &mut Node) -> Result<Value, String> {
+        use gojson::Document;
+        use serde_json::Map;
+        use std::str::FromStr;
+        stacker::maybe_grow(64 * 1024, 1024 * 1024, || match node {
+            Node::Scalar(Value::Number(number)) => {
+                let value = number
+                    .as_f64()
+                    .filter(|value| value.is_finite())
+                    .ok_or_else(|| {
+                        format!(
+                            "json: cannot unmarshal number {number} into Go value of type float64"
+                        )
+                    })?;
+                Ok(Value::Number(
+                    Number::from_str(&float(value)).expect("finite JSON number"),
+                ))
+            }
+            Node::Scalar(value) => Ok(std::mem::take(value)),
+            Node::Array(nodes) => {
+                let mut result = Document::new(Value::Array(Vec::with_capacity(nodes.len())));
+                for node in nodes {
+                    result.as_array_mut().unwrap().push(oracle_convert(node)?);
+                }
+                Ok(result.into_inner())
+            }
+            Node::Object(nodes) => {
+                let mut result = Document::new(Value::Object(Map::with_capacity(nodes.len())));
+                for (key, node) in nodes {
+                    let value = oracle_convert(node)?;
+                    if let Some(old) = result
+                        .as_object_mut()
+                        .unwrap()
+                        .insert(std::mem::take(key), value)
+                    {
+                        gojson::drop_value(old);
+                    }
+                }
+                result.as_object_mut().unwrap().sort_keys();
+                Ok(result.into_inner())
+            }
+        })
+    }
+
+    fn oracle_document(bytes: &[u8]) -> Result<gojson::Document, String> {
+        let mut document = gojson::decode_ordered(bytes)?;
+        oracle_convert(&mut document).map(gojson::Document::new)
+    }
+
+    fn oracle(bytes: &[u8], separator: &[u8]) -> Result<Vec<u8>, String> {
+        let value = oracle_document(bytes)?;
+        let mut encoded = Vec::new();
+        serialize_element(&value, &mut encoded);
+        let mut indented = separator.to_vec();
+        indented.extend_from_slice(b"  ");
+        escape_indented(&encoded, &mut indented, 1);
+        Ok(indented)
+    }
+
+    fn direct(bytes: &[u8], separator: &[u8]) -> Result<Vec<u8>, String> {
+        let mut document = gojson::decode_ordered(bytes)?;
+        normalize(&mut document)?;
+        let mut indented = Vec::new();
+        render_element(&document, &mut indented, separator);
+        Ok(indented)
+    }
+
+    fn assert_matches_oracle(body: &[u8]) {
+        for separator in [b"\n".as_slice(), b",\n"] {
+            let (expected, actual) = (oracle(body, separator), direct(body, separator));
+            assert!(
+                expected == actual,
+                "{}\nexpected: {:?}\nactual: {:?}",
+                String::from_utf8_lossy(body),
+                expected.map(|bytes| String::from_utf8_lossy(&bytes).into_owned()),
+                actual.map(|bytes| String::from_utf8_lossy(&bytes).into_owned()),
+            );
+        }
+    }
+
     #[test]
     fn reusable_render_buffers_match_generic_renderer() {
-        let mut encoded = Vec::new();
         let mut indented = Vec::new();
         for body in [
             br#"{"<&>":"literal \\u2028, escaped newline \n","nested":[[],{},"<&>"]}"#.as_slice(),
@@ -525,14 +999,345 @@ mod tests {
             br#""short""#,
         ] {
             let value = float_document(body).unwrap();
-            serialize_element(&value, &mut encoded);
-            indent_element(&encoded, &mut indented, b"");
-            let generic = crate::render::json(&value, true);
+            render_element(&value, &mut indented, b"");
+            let generic = crate::render::json(&oracle_document(body).unwrap(), true);
             let expected = format!(
                 "  {}",
                 generic.strip_suffix('\n').unwrap().replace('\n', "\n  ")
             );
             assert_eq!(indented, expected.as_bytes());
+        }
+    }
+
+    #[test]
+    fn direct_rendering_matches_former_pipeline() {
+        let mut controls = String::from("\"");
+        for byte in 0u8..0x20 {
+            controls.push_str(&format!("\\u{byte:04x}"));
+        }
+        controls.push_str("\\u007f\\\"\\\\/\"");
+        let cases = [
+            // Duplicate keys: last wins, sorted, nested and repeated.
+            r#"{"z":1,"a":2,"z":3,"m":{"b":1,"b":{"x":[1,2]},"a":0},"a":"last"}"#.to_owned(),
+            r#"{"k":[1,2,3],"k":{},"k":[]}"#.to_owned(),
+            r#"{"b":1,"a":2}"#.to_owned(),
+            r#"{"a":1,"b":2,"c":3}"#.to_owned(),
+            r#"{"":0,"\u0000":1,"A":2,"a":3,"é":4,"\u2028":5,"&":6}"#.to_owned(),
+            // An overwritten duplicate must still fail, and the first failing
+            // number in document order is the one reported.
+            r#"{"a":1e1000,"a":1}"#.to_owned(),
+            r#"{"a":1,"a":-1e1000}"#.to_owned(),
+            r#"{"b":1e999,"a":1e1000}"#.to_owned(),
+            r#"[{"z":[1e400]},{"a":2e400}]"#.to_owned(),
+            // Escapes in values and keys.
+            controls.clone(),
+            format!("{{{controls}:{controls}}}"),
+            "\"<&>\u{2028}\u{2029}\u{2027}\u{202a}€\u{e2}é日本🎉\"".to_owned(),
+            r#"{"<a&b>":"\u2028\u2029\ud800\udc00\ud800"}"#.to_owned(),
+            // Numbers through each notation boundary.
+            r#"[0,-0,1,-1,0.0,-0.0,1.0,1E5,1e+5,12e-1,0.1,1e-6,1e-7,0.000001,1e20,1e21,-1e+21]"#
+                .to_owned(),
+            r#"[123456789012345,-123456789012345,999999999999999,1234567890123456,100000000000000]"#
+                .to_owned(),
+            r#"[9007199254740993,9223372036854775807,-9223372036854775808,18446744073709551616]"#
+                .to_owned(),
+            r#"[100000000000000000000,1.5e300,5e-324,2.2250738585072014e-308]"#.to_owned(),
+            r#"[1.7976931348623157e308,-4.9e-324,0.30000000000000004]"#.to_owned(),
+            r#"[1e1000]"#.to_owned(),
+            r#"[[],{},[[]],[{}],{"a":{}},{"a":[]},true,false,null,"x"]"#.to_owned(),
+        ];
+        for body in cases {
+            assert_matches_oracle(body.as_bytes());
+        }
+    }
+
+    struct Random(u64);
+    impl Random {
+        fn next(&mut self) -> u64 {
+            // xorshift64*: deterministic, dependency-free test input.
+            self.0 ^= self.0 >> 12;
+            self.0 ^= self.0 << 25;
+            self.0 ^= self.0 >> 27;
+            self.0.wrapping_mul(0x2545_f491_4f6c_dd1d)
+        }
+        fn below(&mut self, bound: u64) -> u64 {
+            self.next() % bound
+        }
+    }
+
+    fn random_finite(random: &mut Random) -> f64 {
+        loop {
+            let value = match random.below(4) {
+                0 => f64::from_bits(random.next()),
+                1 => (random.next() >> random.below(64)) as f64,
+                2 => {
+                    let scale = 10f64.powi(random.below(30) as i32);
+                    -((random.next() >> random.below(64)) as f64) / scale
+                }
+                _ => f64::from_bits(random.next() & 0x800f_ffff_ffff_ffff),
+            };
+            if value.is_finite() {
+                return value;
+            }
+        }
+    }
+
+    #[test]
+    fn random_finite_floats_match_former_number_text() {
+        use std::str::FromStr;
+        let mut random = Random(0x9e37_79b9_7f4a_7c15);
+        for _ in 0..20_000 {
+            let value = random_finite(&mut random);
+            let former = Number::from_str(&float(value)).unwrap();
+            assert_eq!(float_text(value), former.as_str(), "{value:?}");
+            // Several input spellings of the same float, plus integer lexemes
+            // at the exact-integer fast path's boundary.
+            let sign = if random.below(2) == 0 { 1 } else { -1 };
+            let integer = (random.next() >> random.below(64)) as i128 * sign;
+            let body = format!(
+                "[{value:?},{value:e},{},{integer},{{\"v\":{value:?}}}]",
+                float(value)
+            );
+            assert_matches_oracle(body.as_bytes());
+        }
+    }
+
+    fn random_value(random: &mut Random, depth: usize, out: &mut String) {
+        const STRINGS: [&str; 8] = [
+            "",
+            "a",
+            "<&>",
+            "\\u2028\\u2029",
+            "\\n\\t\\u0001\\u001f",
+            "é€\u{2027}",
+            "\\\"\\\\/",
+            "🎉\\ud800",
+        ];
+        const NUMBERS: [&str; 8] = [
+            "0",
+            "-0",
+            "1e21",
+            "1E-7",
+            "0.1",
+            "123456789012345678",
+            "-12.5e3",
+            "5e-324",
+        ];
+        match random.below(if depth == 0 { 4 } else { 6 }) {
+            0 => out.push_str(["true", "false", "null"][random.below(3) as usize]),
+            1 => out.push_str(NUMBERS[random.below(8) as usize]),
+            2 => out.push_str(&format!("{:?}", random_finite(random))),
+            3 => {
+                out.push('"');
+                out.push_str(STRINGS[random.below(8) as usize]);
+                out.push('"');
+            }
+            4 => {
+                out.push('[');
+                for index in 0..random.below(4) {
+                    if index > 0 {
+                        out.push(',');
+                    }
+                    random_value(random, depth - 1, out);
+                }
+                out.push(']');
+            }
+            _ => {
+                out.push('{');
+                for index in 0..random.below(6) {
+                    if index > 0 {
+                        out.push(',');
+                    }
+                    // A small key alphabet forces duplicates and reordering.
+                    out.push('"');
+                    out.push_str(["b", "a", "<", "é", "", "aa"][random.below(6) as usize]);
+                    out.push_str("\":");
+                    random_value(random, depth - 1, out);
+                }
+                out.push('}');
+            }
+        }
+    }
+
+    /// Every lexeme's normalized text must equal the former parse-and-format
+    /// text, whether or not the plain-decimal fast path accepts it.
+    fn assert_decimal_matches_float(lexeme: &str) -> bool {
+        let value: f64 = lexeme.parse().unwrap();
+        let expected = float_text(value);
+        let mut node = Node::Scalar(Value::Number(Number::from_string_unchecked(lexeme.into())));
+        normalize(&mut node).unwrap();
+        let Node::Scalar(Value::Number(actual)) = node else {
+            unreachable!()
+        };
+        assert_eq!(actual.as_str(), expected, "{lexeme}");
+        plain_decimal(lexeme).is_some()
+    }
+
+    fn random_digits(random: &mut Random, count: usize, out: &mut String) {
+        for _ in 0..count {
+            out.push(char::from(b'0' + random.below(10) as u8));
+        }
+    }
+
+    #[test]
+    fn plain_decimals_match_float_text() {
+        let fast = [
+            "0",
+            "-0",
+            "0.0",
+            "-0.0",
+            "-0.000000000000000000000000",
+            "1.0",
+            "1.50",
+            "100.000",
+            "0.000001",
+            "-0.000001",
+            "0.0000010000000000",
+            "0.00000999999999999999",
+            "999999999999999",
+            "999999999999999.0",
+            "99999999999999.9",
+            "0.999999999999999",
+            "123456789012345",
+            "12345678.9012345",
+            "0.1",
+            "0.2",
+            "0.3",
+            "1.1",
+        ];
+        let slow = [
+            "0.0000001",
+            "0.00000099999999999999",
+            "-0.00000000000000001",
+            "1234567890123456",
+            "1234567890123456.0",
+            "0.1234567890123456",
+            "9007199254740993",
+            "1000000000000000.5",
+            "100000000000000000000.0",
+            "1000000000000000000000.0",
+            "1e2",
+            "1E-2",
+            "-1.5e+3",
+            "0.10000000000000000555",
+        ];
+        for lexeme in fast {
+            assert!(assert_decimal_matches_float(lexeme), "{lexeme}");
+        }
+        for lexeme in slow {
+            assert!(!assert_decimal_matches_float(lexeme), "{lexeme}");
+        }
+        let mut random = Random(0x2545_f491_4f6c_dd1d);
+        let mut accepted = 0;
+        for _ in 0..200_000 {
+            let mut lexeme = String::new();
+            if random.below(2) == 0 {
+                lexeme.push('-');
+            }
+            if random.below(2) == 0 {
+                lexeme.push('0');
+            } else {
+                lexeme.push(char::from(b'1' + random.below(9) as u8));
+                let count = random.below(22) as usize;
+                random_digits(&mut random, count, &mut lexeme);
+            }
+            if random.below(4) != 0 {
+                lexeme.push('.');
+                // Long leading zeros straddle the 1e-6 cutoff; long trailing
+                // zeros and 15- versus 16-digit spans straddle the length cutoff.
+                let zeros = match random.below(3) {
+                    0 => random.below(9),
+                    1 => 4 + random.below(4),
+                    _ => 0,
+                } as usize;
+                lexeme.extend(std::iter::repeat_n('0', zeros));
+                let count = random.below(18) as usize;
+                random_digits(&mut random, count, &mut lexeme);
+                let trailing = random.below(4).pow(2) as usize;
+                lexeme.extend(std::iter::repeat_n('0', trailing));
+                if lexeme.ends_with('.') {
+                    lexeme.push('0');
+                }
+            }
+            accepted += usize::from(assert_decimal_matches_float(&lexeme));
+        }
+        assert!(accepted > 50_000, "{accepted}");
+        // Dense spans at the length cutoff and the 1e-6 boundary.
+        for digits in 14..=16 {
+            for leading in b'1'..=b'9' {
+                for tail in [b'0', b'1', b'5', b'9'] {
+                    let mut body = vec![leading];
+                    body.resize(digits - 1, b'9');
+                    body.push(tail);
+                    let body = String::from_utf8(body).unwrap();
+                    for point in 0..=digits {
+                        for sign in ["", "-"] {
+                            let lexeme = match point {
+                                0 => format!("{sign}0.{body}"),
+                                _ if point == digits => format!("{sign}{body}"),
+                                _ => format!("{sign}{}.{}", &body[..point], &body[point..]),
+                            };
+                            assert_decimal_matches_float(&lexeme);
+                            for zeros in 1..=7 {
+                                let small = format!("{sign}0.{}{body}", "0".repeat(zeros));
+                                assert_decimal_matches_float(&small);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn random_documents_match_former_pipeline() {
+        let mut random = Random(0x2545_f491_4f6c_dd1d);
+        let mut body = String::new();
+        for iteration in 0..5_000 {
+            body.clear();
+            random_value(&mut random, 5, &mut body);
+            // Occasionally overwrite or bury an out-of-range number.
+            if iteration % 7 == 0 {
+                body = format!("{{\"k\":1e999,\"k\":{body}}}");
+            } else if iteration % 11 == 0 {
+                body = format!("[{body},{{\"x\":-1e400}}]");
+            }
+            assert_matches_oracle(body.as_bytes());
+        }
+    }
+
+    #[test]
+    fn deep_duplicates_and_rendering_match_former_pipeline() {
+        let deep = |depth: usize| format!("{}0{}", "[".repeat(depth), "]".repeat(depth));
+        let deep_object =
+            |depth: usize| format!("{}1e1000{}", "{\"a\":".repeat(depth), "}".repeat(depth));
+        assert_matches_oracle(deep(2_000).as_bytes());
+        let pair = format!("{{\"b\":{},\"a\":{}}}", deep(1_500), deep(1_500));
+        assert_matches_oracle(pair.as_bytes());
+        // Overwritten deep duplicates are dropped iteratively, and an overflow
+        // buried in one still fails the row.
+        for (body, error) in [
+            (format!("[{{\"a\":{},\"a\":0}}]", deep(9_000)), None),
+            (
+                format!("[{{\"a\":{},\"a\":0}}]", deep_object(9_000)),
+                Some("1e1000"),
+            ),
+            (
+                format!("[{{\"a\":0,\"a\":{}}}]", deep_object(9_000)),
+                Some("1e1000"),
+            ),
+        ] {
+            let (out, result) = json(body.as_bytes());
+            match error {
+                None => {
+                    result.unwrap();
+                    assert_eq!(out, b"[\n  {\n    \"a\": 0\n  }\n]\n");
+                }
+                Some(number) => {
+                    assert_eq!(out, b"[");
+                    assert!(result.unwrap_err().to_string().contains(number));
+                }
+            }
         }
     }
 
@@ -630,6 +1435,144 @@ mod tests {
             stream_text(&mut io::Cursor::new(b"raw"), &mut RejectWrites, "200 OK").unwrap_err();
         assert_eq!(error.context, "failed to stream response body");
         assert!(matches!(error.kind, OutputErrorKind::Io(_)));
+    }
+
+    #[derive(Default)]
+    struct RowWrites {
+        output: Vec<u8>,
+        lengths: Vec<usize>,
+        flushes: usize,
+        partial_then_fail: bool,
+    }
+
+    impl Write for RowWrites {
+        fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
+            self.lengths.push(bytes.len());
+            let count = if self.partial_then_fail {
+                match self.lengths.len() {
+                    3 => 7.min(bytes.len()),
+                    4 => return Err(io::Error::other("mid-row write fault")),
+                    _ => bytes.len(),
+                }
+            } else {
+                bytes.len()
+            };
+            self.output.extend_from_slice(&bytes[..count]);
+            Ok(count)
+        }
+
+        fn flush(&mut self) -> io::Result<()> {
+            self.flushes += 1;
+            Ok(())
+        }
+    }
+
+    #[test]
+    fn chunked_renderer_keeps_small_row_writes_and_flushes() {
+        let mut out = RowWrites::default();
+        stream_json(&mut io::Cursor::new(b"[1,2]"), &mut out, "200 OK").unwrap();
+        assert_eq!(out.output, b"[\n  1,\n  2\n]\n");
+        assert_eq!(out.lengths, [1, 4, 5, 3]);
+        assert_eq!(out.flushes, 4);
+    }
+
+    #[test]
+    fn small_source_fast_path_bounds_indentation_strings_and_float_expansion() {
+        let nested = format!("{}0{}", "[".repeat(255), "]".repeat(255));
+        let numbers = format!("[{}]", vec!["1e20"; 100].join(","));
+        let mut repaired = vec![b'"'];
+        repaired.extend(std::iter::repeat_n(0xff, 510));
+        repaired.push(b'"');
+        for body in [
+            nested.into_bytes(),
+            numbers.into_bytes(),
+            format!("\"{}\"", "<".repeat(510)).into_bytes(),
+            repaired,
+        ] {
+            assert!(body.len() <= SMALL_ROW_SOURCE_BYTES);
+            let row = oracle(&body, b"\n").unwrap();
+            assert!(row.len() < ROW_CHUNK_BYTES);
+            let mut input = vec![b'['];
+            input.extend_from_slice(&body);
+            input.push(b']');
+            let mut out = RowWrites::default();
+            stream_json(&mut io::Cursor::new(input), &mut out, "200 OK").unwrap();
+            assert_eq!(out.lengths, [1, row.len(), 3]);
+            assert_eq!(&out.output[1..out.output.len() - 3], row);
+        }
+    }
+
+    #[test]
+    fn large_escaping_and_duplicates_match_oracle_in_bounded_chunks() {
+        let text = "<&>\u{2028}\u{2029}\"\\\n日本".repeat(70_000);
+        let escaped = serde_json::to_string(&text).unwrap();
+        let body = format!(r#"{{"z":0,"<&>":{escaped},"z":{{"b":2,"a":1}}}}"#);
+        let expected = oracle(body.as_bytes(), b"\n").unwrap();
+        assert!(expected.len() > ROW_CHUNK_BYTES * 2);
+        let value = float_document(body.as_bytes()).unwrap();
+        let mut buffer = Vec::new();
+        let mut out = RowWrites::default();
+        let mut row = RowBuffer::new(&mut buffer, &mut out);
+        render_element(&value, &mut row, b"\n");
+        assert_eq!(row.rendered_bytes, expected.len());
+        assert_eq!(
+            row.newlines,
+            expected.iter().filter(|&&byte| byte == b'\n').count()
+        );
+        row.finish();
+        assert_eq!(out.output, expected);
+        assert!(out.lengths.len() > 2);
+        assert!(out.lengths.iter().all(|&length| length <= ROW_CHUNK_BYTES));
+        assert!(buffer.capacity() <= ROW_CHUNK_BYTES);
+    }
+
+    #[test]
+    fn deeply_indented_small_source_also_uses_bounded_chunks() {
+        // Pretty indentation alone exceeds the chunk size: source length
+        // cannot safely choose between a bounded and an unbounded renderer.
+        let body = format!("{}0{}", "[".repeat(1_100), "]".repeat(1_100));
+        let expected = oracle(body.as_bytes(), b",\n").unwrap();
+        assert!(expected.len() > ROW_CHUNK_BYTES * 2);
+        let value = float_document(body.as_bytes()).unwrap();
+        let mut buffer = Vec::new();
+        let mut out = RowWrites::default();
+        let mut row = RowBuffer::new(&mut buffer, &mut out);
+        render_element(&value, &mut row, b",\n");
+        row.finish();
+        assert_eq!(out.output, expected);
+        assert!(out.lengths.iter().all(|&length| length <= ROW_CHUNK_BYTES));
+        assert!(buffer.capacity() <= ROW_CHUNK_BYTES);
+    }
+
+    #[test]
+    fn late_overflow_in_large_row_emits_neither_separator_nor_prefix() {
+        let text = "x".repeat(ROW_CHUNK_BYTES * 2);
+        for row in [
+            format!(r#"{{"a":"{text}","z":1e1000}}"#),
+            // Even an overwritten invalid duplicate must fail before output.
+            format!(r#"{{"a":"{text}","z":1e1000,"z":0}}"#),
+        ] {
+            let (out, result) = json(format!("[0,{row}]").as_bytes());
+            assert_eq!(out, b"[\n  0");
+            assert!(result.unwrap_err().to_string().contains("number 1e1000"));
+        }
+    }
+
+    #[test]
+    fn midrow_partial_write_error_discards_remainder_and_attempts_next_row() {
+        let body = format!(r#"["{}",{{"next":true}}]"#, "x".repeat(ROW_CHUNK_BYTES * 3));
+        let mut out = RowWrites {
+            partial_then_fail: true,
+            ..RowWrites::default()
+        };
+        stream_json(&mut io::Cursor::new(body), &mut out, "200 OK").unwrap();
+        let next = b",\n  {\n    \"next\": true\n  }\n]\n";
+        assert_eq!(&out.output[1 + ROW_CHUNK_BYTES + 7..], next);
+        assert_eq!(out.lengths.len(), 6);
+        assert_eq!(out.lengths[1], ROW_CHUNK_BYTES);
+        assert_eq!(out.lengths[2], ROW_CHUNK_BYTES);
+        assert_eq!(out.lengths[3], ROW_CHUNK_BYTES - 7);
+        assert_eq!(out.flushes, 4);
     }
 
     struct FaultTail {

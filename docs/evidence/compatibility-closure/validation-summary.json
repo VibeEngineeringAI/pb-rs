@@ -1,0 +1,73 @@
+{
+  "source_commit": "f719615de4c46b6fbc056bb0b460e85af4e80e3e",
+  "rust": {
+    "command": "cargo test --locked --all-targets --all-features",
+    "passed": 735,
+    "ignored": 10,
+    "log": {
+      "path": "/home/ajs/.cache/pb-compat-final/integrated-tests-r4.log",
+      "sha256": "0f687a0ba8dc19cf43c6e7aadf77fbd45b2a92a528f215340ae47efc4bc9f140"
+    },
+    "ignored_disposition": "Eight interactive effects rerun successfully in frozen replay; diagnostic microbenchmark and external exhaustive float vectors remain ignored."
+  },
+  "python": {
+    "command": "python harness/run_tests.py (pinned observer venv)",
+    "modules": 33,
+    "tests_run": 956,
+    "log": {
+      "path": "/home/ajs/.cache/pb-compat-final/python-tests-r2.log",
+      "sha256": "34f7df69db9d987ee47be3c0663331661f49f4c8a6715c1c67869a1d1a5b382c"
+    },
+    "passed": 953,
+    "skipped": 3,
+    "skip_reasons": [
+      "Two phase5 Go smoke tests require a separately located reference binary",
+      "One native resize-control test requires explicit opt-in"
+    ]
+  },
+  "strict_clippy": {
+    "passed": true,
+    "log": {
+      "path": "/home/ajs/.cache/pb-compat-final/final-clippy.log",
+      "sha256": "8f36b9fdddd545812cfcf136bb6060ef02232bac59aae35c4d4a863d4f76be82"
+    }
+  },
+  "native": {
+    "run_url": "https://github.com/VibeEngineeringAI/pb-rs/actions/runs/38806555369",
+    "macos": {
+      "passed": true,
+      "tui_tests": 271,
+      "metrics_terminal_tests": 1,
+      "log": {
+        "path": "/home/ajs/.cache/pb-compat-final/macos-ci-final.log",
+        "sha256": "f607372c8da9087befef8517d96ba49a9926ab258e037f0d9339b61767fdaee2"
+      }
+    },
+    "windows": {
+      "passed": true,
+      "tui_tests": 249,
+      "separately_enabled_clipboard_tests": 1,
+      "log": {
+        "path": "/home/ajs/.cache/pb-compat-final/windows-ci-final.log",
+        "sha256": "244b501ecd6a2cc82a9f1ef61cb3092a9e5d376466c74ab2a76428ec5da46573"
+      }
+    }
+  },
+  "portability_followup": {
+    "commit": "0ae006a",
+    "production_sources_unchanged": true,
+    "final_replay_tests": 8,
+    "phase7_passed": 96,
+    "phase7_skipped": 1,
+    "logs": [
+      {
+        "path": "/home/ajs/.cache/pb-compat-final/ci-portability-final-replay-tests.log",
+        "sha256": "d1d83f7a74d61dc97efe3f76c7b1251eb42f0306896b1cf50be165c1c97654d1"
+      },
+      {
+        "path": "/home/ajs/.cache/pb-compat-final/ci-portability-phase7-tests.log",
+        "sha256": "dda0a1c985da32fd53fd7fd50fd15dfbbfa2bb32e74a89119ea0e4522dc469d4"
+      }
+    ]
+  }
+}

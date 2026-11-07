@@ -1,0 +1,147 @@
+{
+  "phase1": {
+    "report_sha256": "0c1b9e1a245d83202482fcaebe7965cac5f802be1bf3add090fc7282357e7f1c",
+    "report_path": "/home/ajs/.cache/pb-compat-final/replay-r4/phase1/report.json",
+    "passed": 2760,
+    "cases": 2760
+  },
+  "phase2": {
+    "report_sha256": "779d62bcabf9a4e80d8d41d044055d4b061cdbcd2815ee7f5701f3eee8d345ed",
+    "report_path": "/home/ajs/.cache/pb-compat-final/replay-r4/phase2/report.json",
+    "boundaries_status": "promoted to phase7 PTY/effect gate",
+    "counts": {
+      "pass": 219
+    },
+    "cases": 219
+  },
+  "phase3": {
+    "report_sha256": "249db14b99b1d4f8b4e52de7ae2f5ee5f5838c627257a4163bf8b4d29d668d8d",
+    "report_path": "/home/ajs/.cache/pb-compat-final/replay-r4/phase3/report.json",
+    "boundaries_status": "promoted to phase7 PTY/effect gate",
+    "counts": {
+      "pass": 676
+    },
+    "cases": 676
+  },
+  "phase4": {
+    "report_sha256": "e4caacdcbd24b04044d3633ec9782e91d82640a8ff539aa198c9c5a8f4641a8d",
+    "report_path": "/home/ajs/.cache/pb-compat-final/replay-r4/phase4/report.json",
+    "failed": 0,
+    "excluded_cases": [
+      {
+        "name": "p4-deadline-header",
+        "reason": "full120s requires --include-full120s"
+      },
+      {
+        "name": "p4-deadline-body",
+        "reason": "full120s requires --include-full120s"
+      }
+    ],
+    "cases": 159
+  },
+  "phase5": {
+    "report_sha256": "3beae03cb6a864dbc0c19910941d5318925bc0d2895f38f97b73145bd4c52194",
+    "report_path": "/home/ajs/.cache/pb-compat-final/replay-r4/phase5/report.json",
+    "failed": 0,
+    "skipped": [],
+    "boundaries_status": "promoted to phase7 PTY/effect gate",
+    "cases": 185
+  },
+  "interactive": {
+    "report_sha256": "b6e34db7d5f1c38b53c2712bd02a51816832afff457798c607279413dc50a973",
+    "report_path": "/home/ajs/.cache/pb-compat-final/replay-r4/interactive/report.json",
+    "cases": 190,
+    "required": 160,
+    "documentary": 30,
+    "required_failures": [],
+    "documentary_differences": [
+      {
+        "name": "p7-remove-replacement-cancel-dark",
+        "reference_issues": [],
+        "termination": {
+          "exit": 0
+        },
+        "termios_restored": true,
+        "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+        "issues": [
+          "styled cells/cursor/scrollback differ at filter-draft",
+          "final styled cells/cursor/scrollback differ"
+        ],
+        "documentary": true
+      },
+      {
+        "name": "p7-logout-replacement-cancel-light",
+        "reference_issues": [],
+        "termination": {
+          "exit": 0
+        },
+        "termios_restored": true,
+        "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+        "issues": [
+          "styled cells/cursor/scrollback differ at filter-draft",
+          "final styled cells/cursor/scrollback differ"
+        ],
+        "documentary": true
+      }
+    ]
+  },
+  "device-login": {
+    "report_sha256": "b4211491ed1438896f72734f8251273224e7a973d2dbc72933f4b4afd7653a7d",
+    "report_path": "/home/ajs/.cache/pb-compat-final/replay-r4/device-login/report.json",
+    "cases": 17,
+    "failures": []
+  },
+  "root-help": {
+    "report_sha256": "528426a539dc9018c4052ae5f73b77022b1255a4ae899147c0f0372247199217",
+    "report_path": "/home/ajs/.cache/pb-compat-final/replay-r4/root-help/report.json",
+    "passed": 48,
+    "cases": 0
+  },
+  "flight-main": {
+    "complete": true,
+    "partial": false,
+    "failed": 0,
+    "parity_passed": 36,
+    "payload_auth_passed": 219,
+    "wire_ua_divergent": 183,
+    "diagnostic_divergent": 1,
+    "cases": 219,
+    "report_sha256": "e3d6ceb2eae581d3314fc630dbb8fc93687b288869729c35bed4c36e94137ae8",
+    "report_path": "/home/ajs/.cache/pb-phase6/tmp/compat-final-r4-flight/flight-main/report.json"
+  },
+  "flight-trailer-followup": {
+    "complete": true,
+    "partial": false,
+    "failed": 0,
+    "parity_passed": 0,
+    "payload_auth_passed": 16,
+    "wire_ua_divergent": 16,
+    "diagnostic_divergent": 0,
+    "cases": 16,
+    "report_sha256": "e11e965bcf67881ffee555b6f039e6b25fd38fd412410887671f2795d99599c9",
+    "report_path": "/home/ajs/.cache/pb-phase6/tmp/compat-final-r4-flight/flight-trailer-followup/report.json"
+  },
+  "flight-review3-followup": {
+    "complete": true,
+    "partial": false,
+    "failed": 0,
+    "parity_passed": 0,
+    "payload_auth_passed": 56,
+    "wire_ua_divergent": 56,
+    "diagnostic_divergent": 0,
+    "cases": 56,
+    "report_sha256": "1665733b35e487842e2dce372eee3f3395eccdeaf0f12b9f3b65684be3bab069",
+    "report_path": "/home/ajs/.cache/pb-phase6/tmp/compat-final-r4-flight/flight-review3-followup/report.json"
+  },
+  "interactive-effects": {
+    "passed": 59,
+    "ignored": 0,
+    "log_sha256": "9f1b9cfe742cd99b48ddb29c2ab7805741e3bfad79fefdb56d38074a7a726b85"
+  },
+  "deadline_gates": {
+    "passed": 12
+  },
+  "flight-pr4-decoder": {
+    "passed_pairs": 14
+  }
+}

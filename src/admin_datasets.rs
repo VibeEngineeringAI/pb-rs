@@ -75,17 +75,21 @@ pub async fn execute(parsed: &ParsedInvocation, client: &ApiClient) -> Result<Ve
 
 async fn create(parsed: &ParsedInvocation, client: &ApiClient) -> Result<Vec<u8>, CliError> {
     let kind = DatasetKind::parse(&requested_type(parsed))?;
-    create_selected(client, &parsed.positionals[0], kind).await
+    create_selected(client, parsed.positional_bytes(0), kind).await
 }
 
 /// Shared mutation for explicit types and the interactive selection. Selection
 /// happens before entering the runtime, so terminal input cannot block HTTP.
 pub(crate) async fn create_selected(
     client: &ApiClient,
-    name: &str,
+    name: &[u8],
     kind: DatasetKind,
 ) -> Result<Vec<u8>, CliError> {
-    let mut request = client.prepare_standard(Method::PUT, &format!("logstream/{name}"), None)?;
+    let mut request = client.prepare_standard_bytes(
+        Method::PUT,
+        &[b"logstream/".as_slice(), name].concat(),
+        None,
+    )?;
     request.set_header(TELEMETRY_TYPE, HeaderValue::from_static(kind.as_str()));
     if let Some(source) = kind.log_source() {
         request.set_header(LOG_SOURCE, HeaderValue::from_static(source));
@@ -98,17 +102,21 @@ pub(crate) async fn create_selected(
     use crate::metrics::output::{line_width, style};
     Ok(style::with_process_render(|| {
         let terminal = style::Terminal::from_process();
-        format!(
-            "Created {} dataset {}\n",
-            style::SELECTED.render(kind.as_str(), &terminal, line_width),
-            style::BOLD.render(name, &terminal, line_width)
-        )
-        .into_bytes()
+        [
+            format!(
+                "Created {} dataset ",
+                style::SELECTED.render(kind.as_str(), &terminal, line_width)
+            )
+            .as_bytes(),
+            &style::BOLD.render_bytes(name, &terminal),
+            b"\n",
+        ]
+        .concat()
     }))
 }
 
 async fn remove(parsed: &ParsedInvocation, client: &ApiClient) -> Result<Vec<u8>, CliError> {
-    let name = &parsed.positionals[0];
+    let name = parsed.positional_bytes(0);
     let expected = requested_type(parsed);
     // A blank expectation is an unguarded deletion, not a selector.
     if !expected.is_empty() {
@@ -117,22 +125,27 @@ async fn remove(parsed: &ParsedInvocation, client: &ApiClient) -> Result<Vec<u8>
         if actual != expected {
             return Err(command_error(format!(
                 "dataset {} is {actual}, not {expected}",
-                quote(name)
+                crate::argv::quote(name)
             )));
         }
     }
-    let request = client.prepare_standard(Method::DELETE, &format!("logstream/{name}"), None)?;
+    let request = client.prepare_standard_bytes(
+        Method::DELETE,
+        &[b"logstream/".as_slice(), name].concat(),
+        None,
+    )?;
     let response = client.send_streaming(request).await?;
     if response.status != 200 {
         return Err(status_failure("delete dataset", response).await);
     }
     drop(response);
-    use crate::metrics::output::{line_width, style};
-    Ok(format!(
-        "Successfully deleted dataset {}\n",
-        style::BOLD.render(name, &style::Terminal::from_process(), line_width)
-    )
-    .into_bytes())
+    use crate::metrics::output::style;
+    Ok([
+        b"Successfully deleted dataset ".as_slice(),
+        &style::BOLD.render_bytes(name, &style::Terminal::from_process()),
+        b"\n",
+    ]
+    .concat())
 }
 
 /// Go strings.ToLower(strings.TrimSpace(value)): per-rune lowercase without
@@ -184,9 +197,13 @@ fn wrapped(prefix: &'static str) -> impl Fn(ApiError) -> CliError {
 
 /// Go fetchInfo: GET logstream/NAME/info, reading the body before checking
 /// the status, then preferring a nonempty telemetryType over streamType.
-async fn fetch_type(client: &ApiClient, name: &str) -> Result<String, CliError> {
+async fn fetch_type(client: &ApiClient, name: &[u8]) -> Result<String, CliError> {
     let request = client
-        .prepare_standard(Method::GET, &format!("logstream/{name}/info"), None)
+        .prepare_standard_bytes(
+            Method::GET,
+            &[b"logstream/".as_slice(), name, b"/info"].concat(),
+            None,
+        )
         .map_err(wrapped("failed to create request"))?;
     let response = client
         .send_streaming(request)
@@ -198,7 +215,7 @@ async fn fetch_type(client: &ApiClient, name: &str) -> Result<String, CliError> 
     match response.status {
         200 => decode_type(&response.body),
         404 => {
-            let message = format!("dataset {} not found", quote(name));
+            let message = format!("dataset {} not found", crate::argv::quote(name));
             Err(CliError::http(404, &message, &message))
         }
         status => {
@@ -306,6 +323,7 @@ mod tests {
             );
         }
         ParsedInvocation {
+            raw: Default::default(),
             command_path: path.into(),
             positionals: vec![name.into()],
             flags,

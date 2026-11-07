@@ -1,47 +1,256 @@
-name: goreleaser
+name: Release
+
+# Native Rust release. Tag pushes (vMAJOR.MINOR.PATCH[-PRERELEASE], whose base
+# must equal Cargo.toml's version) build, verify and publish; pull requests and
+# manual runs execute every step except publishing. See docs/release.md.
 
 on:
   push:
     tags:
       - "v*"
+  pull_request:
+    paths:
+      - ".github/workflows/release.yaml"
+      - "scripts/install.sh"
+      - "scripts/install.ps1"
+      - "scripts/release.py"
+      - "tests/release/**"
+      - "Cargo.toml"
+      - "Cargo.lock"
+  workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  RUST_TOOLCHAIN: "1.96.0"
+  PYTHON_VERSION: "3.12"
 
 jobs:
-  goreleaser:
+  plan:
     runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.version.outputs.tag }}
+      version: ${{ steps.version.outputs.version }}
+      prerelease: ${{ steps.version.outputs.prerelease }}
+      publish: ${{ steps.publish.outputs.publish }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
           persist-credentials: false
-
-      - name: Set up Go
-        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
+      - uses: actions/setup-python@v5
         with:
-          go-version-file: go.mod
-          cache: false
-
-      - name: Validate release configuration
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Choose the release tag
+        id: tag
+        shell: bash
+        run: |
+          if [[ "$GITHUB_EVENT_NAME" == push && "$GITHUB_REF_TYPE" == tag ]]; then
+            tag="$GITHUB_REF_NAME"
+          else
+            base="$(python3 -c 'import tomllib; print(tomllib.load(open("Cargo.toml", "rb"))["package"]["version"])')"
+            tag="v${base}-ci.${GITHUB_RUN_NUMBER}"
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+      - name: Validate tag against Cargo.toml
+        id: version
         env:
-          PB_CLOUD_ORCHESTRATOR_URL: ${{ vars.PB_CLOUD_ORCHESTRATOR_URL }}
-          PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN: ${{ secrets.PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN }}
-        run: test -n "$PB_CLOUD_ORCHESTRATOR_URL" && test -n "$PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN"
+          RELEASE_TAG: ${{ steps.tag.outputs.tag }}
+        run: python3 scripts/release.py version "$RELEASE_TAG"
+      - name: Decide whether to publish
+        id: publish
+        shell: bash
+        run: |
+          if [[ "$GITHUB_EVENT_NAME" == push && "$GITHUB_REF_TYPE" == tag ]]; then
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+          fi
 
-      - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v6
+  installer-tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
         with:
-          distribution: goreleaser # or 'goreleaser-pro'
-          version: "~> v2" # or 'latest', 'nightly', semver
-          args: release --parallelism 1 --clean
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Lint install.sh
+        if: runner.os == 'Linux'
+        run: shellcheck --shell=sh --severity=warning scripts/install.sh
+      - name: Offline installer tests (dash, the Ubuntu /bin/sh)
+        if: runner.os == 'Linux'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PB_CLOUD_ORCHESTRATOR_URL: ${{ vars.PB_CLOUD_ORCHESTRATOR_URL }}
-          PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN: ${{ secrets.PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN }}
+          PB_INSTALLER_TEST_SH: dash
+        run: python3 tests/release/test_installers.py
+      - name: Offline installer tests (bash in POSIX mode)
+        if: runner.os == 'Linux'
+        env:
+          PB_INSTALLER_TEST_SH: bash
+        run: python3 tests/release/test_installers.py
+      - name: Offline installer tests (macOS sh, plus pwsh where present)
+        if: runner.os == 'macOS'
+        run: python3 tests/release/test_installers.py
+      - name: Offline installer tests (PowerShell 7, real user PATH update)
+        if: runner.os == 'Windows'
+        env:
+          PB_INSTALLER_TEST_POWERSHELL: pwsh
+          PB_INSTALLER_TEST_MODIFY_PATH: "1"
+        run: python tests/release/test_installers.py
+      - name: Offline installer tests (Windows PowerShell 5.1)
+        if: runner.os == 'Windows'
+        env:
+          PB_INSTALLER_TEST_POWERSHELL: powershell
+          PB_INSTALLER_TEST_MODIFY_PATH: "1"
+        run: python tests/release/test_installers.py
 
-      - name: Update Homebrew tap
+  build:
+    needs: plan
+    name: build (${{ matrix.os }}-${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # 22.04 images keep the glibc floor at 2.35.
+          - { os: linux, arch: amd64, runner: ubuntu-22.04, target: x86_64-unknown-linux-gnu }
+          - { os: linux, arch: arm64, runner: ubuntu-22.04-arm, target: aarch64-unknown-linux-gnu }
+          - { os: darwin, arch: amd64, runner: macos-15-intel, target: x86_64-apple-darwin }
+          - { os: darwin, arch: arm64, runner: macos-15, target: aarch64-apple-darwin }
+          - { os: windows, arch: amd64, runner: windows-latest, target: x86_64-pc-windows-msvc }
+          # Optional: release.py accepts its absence and install.ps1 then
+          # installs the x64 build, which Windows on Arm runs under emulation.
+          - { os: windows, arch: arm64, runner: windows-11-arm, target: aarch64-pc-windows-msvc, optional: true }
+    runs-on: ${{ matrix.runner }}
+    continue-on-error: ${{ matrix.optional == true }}
+    timeout-minutes: 60
+    env:
+      PB_VERSION: ${{ needs.plan.outputs.tag }}
+      # Optional cloud defaults; empty values build a CLI that requires
+      # release-time cloud configuration, like an unconfigured local build.
+      PB_CLOUD_ORCHESTRATOR_URL: ${{ vars.PB_CLOUD_ORCHESTRATOR_URL }}
+      PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN: ${{ secrets.PB_CLOUD_ORCHESTRATOR_AUTH_TOKEN }}
+      MACOSX_DEPLOYMENT_TARGET: "11.0"
+      CARGO_TERM_COLOR: always
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install rustup when the image lacks it
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          if ! command -v rustup >/dev/null 2>&1; then
+            arch="$([[ "${{ matrix.arch }}" == arm64 ]] && echo aarch64 || echo x86_64)"
+            curl --proto '=https' --tlsv1.2 -fsSL "https://static.rust-lang.org/rustup/dist/${arch}-pc-windows-msvc/rustup-init.exe" -o "$RUNNER_TEMP/rustup-init.exe"
+            "$RUNNER_TEMP/rustup-init.exe" -y --profile minimal --default-toolchain none
+            echo "$USERPROFILE/.cargo/bin" >> "$GITHUB_PATH"
+          fi
+      - name: Select Rust toolchain
+        shell: bash
+        run: |
+          rustup toolchain install "$RUST_TOOLCHAIN" --profile minimal --target "${{ matrix.target }}"
+          rustup default "$RUST_TOOLCHAIN"
+      - name: Record commit
+        shell: bash
+        run: echo "PB_COMMIT=${GITHUB_SHA::7}" >> "$GITHUB_ENV"
+      - name: Build
+        shell: bash
         env:
-          HOMEBREW_TAP_GITHUB_TOKEN: ${{ secrets.HOMEBREW_TAP_GITHUB_TOKEN }}
-        run: scripts/update-homebrew-tap.sh
+          # Static CRT: pb.exe runs without the Visual C++ redistributable.
+          RUSTFLAGS: ${{ runner.os == 'Windows' && '-C target-feature=+crt-static' || '' }}
+        run: cargo build --locked --release --target "${{ matrix.target }}"
+      - name: Smoke test the binary
+        shell: bash
+        run: |
+          bin="target/${{ matrix.target }}/release/pb${{ runner.os == 'Windows' && '.exe' || '' }}"
+          out="$("$bin" version)"
+          echo "$out"
+          test "$out" = "pb version ${{ needs.plan.outputs.version }}"
+          "$bin" --help > /dev/null
+          case "$RUNNER_OS" in
+            Linux) file "$bin"; ldd "$bin" || true; objdump -T "$bin" | grep -o 'GLIBC_[0-9.]*' | sort -uV | tail -1 ;;
+            macOS) file "$bin"; otool -L "$bin"; lipo -archs "$bin" ;;
+          esac
+      - name: Package
+        shell: bash
+        run: |
+          # Archive timestamps come from the commit, so repackaging is reproducible.
+          export SOURCE_DATE_EPOCH="$(git log -1 --format=%ct)"
+          python scripts/release.py package \
+            --version "${{ needs.plan.outputs.version }}" \
+            --os "${{ matrix.os }}" --arch "${{ matrix.arch }}" \
+            --binary "target/${{ matrix.target }}/release/pb${{ runner.os == 'Windows' && '.exe' || '' }}" \
+            --out dist
+      - name: Install the archive with the pinned installer and run it
+        shell: bash
+        run: python tests/release/test_installers.py --e2e-dist dist --e2e-version "${{ needs.plan.outputs.version }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pb-dist-${{ matrix.os }}-${{ matrix.arch }}
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 14
+
+  release:
+    needs: [plan, installer-tests, build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: pb-dist-*
+          path: dist
+          merge-multiple: true
+      - name: Stamp installers, write checksums and check the asset set
+        run: python3 scripts/release.py finalize --version "${{ needs.plan.outputs.version }}" --dist dist
+      - name: Verify checksums and install the final Linux asset
+        run: |
+          cd dist && sha256sum --strict --check "pb_${{ needs.plan.outputs.version }}_checksums.txt" && cd ..
+          python3 tests/release/test_installers.py --e2e-dist dist --e2e-version "${{ needs.plan.outputs.version }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pb-release-${{ needs.plan.outputs.tag }}
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 14
+      - name: Publish GitHub release
+        if: needs.plan.outputs.publish == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ needs.plan.outputs.tag }}
+          PRERELEASE: ${{ needs.plan.outputs.prerelease }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "::error::release $TAG already exists; delete it or push a new tag"
+            exit 1
+          fi
+          # Prereleases never become "latest", so /releases/latest keeps
+          # pointing at the newest stable release.
+          if [ "$PRERELEASE" = true ]; then flags=(--prerelease --latest=false); else flags=(--latest); fi
+          # Upload into a draft first so a failed upload never leaves a
+          # half-populated public release.
+          gh release create "$TAG" dist/* --draft --verify-tag --title "pb $TAG" --generate-notes "${flags[@]}"
+          gh release edit "$TAG" --draft=false "${flags[@]}"
+          gh release view "$TAG" --json assets --jq '.assets[].name' | sort

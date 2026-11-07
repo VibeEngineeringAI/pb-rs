@@ -1,0 +1,2124 @@
+{
+  "schema_version": 1,
+  "kind": "functional-oracle",
+  "statistics_unit": "independent process session",
+  "dependencies": {
+    "pyte": "0.8.2",
+    "wcwidth": "0.2.13"
+  },
+  "prior_rust": "/home/ajs/.cache/pb-phase7/baselines/pb-rust-phase5",
+  "source_pin": "07af390",
+  "cases": [
+    {
+      "name": "p7-login-cancel-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-login-backtrack-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-login-basic-save-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-login-overwrite-bad-config-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-login-duplicate-replace-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-login-duplicate-change-name-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-login-api-key-save-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-login-required-url-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-login-cloud-cancel-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "622d4144b7e354c0ee4036244ba719cbbaf8357710804b1d733cd421a0dc227e",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-login-signal-sigint-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": true
+    },
+    {
+      "name": "p7-login-signal-sigterm-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": true
+    },
+    {
+      "name": "p7-login-signal-sighup-dark",
+      "reference_issues": [],
+      "termination": {
+        "signal": 1,
+        "core_dumped": false
+      },
+      "termios_restored": false,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": true
+    },
+    {
+      "name": "p7-login-signal-sigquit-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 2
+      },
+      "termios_restored": false,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-nonTTY-login-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 1
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": true
+    },
+    {
+      "name": "p7-nonTTY-sql-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 1
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": true
+    },
+    {
+      "name": "p7-nonTTY-promql-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 1
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": true
+    },
+    {
+      "name": "p7-nonTTY-credentials-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 1
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": true
+    },
+    {
+      "name": "p7-nonTTY-saved-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 1
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": true
+    },
+    {
+      "name": "p7-credential-empty-esc-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-credential-empty-ctrl-c-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-credential-partial-cancel-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-credential-valid-cancel-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-default-cancel-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-default-select-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-remove-replacement-cancel-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [
+        "styled cells/cursor/scrollback differ at filter-draft",
+        "final styled cells/cursor/scrollback differ"
+      ],
+      "documentary": true
+    },
+    {
+      "name": "p7-logout-replacement-cancel-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": true
+    },
+    {
+      "name": "p7-logout-decline-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-logout-confirm-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-dataset-cancel-esc-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-dataset-cancel-ctrl-c-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-dataset-logs-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-dataset-metrics-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-dataset-traces-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-role-cancel-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-role-reader-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-role-conflict-before-prompt-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 1
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-empty-quit-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-signal-sigint-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": true
+    },
+    {
+      "name": "p7-sql-signal-sigterm-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": true
+    },
+    {
+      "name": "p7-sql-signal-sigquit-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 2
+      },
+      "termios_restored": false,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-resize-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-empty-quit-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-signal-sigint-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": true
+    },
+    {
+      "name": "p7-promql-signal-sigterm-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": true
+    },
+    {
+      "name": "p7-promql-signal-sigquit-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 2
+      },
+      "termios_restored": false,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-resize-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-saved-quit-ctrl-c-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-saved-filter-a-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-saved-filter-b-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-saved-filter-enter-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-saved-non2xx-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-saved-malformed-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-saved-empty-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-promoted-short-empty-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-promoted-short-query-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-promoted-long-empty-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-promoted-long-true-query-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-promoted-ignored-yaml-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-promoted-ignored-save-as-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-promoted-compact-json-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-promoted-short-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-promoted-compact-json-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-promoted-long-true-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-dataset-placeholder-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-editor-key-precedence-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-time-overlay-cancel-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-window-partial-final-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-builder-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-table-chart-unwrap-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-saved-empty-output-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-clipboard-login-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-clipboard-credentials-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-clipboard-sql-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-clipboard-promql-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-clipboard-saved-filter-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-clipboard-profile-picker-dropped-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-clipboard-delayed-focus-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-clipboard-delayed-quit-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": true
+    },
+    {
+      "name": "p7-sql-result-empty-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-result-error-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-result-empty-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-result-error-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-delayed-window-guard-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-delayed-result-unguarded-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-alt-enter-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-hang-double-sigterm-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 2
+      },
+      "termios_restored": false,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-hang-double-sigterm-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 2
+      },
+      "termios_restored": false,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-wide-dataset-truncation-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-wide-legend-view-panic-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-g4-z-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-g4-fixed-zone-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-g10-equal-time-merge-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-g7-infinite-plot-amd64-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-g7-huge-timestamp-amd64-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-g3-duplicate-result-merge-dark",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-login-cancel-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-login-backtrack-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-login-basic-save-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-login-overwrite-bad-config-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-login-duplicate-replace-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-login-duplicate-change-name-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-login-api-key-save-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-login-required-url-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-login-cloud-cancel-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "622d4144b7e354c0ee4036244ba719cbbaf8357710804b1d733cd421a0dc227e",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-login-signal-sigint-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": true
+    },
+    {
+      "name": "p7-login-signal-sigterm-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": true
+    },
+    {
+      "name": "p7-login-signal-sighup-light",
+      "reference_issues": [],
+      "termination": {
+        "signal": 1,
+        "core_dumped": false
+      },
+      "termios_restored": false,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": true
+    },
+    {
+      "name": "p7-login-signal-sigquit-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 2
+      },
+      "termios_restored": false,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-nonTTY-login-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 1
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": true
+    },
+    {
+      "name": "p7-nonTTY-sql-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 1
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": true
+    },
+    {
+      "name": "p7-nonTTY-promql-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 1
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": true
+    },
+    {
+      "name": "p7-nonTTY-credentials-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 1
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": true
+    },
+    {
+      "name": "p7-nonTTY-saved-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 1
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": true
+    },
+    {
+      "name": "p7-credential-empty-esc-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-credential-empty-ctrl-c-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-credential-partial-cancel-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-credential-valid-cancel-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-default-cancel-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-default-select-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-remove-replacement-cancel-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": true
+    },
+    {
+      "name": "p7-logout-replacement-cancel-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [
+        "styled cells/cursor/scrollback differ at filter-draft",
+        "final styled cells/cursor/scrollback differ"
+      ],
+      "documentary": true
+    },
+    {
+      "name": "p7-logout-decline-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-logout-confirm-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-dataset-cancel-esc-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-dataset-cancel-ctrl-c-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-dataset-logs-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-dataset-metrics-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-dataset-traces-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-role-cancel-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-role-reader-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-role-conflict-before-prompt-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 1
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-empty-quit-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-signal-sigint-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": true
+    },
+    {
+      "name": "p7-sql-signal-sigterm-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": true
+    },
+    {
+      "name": "p7-sql-signal-sigquit-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 2
+      },
+      "termios_restored": false,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-resize-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-empty-quit-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-signal-sigint-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": true
+    },
+    {
+      "name": "p7-promql-signal-sigterm-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": true
+    },
+    {
+      "name": "p7-promql-signal-sigquit-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 2
+      },
+      "termios_restored": false,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-resize-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-saved-quit-ctrl-c-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-saved-filter-a-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-saved-filter-b-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-saved-filter-enter-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-saved-non2xx-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-saved-malformed-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-saved-empty-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-promoted-short-empty-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-promoted-short-query-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-promoted-long-empty-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-promoted-long-true-query-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-promoted-ignored-yaml-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-promoted-ignored-save-as-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-promoted-compact-json-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-promoted-short-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-promoted-compact-json-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-promoted-long-true-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-dataset-placeholder-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-editor-key-precedence-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-time-overlay-cancel-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-window-partial-final-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-builder-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-table-chart-unwrap-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-saved-empty-output-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-clipboard-login-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-clipboard-credentials-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-clipboard-sql-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-clipboard-promql-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-clipboard-saved-filter-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-clipboard-profile-picker-dropped-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-clipboard-delayed-focus-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-clipboard-delayed-quit-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": true
+    },
+    {
+      "name": "p7-sql-result-empty-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-result-error-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-result-empty-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-result-error-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-delayed-window-guard-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-delayed-result-unguarded-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-alt-enter-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-hang-double-sigterm-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 2
+      },
+      "termios_restored": false,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-hang-double-sigterm-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 2
+      },
+      "termios_restored": false,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-sql-wide-dataset-truncation-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-wide-legend-view-panic-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-g4-z-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-g4-fixed-zone-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-g10-equal-time-merge-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-g7-infinite-plot-amd64-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-g7-huge-timestamp-amd64-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    },
+    {
+      "name": "p7-promql-g3-duplicate-result-merge-light",
+      "reference_issues": [],
+      "termination": {
+        "exit": 0
+      },
+      "termios_restored": true,
+      "reference_sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "issues": [],
+      "documentary": false
+    }
+  ],
+  "production_go_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "harness_sources": {
+    "harness/phase7.py": "3bb5852db477329d3ce6efba833e0150d76d9dcf9f9a9e00f4c8ffb87036eeb6",
+    "harness/phase7_workloads.py": "04404c96efabad1d2b0674df17751856913363443744c3dd1fb497f07a5f6178",
+    "harness/phase7_spawn.c": "0279d5fb06e4f38adc32004c152fc42c94194d59f234ee5a9c5694f74a6d31f4",
+    "harness/phase3.py": "0e70e2d000accca670e76c78a86d63ac4f3815f63804b6be425f310c58513373",
+    "harness/phase2.py": "66568cd9b0663011547763a258875f45949b21f5ed4c05fe9a695cebdc89cfbd"
+  },
+  "prior_rust_identity": {
+    "path": "/home/ajs/.cache/pb-phase7/baselines/pb-rust-phase5",
+    "bytes": 7617800,
+    "sha256": "9bd38b9db4f4f8e76cd43384cb024dddd4d122c6bc109d29a8afa483ae0e2c6d"
+  }
+}

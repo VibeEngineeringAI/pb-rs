@@ -13,8 +13,14 @@ prior manifests or count a formerly deferred path as a retained stub failure.
 Python >=3.11 on Linux/Unix, `pyte==0.8.2`, `wcwidth==0.2.13`; the installed local
 environment is `/home/ajs/.cache/pb-phase7/harness-venv`. There are no Rust
 dependency/API requirements. Candidate binaries must be built by the parent;
-this harness never builds a candidate. All child/fixture/helper commands inherit
-`TMPDIR=GOTMPDIR=CLAUDE_CODE_TMPDIR=/home/ajs/.cache/pb-phase7/tmp`.
+this harness never builds a candidate. Install the pinned observer dependencies
+with `python3 -m pip install -r harness/requirements.txt`. The owned scratch root
+defaults to `Path.home() / '.cache/pb-phase7/tmp'`; `PB_PHASE7_TMP` selects a
+separate root. Initialization creates that directory before tests or captures
+use it. All child/fixture/helper commands inherit
+`TMPDIR=GOTMPDIR=CLAUDE_CODE_TMPDIR` set to the selected absolute root. An explicit
+no-build helper lookup still refuses to create or rebuild a missing helper
+cache after preflight.
 
 Owned sources: `phase7.py`, `test_phase7.py`, `phase7_workloads.py`, this contract,
 and `docs/phase7-harness.md`. Shared phase2 config and phase3 HTTP machinery are

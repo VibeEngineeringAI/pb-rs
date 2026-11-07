@@ -14,11 +14,13 @@
 //! * `w` toggles metric unwrap before the table sees it, but only in table
 //!   view; in chart view `w` reaches the table key map (row up);
 //! * a resize resets the VALUE column to the width of its title.
+#[cfg(test)]
+use super::sql::parse_cli_time;
 use super::{
     editor::{AreaStyles, InputStyles, PB_AREA_KEYS, TextArea, TextInput},
     input::{Event, Key, KeyCode},
     promql_service::{AnyValue, PromqlResult, PromqlSessionService, ResultRequest},
-    sql::{GoTime, Zone, parse_cli_time, reflow_truncate},
+    sql::{GoTime, Zone, parse_cli_time_bytes, reflow_truncate},
     style::{self, Border, Color, GoPanic, KeyHint, Role, Style},
     terminal::{Screen, TerminalSession},
 };
@@ -2908,18 +2910,18 @@ pub(crate) enum Effect {
     FetchResult(ResultRequest),
     FetchDatasets,
     FetchCacheMetrics {
-        dataset: String,
+        dataset: Vec<u8>,
     },
     FetchLabels {
         id: u64,
-        dataset: String,
+        dataset: Vec<u8>,
         metric: String,
         start: String,
         end: String,
     },
     FetchValues {
         id: u64,
-        dataset: String,
+        dataset: Vec<u8>,
         metric: String,
         label: String,
         start: String,
@@ -2943,7 +2945,7 @@ pub(crate) enum Completion {
     Result(Result<ResultData, String>),
     Datasets(Result<Vec<String>, String>),
     CacheMetrics {
-        dataset: String,
+        dataset: Vec<u8>,
         result: Result<Vec<String>, String>,
     },
     Labels {
@@ -2978,6 +2980,7 @@ pub(crate) struct Setup {
     pub(crate) end: GoTime,
     pub(crate) step: String,
     pub(crate) dataset: String,
+    pub(crate) dataset_raw: Option<Vec<u8>>,
     pub(crate) instant: bool,
     pub(crate) width: usize,
     pub(crate) height: usize,
@@ -3012,6 +3015,7 @@ pub(crate) struct PromqlState {
     chart_hover: bool,
 
     dataset: String,
+    dataset_raw: Option<Vec<u8>>,
     step: String,
     mode: QueryMode,
 
@@ -3023,7 +3027,7 @@ pub(crate) struct PromqlState {
     dataset_idx: usize,
     datasets_loading: bool,
 
-    cache_dataset: String,
+    cache_dataset: Vec<u8>,
     cache_metrics: Vec<String>,
     cache_labels: HashMap<String, Vec<String>>,
     cache_values: HashMap<String, HashMap<String, Vec<String>>>,
@@ -3163,6 +3167,7 @@ impl PromqlState {
             end,
             step,
             dataset,
+            dataset_raw,
             instant,
             width,
             height,
@@ -3246,6 +3251,7 @@ impl PromqlState {
             chart_cursor: 0,
             chart_hover: false,
             dataset,
+            dataset_raw,
             step,
             mode,
             step_input,
@@ -3254,7 +3260,7 @@ impl PromqlState {
             filtered_datasets: Vec::new(),
             dataset_idx: 0,
             datasets_loading: false,
-            cache_dataset: String::new(),
+            cache_dataset: Vec::new(),
             cache_metrics: Vec::new(),
             cache_labels: HashMap::new(),
             cache_values: HashMap::new(),
@@ -3349,6 +3355,12 @@ impl PromqlState {
         editor.or(render)
     }
 
+    fn dataset_bytes(&self) -> &[u8] {
+        self.dataset_raw
+            .as_deref()
+            .unwrap_or(self.dataset.as_bytes())
+    }
+
     /// `Init`.
     pub(crate) fn init(&self) -> Vec<Effect> {
         let mut effects = vec![Effect::Tick {
@@ -3359,7 +3371,7 @@ impl PromqlState {
         }
         if !self.dataset.is_empty() {
             effects.push(Effect::FetchCacheMetrics {
-                dataset: self.dataset.clone(),
+                dataset: self.dataset_bytes().to_vec(),
             });
         }
         effects.push(Effect::FetchDatasets);
@@ -3370,6 +3382,7 @@ impl PromqlState {
         ResultRequest {
             expr: self.query.value(),
             dataset: self.dataset.clone(),
+            dataset_raw: self.dataset_raw.clone(),
             step: self.step.clone(),
             start: self.time_range.start.value_utc(),
             end: self.time_range.end.value_utc(),
@@ -3511,6 +3524,7 @@ impl PromqlState {
                             && !datasets.is_empty()
                         {
                             self.dataset = datasets[0].clone();
+                            self.dataset_raw = None;
                             self.cache_dataset.clear();
                             self.cache_metrics.clear();
                             if !self.query.value().trim().is_empty() {
@@ -3521,20 +3535,20 @@ impl PromqlState {
                                     tag: self.spinner_tag,
                                 });
                                 effects.push(Effect::FetchCacheMetrics {
-                                    dataset: self.dataset.clone(),
+                                    dataset: self.dataset_bytes().to_vec(),
                                 });
                                 effects.push(Effect::FetchResult(self.result_request()));
                                 return effects;
                             }
                             effects.push(Effect::FetchCacheMetrics {
-                                dataset: self.dataset.clone(),
+                                dataset: self.dataset_bytes().to_vec(),
                             });
                             return effects;
                         }
                         if let Some(i) = self
                             .filtered_datasets
                             .iter()
-                            .position(|d| *d == self.dataset)
+                            .position(|d| d.as_bytes() == self.dataset_bytes())
                         {
                             self.dataset_idx = i;
                         }
@@ -3544,7 +3558,7 @@ impl PromqlState {
             Completion::CacheMetrics { dataset, result } => {
                 if let Ok(items) = result
                     && !items.is_empty()
-                    && dataset == self.dataset
+                    && dataset == self.dataset_bytes()
                 {
                     self.cache_dataset = dataset;
                     self.cache_metrics = items.clone();
@@ -3876,7 +3890,7 @@ impl PromqlState {
             self.builder_metrics_loading = false;
             return Vec::new();
         }
-        if self.cache_dataset == self.dataset && !self.cache_metrics.is_empty() {
+        if self.cache_dataset == self.dataset_bytes() && !self.cache_metrics.is_empty() {
             self.builder_metrics = self.cache_metrics.clone();
             self.builder_metrics_filtered = self.cache_metrics.clone();
             self.builder_metrics_loading = false;
@@ -3887,7 +3901,7 @@ impl PromqlState {
         self.builder_metrics_filtered.clear();
         self.builder_metrics_loading = true;
         vec![Effect::FetchCacheMetrics {
-            dataset: self.dataset.clone(),
+            dataset: self.dataset_bytes().to_vec(),
         }]
     }
 
@@ -3966,7 +3980,7 @@ impl PromqlState {
                     self.cancel_labels = Some(id);
                     effects.push(Effect::FetchLabels {
                         id,
-                        dataset: self.dataset.clone(),
+                        dataset: self.dataset_bytes().to_vec(),
                         metric,
                         start: self.time_range.start.value_utc(),
                         end: self.time_range.end.value_utc(),
@@ -4005,7 +4019,7 @@ impl PromqlState {
                     self.cancel_values = Some(id);
                     effects.push(Effect::FetchValues {
                         id,
-                        dataset: self.dataset.clone(),
+                        dataset: self.dataset_bytes().to_vec(),
                         metric,
                         label,
                         start: self.time_range.start.value_utc(),
@@ -4092,9 +4106,10 @@ impl PromqlState {
             }
             KeyCode::Enter => {
                 if let Some(selected) = self.filtered_datasets.get(self.dataset_idx).cloned()
-                    && selected != self.dataset
+                    && selected.as_bytes() != self.dataset_bytes()
                 {
                     self.dataset = selected;
+                    self.dataset_raw = None;
                     self.query.set_value("");
                     self.cache_dataset.clear();
                     self.cache_metrics.clear();
@@ -4106,7 +4121,7 @@ impl PromqlState {
                     self.focused = 0;
                     self.focus_selected();
                     effects.push(Effect::FetchCacheMetrics {
-                        dataset: self.dataset.clone(),
+                        dataset: self.dataset_bytes().to_vec(),
                     });
                     return effects;
                 }
@@ -5723,15 +5738,15 @@ pub(crate) fn execute(
     let command_error = |message: String| CliError::new(ErrorCode::CommandFailed, message);
     // parseTimeStr keeps time.Parse's location (UTC for `Z`, a fixed zone or
     // Local for an offset); relative values are Local (G4).
-    let to = parse_cli_time(parsed.text("to"))
+    let to = parse_cli_time_bytes(parsed.text_bytes("to"))
         .map_err(|e| command_error(format!("invalid --to: {e}")))?;
     let from_text = if parsed.explicit("from") {
-        parsed.text("from")
+        parsed.text_bytes("from")
     } else {
-        "10m"
+        b"10m".as_slice()
     };
-    let from =
-        parse_cli_time(from_text).map_err(|e| command_error(format!("invalid --from: {e}")))?;
+    let from = parse_cli_time_bytes(from_text)
+        .map_err(|e| command_error(format!("invalid --from: {e}")))?;
     let store =
         crate::config::ProfileStore::from_env().map_err(|e| CliError::new(e.code, e.message))?;
     let profile = store
@@ -5745,11 +5760,14 @@ pub(crate) fn execute(
         .map_err(|e| command_error(e.to_string()))?;
     let setup = Setup {
         profile_url: service.profile_url(),
-        expr: parsed.positionals.first().cloned().unwrap_or_default(),
+        expr: crate::error::go_string(parsed.positional_bytes(0)),
         start: from,
         end: to,
         step: parsed.text("step").to_owned(),
-        dataset: parsed.text("dataset").to_owned(),
+        dataset: crate::error::go_string(parsed.text_bytes("dataset")),
+        dataset_raw: std::str::from_utf8(parsed.text_bytes("dataset"))
+            .is_err()
+            .then(|| parsed.text_bytes("dataset").to_vec()),
         instant: parsed.boolean("instant"),
         width: 0,
         height: 0,
@@ -6229,6 +6247,7 @@ mod tests {
                 end,
                 step: "auto".into(),
                 dataset: dataset.into(),
+                dataset_raw: None,
                 instant,
                 width: 120,
                 height: 40,
@@ -6980,6 +6999,36 @@ mod tests {
     }
 
     #[test]
+    fn raw_cli_dataset_identity_survives_effects_cache_and_picker() {
+        let mut s = state("up", "m\u{fffd}", false);
+        s.dataset_raw = Some(b"m\xff".to_vec());
+        let effects = s.init();
+        assert!(effects.contains(&Effect::FetchCacheMetrics {
+            dataset: b"m\xff".to_vec()
+        }));
+        assert!(effects.iter().any(|e| matches!(e, Effect::FetchResult(r) if r.dataset_raw.as_deref() == Some(b"m\xff".as_slice()))));
+        // A valid replacement-character title is a distinct Go string.
+        s.update(Message::Done(Completion::CacheMetrics {
+            dataset: "m\u{fffd}".as_bytes().to_vec(),
+            result: Ok(vec!["wrong".into()]),
+        }));
+        assert!(s.cache_metrics.is_empty());
+        s.update(Message::Done(Completion::CacheMetrics {
+            dataset: b"m\xff".to_vec(),
+            result: Ok(vec!["up".into()]),
+        }));
+        assert_eq!(s.cache_dataset, b"m\xff");
+        s.filtered_datasets = vec!["m\u{fffd}".into()];
+        s.dataset_idx = 0;
+        s.overlay = Overlay::Dataset;
+        let effects = s.dataset_key(&Key::new(KeyCode::Enter));
+        assert!(s.dataset_raw.is_none());
+        assert!(effects.contains(&Effect::FetchCacheMetrics {
+            dataset: "m\u{fffd}".as_bytes().to_vec()
+        }));
+    }
+
+    #[test]
     fn init_requests_result_cache_and_datasets_in_go_order() {
         let s = state("up", "metrics", false);
         let effects = s.init();
@@ -6990,7 +7039,7 @@ mod tests {
         assert_eq!(
             effects[2],
             Effect::FetchCacheMetrics {
-                dataset: "metrics".into()
+                dataset: b"metrics".to_vec()
             }
         );
         assert_eq!(effects[3], Effect::FetchDatasets);
@@ -7009,7 +7058,7 @@ mod tests {
         assert_eq!(
             effects[1],
             Effect::FetchCacheMetrics {
-                dataset: "m1".into()
+                dataset: b"m1".to_vec()
             }
         );
         assert!(matches!(&effects[2], Effect::FetchResult(r) if r.dataset == "m1"));
@@ -7087,7 +7136,7 @@ mod tests {
         assert_eq!(
             effects,
             vec![Effect::FetchCacheMetrics {
-                dataset: "m".into()
+                dataset: b"m".to_vec()
             }]
         );
     }
@@ -7144,7 +7193,7 @@ mod tests {
     fn builder_label_completion_caches_but_respects_metric_guard() {
         let mut s = state("", "m", false);
         s.update(Message::Done(Completion::CacheMetrics {
-            dataset: "m".into(),
+            dataset: b"m".to_vec(),
             result: Ok(vec!["a".into(), "b".into()]),
         }));
         press(&mut s, key(KeyCode::Ctrl(2)));
@@ -7175,7 +7224,7 @@ mod tests {
     fn reentering_labels_cancels_the_previous_request() {
         let mut s = state("", "m", false);
         s.update(Message::Done(Completion::CacheMetrics {
-            dataset: "m".into(),
+            dataset: b"m".to_vec(),
             result: Ok(vec!["a".into()]),
         }));
         press(&mut s, key(KeyCode::Ctrl(2)));
@@ -7648,7 +7697,7 @@ mod tests {
         assert_eq!(s.dataset(), "beta");
         assert!(
             effects.contains(&Effect::FetchCacheMetrics {
-                dataset: "beta".into()
+                dataset: b"beta".to_vec()
             }),
             "{effects:?}"
         );

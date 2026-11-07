@@ -1,0 +1,10 @@
+
+ Performance counter stats for 'bin/pb-perf-final version' (20 runs):
+
+     <not counted>      cpu_atom/instructions/u                                                 (0.00%)
+            918121      cpu_core/instructions/u                                                 ( +-  0.01% )
+     <not counted>      cpu_atom/cycles/u                                                       (0.00%)
+            788309      cpu_core/cycles/u                                                       ( +-  2.26% )
+
+       0.000747457 +- 0.000019784 seconds time elapsed  ( +-  2.65% )
+

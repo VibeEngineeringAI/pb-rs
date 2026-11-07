@@ -467,6 +467,144 @@
       "operation": "help"
     },
     {
+      "name": "ingest",
+      "use": "ingest",
+      "short": "Ingest events into Parseable",
+      "long": "Ingest local data using the active Parseable profile.",
+      "example": "  pb ingest files --help",
+      "aliases": [],
+      "flags": [
+        {
+          "name": "output",
+          "shorthand": "o",
+          "kind": "string",
+          "default": "text",
+          "usage": "Output format (text|json)"
+        }
+      ],
+      "children": [
+        {
+          "name": "files",
+          "use": "files <glob>...",
+          "short": "Ingest local files into a dataset with resumable checkpoints",
+          "long": "Read matching local files and ingest complete lines into a Parseable dataset. Quote globs so the client can discover new files while following. A dataset, session, and state file are required. The state file tracks acknowledged byte offsets; retries after an uncertain response can duplicate events. Text input becomes message events; JSONL input must contain one JSON object per line. Initially matched files start at the end unless --from beginning is selected; files discovered while following start at the beginning. Use --complete to finalize the session after a one-shot import; it cannot be combined with --follow. Finalized state files cannot ingest further events.",
+          "example": "  pb ingest files './logs/*.log' --dataset app --session run-1 --state-file .pb-ingest.json --from beginning\n  pb ingest files './logs/**/*.jsonl' --dataset app --session run-1 --state-file .pb-ingest.json --format jsonl --follow --exclude '**/archive/**'\n  pb ingest files './logs/*.log' --dataset app --session run-1 --state-file .pb-ingest.json --from beginning --complete",
+          "aliases": [],
+          "flags": [
+            {
+              "name": "dataset",
+              "shorthand": "",
+              "kind": "string",
+              "default": "",
+              "usage": "Destination dataset (required)"
+            },
+            {
+              "name": "session",
+              "shorthand": "",
+              "kind": "string",
+              "default": "",
+              "usage": "Session identifier attached to ingested events (required)"
+            },
+            {
+              "name": "format",
+              "shorthand": "",
+              "kind": "string",
+              "default": "text",
+              "usage": "Input line format (jsonl|text)"
+            },
+            {
+              "name": "follow",
+              "shorthand": "",
+              "kind": "bool",
+              "default": false,
+              "usage": "Follow appended lines and discover newly matching files until interrupted"
+            },
+            {
+              "name": "complete",
+              "shorthand": "",
+              "kind": "bool",
+              "default": false,
+              "usage": "Finalize the session after a one-shot import; incompatible with --follow"
+            },
+            {
+              "name": "from",
+              "shorthand": "",
+              "kind": "string",
+              "default": "end",
+              "usage": "Initial position for files matched at startup (beginning|end); new files start at beginning"
+            },
+            {
+              "name": "exclude",
+              "shorthand": "",
+              "kind": "strings",
+              "default": [],
+              "usage": "Exclude matching paths; repeat for multiple globs"
+            },
+            {
+              "name": "state-file",
+              "shorthand": "",
+              "kind": "string",
+              "default": "",
+              "usage": "Durable local checkpoint file (required)"
+            },
+            {
+              "name": "poll-interval",
+              "shorthand": "",
+              "kind": "string",
+              "default": "1s",
+              "usage": "Polling interval when following files"
+            },
+            {
+              "name": "batch-size",
+              "shorthand": "",
+              "kind": "int",
+              "default": 100,
+              "usage": "Maximum events per ingestion batch"
+            },
+            {
+              "name": "max-line-bytes",
+              "shorthand": "",
+              "kind": "int",
+              "default": 1048576,
+              "usage": "Maximum bytes in one input line"
+            },
+            {
+              "name": "on-invalid",
+              "shorthand": "",
+              "kind": "string",
+              "default": "error",
+              "usage": "Invalid line policy (error|skip)"
+            },
+            {
+              "name": "output",
+              "shorthand": "o",
+              "kind": "string",
+              "default": "text",
+              "usage": "Output format (text|json)"
+            }
+          ],
+          "children": [],
+          "args": {
+            "kind": "min",
+            "counts": [
+              1
+            ]
+          },
+          "silence_usage": false,
+          "requires_profile": true,
+          "wrapped_preflight": false,
+          "operation": "ingest_files"
+        }
+      ],
+      "args": {
+        "kind": "none"
+      },
+      "silence_usage": false,
+      "requires_profile": false,
+      "wrapped_preflight": false,
+      "operation": "root"
+    },
+    {
       "name": "login",
       "use": "login",
       "short": "Login to Parseable",
@@ -514,6 +652,76 @@
       "requires_profile": false,
       "wrapped_preflight": false,
       "operation": "deferred"
+    },
+    {
+      "name": "observe",
+      "use": "observe <dataset>",
+      "short": "Read session events with an explicit cursor receipt",
+      "long": "Read a bounded batch of events for one session using the active Parseable profile. A session and cursor file are required. Results are JSON by default and include an acknowledgment token. Repeating a read before acknowledgment returns the same receipt. Use --ack TOKEN to advance the local cursor after consuming a receipt. Observation queries do not modify the dataset; the cursor file records pending receipts and acknowledged progress.",
+      "example": "  pb observe app --session run-1 --cursor-file .pb-observe.json\n  pb observe app --session run-1 --cursor-file .pb-observe.json --wait 5s --limit 100 -o json\n  pb observe app --session run-1 --cursor-file .pb-observe.json --ack TOKEN",
+      "aliases": [],
+      "flags": [
+        {
+          "name": "session",
+          "shorthand": "",
+          "kind": "string",
+          "default": "",
+          "usage": "Session identifier to observe (required)"
+        },
+        {
+          "name": "cursor-file",
+          "shorthand": "",
+          "kind": "string",
+          "default": "",
+          "usage": "Durable local observation cursor and receipt file (required)"
+        },
+        {
+          "name": "wait",
+          "shorthand": "",
+          "kind": "string",
+          "default": "0s",
+          "usage": "Maximum wait for matching events"
+        },
+        {
+          "name": "limit",
+          "shorthand": "",
+          "kind": "int",
+          "default": 100,
+          "usage": "Maximum events per receipt"
+        },
+        {
+          "name": "max-bytes",
+          "shorthand": "",
+          "kind": "int",
+          "default": 262144,
+          "usage": "Maximum serialized event bytes per receipt"
+        },
+        {
+          "name": "ack",
+          "shorthand": "",
+          "kind": "string",
+          "default": "",
+          "usage": "Acknowledge the pending receipt token and advance the local cursor"
+        },
+        {
+          "name": "output",
+          "shorthand": "o",
+          "kind": "string",
+          "default": "json",
+          "usage": "Output format (text|json)"
+        }
+      ],
+      "children": [],
+      "args": {
+        "kind": "exact",
+        "counts": [
+          1
+        ]
+      },
+      "silence_usage": false,
+      "requires_profile": true,
+      "wrapped_preflight": false,
+      "operation": "observe"
     },
     {
       "name": "profile",

@@ -34,11 +34,21 @@ pub(super) fn render(
 
 /// `render` with cmd/style.go's lipgloss styles for `terminal` (Go detects
 /// it from os.Stdout and the environment; see `Terminal::detect`).
+#[cfg(test)]
 pub(super) fn render_styled(
     operation: &str,
     body: &[u8],
     json: bool,
     label: &str,
+    t: &Terminal,
+) -> Result<Vec<u8>, String> {
+    render_styled_bytes(operation, body, json, label.as_bytes(), t)
+}
+pub(super) fn render_styled_bytes(
+    operation: &str,
+    body: &[u8],
+    json: bool,
+    label: &[u8],
     t: &Terminal,
 ) -> Result<Vec<u8>, String> {
     if json {
@@ -917,7 +927,7 @@ fn names(
     body: &[u8],
     kind: &str,
     empty: &str,
-    label: Option<&str>,
+    label: Option<&[u8]>,
     t: &Terminal,
 ) -> Result<Vec<u8>, String> {
     let context = |e: String| format!("failed to decode PromQL {kind} response: {e}");
@@ -958,7 +968,9 @@ fn names(
         bullet(&mut out, item, t);
     }
     if let Some(label) = label {
-        out.extend_from_slice(format!("\nlabel={label}  total={}\n", data.len()).as_bytes());
+        out.extend_from_slice(b"\nlabel=");
+        out.extend_from_slice(label);
+        out.extend_from_slice(format!("  total={}\n", data.len()).as_bytes());
     }
     Ok(out)
 }
@@ -1190,7 +1202,7 @@ fn cardinality(
     Ok(out)
 }
 
-fn tsdb(body: &[u8], focus_label: &str, t: &Terminal) -> Result<Vec<u8>, String> {
+fn tsdb(body: &[u8], focus_label: &[u8], t: &Terminal) -> Result<Vec<u8>, String> {
     let document = gojson::decode_ordered(body)
         .map_err(|e| format!("failed to decode PromQL TSDB response: {e}"))?;
     let (mut status, mut error) = (String::new(), String::new());
@@ -1265,19 +1277,27 @@ fn tsdb(body: &[u8], focus_label: &str, t: &Terminal) -> Result<Vec<u8>, String>
         );
     }
     out.push(b'\n');
-    let focus_title = format!("Series by {focus_label} value");
+    let focus_title = [b"Series by ".as_slice(), focus_label, b" value"].concat();
     let sections = [
-        ("Top metrics by series count", "METRIC", "SERIES"),
-        ("Top labels by series count", "LABEL", "SERIES"),
-        (focus_title.as_str(), "VALUE", "SERIES"),
-        ("Distinct values per label", "LABEL", "DISTINCT VALUES"),
+        (
+            b"Top metrics by series count".as_slice(),
+            "METRIC",
+            "SERIES",
+        ),
+        (b"Top labels by series count".as_slice(), "LABEL", "SERIES"),
+        (focus_title.as_slice(), "VALUE", "SERIES"),
+        (
+            b"Distinct values per label".as_slice(),
+            "LABEL",
+            "DISTINCT VALUES",
+        ),
     ];
     for ((title, name_header, value_header), (entries, _)) in sections.into_iter().zip(&lists) {
         if entries.is_empty() {
             continue;
         }
         out.push(b'\n');
-        out.extend_from_slice(SELECTED.render(title, t, line_width).as_bytes());
+        out.extend_from_slice(&SELECTED.render_bytes(title, t));
         out.push(b'\n');
         entry_table(&mut out, name_header, value_header, entries, t);
     }

@@ -1,0 +1,15 @@
+{
+  "reason": "Documentation-only corrections after replay: SQL gate counts and promoted boundaries; removal of the live Flight diagnostic waiver. Executable sources, Python runners, and pinned JSON expectations unchanged.",
+  "files": {
+    "harness/contracts/phase3.md": {
+      "replayed_sha256": "31907b6b5cf132a064ec3b905f25f699551a8857e922c9945f24742a1d8c47d0",
+      "retained_original": "replayed-contracts/phase3.md",
+      "updated_sha256": "91f47166412748311d23a562758e621512774887e2b205fe672c71ea21115605"
+    },
+    "harness/contracts/phase6.md": {
+      "replayed_sha256": "0740c069397425566fdeea89bfb149b19a35d3a7101b3bdb571a73fa5c1cbdeb",
+      "retained_original": "replayed-contracts/phase6.md",
+      "updated_sha256": "25a63ae35f51f20492cf8bd5b6cad3bdd98fc3c5f1532da1ff347966e65d5c91"
+    }
+  }
+}

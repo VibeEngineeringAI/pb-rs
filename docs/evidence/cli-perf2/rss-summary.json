@@ -1,0 +1,2252 @@
+{
+  "kernel_documentation": "https://www.kernel.org/doc/html/latest/filesystems/proc.html",
+  "kind": "RSS attribution diagnostics; original benchmark rankings remain unchanged",
+  "limitations": [
+    "Full-pipe snapshots are precise RSS at the natural output-write boundary, not lifetime peaks.",
+    "Native wait4 maxrss is collected after release and can exceed snapshot RSS as exit paths execute.",
+    "File-copy/inode sensitivity is established; no exact kernel compression/folio mechanism is inferred.",
+    "W/R changes only private-copy cache history; mincore confirms presence, not folio order.",
+    "Tmpfs controls are explanatory controls and do not replace original-path measured regressions.",
+    "Initial failed phase retained: Btrfs stat device differs from mapping device; pathname/inode fallback fixed attribution."
+  ],
+  "phases": [
+    {
+      "artifact_manifest": "harness/results/perf2/rss-original-paths/artifact-manifest.json",
+      "artifact_manifest_sha256": "d00af627948e7a8f9dd9967b35957caef69f15ed53f29d98911e84d5b31c608c",
+      "complete": true,
+      "configuration": {
+        "argv": "[\"version\"]",
+        "binary": [
+          "original=bin/pb-perf-baseline",
+          "base=bin/pb-perf-final",
+          "final=bin/pb-perf2-final"
+        ],
+        "fresh_copies": false,
+        "meter": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-meter",
+        "out": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf2/rss-original-paths",
+        "repetitions": 3,
+        "seed": 2033,
+        "timeout": 10
+      },
+      "copy_storage": null,
+      "host": {
+        "affinity": [
+          8
+        ],
+        "kernel": "7.2.5-3-omarchy",
+        "machine": "x86_64",
+        "page_size_bytes": 4096
+      },
+      "inputs_unchanged": true,
+      "meter": {
+        "device": 31,
+        "inode": 197645173,
+        "mtime_ns": 1792281468955379288,
+        "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-meter",
+        "sha256": "17c3b73491b2a31e465f58eda9f210000b5cd886a4ba9fc0764dc3576899127c",
+        "size_bytes": 17232
+      },
+      "originals": {
+        "base": {
+          "device": 31,
+          "inode": 197825316,
+          "mtime_ns": 1792282277383798894,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf-final",
+          "sha256": "6be0db3a7c5f145ed75d0522b288c8ff69289c5f0bf8fe34c1622fcb180fe37c",
+          "size_bytes": 13564360
+        },
+        "final": {
+          "device": 31,
+          "inode": 198530387,
+          "mtime_ns": 1792285331847583340,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf2-final",
+          "sha256": "8124d157236e215d2068ce4dadf97ebe08043a1a1c327d5dc3a69806785e12a1",
+          "size_bytes": 13547528
+        },
+        "original": {
+          "device": 31,
+          "inode": 197663911,
+          "mtime_ns": 1792281594366202630,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf-baseline",
+          "sha256": "475fabaab8b22796089f370b49ad07e5a92bd4c554376fef62465e9500080467",
+          "size_bytes": 13525640
+        }
+      },
+      "passed": false,
+      "report": "harness/results/perf2/rss-original-paths/report.json",
+      "report_sha256": "5d8f0fe319821a3a269803d904d9d2d09633642411f07ea91d993009b238ef88",
+      "script_sha256": "3c62415e87d1965bf7900cbf788f21ac5b4eabc3a01321f3e61e2c73f8fcd045",
+      "series": {
+        "base-original-path": {
+          "metrics": {},
+          "passing_runs": 0
+        },
+        "final-original-path": {
+          "metrics": {},
+          "passing_runs": 0
+        },
+        "original-original-path": {
+          "metrics": {},
+          "passing_runs": 0
+        }
+      },
+      "variants": {
+        "base-original-path": {
+          "device": 31,
+          "inode": 197825316,
+          "mtime_ns": 1792282277383798894,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf-final",
+          "sha256": "6be0db3a7c5f145ed75d0522b288c8ff69289c5f0bf8fe34c1622fcb180fe37c",
+          "size_bytes": 13564360
+        },
+        "final-original-path": {
+          "device": 31,
+          "inode": 198530387,
+          "mtime_ns": 1792285331847583340,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf2-final",
+          "sha256": "8124d157236e215d2068ce4dadf97ebe08043a1a1c327d5dc3a69806785e12a1",
+          "size_bytes": 13547528
+        },
+        "original-original-path": {
+          "device": 31,
+          "inode": 197663911,
+          "mtime_ns": 1792281594366202630,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf-baseline",
+          "sha256": "475fabaab8b22796089f370b49ad07e5a92bd4c554376fef62465e9500080467",
+          "size_bytes": 13525640
+        }
+      }
+    },
+    {
+      "artifact_manifest": "harness/results/perf2/rss-original-paths-v2/artifact-manifest.json",
+      "artifact_manifest_sha256": "c5f3a10cc89a06bab6aeb6a573881837ffa641490f83fb184449677fec4c087d",
+      "complete": true,
+      "configuration": {
+        "argv": "[\"version\"]",
+        "binary": [
+          "original=bin/pb-perf-baseline",
+          "base=bin/pb-perf-final",
+          "final=bin/pb-perf2-final"
+        ],
+        "fresh_copies": false,
+        "meter": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-meter",
+        "out": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf2/rss-original-paths-v2",
+        "repetitions": 3,
+        "seed": 2033,
+        "timeout": 10
+      },
+      "copy_storage": null,
+      "host": {
+        "affinity": [
+          8
+        ],
+        "kernel": "7.2.5-3-omarchy",
+        "machine": "x86_64",
+        "page_size_bytes": 4096
+      },
+      "inputs_unchanged": true,
+      "meter": {
+        "device": 31,
+        "inode": 197645173,
+        "mtime_ns": 1792281468955379288,
+        "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-meter",
+        "sha256": "17c3b73491b2a31e465f58eda9f210000b5cd886a4ba9fc0764dc3576899127c",
+        "size_bytes": 17232
+      },
+      "originals": {
+        "base": {
+          "device": 31,
+          "inode": 197825316,
+          "mtime_ns": 1792282277383798894,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf-final",
+          "sha256": "6be0db3a7c5f145ed75d0522b288c8ff69289c5f0bf8fe34c1622fcb180fe37c",
+          "size_bytes": 13564360
+        },
+        "final": {
+          "device": 31,
+          "inode": 198530387,
+          "mtime_ns": 1792285331847583340,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf2-final",
+          "sha256": "8124d157236e215d2068ce4dadf97ebe08043a1a1c327d5dc3a69806785e12a1",
+          "size_bytes": 13547528
+        },
+        "original": {
+          "device": 31,
+          "inode": 197663911,
+          "mtime_ns": 1792281594366202630,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf-baseline",
+          "sha256": "475fabaab8b22796089f370b49ad07e5a92bd4c554376fef62465e9500080467",
+          "size_bytes": 13525640
+        }
+      },
+      "passed": true,
+      "report": "harness/results/perf2/rss-original-paths-v2/report.json",
+      "report_sha256": "61cce578a52b016a2f973f2571e6109ddba177e9671c4f8a0bf23e7208043a36",
+      "script_sha256": "0b696be18a4f014d030be7bea88500b96ced3cfd31ca2a8846e34ace8e8b274e",
+      "series": {
+        "base-original-path": {
+          "metrics": {
+            "anon_huge_kb": {
+              "max": 0,
+              "median": 0,
+              "min": 0
+            },
+            "file_pmd_kb": {
+              "max": 0,
+              "median": 0,
+              "min": 0
+            },
+            "heap_kb": {
+              "max": 64,
+              "median": 64,
+              "min": 64
+            },
+            "hwm_minus_status_kb": {
+              "max": 0,
+              "median": 0,
+              "min": 0
+            },
+            "native_minor_faults": {
+              "max": 236,
+              "median": 233,
+              "min": 233
+            },
+            "native_minus_write_kb": {
+              "max": 244.0,
+              "median": 224.0,
+              "min": 116.0
+            },
+            "native_peak_kb": {
+              "max": 6724.0,
+              "median": 6484.0,
+              "min": 6456.0
+            },
+            "smaps_anonymous_kb": {
+              "max": 492,
+              "median": 492,
+              "min": 488
+            },
+            "smaps_minus_status_kb": {
+              "max": 0,
+              "median": 0,
+              "min": 0
+            },
+            "smaps_ro_kb": {
+              "max": 1268,
+              "median": 1252,
+              "min": 1188
+            },
+            "smaps_rx_kb": {
+              "max": 2864,
+              "median": 2808,
+              "min": 2552
+            },
+            "smaps_total_kb": {
+              "max": 6500,
+              "median": 6368,
+              "min": 6212
+            },
+            "status_hwm_kb": {
+              "max": 6500,
+              "median": 6368,
+              "min": 6212
+            },
+            "status_rss_kb": {
+              "max": 6500,
+              "median": 6368,
+              "min": 6212
+            }
+          },
+          "passing_runs": 3
+        },
+        "final-original-path": {
+          "metrics": {
+            "anon_huge_kb": {
+              "max": 0,
+              "median": 0,
+              "min": 0
+            },
+            "file_pmd_kb": {
+              "max": 0,
+              "median": 0,
+              "min": 0
+            },
+            "heap_kb": {
+              "max": 64,
+              "median": 64,
+              "min": 64
+            },
+            "hwm_minus_status_kb": {
+              "max": 0,
+              "median": 0,
+              "min": 0
+            },
+            "native_minor_faults": {
+              "max": 233,
+              "median": 230,
+              "min": 226
+            },
+            "native_minus_write_kb": {
+              "max": 664.0,
+              "median": 508.0,
+              "min": 504.0
+            },
+            "native_peak_kb": {
+              "max": 8520.0,
+              "median": 8392.0,
+              "min": 8136.0
+            },
+            "smaps_anonymous_kb": {
+              "max": 488,
+              "median": 488,
+              "min": 484
+            },
+            "smaps_minus_status_kb": {
+              "max": 0,
+              "median": 0,
+              "min": 0
+            },
+            "smaps_ro_kb": {
+              "max": 1268,
+              "median": 1236,
+              "min": 1236
+            },
+            "smaps_rx_kb": {
+              "max": 4320,
+              "median": 4216,
+              "min": 3864
+            },
+            "smaps_total_kb": {
+              "max": 8016,
+              "median": 7884,
+              "min": 7472
+            },
+            "status_hwm_kb": {
+              "max": 8016,
+              "median": 7884,
+              "min": 7472
+            },
+            "status_rss_kb": {
+              "max": 8016,
+              "median": 7884,
+              "min": 7472
+            }
+          },
+          "passing_runs": 3
+        },
+        "original-original-path": {
+          "metrics": {
+            "anon_huge_kb": {
+              "max": 0,
+              "median": 0,
+              "min": 0
+            },
+            "file_pmd_kb": {
+              "max": 0,
+              "median": 0,
+              "min": 0
+            },
+            "heap_kb": {
+              "max": 96,
+              "median": 96,
+              "min": 96
+            },
+            "hwm_minus_status_kb": {
+              "max": 0,
+              "median": 0,
+              "min": 0
+            },
+            "native_minor_faults": {
+              "max": 252,
+              "median": 250,
+              "min": 249
+            },
+            "native_minus_write_kb": {
+              "max": 268.0,
+              "median": 216.0,
+              "min": 144.0
+            },
+            "native_peak_kb": {
+              "max": 6400.0,
+              "median": 6348.0,
+              "min": 6116.0
+            },
+            "smaps_anonymous_kb": {
+              "max": 528,
+              "median": 520,
+              "min": 520
+            },
+            "smaps_minus_status_kb": {
+              "max": 0,
+              "median": 0,
+              "min": 0
+            },
+            "smaps_ro_kb": {
+              "max": 1308,
+              "median": 1276,
+              "min": 1256
+            },
+            "smaps_rx_kb": {
+              "max": 2456,
+              "median": 2412,
+              "min": 2312
+            },
+            "smaps_total_kb": {
+              "max": 6132,
+              "median": 6132,
+              "min": 5972
+            },
+            "status_hwm_kb": {
+              "max": 6132,
+              "median": 6132,
+              "min": 5972
+            },
+            "status_rss_kb": {
+              "max": 6132,
+              "median": 6132,
+              "min": 5972
+            }
+          },
+          "passing_runs": 3
+        }
+      },
+      "variants": {
+        "base-original-path": {
+          "device": 31,
+          "inode": 197825316,
+          "mtime_ns": 1792282277383798894,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf-final",
+          "sha256": "6be0db3a7c5f145ed75d0522b288c8ff69289c5f0bf8fe34c1622fcb180fe37c",
+          "size_bytes": 13564360
+        },
+        "final-original-path": {
+          "device": 31,
+          "inode": 198530387,
+          "mtime_ns": 1792285331847583340,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf2-final",
+          "sha256": "8124d157236e215d2068ce4dadf97ebe08043a1a1c327d5dc3a69806785e12a1",
+          "size_bytes": 13547528
+        },
+        "original-original-path": {
+          "device": 31,
+          "inode": 197663911,
+          "mtime_ns": 1792281594366202630,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf-baseline",
+          "sha256": "475fabaab8b22796089f370b49ad07e5a92bd4c554376fef62465e9500080467",
+          "size_bytes": 13525640
+        }
+      }
+    },
+    {
+      "artifact_manifest": "harness/results/perf2/rss-fresh-copies/artifact-manifest.json",
+      "artifact_manifest_sha256": "92dd58ea17e073e2ef0273538e59a2273a0bcbbaad15600522647e883363e6e4",
+      "complete": true,
+      "configuration": {
+        "argv": "[\"version\"]",
+        "binary": [
+          "original=bin/pb-perf-baseline",
+          "base=bin/pb-perf-final",
+          "final=bin/pb-perf2-final"
+        ],
+        "fresh_copies": true,
+        "meter": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-meter",
+        "out": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf2/rss-fresh-copies",
+        "repetitions": 12,
+        "seed": 2034,
+        "timeout": 10
+      },
+      "copy_storage": null,
+      "host": {
+        "affinity": [
+          8
+        ],
+        "kernel": "7.2.5-3-omarchy",
+        "machine": "x86_64",
+        "page_size_bytes": 4096
+      },
+      "inputs_unchanged": true,
+      "meter": {
+        "device": 31,
+        "inode": 197645173,
+        "mtime_ns": 1792281468955379288,
+        "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-meter",
+        "sha256": "17c3b73491b2a31e465f58eda9f210000b5cd886a4ba9fc0764dc3576899127c",
+        "size_bytes": 17232
+      },
+      "originals": {
+        "base": {
+          "device": 31,
+          "inode": 197825316,
+          "mtime_ns": 1792282277383798894,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf-final",
+          "sha256": "6be0db3a7c5f145ed75d0522b288c8ff69289c5f0bf8fe34c1622fcb180fe37c",
+          "size_bytes": 13564360
+        },
+        "final": {
+          "device": 31,
+          "inode": 198530387,
+          "mtime_ns": 1792285331847583340,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf2-final",
+          "sha256": "8124d157236e215d2068ce4dadf97ebe08043a1a1c327d5dc3a69806785e12a1",
+          "size_bytes": 13547528
+        },
+        "original": {
+          "device": 31,
+          "inode": 197663911,
+          "mtime_ns": 1792281594366202630,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf-baseline",
+          "sha256": "475fabaab8b22796089f370b49ad07e5a92bd4c554376fef62465e9500080467",
+          "size_bytes": 13525640
+        }
+      },
+      "passed": true,
+      "report": "harness/results/perf2/rss-fresh-copies/report.json",
+      "report_sha256": "c428a4a40dc93a01f0863af01f39befd6dde2911c964273523554eb436d9caa2",
+      "script_sha256": "0b696be18a4f014d030be7bea88500b96ced3cfd31ca2a8846e34ace8e8b274e",
+      "series": {
+        "base-fresh-copy": {
+          "metrics": {
+            "anon_huge_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "file_pmd_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "heap_kb": {
+              "max": 64,
+              "median": 64.0,
+              "min": 64
+            },
+            "hwm_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "native_minor_faults": {
+              "max": 241,
+              "median": 235.0,
+              "min": 233
+            },
+            "native_minus_write_kb": {
+              "max": 252.0,
+              "median": 196.0,
+              "min": 120.0
+            },
+            "native_peak_kb": {
+              "max": 6344.0,
+              "median": 6086.0,
+              "min": 5856.0
+            },
+            "smaps_anonymous_kb": {
+              "max": 492,
+              "median": 488.0,
+              "min": 484
+            },
+            "smaps_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "smaps_ro_kb": {
+              "max": 1252,
+              "median": 1228.0,
+              "min": 1188
+            },
+            "smaps_rx_kb": {
+              "max": 2472,
+              "median": 2312.0,
+              "min": 2088
+            },
+            "smaps_total_kb": {
+              "max": 6100,
+              "median": 5884.0,
+              "min": 5696
+            },
+            "status_hwm_kb": {
+              "max": 6100,
+              "median": 5884.0,
+              "min": 5696
+            },
+            "status_rss_kb": {
+              "max": 6100,
+              "median": 5884.0,
+              "min": 5696
+            }
+          },
+          "passing_runs": 12
+        },
+        "base-original-path": {
+          "metrics": {
+            "anon_huge_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "file_pmd_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "heap_kb": {
+              "max": 64,
+              "median": 64.0,
+              "min": 64
+            },
+            "hwm_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "native_minor_faults": {
+              "max": 239,
+              "median": 234.5,
+              "min": 232
+            },
+            "native_minus_write_kb": {
+              "max": 312.0,
+              "median": 184.0,
+              "min": 56.0
+            },
+            "native_peak_kb": {
+              "max": 6796.0,
+              "median": 6570.0,
+              "min": 6400.0
+            },
+            "smaps_anonymous_kb": {
+              "max": 492,
+              "median": 488.0,
+              "min": 488
+            },
+            "smaps_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "smaps_ro_kb": {
+              "max": 1268,
+              "median": 1236.0,
+              "min": 1188
+            },
+            "smaps_rx_kb": {
+              "max": 2992,
+              "median": 2804.0,
+              "min": 2608
+            },
+            "smaps_total_kb": {
+              "max": 6612,
+              "median": 6416.0,
+              "min": 6240
+            },
+            "status_hwm_kb": {
+              "max": 6612,
+              "median": 6416.0,
+              "min": 6240
+            },
+            "status_rss_kb": {
+              "max": 6612,
+              "median": 6416.0,
+              "min": 6240
+            }
+          },
+          "passing_runs": 12
+        },
+        "final-fresh-copy": {
+          "metrics": {
+            "anon_huge_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "file_pmd_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "heap_kb": {
+              "max": 64,
+              "median": 64.0,
+              "min": 64
+            },
+            "hwm_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "native_minor_faults": {
+              "max": 240,
+              "median": 235.0,
+              "min": 234
+            },
+            "native_minus_write_kb": {
+              "max": 296.0,
+              "median": 252.0,
+              "min": 120.0
+            },
+            "native_peak_kb": {
+              "max": 5976.0,
+              "median": 5826.0,
+              "min": 5568.0
+            },
+            "smaps_anonymous_kb": {
+              "max": 488,
+              "median": 486.0,
+              "min": 480
+            },
+            "smaps_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "smaps_ro_kb": {
+              "max": 1268,
+              "median": 1236.0,
+              "min": 1176
+            },
+            "smaps_rx_kb": {
+              "max": 2068,
+              "median": 1944.0,
+              "min": 1848
+            },
+            "smaps_total_kb": {
+              "max": 5716,
+              "median": 5548.0,
+              "min": 5448
+            },
+            "status_hwm_kb": {
+              "max": 5716,
+              "median": 5548.0,
+              "min": 5448
+            },
+            "status_rss_kb": {
+              "max": 5716,
+              "median": 5548.0,
+              "min": 5448
+            }
+          },
+          "passing_runs": 12
+        },
+        "final-original-path": {
+          "metrics": {
+            "anon_huge_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "file_pmd_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "heap_kb": {
+              "max": 64,
+              "median": 64.0,
+              "min": 64
+            },
+            "hwm_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "native_minor_faults": {
+              "max": 233,
+              "median": 229.0,
+              "min": 226
+            },
+            "native_minus_write_kb": {
+              "max": 692.0,
+              "median": 508.0,
+              "min": 248.0
+            },
+            "native_peak_kb": {
+              "max": 8488.0,
+              "median": 8060.0,
+              "min": 7852.0
+            },
+            "smaps_anonymous_kb": {
+              "max": 488,
+              "median": 484.0,
+              "min": 484
+            },
+            "smaps_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "smaps_ro_kb": {
+              "max": 1268,
+              "median": 1244.0,
+              "min": 1188
+            },
+            "smaps_rx_kb": {
+              "max": 4256,
+              "median": 4000.0,
+              "min": 3712
+            },
+            "smaps_total_kb": {
+              "max": 7840,
+              "median": 7656.0,
+              "min": 7344
+            },
+            "status_hwm_kb": {
+              "max": 7840,
+              "median": 7656.0,
+              "min": 7344
+            },
+            "status_rss_kb": {
+              "max": 7840,
+              "median": 7656.0,
+              "min": 7344
+            }
+          },
+          "passing_runs": 12
+        },
+        "original-fresh-copy": {
+          "metrics": {
+            "anon_huge_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "file_pmd_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "heap_kb": {
+              "max": 96,
+              "median": 96.0,
+              "min": 96
+            },
+            "hwm_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "native_minor_faults": {
+              "max": 235,
+              "median": 233.0,
+              "min": 228
+            },
+            "native_minus_write_kb": {
+              "max": 392.0,
+              "median": 212.0,
+              "min": 208.0
+            },
+            "native_peak_kb": {
+              "max": 9196.0,
+              "median": 8660.0,
+              "min": 8400.0
+            },
+            "smaps_anonymous_kb": {
+              "max": 528,
+              "median": 524.0,
+              "min": 520
+            },
+            "smaps_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "smaps_ro_kb": {
+              "max": 1576,
+              "median": 1568.0,
+              "min": 1456
+            },
+            "smaps_rx_kb": {
+              "max": 4792,
+              "median": 4440.0,
+              "min": 4200
+            },
+            "smaps_total_kb": {
+              "max": 8804,
+              "median": 8448.0,
+              "min": 8180
+            },
+            "status_hwm_kb": {
+              "max": 8804,
+              "median": 8448.0,
+              "min": 8180
+            },
+            "status_rss_kb": {
+              "max": 8804,
+              "median": 8448.0,
+              "min": 8180
+            }
+          },
+          "passing_runs": 12
+        },
+        "original-original-path": {
+          "metrics": {
+            "anon_huge_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "file_pmd_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "heap_kb": {
+              "max": 96,
+              "median": 96.0,
+              "min": 96
+            },
+            "hwm_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "native_minor_faults": {
+              "max": 253,
+              "median": 251.0,
+              "min": 249
+            },
+            "native_minus_write_kb": {
+              "max": 380.0,
+              "median": 268.0,
+              "min": 212.0
+            },
+            "native_peak_kb": {
+              "max": 6584.0,
+              "median": 6478.0,
+              "min": 6328.0
+            },
+            "smaps_anonymous_kb": {
+              "max": 524,
+              "median": 524.0,
+              "min": 520
+            },
+            "smaps_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "smaps_ro_kb": {
+              "max": 1316,
+              "median": 1282.0,
+              "min": 1224
+            },
+            "smaps_rx_kb": {
+              "max": 2624,
+              "median": 2554.0,
+              "min": 2320
+            },
+            "smaps_total_kb": {
+              "max": 6344,
+              "median": 6212.0,
+              "min": 6036
+            },
+            "status_hwm_kb": {
+              "max": 6344,
+              "median": 6212.0,
+              "min": 6036
+            },
+            "status_rss_kb": {
+              "max": 6344,
+              "median": 6212.0,
+              "min": 6036
+            }
+          },
+          "passing_runs": 12
+        }
+      },
+      "variants": {
+        "base-fresh-copy": {
+          "device": 31,
+          "inode": 199138997,
+          "mtime_ns": 1792287515147416871,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf2/rss-fresh-copies/private-copies/base",
+          "sha256": "6be0db3a7c5f145ed75d0522b288c8ff69289c5f0bf8fe34c1622fcb180fe37c",
+          "size_bytes": 13564360
+        },
+        "base-original-path": {
+          "device": 31,
+          "inode": 197825316,
+          "mtime_ns": 1792282277383798894,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf-final",
+          "sha256": "6be0db3a7c5f145ed75d0522b288c8ff69289c5f0bf8fe34c1622fcb180fe37c",
+          "size_bytes": 13564360
+        },
+        "final-fresh-copy": {
+          "device": 31,
+          "inode": 199138991,
+          "mtime_ns": 1792287515125416772,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf2/rss-fresh-copies/private-copies/final",
+          "sha256": "8124d157236e215d2068ce4dadf97ebe08043a1a1c327d5dc3a69806785e12a1",
+          "size_bytes": 13547528
+        },
+        "final-original-path": {
+          "device": 31,
+          "inode": 198530387,
+          "mtime_ns": 1792285331847583340,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf2-final",
+          "sha256": "8124d157236e215d2068ce4dadf97ebe08043a1a1c327d5dc3a69806785e12a1",
+          "size_bytes": 13547528
+        },
+        "original-fresh-copy": {
+          "device": 31,
+          "inode": 199139004,
+          "mtime_ns": 1792287515189417059,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf2/rss-fresh-copies/private-copies/original",
+          "sha256": "475fabaab8b22796089f370b49ad07e5a92bd4c554376fef62465e9500080467",
+          "size_bytes": 13525640
+        },
+        "original-original-path": {
+          "device": 31,
+          "inode": 197663911,
+          "mtime_ns": 1792281594366202630,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf-baseline",
+          "sha256": "475fabaab8b22796089f370b49ad07e5a92bd4c554376fef62465e9500080467",
+          "size_bytes": 13525640
+        }
+      }
+    },
+    {
+      "artifact_manifest": "harness/results/perf2/rss-history-crossover/artifact-manifest.json",
+      "artifact_manifest_sha256": "bfc3fda9feb2407e4f04f7567a0b511ed9e7755e1bb5391493d81c214c872e91",
+      "complete": true,
+      "configuration": {
+        "argv": "[\"version\"]",
+        "binary": [
+          "final=bin/pb-perf2-final"
+        ],
+        "fresh_copies": true,
+        "history_crossover": true,
+        "meter": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-meter",
+        "out": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf2/rss-history-crossover",
+        "repetitions": 12,
+        "seed": 2035,
+        "timeout": 10
+      },
+      "copy_storage": null,
+      "host": {
+        "affinity": [
+          8
+        ],
+        "kernel": "7.2.5-3-omarchy",
+        "machine": "x86_64",
+        "page_size_bytes": 4096
+      },
+      "inputs_unchanged": true,
+      "meter": {
+        "device": 31,
+        "inode": 197645173,
+        "mtime_ns": 1792281468955379288,
+        "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-meter",
+        "sha256": "17c3b73491b2a31e465f58eda9f210000b5cd886a4ba9fc0764dc3576899127c",
+        "size_bytes": 17232
+      },
+      "originals": {
+        "final": {
+          "device": 31,
+          "inode": 198530387,
+          "mtime_ns": 1792285331847583340,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf2-final",
+          "sha256": "8124d157236e215d2068ce4dadf97ebe08043a1a1c327d5dc3a69806785e12a1",
+          "size_bytes": 13547528
+        }
+      },
+      "passed": true,
+      "report": "harness/results/perf2/rss-history-crossover/report.json",
+      "report_sha256": "0abd61eca64889f8bc9b5cbce74373a74c7b7980339d6faaa4c9c70da41dfe3b",
+      "script_sha256": "a762350332c7249c44ebc97c3cbf04ded14fa05a8fe4eff7dc455122e16192a0",
+      "series": {
+        "final-copy-read": {
+          "metrics": {
+            "anon_huge_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "file_pmd_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "heap_kb": {
+              "max": 64,
+              "median": 64.0,
+              "min": 64
+            },
+            "hwm_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "native_minor_faults": {
+              "max": 234,
+              "median": 228.5,
+              "min": 226
+            },
+            "native_minus_write_kb": {
+              "max": 692.0,
+              "median": 508.0,
+              "min": 248.0
+            },
+            "native_peak_kb": {
+              "max": 8624.0,
+              "median": 8038.0,
+              "min": 7868.0
+            },
+            "smaps_anonymous_kb": {
+              "max": 488,
+              "median": 484.0,
+              "min": 480
+            },
+            "smaps_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "smaps_ro_kb": {
+              "max": 1268,
+              "median": 1236.0,
+              "min": 1176
+            },
+            "smaps_rx_kb": {
+              "max": 4352,
+              "median": 4070.0,
+              "min": 3864
+            },
+            "smaps_total_kb": {
+              "max": 7964,
+              "median": 7724.0,
+              "min": 7416
+            },
+            "status_hwm_kb": {
+              "max": 7964,
+              "median": 7724.0,
+              "min": 7416
+            },
+            "status_rss_kb": {
+              "max": 7964,
+              "median": 7724.0,
+              "min": 7416
+            }
+          },
+          "passing_runs": 12
+        },
+        "final-copy-write": {
+          "metrics": {
+            "anon_huge_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "file_pmd_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "heap_kb": {
+              "max": 64,
+              "median": 64.0,
+              "min": 64
+            },
+            "hwm_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "native_minor_faults": {
+              "max": 225,
+              "median": 219.5,
+              "min": 218
+            },
+            "native_minus_write_kb": {
+              "max": 692.0,
+              "median": 504.0,
+              "min": 252.0
+            },
+            "native_peak_kb": {
+              "max": 8848.0,
+              "median": 8386.0,
+              "min": 8136.0
+            },
+            "smaps_anonymous_kb": {
+              "max": 488,
+              "median": 484.0,
+              "min": 484
+            },
+            "smaps_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "smaps_ro_kb": {
+              "max": 1572,
+              "median": 1486.0,
+              "min": 1404
+            },
+            "smaps_rx_kb": {
+              "max": 4396,
+              "median": 4092.0,
+              "min": 3824
+            },
+            "smaps_total_kb": {
+              "max": 8204,
+              "median": 7916.0,
+              "min": 7720
+            },
+            "status_hwm_kb": {
+              "max": 8204,
+              "median": 7916.0,
+              "min": 7720
+            },
+            "status_rss_kb": {
+              "max": 8204,
+              "median": 7916.0,
+              "min": 7720
+            }
+          },
+          "passing_runs": 12
+        },
+        "final-original-path": {
+          "metrics": {
+            "anon_huge_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "file_pmd_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "heap_kb": {
+              "max": 64,
+              "median": 64.0,
+              "min": 64
+            },
+            "hwm_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "native_minor_faults": {
+              "max": 231,
+              "median": 228.5,
+              "min": 225
+            },
+            "native_minus_write_kb": {
+              "max": 680.0,
+              "median": 508.0,
+              "min": 252.0
+            },
+            "native_peak_kb": {
+              "max": 8616.0,
+              "median": 8138.0,
+              "min": 7800.0
+            },
+            "smaps_anonymous_kb": {
+              "max": 488,
+              "median": 484.0,
+              "min": 480
+            },
+            "smaps_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "smaps_ro_kb": {
+              "max": 1268,
+              "median": 1236.0,
+              "min": 1188
+            },
+            "smaps_rx_kb": {
+              "max": 4440,
+              "median": 4084.0,
+              "min": 3696
+            },
+            "smaps_total_kb": {
+              "max": 8016,
+              "median": 7700.0,
+              "min": 7288
+            },
+            "status_hwm_kb": {
+              "max": 8016,
+              "median": 7700.0,
+              "min": 7288
+            },
+            "status_rss_kb": {
+              "max": 8016,
+              "median": 7700.0,
+              "min": 7288
+            }
+          },
+          "passing_runs": 12
+        }
+      },
+      "variants": {
+        "final-copy-read": {
+          "device": 31,
+          "inode": 199153507,
+          "mtime_ns": 1792287582667716858,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf2/rss-history-crossover/private-copies/final",
+          "sha256": "8124d157236e215d2068ce4dadf97ebe08043a1a1c327d5dc3a69806785e12a1",
+          "size_bytes": 13547528
+        },
+        "final-copy-write": {
+          "device": 31,
+          "inode": 199153507,
+          "mtime_ns": 1792287582720717092,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf2/rss-history-crossover/private-copies/final",
+          "sha256": "8124d157236e215d2068ce4dadf97ebe08043a1a1c327d5dc3a69806785e12a1",
+          "size_bytes": 13547528
+        },
+        "final-original-path": {
+          "device": 31,
+          "inode": 198530387,
+          "mtime_ns": 1792285331847583340,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf2-final",
+          "sha256": "8124d157236e215d2068ce4dadf97ebe08043a1a1c327d5dc3a69806785e12a1",
+          "size_bytes": 13547528
+        }
+      }
+    },
+    {
+      "artifact_manifest": "harness/results/perf2/rss-history-mincore/artifact-manifest.json",
+      "artifact_manifest_sha256": "8be635a23fa1bacc14cb27216c42964aa5a3e5270889c7a6e697cdaa70bfb783",
+      "complete": true,
+      "configuration": {
+        "argv": "[\"version\"]",
+        "binary": [
+          "final=bin/pb-perf2-final"
+        ],
+        "copy_root": null,
+        "fresh_copies": true,
+        "history_crossover": true,
+        "meter": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-meter",
+        "out": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf2/rss-history-mincore",
+        "repetitions": 12,
+        "seed": 2036,
+        "timeout": 10
+      },
+      "copy_storage": {
+        "device": "0:30",
+        "filesystem": "btrfs",
+        "mount_options": "rw,relatime",
+        "mountpoint": "/home"
+      },
+      "host": {
+        "affinity": [
+          8
+        ],
+        "kernel": "7.2.5-3-omarchy",
+        "machine": "x86_64",
+        "page_size_bytes": 4096
+      },
+      "inputs_unchanged": true,
+      "meter": {
+        "device": 31,
+        "inode": 197645173,
+        "mtime_ns": 1792281468955379288,
+        "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-meter",
+        "sha256": "17c3b73491b2a31e465f58eda9f210000b5cd886a4ba9fc0764dc3576899127c",
+        "size_bytes": 17232
+      },
+      "originals": {
+        "final": {
+          "device": 31,
+          "inode": 198530387,
+          "mtime_ns": 1792285331847583340,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf2-final",
+          "sha256": "8124d157236e215d2068ce4dadf97ebe08043a1a1c327d5dc3a69806785e12a1",
+          "size_bytes": 13547528
+        }
+      },
+      "passed": true,
+      "report": "harness/results/perf2/rss-history-mincore/report.json",
+      "report_sha256": "d4698e1dad3dd08d180645d1fe5ba718c274e6ca14a5fef647df626063f5c9fd",
+      "script_sha256": "c02897b3e9f07a87ba220a512a6f9c08a6fd201153121c8c7d1d2cecd6070960",
+      "series": {
+        "final-copy-read": {
+          "metrics": {
+            "anon_huge_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "file_pmd_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "heap_kb": {
+              "max": 64,
+              "median": 64.0,
+              "min": 64
+            },
+            "hwm_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "native_minor_faults": {
+              "max": 232,
+              "median": 229.0,
+              "min": 225
+            },
+            "native_minus_write_kb": {
+              "max": 684.0,
+              "median": 508.0,
+              "min": 316.0
+            },
+            "native_peak_kb": {
+              "max": 8708.0,
+              "median": 8336.0,
+              "min": 7808.0
+            },
+            "post_full_read_resident_pages": {
+              "max": 3308,
+              "median": 3308.0,
+              "min": 3308
+            },
+            "post_full_read_total_pages": {
+              "max": 3308,
+              "median": 3308.0,
+              "min": 3308
+            },
+            "post_private_dontneed_resident_pages": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "post_private_dontneed_total_pages": {
+              "max": 3308,
+              "median": 3308.0,
+              "min": 3308
+            },
+            "post_write_fsync_resident_pages": {
+              "max": 3308,
+              "median": 3308.0,
+              "min": 3308
+            },
+            "post_write_fsync_total_pages": {
+              "max": 3308,
+              "median": 3308.0,
+              "min": 3308
+            },
+            "smaps_anonymous_kb": {
+              "max": 488,
+              "median": 484.0,
+              "min": 484
+            },
+            "smaps_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "smaps_ro_kb": {
+              "max": 1268,
+              "median": 1236.0,
+              "min": 1188
+            },
+            "smaps_rx_kb": {
+              "max": 4436,
+              "median": 4228.0,
+              "min": 3680
+            },
+            "smaps_total_kb": {
+              "max": 8072,
+              "median": 7828.0,
+              "min": 7304
+            },
+            "status_hwm_kb": {
+              "max": 8072,
+              "median": 7828.0,
+              "min": 7304
+            },
+            "status_rss_kb": {
+              "max": 8072,
+              "median": 7828.0,
+              "min": 7304
+            }
+          },
+          "passing_runs": 12
+        },
+        "final-copy-write": {
+          "metrics": {
+            "anon_huge_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "file_pmd_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "heap_kb": {
+              "max": 64,
+              "median": 64.0,
+              "min": 64
+            },
+            "hwm_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "native_minor_faults": {
+              "max": 226,
+              "median": 220.0,
+              "min": 216
+            },
+            "native_minus_write_kb": {
+              "max": 684.0,
+              "median": 508.0,
+              "min": 252.0
+            },
+            "native_peak_kb": {
+              "max": 8848.0,
+              "median": 8466.0,
+              "min": 8244.0
+            },
+            "post_full_read_resident_pages": {
+              "max": 3308,
+              "median": 3308.0,
+              "min": 3308
+            },
+            "post_full_read_total_pages": {
+              "max": 3308,
+              "median": 3308.0,
+              "min": 3308
+            },
+            "post_write_fsync_resident_pages": {
+              "max": 3308,
+              "median": 3308.0,
+              "min": 3308
+            },
+            "post_write_fsync_total_pages": {
+              "max": 3308,
+              "median": 3308.0,
+              "min": 3308
+            },
+            "smaps_anonymous_kb": {
+              "max": 488,
+              "median": 484.0,
+              "min": 484
+            },
+            "smaps_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "smaps_ro_kb": {
+              "max": 1572,
+              "median": 1572.0,
+              "min": 1448
+            },
+            "smaps_rx_kb": {
+              "max": 4348,
+              "median": 4110.0,
+              "min": 3648
+            },
+            "smaps_total_kb": {
+              "max": 8304,
+              "median": 8008.0,
+              "min": 7604
+            },
+            "status_hwm_kb": {
+              "max": 8304,
+              "median": 8008.0,
+              "min": 7604
+            },
+            "status_rss_kb": {
+              "max": 8304,
+              "median": 8008.0,
+              "min": 7604
+            }
+          },
+          "passing_runs": 12
+        },
+        "final-original-path": {
+          "metrics": {
+            "anon_huge_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "file_pmd_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "heap_kb": {
+              "max": 64,
+              "median": 64.0,
+              "min": 64
+            },
+            "hwm_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "native_minor_faults": {
+              "max": 234,
+              "median": 228.0,
+              "min": 226
+            },
+            "native_minus_write_kb": {
+              "max": 692.0,
+              "median": 600.0,
+              "min": 428.0
+            },
+            "native_peak_kb": {
+              "max": 8424.0,
+              "median": 8152.0,
+              "min": 8036.0
+            },
+            "smaps_anonymous_kb": {
+              "max": 488,
+              "median": 484.0,
+              "min": 480
+            },
+            "smaps_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "smaps_ro_kb": {
+              "max": 1268,
+              "median": 1240.0,
+              "min": 1220
+            },
+            "smaps_rx_kb": {
+              "max": 4256,
+              "median": 3950.0,
+              "min": 3756
+            },
+            "smaps_total_kb": {
+              "max": 7916,
+              "median": 7596.0,
+              "min": 7388
+            },
+            "status_hwm_kb": {
+              "max": 7916,
+              "median": 7596.0,
+              "min": 7388
+            },
+            "status_rss_kb": {
+              "max": 7916,
+              "median": 7596.0,
+              "min": 7388
+            }
+          },
+          "passing_runs": 12
+        }
+      },
+      "variants": {
+        "final-copy-read": {
+          "device": 31,
+          "inode": 199171679,
+          "mtime_ns": 1792287658127046208,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf2/rss-history-mincore/private-copies/final",
+          "sha256": "8124d157236e215d2068ce4dadf97ebe08043a1a1c327d5dc3a69806785e12a1",
+          "size_bytes": 13547528
+        },
+        "final-copy-write": {
+          "device": 31,
+          "inode": 199171679,
+          "mtime_ns": 1792287658181046442,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf2/rss-history-mincore/private-copies/final",
+          "sha256": "8124d157236e215d2068ce4dadf97ebe08043a1a1c327d5dc3a69806785e12a1",
+          "size_bytes": 13547528
+        },
+        "final-original-path": {
+          "device": 31,
+          "inode": 198530387,
+          "mtime_ns": 1792285331847583340,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf2-final",
+          "sha256": "8124d157236e215d2068ce4dadf97ebe08043a1a1c327d5dc3a69806785e12a1",
+          "size_bytes": 13547528
+        }
+      }
+    },
+    {
+      "artifact_manifest": "harness/results/perf2/rss-tmpfs-controls/artifact-manifest.json",
+      "artifact_manifest_sha256": "d2a70a3748c05ea49f6fade6807b5738a2292fc1659df5fe36476c86d7ed6945",
+      "complete": true,
+      "configuration": {
+        "argv": "[\"version\"]",
+        "binary": [
+          "original=bin/pb-perf-baseline",
+          "base=bin/pb-perf-final",
+          "final=bin/pb-perf2-final"
+        ],
+        "copy_root": "/dev/shm/pb-perf2-rss-controls-2037",
+        "fresh_copies": true,
+        "history_crossover": false,
+        "meter": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-meter",
+        "out": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf2/rss-tmpfs-controls",
+        "repetitions": 12,
+        "seed": 2037,
+        "timeout": 10
+      },
+      "copy_storage": {
+        "device": "0:34",
+        "filesystem": "tmpfs",
+        "mount_options": "rw,nosuid,nodev",
+        "mountpoint": "/dev/shm"
+      },
+      "host": {
+        "affinity": [
+          8
+        ],
+        "kernel": "7.2.5-3-omarchy",
+        "machine": "x86_64",
+        "page_size_bytes": 4096
+      },
+      "inputs_unchanged": true,
+      "meter": {
+        "device": 31,
+        "inode": 197645173,
+        "mtime_ns": 1792281468955379288,
+        "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-meter",
+        "sha256": "17c3b73491b2a31e465f58eda9f210000b5cd886a4ba9fc0764dc3576899127c",
+        "size_bytes": 17232
+      },
+      "originals": {
+        "base": {
+          "device": 31,
+          "inode": 197825316,
+          "mtime_ns": 1792282277383798894,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf-final",
+          "sha256": "6be0db3a7c5f145ed75d0522b288c8ff69289c5f0bf8fe34c1622fcb180fe37c",
+          "size_bytes": 13564360
+        },
+        "final": {
+          "device": 31,
+          "inode": 198530387,
+          "mtime_ns": 1792285331847583340,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf2-final",
+          "sha256": "8124d157236e215d2068ce4dadf97ebe08043a1a1c327d5dc3a69806785e12a1",
+          "size_bytes": 13547528
+        },
+        "original": {
+          "device": 31,
+          "inode": 197663911,
+          "mtime_ns": 1792281594366202630,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf-baseline",
+          "sha256": "475fabaab8b22796089f370b49ad07e5a92bd4c554376fef62465e9500080467",
+          "size_bytes": 13525640
+        }
+      },
+      "passed": true,
+      "report": "harness/results/perf2/rss-tmpfs-controls/report.json",
+      "report_sha256": "c05681ff0508a914cde3ef87a1bf2e6a4958fb90bd975a4b2e052634da1185d8",
+      "script_sha256": "c02897b3e9f07a87ba220a512a6f9c08a6fd201153121c8c7d1d2cecd6070960",
+      "series": {
+        "base-fresh-copy": {
+          "metrics": {
+            "anon_huge_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "file_pmd_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "heap_kb": {
+              "max": 64,
+              "median": 64.0,
+              "min": 64
+            },
+            "hwm_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "native_minor_faults": {
+              "max": 244,
+              "median": 237.0,
+              "min": 234
+            },
+            "native_minus_write_kb": {
+              "max": 304.0,
+              "median": 132.0,
+              "min": -8.0
+            },
+            "native_peak_kb": {
+              "max": 5896.0,
+              "median": 5384.0,
+              "min": 5148.0
+            },
+            "smaps_anonymous_kb": {
+              "max": 492,
+              "median": 488.0,
+              "min": 488
+            },
+            "smaps_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "smaps_ro_kb": {
+              "max": 1268,
+              "median": 1248.0,
+              "min": 1208
+            },
+            "smaps_rx_kb": {
+              "max": 1924,
+              "median": 1560.0,
+              "min": 1444
+            },
+            "smaps_total_kb": {
+              "max": 5592,
+              "median": 5200.0,
+              "min": 5072
+            },
+            "status_hwm_kb": {
+              "max": 5592,
+              "median": 5200.0,
+              "min": 5072
+            },
+            "status_rss_kb": {
+              "max": 5592,
+              "median": 5200.0,
+              "min": 5072
+            }
+          },
+          "passing_runs": 12
+        },
+        "base-original-path": {
+          "metrics": {
+            "anon_huge_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "file_pmd_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "heap_kb": {
+              "max": 64,
+              "median": 64.0,
+              "min": 64
+            },
+            "hwm_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "native_minor_faults": {
+              "max": 242,
+              "median": 236.0,
+              "min": 232
+            },
+            "native_minus_write_kb": {
+              "max": 344.0,
+              "median": 238.0,
+              "min": 116.0
+            },
+            "native_peak_kb": {
+              "max": 6948.0,
+              "median": 6604.0,
+              "min": 6504.0
+            },
+            "smaps_anonymous_kb": {
+              "max": 492,
+              "median": 488.0,
+              "min": 484
+            },
+            "smaps_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "smaps_ro_kb": {
+              "max": 1268,
+              "median": 1236.0,
+              "min": 1188
+            },
+            "smaps_rx_kb": {
+              "max": 3036,
+              "median": 2784.0,
+              "min": 2624
+            },
+            "smaps_total_kb": {
+              "max": 6696,
+              "median": 6410.0,
+              "min": 6236
+            },
+            "status_hwm_kb": {
+              "max": 6696,
+              "median": 6410.0,
+              "min": 6236
+            },
+            "status_rss_kb": {
+              "max": 6696,
+              "median": 6410.0,
+              "min": 6236
+            }
+          },
+          "passing_runs": 12
+        },
+        "final-fresh-copy": {
+          "metrics": {
+            "anon_huge_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "file_pmd_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "heap_kb": {
+              "max": 64,
+              "median": 64.0,
+              "min": 64
+            },
+            "hwm_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "native_minor_faults": {
+              "max": 244,
+              "median": 238.5,
+              "min": 235
+            },
+            "native_minus_write_kb": {
+              "max": 260.0,
+              "median": 128.0,
+              "min": -4.0
+            },
+            "native_peak_kb": {
+              "max": 5840.0,
+              "median": 5324.0,
+              "min": 5188.0
+            },
+            "smaps_anonymous_kb": {
+              "max": 488,
+              "median": 484.0,
+              "min": 484
+            },
+            "smaps_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "smaps_ro_kb": {
+              "max": 1268,
+              "median": 1240.0,
+              "min": 1160
+            },
+            "smaps_rx_kb": {
+              "max": 1920,
+              "median": 1626.0,
+              "min": 1440
+            },
+            "smaps_total_kb": {
+              "max": 5580,
+              "median": 5226.0,
+              "min": 5000
+            },
+            "status_hwm_kb": {
+              "max": 5580,
+              "median": 5226.0,
+              "min": 5000
+            },
+            "status_rss_kb": {
+              "max": 5580,
+              "median": 5226.0,
+              "min": 5000
+            }
+          },
+          "passing_runs": 12
+        },
+        "final-original-path": {
+          "metrics": {
+            "anon_huge_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "file_pmd_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "heap_kb": {
+              "max": 64,
+              "median": 64.0,
+              "min": 64
+            },
+            "hwm_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "native_minor_faults": {
+              "max": 232,
+              "median": 228.5,
+              "min": 225
+            },
+            "native_minus_write_kb": {
+              "max": 692.0,
+              "median": 510.0,
+              "min": 248.0
+            },
+            "native_peak_kb": {
+              "max": 8640.0,
+              "median": 8038.0,
+              "min": 7840.0
+            },
+            "smaps_anonymous_kb": {
+              "max": 488,
+              "median": 484.0,
+              "min": 480
+            },
+            "smaps_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "smaps_ro_kb": {
+              "max": 1268,
+              "median": 1236.0,
+              "min": 1184
+            },
+            "smaps_rx_kb": {
+              "max": 4320,
+              "median": 3980.0,
+              "min": 3728
+            },
+            "smaps_total_kb": {
+              "max": 7968,
+              "median": 7608.0,
+              "min": 7332
+            },
+            "status_hwm_kb": {
+              "max": 7968,
+              "median": 7608.0,
+              "min": 7332
+            },
+            "status_rss_kb": {
+              "max": 7968,
+              "median": 7608.0,
+              "min": 7332
+            }
+          },
+          "passing_runs": 12
+        },
+        "original-fresh-copy": {
+          "metrics": {
+            "anon_huge_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "file_pmd_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "heap_kb": {
+              "max": 96,
+              "median": 96.0,
+              "min": 96
+            },
+            "hwm_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "native_minor_faults": {
+              "max": 261,
+              "median": 257.0,
+              "min": 254
+            },
+            "native_minus_write_kb": {
+              "max": 224.0,
+              "median": 142.0,
+              "min": -8.0
+            },
+            "native_peak_kb": {
+              "max": 6260.0,
+              "median": 5924.0,
+              "min": 5748.0
+            },
+            "smaps_anonymous_kb": {
+              "max": 528,
+              "median": 524.0,
+              "min": 520
+            },
+            "smaps_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "smaps_ro_kb": {
+              "max": 1316,
+              "median": 1268.0,
+              "min": 1224
+            },
+            "smaps_rx_kb": {
+              "max": 2364,
+              "median": 2094.0,
+              "min": 2016
+            },
+            "smaps_total_kb": {
+              "max": 6112,
+              "median": 5810.0,
+              "min": 5716
+            },
+            "status_hwm_kb": {
+              "max": 6112,
+              "median": 5810.0,
+              "min": 5716
+            },
+            "status_rss_kb": {
+              "max": 6112,
+              "median": 5810.0,
+              "min": 5716
+            }
+          },
+          "passing_runs": 12
+        },
+        "original-original-path": {
+          "metrics": {
+            "anon_huge_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "file_pmd_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "heap_kb": {
+              "max": 96,
+              "median": 96.0,
+              "min": 96
+            },
+            "hwm_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "native_minor_faults": {
+              "max": 256,
+              "median": 251.5,
+              "min": 249
+            },
+            "native_minus_write_kb": {
+              "max": 372.0,
+              "median": 214.0,
+              "min": 152.0
+            },
+            "native_peak_kb": {
+              "max": 6612.0,
+              "median": 6436.0,
+              "min": 5928.0
+            },
+            "smaps_anonymous_kb": {
+              "max": 524,
+              "median": 524.0,
+              "min": 520
+            },
+            "smaps_minus_status_kb": {
+              "max": 0,
+              "median": 0.0,
+              "min": 0
+            },
+            "smaps_ro_kb": {
+              "max": 1316,
+              "median": 1278.0,
+              "min": 1256
+            },
+            "smaps_rx_kb": {
+              "max": 2640,
+              "median": 2428.0,
+              "min": 2024
+            },
+            "smaps_total_kb": {
+              "max": 6368,
+              "median": 6146.0,
+              "min": 5740
+            },
+            "status_hwm_kb": {
+              "max": 6368,
+              "median": 6146.0,
+              "min": 5740
+            },
+            "status_rss_kb": {
+              "max": 6368,
+              "median": 6146.0,
+              "min": 5740
+            }
+          },
+          "passing_runs": 12
+        }
+      },
+      "variants": {
+        "base-fresh-copy": {
+          "device": 34,
+          "inode": 1724860,
+          "mtime_ns": 1792287669651096010,
+          "path": "/dev/shm/pb-perf2-rss-controls-2037/base",
+          "sha256": "6be0db3a7c5f145ed75d0522b288c8ff69289c5f0bf8fe34c1622fcb180fe37c",
+          "size_bytes": 13564360
+        },
+        "base-original-path": {
+          "device": 31,
+          "inode": 197825316,
+          "mtime_ns": 1792282277383798894,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf-final",
+          "sha256": "6be0db3a7c5f145ed75d0522b288c8ff69289c5f0bf8fe34c1622fcb180fe37c",
+          "size_bytes": 13564360
+        },
+        "final-fresh-copy": {
+          "device": 34,
+          "inode": 1724858,
+          "mtime_ns": 1792287669625095898,
+          "path": "/dev/shm/pb-perf2-rss-controls-2037/final",
+          "sha256": "8124d157236e215d2068ce4dadf97ebe08043a1a1c327d5dc3a69806785e12a1",
+          "size_bytes": 13547528
+        },
+        "final-original-path": {
+          "device": 31,
+          "inode": 198530387,
+          "mtime_ns": 1792285331847583340,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf2-final",
+          "sha256": "8124d157236e215d2068ce4dadf97ebe08043a1a1c327d5dc3a69806785e12a1",
+          "size_bytes": 13547528
+        },
+        "original-fresh-copy": {
+          "device": 34,
+          "inode": 1724859,
+          "mtime_ns": 1792287669638095954,
+          "path": "/dev/shm/pb-perf2-rss-controls-2037/original",
+          "sha256": "475fabaab8b22796089f370b49ad07e5a92bd4c554376fef62465e9500080467",
+          "size_bytes": 13525640
+        },
+        "original-original-path": {
+          "device": 31,
+          "inode": 197663911,
+          "mtime_ns": 1792281594366202630,
+          "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf-baseline",
+          "sha256": "475fabaab8b22796089f370b49ad07e5a92bd4c554376fef62465e9500080467",
+          "size_bytes": 13525640
+        }
+      }
+    }
+  ],
+  "samples": 234,
+  "samples_csv": "docs/evidence/cli-perf2/rss-samples.csv",
+  "samples_csv_sha256": "500365cae2c74d9bbf81228c1259d7a271f8cae5f3540bc7c0ba59d5aaba1536",
+  "successful_samples": 225
+}

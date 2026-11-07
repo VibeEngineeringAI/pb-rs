@@ -37,7 +37,10 @@ import phase2
 import phase3
 import run
 
-TMP = Path('/home/ajs/.cache/pb-phase7/tmp')
+# Select one owned scratch root before any test/capture creates a temporary
+# directory. Explicit overrides keep independent runs away from frozen caches.
+TMP = Path(os.environ.get('PB_PHASE7_TMP') or Path.home() / '.cache/pb-phase7/tmp').expanduser().resolve()
+TMP.mkdir(parents=True, exist_ok=True)
 os.environ.update({name: str(TMP) for name in ('TMPDIR', 'GOTMPDIR', 'CLAUDE_CODE_TMPDIR')})
 SCHEMA = 1
 CELL_FIELDS = ['data', 'fg', 'bg', 'bold', 'italics', 'underscore', 'strikethrough',
@@ -485,8 +488,14 @@ def spawn_helper(build=True, *, probe=True):
         TMP.mkdir(parents=True, exist_ok=True)
         with tempfile.TemporaryDirectory(prefix='phase7-spawn-build-', dir=TMP) as folder:
             staged = Path(folder) / 'spawn'
-            subprocess.run([compiler, *flags, str(source), '-o', str(staged)], check=True,
-                           stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=30)
+            try:
+                subprocess.run([compiler, *flags, str(source), '-o', str(staged)], check=True,
+                               stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=30)
+            except subprocess.CalledProcessError as error:
+                stdout = (error.stdout or b'').decode('utf-8', errors='replace')
+                stderr = (error.stderr or b'').decode('utf-8', errors='replace')
+                raise RuntimeError(f'phase7 native helper compilation failed: {error}\n'
+                                   f'compiler stdout:\n{stdout}\ncompiler stderr:\n{stderr}') from error
             manifest = {'schema_version': 1, **identity, 'build_key': key, 'path': str(binary),
                         'sha256': hashlib.sha256(staged.read_bytes()).hexdigest(), 'protocol_version': 2}
             staged_provenance = Path(folder) / 'manifest.json'

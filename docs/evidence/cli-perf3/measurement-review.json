@@ -1,0 +1,2100 @@
+{
+  "schema": "pb-perf3-measurement-review/1",
+  "scope": "Read-only analysis of completed explicit reports. No workload execution. Ratios are candidate/baseline within matching rounds; resource-gate failures retained. Candidate identity in each source report remains authoritative.",
+  "sources": [
+    {
+      "path": "harness/results/perf3/final-cached/report.json",
+      "sha256": "44ab85bd9d823ee16224b3ec8eb8239e2a4d70aaa566825f89caffef5c4f33b6"
+    },
+    {
+      "path": "harness/results/perf3/final-ingest/report.json",
+      "sha256": "ca52a64841ea3e8f8c0a4aac0a19f1b58d9a9c0d450d06326ec1924c80206309"
+    },
+    {
+      "path": "harness/results/perf3/final-follow/report.json",
+      "sha256": "228230172b5264937a8f47e22f8586deacdf18f1ac5d1f6d054e583d49c461b1"
+    },
+    {
+      "path": "harness/results/perf3/final-retry/report.json",
+      "sha256": "716b73d9073cd2e32af97ba65b33adab497329ea676ed25d33e9a7bf97047964"
+    },
+    {
+      "path": "harness/results/perf3/final-ack-loss/report.json",
+      "sha256": "347d10b04d5528ae32c18599daad10cc8fe9e0a20a79d923c8f1060c76935e53"
+    },
+    {
+      "path": "harness/results/perf3/final-split/report.json",
+      "sha256": "8502a1facf924c83942b2fc8ad020c3d0c910a42cfc8fef7ba9802b871b2020f"
+    },
+    {
+      "path": "docs/evidence/cli-perf3/profiles-baseline-json.json",
+      "sha256": "b37a673031122fe514a5cfbe5721d8a6ea1a2fd14b3a702c17d17d2b3befa612"
+    },
+    {
+      "path": "docs/evidence/cli-perf3/profiles-candidate-json.json",
+      "sha256": "0b9778cd96b4f50b1075ee647142d6106c9d2eaa2e85ef36f23a0ffad28aa1a0"
+    },
+    {
+      "path": "docs/evidence/cli-perf3/profiles-baseline-text.json",
+      "sha256": "9778812d290cf3fca7e2b052dfc2a6c86568cf344b1a810e25ea5649c499868d"
+    },
+    {
+      "path": "docs/evidence/cli-perf3/profiles-candidate-text.json",
+      "sha256": "f26f1992d5ad707a915a23f000503bf0a16de9304f067a3cf97cabaea9572731"
+    },
+    {
+      "path": "docs/evidence/cli-perf3/summarize.py",
+      "sha256": "a7ffce43600fd29f04c1ca0d38b01bba2cbc41f1698ae23abe2e6c7a4ca7046b"
+    },
+    {
+      "path": "docs/evidence/cli-perf3/dashboard.py",
+      "sha256": "4f8e44a1461bc24e8ee6262deb93a0ac687fa2758617874316e1054941fb85ce"
+    },
+    {
+      "path": "docs/evidence/cli-perf3/final-candidate.json",
+      "sha256": "c773f5596939d01fd49d78a8110ad272de65fe8f58f04f6c5799eb96816ef9b3"
+    },
+    {
+      "path": "docs/evidence/cli-perf3/round4-candidate.json",
+      "sha256": "f2bd42ad394fb24b8e220bc29209ebcfe25b162eb1cebf23db8321fad43f6cb8"
+    }
+  ],
+  "cached": {
+    "passed": true,
+    "paired": {
+      "scope": "candidate/baseline ratios within randomized serial paired rounds; lower is better",
+      "rounds": [
+        {
+          "round": 0,
+          "wall_ms": 0.28251947740648947,
+          "cpu_ms": 0.22051406965350398,
+          "peak_rss_bytes": 1.174517720951099
+        },
+        {
+          "round": 1,
+          "wall_ms": 0.30024548239944854,
+          "cpu_ms": 0.2262920637342566,
+          "peak_rss_bytes": 1.1180467091295117
+        },
+        {
+          "round": 2,
+          "wall_ms": 0.2645904984898029,
+          "cpu_ms": 0.2262406017657588,
+          "peak_rss_bytes": 1.1618923611111112
+        },
+        {
+          "round": 3,
+          "wall_ms": 0.29525677689395485,
+          "cpu_ms": 0.23791411954207153,
+          "peak_rss_bytes": 1.1611927398444253
+        },
+        {
+          "round": 4,
+          "wall_ms": 0.2848077570123331,
+          "cpu_ms": 0.23396066681044175,
+          "peak_rss_bytes": 1.149627029398859
+        }
+      ],
+      "median_ratios": {
+        "wall_ms": 0.2848077570123331,
+        "cpu_ms": 0.2262920637342566,
+        "peak_rss_bytes": 1.1611927398444253
+      }
+    },
+    "summary": {
+      "valid": true,
+      "compatible": true,
+      "observation_only": false,
+      "deadline_prefix_comparison": null,
+      "different_contracts": 1,
+      "medians": {
+        "baseline": {
+          "runs": 5,
+          "wall_ms": 935.323675,
+          "cpu_ms": 871.732,
+          "rows_per_second": 1121083.5650022437,
+          "cpu_ms_per_million_rows": 831.3484191894531,
+          "output_mib_per_second": null,
+          "peak_rss_bytes": 9437184
+        },
+        "candidate": {
+          "runs": 5,
+          "wall_ms": 270.242437,
+          "cpu_ms": 199.165,
+          "rows_per_second": 3880130.7878969433,
+          "cpu_ms_per_million_rows": 189.93854522705078,
+          "output_mib_per_second": null,
+          "peak_rss_bytes": 10784768
+        }
+      },
+      "observer_bound_runs": 0,
+      "performance_admitted": false,
+      "performance_note": "descriptive local fixture measurement; pacing, observer or producer may cap throughput",
+      "possibly_producer_bound_runs": 10,
+      "unmeasured_producer_comparison_runs": 0
+    },
+    "calibration": {
+      "bytes": 1074790401,
+      "sha256": "9de4edf4468a1d5acdd826b6f0fdbb05573c6f2c93d861a8af3e0edce2e94f0b",
+      "text_output_sha256": "f5452418826b608262d7c3dabbc39f4cfe204343f44c59d33d34973d297caf68",
+      "seconds": 1.0365156379994005,
+      "source_mib_per_second": 988.8900498713625,
+      "scope": "unparsed raw stream drain; producer/reader diagnostic only",
+      "valid": true
+    },
+    "full_output_validation": {
+      "valid": true,
+      "compatible": true,
+      "observation_only": false,
+      "deadline_prefix_comparison": null,
+      "different_contracts": 1,
+      "medians": {
+        "go": {
+          "runs": 1,
+          "wall_ms": 1000.873275,
+          "cpu_ms": 692.6869999999999,
+          "rows_per_second": 1047661.103749623,
+          "cpu_ms_per_million_rows": 660.597801208496,
+          "output_mib_per_second": 1024.1056760231195,
+          "peak_rss_bytes": 56029184
+        },
+        "baseline": {
+          "runs": 1,
+          "wall_ms": 1195.128678,
+          "cpu_ms": 1031.764,
+          "rows_per_second": 877374.9800354134,
+          "cpu_ms_per_million_rows": 983.966827392578,
+          "output_mib_per_second": 857.6482355210863,
+          "peak_rss_bytes": 9539584
+        },
+        "candidate": {
+          "runs": 1,
+          "wall_ms": 998.294192,
+          "cpu_ms": 371.848,
+          "rows_per_second": 1050367.7256693887,
+          "cpu_ms_per_million_rows": 354.62188720703125,
+          "output_mib_per_second": 1026.751442732373,
+          "peak_rss_bytes": 10522624
+        }
+      },
+      "observer_bound_runs": 3,
+      "performance_admitted": false,
+      "performance_note": "descriptive local fixture measurement; pacing, observer or producer may cap throughput"
+    }
+  },
+  "ingest": {
+    "source_gate": {
+      "passed": false,
+      "compatibility": {
+        "passed": true,
+        "workloads": {
+          "jsonl": {
+            "check_failures": [],
+            "observation_sha256": {
+              "baseline": [
+                "2902a650b8e958b4815f0955e2173973e6aa579272f1f7e23531c590980b55a3"
+              ],
+              "candidate": [
+                "2902a650b8e958b4815f0955e2173973e6aa579272f1f7e23531c590980b55a3"
+              ]
+            },
+            "baseline_stable": true,
+            "candidate_stable": true,
+            "exact_match": true,
+            "logical_match": true,
+            "differences": [],
+            "passed": true
+          },
+          "text": {
+            "check_failures": [],
+            "observation_sha256": {
+              "baseline": [
+                "e5f9699be5ebf00a2b44df7b0043e6052be402fad5bac2a3e7352d2b2644cd97"
+              ],
+              "candidate": [
+                "e5f9699be5ebf00a2b44df7b0043e6052be402fad5bac2a3e7352d2b2644cd97"
+              ]
+            },
+            "baseline_stable": true,
+            "candidate_stable": true,
+            "exact_match": true,
+            "logical_match": true,
+            "differences": [],
+            "passed": true
+          }
+        },
+        "probes": {
+          "retry_503:jsonl": {
+            "check_failures": [],
+            "observation_sha256": {
+              "baseline": [
+                "d98188ed3ebb0764f5643afeabb1f29a07e722303daa35d45656d91c260fa7e0"
+              ],
+              "candidate": [
+                "d98188ed3ebb0764f5643afeabb1f29a07e722303daa35d45656d91c260fa7e0"
+              ]
+            },
+            "baseline_stable": true,
+            "candidate_stable": true,
+            "exact_match": true,
+            "logical_match": true,
+            "differences": [],
+            "passed": true
+          },
+          "retry_503:text": {
+            "check_failures": [],
+            "observation_sha256": {
+              "baseline": [
+                "84f91a6b7093a171509fbba2653963e492a674fa9e705ffa40b75319170d7b7f"
+              ],
+              "candidate": [
+                "84f91a6b7093a171509fbba2653963e492a674fa9e705ffa40b75319170d7b7f"
+              ]
+            },
+            "baseline_stable": true,
+            "candidate_stable": true,
+            "exact_match": true,
+            "logical_match": true,
+            "differences": [],
+            "passed": true
+          },
+          "split_413:jsonl": {
+            "check_failures": [],
+            "observation_sha256": {
+              "baseline": [
+                "0104307f448d4e715ce81cd325d003782cd33a82d6bd1dd464d043b83dbdb093"
+              ],
+              "candidate": [
+                "0104307f448d4e715ce81cd325d003782cd33a82d6bd1dd464d043b83dbdb093"
+              ]
+            },
+            "baseline_stable": true,
+            "candidate_stable": true,
+            "exact_match": true,
+            "logical_match": true,
+            "differences": [],
+            "passed": true
+          },
+          "split_413:text": {
+            "check_failures": [],
+            "observation_sha256": {
+              "baseline": [
+                "2025c1ac9833c51fb416f8b914311e6de8117aeef4b92cf071ab0ae199a22898"
+              ],
+              "candidate": [
+                "2025c1ac9833c51fb416f8b914311e6de8117aeef4b92cf071ab0ae199a22898"
+              ]
+            },
+            "baseline_stable": true,
+            "candidate_stable": true,
+            "exact_match": true,
+            "logical_match": true,
+            "differences": [],
+            "passed": true
+          }
+        }
+      },
+      "resources": {
+        "passed": false,
+        "threshold": 0.1,
+        "max_regression": 0.05,
+        "mode": "any",
+        "metrics": [
+          "proc_io_syscw",
+          "cpu_ms",
+          "wall_ms",
+          "peak_rss_bytes"
+        ],
+        "workloads": {
+          "jsonl": {
+            "passed": false,
+            "metrics": {
+              "proc_io_syscw": {
+                "defined": true,
+                "improvement": 0.8686281217926788,
+                "ratio_ci95": [
+                  0.13137187820732124,
+                  0.13137187820732124
+                ],
+                "meets_threshold": true,
+                "regressed": false
+              },
+              "cpu_ms": {
+                "defined": true,
+                "improvement": 0.05000058045716804,
+                "ratio_ci95": [
+                  0.8734962692249124,
+                  0.9978523636099651
+                ],
+                "meets_threshold": false,
+                "regressed": false
+              },
+              "wall_ms": {
+                "defined": true,
+                "improvement": 0.015176129595722787,
+                "ratio_ci95": [
+                  0.9347568159020102,
+                  1.0212593656357853
+                ],
+                "meets_threshold": false,
+                "regressed": false
+              },
+              "peak_rss_bytes": {
+                "defined": true,
+                "improvement": -0.08112324492979717,
+                "ratio_ci95": [
+                  1.0472972972972974,
+                  1.116403785488959
+                ],
+                "meets_threshold": false,
+                "regressed": true
+              }
+            },
+            "valid_rounds": 5,
+            "required_rounds": 5
+          },
+          "text": {
+            "passed": false,
+            "metrics": {
+              "proc_io_syscw": {
+                "defined": true,
+                "improvement": 0.8754704071159767,
+                "ratio_ci95": [
+                  0.12452959288402327,
+                  0.12452959288402327
+                ],
+                "meets_threshold": true,
+                "regressed": false
+              },
+              "cpu_ms": {
+                "defined": true,
+                "improvement": 0.10880852993715462,
+                "ratio_ci95": [
+                  0.853179510684851,
+                  0.9190522822996985
+                ],
+                "meets_threshold": true,
+                "regressed": false
+              },
+              "wall_ms": {
+                "defined": true,
+                "improvement": 0.007816486558784974,
+                "ratio_ci95": [
+                  0.9721316327718831,
+                  1.010323808317284
+                ],
+                "meets_threshold": false,
+                "regressed": false
+              },
+              "peak_rss_bytes": {
+                "defined": true,
+                "improvement": -0.07733873691320503,
+                "ratio_ci95": [
+                  1.0654642618570473,
+                  1.093878954607978
+                ],
+                "meets_threshold": false,
+                "regressed": true
+              }
+            },
+            "valid_rounds": 5,
+            "required_rounds": 5
+          }
+        }
+      }
+    },
+    "paired_metrics": {
+      "jsonl": {
+        "cpu_ms": {
+          "before_median": 172.278,
+          "after_median": 163.664,
+          "paired_median_ratio": 0.9261623432477704,
+          "paired_ratio_range": [
+            0.8734962692249124,
+            0.9978523636099651
+          ],
+          "n": 5
+        },
+        "wall_ms": {
+          "before_median": 1065.559364,
+          "after_median": 1049.388297,
+          "paired_median_ratio": 0.9855748697048407,
+          "paired_ratio_range": [
+            0.9347568159020102,
+            1.0212593656357853
+          ],
+          "n": 5
+        },
+        "peak_rss_bytes": {
+          "before_median": 13127680,
+          "after_median": 14192640,
+          "paired_median_ratio": 1.0811232449297972,
+          "paired_ratio_range": [
+            1.0472972972972974,
+            1.116403785488959
+          ],
+          "n": 5
+        },
+        "proc_io_syscw": {
+          "before_median": 2923,
+          "after_median": 384,
+          "paired_median_ratio": 0.13137187820732124,
+          "paired_ratio_range": [
+            0.13137187820732124,
+            0.13137187820732124
+          ],
+          "n": 5
+        },
+        "proc_io_wchar": {
+          "before_median": 21241231,
+          "after_median": 21241231,
+          "paired_median_ratio": 1.0,
+          "paired_ratio_range": [
+            1.0,
+            1.0
+          ],
+          "n": 5
+        },
+        "proc_io_write_bytes": {
+          "before_median": 26460160,
+          "after_median": 26607616,
+          "paired_median_ratio": 1.0012269938650307,
+          "paired_ratio_range": [
+            0.9950248756218906,
+            1.0135135135135136
+          ],
+          "n": 5
+        }
+      },
+      "text": {
+        "cpu_ms": {
+          "before_median": 108.043,
+          "after_median": 96.287,
+          "paired_median_ratio": 0.8887665096304249,
+          "paired_ratio_range": [
+            0.853179510684851,
+            0.9190522822996985
+          ],
+          "n": 5
+        },
+        "wall_ms": {
+          "before_median": 988.997159,
+          "after_median": 981.266676,
+          "paired_median_ratio": 0.9969073548720587,
+          "paired_ratio_range": [
+            0.9721316327718831,
+            1.010323808317284
+          ],
+          "n": 5
+        },
+        "peak_rss_bytes": {
+          "before_median": 12128256,
+          "after_median": 13066240,
+          "paired_median_ratio": 1.0764266304347827,
+          "paired_ratio_range": [
+            1.0654642618570473,
+            1.093878954607978
+          ],
+          "n": 5
+        },
+        "proc_io_syscw": {
+          "before_median": 2923,
+          "after_median": 364,
+          "paired_median_ratio": 0.12452959288402327,
+          "paired_ratio_range": [
+            0.12452959288402327,
+            0.12452959288402327
+          ],
+          "n": 5
+        },
+        "proc_io_wchar": {
+          "before_median": 20900378,
+          "after_median": 20900378,
+          "paired_median_ratio": 1.0,
+          "paired_ratio_range": [
+            1.0,
+            1.0
+          ],
+          "n": 5
+        },
+        "proc_io_write_bytes": {
+          "before_median": 26165248,
+          "after_median": 26279936,
+          "paired_median_ratio": 1.0043832185347528,
+          "paired_ratio_range": [
+            0.9873976055450535,
+            1.015
+          ],
+          "n": 5
+        }
+      }
+    }
+  },
+  "follow_faults": {
+    "final-follow": {
+      "passed": true,
+      "completed": true,
+      "error": null,
+      "failures": [],
+      "checks": {
+        "lock_probe": true,
+        "follow_phases": true,
+        "producer_finished": true,
+        "producer_rate_target": true,
+        "accepted_never_exceeded_generated": true,
+        "follow_drained_backlog": true,
+        "complete_exit": true,
+        "all_records_in_order": true,
+        "source_content_hash": true,
+        "completion_marker": true,
+        "no_sink_validation_errors": true,
+        "checkpoint": true,
+        "repeat_complete_noop": true,
+        "retry_exact": true,
+        "duplicate_policy": true,
+        "split_exercised": true,
+        "checkpoint_source_offset": true,
+        "checkpoint_binding": true
+      },
+      "issues": {
+        "lock_probe": [],
+        "follow": []
+      },
+      "producer_rate": {
+        "requested_rate": 5000.0,
+        "target_records": 300000,
+        "generated": 300000,
+        "started_monotonic": 1309922.729950178,
+        "ended_monotonic": 1309982.73024494,
+        "first_record_monotonic": 1309922.729990284,
+        "last_record_monotonic": 1309982.730068175,
+        "generation_window_seconds": 60.0000778909307,
+        "achieved_rate": 4999.976842452505,
+        "achieved_rate_over_run": 4999.975436623585,
+        "max_schedule_lag_seconds": 0.031024289,
+        "max_schedule_lag_records": 156,
+        "schedule_lag_tolerance_seconds": 0.25,
+        "classification": "target_met"
+      },
+      "backlog": {
+        "csv": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/final-follow/backlog.csv",
+        "samples": 640,
+        "max_records": 352,
+        "negative_samples": 0,
+        "before_complete": 0,
+        "drain_seconds_after_producer": 0.045285527128726244,
+        "definition": "materialized generated records minus sink accepted unique events; includes at most one bounded producer batch before append"
+      },
+      "cleanup": {
+        "producer_terminated": false,
+        "collector_threads_alive": 0
+      },
+      "limits": [
+        "one append-only JSONL source; no rotation, truncation, symlink or file-discovery coverage",
+        "source/state use the selected output filesystem; tmpfs changes fsync costs",
+        "single bounded HTTP sink process; histogram is producer-to-acceptance latency, not network-only latency",
+        "collector CPU includes controller threads, excluding separate writer/sink processes",
+        "same-state rejection is checked while idle; different-state concurrency is not exercised",
+        "controlled accept-before-503 on one event batch models at-least-once replay, not arbitrary kill/crash timing or server deduplication",
+        "Rust collector only; there is no Go ingest feature to compare"
+      ],
+      "sink": {
+        "unique_events": 300000,
+        "duplicate_events": 0,
+        "complete_markers": 1,
+        "rejected_503": 0,
+        "rejected_413": 0,
+        "retry_checks": 0,
+        "retry_matches": 0,
+        "latency": {
+          "count": 300000,
+          "bin_upper_bounds_ms": [
+            1,
+            2,
+            5,
+            10,
+            20,
+            50,
+            100,
+            200,
+            500,
+            1000,
+            2000,
+            5000,
+            10000,
+            30000,
+            60000,
+            300000,
+            null
+          ],
+          "bin_counts": [
+            0,
+            0,
+            3304,
+            37460,
+            71533,
+            118609,
+            69094,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "p50_upper_ms": 50,
+          "p95_upper_ms": 100,
+          "p99_upper_ms": 100,
+          "mean_ms": 29.956453828556064,
+          "max_ms": 77.045182,
+          "overflow_note": "null percentile means empty histogram or above final finite bin"
+        }
+      },
+      "follow_phases": [
+        {
+          "native_metrics": {
+            "started_monotonic_ns": 1309922666346464,
+            "ended_monotonic_ns": 1309987667678966,
+            "started_unix_ns": 1792298564281232958,
+            "exit_code": -2,
+            "termination": {
+              "signal": 2
+            },
+            "cpu_user_ms": 1045.784,
+            "cpu_system_ms": 1567.093,
+            "peak_rss_bytes": 10424320,
+            "minor_faults": 39002,
+            "major_faults": 0,
+            "voluntary_context_switches": 31357,
+            "involuntary_context_switches": 8037,
+            "block_input_operations": 0,
+            "block_output_operations": 1010528,
+            "resource_source": "native_child_wait4",
+            "proc_io_available": true,
+            "proc_io_unavailable_reason": null,
+            "proc_io_source": "linux_proc_pid_io_before_wait4",
+            "proc_io_syscr": 23063,
+            "proc_io_syscw": 6671,
+            "proc_io_rchar": 20359187,
+            "proc_io_wchar": 170728555,
+            "proc_io_read_bytes": 0,
+            "proc_io_write_bytes": 517390336,
+            "proc_io_cancelled_write_bytes": 0,
+            "cpu_total_ms": 2612.8770000000004,
+            "wall_ms": 65001.332502
+          },
+          "termination": {
+            "signal": 2
+          },
+          "planned_interruption": true
+        }
+      ]
+    },
+    "final-retry": {
+      "passed": true,
+      "completed": true,
+      "error": null,
+      "failures": [],
+      "checks": {
+        "lock_probe": true,
+        "follow_phases": true,
+        "producer_finished": true,
+        "producer_rate_target": true,
+        "accepted_never_exceeded_generated": true,
+        "follow_drained_backlog": true,
+        "complete_exit": true,
+        "all_records_in_order": true,
+        "source_content_hash": true,
+        "completion_marker": true,
+        "no_sink_validation_errors": true,
+        "checkpoint": true,
+        "repeat_complete_noop": true,
+        "retry_exact": true,
+        "duplicate_policy": true,
+        "split_exercised": true,
+        "checkpoint_source_offset": true,
+        "checkpoint_binding": true
+      },
+      "issues": {
+        "lock_probe": [],
+        "follow": []
+      },
+      "producer_rate": {
+        "requested_rate": 1000.0,
+        "target_records": 3000,
+        "generated": 3000,
+        "started_monotonic": 1309991.040831039,
+        "ended_monotonic": 1309994.041344442,
+        "first_record_monotonic": 1309991.040861187,
+        "last_record_monotonic": 1309994.040997467,
+        "generation_window_seconds": 3.000136279966682,
+        "achieved_rate": 999.6212572161239,
+        "achieved_rate_over_run": 999.8288949559603,
+        "max_schedule_lag_seconds": 0.020704495,
+        "max_schedule_lag_records": 21,
+        "schedule_lag_tolerance_seconds": 0.25,
+        "classification": "target_met"
+      },
+      "backlog": {
+        "csv": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/final-retry/backlog.csv",
+        "samples": 80,
+        "max_records": 62,
+        "negative_samples": 0,
+        "before_complete": 0,
+        "drain_seconds_after_producer": 0.07326400699093938,
+        "definition": "materialized generated records minus sink accepted unique events; includes at most one bounded producer batch before append"
+      },
+      "cleanup": {
+        "producer_terminated": false,
+        "collector_threads_alive": 0
+      },
+      "limits": [
+        "one append-only JSONL source; no rotation, truncation, symlink or file-discovery coverage",
+        "source/state use the selected output filesystem; tmpfs changes fsync costs",
+        "single bounded HTTP sink process; histogram is producer-to-acceptance latency, not network-only latency",
+        "collector CPU includes controller threads, excluding separate writer/sink processes",
+        "same-state rejection is checked while idle; different-state concurrency is not exercised",
+        "controlled accept-before-503 on one event batch models at-least-once replay, not arbitrary kill/crash timing or server deduplication",
+        "Rust collector only; there is no Go ingest feature to compare"
+      ],
+      "sink": {
+        "unique_events": 3000,
+        "duplicate_events": 0,
+        "complete_markers": 1,
+        "rejected_503": 1,
+        "rejected_413": 0,
+        "retry_checks": 1,
+        "retry_matches": 1,
+        "latency": {
+          "count": 3000,
+          "bin_upper_bounds_ms": [
+            1,
+            2,
+            5,
+            10,
+            20,
+            50,
+            100,
+            200,
+            500,
+            1000,
+            2000,
+            5000,
+            10000,
+            30000,
+            60000,
+            300000,
+            null
+          ],
+          "bin_counts": [
+            0,
+            0,
+            83,
+            802,
+            201,
+            1811,
+            103,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "p50_upper_ms": 50,
+          "p95_upper_ms": 50,
+          "p99_upper_ms": 100,
+          "mean_ms": 24.655552891333354,
+          "max_ms": 53.961926,
+          "overflow_note": "null percentile means empty histogram or above final finite bin"
+        }
+      },
+      "follow_phases": [
+        {
+          "native_metrics": {
+            "started_monotonic_ns": 1309990964250632,
+            "ended_monotonic_ns": 1309991126928040,
+            "started_unix_ns": 1792298632579137123,
+            "exit_code": 1,
+            "termination": {
+              "exit": 1
+            },
+            "cpu_user_ms": 0.0,
+            "cpu_system_ms": 3.735,
+            "peak_rss_bytes": 10047488,
+            "minor_faults": 319,
+            "major_faults": 0,
+            "voluntary_context_switches": 41,
+            "involuntary_context_switches": 7,
+            "block_input_operations": 0,
+            "block_output_operations": 872,
+            "resource_source": "native_child_wait4",
+            "proc_io_available": true,
+            "proc_io_unavailable_reason": null,
+            "proc_io_source": "linux_proc_pid_io_before_wait4",
+            "proc_io_syscr": 49,
+            "proc_io_syscw": 9,
+            "proc_io_rchar": 23185,
+            "proc_io_wchar": 47871,
+            "proc_io_read_bytes": 0,
+            "proc_io_write_bytes": 446464,
+            "proc_io_cancelled_write_bytes": 0,
+            "cpu_total_ms": 3.735,
+            "wall_ms": 162.677408
+          },
+          "termination": {
+            "exit": 1
+          },
+          "planned_interruption": false
+        },
+        {
+          "native_metrics": {
+            "started_monotonic_ns": 1309991129163629,
+            "ended_monotonic_ns": 1309998964727359,
+            "started_unix_ns": 1792298632744050117,
+            "exit_code": -2,
+            "termination": {
+              "signal": 2
+            },
+            "cpu_user_ms": 35.361,
+            "cpu_system_ms": 89.482,
+            "peak_rss_bytes": 9678848,
+            "minor_faults": 374,
+            "major_faults": 0,
+            "voluntary_context_switches": 2149,
+            "involuntary_context_switches": 498,
+            "block_input_operations": 0,
+            "block_output_operations": 45360,
+            "resource_source": "native_child_wait4",
+            "proc_io_available": true,
+            "proc_io_unavailable_reason": null,
+            "proc_io_source": "linux_proc_pid_io_before_wait4",
+            "proc_io_syscr": 2221,
+            "proc_io_syscw": 340,
+            "proc_io_rchar": 782814,
+            "proc_io_wchar": 2330439,
+            "proc_io_read_bytes": 0,
+            "proc_io_write_bytes": 23224320,
+            "proc_io_cancelled_write_bytes": 0,
+            "cpu_total_ms": 124.84299999999999,
+            "wall_ms": 7835.56373
+          },
+          "termination": {
+            "signal": 2
+          },
+          "planned_interruption": true
+        }
+      ]
+    },
+    "final-ack-loss": {
+      "passed": true,
+      "completed": true,
+      "error": null,
+      "failures": [],
+      "checks": {
+        "lock_probe": true,
+        "follow_phases": true,
+        "producer_finished": true,
+        "producer_rate_target": true,
+        "accepted_never_exceeded_generated": true,
+        "follow_drained_backlog": true,
+        "complete_exit": true,
+        "all_records_in_order": true,
+        "source_content_hash": true,
+        "completion_marker": true,
+        "no_sink_validation_errors": true,
+        "checkpoint": true,
+        "repeat_complete_noop": true,
+        "retry_exact": true,
+        "duplicate_policy": true,
+        "split_exercised": true,
+        "checkpoint_source_offset": true,
+        "checkpoint_binding": true
+      },
+      "issues": {
+        "lock_probe": [],
+        "follow": []
+      },
+      "producer_rate": {
+        "requested_rate": 1000.0,
+        "target_records": 3000,
+        "generated": 3000,
+        "started_monotonic": 1310002.443713117,
+        "ended_monotonic": 1310005.444290319,
+        "first_record_monotonic": 1310002.443749146,
+        "last_record_monotonic": 1310005.443954646,
+        "generation_window_seconds": 3.0002054998185486,
+        "achieved_rate": 999.59819425082,
+        "achieved_rate_over_run": 999.8076363219778,
+        "max_schedule_lag_seconds": 0.022197891,
+        "max_schedule_lag_records": 23,
+        "schedule_lag_tolerance_seconds": 0.25,
+        "classification": "target_met"
+      },
+      "backlog": {
+        "csv": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/final-ack-loss/backlog.csv",
+        "samples": 80,
+        "max_records": 62,
+        "negative_samples": 0,
+        "before_complete": 0,
+        "drain_seconds_after_producer": 0.06022910610772669,
+        "definition": "materialized generated records minus sink accepted unique events; includes at most one bounded producer batch before append"
+      },
+      "cleanup": {
+        "producer_terminated": false,
+        "collector_threads_alive": 0
+      },
+      "limits": [
+        "one append-only JSONL source; no rotation, truncation, symlink or file-discovery coverage",
+        "source/state use the selected output filesystem; tmpfs changes fsync costs",
+        "single bounded HTTP sink process; histogram is producer-to-acceptance latency, not network-only latency",
+        "collector CPU includes controller threads, excluding separate writer/sink processes",
+        "same-state rejection is checked while idle; different-state concurrency is not exercised",
+        "controlled accept-before-503 on one event batch models at-least-once replay, not arbitrary kill/crash timing or server deduplication",
+        "Rust collector only; there is no Go ingest feature to compare"
+      ],
+      "sink": {
+        "unique_events": 3000,
+        "duplicate_events": 20,
+        "complete_markers": 1,
+        "rejected_503": 1,
+        "rejected_413": 0,
+        "retry_checks": 1,
+        "retry_matches": 1,
+        "latency": {
+          "count": 3000,
+          "bin_upper_bounds_ms": [
+            1,
+            2,
+            5,
+            10,
+            20,
+            50,
+            100,
+            200,
+            500,
+            1000,
+            2000,
+            5000,
+            10000,
+            30000,
+            60000,
+            300000,
+            null
+          ],
+          "bin_counts": [
+            0,
+            0,
+            129,
+            567,
+            503,
+            1555,
+            246,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "p50_upper_ms": 50,
+          "p95_upper_ms": 100,
+          "p99_upper_ms": 100,
+          "mean_ms": 25.89859001033331,
+          "max_ms": 56.177443,
+          "overflow_note": "null percentile means empty histogram or above final finite bin"
+        }
+      },
+      "follow_phases": [
+        {
+          "native_metrics": {
+            "started_monotonic_ns": 1310002361822374,
+            "ended_monotonic_ns": 1310002471149322,
+            "started_unix_ns": 1792298643976708876,
+            "exit_code": 1,
+            "termination": {
+              "exit": 1
+            },
+            "cpu_user_ms": 0.665,
+            "cpu_system_ms": 2.652,
+            "peak_rss_bytes": 9793536,
+            "minor_faults": 309,
+            "major_faults": 0,
+            "voluntary_context_switches": 38,
+            "involuntary_context_switches": 8,
+            "block_input_operations": 0,
+            "block_output_operations": 720,
+            "resource_source": "native_child_wait4",
+            "proc_io_available": true,
+            "proc_io_unavailable_reason": null,
+            "proc_io_source": "linux_proc_pid_io_before_wait4",
+            "proc_io_syscr": 39,
+            "proc_io_syscw": 9,
+            "proc_io_rchar": 14231,
+            "proc_io_wchar": 19717,
+            "proc_io_read_bytes": 0,
+            "proc_io_write_bytes": 368640,
+            "proc_io_cancelled_write_bytes": 0,
+            "cpu_total_ms": 3.317,
+            "wall_ms": 109.326948
+          },
+          "termination": {
+            "exit": 1
+          },
+          "planned_interruption": false
+        },
+        {
+          "native_metrics": {
+            "started_monotonic_ns": 1310002473563327,
+            "ended_monotonic_ns": 1310010362141227,
+            "started_unix_ns": 1792298644088449818,
+            "exit_code": -2,
+            "termination": {
+              "signal": 2
+            },
+            "cpu_user_ms": 35.491,
+            "cpu_system_ms": 86.963,
+            "peak_rss_bytes": 9756672,
+            "minor_faults": 416,
+            "major_faults": 0,
+            "voluntary_context_switches": 2075,
+            "involuntary_context_switches": 475,
+            "block_input_operations": 32,
+            "block_output_operations": 41472,
+            "resource_source": "native_child_wait4",
+            "proc_io_available": true,
+            "proc_io_unavailable_reason": null,
+            "proc_io_source": "linux_proc_pid_io_before_wait4",
+            "proc_io_syscr": 2179,
+            "proc_io_syscw": 324,
+            "proc_io_rchar": 775136,
+            "proc_io_wchar": 2355123,
+            "proc_io_read_bytes": 16384,
+            "proc_io_write_bytes": 21233664,
+            "proc_io_cancelled_write_bytes": 0,
+            "cpu_total_ms": 122.454,
+            "wall_ms": 7888.5779
+          },
+          "termination": {
+            "signal": 2
+          },
+          "planned_interruption": true
+        }
+      ]
+    },
+    "final-split": {
+      "passed": true,
+      "completed": true,
+      "error": null,
+      "failures": [],
+      "checks": {
+        "lock_probe": true,
+        "follow_phases": true,
+        "producer_finished": true,
+        "producer_rate_target": true,
+        "accepted_never_exceeded_generated": true,
+        "follow_drained_backlog": true,
+        "complete_exit": true,
+        "all_records_in_order": true,
+        "source_content_hash": true,
+        "completion_marker": true,
+        "no_sink_validation_errors": true,
+        "checkpoint": true,
+        "repeat_complete_noop": true,
+        "retry_exact": true,
+        "duplicate_policy": true,
+        "split_exercised": true,
+        "checkpoint_source_offset": true,
+        "checkpoint_binding": true
+      },
+      "issues": {
+        "lock_probe": [],
+        "follow": []
+      },
+      "producer_rate": {
+        "requested_rate": 1000.0,
+        "target_records": 3000,
+        "generated": 3000,
+        "started_monotonic": 1310013.77504115,
+        "ended_monotonic": 1310016.775484281,
+        "first_record_monotonic": 1310013.775071567,
+        "last_record_monotonic": 1310016.775176525,
+        "generation_window_seconds": 3.000104958191514,
+        "achieved_rate": 999.6316934884238,
+        "achieved_rate_over_run": 999.8523114936456,
+        "max_schedule_lag_seconds": 0.021403992,
+        "max_schedule_lag_records": 22,
+        "schedule_lag_tolerance_seconds": 0.25,
+        "classification": "target_met"
+      },
+      "backlog": {
+        "csv": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/harness/results/perf3/final-split/backlog.csv",
+        "samples": 80,
+        "max_records": 63,
+        "negative_samples": 0,
+        "before_complete": 0,
+        "drain_seconds_after_producer": 0.07491437019780278,
+        "definition": "materialized generated records minus sink accepted unique events; includes at most one bounded producer batch before append"
+      },
+      "cleanup": {
+        "producer_terminated": false,
+        "collector_threads_alive": 0
+      },
+      "limits": [
+        "one append-only JSONL source; no rotation, truncation, symlink or file-discovery coverage",
+        "source/state use the selected output filesystem; tmpfs changes fsync costs",
+        "single bounded HTTP sink process; histogram is producer-to-acceptance latency, not network-only latency",
+        "collector CPU includes controller threads, excluding separate writer/sink processes",
+        "same-state rejection is checked while idle; different-state concurrency is not exercised",
+        "controlled accept-before-503 on one event batch models at-least-once replay, not arbitrary kill/crash timing or server deduplication",
+        "Rust collector only; there is no Go ingest feature to compare"
+      ],
+      "sink": {
+        "unique_events": 3000,
+        "duplicate_events": 0,
+        "complete_markers": 1,
+        "rejected_503": 0,
+        "rejected_413": 315,
+        "retry_checks": 0,
+        "retry_matches": 0,
+        "latency": {
+          "count": 3000,
+          "bin_upper_bounds_ms": [
+            1,
+            2,
+            5,
+            10,
+            20,
+            50,
+            100,
+            200,
+            500,
+            1000,
+            2000,
+            5000,
+            10000,
+            30000,
+            60000,
+            300000,
+            null
+          ],
+          "bin_counts": [
+            0,
+            0,
+            19,
+            298,
+            780,
+            1362,
+            541,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "p50_upper_ms": 50,
+          "p95_upper_ms": 100,
+          "p99_upper_ms": 100,
+          "mean_ms": 30.915863392000027,
+          "max_ms": 67.405252,
+          "overflow_note": "null percentile means empty histogram or above final finite bin"
+        }
+      },
+      "follow_phases": [
+        {
+          "native_metrics": {
+            "started_monotonic_ns": 1310013704224483,
+            "ended_monotonic_ns": 1310021704995399,
+            "started_unix_ns": 1792298655319110976,
+            "exit_code": -2,
+            "termination": {
+              "signal": 2
+            },
+            "cpu_user_ms": 73.361,
+            "cpu_system_ms": 98.778,
+            "peak_rss_bytes": 9445376,
+            "minor_faults": 381,
+            "major_faults": 0,
+            "voluntary_context_switches": 2429,
+            "involuntary_context_switches": 608,
+            "block_input_operations": 0,
+            "block_output_operations": 40352,
+            "resource_source": "native_child_wait4",
+            "proc_io_available": true,
+            "proc_io_unavailable_reason": null,
+            "proc_io_source": "linux_proc_pid_io_before_wait4",
+            "proc_io_syscr": 2041,
+            "proc_io_syscw": 1545,
+            "proc_io_rchar": 757265,
+            "proc_io_wchar": 2337653,
+            "proc_io_read_bytes": 0,
+            "proc_io_write_bytes": 20660224,
+            "proc_io_cancelled_write_bytes": 0,
+            "cpu_total_ms": 172.139,
+            "wall_ms": 8000.770916
+          },
+          "termination": {
+            "signal": 2
+          },
+          "planned_interruption": true
+        }
+      ]
+    }
+  },
+  "profiles": {
+    "profiles-baseline-json": {
+      "valid": true,
+      "source_report_sha256": "4a0a06ee7d0a972d76eef804224c8941fce7643e7478cd251fa3f0abae1bfbd7",
+      "scope": "synthetic local HTTP; profiles explain work, not release performance; no live service measurements",
+      "rust_samples": [
+        {
+          "case": "p3-100000-json",
+          "mode": "perf",
+          "repetition": 0,
+          "analysis_sha256": "5907d5590bc1a24d19cd2f66ee266dac4af82d06ecde038c6643fbd6e7333d9c",
+          "samples": [
+            "251  of event 'cpu_core/cycles/u'"
+          ],
+          "lost_samples": [
+            "0"
+          ],
+          "top_symbols": [
+            {
+              "percent": 25.22,
+              "symbol": "pb::sql::output::scan::Scanner::value_impl"
+            },
+            {
+              "percent": 8.47,
+              "symbol": "pb::gojson::Decoder::value_inner"
+            },
+            {
+              "percent": 7.38,
+              "symbol": "<pb::sql::BodyReader as std::io::BufRead>::fill_buf"
+            },
+            {
+              "percent": 5.17,
+              "symbol": "core::str::converts::from_utf8"
+            },
+            {
+              "percent": 4.05,
+              "symbol": "pb::sql::output::normalize::{{closure}}"
+            },
+            {
+              "percent": 3.86,
+              "symbol": "pb::sql::output::render::{{closure}}"
+            },
+            {
+              "percent": 3.84,
+              "symbol": "pb::sql::output::string"
+            },
+            {
+              "percent": 3.04,
+              "symbol": "cfree"
+            }
+          ]
+        },
+        {
+          "case": "p3-100000-json",
+          "mode": "perf",
+          "repetition": 1,
+          "analysis_sha256": "b122616e5290a8e74c2341fc144bc7ecf61b0509e038f4b0ff9c148987ce17b1",
+          "samples": [
+            "243  of event 'cpu_core/cycles/u'"
+          ],
+          "lost_samples": [
+            "0"
+          ],
+          "top_symbols": [
+            {
+              "percent": 24.05,
+              "symbol": "pb::sql::output::scan::Scanner::value_impl"
+            },
+            {
+              "percent": 8.15,
+              "symbol": "<pb::sql::BodyReader as std::io::BufRead>::fill_buf"
+            },
+            {
+              "percent": 7.0,
+              "symbol": "pb::gojson::Decoder::value_inner"
+            },
+            {
+              "percent": 5.61,
+              "symbol": "core::str::converts::from_utf8"
+            },
+            {
+              "percent": 4.52,
+              "symbol": "pb::gojson::Decoder::string"
+            },
+            {
+              "percent": 4.0,
+              "symbol": "pb::sql::output::render::{{closure}}"
+            },
+            {
+              "percent": 3.62,
+              "symbol": "pb::sql::output::normalize::{{closure}}"
+            },
+            {
+              "percent": 3.06,
+              "symbol": "pb::sql::output::string"
+            }
+          ]
+        },
+        {
+          "case": "p3-100000-json",
+          "mode": "heaptrack",
+          "repetition": 0,
+          "analysis_sha256": "3d77c4b166e6d10b65ad42d98bb6b146f3be07c6bcb6cabe89ab09b409f6037a",
+          "totals": [
+            "calls to allocation functions: 1226239 (2067856/s)",
+            "temporary memory allocations: 40 (67/s)",
+            "peak heap memory consumption: 1.46M",
+            "peak RSS (including heaptrack overhead): 13.14M",
+            "total memory leaked: 70.33K"
+          ]
+        },
+        {
+          "case": "p3-100000-json",
+          "mode": "heaptrack",
+          "repetition": 1,
+          "analysis_sha256": "d35f7c1f63c469c8466e73ff6889582966bbd9d0d4efe84b35e79edc0d513770",
+          "totals": [
+            "calls to allocation functions: 1226239 (1913009/s)",
+            "temporary memory allocations: 40 (62/s)",
+            "peak heap memory consumption: 1.46M",
+            "peak RSS (including heaptrack overhead): 13.17M",
+            "total memory leaked: 70.33K"
+          ]
+        },
+        {
+          "case": "p3-single-8MiB-item",
+          "mode": "perf",
+          "repetition": 0,
+          "analysis_sha256": "ef085c825ad44bc61a27a83de4c6747af0718d44883f5f03175393a302dd648f",
+          "samples": [
+            "51  of event 'cpu_core/cycles/u'"
+          ],
+          "lost_samples": [
+            "0"
+          ],
+          "top_symbols": [
+            {
+              "percent": 27.3,
+              "symbol": "pb::sql::output::scan::Scanner::value_impl"
+            },
+            {
+              "percent": 25.62,
+              "symbol": "pb::gojson::Decoder::string"
+            },
+            {
+              "percent": 14.06,
+              "symbol": "0xffffffffac201280"
+            },
+            {
+              "percent": 14.05,
+              "symbol": "pb::sql::output::string"
+            },
+            {
+              "percent": 10.51,
+              "symbol": "0x0000000000176707"
+            },
+            {
+              "percent": 1.78,
+              "symbol": "<tokio::sync::batch_semaphore::Acquire as core::future::future::Future>::poll"
+            },
+            {
+              "percent": 1.47,
+              "symbol": "pb::sql::render_response::{{closure}}::{{closure}}"
+            },
+            {
+              "percent": 1.38,
+              "symbol": "tokio::runtime::time::<impl tokio::runtime::time::handle::Handle>::reregister"
+            }
+          ]
+        },
+        {
+          "case": "p3-single-8MiB-item",
+          "mode": "perf",
+          "repetition": 1,
+          "analysis_sha256": "b9c3f2135993461013e0a56f0c774c0960728056b9c3d3cbf7438659ac3ac651",
+          "samples": [
+            "44  of event 'cpu_core/cycles/u'"
+          ],
+          "lost_samples": [
+            "0"
+          ],
+          "top_symbols": [
+            {
+              "percent": 30.2,
+              "symbol": "pb::gojson::Decoder::string"
+            },
+            {
+              "percent": 23.77,
+              "symbol": "pb::sql::output::scan::Scanner::value_impl"
+            },
+            {
+              "percent": 21.16,
+              "symbol": "pb::sql::output::string"
+            },
+            {
+              "percent": 19.02,
+              "symbol": "0xffffffffac201280"
+            },
+            {
+              "percent": 2.16,
+              "symbol": "<tokio::sync::batch_semaphore::Acquire as core::future::future::Future>::poll"
+            },
+            {
+              "percent": 1.69,
+              "symbol": "<pb::sql::BodyReader as std::io::BufRead>::fill_buf"
+            },
+            {
+              "percent": 0.69,
+              "symbol": "pb::transport::Transport::send::{{closure}}"
+            },
+            {
+              "percent": 0.65,
+              "symbol": "0x00000000000105d1"
+            }
+          ]
+        },
+        {
+          "case": "p3-single-8MiB-item",
+          "mode": "heaptrack",
+          "repetition": 0,
+          "analysis_sha256": "84eee130ce5f64fd68aceaa7096c1d41f492129838fc8f919245a318351540ce",
+          "totals": [
+            "calls to allocation functions: 1239 (21736/s)",
+            "temporary memory allocations: 39 (684/s)",
+            "peak heap memory consumption: 38.65M",
+            "peak RSS (including heaptrack overhead): 38.66M",
+            "total memory leaked: 70.33K"
+          ]
+        },
+        {
+          "case": "p3-single-8MiB-item",
+          "mode": "heaptrack",
+          "repetition": 1,
+          "analysis_sha256": "1c78ce45ba139e13422704d619d6f08b1312ea8c8113e19a84db31883d0336fc",
+          "totals": [
+            "calls to allocation functions: 1307 (26140/s)",
+            "temporary memory allocations: 38 (760/s)",
+            "peak heap memory consumption: 38.34M",
+            "peak RSS (including heaptrack overhead): 38.17M",
+            "total memory leaked: 70.33K"
+          ]
+        }
+      ]
+    },
+    "profiles-candidate-json": {
+      "valid": true,
+      "source_report_sha256": "0f12b242a47f54409585a4f89c30b1b3796d26d41775b201caa882170a63a106",
+      "scope": "synthetic local HTTP; profiles explain work, not release performance; no live service measurements",
+      "rust_samples": [
+        {
+          "case": "p3-100000-json",
+          "mode": "perf",
+          "repetition": 0,
+          "analysis_sha256": "763fcebd0d9c78be2a6f3b908502d9e1f75c1b397482e8f095f1106ef1a87e68",
+          "samples": [
+            "285  of event 'cpu_core/cycles/u'"
+          ],
+          "lost_samples": [
+            "0"
+          ],
+          "top_symbols": [
+            {
+              "percent": 26.16,
+              "symbol": "pb::sql::output::scan::Scanner::value_impl"
+            },
+            {
+              "percent": 6.4,
+              "symbol": "<pb::sql::BodyReader as std::io::BufRead>::fill_buf"
+            },
+            {
+              "percent": 4.69,
+              "symbol": "core::str::converts::from_utf8"
+            },
+            {
+              "percent": 4.21,
+              "symbol": "pb::sql::output::string"
+            },
+            {
+              "percent": 3.69,
+              "symbol": "pb::sql::output::normalize::{{closure}}"
+            },
+            {
+              "percent": 3.48,
+              "symbol": "cfree"
+            },
+            {
+              "percent": 3.23,
+              "symbol": "pb::gojson::Decoder::string"
+            },
+            {
+              "percent": 3.23,
+              "symbol": "pb::gojson::Decoder::value_inner"
+            }
+          ]
+        },
+        {
+          "case": "p3-100000-json",
+          "mode": "perf",
+          "repetition": 1,
+          "analysis_sha256": "192fc0992f075958308e5c2678cf5c44749a9669c5f9cce17cd5496bc89759a4",
+          "samples": [
+            "347  of event 'cpu_core/cycles/u'"
+          ],
+          "lost_samples": [
+            "0"
+          ],
+          "top_symbols": [
+            {
+              "percent": 22.39,
+              "symbol": "pb::sql::output::scan::Scanner::value_impl"
+            },
+            {
+              "percent": 7.86,
+              "symbol": "<pb::sql::BodyReader as std::io::BufRead>::fill_buf"
+            },
+            {
+              "percent": 6.57,
+              "symbol": "pb::gojson::Decoder::value_inner"
+            },
+            {
+              "percent": 5.62,
+              "symbol": "pb::gojson::Decoder::string"
+            },
+            {
+              "percent": 5.57,
+              "symbol": "pb::sql::output::normalize::{{closure}}"
+            },
+            {
+              "percent": 4.46,
+              "symbol": "pb::sql::output::string"
+            },
+            {
+              "percent": 4.38,
+              "symbol": "malloc"
+            },
+            {
+              "percent": 3.13,
+              "symbol": "core::str::converts::from_utf8"
+            }
+          ]
+        },
+        {
+          "case": "p3-100000-json",
+          "mode": "heaptrack",
+          "repetition": 0,
+          "analysis_sha256": "235a2ba5a8ad31cca899090bde62b508f0f69ae3211e756a71337895fa398d09",
+          "totals": [
+            "calls to allocation functions: 1226245 (1562095/s)",
+            "temporary memory allocations: 40 (50/s)",
+            "peak heap memory consumption: 1.46M",
+            "peak RSS (including heaptrack overhead): 14.04M",
+            "total memory leaked: 70.33K"
+          ]
+        },
+        {
+          "case": "p3-100000-json",
+          "mode": "heaptrack",
+          "repetition": 1,
+          "analysis_sha256": "e140010b047a5fe3d0ef3a0e3c161061fe5ae7145a8151895a7e99ef28e809ec",
+          "totals": [
+            "calls to allocation functions: 1226239 (1904097/s)",
+            "temporary memory allocations: 40 (62/s)",
+            "peak heap memory consumption: 1.46M",
+            "peak RSS (including heaptrack overhead): 13.81M",
+            "total memory leaked: 70.33K"
+          ]
+        },
+        {
+          "case": "p3-single-8MiB-item",
+          "mode": "perf",
+          "repetition": 0,
+          "analysis_sha256": "72e81517c55211065cbdf785b36612bd0d898dfce598af3bbedc0a2b773ab849",
+          "samples": [
+            "46  of event 'cpu_core/cycles/u'"
+          ],
+          "lost_samples": [
+            "0"
+          ],
+          "top_symbols": [
+            {
+              "percent": 25.33,
+              "symbol": "pb::gojson::Decoder::string"
+            },
+            {
+              "percent": 24.7,
+              "symbol": "pb::sql::output::scan::Scanner::value_impl"
+            },
+            {
+              "percent": 17.74,
+              "symbol": "pb::sql::output::string"
+            },
+            {
+              "percent": 9.12,
+              "symbol": "0x0000000000176707"
+            },
+            {
+              "percent": 9.02,
+              "symbol": "0xffffffffac201280"
+            },
+            {
+              "percent": 4.3,
+              "symbol": "core::str::converts::from_utf8"
+            },
+            {
+              "percent": 2.15,
+              "symbol": "tokio::runtime::park::drop_waker"
+            },
+            {
+              "percent": 1.77,
+              "symbol": "tokio::sync::mpsc::list::Tx<T>::find_block"
+            }
+          ]
+        },
+        {
+          "case": "p3-single-8MiB-item",
+          "mode": "perf",
+          "repetition": 1,
+          "analysis_sha256": "23fa68cc07585f9186a127239e243911e55988c4169a2206a3715769b909d552",
+          "samples": [
+            "43  of event 'cpu_core/cycles/u'"
+          ],
+          "lost_samples": [
+            "0"
+          ],
+          "top_symbols": [
+            {
+              "percent": 28.24,
+              "symbol": "pb::sql::output::scan::Scanner::value_impl"
+            },
+            {
+              "percent": 28.16,
+              "symbol": "pb::gojson::Decoder::string"
+            },
+            {
+              "percent": 12.6,
+              "symbol": "0xffffffffac201280"
+            },
+            {
+              "percent": 11.76,
+              "symbol": "pb::sql::output::string"
+            },
+            {
+              "percent": 8.5,
+              "symbol": "0x0000000000176707"
+            },
+            {
+              "percent": 4.81,
+              "symbol": "core::str::converts::from_utf8"
+            },
+            {
+              "percent": 1.94,
+              "symbol": "tokio::sync::mpsc::bounded::Sender<T>::reserve::{{closure}}"
+            },
+            {
+              "percent": 1.69,
+              "symbol": "<pb::sql::BodyReader as std::io::BufRead>::fill_buf"
+            }
+          ]
+        },
+        {
+          "case": "p3-single-8MiB-item",
+          "mode": "heaptrack",
+          "repetition": 0,
+          "analysis_sha256": "16c8c04a9f445ecdab46eaff28f41c97094db6788dbb333aa7704a4623a27761",
+          "totals": [
+            "calls to allocation functions: 1346 (24472/s)",
+            "temporary memory allocations: 39 (709/s)",
+            "peak heap memory consumption: 26.55M",
+            "peak RSS (including heaptrack overhead): 31.17M",
+            "total memory leaked: 70.33K"
+          ]
+        },
+        {
+          "case": "p3-single-8MiB-item",
+          "mode": "heaptrack",
+          "repetition": 1,
+          "analysis_sha256": "5831288945ca030877d3bef8d5869d7451feb0ae8abd03623ec5ceedbee68f79",
+          "totals": [
+            "calls to allocation functions: 1316 (24370/s)",
+            "temporary memory allocations: 38 (703/s)",
+            "peak heap memory consumption: 22.35M",
+            "peak RSS (including heaptrack overhead): 30.77M",
+            "total memory leaked: 70.33K"
+          ]
+        }
+      ]
+    },
+    "profiles-baseline-text": {
+      "valid": true,
+      "source_report_sha256": "1ed00e0e28a4190cb5643fc79d741ee8e051fdc49461d43773f3891e75efaf5a",
+      "scope": "synthetic local HTTP; profiles explain work, not release performance; no live service measurements",
+      "rust_samples": [
+        {
+          "case": "p3-100000-text",
+          "mode": "perf",
+          "repetition": 0,
+          "analysis_sha256": "8574000927dbf5e5947fb8d0f2f5d8a0592a37178fda9bfbe44b59f8df25278b",
+          "samples": [
+            "15  of event 'cpu_core/cycles/u'"
+          ],
+          "lost_samples": [
+            "0"
+          ],
+          "top_symbols": [
+            {
+              "percent": 15.92,
+              "symbol": "0xffffffffac200080"
+            },
+            {
+              "percent": 12.96,
+              "symbol": "<pb::sql::BodyReader as std::io::BufRead>::fill_buf"
+            },
+            {
+              "percent": 7.27,
+              "symbol": "0x00000000000105b3"
+            },
+            {
+              "percent": 7.27,
+              "symbol": "0x00000000000a5b65"
+            },
+            {
+              "percent": 7.27,
+              "symbol": "<alloc::collections::vec_deque::iter::Iter<T> as core::iter::traits::iterator::Iterator>::fold"
+            },
+            {
+              "percent": 7.27,
+              "symbol": "<std::sys::pal::unix::time::Timespec>::sub_timespec"
+            },
+            {
+              "percent": 7.27,
+              "symbol": "toml_parser::parser::document::opt_dot_keys"
+            },
+            {
+              "percent": 6.28,
+              "symbol": "<tokio::sync::batch_semaphore::Acquire as core::future::future::Future>::poll"
+            }
+          ]
+        },
+        {
+          "case": "p3-100000-text",
+          "mode": "perf",
+          "repetition": 1,
+          "analysis_sha256": "6441c28287dbd0859c9224114163add30bb9302886bc6ef05b8da0fc86c04418",
+          "samples": [
+            "18  of event 'cpu_core/cycles/u'"
+          ],
+          "lost_samples": [
+            "0"
+          ],
+          "top_symbols": [
+            {
+              "percent": 15.2,
+              "symbol": "__vdso_clock_gettime"
+            },
+            {
+              "percent": 11.55,
+              "symbol": "0xffffffffac201280"
+            },
+            {
+              "percent": 11.02,
+              "symbol": "<tokio::sync::batch_semaphore::Acquire as core::future::future::Future>::poll"
+            },
+            {
+              "percent": 7.09,
+              "symbol": "0x00000000000a61c5"
+            },
+            {
+              "percent": 5.9,
+              "symbol": "idna::uts46::Uts46::process_innermost"
+            },
+            {
+              "percent": 5.77,
+              "symbol": "0x00000000000a6e8b"
+            },
+            {
+              "percent": 5.77,
+              "symbol": "tokio::runtime::park::Inner::park"
+            },
+            {
+              "percent": 5.77,
+              "symbol": "tokio::runtime::park::Inner::unpark"
+            }
+          ]
+        },
+        {
+          "case": "p3-single-8MiB-text",
+          "mode": "perf",
+          "repetition": 0,
+          "analysis_sha256": "4242064582ea6e068bcbefcecaf88beaa0d6b1f88ef11527de7001bf62e6e403",
+          "samples": [
+            "13  of event 'cpu_core/cycles/u'"
+          ],
+          "lost_samples": [
+            "0"
+          ],
+          "top_symbols": [
+            {
+              "percent": 15.0,
+              "symbol": "tokio::sync::task::atomic_waker::AtomicWaker::register_by_ref"
+            },
+            {
+              "percent": 8.23,
+              "symbol": "<core::str::pattern::CharSearcher as core::str::pattern::ReverseSearcher>::next_match_back"
+            },
+            {
+              "percent": 7.77,
+              "symbol": "__vdso_clock_gettime"
+            },
+            {
+              "percent": 7.77,
+              "symbol": "0x00000000000105c7"
+            },
+            {
+              "percent": 7.77,
+              "symbol": "malloc"
+            },
+            {
+              "percent": 7.77,
+              "symbol": "<pb::sql::BodyReader as std::io::BufRead>::fill_buf"
+            },
+            {
+              "percent": 7.77,
+              "symbol": "bytes::bytes_mut::shared_v_clone"
+            },
+            {
+              "percent": 7.77,
+              "symbol": "core::ptr::drop_in_place<core::option::Option<tokio::runtime::Timer>>"
+            }
+          ]
+        },
+        {
+          "case": "p3-single-8MiB-text",
+          "mode": "perf",
+          "repetition": 1,
+          "analysis_sha256": "3094da8c8404a74abca0dc79895353ec301caf33fd200785a6808e6709abe57d",
+          "samples": [
+            "13  of event 'cpu_core/cycles/u'"
+          ],
+          "lost_samples": [
+            "0"
+          ],
+          "top_symbols": [
+            {
+              "percent": 16.21,
+              "symbol": "0xffffffffac200080"
+            },
+            {
+              "percent": 8.18,
+              "symbol": "0x000000000000b20f"
+            },
+            {
+              "percent": 8.18,
+              "symbol": "0x00000000000a093b"
+            },
+            {
+              "percent": 8.18,
+              "symbol": "<pb::config::ProfileRecord as core::clone::Clone>::clone"
+            },
+            {
+              "percent": 8.18,
+              "symbol": "pb::api::StreamingResponse::chunk_limit::{{closure}}"
+            },
+            {
+              "percent": 7.9,
+              "symbol": "pb::sql::fetch_query::{{closure}}"
+            },
+            {
+              "percent": 7.57,
+              "symbol": "tokio::runtime::park::Inner::park"
+            },
+            {
+              "percent": 7.47,
+              "symbol": "<tokio::sync::batch_semaphore::Acquire as core::future::future::Future>::poll"
+            }
+          ]
+        }
+      ]
+    },
+    "profiles-candidate-text": {
+      "valid": true,
+      "source_report_sha256": "868070d0c9893cf17089344ef00cba8d7eccb3809fd3ed8002507cca753ab798",
+      "scope": "synthetic local HTTP; profiles explain work, not release performance; no live service measurements",
+      "rust_samples": [
+        {
+          "case": "p3-100000-text",
+          "mode": "perf",
+          "repetition": 0,
+          "analysis_sha256": "f1e16201a428a543e95e0dcd5363517a330806806ee58049c0910799be625447",
+          "samples": [
+            "5  of event 'cpu_core/cycles/u'"
+          ],
+          "lost_samples": [
+            "0"
+          ],
+          "top_symbols": [
+            {
+              "percent": 24.38,
+              "symbol": "<tokio::sync::batch_semaphore::Acquire as core::future::future::Future>::poll"
+            },
+            {
+              "percent": 20.25,
+              "symbol": "tokio::runtime::time::Driver::park_internal"
+            },
+            {
+              "percent": 18.46,
+              "symbol": "0x00000000000105c7"
+            },
+            {
+              "percent": 18.46,
+              "symbol": "0x000000000017640d"
+            },
+            {
+              "percent": 18.46,
+              "symbol": "tokio::runtime::park::Inner::unpark"
+            }
+          ]
+        },
+        {
+          "case": "p3-100000-text",
+          "mode": "perf",
+          "repetition": 1,
+          "analysis_sha256": "dae7c5b2479bfd3966951b9074c241d1af13c541d75158c36ed14037d056530f",
+          "samples": [
+            "6  of event 'cpu_core/cycles/u'"
+          ],
+          "lost_samples": [
+            "0"
+          ],
+          "top_symbols": [
+            {
+              "percent": 32.26,
+              "symbol": "0xffffffffac201280"
+            },
+            {
+              "percent": 18.58,
+              "symbol": "<pb::sql::BodyReader as std::io::BufRead>::fill_buf"
+            },
+            {
+              "percent": 16.9,
+              "symbol": "hyper_util::client::legacy::pool::PoolInner<T,K>::put"
+            },
+            {
+              "percent": 16.9,
+              "symbol": "pb::api::StreamingResponse::chunk_limit::{{closure}}"
+            },
+            {
+              "percent": 15.36,
+              "symbol": "0x0000000000176707"
+            }
+          ]
+        },
+        {
+          "case": "p3-single-8MiB-text",
+          "mode": "perf",
+          "repetition": 0,
+          "analysis_sha256": "12a1fd28e16e2c7b9be79c35462d6ac6576d52f48f71c29e2bee5f6e8a5861dd",
+          "samples": [
+            "5  of event 'cpu_core/cycles/u'"
+          ],
+          "lost_samples": [
+            "0"
+          ],
+          "top_symbols": [
+            {
+              "percent": 20.2,
+              "symbol": "0x00000000000a79af"
+            },
+            {
+              "percent": 20.2,
+              "symbol": "0x0000000000175ca4"
+            },
+            {
+              "percent": 20.2,
+              "symbol": "<alloc::collections::vec_deque::iter::Iter<T> as core::iter::traits::iterator::Iterator>::fold"
+            },
+            {
+              "percent": 20.2,
+              "symbol": "<tokio::sync::batch_semaphore::Acquire as core::future::future::Future>::poll"
+            },
+            {
+              "percent": 19.2,
+              "symbol": "0x00000000000a6201"
+            }
+          ]
+        },
+        {
+          "case": "p3-single-8MiB-text",
+          "mode": "perf",
+          "repetition": 1,
+          "analysis_sha256": "d67e1f5722e60322ac09959948938f103f7c29399bcb5ec3220a2c3e09bd6199",
+          "samples": [
+            "3  of event 'cpu_core/cycles/u'"
+          ],
+          "lost_samples": [
+            "0"
+          ],
+          "top_symbols": [
+            {
+              "percent": 35.77,
+              "symbol": "<std::sys::net::connection::socket::TcpStream>::socket_addr"
+            },
+            {
+              "percent": 32.12,
+              "symbol": "0x00000000000105d5"
+            },
+            {
+              "percent": 32.12,
+              "symbol": "core::ptr::drop_in_place<serde_json::value::Value>"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "review": {
+    "dashboard_resource_gate_warning": "Verified current selected-case warning reads retained source.gate.resources.passed=false; matches final-ingest schema.",
+    "summary_ingest_probes": "Verified retry_503 and split_413 entries required for each workload; skipped/missing probes withhold comparisons.",
+    "remaining_limits": [
+      "Null-sink CPU/RSS comparisons are resource diagnostics, not throughput admission.",
+      "Five paired rounds on shared host are descriptive, without population confidence claims.",
+      "Ingest resource gate failed because RSS regression exceeded5%; compatibility and retry/split probes passed.",
+      "Follow/fault runs have no Go feature equivalent; single controlled append-only source, no rotation/truncation/arbitrary crash coverage.",
+      "Fault ack-loss deliberately includes20 exact replay duplicates; it is at-least-once delivery.",
+      "Heaptrack and perf are instrumented attribution; heaptrack RSS includes profiler overhead and text perf sample counts are sparse.",
+      "Small-workload native RSS increase and repeated-large user CPU overhead remain unresolved pending queued mapping/inline diagnostics."
+    ]
+  },
+  "candidate_scope": {
+    "name": "R4 candidate only; before isolated inline experiment",
+    "binary": "bin/pb-perf3-final",
+    "sha256": "0dd77ed8adb4545294559bc1770648476b6d2f27c396a73ab05f398426854ad5",
+    "same_as_round4": true,
+    "symbolized_sha256": "96c3fc605d1f051e1f6c00a70458d6a7756d4fefc1982fad270445fbe576521e",
+    "not_a_future_candidate_claim": true
+  },
+  "pending_diagnostics": {
+    "rss_attribution": "Original queued session86336 ended143 before obtaining lock, with no capture directory; not a capture failure. Requeued identical session26456, behind inline experiment. This review contains no RSS mapping result.",
+    "inline": "Separate isolated experiment; only root chooses candidate. No experiment result included in this R4 review."
+  }
+}

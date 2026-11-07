@@ -1189,25 +1189,6 @@ def split_wire_ua(reference, candidate, second_issues, delta):
             [i for i in delta if i != 'flight_user_agents differs'], wire)
 
 
-def split_diagnostics(case, reference, candidate, delta):
-    """The exact single malformed-header diagnostic accepted by the parent."""
-    if case['name'] != 'p6-corrupt-garbage_header':
-        return delta, []
-    prefix = 'arrow/flight: could not create flight reader: arrow/ipc: unknown error while reading: '
-    messages = [prefix + 'runtime error: slice bounds out of range [4022250974:12]',
-                prefix + 'Type `i32` at position 4022250974 is unaligned.\n\n']
-    try:
-        for result, message in zip((reference, candidate), messages):
-            expected = (json.dumps({'error': {'code': 'COMMAND_FAILED', 'message': message,
-                                            'retryable': False}}, indent=2) + '\n').encode()
-            if base64.b64decode(result['stderr_contract_b64'], validate=True) != expected:
-                return delta, []
-    except (ValueError, KeyError):
-        return delta, []
-    return ([i for i in delta if i != 'stderr_contract_b64 differs'],
-            ['P6-DIAG-GARBAGE-HEADER: ' + i for i in delta if i == 'stderr_contract_b64 differs'])
-
-
 def binary_for(case, args, label):
     path = getattr(args, label + ('_cloud' if case['build'] == 'cloud' else ''))
     if not path:
@@ -1314,6 +1295,10 @@ def main(argv=None):
             second_issues = expectation_issues(case, second)
             delta = differences(first, second)
             wire_issues = []
+            # No diagnostic difference is waived: the former garbage-header
+            # waiver closed when Rust adopted Go's HeaderType panic text
+            # (docs/pr7-remaining-differences.md). The field stays for report
+            # compatibility.
             diagnostic_issues = []
             if args.command == 'compare':
                 # Parent's explicit wire ledger: native tonic UA is a known
@@ -1321,7 +1306,6 @@ def main(argv=None):
                 # CONNECT headers, every other metadata field and raw bytes
                 # remain under their original gates.
                 second_issues, delta, wire_issues = split_wire_ua(first, second, second_issues, delta)
-                delta, diagnostic_issues = split_diagnostics(case, first, second, delta)
             issues += ['second: ' + i for i in second_issues]
             issues += delta
             report['cases'][name] = dict(signature=signature(first), issues=issues,

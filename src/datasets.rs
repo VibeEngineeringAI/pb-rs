@@ -32,7 +32,7 @@ fn format(parsed: &ParsedInvocation) -> Result<bool, CliError> {
             ErrorCode::InvalidInput,
             format!(
                 "unsupported output format {} (expected text or json)",
-                quote(parsed.text("output"))
+                crate::argv::quote(parsed.text_bytes("output"))
             ),
         )),
     }
@@ -206,9 +206,17 @@ struct RuleConfig {
 }
 
 async fn info(parsed: &ParsedInvocation, client: &ApiClient) -> Result<String, CliError> {
-    let name = &parsed.positionals[0];
     let response = client
-        .standard(Method::GET, &format!("logstream/{name}/info"), None)
+        .standard_bytes(
+            Method::GET,
+            &[
+                b"logstream/".as_slice(),
+                parsed.positional_bytes(0),
+                b"/info",
+            ]
+            .concat(),
+            None,
+        )
         .await
         .map_err(|error| {
             let prefix = match &error {
@@ -224,7 +232,10 @@ async fn info(parsed: &ParsedInvocation, client: &ApiClient) -> Result<String, C
     let dataset_type = match response.status {
         200 => decode_type(&response.body)?,
         404 => {
-            let message = format!("dataset {} not found", quote(name));
+            let message = format!(
+                "dataset {} not found",
+                crate::argv::quote(parsed.positional_bytes(0))
+            );
             return Err(CliError::http(404, &message, &message));
         }
         status => {
@@ -236,18 +247,18 @@ async fn info(parsed: &ParsedInvocation, client: &ApiClient) -> Result<String, C
             ));
         }
     };
-    let stats = match info_request(client, name, "stats").await? {
+    let stats = match info_request(client, parsed.positional_bytes(0), "stats").await? {
         Some(body) => decode_stats(&body)?,
         None => Stats::default(),
     };
-    let retention = match info_request(client, name, "retention").await? {
+    let retention = match info_request(client, parsed.positional_bytes(0), "retention").await? {
         Some(body) => {
             let document = decode(&body)?;
             retention(&document)?
         }
         None => None,
     };
-    let alerts = match info_request(client, name, "alert").await? {
+    let alerts = match info_request(client, parsed.positional_bytes(0), "alert").await? {
         Some(body) => {
             let document = decode(&body)?;
             alerts(&document)?
@@ -342,11 +353,15 @@ async fn info(parsed: &ParsedInvocation, client: &ApiClient) -> Result<String, C
 }
 async fn info_request(
     client: &ApiClient,
-    name: &str,
+    name: &[u8],
     endpoint: &str,
 ) -> Result<Option<Vec<u8>>, CliError> {
     let response = client
-        .standard(Method::GET, &format!("logstream/{name}/{endpoint}"), None)
+        .standard_bytes(
+            Method::GET,
+            &[b"logstream/".as_slice(), name, b"/", endpoint.as_bytes()].concat(),
+            None,
+        )
         .await
         .map_err(CliError::from)?;
     match response.status {
@@ -747,9 +762,17 @@ const SCHEMA_FIELD: &str = "struct { Name string \"json:\\\"name\\\"\"; DataType
 const SCHEMA_ROOT: &str = "struct { Fields []struct { Name string \"json:\\\"name\\\"\"; DataType json.RawMessage \"json:\\\"data_type\\\"\" } \"json:\\\"fields\\\"\" }";
 async fn schema(parsed: &ParsedInvocation, client: &ApiClient) -> Result<String, CliError> {
     let json = format(parsed)?;
-    let name = &parsed.positionals[0];
     let response = client
-        .standard(Method::GET, &format!("logstream/{name}/schema"), None)
+        .standard_bytes(
+            Method::GET,
+            &[
+                b"logstream/".as_slice(),
+                parsed.positional_bytes(0),
+                b"/schema",
+            ]
+            .concat(),
+            None,
+        )
         .await
         .map_err(CliError::from)?;
     if response.status != 200 {

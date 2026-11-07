@@ -1,0 +1,65 @@
+{
+  "binaries": {
+    "go": {
+      "path": "/dev/shm/pb-stress-binaries-p167spqa/go",
+      "source": "bin/pb-go",
+      "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314"
+    },
+    "rust": {
+      "path": "/dev/shm/pb-stress-binaries-p167spqa/rust",
+      "source": "bin/pb-perf2-final",
+      "sha256": "8124d157236e215d2068ce4dadf97ebe08043a1a1c327d5dc3a69806785e12a1"
+    }
+  },
+  "scope": "new stress harness characterization, no product optimization",
+  "sql": {
+    "scale": {
+      "repetitions": 3,
+      "warmup": 1,
+      "sink": "null",
+      "calibrate": true
+    },
+    "soak": {
+      "duration_seconds_per_case": 60,
+      "sink": "null",
+      "calibrate": true
+    },
+    "extended": {
+      "cases": [
+        "stream-10gib"
+      ],
+      "repetitions": 1,
+      "sink": "null",
+      "calibrate": true
+    }
+  },
+  "ingestion": {
+    "duration_seconds": 300,
+    "rate_requested_per_second": 5000,
+    "record_bytes": 64,
+    "filesystem": "workspace real disk, retained in report",
+    "fault_validation": {
+      "duration_seconds": 3,
+      "rate": 1000,
+      "shape": "mixed",
+      "record_bytes": 256,
+      "modes": [
+        "503 on upload2",
+        "ack loss on upload2",
+        "413 above10 rows"
+      ]
+    },
+    "supplementary_run": {
+      "duration_seconds": 60,
+      "rate": 5000,
+      "record_bytes": 64,
+      "reason": "Five-minute producer schedule lag405.5ms exceeded250ms limit; original retained, shorter repeat passed"
+    }
+  },
+  "limitations": [
+    "shared host; external work may compete for CPUs",
+    "null sink measurements follow full pipe-output validation",
+    "ingest is Rust-only extension; no Go comparison",
+    "SQL success requires completion within existing60-second deadline"
+  ]
+}

@@ -1,0 +1,37 @@
+running 13 tests
+test ingest_oversized_line_and_corrupt_state_fail_without_network ... ok
+
+thread 'ingest_host_falls_back_to_os_hostname_without_environment_variables' (2630951) panicked at tests/shoulder_process.rs:500:5:
+assertion `left == right` failed
+  left: String("unknown")
+ right: "ajs-mini-pc-02"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'ingest_one_shot_drains_bounded_skipped_only_batches' (2630960) panicked at tests/shoulder_process.rs:469:5:
+five source lines with batch-size=1 must require at least five committed scans: {"version":1,"binding":{"endpoint":"http://127.0.0.1:35373/","tenant_id":"","workspace_id":"","dataset":"fixture","session":"run-1","directory":"/var/tmp/pb-pr8-tdd-evidence/sol/tmp/pb-shoulder-process-2630925-8","includes":["*.log"],"excludes":[],"format":"jsonl"},"collector":"c89a41bf-1b68-44be-926e-91707848260b","host":"unknown","next_sequence":2,"files":{"initialized":true,"revision":2,"next_generation":1,"files":{"/var/tmp/pb-pr8-tdd-evidence/sol/tmp/pb-shoulder-process-2630925-8/a.log":{"identity":"33:2811450","generation_number":0,"generation":"file-2ca941a020196e9d","offset":29,"sequence":5,"discard_fragment":false,"anchor":[91,93,10,105,110,118,97,108,105,100,10,91,93,10,123,34,111,107,34,58,116,114,117,101,125,10,91,93,10],"prefix":[91,93,10,105,110,118,97,108,105,100,10,91,93,10,123,34,111,107,34,58,116,114,117,101,125,10,91,93,10],"missing_scans":0}}},"complete":false,"pending":null}
+test ingest_glob_skips_named_pipe_without_waiting_for_a_writer ... ok
+test ingest_host_falls_back_to_os_hostname_without_environment_variables ... FAILED
+test ingest_one_shot_drains_bounded_skipped_only_batches ... FAILED
+test ingest_rejects_session_mismatch_without_upload_or_checkpoint_changes ... ok
+
+thread 'ingest_complete_drains_bounded_skipped_only_batches_before_marker' (2630933) panicked at tests/shoulder_process.rs:469:5:
+five source lines with batch-size=1 must require at least five committed scans: {"version":1,"binding":{"endpoint":"http://127.0.0.1:36673/","tenant_id":"","workspace_id":"","dataset":"fixture","session":"run-1","directory":"/var/tmp/pb-pr8-tdd-evidence/sol/tmp/pb-shoulder-process-2630925-3","includes":["*.log"],"excludes":[],"format":"jsonl"},"collector":"e61e90ac-9f2f-44b9-98e3-ebefae43571d","host":"unknown","next_sequence":3,"files":{"initialized":true,"revision":2,"next_generation":1,"files":{"/var/tmp/pb-pr8-tdd-evidence/sol/tmp/pb-shoulder-process-2630925-3/a.log":{"identity":"33:2811423","generation_number":0,"generation":"file-d2014c204b97256e","offset":29,"sequence":5,"discard_fragment":false,"anchor":[91,93,10,105,110,118,97,108,105,100,10,91,93,10,123,34,111,107,34,58,116,114,117,101,125,10,91,93,10],"prefix":[91,93,10,105,110,118,97,108,105,100,10,91,93,10,123,34,111,107,34,58,116,114,117,101,125,10,91,93,10],"missing_scans":0}}},"complete":true,"pending":null}
+test ingest_default_end_discards_initial_fragment_but_reads_new_files ... ok
+test ingest_complete_drains_bounded_skipped_only_batches_before_marker ... FAILED
+test ingest_follow_discovers_new_glob_matches_and_respects_excludes ... ok
+test ingest_failed_upload_replays_original_before_importing_rewritten_source ... ok
+test ingest_jsonl_snapshot_append_restart_has_no_duplicates ... ok
+test ingest_failed_upload_replays_exact_persisted_body_after_source_is_deleted ... ok
+test ingest_text_preserves_lines_and_jsonl_skip_is_explicit ... ok
+test ingest_complete_rejects_partial_then_sends_final_ordered_marker_once ... ok
+
+failures:
+
+failures:
+    ingest_complete_drains_bounded_skipped_only_batches_before_marker
+    ingest_host_falls_back_to_os_hostname_without_environment_variables
+    ingest_one_shot_drains_bounded_skipped_only_batches
+
+test result: FAILED. 10 passed; 3 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.08s
+
+error: test failed, to rerun pass `--test shoulder_process`

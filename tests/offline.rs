@@ -19,7 +19,7 @@ fn collect<'a>(spec: &'a CommandSpec, path: String, out: &mut Vec<(&'a CommandSp
 fn specification_is_consistent_and_all_help_paths_execute() {
     let mut nodes = Vec::new();
     collect(command_spec(), "pb".into(), &mut nodes);
-    assert_eq!(nodes.len(), 52);
+    assert_eq!(nodes.len(), 55);
     for (node, path) in nodes {
         let mut long = BTreeSet::new();
         let mut short = BTreeSet::new();
@@ -118,6 +118,17 @@ fn help_and_discovery_only_include_initialized_help_flags() {
             .iter()
             .any(|c| matches!(c["command"].as_str(), Some("pb help" | "pb completion")))
     );
+    // These Rust-only additions are checked before the legacy Go comparison
+    // projects them out; discovery must retain both commands and the leaf.
+    for tree in [&root, &via_help] {
+        let commands = tree["subcommands"].as_array().unwrap();
+        let ingest = commands
+            .iter()
+            .find(|c| c["command"] == "pb ingest")
+            .unwrap();
+        assert_eq!(ingest["subcommands"][0]["command"], "pb ingest files");
+        assert!(commands.iter().any(|c| c["command"] == "pb observe"));
+    }
     let completion: Value =
         serde_json::from_slice(&pb::run(&args(&["help", "completion", "-ojson"])).stdout).unwrap();
     assert_eq!(completion["subcommands"].as_array().unwrap().len(), 4);

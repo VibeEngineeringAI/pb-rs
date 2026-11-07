@@ -6,7 +6,7 @@
 //! assignment/syntax rules forced a parallel tokenizer. Keeping one sequential
 //! parser avoids synthetic flag collisions and duplicated validation.
 use crate::spec::{ArgsKind, CommandSpec, FlagKind, FlagSpec};
-use std::collections::BTreeMap;
+use std::{borrow::Cow, collections::BTreeMap};
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum FlagValue {
@@ -25,8 +25,25 @@ pub struct ParsedInvocation {
     pub command_path: String,
     pub positionals: Vec<String>,
     pub flags: BTreeMap<String, ParsedFlag>,
+    pub raw: crate::argv::RawValues,
 }
 impl ParsedInvocation {
+    pub fn positional_bytes(&self, index: usize) -> &[u8] {
+        self.raw
+            .positionals
+            .get(index)
+            .map(Vec::as_slice)
+            .unwrap_or_else(|| self.positionals.get(index).map_or(b"", |s| s.as_bytes()))
+    }
+    pub fn text_bytes(&self, name: &str) -> &[u8] {
+        self.raw
+            .flags
+            .get(name)
+            .and_then(|values| values.last())
+            .map(Vec::as_slice)
+            .unwrap_or_else(|| self.text(name).as_bytes())
+    }
+
     pub fn text(&self, name: &str) -> &str {
         match self.flags.get(name).map(|f| &f.value) {
             Some(FlagValue::Text(v)) => v,
@@ -50,8 +67,7 @@ pub struct ParseError {
     pub root_find: bool,
 }
 
-fn non_flags(args: &[String], command: &CommandSpec) -> Vec<(usize, String)> {
-    let mut result = Vec::new();
+fn first_non_flag(args: &[String], command: &CommandSpec) -> Option<usize> {
     let mut i = 0;
     while i < args.len() {
         let s = &args[i];
@@ -82,11 +98,11 @@ fn non_flags(args: &[String], command: &CommandSpec) -> Vec<(usize, String)> {
             continue;
         }
         if !s.is_empty() && !s.starts_with('-') {
-            result.push((i, s.clone()));
+            return Some(i);
         }
         i += 1;
     }
-    result
+    None
 }
 
 /// Resolve aliases and remove command words, preserving all flag/value tokens.
@@ -97,11 +113,8 @@ pub fn discover<'a>(
     let mut command = root;
     let mut path = root.name.clone();
     let mut remaining = args.to_vec();
-    loop {
-        let words = non_flags(&remaining, command);
-        let Some((index, word)) = words.first() else {
-            break;
-        };
+    while let Some(index) = first_non_flag(&remaining, command) {
+        let word = &remaining[index];
         let Some(child) = command.child(word) else {
             if path == root.name && command.args.kind == ArgsKind::Arbitrary {
                 let mut message = format!("unknown command {} for {}", quote(word), quote(&path));
@@ -129,7 +142,7 @@ pub fn discover<'a>(
             }
             break;
         };
-        remaining.remove(*index);
+        remaining.remove(index);
         path.push(' ');
         path.push_str(&child.name);
         command = child;
@@ -194,7 +207,7 @@ fn distance(a: &str, b: &str) -> usize {
     row.last().copied().unwrap_or(0)
 }
 
-fn parse_value(kind: FlagKind, value: &str) -> Result<FlagValue, String> {
+pub(crate) fn parse_value(kind: FlagKind, value: &str) -> Result<FlagValue, String> {
     match kind {
         FlagKind::String | FlagKind::Strings => Ok(FlagValue::Text(value.into())),
         FlagKind::Bool => match value {
@@ -268,7 +281,7 @@ fn parse_error(message: String) -> ParseError {
     }
 }
 
-fn shorthand_quote(byte: u8) -> String {
+pub(crate) fn shorthand_quote(byte: u8) -> String {
     let character = char::from(byte);
     if character == '\'' {
         return "'\\''".into();
@@ -308,7 +321,7 @@ pub fn parse(
     path: &str,
     args: &[String],
 ) -> Result<ParsedInvocation, ParseError> {
-    let flags = command.local_flags(true);
+    let flags = command.local_flags_borrowed(true);
     let defaults = flags
         .iter()
         .map(|flag| {
@@ -318,8 +331,8 @@ pub fn parse(
                 let raw = flag
                     .default
                     .as_str()
-                    .map(str::to_string)
-                    .unwrap_or_else(|| flag.default.to_string());
+                    .map(Cow::Borrowed)
+                    .unwrap_or_else(|| Cow::Owned(flag.default.to_string()));
                 parse_value(flag.kind, &raw).expect("valid flag default")
             };
             (
@@ -333,6 +346,7 @@ pub fn parse(
         .collect();
     let mut parsed = ParsedInvocation {
         command_path: path.into(),
+        raw: Default::default(),
         positionals: Vec::new(),
         flags: defaults,
     };
@@ -420,7 +434,7 @@ pub fn validate_args(command: &CommandSpec, parsed: &ParsedInvocation) -> Result
     let err = match command.args.kind {
         ArgsKind::None if n > 0 => Some(format!(
             "unknown command {} for {}",
-            quote(&parsed.positionals[0]),
+            crate::argv::quote(parsed.positional_bytes(0)),
             quote(&parsed.command_path)
         )),
         ArgsKind::Exact if n != counts[0] => {

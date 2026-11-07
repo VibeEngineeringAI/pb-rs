@@ -252,6 +252,68 @@ fn missing_or_short_schema_header_is_an_initialization_failure() {
     );
 }
 
+/// Go reads the root offset, then `HeaderType()` through the vtable, without
+/// verification; each out-of-range access panics with Go's runtime text.
+#[test]
+fn garbage_headers_reproduce_go_header_type_panics() {
+    let cases: [(&[u8], &str); 6] = [
+        // The retained p6-corrupt-garbage_header fixture shape.
+        (
+            b"\xde\xad\xbe\xef\0\0\0\0\0\0\0\0",
+            "slice bounds out of range [4022250974:12]",
+        ),
+        (
+            &[10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            "index out of range [3] with length 2",
+        ),
+        // SOffsetT -100: the vtable lies past the end.
+        (
+            &[4, 0, 0, 0, 0x9c, 0xff, 0xff, 0xff, 0, 0, 0, 0],
+            "slice bounds out of range [104:12]",
+        ),
+        // A vtable with one byte left.
+        (
+            &[4, 0, 0, 0, 0xf9, 0xff, 0xff, 0xff, 0, 0, 0, 0],
+            "index out of range [1] with length 1",
+        ),
+        // The header-type slot lies past the end.
+        (
+            &[4, 0, 0, 0, 0xfc, 0xff, 0xff, 0xff, 8, 0, 0, 0],
+            "slice bounds out of range [14:12]",
+        ),
+        // The header-type byte itself lies exactly at the end.
+        (
+            &[4, 0, 0, 0, 0xfc, 0xff, 0xff, 0xff, 8, 0, 0, 0, 0, 0, 12, 0],
+            "index out of range [0] with length 0",
+        ),
+    ];
+    for (header, panic) in cases {
+        assert_eq!(go_header_type(header), Err(panic.to_owned()), "{header:?}");
+        let data = FlightData {
+            data_header: Bytes::copy_from_slice(header),
+            ..Default::default()
+        };
+        assert_eq!(
+            open_error(vec![Ok(data)]),
+            format!("{FLIGHT_READER}{UNKNOWN_READ}runtime error: {panic}")
+        );
+    }
+    // A vtable too short for the slot reads as no header, like Go.
+    assert_eq!(
+        go_header_type(&[4, 0, 0, 0, 0xfc, 0xff, 0xff, 0xff, 4, 0, 0, 0]),
+        Ok(0)
+    );
+    let data = int_stream(&[&[1]]);
+    assert_eq!(
+        go_header_type(&data[0].data_header),
+        Ok(MessageHeader::Schema.0)
+    );
+    assert_eq!(
+        go_header_type(&data[1].data_header),
+        Ok(MessageHeader::RecordBatch.0)
+    );
+}
+
 #[test]
 fn established_reads_reconnect_only_for_eof_and_stream_end_codes() {
     for code in [CANCELED, UNAVAILABLE, OK] {
@@ -2119,13 +2181,10 @@ mod fbx {
     }
 }
 
-/// Go v13 byte-swaps a big-endian stream (go1.25.4 probe: Int64 1, -2, 300
-/// render correctly, plain and LZ4; strings and dictionaries too). Arrow's
-/// low-level decoder would read the buffers as little-endian and print
-/// `72057594037927936` for 1, so a non-native schema fails initialization:
-/// a declared capability limitation, never silently wrong values.
+/// Schema initialization accepts foreign byte order; buffer normalization is
+/// exercised by endian module tests before any offsets reach arrow-rs.
 #[test]
-fn non_native_byte_order_fails_initialization() {
+fn non_native_byte_order_initializes() {
     use arrow_ipc::Endianness;
     let declared = |endianness| {
         let mut fbb = fbx::Build::new();
@@ -2137,10 +2196,9 @@ fn non_native_byte_order_fails_initialization() {
     } else {
         Endianness::Big
     };
-    assert_eq!(
-        open_error(vec![Ok(declared(foreign))]),
-        format!("{FLIGHT_READER}{NON_NATIVE_ENDIAN}")
-    );
+    assert!(Decoder::new(&declared(foreign).data_header).is_ok());
+    let unknown = Decoder::new(&declared(Endianness(2)).data_header).unwrap();
+    assert!(unknown.swap_endian);
     // The same schema in native order initializes and decodes.
     let mut data = int_stream(&[&[1, -2, 300]]);
     data[0] = declared(NATIVE_ENDIAN);
@@ -3330,4 +3388,39 @@ fn inflight_guard_spans_the_real_open_handoff() {
     let snapshot = serde_json::to_value(resources::finish().unwrap()).unwrap();
     assert_eq!(snapshot["max_application_messages_inflight"], 1);
     assert_eq!(stdout, b"{\"n\":1}\n\n");
+}
+
+#[test]
+fn logical_endian_schema_dictionary_ids_use_the_patched_copy() {
+    let mut b = fbx::Build::new();
+    let field = fbx::leaf(&mut b, "d", fbx::Leaf::Utf8, true, Some(1));
+    let data = fbx::schema(b, &[field], arrow_ipc::Endianness::Big);
+    let mut header = data.data_header.to_vec();
+    let schema = ipc_message(&header).unwrap().header_as_schema().unwrap();
+    let dictionary = schema.fields().unwrap().get(0).dictionary().unwrap();
+    let dictionary_id_at = dictionary._tab.loc()
+        + usize::from(
+            dictionary
+                ._tab
+                .vtable()
+                .get(arrow_ipc::DictionaryEncoding::VT_ID),
+        );
+    let schema_at = schema._tab.loc();
+    // FlatBuffers permits field storage to overlap other verified tables.
+    // Make endianness alias the dictionary ID's low two bytes (currently 1).
+    let vtable_distance = i32::from_le_bytes(header[schema_at..schema_at + 4].try_into().unwrap());
+    let vtable_at = (schema_at as isize - vtable_distance as isize) as usize;
+    let entry = vtable_at + usize::from(arrow_ipc::Schema::VT_ENDIANNESS);
+    header[entry..entry + 2].copy_from_slice(
+        &u16::try_from(dictionary_id_at - schema_at)
+            .unwrap()
+            .to_le_bytes(),
+    );
+    let original = ipc_message(&header).unwrap().header_as_schema().unwrap();
+    assert_eq!(original.endianness(), arrow_ipc::Endianness::Big);
+    assert_eq!(ipc_dictionary_ids(&original).0, BTreeSet::from([1]));
+    let decoder = Decoder::new(&header).unwrap();
+    assert_eq!(decoder.ids, BTreeSet::from([0]));
+    assert!(decoder.dictionary_types.contains_key(&0));
+    assert!(!decoder.dictionary_types.contains_key(&1));
 }

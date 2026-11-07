@@ -20,6 +20,8 @@ import sys
 import tempfile
 import time
 
+import compatibility
+
 
 HERE = Path(__file__).resolve().parent
 SURFACE_PATH = HERE / "contracts" / "phase1-surface.json"
@@ -242,6 +244,19 @@ def corpus(surface=None):
     for chunk in unicode_quote_chunks():
         add("unicode-scalar-quote-sweep", ["version", "-o", chunk], "unicode", "offline-action")
         cases[-1]["unicode_scalar_range"] = [ord(chunk[0]), ord(chunk[-1])]
+    # Completion generation and protocol execution are offline operations.
+    # Append these cases so historical phase-one case identifiers stay stable.
+    for shell in ("bash", "fish", "powershell", "zsh"):
+        for option in ([], ["--no-descriptions"], ["--no-descriptions=false"]):
+            add("completion-script-" + shell, ["completion", shell, *option],
+                "completion", "offline-action")
+    for protocol in ("__complete", "__completeNoDesc"):
+        add("completion-protocol-missing", [protocol], "completion", "arity-invalid")
+        for node in surface["nodes"]:
+            for tail in ([""], ["-"], ["--h"], ["--help=false", ""],
+                         ["--", "-"], ["--unknown-phase1="], ["--unknown-phase1", ""]):
+                add("completion-protocol-" + ("-".join(node["path"]) or "root"),
+                    [protocol, *node["path"], *tail], "completion", "offline-action")
     return cases
 
 
@@ -374,7 +389,7 @@ def read_result(folder, expected=None):
     return value
 
 
-def differences(reference, candidate):
+def differences(reference, candidate, project_extensions=False, argv=()):
     issues = []
     for role, result in (("reference", reference), ("candidate", candidate)):
         if result.get("failure"):
@@ -383,6 +398,8 @@ def differences(reference, candidate):
         issues.append(f"exit {candidate['exit_code']}, expected {reference['exit_code']}")
     for stream in ("stdout", "stderr"):
         expected, actual = reference[stream], candidate[stream]
+        if project_extensions:
+            expected, actual = compatibility.project(expected, argv), compatibility.project(actual, argv)
         if expected != actual:
             offset = next((i for i, pair in enumerate(zip(expected, actual)) if pair[0] != pair[1]), min(len(expected), len(actual)))
             issues.append(f"{stream} differs at byte {offset}: candidate {len(actual)} bytes, reference {len(expected)} bytes")
@@ -433,6 +450,8 @@ PHASE6_OPERATIONS = {"tail"}
 # Interactive contracts are now asserted by phase7.py and interactive_effects.rs.
 PHASE7_OPERATIONS = {"login", "role add", "dataset add", "sql list"}
 
+COMPLETION_OPERATIONS = {"completion " + shell for shell in ("bash", "fish", "powershell", "zsh")}
+
 
 def deferred_guards(surface=None):
     """Candidate safety assertions, never Go parity or benchmark workloads."""
@@ -445,7 +464,7 @@ def deferred_guards(surface=None):
     nodes = surface["nodes"]
     for node in nodes:
         path = node["path"]
-        if " ".join(path) in PHASE2_OPERATIONS | PHASE4_OPERATIONS | PHASE5_OPERATIONS | PHASE6_OPERATIONS | PHASE7_OPERATIONS:
+        if " ".join(path) in PHASE2_OPERATIONS | PHASE4_OPERATIONS | PHASE5_OPERATIONS | PHASE6_OPERATIONS | PHASE7_OPERATIONS | COMPLETION_OPERATIONS:
             continue
         if not path or path in (["help"], ["agent"], ["version"]):
             continue
@@ -528,7 +547,8 @@ def valid_saved_report(report, cases):
 
 def benchmark_suite(cases, results, all_cases=False):
     return [{"name": case["name"], "group": case["group"], "argv": case["argv"],
-             "profile": False, "fixture": None, "expected_exit": result["exit_code"], "expected_requests": []}
+             "profile": False, "fixture": None, "expected_exit": result["exit_code"], "expected_requests": [],
+             "compatibility_projection": compatibility.PROJECTION}
             for case, result in zip(cases, results) if all_cases or case["benchmark"]]
 
 
@@ -538,7 +558,8 @@ def write_report(out, report):
              f"Corpus SHA-256: `{report['corpus_sha256']}`.",
              f"Reference SHA-256: `{report['reference']['sha256']}`.",
              f"Declared Go source revision: `{report['provenance']['source_revision']}`.",
-             "Exact stdout, stderr and process exit are compared without byte normalization.",
+             "Retained Go stdout/stderr bytes and process exits are compared exactly. "
+             "Only the declared Rust ingest/observe discovery, help, completion and catalog additions are projected out; raw transcripts are retained.",
              "Every sample uses an empty HOME/XDG tree and rejects filesystem changes.",
              "This runner is not an OS network/filesystem sandbox; only reviewed help/parser paths are exercised.", ""]
     if report.get("candidate"):
@@ -594,7 +615,8 @@ def run(args):
               "provenance": surface["provenance"], "surface_sha256": digest(SURFACE_PATH.read_bytes()),
               "reference": {**reference, "version_stdout": "pb version " + surface["provenance"]["version"] + "\n"},
               "candidate": candidate, "build_provenance": build_provenance(candidate), "timeout_seconds": args.timeout,
-              "deferred": surface["deferred"], "cases": [], "passed": 0}
+              "deferred": surface["deferred"], "cases": [], "passed": 0,
+              "compatibility_projection": compatibility.PROJECTION}
     live_reference = not reference_results
     for index, case in enumerate(cases):
         ref = sample(reference["path"], case["argv"], args.timeout) if live_reference else reference_results[index]
@@ -604,7 +626,7 @@ def run(args):
         actual = sample(candidate["path"], case["argv"], args.timeout) if candidate else None
         if actual:
             store_result(out / "candidate" / case["name"], actual)
-        issues = differences(ref, actual) if actual else (["reference: " + ref["failure"]] if ref["failure"] else [])
+        issues = differences(ref, actual, project_extensions=True, argv=case["argv"]) if actual else (["reference: " + ref["failure"]] if ref["failure"] else [])
         if case["safety"] in ("parser-invalid", "arity-invalid") and ref["exit_code"] != 1:
             issues.append("reviewed invalid parser/arity case did not exit 1 in reference")
         if case.get("preflight"):

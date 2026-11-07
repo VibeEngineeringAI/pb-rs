@@ -29,27 +29,16 @@ by default and any difference fails the case.
 
 | Tier | Cases | Default |
 | --- | --- | --- |
-| `gate` | 675 | run |
+| `gate` | 688 | run |
 | `full60s` | 9 | `--include-full60s` (80 s per-case timeout above Go's 60 s client deadline) |
-| `known-divergence` | 13 | `--include-known-divergence`; documented residuals, never counted as gate passes |
+| `known-divergence` | 0 | `--include-known-divergence`; currently empty |
 
-`known-divergence` cases keep their full Go pins and run against Go in every
-capture that includes the tier; only the candidate comparison is outside the
-gate. They are listed with reasons in `phase3.KNOWN_DIVERGENCES` and in every
-report's scope:
-
-- Empty HTTP/1.1 reason phrase (6 cases, plus status 299, which has no standard
-  reason): Go reports `200 ` with the raw delimiter; hyper does not expose it.
-- Connection reset mid-body (text, JSON): Go `read tcp A->B: read: connection
-  reset by peer` against Rust `Connection reset by peer (os error 104)`. Partial
-  stdout, error code and retryability match.
-- EOF before response headers: hyper cannot reproduce Go's distinct diagnostics.
-- Malformed status code: Go echoes the raw token (`abc`); hyper reports only
-  `invalid HTTP status-code parsed`.
-- Non-UTF-8 argv: the phase-one `String` parser boundary.
-
-Fixable diagnostics (for example truncated chunked bodies reporting
-`unexpected EOF`) stay in the gate.
+All thirteen originally excluded cases now run in the ordinary gate with their
+Go expectations unchanged: non-UTF-8 argv was promoted in PR #6, and the twelve
+HTTP reason/transport diagnostic cases in PR #7. The reference manifest records
+these classification changes. `phase3.KNOWN_DIVERGENCES` is empty. See the
+[remaining-difference audit](../../docs/pr7-remaining-differences.md) for each
+case and the explicit transport limitations outside this corpus.
 
 Gate groups: named rewrites (63) and 160 seeded rewrites, time forwarding,
 validation precedence, profiles/request construction, auth headers, text
@@ -63,15 +52,11 @@ slow and blocked readers, signals and SIGPIPE, `/dev/full`, PTY spinner and
 large workloads (10,000/100,000 rows, one 8 MiB element, 4 MiB leading
 whitespace).
 
-Candidate-only deferred boundaries (11, run by unfiltered non-self-check
-`compare`): `-i`/`--interactive` (including `-i -o yaml`, which must not report
-output validation) and nonempty `--save-as` (including whitespace). Each must
-exit 1 with empty stdout, an explicit `... is not implemented in this Rust
-phase` error (a `COMMAND_FAILED` JSON envelope on stderr when JSON is
-requested), make no request to a fixture that would accept `/api/v1/query` and
-`/api/v1/filters`, and leave HOME byte-identical. Go fails these checks by design;
-they are scope assertions, not parity. Empty-SQL and invalid-output cases with
-`--save-as` are ordinary Go parity cases because Go rejects them before saving.
+The earlier candidate-only interactive stub boundaries have graduated to the
+phase-seven PTY/effects gate; `deferred_boundaries()` now returns no cases.
+Nonempty `--save-as` is covered by phase four. Empty-SQL and invalid-output cases
+with `--save-as` remain ordinary Go parity cases because Go rejects them before
+saving.
 
 ## What gates
 

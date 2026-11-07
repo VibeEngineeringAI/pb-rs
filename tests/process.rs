@@ -148,17 +148,20 @@ fn closed_stderr_terminates_with_sigpipe() {
 }
 
 #[test]
-fn invalid_utf8_is_an_explicit_error_without_panicking() {
+fn invalid_utf8_command_is_byte_quoted_without_panicking() {
     let sandbox = Sandbox::new();
     let invalid = OsString::from_vec(vec![0xff]);
     let output = sandbox.command().arg(invalid).output().unwrap();
     assert_eq!(output.status.code(), Some(1));
     assert!(output.stdout.is_empty());
-    assert_eq!(output.stderr, b"Error: argument 1 is not valid UTF-8\n");
+    assert_eq!(
+        output.stderr,
+        b"Error: unknown command \"\\xff\" for \"pb\"\nRun 'pb --help' for usage.\n"
+    );
 }
 
 #[test]
-fn invalid_utf8_json_rejection_uses_raw_output_request_scan() {
+fn invalid_utf8_command_error_uses_raw_output_request_scan() {
     let sandbox = Sandbox::new();
     let output = sandbox
         .command()
@@ -172,7 +175,7 @@ fn invalid_utf8_json_rejection_uses_raw_output_request_scan() {
     assert_eq!(
         error,
         serde_json::json!({"error": {
-            "code": "INVALID_INPUT", "message": "argument 1 is not valid UTF-8", "retryable": false
+            "code": "INVALID_INPUT", "message": "unknown command \"\\xff\" for \"pb\"", "retryable": false
         }})
     );
 }
@@ -187,11 +190,14 @@ fn invalid_utf8_after_terminator_does_not_scan_json_as_a_flag() {
         .output()
         .unwrap();
     assert_eq!(output.status.code(), Some(1));
-    assert_eq!(output.stderr, b"Error: argument 1 is not valid UTF-8\n");
+    assert_eq!(
+        output.stderr,
+        b"Error: unknown command \"\\xff\" for \"pb\"\nRun 'pb --help' for usage.\n"
+    );
 }
 
 #[test]
-fn invalid_utf8_flag_value_is_rejected_without_panicking() {
+fn invalid_utf8_output_value_is_byte_quoted_without_panicking() {
     let sandbox = Sandbox::new();
     let output = sandbox
         .command()
@@ -201,7 +207,9 @@ fn invalid_utf8_flag_value_is_rejected_without_panicking() {
         .unwrap();
     assert_eq!(output.status.code(), Some(1));
     assert!(output.stdout.is_empty());
-    assert_eq!(output.stderr, b"Error: argument 2 is not valid UTF-8\n");
+    assert!(output.stderr.starts_with(
+        b"Error: unsupported output format \"bad\\xffvalue\" (expected text or json)\n"
+    ));
 }
 
 #[test]

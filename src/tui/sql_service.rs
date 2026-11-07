@@ -248,11 +248,7 @@ fn schema_endpoint(base: &str, stream: &[u8]) -> Result<String, crate::api::ApiE
 }
 
 fn status_text(response: &StreamingResponse) -> String {
-    if response.reason.is_empty() {
-        response.status.to_string()
-    } else {
-        format!("{} {}", response.status, response.reason)
-    }
+    response.status_text.clone()
 }
 
 /// io.ReadAll whose error the Go call sites ignore: keep what arrived.

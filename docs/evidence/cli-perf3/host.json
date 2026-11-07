@@ -1,0 +1,28 @@
+{
+  "recorded_unix": 1792295893.3931067,
+  "scope": "Shared host, no governor or background workload changes; owned tests/builds/benchmarks serialized. Fixtures/collector/CLI inherit CPUs 2,4,6,8. This snapshot is not per-sample host telemetry.",
+  "uname": {
+    "system": "Linux",
+    "node": "ajs-mini-pc-02",
+    "release": "7.2.5-3-omarchy",
+    "version": "#1 SMP PREEMPT_DYNAMIC Mon, 14 Sep 2026 19:55:01 +0000",
+    "machine": "x86_64",
+    "processor": ""
+  },
+  "loadavg": "29.74 25.21 20.73 32/3980 4036976",
+  "cpu_count": 20,
+  "benchmark_affinity": [
+    2,
+    4,
+    6,
+    8
+  ],
+  "governors": {
+    "2": "powersave",
+    "4": "powersave",
+    "6": "powersave",
+    "8": "powersave"
+  },
+  "work_filesystem": "btrfs /home",
+  "temporary_filesystem": "tmpfs /tmp"
+}

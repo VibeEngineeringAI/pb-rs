@@ -48,7 +48,8 @@ const RETAINED_STAGING: usize = 4 << 20;
 const FLIGHT_READER: &str = "arrow/flight: could not create flight reader: ";
 const UNKNOWN_READ: &str = "arrow/ipc: unknown error while reading: ";
 const NESTING_LIMIT: &str = "arrow/ipc: nested type limit reached";
-const NON_NATIVE_ENDIAN: &str = "arrow/ipc: IPC data in non-native byte order is not supported";
+#[path = "endian.rs"]
+mod endian;
 const NATIVE_ENDIAN: arrow_ipc::Endianness = if cfg!(target_endian = "big") {
     arrow_ipc::Endianness::Big
 } else {
@@ -78,7 +79,7 @@ fn failed(message: Vec<u8>) -> Terminal {
 
 pub(super) fn run(
     store: &ProfileStore,
-    dataset: &str,
+    dataset: &[u8],
     json: bool,
     stdout: &mut (dyn Write + Send),
     stderr: &mut (dyn Write + Send),
@@ -192,7 +193,7 @@ impl Handoff {
     }
 }
 
-async fn drive(store: &ProfileStore, dataset: &str, json: bool, mut handoff: Handoff) -> Terminal {
+async fn drive(store: &ProfileStore, dataset: &[u8], json: bool, mut handoff: Handoff) -> Terminal {
     if let Err(terminal) = handoff.status(json, Event::Spin).await {
         return terminal;
     }
@@ -372,6 +373,7 @@ struct Decoder {
     /// Utf8/LargeUtf8 rewritten to Binary/LargeBinary; see [`wire_schema`].
     /// The renderer keeps the original schema's plan.
     wire: SchemaRef,
+    swap_endian: bool,
     /// The value layout for every dictionary ID Go's memo registers. An ID
     /// reachable from the columns keeps the last compatible column-path
     /// occurrence (Go's post-order memo), which also supplies the nested IDs
@@ -424,19 +426,34 @@ impl Decoder {
         let decode_error = |e: &dyn std::fmt::Display| {
             format!("arrow/ipc: could not decode schema from message schema: {e}")
         };
-        let (ids, orphans) = ipc_dictionary_ids(&schema);
-        validation::ipc_schema(&schema)?;
-        // Arrow's low-level decoder reads buffers in native byte order and
-        // never consults the schema's endianness, so a big-endian stream
-        // would render silently wrong numbers. Go byte-swaps such streams;
-        // rejecting them here is a declared capability limitation.
         let endianness = schema.endianness();
-        if endianness != NATIVE_ENDIAN {
-            return Err(NON_NATIVE_ENDIAN.into());
+        let swap_endian = endianness != NATIVE_ENDIAN;
+        // arrow-rs rejects big-endian decimal schemas before reading buffers.
+        // Conversion only needs the logical schema; body normalization below
+        // handles its original byte order. Retain all original field metadata.
+        let mut logical_header = header.to_vec();
+        // Go treats every non-native enum value as requiring a byte swap,
+        // including unknown values. Conversion always uses a little-endian
+        // logical schema regardless of that original wire declaration.
+        if endianness != arrow_ipc::Endianness::Little {
+            let slot = schema._tab.vtable().get(arrow_ipc::Schema::VT_ENDIANNESS);
+            let offset = schema._tab.loc() + usize::from(slot);
+            logical_header[offset..offset + 2].copy_from_slice(&0_i16.to_le_bytes());
         }
-        let schema =
-            Arc::new(arrow_ipc::convert::try_fb_to_schema(schema).map_err(|e| decode_error(&e))?);
-        let orphans = orphan_schema(&orphans, endianness).map_err(|e| decode_error(&e))?;
+        let logical_message = ipc_message(&logical_header)?;
+        let logical_schema = logical_message.header_as_schema().unwrap();
+        if logical_schema.endianness() != arrow_ipc::Endianness::Little {
+            return Err(decode_error(&"logical schema is not little endian"));
+        }
+        // The patch can overlap another FlatBuffer field. Validate and collect
+        // dictionaries from exactly the verified copy used for conversion.
+        validation::ipc_schema(&logical_schema)?;
+        let (ids, orphans) = ipc_dictionary_ids(&logical_schema);
+        let schema = Arc::new(
+            arrow_ipc::convert::try_fb_to_schema(logical_schema).map_err(|e| decode_error(&e))?,
+        );
+        let orphans =
+            orphan_schema(&orphans, arrow_ipc::Endianness::Little).map_err(|e| decode_error(&e))?;
         validation::schema_types(schema.fields()).map_err(|e| decode_error(&e))?;
         validation::schema_types(orphans.fields()).map_err(|e| decode_error(&e))?;
         // Go rejects types it cannot represent while decoding the schema.
@@ -453,6 +470,7 @@ impl Decoder {
         }
         Ok(Self {
             wire,
+            swap_endian,
             dictionary_types,
             ids,
             dictionary_order,
@@ -559,8 +577,29 @@ impl Decoder {
                 } else {
                     &self.dictionaries
                 };
+                // Normalize only once this message has passed pending-dictionary,
+                // layout and dictionary-binding checks. NoRows never reads buffers.
+                let (normalized_header, body) = if self.swap_endian {
+                    let types = self
+                        .wire
+                        .fields()
+                        .iter()
+                        .map(|f| f.data_type())
+                        .collect::<Vec<_>>();
+                    let (header, body) = endian::normalize(message, batch, &types, &data.data_body)
+                        .map_err(|e| format!("{UNKNOWN_READ}{e}"))?;
+                    (Some(header), bytes::Bytes::from(body))
+                } else {
+                    (None, data.data_body)
+                };
+                let normalized_message =
+                    normalized_header.as_deref().map(ipc_message).transpose()?;
+                let batch = normalized_message
+                    .as_ref()
+                    .and_then(|m| m.header_as_record_batch())
+                    .unwrap_or(batch);
                 let batch = arrow_ipc::reader::read_record_batch(
-                    &ipc_body(data.data_body),
+                    &ipc_body(body),
                     batch,
                     Arc::clone(&self.wire),
                     dictionaries,
@@ -617,6 +656,21 @@ impl Decoder {
                 batch.id()
             ));
         }
+        // Match the native ordering: body bounds, dictionary ID, nesting,
+        // structural guards and missing-delta checks precede decompression.
+        let (normalized_header, body) = if self.swap_endian {
+            let (header, body) = endian::normalize(*message, record, &[&layout.values], &body)
+                .map_err(|e| format!("{UNKNOWN_READ}{e}"))?;
+            (Some(header), bytes::Bytes::from(body))
+        } else {
+            (None, body)
+        };
+        let normalized_message = normalized_header.as_deref().map(ipc_message).transpose()?;
+        let batch = normalized_message
+            .as_ref()
+            .and_then(|m| m.header_as_dictionary_batch())
+            .unwrap_or(batch);
+        let record = batch.data().unwrap();
         if batch.isDelta() && layout.nested {
             // Go retains each unresolved delta piece without concatenating it.
             // Reification fails only at a record; replacement or EOF can occur
@@ -983,11 +1037,13 @@ fn wire_type(data_type: &DataType, dictionary_value: bool) -> DataType {
 
 /// Protobuf `Bytes` can start at any byte address. Arrow's dense-union reader
 /// constructs typed offsets directly, unlike its other array builders which
-/// realign buffers. Copy an unaligned body into Arrow-owned aligned storage
-/// before decoding; already aligned bodies keep their existing owner. This is
-/// the same aligned-copy boundary used by arrow-flight's decoding utility.
+/// realign buffers. Its only direct casts are i8 type IDs and i32 offsets;
+/// validation has already checked that the offsets buffer's relative offset
+/// is a multiple of four (including stored-uncompressed buffers' 8-byte prefix).
+/// A four-byte-aligned base therefore suffices; other arrays copy only their
+/// individual buffers when they need stricter alignment.
 fn ipc_body(body: bytes::Bytes) -> Buffer {
-    if (body.as_ptr() as usize).is_multiple_of(64) {
+    if (body.as_ptr() as usize).is_multiple_of(std::mem::align_of::<i32>()) {
         Buffer::from(body)
     } else {
         Buffer::from(body.as_ref())
@@ -1014,21 +1070,64 @@ fn validate_body(batch: &arrow_ipc::RecordBatch<'_>, body_len: usize) -> Result<
     Ok(())
 }
 
-/// Go's unverified flatbuffer root read panics below four bytes and the
-/// reader recovers that panic into this text. Rust verifies longer headers,
-/// so other malformed headers produce a different (documented) diagnostic.
+/// Go's unverified flatbuffer reads panic on out-of-range offsets and the
+/// reader recovers the panic into this text. The first reads are the root
+/// offset and then `Message.HeaderType()`, which every message path calls
+/// first; their panics are reproduced here. Rust verifies a header that
+/// survives them, so deeper malformations keep a different (documented)
+/// diagnostic.
 fn ipc_message(header: &[u8]) -> Result<arrow_ipc::Message<'_>, String> {
-    if header.len() < 4 {
-        return Err(format!(
-            "{UNKNOWN_READ}runtime error: index out of range [3] with length {}",
-            header.len()
-        ));
-    }
+    go_header_type(header).map_err(|panic| format!("{UNKNOWN_READ}runtime error: {panic}"))?;
     let options = flatbuffers::VerifierOptions {
         max_depth: VERIFIER_MAX_DEPTH,
         ..Default::default()
     };
     arrow_ipc::root_as_message_with_opts(&options, header).map_err(|e| format!("{UNKNOWN_READ}{e}"))
+}
+
+/// Go flatbuffers v23.1.21 `GetRootAsMessage(buf, 0).HeaderType()` with its
+/// runtime bounds checks: `t.Bytes[off:]` slices with a uint32 offset and the
+/// fixed-width getters touch their last byte first. Offsets wrap as Go's
+/// UOffsetT/SOffsetT conversions do.
+fn go_header_type(buf: &[u8]) -> Result<u8, String> {
+    let length = buf.len();
+    let slice = |off: u32| -> Result<&[u8], String> {
+        buf.get(off as usize..)
+            .ok_or_else(|| format!("slice bounds out of range [{off}:{length}]"))
+    };
+    let fixed = |bytes: &[u8], width: usize| -> Result<(), String> {
+        if bytes.len() < width {
+            return Err(format!(
+                "index out of range [{}] with length {}",
+                width - 1,
+                bytes.len()
+            ));
+        }
+        Ok(())
+    };
+    let u32_at = |off: u32| -> Result<u32, String> {
+        let bytes = slice(off)?;
+        fixed(bytes, 4)?;
+        Ok(u32::from_le_bytes([bytes[0], bytes[1], bytes[2], bytes[3]]))
+    };
+    let u16_at = |off: u32| -> Result<u16, String> {
+        let bytes = slice(off)?;
+        fixed(bytes, 2)?;
+        Ok(u16::from_le_bytes([bytes[0], bytes[1]]))
+    };
+    let position = u32_at(0)?;
+    // Table.Offset(6): vtable := UOffsetT(SOffsetT(t.Pos) - t.GetSOffsetT(t.Pos))
+    let vtable = (position as i32).wrapping_sub(u32_at(position)? as i32) as u32;
+    if 6 >= u16_at(vtable)? {
+        return Ok(0);
+    }
+    let field = u16_at(vtable.wrapping_add(6))?;
+    if field == 0 {
+        return Ok(0);
+    }
+    let bytes = slice(u32::from(field).wrapping_add(position))?;
+    fixed(bytes, 1)?;
+    Ok(bytes[0])
 }
 
 /// Go's flatbuf.EnumNamesMessageHeader, falling back to MessageType(N).
@@ -1333,7 +1432,7 @@ fn copy_type<'b>(
 struct Worker<'a> {
     stdout: &'a mut (dyn Write + Send),
     stderr: &'a mut (dyn Write + Send),
-    dataset: &'a str,
+    dataset: &'a [u8],
     json: bool,
     staging: Vec<u8>,
     /// Tests hold the worker inside reader initialization: it signals the
@@ -1346,13 +1445,13 @@ impl<'a> Worker<'a> {
     fn new(
         stdout: &'a mut (dyn Write + Send),
         stderr: &'a mut (dyn Write + Send),
-        dataset: &'a str,
+        dataset: &'a (impl AsRef<[u8]> + ?Sized),
         json: bool,
     ) -> Self {
         Self {
             stdout,
             stderr,
-            dataset,
+            dataset: dataset.as_ref(),
             json,
             staging: Vec::new(),
             #[cfg(test)]
@@ -1385,10 +1484,14 @@ impl<'a> Worker<'a> {
                     Ack::Written
                 }
                 Event::Watching => {
-                    let _ = write!(
-                        self.stderr,
-                        "\r\x1b[K● watching {}... (ctrl+c to stop)",
-                        self.dataset
+                    let _ = self.stderr.write_all(
+                        &[
+                            b"\r\x1b[K".as_slice(),
+                            "● watching ".as_bytes(),
+                            self.dataset,
+                            b"... (ctrl+c to stop)",
+                        ]
+                        .concat(),
                     );
                     Ack::Written
                 }
@@ -1470,3 +1573,171 @@ impl<'a> Worker<'a> {
 
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+mod ipc_body_tests {
+    use super::*;
+    use arrow_array::{
+        Array, Decimal128Array, DictionaryArray, Float64Array, Int64Array, LargeStringArray,
+        StringArray, UnionArray, types::Int64Type,
+    };
+    use arrow_buffer::MutableBuffer;
+    use arrow_ipc::{
+        CompressionType, MetadataVersion,
+        writer::{DictionaryTracker, IpcDataGenerator, IpcWriteContext, IpcWriteOptions},
+    };
+    use arrow_schema::UnionFields;
+    use bytes::Bytes;
+
+    fn shifted(body: &[u8], prefix: usize) -> Bytes {
+        // MutableBuffer guarantees a 64-byte base, so prefix identifies the
+        // precise alignment rather than relying on the system allocator.
+        let mut storage = MutableBuffer::with_capacity(body.len() + prefix);
+        storage.extend_from_slice(&vec![0_u8; prefix]);
+        storage.extend_from_slice(body);
+        Bytes::from(Buffer::from(storage)).slice(prefix..)
+    }
+
+    fn batch() -> RecordBatch {
+        let fields = UnionFields::try_new(
+            vec![0, 1],
+            vec![
+                Field::new("i", DataType::Int64, true),
+                Field::new("s", DataType::Utf8, true),
+            ],
+        )
+        .unwrap();
+        let union = UnionArray::try_new(
+            fields,
+            vec![0_i8, 1, 0, 1].into(),
+            Some(vec![0_i32, 0, 1, 1].into()),
+            vec![
+                Arc::new(Int64Array::from(vec![42, 43])),
+                Arc::new(StringArray::from(vec!["first", "second"])),
+            ],
+        )
+        .unwrap();
+        let columns: Vec<ArrayRef> = vec![
+            Arc::new(union),
+            Arc::new(Int64Array::from(vec![Some(1), None, Some(3), Some(4)])),
+            Arc::new(Float64Array::from(vec![1.25, 2.5, 3.75, 4.0])),
+            Arc::new(
+                Decimal128Array::from(vec![123, 456, 789, 0])
+                    .with_precision_and_scale(10, 2)
+                    .unwrap(),
+            ),
+            Arc::new(StringArray::from(vec![
+                Some("a"),
+                Some("b"),
+                None,
+                Some("c"),
+            ])),
+            Arc::new(LargeStringArray::from(vec!["large text".repeat(128); 4])),
+            Arc::new(DictionaryArray::<Int64Type>::new(
+                vec![0, 1, 0, 1].into(),
+                Arc::new(StringArray::from(vec![
+                    "dictionary a".repeat(128),
+                    "dictionary b".repeat(128),
+                ])),
+            )),
+        ];
+        let schema = Arc::new(Schema::new(
+            columns
+                .iter()
+                .enumerate()
+                .map(|(i, column)| Field::new(format!("c{i}"), column.data_type().clone(), true))
+                .collect::<Vec<_>>(),
+        ));
+        RecordBatch::try_new(schema, columns).unwrap()
+    }
+
+    fn encoded(
+        batch: &RecordBatch,
+        version: MetadataVersion,
+        codec: Option<CompressionType>,
+    ) -> Vec<FlightData> {
+        let options = IpcWriteOptions::try_new(64, false, version)
+            .unwrap()
+            .try_with_compression(codec)
+            .unwrap();
+        let generator = IpcDataGenerator::default();
+        let mut tracker = DictionaryTracker::new(false);
+        let mut context = IpcWriteContext::default();
+        let schema = generator.schema_to_bytes_with_dictionary_tracker(
+            &batch.schema(),
+            &mut tracker,
+            &options,
+        );
+        let (dictionaries, record) = generator
+            .encode(batch, &mut tracker, &options, &mut context)
+            .unwrap();
+        let mut messages = vec![schema.into()];
+        messages.extend(dictionaries.into_iter().map(FlightData::from));
+        messages.push(record.into());
+        messages
+    }
+
+    fn decode(messages: &[FlightData], prefix: usize) -> Result<Vec<RecordBatch>, String> {
+        let mut decoder = Decoder::new(&messages[0].data_header)?;
+        let mut batches = Vec::new();
+        for message in &messages[1..] {
+            let mut message = message.clone();
+            message.data_body = shifted(&message.data_body, prefix);
+            if let Decoded::Batch(batch) = decoder.decode(message)? {
+                batches.push(batch);
+            }
+        }
+        Ok(batches)
+    }
+
+    #[test]
+    fn ipc_body_shares_four_byte_aligned_storage_and_copies_other_bases() {
+        for prefix in 0..64 {
+            let body = shifted(b"nonempty IPC body", prefix);
+            let original = body.as_ptr();
+            let decoded = ipc_body(body);
+            assert_eq!(decoded.as_ref(), b"nonempty IPC body");
+            assert_eq!(decoded.as_ptr() == original, prefix % 4 == 0);
+            assert!((decoded.as_ptr() as usize).is_multiple_of(4));
+        }
+    }
+
+    #[test]
+    fn ipc_body_alignment_preserves_union_numeric_string_and_dictionary_decoding() {
+        let batch = batch();
+        for (version, codec) in [
+            (MetadataVersion::V4, None),
+            (MetadataVersion::V5, None),
+            (MetadataVersion::V5, Some(CompressionType::LZ4_FRAME)),
+            (MetadataVersion::V5, Some(CompressionType::ZSTD)),
+        ] {
+            let messages = encoded(&batch, version, codec);
+            // Prefix zero supplies the former whole-body 64-byte alignment.
+            // Decoder deliberately normalizes string types to Binary, so
+            // compare decoded arrays against that path rather than the schema
+            // used by the IPC writer.
+            let expected = decode(&messages, 0).unwrap();
+            assert_eq!(expected.len(), 1);
+            assert_eq!(expected[0].column(1), batch.column(1));
+            for prefix in 0..64 {
+                let decoded = decode(&messages, prefix).unwrap();
+                assert_eq!(decoded.len(), 1);
+                assert_eq!(
+                    decoded[0].columns(),
+                    expected[0].columns(),
+                    "prefix={prefix}, codec={codec:?}"
+                );
+            }
+            // A body range failure must retain its exact diagnostic at every
+            // base alignment, before Arrow attempts any typed conversion.
+            let mut truncated = messages;
+            let last = truncated.last_mut().unwrap();
+            last.data_body = last.data_body.slice(..last.data_body.len() / 2);
+            let expected = decode(&truncated, 0).unwrap_err();
+            assert_eq!(expected, format!("{UNKNOWN_READ}EOF"));
+            for prefix in 1..64 {
+                assert_eq!(decode(&truncated, prefix).unwrap_err(), expected);
+            }
+        }
+    }
+}

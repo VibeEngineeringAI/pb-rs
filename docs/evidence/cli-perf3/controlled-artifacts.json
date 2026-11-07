@@ -1,0 +1,33 @@
+{
+  "reason": "Three paired interrupted RSS snapshots showed ~1.3MiB executable-file residency difference for byte-identical R4 copies. Repeat native measurements with uniform artifact materialization. Preserve original results and failed gate. Underlying kernel/page-cache cause not established.",
+  "method": "Serial read/write of 65536-byte blocks into fresh files, flush+fsync, chmod0755, SHA256 full reads source/copy; same policy for both Rust artifacts and Go. No cache dropping or system tuning. Existing warmup and randomized paired runs retained.",
+  "binaries": [
+    {
+      "label": "baseline",
+      "source": "bin/pb-perf2-final",
+      "copy": "bin/pb-perf3-controlled-baseline",
+      "sha256": "8124d157236e215d2068ce4dadf97ebe08043a1a1c327d5dc3a69806785e12a1",
+      "bytes": 13547528,
+      "source_inode": 198530387,
+      "copy_inode": 201672886
+    },
+    {
+      "label": "candidate",
+      "source": "bin/pb-perf3-final",
+      "copy": "bin/pb-perf3-controlled-candidate",
+      "sha256": "0dd77ed8adb4545294559bc1770648476b6d2f27c396a73ab05f398426854ad5",
+      "bytes": 13555336,
+      "source_inode": 200995733,
+      "copy_inode": 201672894
+    },
+    {
+      "label": "go",
+      "source": "bin/pb-go",
+      "copy": "bin/pb-perf3-controlled-go",
+      "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "bytes": 71807160,
+      "source_inode": 197896336,
+      "copy_inode": 201672902
+    }
+  ]
+}

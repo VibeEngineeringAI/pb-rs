@@ -2176,6 +2176,23 @@ class MetricsTests(unittest.TestCase):
 
 
 class AdapterTests(unittest.TestCase):
+    def test_public_paths_round_trip_for_other_users_and_scratch_overrides(self):
+        home = Path('/home/runner')
+        root = home / 'work/pb-rs/pb-rs'
+        for scratch in (home / '.cache/pb-phase7/tmp', Path('/scratch/isolated-pb')):
+            with self.subTest(scratch=scratch), \
+                    mock.patch.object(Path, 'home', return_value=home), \
+                    mock.patch.object(bench, 'ROOT', root), \
+                    mock.patch.object(bench.p7, 'TMP', scratch):
+                private = {'cache': str(home / '.cache/pb-phase7/baselines/pb-go'),
+                           'helper': str(scratch / 'helper'),
+                           'repo': str(root / 'harness'), 'home': str(home / 'other')}
+                public = bench.public_value(private)
+                self.assertEqual(public, {'cache': '$PB_CACHE/baselines/pb-go',
+                                          'helper': '$PB_CACHE/tmp/helper',
+                                          'repo': '$WORKTREE/harness', 'home': '$HOME/other'})
+                self.assertEqual(bench.private_value(public), private)
+
     def test_recorded_replay_program_and_minimal_no_descendant_probe(self):
         with tempfile.TemporaryDirectory(dir=bench.p7.TMP) as folder:
             capture = bench.ReplayCapture(mock.Mock(), replay={'bytes': b'\x1b[31mstyled frame'}, frames=3, evidence_path=Path(folder))

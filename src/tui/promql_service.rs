@@ -21,12 +21,21 @@ use tokio::sync::watch;
 pub(crate) struct ResultRequest {
     pub(crate) expr: String,
     pub(crate) dataset: String,
+    pub(crate) dataset_raw: Option<Vec<u8>>,
     pub(crate) step: String,
     /// RFC 3339 UTC strings as produced by the time picker.
     pub(crate) start: String,
     pub(crate) end: String,
     pub(crate) mode: QueryMode,
     pub(crate) display: DisplayMode,
+}
+
+impl ResultRequest {
+    pub(crate) fn dataset_bytes(&self) -> &[u8] {
+        self.dataset_raw
+            .as_deref()
+            .unwrap_or(self.dataset.as_bytes())
+    }
 }
 
 /// Concrete adapter over the authenticated client. Cloning shares the client.
@@ -48,9 +57,11 @@ impl PromqlSessionService {
 
     /// Range then instant for `both`, otherwise one request, as Go does.
     pub(crate) async fn query(&self, request: ResultRequest) -> Result<ResultData, String> {
+        let dataset_bytes = request.dataset_bytes().to_vec();
         let ResultRequest {
             expr,
-            dataset,
+            dataset: _,
+            dataset_raw: _,
             step,
             start,
             end,
@@ -60,10 +71,17 @@ impl PromqlSessionService {
         if mode == QueryMode::Both {
             let (range_start, range_end) = super::promql::normalize_range_window(&start, &end);
             let range = self
-                .fetch_result(&expr, &dataset, &step, &range_start, &range_end, false)
+                .fetch_result(
+                    &expr,
+                    &dataset_bytes,
+                    &step,
+                    &range_start,
+                    &range_end,
+                    false,
+                )
                 .await?;
             let instant = self
-                .fetch_result(&expr, &dataset, &step, &start, &end, true)
+                .fetch_result(&expr, &dataset_bytes, &step, &start, &end, true)
                 .await?;
             let result_type = instant.result_type.clone();
             let chart_result = range.result_type.clone();
@@ -81,7 +99,7 @@ impl PromqlSessionService {
         let result = self
             .fetch_result(
                 &expr,
-                &dataset,
+                &dataset_bytes,
                 &step,
                 &start,
                 &end,
@@ -112,25 +130,25 @@ impl PromqlSessionService {
     async fn fetch_result(
         &self,
         expr: &str,
-        dataset: &str,
+        dataset: &[u8],
         step: &str,
         start: &str,
         end: &str,
         instant: bool,
     ) -> Result<PromqlResult, String> {
         let mut pairs = vec![
-            ("query".to_owned(), expr.to_owned()),
-            ("stream".to_owned(), dataset.to_owned()),
+            ("query".to_owned(), expr.as_bytes().to_vec()),
+            ("stream".to_owned(), dataset.to_vec()),
         ];
         let path = if instant {
-            pairs.push(("time".to_owned(), end.to_owned()));
+            pairs.push(("time".to_owned(), end.as_bytes().to_vec()));
             "prometheus/api/v1/query"
         } else {
-            pairs.push(("start".to_owned(), start.to_owned()));
-            pairs.push(("end".to_owned(), end.to_owned()));
+            pairs.push(("start".to_owned(), start.as_bytes().to_vec()));
+            pairs.push(("end".to_owned(), end.as_bytes().to_vec()));
             pairs.push((
                 "step".to_owned(),
-                super::promql::resolve_step_from_strings(step, start, end),
+                super::promql::resolve_step_from_strings(step, start, end).into_bytes(),
             ));
             "prometheus/api/v1/query_range"
         };
@@ -150,11 +168,11 @@ impl PromqlSessionService {
     async fn metrics_fetch(
         &self,
         path: &str,
-        pairs: &[(String, String)],
+        pairs: &[(String, Vec<u8>)],
     ) -> Result<Vec<u8>, String> {
         let client = self.client.effect_scope();
         let request = client
-            .prepare_metrics(path, pairs)
+            .prepare_metrics_bytes(path.as_bytes(), pairs)
             .map_err(|e| e.to_string())?;
         let response = client
             .send_streaming(request)
@@ -181,7 +199,7 @@ impl PromqlSessionService {
     }
 
     /// `fetchCacheMetrics`: metric names of `dataset` through the result transport.
-    pub(crate) async fn cache_metrics(&self, dataset: &str) -> Result<Vec<String>, String> {
+    pub(crate) async fn cache_metrics(&self, dataset: &[u8]) -> Result<Vec<String>, String> {
         let pairs = [("stream".to_owned(), dataset.to_owned())];
         let body = self
             .metrics_fetch("prometheus/api/v1/label/__name__/values", &pairs)
@@ -197,7 +215,7 @@ impl PromqlSessionService {
     /// like Go's nil message, produces no completion.
     pub(crate) async fn builder_labels(
         &self,
-        dataset: &str,
+        dataset: &[u8],
         metric: &str,
         start: &str,
         end: &str,
@@ -219,7 +237,7 @@ impl PromqlSessionService {
     /// `fetchBuilderValuesCtx` for a concrete label.
     pub(crate) async fn builder_values(
         &self,
-        dataset: &str,
+        dataset: &[u8],
         metric: &str,
         label: &str,
         start: &str,
@@ -234,7 +252,7 @@ impl PromqlSessionService {
     async fn builder_list(
         &self,
         path: &str,
-        dataset: &str,
+        dataset: &[u8],
         metric: &str,
         start: &str,
         end: &str,
@@ -247,7 +265,7 @@ impl PromqlSessionService {
             Ok(base) => base,
             Err(error) => return Some(Err(error.to_string())),
         };
-        let mut raw = format!("{base}?stream={}", query_escape(dataset));
+        let mut raw = format!("{base}?stream={}", crate::api::query_escape_bytes(dataset));
         if !start.is_empty() {
             raw.push_str(&format!("&start={}", query_escape(start)));
         }
@@ -1204,7 +1222,7 @@ mod tests {
     fn non_200_uses_status_text_or_body() {
         let error = exactly_ok(ApiResponse {
             status: 503,
-            reason: "Service Unavailable".into(),
+            status_text: "503 Service Unavailable".into(),
             body: b"  \n".to_vec(),
         })
         .unwrap_err();
@@ -1214,7 +1232,7 @@ mod tests {
         );
         let error = exactly_ok(ApiResponse {
             status: 204,
-            reason: "No Content".into(),
+            status_text: "204 No Content".into(),
             body: b" busy ".to_vec(),
         })
         .unwrap_err();

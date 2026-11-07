@@ -8,7 +8,9 @@
 //! printable runes in one read become a single multi-rune key.
 
 use super::terminal::Size;
+#[cfg(any(unix, test))]
 use std::collections::HashMap;
+#[cfg(any(unix, test))]
 use std::sync::OnceLock;
 
 /// One message delivered to a session runner.
@@ -18,7 +20,9 @@ pub(crate) enum Event {
     /// tea.WindowSizeMsg; only produced when stdout is a terminal.
     Resize(Size),
     /// SIGINT/SIGTERM: tea.QuitMsg. End the loop without updating the model,
-    /// then close the session with the current view.
+    /// then close the session with the current view. Not produced on
+    /// Windows, where raw-mode Ctrl+C arrives as a key.
+    #[cfg_attr(windows, allow(dead_code))]
     Quit,
     /// Error that makes tea.Program.Run return, e.g. "error reading input: ...".
     InputError(String),
@@ -219,6 +223,7 @@ impl Key {
     }
 }
 
+#[cfg(any(unix, test))]
 /// tea's `sequences` map.
 const SEQUENCES: &[(&[u8], KeyCode, bool)] = {
     use KeyCode::*;
@@ -368,12 +373,14 @@ const SEQUENCES: &[(&[u8], KeyCode, bool)] = {
     ]
 };
 
+#[cfg(any(unix, test))]
 struct SequenceTable {
     keys: HashMap<Vec<u8>, Key>,
     /// Distinct sequence lengths, longest first.
     lengths: Vec<usize>,
 }
 
+#[cfg(any(unix, test))]
 /// tea's extSequences/seqLengths: sequences plus ESC-prefixed alt variants,
 /// control bytes (except NUL and ESC) with alt variants, space, alt+esc.
 fn table() -> &'static SequenceTable {
@@ -408,15 +415,18 @@ fn table() -> &'static SequenceTable {
     })
 }
 
+#[cfg(any(unix, test))]
 /// tea's read buffer size; a read that fills it may continue in the next read.
 pub(crate) const READ_BUFFER: usize = 256;
 
+#[cfg(any(unix, test))]
 /// Incremental readAnsiInputs decoder. Feed each read() result in order.
 #[derive(Default)]
 pub(crate) struct Parser {
     leftover: Vec<u8>,
 }
 
+#[cfg(any(unix, test))]
 impl Parser {
     pub(crate) fn new() -> Parser {
         Parser::default()
@@ -452,6 +462,7 @@ pub(crate) fn parse(chunk: &[u8]) -> Vec<Event> {
     Parser::new().feed(chunk, false)
 }
 
+#[cfg(any(unix, test))]
 /// detectOneMsg: Some((consumed, event)), or None when more input is needed.
 fn detect_one(b: &[u8], can_have_more: bool) -> Option<(usize, Event)> {
     // X10 and SGR mouse events.
@@ -522,6 +533,7 @@ fn detect_one(b: &[u8], can_have_more: bool) -> Option<(usize, Event)> {
     Some((1, Event::Unknown))
 }
 
+#[cfg(any(unix, test))]
 /// detectSequence: longest known prefix, else an unknown CSI sequence.
 fn detect_sequence(input: &[u8]) -> Option<(usize, Event)> {
     let table = table();
@@ -549,6 +561,7 @@ fn detect_sequence(input: &[u8]) -> Option<(usize, Event)> {
     None
 }
 
+#[cfg(any(unix, test))]
 /// detectBracketedPaste: None if not a paste; Some(None) when the end marker
 /// has not arrived yet (Go waits for more input even after a short read).
 fn detect_bracketed_paste(input: &[u8]) -> Option<Option<(usize, Event)>> {
@@ -578,6 +591,7 @@ fn detect_bracketed_paste(input: &[u8]) -> Option<Option<(usize, Event)>> {
     )))
 }
 
+#[cfg(any(unix, test))]
 /// `(\d+);(\d+);(\d+)([Mm])` searched anywhere in `b`; returns the match end.
 fn find_sgr_mouse(b: &[u8]) -> Option<usize> {
     let digits = |mut i: usize| {
@@ -599,6 +613,7 @@ fn find_sgr_mouse(b: &[u8]) -> Option<usize> {
     })
 }
 
+#[cfg(any(unix, test))]
 /// utf8.DecodeRune: `(None, 1)` for invalid or truncated input; an encoded
 /// U+FFFD also reports RuneError, so it is treated as invalid like Go.
 pub(crate) fn decode_rune(b: &[u8]) -> (Option<char>, usize) {

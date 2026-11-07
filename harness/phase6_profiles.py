@@ -33,7 +33,7 @@ REPORT_SCHEMA = 'pb-phase6-profile-report-v4'
 ANALYSIS_SCHEMA = 'pb-phase6-profile-analysis-v4'
 HARNESS_DIR = Path(__file__).resolve().parent
 HARNESS_MODULES = ('phase6_profiles', 'phase6_workloads', 'profile_external', 'run', 'manifest', 'diagnose',
-                   'cases', 'phase3_workloads')
+                   'cases', 'phase3_workloads', 'compatibility')
 CAPTURE_MODES = ('perf', 'strace', 'strace-writes', 'heaptrack')
 PERF_EVENTS = ('cycles:u', 'cpu-clock:u')
 DEBUG_SECTIONS = ('.debug_info', '.debug_line', '.symtab')

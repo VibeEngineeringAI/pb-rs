@@ -1,0 +1,18 @@
+{
+  "Cargo.toml": "41d810975083cd91ed933d9538c4e345f47d6e4ff3dd9cde8d0510fec70f34bc",
+  "Cargo.lock": "5244517b130a36223c8d84af03d66e381d26aad873efa16f450961e57b2013c9",
+  "build.rs": "6c26af8912af083220c0e7233ca1abbf33848020a0893c3e0908d0d721ccf8e3",
+  "src/spec.rs": "be1c89a0420224384c57b8964341cf5a781338cf52bd2098dd973e1b78115b2b",
+  "src/completion.rs": "2b69d41c8fb3d0e8eb5f8a32353941c79170efb922807c83cc471af64d6caf96",
+  "src/render.rs": "6c590418f7d214f7f8d466249822ba902cd239180f37342e9602bf9411e22882",
+  "src/ingest/files.rs": "b7da1af2805f297c1bb669916711194b2d5b8dd63be5bbd8e58d1caa1cd34853",
+  "src/ingest/files_tests.rs": "7ab80d62c48d5a323eb31677585ea73f85a0ee7a693db72e650729772fb1daa6",
+  "src/ingest/mod.rs": "584f9f4a30bd207f1017a2e04f680128a2105db51c244ee9dfa967ef324fbce8",
+  "src/sql/output.rs": "0a00ea7940c19264dd1bcac099575d32fa9b7c7b296ef8b09bda05d6b66eb32a",
+  "src/transport.rs": "da0a025f5f3574052f964ceb8e9eff6021b9fdd8c9d48f778702aefa144e0902",
+  "tests/diagnostics_process.rs": "9545368c1ee3cdd13b7f27021bdda31702c6638882d93a24609b6ab11c9976ec",
+  "harness/ingest_perf.py": "2df225a2593c6add59d19ce4301566a58a679a7081108d97c319e3dcdf098e85",
+  "harness/test_ingest_perf.py": "a07403b06ea08e55f319de9c9652c57c8ccc9b12e826a1ea7f49fbe894d32bca",
+  "harness/run.py": "373b95904f4695f67554713f47357cd35bab7046b3793122f3c09993343e14ca",
+  "harness/meter.c": "5d7ce9dc2fa65b1ec7018fb863d36fd78d8b8535762acadaefc3f2f4e0f070e9"
+}

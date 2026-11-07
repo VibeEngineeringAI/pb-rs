@@ -1,0 +1,38 @@
+running 4 tests
+
+thread 'ingest::files::tests::recursive_glob_directory_slash_only_exclude_preserves_traversal_errors' (780982) panicked at src/ingest/files_tests.rs:308:5:
+incorrect exclusion behavior: [
+    "mode 0, exclude \"**/locked/\": Ok(PendingBatch { records: [FileRecord { payload: {}, source_path: \"/var/tmp/pb-pr8-tdd-evidence/sol-r2/tmp/pb-file-collector-780964-1792115878841885818-1/good.log\", source_generation: \"file-434e702445da51ed\", source_sequence: 1, event_id: \"file-434e702445da51ed-1\" }], skipped_lines: 0, payload_bytes: 2, has_incomplete_lines: false, scan_limit_reached: false, base_state: FileState { initialized: false, revision: 0, next_generation: 0, files: {} }, next_state: FileState { initialized: true, revision: 1, next_generation: 1, files: {\"/var/tmp/pb-pr8-tdd-evidence/sol-r2/tmp/pb-file-collector-780964-1792115878841885818-1/good.log\": Checkpoint { identity: \"33:2815364\", generation_number: 0, generation: \"file-434e702445da51ed\", offset: 3, sequence: 1, discard_fragment: false, anchor: [123, 125, 10], prefix: [123, 125, 10], missing_scans: 0 }} } })",
+]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'ingest::files::tests::recursive_glob_filename_exclude_preserves_traversal_errors' (780983) panicked at src/ingest/files_tests.rs:308:5:
+incorrect exclusion behavior: [
+    "mode 0, exclude \"*.tmp\": Ok(PendingBatch { records: [FileRecord { payload: {}, source_path: \"/var/tmp/pb-pr8-tdd-evidence/sol-r2/tmp/pb-file-collector-780964-1792115878841908099-3/good.log\", source_generation: \"file-7fe73653cdcf4123\", source_sequence: 1, event_id: \"file-7fe73653cdcf4123-1\" }], skipped_lines: 0, payload_bytes: 2, has_incomplete_lines: false, scan_limit_reached: false, base_state: FileState { initialized: false, revision: 0, next_generation: 0, files: {} }, next_state: FileState { initialized: true, revision: 1, next_generation: 1, files: {\"/var/tmp/pb-pr8-tdd-evidence/sol-r2/tmp/pb-file-collector-780964-1792115878841908099-3/good.log\": Checkpoint { identity: \"33:2815354\", generation_number: 0, generation: \"file-7fe73653cdcf4123\", offset: 3, sequence: 1, discard_fragment: false, anchor: [123, 125, 10], prefix: [123, 125, 10], missing_scans: 0 }} } })",
+]
+
+thread 'ingest::files::tests::recursive_glob_directory_only_exclude_preserves_traversal_errors' (780981) panicked at src/ingest/files_tests.rs:308:5:
+incorrect exclusion behavior: [
+    "mode 0, exclude \"**/locked\": Ok(PendingBatch { records: [FileRecord { payload: {}, source_path: \"/var/tmp/pb-pr8-tdd-evidence/sol-r2/tmp/pb-file-collector-780964-1792115878841857354-0/good.log\", source_generation: \"file-1e5b945558206824\", source_sequence: 1, event_id: \"file-1e5b945558206824-1\" }], skipped_lines: 0, payload_bytes: 2, has_incomplete_lines: false, scan_limit_reached: false, base_state: FileState { initialized: false, revision: 0, next_generation: 0, files: {} }, next_state: FileState { initialized: true, revision: 1, next_generation: 1, files: {\"/var/tmp/pb-pr8-tdd-evidence/sol-r2/tmp/pb-file-collector-780964-1792115878841857354-0/good.log\": Checkpoint { identity: \"33:2815355\", generation_number: 0, generation: \"file-1e5b945558206824\", offset: 3, sequence: 1, discard_fragment: false, anchor: [123, 125, 10], prefix: [123, 125, 10], missing_scans: 0 }} } })",
+]
+
+thread 'ingest::files::tests::recursive_glob_honors_excluded_unreadable_subtrees' (780984) panicked at src/ingest/files_tests.rs:308:5:
+incorrect exclusion behavior: [
+    "mode 444, exclude \"**/locked/**\": Err(ScanError { message: \"/var/tmp/pb-pr8-tdd-evidence/sol-r2/tmp/pb-file-collector-780964-1792115878841895959-2/locked/hidden.log: Permission denied (os error 13)\", retryable: false })",
+]
+test ingest::files::tests::recursive_glob_directory_slash_only_exclude_preserves_traversal_errors ... FAILED
+test ingest::files::tests::recursive_glob_filename_exclude_preserves_traversal_errors ... FAILED
+test ingest::files::tests::recursive_glob_directory_only_exclude_preserves_traversal_errors ... FAILED
+test ingest::files::tests::recursive_glob_honors_excluded_unreadable_subtrees ... FAILED
+
+failures:
+
+failures:
+    ingest::files::tests::recursive_glob_directory_only_exclude_preserves_traversal_errors
+    ingest::files::tests::recursive_glob_directory_slash_only_exclude_preserves_traversal_errors
+    ingest::files::tests::recursive_glob_filename_exclude_preserves_traversal_errors
+    ingest::files::tests::recursive_glob_honors_excluded_unreadable_subtrees
+
+test result: FAILED. 0 passed; 4 failed; 0 ignored; 0 measured; 664 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--lib`

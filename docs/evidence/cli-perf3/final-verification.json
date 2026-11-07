@@ -1,0 +1,105 @@
+{
+  "scope": "Final integrity and evidence inventory; not a blanket performance/compatibility pass.",
+  "source_hashes_verified": 93,
+  "selected_release_sha256": "0dd77ed8adb4545294559bc1770648476b6d2f27c396a73ab05f398426854ad5",
+  "normal_cargo_release_matches_selected": true,
+  "controlled_resource_comparisons": 15,
+  "pairs_per_comparison": 5,
+  "all_selected_workload_compatibility_and_resource_measurement_admission": true,
+  "controlled_executions": [
+    {
+      "path": "harness/results/perf3/controlled-ack-loss-execution.json",
+      "sha256": "8515d25a3510ce90d605a76fc7cac23cc6f9b584499f047aadcce62485956bf3",
+      "name": "controlled-ack-loss",
+      "exit_code": 0
+    },
+    {
+      "path": "harness/results/perf3/controlled-cached-execution.json",
+      "sha256": "658e6018dd529c2d1aa5fad4b1f5b838830f314bad489827b08b3e117cd29ddc",
+      "name": "controlled-cached",
+      "exit_code": 0
+    },
+    {
+      "path": "harness/results/perf3/controlled-follow-execution.json",
+      "sha256": "937a3d07bc06d0603c7623ace95461af40067299566cd31f866ff7a0d9c09098",
+      "name": "controlled-follow",
+      "exit_code": 1
+    },
+    {
+      "path": "harness/results/perf3/controlled-go-10gib-execution.json",
+      "sha256": "2edefcc1c6e45d72656326e6508cf98f13345e855fa574285f66a36fc722110f",
+      "name": "controlled-go-10gib",
+      "exit_code": 0
+    },
+    {
+      "path": "harness/results/perf3/controlled-go-large-execution.json",
+      "sha256": "e2d62ca0cfc8c4b9189ca7b1783b9d09feb2ec91a50dcf7748849f425c90a612",
+      "name": "controlled-go-large",
+      "exit_code": 0
+    },
+    {
+      "path": "harness/results/perf3/controlled-go-small-execution.json",
+      "sha256": "8918e13855100dbc0ea50863dc64f84f40774187811183539c121a4793c6f38f",
+      "name": "controlled-go-small",
+      "exit_code": 0
+    },
+    {
+      "path": "harness/results/perf3/controlled-go-smoke-execution.json",
+      "sha256": "9bb7cb2a14342bb4d183cc67721443474d4e0deb2dd67ef0dddec784e92883cb",
+      "name": "controlled-go-smoke",
+      "exit_code": 0
+    },
+    {
+      "path": "harness/results/perf3/controlled-go-transport-execution.json",
+      "sha256": "9b1f57d88cf3d7a442b7c8bd75c06fb2f52c10a11f986a20ba930cb5f1aadcbf",
+      "name": "controlled-go-transport",
+      "exit_code": 0
+    },
+    {
+      "path": "harness/results/perf3/controlled-ingest-execution.json",
+      "sha256": "5cf7146bd901231e9c2214467b54b43dfbc687bb00f63c5f71adc365fcfb5a53",
+      "name": "controlled-ingest",
+      "exit_code": 1
+    },
+    {
+      "path": "harness/results/perf3/controlled-large-execution.json",
+      "sha256": "db1381ce2208b642e9f2cc074557489107a39d016b297d787b1359c2ae869e6f",
+      "name": "controlled-large",
+      "exit_code": 0
+    },
+    {
+      "path": "harness/results/perf3/controlled-retry-execution.json",
+      "sha256": "d197946bdede091040cac6e53e79b5d0bf247115c054cc125d00b557989a7d1a",
+      "name": "controlled-retry",
+      "exit_code": 0
+    },
+    {
+      "path": "harness/results/perf3/controlled-scale-execution.json",
+      "sha256": "0f27b2d8ba9c45772e66c30365f005d2ae63d44b0ede47ceeb0edebce178d616",
+      "name": "controlled-scale",
+      "exit_code": 0
+    },
+    {
+      "path": "harness/results/perf3/controlled-split-execution.json",
+      "sha256": "db99c5e3e5088294beb16ecba6c9c22080f0e3aba2a59b69f9b703615266d66e",
+      "name": "controlled-split",
+      "exit_code": 0
+    }
+  ],
+  "retained_failed_gates": {
+    "controlled-ingest": "Peak RSS regression guard; compatibility passed",
+    "controlled-follow": "Producer pacing only; all behavior/content/checkpoint checks passed"
+  },
+  "agent_rounds": 22,
+  "evidence": {
+    "docs/evidence/cli-perf3/tests.json": "dcb8f42986908ebb9f6a94c41ad5162e9fa9dee7ead119f4279d3e647c217bda",
+    "docs/evidence/cli-perf3/final-candidate.json": "c773f5596939d01fd49d78a8110ad272de65fe8f58f04f6c5799eb96816ef9b3",
+    "docs/evidence/cli-perf3/accepted.patch": "77f1ad33133f1794cec05a0b735aaddabfadcc73bfcfbcc0ac35305b29afa4ca",
+    "docs/evidence/cli-perf3/results.json": "ee3f2ec474f10b77538ef14a781fb492309981b7a7d276128fcb01413c583d44",
+    "docs/evidence/cli-perf3/dashboard.html": "cecbaf9fdc89833d36858a39aad480409f3c81b4060240a0c620a19676ef9d77",
+    "docs/evidence/cli-perf3/controlled-process-summary.json": "66fb8ca314d2565140f57d5f6bb949509b3086cbddd7cd7deff12567a88f022c",
+    "docs/evidence/cli-perf3/rss-identical-copy-balanced.json": "abda34a21953fd693a22770f0b960d39311f4c92faa3a5ffcdcc1e4e8f939399",
+    "docs/evidence/cli-perf3/restored-build-forced.json": "ee76abf7be1f037598f23f2c0f197abc15cf1b2ff5c096d98a8ba53d796770d3",
+    "docs/cli-performance.md": "35f079ae3dab70b7011e44c4ce5a20b89a195c7e6db6d0d1c0c310d020c6760c"
+  }
+}

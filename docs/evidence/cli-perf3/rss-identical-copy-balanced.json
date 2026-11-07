@@ -1,0 +1,1293 @@
+{
+  "scope": "Interrupted steady-state mapping diagnostic. Direct CLI stdout=/dev/null; no output parity, native lifetime peak, leak, or throughput claim. Snapshots from distinct proc files are not atomic.",
+  "source_report": "harness/results/perf3/rss-identical-copy-balanced/report.json",
+  "sha256": "74e1b32fb650e4fe44d3ddebfc68641466aec906de6bd17f2e4e25fc87349e46",
+  "binaries": {
+    "baseline": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf3-final",
+      "sha256": "0dd77ed8adb4545294559bc1770648476b6d2f27c396a73ab05f398426854ad5",
+      "size_bytes": 13555336
+    },
+    "final": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf3-layout-control",
+      "sha256": "0dd77ed8adb4545294559bc1770648476b6d2f27c396a73ab05f398426854ad5",
+      "size_bytes": 13555336
+    }
+  },
+  "method": {
+    "rounds": 6,
+    "snapshot_seconds": 2,
+    "seed": 1,
+    "serial_randomized_pairs": true,
+    "affinity": [
+      2,
+      4,
+      6,
+      8
+    ],
+    "stdout_sink": "/dev/null",
+    "direct_child": true,
+    "planned_stop": "SIGINT",
+    "output_parity": false,
+    "native_peak_measured": false
+  },
+  "order": [
+    {
+      "round": 0,
+      "labels": [
+        "final",
+        "baseline"
+      ]
+    },
+    {
+      "round": 1,
+      "labels": [
+        "final",
+        "baseline"
+      ]
+    },
+    {
+      "round": 2,
+      "labels": [
+        "baseline",
+        "final"
+      ]
+    },
+    {
+      "round": 3,
+      "labels": [
+        "final",
+        "baseline"
+      ]
+    },
+    {
+      "round": 4,
+      "labels": [
+        "baseline",
+        "final"
+      ]
+    },
+    {
+      "round": 5,
+      "labels": [
+        "baseline",
+        "final"
+      ]
+    }
+  ],
+  "passed": true,
+  "samples": [
+    {
+      "label": "final",
+      "round": 0,
+      "status_memory": {
+        "VmSize_bytes": 87822336,
+        "VmHWM_bytes": 8777728,
+        "VmRSS_bytes": 8777728,
+        "RssAnon_bytes": 1032192,
+        "RssFile_bytes": 7745536,
+        "RssShmem_bytes": 0,
+        "VmStk_bytes": 135168,
+        "Threads": 2
+      },
+      "valid_snapshot": true,
+      "mapping_categories_bytes": {
+        "executable_file": {
+          "Size": 13565952,
+          "Rss": 5636096,
+          "Pss": 5636096,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 5320704,
+          "Private_Dirty": 315392,
+          "Referenced": 5636096,
+          "Anonymous": 315392,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "anonymous_mapping": {
+          "Size": 69312512,
+          "Rss": 73728,
+          "Pss": 73728,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 73728,
+          "Referenced": 73728,
+          "Anonymous": 73728,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "labelled_heap": {
+          "Size": 692224,
+          "Rss": 483328,
+          "Pss": 483328,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 483328,
+          "Referenced": 483328,
+          "Anonymous": 483328,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "shared_library": {
+          "Size": 4079616,
+          "Rss": 2461696,
+          "Pss": 60416,
+          "Shared_Clean": 2408448,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 53248,
+          "Referenced": 2461696,
+          "Anonymous": 53248,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "kernel_or_other_mapping": {
+          "Size": 40960,
+          "Rss": 16384,
+          "Pss": 0,
+          "Shared_Clean": 16384,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 0,
+          "Referenced": 16384,
+          "Anonymous": 0,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "labelled_stack": {
+          "Size": 135168,
+          "Rss": 106496,
+          "Pss": 106496,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 106496,
+          "Referenced": 106496,
+          "Anonymous": 106496,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        }
+      }
+    },
+    {
+      "label": "baseline",
+      "round": 0,
+      "status_memory": {
+        "VmSize_bytes": 87691264,
+        "VmHWM_bytes": 8679424,
+        "VmRSS_bytes": 8679424,
+        "RssAnon_bytes": 1024000,
+        "RssFile_bytes": 7655424,
+        "RssShmem_bytes": 0,
+        "VmStk_bytes": 135168,
+        "Threads": 2
+      },
+      "valid_snapshot": true,
+      "mapping_categories_bytes": {
+        "executable_file": {
+          "Size": 13565952,
+          "Rss": 5570560,
+          "Pss": 5570560,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 5255168,
+          "Private_Dirty": 315392,
+          "Referenced": 5570560,
+          "Anonymous": 315392,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "anonymous_mapping": {
+          "Size": 69312512,
+          "Rss": 73728,
+          "Pss": 73728,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 73728,
+          "Referenced": 73728,
+          "Anonymous": 73728,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "labelled_heap": {
+          "Size": 561152,
+          "Rss": 483328,
+          "Pss": 483328,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 483328,
+          "Referenced": 483328,
+          "Anonymous": 483328,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "shared_library": {
+          "Size": 4079616,
+          "Rss": 2437120,
+          "Pss": 60416,
+          "Shared_Clean": 2383872,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 53248,
+          "Referenced": 2437120,
+          "Anonymous": 53248,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "kernel_or_other_mapping": {
+          "Size": 40960,
+          "Rss": 16384,
+          "Pss": 0,
+          "Shared_Clean": 16384,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 0,
+          "Referenced": 16384,
+          "Anonymous": 0,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "labelled_stack": {
+          "Size": 135168,
+          "Rss": 98304,
+          "Pss": 98304,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 98304,
+          "Referenced": 98304,
+          "Anonymous": 98304,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        }
+      }
+    },
+    {
+      "label": "final",
+      "round": 1,
+      "status_memory": {
+        "VmSize_bytes": 87756800,
+        "VmHWM_bytes": 8916992,
+        "VmRSS_bytes": 8916992,
+        "RssAnon_bytes": 1093632,
+        "RssFile_bytes": 7823360,
+        "RssShmem_bytes": 0,
+        "VmStk_bytes": 135168,
+        "Threads": 2
+      },
+      "valid_snapshot": true,
+      "mapping_categories_bytes": {
+        "executable_file": {
+          "Size": 13565952,
+          "Rss": 5730304,
+          "Pss": 5730304,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 5414912,
+          "Private_Dirty": 315392,
+          "Referenced": 5730304,
+          "Anonymous": 315392,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "anonymous_mapping": {
+          "Size": 69312512,
+          "Rss": 73728,
+          "Pss": 73728,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 73728,
+          "Referenced": 73728,
+          "Anonymous": 73728,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "labelled_heap": {
+          "Size": 626688,
+          "Rss": 548864,
+          "Pss": 548864,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 548864,
+          "Referenced": 548864,
+          "Anonymous": 548864,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "shared_library": {
+          "Size": 4079616,
+          "Rss": 2445312,
+          "Pss": 59392,
+          "Shared_Clean": 2392064,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 53248,
+          "Referenced": 2445312,
+          "Anonymous": 53248,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "kernel_or_other_mapping": {
+          "Size": 40960,
+          "Rss": 16384,
+          "Pss": 0,
+          "Shared_Clean": 16384,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 0,
+          "Referenced": 16384,
+          "Anonymous": 0,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "labelled_stack": {
+          "Size": 135168,
+          "Rss": 102400,
+          "Pss": 102400,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 102400,
+          "Referenced": 102400,
+          "Anonymous": 102400,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        }
+      }
+    },
+    {
+      "label": "baseline",
+      "round": 1,
+      "status_memory": {
+        "VmSize_bytes": 87756800,
+        "VmHWM_bytes": 8851456,
+        "VmRSS_bytes": 8851456,
+        "RssAnon_bytes": 1028096,
+        "RssFile_bytes": 7823360,
+        "RssShmem_bytes": 0,
+        "VmStk_bytes": 135168,
+        "Threads": 2
+      },
+      "valid_snapshot": true,
+      "mapping_categories_bytes": {
+        "executable_file": {
+          "Size": 13565952,
+          "Rss": 5734400,
+          "Pss": 5734400,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 5419008,
+          "Private_Dirty": 315392,
+          "Referenced": 5734400,
+          "Anonymous": 315392,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "anonymous_mapping": {
+          "Size": 69312512,
+          "Rss": 73728,
+          "Pss": 73728,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 73728,
+          "Referenced": 73728,
+          "Anonymous": 73728,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "labelled_heap": {
+          "Size": 626688,
+          "Rss": 487424,
+          "Pss": 487424,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 487424,
+          "Referenced": 487424,
+          "Anonymous": 487424,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "shared_library": {
+          "Size": 4079616,
+          "Rss": 2441216,
+          "Pss": 60416,
+          "Shared_Clean": 2387968,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 53248,
+          "Referenced": 2441216,
+          "Anonymous": 53248,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "kernel_or_other_mapping": {
+          "Size": 40960,
+          "Rss": 16384,
+          "Pss": 0,
+          "Shared_Clean": 16384,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 0,
+          "Referenced": 16384,
+          "Anonymous": 0,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "labelled_stack": {
+          "Size": 135168,
+          "Rss": 98304,
+          "Pss": 98304,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 98304,
+          "Referenced": 98304,
+          "Anonymous": 98304,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        }
+      }
+    },
+    {
+      "label": "baseline",
+      "round": 2,
+      "status_memory": {
+        "VmSize_bytes": 87756800,
+        "VmHWM_bytes": 8720384,
+        "VmRSS_bytes": 8720384,
+        "RssAnon_bytes": 1150976,
+        "RssFile_bytes": 7569408,
+        "RssShmem_bytes": 0,
+        "VmStk_bytes": 135168,
+        "Threads": 2
+      },
+      "valid_snapshot": true,
+      "mapping_categories_bytes": {
+        "executable_file": {
+          "Size": 13565952,
+          "Rss": 5505024,
+          "Pss": 5505024,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 5189632,
+          "Private_Dirty": 315392,
+          "Referenced": 5505024,
+          "Anonymous": 315392,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "anonymous_mapping": {
+          "Size": 69312512,
+          "Rss": 73728,
+          "Pss": 73728,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 73728,
+          "Referenced": 73728,
+          "Anonymous": 73728,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "labelled_heap": {
+          "Size": 626688,
+          "Rss": 610304,
+          "Pss": 610304,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 610304,
+          "Referenced": 610304,
+          "Anonymous": 610304,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "shared_library": {
+          "Size": 4079616,
+          "Rss": 2416640,
+          "Pss": 60416,
+          "Shared_Clean": 2363392,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 53248,
+          "Referenced": 2416640,
+          "Anonymous": 53248,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "kernel_or_other_mapping": {
+          "Size": 40960,
+          "Rss": 16384,
+          "Pss": 0,
+          "Shared_Clean": 16384,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 0,
+          "Referenced": 16384,
+          "Anonymous": 0,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "labelled_stack": {
+          "Size": 135168,
+          "Rss": 98304,
+          "Pss": 98304,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 98304,
+          "Referenced": 98304,
+          "Anonymous": 98304,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        }
+      }
+    },
+    {
+      "label": "final",
+      "round": 2,
+      "status_memory": {
+        "VmSize_bytes": 87887872,
+        "VmHWM_bytes": 8945664,
+        "VmRSS_bytes": 8945664,
+        "RssAnon_bytes": 1093632,
+        "RssFile_bytes": 7852032,
+        "RssShmem_bytes": 0,
+        "VmStk_bytes": 135168,
+        "Threads": 2
+      },
+      "valid_snapshot": true,
+      "mapping_categories_bytes": {
+        "executable_file": {
+          "Size": 13565952,
+          "Rss": 5771264,
+          "Pss": 5771264,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 5455872,
+          "Private_Dirty": 315392,
+          "Referenced": 5771264,
+          "Anonymous": 315392,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "anonymous_mapping": {
+          "Size": 69312512,
+          "Rss": 73728,
+          "Pss": 73728,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 73728,
+          "Referenced": 73728,
+          "Anonymous": 73728,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "labelled_heap": {
+          "Size": 757760,
+          "Rss": 548864,
+          "Pss": 548864,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 548864,
+          "Referenced": 548864,
+          "Anonymous": 548864,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "shared_library": {
+          "Size": 4079616,
+          "Rss": 2433024,
+          "Pss": 60416,
+          "Shared_Clean": 2379776,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 53248,
+          "Referenced": 2433024,
+          "Anonymous": 53248,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "kernel_or_other_mapping": {
+          "Size": 40960,
+          "Rss": 16384,
+          "Pss": 0,
+          "Shared_Clean": 16384,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 0,
+          "Referenced": 16384,
+          "Anonymous": 0,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "labelled_stack": {
+          "Size": 135168,
+          "Rss": 102400,
+          "Pss": 102400,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 102400,
+          "Referenced": 102400,
+          "Anonymous": 102400,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        }
+      }
+    },
+    {
+      "label": "final",
+      "round": 3,
+      "status_memory": {
+        "VmSize_bytes": 87691264,
+        "VmHWM_bytes": 9003008,
+        "VmRSS_bytes": 9003008,
+        "RssAnon_bytes": 1085440,
+        "RssFile_bytes": 7917568,
+        "RssShmem_bytes": 0,
+        "VmStk_bytes": 135168,
+        "Threads": 2
+      },
+      "valid_snapshot": true,
+      "mapping_categories_bytes": {
+        "executable_file": {
+          "Size": 13565952,
+          "Rss": 5844992,
+          "Pss": 5844992,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 5529600,
+          "Private_Dirty": 315392,
+          "Referenced": 5844992,
+          "Anonymous": 315392,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "anonymous_mapping": {
+          "Size": 69312512,
+          "Rss": 73728,
+          "Pss": 73728,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 73728,
+          "Referenced": 73728,
+          "Anonymous": 73728,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "labelled_heap": {
+          "Size": 561152,
+          "Rss": 544768,
+          "Pss": 544768,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 544768,
+          "Referenced": 544768,
+          "Anonymous": 544768,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "shared_library": {
+          "Size": 4079616,
+          "Rss": 2424832,
+          "Pss": 60416,
+          "Shared_Clean": 2371584,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 53248,
+          "Referenced": 2424832,
+          "Anonymous": 53248,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "kernel_or_other_mapping": {
+          "Size": 40960,
+          "Rss": 16384,
+          "Pss": 0,
+          "Shared_Clean": 16384,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 0,
+          "Referenced": 16384,
+          "Anonymous": 0,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "labelled_stack": {
+          "Size": 135168,
+          "Rss": 98304,
+          "Pss": 98304,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 98304,
+          "Referenced": 98304,
+          "Anonymous": 98304,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        }
+      }
+    },
+    {
+      "label": "baseline",
+      "round": 3,
+      "status_memory": {
+        "VmSize_bytes": 87756800,
+        "VmHWM_bytes": 8835072,
+        "VmRSS_bytes": 8835072,
+        "RssAnon_bytes": 1093632,
+        "RssFile_bytes": 7741440,
+        "RssShmem_bytes": 0,
+        "VmStk_bytes": 135168,
+        "Threads": 2
+      },
+      "valid_snapshot": true,
+      "mapping_categories_bytes": {
+        "executable_file": {
+          "Size": 13565952,
+          "Rss": 5652480,
+          "Pss": 5652480,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 5337088,
+          "Private_Dirty": 315392,
+          "Referenced": 5652480,
+          "Anonymous": 315392,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "anonymous_mapping": {
+          "Size": 69312512,
+          "Rss": 73728,
+          "Pss": 73728,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 73728,
+          "Referenced": 73728,
+          "Anonymous": 73728,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "labelled_heap": {
+          "Size": 626688,
+          "Rss": 548864,
+          "Pss": 548864,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 548864,
+          "Referenced": 548864,
+          "Anonymous": 548864,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "shared_library": {
+          "Size": 4079616,
+          "Rss": 2441216,
+          "Pss": 60416,
+          "Shared_Clean": 2387968,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 53248,
+          "Referenced": 2441216,
+          "Anonymous": 53248,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "kernel_or_other_mapping": {
+          "Size": 40960,
+          "Rss": 16384,
+          "Pss": 0,
+          "Shared_Clean": 16384,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 0,
+          "Referenced": 16384,
+          "Anonymous": 0,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "labelled_stack": {
+          "Size": 135168,
+          "Rss": 102400,
+          "Pss": 102400,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 102400,
+          "Referenced": 102400,
+          "Anonymous": 102400,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        }
+      }
+    },
+    {
+      "label": "baseline",
+      "round": 4,
+      "status_memory": {
+        "VmSize_bytes": 87560192,
+        "VmHWM_bytes": 8839168,
+        "VmRSS_bytes": 8839168,
+        "RssAnon_bytes": 954368,
+        "RssFile_bytes": 7884800,
+        "RssShmem_bytes": 0,
+        "VmStk_bytes": 135168,
+        "Threads": 2
+      },
+      "valid_snapshot": true,
+      "mapping_categories_bytes": {
+        "executable_file": {
+          "Size": 13565952,
+          "Rss": 5783552,
+          "Pss": 5783552,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 5468160,
+          "Private_Dirty": 315392,
+          "Referenced": 5783552,
+          "Anonymous": 315392,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "anonymous_mapping": {
+          "Size": 69312512,
+          "Rss": 73728,
+          "Pss": 73728,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 73728,
+          "Referenced": 73728,
+          "Anonymous": 73728,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "labelled_heap": {
+          "Size": 430080,
+          "Rss": 413696,
+          "Pss": 413696,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 413696,
+          "Referenced": 413696,
+          "Anonymous": 413696,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "shared_library": {
+          "Size": 4079616,
+          "Rss": 2453504,
+          "Pss": 60416,
+          "Shared_Clean": 2400256,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 53248,
+          "Referenced": 2453504,
+          "Anonymous": 53248,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "kernel_or_other_mapping": {
+          "Size": 40960,
+          "Rss": 16384,
+          "Pss": 0,
+          "Shared_Clean": 16384,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 0,
+          "Referenced": 16384,
+          "Anonymous": 0,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "labelled_stack": {
+          "Size": 135168,
+          "Rss": 98304,
+          "Pss": 98304,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 98304,
+          "Referenced": 98304,
+          "Anonymous": 98304,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        }
+      }
+    },
+    {
+      "label": "final",
+      "round": 4,
+      "status_memory": {
+        "VmSize_bytes": 87822336,
+        "VmHWM_bytes": 8900608,
+        "VmRSS_bytes": 8900608,
+        "RssAnon_bytes": 1155072,
+        "RssFile_bytes": 7745536,
+        "RssShmem_bytes": 0,
+        "VmStk_bytes": 135168,
+        "Threads": 2
+      },
+      "valid_snapshot": true,
+      "mapping_categories_bytes": {
+        "executable_file": {
+          "Size": 13565952,
+          "Rss": 5652480,
+          "Pss": 5652480,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 5337088,
+          "Private_Dirty": 315392,
+          "Referenced": 5652480,
+          "Anonymous": 315392,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "anonymous_mapping": {
+          "Size": 69312512,
+          "Rss": 73728,
+          "Pss": 73728,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 73728,
+          "Referenced": 73728,
+          "Anonymous": 73728,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "labelled_heap": {
+          "Size": 692224,
+          "Rss": 614400,
+          "Pss": 614400,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 614400,
+          "Referenced": 614400,
+          "Anonymous": 614400,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "shared_library": {
+          "Size": 4079616,
+          "Rss": 2445312,
+          "Pss": 60416,
+          "Shared_Clean": 2392064,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 53248,
+          "Referenced": 2445312,
+          "Anonymous": 53248,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "kernel_or_other_mapping": {
+          "Size": 40960,
+          "Rss": 16384,
+          "Pss": 0,
+          "Shared_Clean": 16384,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 0,
+          "Referenced": 16384,
+          "Anonymous": 0,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "labelled_stack": {
+          "Size": 135168,
+          "Rss": 98304,
+          "Pss": 98304,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 98304,
+          "Referenced": 98304,
+          "Anonymous": 98304,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        }
+      }
+    },
+    {
+      "label": "baseline",
+      "round": 5,
+      "status_memory": {
+        "VmSize_bytes": 87494656,
+        "VmHWM_bytes": 8785920,
+        "VmRSS_bytes": 8785920,
+        "RssAnon_bytes": 888832,
+        "RssFile_bytes": 7897088,
+        "RssShmem_bytes": 0,
+        "VmStk_bytes": 135168,
+        "Threads": 2
+      },
+      "valid_snapshot": true,
+      "mapping_categories_bytes": {
+        "executable_file": {
+          "Size": 13565952,
+          "Rss": 5779456,
+          "Pss": 5779456,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 5464064,
+          "Private_Dirty": 315392,
+          "Referenced": 5779456,
+          "Anonymous": 315392,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "anonymous_mapping": {
+          "Size": 69312512,
+          "Rss": 73728,
+          "Pss": 73728,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 73728,
+          "Referenced": 73728,
+          "Anonymous": 73728,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "labelled_heap": {
+          "Size": 364544,
+          "Rss": 348160,
+          "Pss": 348160,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 348160,
+          "Referenced": 348160,
+          "Anonymous": 348160,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "shared_library": {
+          "Size": 4079616,
+          "Rss": 2469888,
+          "Pss": 61440,
+          "Shared_Clean": 2416640,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 53248,
+          "Referenced": 2469888,
+          "Anonymous": 53248,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "kernel_or_other_mapping": {
+          "Size": 40960,
+          "Rss": 16384,
+          "Pss": 0,
+          "Shared_Clean": 16384,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 0,
+          "Referenced": 16384,
+          "Anonymous": 0,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "labelled_stack": {
+          "Size": 135168,
+          "Rss": 98304,
+          "Pss": 98304,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 98304,
+          "Referenced": 98304,
+          "Anonymous": 98304,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        }
+      }
+    },
+    {
+      "label": "final",
+      "round": 5,
+      "status_memory": {
+        "VmSize_bytes": 87560192,
+        "VmHWM_bytes": 8753152,
+        "VmRSS_bytes": 8736768,
+        "RssAnon_bytes": 954368,
+        "RssFile_bytes": 7782400,
+        "RssShmem_bytes": 0,
+        "VmStk_bytes": 135168,
+        "Threads": 2
+      },
+      "valid_snapshot": true,
+      "mapping_categories_bytes": {
+        "executable_file": {
+          "Size": 13565952,
+          "Rss": 5783552,
+          "Pss": 5783552,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 5468160,
+          "Private_Dirty": 315392,
+          "Referenced": 5783552,
+          "Anonymous": 315392,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "anonymous_mapping": {
+          "Size": 69312512,
+          "Rss": 73728,
+          "Pss": 73728,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 73728,
+          "Referenced": 73728,
+          "Anonymous": 73728,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "labelled_heap": {
+          "Size": 430080,
+          "Rss": 413696,
+          "Pss": 413696,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 413696,
+          "Referenced": 413696,
+          "Anonymous": 413696,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "shared_library": {
+          "Size": 4079616,
+          "Rss": 2351104,
+          "Pss": 59392,
+          "Shared_Clean": 2297856,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 53248,
+          "Referenced": 2351104,
+          "Anonymous": 53248,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "kernel_or_other_mapping": {
+          "Size": 40960,
+          "Rss": 16384,
+          "Pss": 0,
+          "Shared_Clean": 16384,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 0,
+          "Referenced": 16384,
+          "Anonymous": 0,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        },
+        "labelled_stack": {
+          "Size": 135168,
+          "Rss": 98304,
+          "Pss": 98304,
+          "Shared_Clean": 0,
+          "Shared_Dirty": 0,
+          "Private_Clean": 0,
+          "Private_Dirty": 98304,
+          "Referenced": 98304,
+          "Anonymous": 98304,
+          "AnonHugePages": 0,
+          "Swap": 0,
+          "SwapPss": 0
+        }
+      }
+    }
+  ]
+}

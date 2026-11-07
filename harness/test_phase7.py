@@ -14,6 +14,55 @@ import phase7 as p7
 import phase7_workloads as workloads
 
 
+class TemporaryRootTests(unittest.TestCase):
+    def probe(self, home, override=None):
+        env = dict(os.environ, HOME=str(home))
+        env.pop('PB_PHASE7_TMP', None)
+        if override is not None:
+            env['PB_PHASE7_TMP'] = str(override)
+        program = (
+            'import json,os,sys,tempfile\n'
+            'sys.path.insert(0, sys.argv[1])\n'
+            'import phase7\n'
+            'with tempfile.TemporaryDirectory(dir=phase7.TMP) as directory:\n'
+            ' print(json.dumps({"tmp":str(phase7.TMP),"exists":phase7.TMP.is_dir(),'
+            '"temporary_created":os.path.isdir(directory),'
+            '"environment":{name:os.environ[name] for name in '
+            '("TMPDIR","GOTMPDIR","CLAUDE_CODE_TMPDIR")}}))\n'
+        )
+        result = p7.subprocess.run([sys.executable, '-c', program, str(p7.HERE)],
+                                   env=env, check=True, capture_output=True, text=True)
+        return json.loads(result.stdout)
+
+    def test_default_scratch_root_is_created_beneath_current_home(self):
+        with tempfile.TemporaryDirectory(dir=p7.TMP) as folder:
+            home = Path(folder) / 'different-user-home'
+            home.mkdir()
+            expected = home / '.cache/pb-phase7/tmp'
+            self.assertFalse(expected.exists())
+            result = self.probe(home)
+            self.assertEqual(result['tmp'], str(expected.resolve()))
+            self.assertTrue(result['exists'])
+            self.assertTrue(result['temporary_created'])
+            self.assertEqual(result['environment'],
+                             {name: str(expected.resolve()) for name in
+                              ('TMPDIR', 'GOTMPDIR', 'CLAUDE_CODE_TMPDIR')})
+
+    def test_explicit_scratch_root_is_created_and_inherited_by_children(self):
+        with tempfile.TemporaryDirectory(dir=p7.TMP) as folder:
+            home = Path(folder) / 'home'
+            override = Path(folder) / 'separate' / 'scratch'
+            home.mkdir()
+            result = self.probe(home, override)
+            self.assertEqual(result['tmp'], str(override.resolve()))
+            self.assertTrue(result['exists'])
+            self.assertTrue(result['temporary_created'])
+            self.assertFalse((home / '.cache/pb-phase7/tmp').exists())
+            self.assertEqual(result['environment'],
+                             {name: str(override.resolve()) for name in
+                              ('TMPDIR', 'GOTMPDIR', 'CLAUDE_CODE_TMPDIR')})
+
+
 class TerminalTests(unittest.TestCase):
     def test_wide_legend_loading_opt_in_is_exactly_both_named_checkpoints(self):
         cases = {c['name']: c for c in workloads.corpus(themes=('light', 'dark'))}
@@ -526,6 +575,25 @@ class ResolverTests(unittest.TestCase):
         self.assertEqual(result['path'], str(self.binary.resolve()))
         self.assertEqual(result['compiler'], str((self.root / 'cc').resolve()))
         self.assertEqual(p7.spawn_helper(build=False, probe=False), result)
+
+    def test_compile_failure_exposes_diagnostics_and_never_publishes_cache(self):
+        self.binary.unlink()
+        self.manifest.unlink()
+        before = self.snapshot()
+        failure = p7.subprocess.CalledProcessError(1, [self.identity['compiler'], *self.identity['flags']],
+            output=b'compiler note\n', stderr=b'phase7_spawn.c:98: error: unused write result\n')
+        with mock.patch.object(p7.subprocess, 'run', side_effect=failure):
+            with self.assertRaisesRegex(RuntimeError, 'native helper compilation failed') as rejected:
+                p7.spawn_helper(build=True, probe=False)
+        message = str(rejected.exception)
+        self.assertIn(self.identity['compiler'], message)
+        self.assertIn('exit status 1', message)
+        self.assertIn('compiler stdout:\ncompiler note', message)
+        self.assertIn('compiler stderr:\nphase7_spawn.c:98: error: unused write result', message)
+        self.assertIs(rejected.exception.__cause__, failure)
+        self.assertEqual(self.snapshot(), before)
+        self.assertFalse(self.binary.exists())
+        self.assertFalse(self.manifest.exists())
 
 
 @unittest.skipUnless(os.environ.get('PB_PHASE7_RUN_RESIZE_NATIVE') == '1',

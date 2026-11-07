@@ -1,0 +1,59 @@
+{
+  "failed_head": "387cc28",
+  "failure_url": "https://github.com/VibeEngineeringAI/pb-rs/actions/runs/38808953311/job/116676989092",
+  "production_source_inventory_unchanged": true,
+  "fixes": {
+    "5d44d71": "Check signal-probe write and retain compiler output on failure; strict flags unchanged",
+    "10a5cd5": "Symmetric home/cache/scratch report path mappings and per-user performance lock"
+  },
+  "validation": {
+    "gcc13_ubuntu24": {
+      "passed": true,
+      "log": {
+        "path": "/home/ajs/.cache/pb-compat-final/ci-helper-gcc13.log",
+        "sha256": "373565508298084c7a5ae02c8e59a4a114553078282dc27b6a81ff998e056e8a"
+      }
+    },
+    "phase7": {
+      "passed": 97,
+      "skipped": 1,
+      "log": {
+        "path": "/home/ajs/.cache/pb-compat-final/ci-helper-tests.log",
+        "sha256": "f8b2156e6b4adf7e3065cf9a8704d8141a745d1d72a0b141436cdc61b1f1e35d"
+      }
+    },
+    "native_resize_opt_in": {
+      "passed": 1,
+      "log": {
+        "path": "/home/ajs/.cache/pb-compat-final/ci-helper-native-resize-r2.log",
+        "sha256": "6bdc6f24019c7616a47f513fb4fcd3ccd4d74db19f1521cbf489e6cab234e219"
+      },
+      "initial_setup_failure": {
+        "path": "/home/ajs/.cache/pb-compat-final/ci-helper-native-resize.log",
+        "sha256": "a730936c261fd7a43c7de410b4a189ed67db1e228a24e077a27b0daef23d736a"
+      },
+      "setup_reason": "Initial isolated cache had no prepared helper; prepared it explicitly then reran in a new output directory."
+    },
+    "report_adapter": {
+      "passed": 11,
+      "log": {
+        "path": "/home/ajs/.cache/pb-compat-final/ci-bench-portability-tests.log",
+        "sha256": "84ada877cdcad5e194c92d3b0db3f2fffe591e74776a0190e82a1552e4e755c9"
+      }
+    },
+    "benchmark_and_profile": {
+      "passed": 155,
+      "errors": 1,
+      "log": {
+        "path": "/home/ajs/.cache/pb-compat-final/ci-bench-portability-full.log",
+        "sha256": "f982b42c3a6a5a5aa19dbc96a1104ceaa71dc480bead5842974107fed49e6fe1"
+      },
+      "error_reason": "Concurrent phase7.py compiler-diagnostic edit shifted line numbers after import. inspect.getsource read the old function line offset from the changed file and raised IndentationError. No assertion mismatch; affected class rerun with stable files.",
+      "affected_class_retry_passed": 5,
+      "retry_log": {
+        "path": "/home/ajs/.cache/pb-compat-final/ci-bench-portability-stable-retry.log",
+        "sha256": "8a6d8feedf190df95633b8f6bf12fcce6922aef992419802b0ee9dae04e18f60"
+      }
+    }
+  }
+}

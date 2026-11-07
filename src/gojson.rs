@@ -233,7 +233,23 @@ pub fn drop_node(node: Node) {
     let mut pending = match node {
         Node::Scalar(value) => return drop_value(value),
         Node::Array(values) => values,
-        Node::Object(fields) => fields.into_iter().map(|(_, value)| value).collect(),
+        Node::Object(fields) => {
+            // Most SQL rows contain only scalar fields. Their ordinary drop
+            // cannot recurse, so avoid allocating a worklist just to free them.
+            // Scalar nodes can also wrap Value containers; those must retain
+            // the iterative path along with every Node container.
+            if fields.iter().all(|(_, value)| {
+                matches!(
+                    value,
+                    Node::Scalar(
+                        Value::Null | Value::Bool(_) | Value::Number(_) | Value::String(_)
+                    )
+                )
+            }) {
+                return;
+            }
+            fields.into_iter().map(|(_, value)| value).collect()
+        }
     };
     while let Some(node) = pending.pop() {
         match node {
@@ -1124,5 +1140,90 @@ mod tests {
             assert_eq!(document.to_string(), body);
             drop(document);
         }
+    }
+
+    #[test]
+    fn scalar_object_cleanup_retains_iterative_drop_for_mixed_node_and_value_containers() {
+        std::thread::Builder::new()
+            .stack_size(128 * 1024)
+            .spawn(|| {
+                let scalar_fields = || {
+                    vec![
+                        ("null".into(), Node::Scalar(Value::Null)),
+                        ("bool".into(), Node::Scalar(Value::Bool(true))),
+                        (
+                            "number".into(),
+                            Node::Scalar(Value::Number(
+                                "123456789012345678901234567890".parse().unwrap(),
+                            )),
+                        ),
+                        (
+                            "string".into(),
+                            Node::Scalar(Value::String("é😀".repeat(64))),
+                        ),
+                    ]
+                };
+                drop_node(Node::Object(scalar_fields()));
+                drop_node(Node::Object(Vec::new()));
+
+                for position in 0..=4 {
+                    let mut value = Value::Null;
+                    let mut node = Node::Scalar(Value::Null);
+                    for depth in 0..10_000 {
+                        // Value containers inside Scalar nodes must not be
+                        // mistaken for shallow fields, even after scalar peers.
+                        value = if depth % 2 == 0 {
+                            Value::Array(vec![value])
+                        } else {
+                            Value::Object(Map::from_iter([("value".into(), value)]))
+                        };
+                        node = if depth % 2 == 0 {
+                            Node::Array(vec![node])
+                        } else {
+                            Node::Object(vec![("node".into(), node)])
+                        };
+                    }
+                    let mut fields = scalar_fields();
+                    fields.insert(position, ("nested-scalar".into(), Node::Scalar(value)));
+                    fields.push(("nested-node".into(), node));
+                    drop_node(Node::Object(fields));
+                }
+            })
+            .unwrap()
+            .join()
+            .unwrap();
+    }
+
+    #[test]
+    fn mixed_scalar_container_document_drops_safely_during_unwind() {
+        std::thread::Builder::new()
+            .stack_size(128 * 1024)
+            .spawn(|| {
+                let result = std::panic::catch_unwind(|| {
+                    let mut value = Value::Null;
+                    for _ in 0..10_000 {
+                        value = Value::Array(vec![value]);
+                    }
+                    let _document = OrderedDocument::new(Node::Object(vec![
+                        ("first".into(), Node::Scalar(Value::String("scalar".into()))),
+                        ("array".into(), Node::Scalar(value)),
+                        (
+                            "object".into(),
+                            Node::Scalar(Value::Object(Map::from_iter([(
+                                "nested".into(),
+                                Value::Array(vec![Value::Null]),
+                            )]))),
+                        ),
+                    ]));
+                    panic!("document cleanup marker");
+                });
+                assert_eq!(
+                    result.unwrap_err().downcast_ref::<&str>(),
+                    Some(&"document cleanup marker")
+                );
+            })
+            .unwrap()
+            .join()
+            .unwrap();
     }
 }

@@ -302,27 +302,31 @@ class ComparatorTests(unittest.TestCase):
         self.assertEqual(p6.authority_contract({'metadata': {':authority': ['127.0.0.1:23456']}}, selected),
                          ['127.0.0.1:{{grpc_port}}'])
 
-    def test_malformed_header_exception_is_one_exact_message_pair(self):
-        def result(message):
+    def test_former_malformed_header_diagnostic_is_no_longer_waived(self):
+        import phase6_blocked_writer as historical
+
+        def result(message, agent):
             return {'stderr_contract_b64': base64.b64encode(json.dumps({'error': {
-                'code': 'COMMAND_FAILED', 'message': message, 'retryable': False}}, indent=2).encode() + b'\n').decode()}
+                'code': 'COMMAND_FAILED', 'message': message, 'retryable': False}}, indent=2).encode() + b'\n').decode(),
+                'flight_user_agents': [[agent]]}
         prefix = 'arrow/flight: could not create flight reader: arrow/ipc: unknown error while reading: '
-        ref = result(prefix + 'runtime error: slice bounds out of range [4022250974:12]')
-        rust = result(prefix + 'Type `i32` at position 4022250974 is unaligned.\n\n')
-        delta = ['stderr_contract_b64 differs', 'stdout_sha256 differs']
-        remaining, diagnostics = p6.split_diagnostics({'name': 'p6-corrupt-garbage_header'}, ref, rust, delta)
-        self.assertEqual(remaining, ['stdout_sha256 differs'])
-        self.assertEqual(len(diagnostics), 1)
-        for changed in (base64.b64decode(rust['stderr_contract_b64']) + b'\n',
-                        json.dumps(json.loads(base64.b64decode(rust['stderr_contract_b64']))).encode(),
-                        (json.dumps({**json.loads(base64.b64decode(rust['stderr_contract_b64'])),
-                                     'unexpected': 'unaccepted'}, indent=2) + '\n').encode()):
-            mutated = {'stderr_contract_b64': base64.b64encode(changed).decode()}
-            self.assertEqual(p6.split_diagnostics({'name': 'p6-corrupt-garbage_header'}, ref, mutated, delta),
-                             (delta, []))
-        self.assertEqual(p6.split_diagnostics({'name': 'p6-corrupt-other'}, ref, rust, delta), (delta, []))
-        rust = result(prefix + 'different verification error')
-        self.assertEqual(p6.split_diagnostics({'name': 'p6-corrupt-garbage_header'}, ref, rust, delta), (delta, []))
+        ref = result(prefix + 'runtime error: slice bounds out of range [4022250974:12]', 'grpc-go/1.65.0')
+        old = result(prefix + 'Type `i32` at position 4022250974 is unaligned.\n\n', 'tonic/0.14.6')
+        self.assertFalse(hasattr(p6, 'split_diagnostics'))
+        # Only the exact native user-agent difference is still quarantined;
+        # the old Rust diagnostic stays a compare failure.
+        delta = ['stderr_contract_b64 differs', 'flight_user_agents differs']
+        second = ['Flight user-agent differs from pinned grpc-go']
+        self.assertEqual(p6.split_wire_ua(ref, old, second, delta),
+                         ([], ['stderr_contract_b64 differs'], second + ['flight_user_agents differs']))
+        # Historical captures keep re-validating with the exact retained pair.
+        remaining, diagnostics = historical.historical_diagnostics(
+            {'name': 'p6-corrupt-garbage_header'}, ref, old, ['stderr_contract_b64 differs', 'stdout_sha256 differs'])
+        self.assertEqual((remaining, len(diagnostics)), (['stdout_sha256 differs'], 1))
+        self.assertEqual(historical.historical_diagnostics({'name': 'p6-corrupt-other'}, ref, old, delta), (delta, []))
+        other = result(prefix + 'different verification error', 'tonic/0.14.6')
+        self.assertEqual(historical.historical_diagnostics({'name': 'p6-corrupt-garbage_header'}, ref, other, delta),
+                         (delta, []))
 
 
 class ProxyTests(unittest.TestCase):

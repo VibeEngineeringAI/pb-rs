@@ -15,9 +15,13 @@ use std::io::{self, BufRead, Read, Write};
 use tokio::sync::{mpsc, oneshot};
 
 type Chunk = Result<Bytes, ApiError>;
+const TEXT_BRIDGE_CHUNK: usize = 128 * 1024;
 
-/// The bridge holds at most a consumed, queued, and producer-held 8KiB chunk.
-/// Transport framing may additionally retain its current frame; no whole-response buffer.
+/// The bridge holds at most a consumed, queued, and producer-held chunk:
+/// at most TEXT_BRIDGE_CHUNK logical bytes each for successful text, 8KiB
+/// for JSON and error previews. Slices retain their Hyper backing allocations;
+/// transport buffers and flow-control windows add memory beyond this bridge.
+/// Neither the bridge nor the transport buffers the whole response.
 struct BodyReader {
     receiver: mpsc::Receiver<Chunk>,
     current: Bytes,
@@ -79,7 +83,7 @@ enum Failure {
     Output(output::OutputError),
     Status {
         status: u16,
-        reason: String,
+        status_text: String,
         preview: Vec<u8>,
     },
     Preview(io::Error),
@@ -153,6 +157,7 @@ pub(crate) fn execute_saved(
     let _ = writeln!(stdout, "Query: {normalized}");
     let wire_query = rewrite::ensure_default_limit(normalized);
     let mut parsed = ParsedInvocation {
+        raw: Default::default(),
         command_path: "pb sql list".into(),
         positionals: Vec::new(),
         flags: Default::default(),
@@ -222,20 +227,42 @@ fn fetch_query(
     };
     #[derive(serde::Serialize)]
     struct Request<'a> {
-        query: &'a str,
+        query: &'a serde_json::value::RawValue,
         #[serde(rename = "startTime")]
-        start: &'a str,
+        start: &'a serde_json::value::RawValue,
         #[serde(rename = "endTime")]
-        end: &'a str,
+        end: &'a serde_json::value::RawValue,
     }
-    let body = serde_json::to_string(&Request { query, start, end })
-        .expect("SQL request strings")
-        .replace('&', "\\u0026")
-        .replace('<', "\\u003c")
-        .replace('>', "\\u003e")
-        .replace('\u{2028}', "\\u2028")
-        .replace('\u{2029}', "\\u2029")
-        .into_bytes();
+    let raw_query = if parsed.raw.positionals.is_empty() {
+        query.as_bytes().to_vec()
+    } else {
+        rewrite::ensure_default_limit_bytes(&rewrite::prepare_query_bytes(
+            parsed.positional_bytes(0),
+        ))
+    };
+    let query = crate::error::raw_json_string(&raw_query);
+    let start = crate::error::raw_json_string(if parsed.text("from").is_empty() {
+        start.as_bytes()
+    } else {
+        parsed.text_bytes("from")
+    });
+    let end = crate::error::raw_json_string(if parsed.text("to").is_empty() {
+        end.as_bytes()
+    } else {
+        parsed.text_bytes("to")
+    });
+    let body = serde_json::to_string(&Request {
+        query: &query,
+        start: &start,
+        end: &end,
+    })
+    .expect("SQL request strings")
+    .replace('&', "\\u0026")
+    .replace('<', "\\u003c")
+    .replace('>', "\\u003e")
+    .replace('\u{2028}', "\\u2028")
+    .replace('\u{2029}', "\\u2029")
+    .into_bytes();
     (|| -> Result<(), Failure> {
         let (store, profile) = match supplied_profile {
             Some(profile) => profile,
@@ -318,7 +345,14 @@ fn fetch_query(
                 &runtime,
             ) {
                 Ok(()) => {
-                    let _ = writeln!(stderr, "Query saved as '{name}'");
+                    let _ = stderr.write_all(
+                        &[
+                            b"Query saved as '".as_slice(),
+                            parsed.text_bytes("save-as"),
+                            b"'\n",
+                        ]
+                        .concat(),
+                    );
                 }
                 Err(error) => {
                     let _ = writeln!(stderr, "warning: could not save query: {}", error.message);
@@ -336,10 +370,14 @@ fn render_response(
     mut stdout: &mut (dyn Write + Send),
 ) -> Result<(), Failure> {
     let status = response.status;
-    let reason = if response.reason.is_empty() {
-        status.to_string()
+    let status_text = response.status_text.clone();
+    // Return available data immediately rather than waiting to fill a chunk.
+    // Cheap text copies need fewer cross-thread handoffs; JSON and preview
+    // read-ahead retain their existing limits.
+    let chunk_limit = if status == 200 && format != "json" {
+        TEXT_BRIDGE_CHUNK
     } else {
-        format!("{status} {}", response.reason)
+        8192
     };
     std::thread::scope(|scope| {
         let (sender, receiver) = mpsc::channel(1);
@@ -360,14 +398,14 @@ fn render_response(
                     .and_then(|preview| {
                         Err(Failure::Status {
                             status,
-                            reason,
+                            status_text,
                             preview,
                         })
                     })
             } else if format == "json" {
-                output::stream_json(&mut reader, &mut stdout, &reason).map_err(Failure::Output)
+                output::stream_json(&mut reader, &mut stdout, &status_text).map_err(Failure::Output)
             } else {
-                output::stream_text(&mut reader, &mut stdout, &reason).map_err(Failure::Output)
+                output::stream_text(&mut reader, &mut stdout, &status_text).map_err(Failure::Output)
             };
             let _ = finished.send(());
             result
@@ -378,7 +416,7 @@ fn render_response(
             let pump = async {
                 let deadline = response.deadline();
                 loop {
-                    let chunk = response.chunk_limit(8192).await;
+                    let chunk = response.chunk_limit(chunk_limit).await;
                     let (item, last) = match chunk {
                         Ok(Some(bytes)) => (Ok(bytes), false),
                         Ok(None) => break,
@@ -438,10 +476,10 @@ fn render_failure(
     match failure {
         Failure::Status {
             status,
-            reason,
+            status_text,
             preview,
         } => {
-            let public = format!("query failed: server returned {reason}");
+            let public = format!("query failed: server returned {status_text}");
             if structured {
                 return CliError::http(status, &public, &public).render(command, path, true);
             }
@@ -617,7 +655,7 @@ mod tests {
             bytes.extend(vec![b'x'; 256 * 1024]);
             bytes
         } else {
-            vec![b'x'; 256 * 1024]
+            vec![b'x'; 1024 * 1024]
         };
         let body_len = body.len();
         let server = thread::spawn(move || {
@@ -706,6 +744,7 @@ mod tests {
         } else {
             assert!(!writer.bytes.is_empty());
             assert!(writer.bytes.len() < body_len);
+            assert!(writer.bytes.len() <= 2 * TEXT_BRIDGE_CHUNK + 16);
             let Err(Failure::Output(output::OutputError {
                 kind: output::OutputErrorKind::Io(error),
                 ..

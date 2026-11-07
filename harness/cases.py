@@ -2,6 +2,8 @@
 
 import json
 
+from compatibility import PROJECTION
+
 
 START = "2024-01-01T00:00:00Z"
 END = "2024-01-01T01:00:00Z"
@@ -30,9 +32,9 @@ def suite():
 
     add("version-text", ["version"])
     add("version-json", ["version", "-o", "json"])
-    add("root-help", ["--help"])
-    add("command-tree", ["-o", "json"])
-    add("agent-catalog", ["agent", "-o", "json"])
+    add("root-help", ["--help"], compatibility_projection=PROJECTION)
+    add("command-tree", ["-o", "json"], compatibility_projection=PROJECTION)
+    add("agent-catalog", ["agent", "-o", "json"], compatibility_projection=PROJECTION)
     add("sql-help-json", ["help", "sql", "run", "-o", "json"])
     add("unknown-command-json", ["not-a-command", "-o", "json"], exit_code=1)
     add("unknown-flag-json", ["version", "--not-a-flag", "-ojson"], exit_code=1)

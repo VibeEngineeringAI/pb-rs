@@ -1,0 +1,1001 @@
+{
+  "valid": true,
+  "source_report_sha256": "4a0a06ee7d0a972d76eef804224c8941fce7643e7478cd251fa3f0abae1bfbd7",
+  "binaries": {
+    "go": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-go-symbolized",
+      "sha256": "4b512b5a103f9dbb67258f99ba48631b9993ffe7eb360125363d4d3e85cda414",
+      "size_bytes": 99047980
+    },
+    "rust": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf2-final-symbolized",
+      "sha256": "8b31cc2471279c76034c440adfb00aa193c0035dd8cdc33f596a835390f08fdc",
+      "size_bytes": 147932872
+    },
+    "go-release": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-go",
+      "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+      "size_bytes": 71807160
+    },
+    "rust-release": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/t3-03f30a4b/bin/pb-perf2-final",
+      "sha256": "8124d157236e215d2068ce4dadf97ebe08043a1a1c327d5dc3a69806785e12a1",
+      "size_bytes": 13547528
+    }
+  },
+  "scope": "synthetic local HTTP; profiles explain work, not release performance; no live service measurements",
+  "samples": [
+    {
+      "case": "p3-100000-json",
+      "mode": "perf",
+      "language": "go",
+      "repetition": 0,
+      "analysis_sha256": "280e0d850b672ef3a5b84b9f75b3068311150727038a04757d5356a9e617f003",
+      "samples": [
+        "865  of event 'cpu_core/cycles/u'"
+      ],
+      "lost_samples": [
+        "0"
+      ],
+      "self_percent": [
+        {
+          "percent": 7.9,
+          "symbol": "encoding/json.appendIndent"
+        },
+        {
+          "percent": 6.63,
+          "symbol": "encoding/json.(*Decoder).readValue"
+        },
+        {
+          "percent": 4.76,
+          "symbol": "runtime.mallocgcSmallScanNoHeader"
+        },
+        {
+          "percent": 4.36,
+          "symbol": "runtime.scanobject"
+        },
+        {
+          "percent": 3.97,
+          "symbol": "runtime.typePointers.next"
+        },
+        {
+          "percent": 2.48,
+          "symbol": "encoding/json.stateInString"
+        },
+        {
+          "percent": 2.34,
+          "symbol": "encoding/json.unquoteBytes"
+        },
+        {
+          "percent": 2.33,
+          "symbol": "encoding/json.appendString[go.shape.string]"
+        },
+        {
+          "percent": 2.25,
+          "symbol": "strconv.leftShift"
+        },
+        {
+          "percent": 1.76,
+          "symbol": "runtime.mallocgcTiny"
+        },
+        {
+          "percent": 1.69,
+          "symbol": "strconv.readFloat"
+        },
+        {
+          "percent": 1.65,
+          "symbol": "runtime.memmove"
+        },
+        {
+          "percent": 1.6,
+          "symbol": "encoding/json.(*decodeState).rescanLiteral"
+        },
+        {
+          "percent": 1.57,
+          "symbol": "encoding/json.stateEndValue"
+        },
+        {
+          "percent": 1.5,
+          "symbol": "runtime.findObject"
+        },
+        {
+          "percent": 1.45,
+          "symbol": "runtime.mallocgcSmallNoscan"
+        },
+        {
+          "percent": 1.37,
+          "symbol": "internal/runtime/maps.(*Iter).Next"
+        },
+        {
+          "percent": 1.28,
+          "symbol": "runtime.mallocgc"
+        },
+        {
+          "percent": 1.26,
+          "symbol": "strconv.ryuDigits"
+        },
+        {
+          "percent": 1.25,
+          "symbol": "internal/sync.(*HashTrieMap[go.shape.interface {},go.shape.interface {}]).Load"
+        },
+        {
+          "percent": 1.2,
+          "symbol": "runtime.casgstatus"
+        },
+        {
+          "percent": 1.18,
+          "symbol": "internal/poll.(*fdMutex).rwlock"
+        },
+        {
+          "percent": 1.17,
+          "symbol": "0xffffffffac200080"
+        },
+        {
+          "percent": 1.16,
+          "symbol": "runtime.(*mspan).writeHeapBitsSmall"
+        },
+        {
+          "percent": 1.08,
+          "symbol": "runtime.reentersyscall"
+        },
+        {
+          "percent": 1.03,
+          "symbol": "strconv.rightShift"
+        },
+        {
+          "percent": 0.95,
+          "symbol": "encoding/json.state1"
+        },
+        {
+          "percent": 0.9,
+          "symbol": "runtime.greyobject"
+        },
+        {
+          "percent": 0.8,
+          "symbol": "strconv.eiselLemire64"
+        },
+        {
+          "percent": 0.79,
+          "symbol": "runtime.exitsyscallfast"
+        }
+      ]
+    },
+    {
+      "case": "p3-100000-json",
+      "mode": "perf",
+      "language": "rust",
+      "repetition": 0,
+      "analysis_sha256": "5907d5590bc1a24d19cd2f66ee266dac4af82d06ecde038c6643fbd6e7333d9c",
+      "samples": [
+        "251  of event 'cpu_core/cycles/u'"
+      ],
+      "lost_samples": [
+        "0"
+      ],
+      "self_percent": [
+        {
+          "percent": 25.22,
+          "symbol": "pb::sql::output::scan::Scanner::value_impl"
+        },
+        {
+          "percent": 8.47,
+          "symbol": "pb::gojson::Decoder::value_inner"
+        },
+        {
+          "percent": 7.38,
+          "symbol": "<pb::sql::BodyReader as std::io::BufRead>::fill_buf"
+        },
+        {
+          "percent": 5.17,
+          "symbol": "core::str::converts::from_utf8"
+        },
+        {
+          "percent": 4.05,
+          "symbol": "pb::sql::output::normalize::{{closure}}"
+        },
+        {
+          "percent": 3.86,
+          "symbol": "pb::sql::output::render::{{closure}}"
+        },
+        {
+          "percent": 3.84,
+          "symbol": "pb::sql::output::string"
+        },
+        {
+          "percent": 3.04,
+          "symbol": "cfree"
+        },
+        {
+          "percent": 2.86,
+          "symbol": "pb::gojson::Decoder::string"
+        },
+        {
+          "percent": 2.84,
+          "symbol": "pb::gojson::Decoder::skip_number"
+        },
+        {
+          "percent": 2.38,
+          "symbol": "pb::gojson::push_string_bytes"
+        },
+        {
+          "percent": 2.19,
+          "symbol": "malloc"
+        },
+        {
+          "percent": 2.09,
+          "symbol": "alloc::raw_vec::RawVecInner<A>::finish_grow"
+        },
+        {
+          "percent": 1.83,
+          "symbol": "pb::gojson::Decoder::value"
+        },
+        {
+          "percent": 1.82,
+          "symbol": "core::ptr::drop_in_place<serde_json::value::Value>"
+        },
+        {
+          "percent": 1.67,
+          "symbol": "<f64 as zmij::private::Sealed>::write_to_zmij_buffer"
+        },
+        {
+          "percent": 1.44,
+          "symbol": "alloc::vec::Vec<T,A>::push_mut"
+        },
+        {
+          "percent": 1.43,
+          "symbol": "0x0000000000176459"
+        },
+        {
+          "percent": 1.38,
+          "symbol": "std::sys::backtrace::__rust_begin_short_backtrace"
+        },
+        {
+          "percent": 1.31,
+          "symbol": "0xffffffffac200080"
+        },
+        {
+          "percent": 1.19,
+          "symbol": "core::slice::sort::shared::smallsort::insertion_sort_shift_left"
+        },
+        {
+          "percent": 0.96,
+          "symbol": "0x00000000000a79f9"
+        },
+        {
+          "percent": 0.95,
+          "symbol": "0x0000000000176400"
+        },
+        {
+          "percent": 0.94,
+          "symbol": "core::num::imp::dec2flt::lemire::compute_float::<f64>"
+        },
+        {
+          "percent": 0.92,
+          "symbol": "realloc"
+        },
+        {
+          "percent": 0.73,
+          "symbol": "0x0000000000176466"
+        },
+        {
+          "percent": 0.51,
+          "symbol": "pb::gojson::decode_ordered"
+        }
+      ]
+    },
+    {
+      "case": "p3-100000-json",
+      "mode": "perf",
+      "language": "rust",
+      "repetition": 1,
+      "analysis_sha256": "b122616e5290a8e74c2341fc144bc7ecf61b0509e038f4b0ff9c148987ce17b1",
+      "samples": [
+        "243  of event 'cpu_core/cycles/u'"
+      ],
+      "lost_samples": [
+        "0"
+      ],
+      "self_percent": [
+        {
+          "percent": 24.05,
+          "symbol": "pb::sql::output::scan::Scanner::value_impl"
+        },
+        {
+          "percent": 8.15,
+          "symbol": "<pb::sql::BodyReader as std::io::BufRead>::fill_buf"
+        },
+        {
+          "percent": 7.0,
+          "symbol": "pb::gojson::Decoder::value_inner"
+        },
+        {
+          "percent": 5.61,
+          "symbol": "core::str::converts::from_utf8"
+        },
+        {
+          "percent": 4.52,
+          "symbol": "pb::gojson::Decoder::string"
+        },
+        {
+          "percent": 4.0,
+          "symbol": "pb::sql::output::render::{{closure}}"
+        },
+        {
+          "percent": 3.62,
+          "symbol": "pb::sql::output::normalize::{{closure}}"
+        },
+        {
+          "percent": 3.06,
+          "symbol": "pb::sql::output::string"
+        },
+        {
+          "percent": 3.05,
+          "symbol": "<f64 as zmij::private::Sealed>::write_to_zmij_buffer"
+        },
+        {
+          "percent": 2.55,
+          "symbol": "cfree"
+        },
+        {
+          "percent": 1.56,
+          "symbol": "malloc"
+        },
+        {
+          "percent": 1.47,
+          "symbol": "pb::gojson::push_string_bytes"
+        },
+        {
+          "percent": 1.43,
+          "symbol": "<pb::SignalWriter<W> as std::io::Write>::write"
+        },
+        {
+          "percent": 1.36,
+          "symbol": "0x0000000000176400"
+        },
+        {
+          "percent": 1.33,
+          "symbol": "pb::sql::output::normalize"
+        },
+        {
+          "percent": 1.3,
+          "symbol": "core::slice::sort::shared::smallsort::insertion_sort_shift_left"
+        },
+        {
+          "percent": 1.2,
+          "symbol": "<f64 as core::str::traits::FromStr>::from_str"
+        },
+        {
+          "percent": 1.03,
+          "symbol": "std::io::Write::write_all"
+        },
+        {
+          "percent": 1.03,
+          "symbol": "alloc::vec::Vec<T,A>::push_mut"
+        },
+        {
+          "percent": 1.02,
+          "symbol": "alloc::raw_vec::RawVecInner<A>::reserve::do_reserve_and_handle"
+        },
+        {
+          "percent": 1.02,
+          "symbol": "0x0000000000176430"
+        },
+        {
+          "percent": 1.01,
+          "symbol": "0x0000000000175d84"
+        },
+        {
+          "percent": 1.01,
+          "symbol": "rust_psm_stack_pointer"
+        },
+        {
+          "percent": 1.01,
+          "symbol": "<core::str::pattern::CharSearcher as core::str::pattern::Searcher>::next_match"
+        },
+        {
+          "percent": 0.95,
+          "symbol": "pb::gojson::decode_ordered"
+        },
+        {
+          "percent": 0.95,
+          "symbol": "core::ptr::drop_in_place<pb::gojson::Node>"
+        },
+        {
+          "percent": 0.93,
+          "symbol": "pb::gojson::Decoder::skip_literal"
+        },
+        {
+          "percent": 0.91,
+          "symbol": "pb::gojson::Decoder::skip_number"
+        },
+        {
+          "percent": 0.89,
+          "symbol": "0x0000000000175f99"
+        },
+        {
+          "percent": 0.88,
+          "symbol": "pb::gojson::Decoder::value"
+        }
+      ]
+    },
+    {
+      "case": "p3-100000-json",
+      "mode": "perf",
+      "language": "go",
+      "repetition": 1,
+      "analysis_sha256": "fc75f0ce10c19239899151a853e0cd9fc659dc55e48f1a6fd9f5285cef683525",
+      "samples": [
+        "866  of event 'cpu_core/cycles/u'"
+      ],
+      "lost_samples": [
+        "0"
+      ],
+      "self_percent": [
+        {
+          "percent": 9.84,
+          "symbol": "encoding/json.appendIndent"
+        },
+        {
+          "percent": 6.3,
+          "symbol": "encoding/json.(*Decoder).readValue"
+        },
+        {
+          "percent": 4.3,
+          "symbol": "runtime.typePointers.next"
+        },
+        {
+          "percent": 3.69,
+          "symbol": "runtime.scanobject"
+        },
+        {
+          "percent": 3.07,
+          "symbol": "runtime.mallocgcSmallScanNoHeader"
+        },
+        {
+          "percent": 2.7,
+          "symbol": "runtime.memmove"
+        },
+        {
+          "percent": 2.37,
+          "symbol": "encoding/json.stateInString"
+        },
+        {
+          "percent": 2.29,
+          "symbol": "strconv.leftShift"
+        },
+        {
+          "percent": 2.08,
+          "symbol": "runtime.mallocgcSmallNoscan"
+        },
+        {
+          "percent": 2.07,
+          "symbol": "runtime.mallocgcTiny"
+        },
+        {
+          "percent": 1.95,
+          "symbol": "strconv.readFloat"
+        },
+        {
+          "percent": 1.8,
+          "symbol": "runtime.findObject"
+        },
+        {
+          "percent": 1.73,
+          "symbol": "encoding/json.(*decodeState).rescanLiteral"
+        },
+        {
+          "percent": 1.67,
+          "symbol": "runtime.mallocgc"
+        },
+        {
+          "percent": 1.5,
+          "symbol": "runtime.greyobject"
+        },
+        {
+          "percent": 1.32,
+          "symbol": "encoding/json.unquoteBytes"
+        },
+        {
+          "percent": 1.26,
+          "symbol": "strconv.rightShift"
+        },
+        {
+          "percent": 1.18,
+          "symbol": "slices.pdqsortCmpFunc[go.shape.struct { encoding/json.v reflect.Value; encoding/json.ks string }]"
+        },
+        {
+          "percent": 1.15,
+          "symbol": "encoding/json.state1"
+        },
+        {
+          "percent": 1.13,
+          "symbol": "runtime.casgstatus"
+        },
+        {
+          "percent": 1.12,
+          "symbol": "encoding/json.appendString[go.shape.string]"
+        },
+        {
+          "percent": 1.07,
+          "symbol": "encoding/json.stateEndValue"
+        },
+        {
+          "percent": 1.06,
+          "symbol": "encoding/json.stateBeginValue"
+        },
+        {
+          "percent": 1.0,
+          "symbol": "internal/sync.(*HashTrieMap[go.shape.interface {},go.shape.interface {}]).Load"
+        },
+        {
+          "percent": 0.99,
+          "symbol": "bytes.Replace"
+        },
+        {
+          "percent": 0.91,
+          "symbol": "0xffffffffac200080"
+        },
+        {
+          "percent": 0.9,
+          "symbol": "aeshashbody"
+        },
+        {
+          "percent": 0.81,
+          "symbol": "strconv.ryuDigits32"
+        },
+        {
+          "percent": 0.78,
+          "symbol": "strconv.genericFtoa"
+        },
+        {
+          "percent": 0.77,
+          "symbol": "encoding/json.mapEncoder.encode"
+        }
+      ]
+    },
+    {
+      "case": "p3-100000-json",
+      "mode": "heaptrack",
+      "language": "rust",
+      "repetition": 0,
+      "analysis_sha256": "3d77c4b166e6d10b65ad42d98bb6b146f3be07c6bcb6cabe89ab09b409f6037a",
+      "totals": [
+        "calls to allocation functions: 1226239 (2067856/s)",
+        "temporary memory allocations: 40 (67/s)",
+        "peak heap memory consumption: 1.46M",
+        "peak RSS (including heaptrack overhead): 13.14M",
+        "total memory leaked: 70.33K"
+      ]
+    },
+    {
+      "case": "p3-100000-json",
+      "mode": "heaptrack",
+      "language": "rust",
+      "repetition": 1,
+      "analysis_sha256": "d35f7c1f63c469c8466e73ff6889582966bbd9d0d4efe84b35e79edc0d513770",
+      "totals": [
+        "calls to allocation functions: 1226239 (1913009/s)",
+        "temporary memory allocations: 40 (62/s)",
+        "peak heap memory consumption: 1.46M",
+        "peak RSS (including heaptrack overhead): 13.17M",
+        "total memory leaked: 70.33K"
+      ]
+    },
+    {
+      "case": "p3-single-8MiB-item",
+      "mode": "perf",
+      "language": "go",
+      "repetition": 0,
+      "analysis_sha256": "26aec70f0a08c6b93cf25e5baead1cd7cb74b6fcb19926df3c3c1fffdccb15a4",
+      "samples": [
+        "231  of event 'cpu_core/cycles/u'"
+      ],
+      "lost_samples": [
+        "0"
+      ],
+      "self_percent": [
+        {
+          "percent": 17.19,
+          "symbol": "encoding/json.appendIndent"
+        },
+        {
+          "percent": 10.97,
+          "symbol": "encoding/json.stateInString"
+        },
+        {
+          "percent": 10.36,
+          "symbol": "encoding/json.(*Decoder).readValue"
+        },
+        {
+          "percent": 7.45,
+          "symbol": "0xffffffffac201280"
+        },
+        {
+          "percent": 6.41,
+          "symbol": "runtime.typePointers.next"
+        },
+        {
+          "percent": 6.24,
+          "symbol": "encoding/json.unquoteBytes"
+        },
+        {
+          "percent": 6.1,
+          "symbol": "encoding/json.appendString[go.shape.string]"
+        },
+        {
+          "percent": 4.02,
+          "symbol": "encoding/json.(*decodeState).rescanLiteral"
+        },
+        {
+          "percent": 3.75,
+          "symbol": "runtime.memmove"
+        },
+        {
+          "percent": 3.3,
+          "symbol": "runtime.scanobject"
+        },
+        {
+          "percent": 2.5,
+          "symbol": "runtime.procyield.abi0"
+        },
+        {
+          "percent": 1.69,
+          "symbol": "encoding/xml.(*Decoder).getc"
+        },
+        {
+          "percent": 1.32,
+          "symbol": "runtime.greyobject"
+        },
+        {
+          "percent": 1.17,
+          "symbol": "aeshashbody"
+        },
+        {
+          "percent": 1.14,
+          "symbol": "unicode/utf8.DecodeRune"
+        },
+        {
+          "percent": 1.01,
+          "symbol": "runtime.(*mspan).typePointersOfUnchecked"
+        },
+        {
+          "percent": 0.8,
+          "symbol": "runtime.scanblock"
+        },
+        {
+          "percent": 0.75,
+          "symbol": "runtime.findObject"
+        },
+        {
+          "percent": 0.68,
+          "symbol": "runtime.mallocgcSmallScanNoHeader"
+        },
+        {
+          "percent": 0.66,
+          "symbol": "countbody"
+        },
+        {
+          "percent": 0.66,
+          "symbol": "indexbytebody"
+        },
+        {
+          "percent": 0.63,
+          "symbol": "runtime.mallocgcSmallNoscan"
+        },
+        {
+          "percent": 0.62,
+          "symbol": "regexp/syntax.(*compiler).rune"
+        },
+        {
+          "percent": 0.61,
+          "symbol": "runtime.gcmarknewobject"
+        },
+        {
+          "percent": 0.6,
+          "symbol": "runtime.deductAssistCredit"
+        },
+        {
+          "percent": 0.59,
+          "symbol": "reflect.(*rtype).Kind"
+        },
+        {
+          "percent": 0.59,
+          "symbol": "regexp/syntax.unicodeTable"
+        },
+        {
+          "percent": 0.58,
+          "symbol": "unicode.Is"
+        },
+        {
+          "percent": 0.58,
+          "symbol": "runtime.lock2"
+        },
+        {
+          "percent": 0.57,
+          "symbol": "k8s.io/apimachinery/pkg/runtime.(*Scheme).AddKnownTypeWithName"
+        }
+      ]
+    },
+    {
+      "case": "p3-single-8MiB-item",
+      "mode": "perf",
+      "language": "rust",
+      "repetition": 0,
+      "analysis_sha256": "ef085c825ad44bc61a27a83de4c6747af0718d44883f5f03175393a302dd648f",
+      "samples": [
+        "51  of event 'cpu_core/cycles/u'"
+      ],
+      "lost_samples": [
+        "0"
+      ],
+      "self_percent": [
+        {
+          "percent": 27.3,
+          "symbol": "pb::sql::output::scan::Scanner::value_impl"
+        },
+        {
+          "percent": 25.62,
+          "symbol": "pb::gojson::Decoder::string"
+        },
+        {
+          "percent": 14.06,
+          "symbol": "0xffffffffac201280"
+        },
+        {
+          "percent": 14.05,
+          "symbol": "pb::sql::output::string"
+        },
+        {
+          "percent": 10.51,
+          "symbol": "0x0000000000176707"
+        },
+        {
+          "percent": 1.78,
+          "symbol": "<tokio::sync::batch_semaphore::Acquire as core::future::future::Future>::poll"
+        },
+        {
+          "percent": 1.47,
+          "symbol": "pb::sql::render_response::{{closure}}::{{closure}}"
+        },
+        {
+          "percent": 1.38,
+          "symbol": "tokio::runtime::time::<impl tokio::runtime::time::handle::Handle>::reregister"
+        },
+        {
+          "percent": 0.77,
+          "symbol": "0x000000000000ad33"
+        },
+        {
+          "percent": 0.77,
+          "symbol": "<pb::config::ProfileRecord as core::clone::Clone>::clone"
+        },
+        {
+          "percent": 0.77,
+          "symbol": "<tokio::sync::batch_semaphore::Acquire as core::ops::drop::Drop>::drop"
+        },
+        {
+          "percent": 0.77,
+          "symbol": "tokio::runtime::time::<impl tokio::runtime::time::handle::Handle>::process_at_time"
+        },
+        {
+          "percent": 0.77,
+          "symbol": "tokio::runtime::time::Driver::park_internal"
+        }
+      ]
+    },
+    {
+      "case": "p3-single-8MiB-item",
+      "mode": "perf",
+      "language": "rust",
+      "repetition": 1,
+      "analysis_sha256": "b9c3f2135993461013e0a56f0c774c0960728056b9c3d3cbf7438659ac3ac651",
+      "samples": [
+        "44  of event 'cpu_core/cycles/u'"
+      ],
+      "lost_samples": [
+        "0"
+      ],
+      "self_percent": [
+        {
+          "percent": 30.2,
+          "symbol": "pb::gojson::Decoder::string"
+        },
+        {
+          "percent": 23.77,
+          "symbol": "pb::sql::output::scan::Scanner::value_impl"
+        },
+        {
+          "percent": 21.16,
+          "symbol": "pb::sql::output::string"
+        },
+        {
+          "percent": 19.02,
+          "symbol": "0xffffffffac201280"
+        },
+        {
+          "percent": 2.16,
+          "symbol": "<tokio::sync::batch_semaphore::Acquire as core::future::future::Future>::poll"
+        },
+        {
+          "percent": 1.69,
+          "symbol": "<pb::sql::BodyReader as std::io::BufRead>::fill_buf"
+        },
+        {
+          "percent": 0.69,
+          "symbol": "pb::transport::Transport::send::{{closure}}"
+        },
+        {
+          "percent": 0.65,
+          "symbol": "0x00000000000105d1"
+        },
+        {
+          "percent": 0.65,
+          "symbol": "malloc"
+        }
+      ]
+    },
+    {
+      "case": "p3-single-8MiB-item",
+      "mode": "perf",
+      "language": "go",
+      "repetition": 1,
+      "analysis_sha256": "be867a486fc47fdb170d4b672699c0af0dad2eedd2262854923c63a687920afa",
+      "samples": [
+        "201  of event 'cpu_core/cycles/u'"
+      ],
+      "lost_samples": [
+        "0"
+      ],
+      "self_percent": [
+        {
+          "percent": 18.32,
+          "symbol": "encoding/json.appendIndent"
+        },
+        {
+          "percent": 13.82,
+          "symbol": "encoding/json.(*Decoder).readValue"
+        },
+        {
+          "percent": 12.14,
+          "symbol": "encoding/json.stateInString"
+        },
+        {
+          "percent": 6.18,
+          "symbol": "encoding/json.unquoteBytes"
+        },
+        {
+          "percent": 5.53,
+          "symbol": "0xffffffffac201280"
+        },
+        {
+          "percent": 5.41,
+          "symbol": "encoding/json.appendString[go.shape.string]"
+        },
+        {
+          "percent": 4.86,
+          "symbol": "runtime.scanobject"
+        },
+        {
+          "percent": 4.78,
+          "symbol": "runtime.typePointers.next"
+        },
+        {
+          "percent": 4.65,
+          "symbol": "encoding/json.(*decodeState).rescanLiteral"
+        },
+        {
+          "percent": 3.14,
+          "symbol": "runtime.memmove"
+        },
+        {
+          "percent": 2.09,
+          "symbol": "runtime.procyield.abi0"
+        },
+        {
+          "percent": 1.91,
+          "symbol": "runtime.findObject"
+        },
+        {
+          "percent": 1.13,
+          "symbol": "runtime.greyobject"
+        },
+        {
+          "percent": 1.11,
+          "symbol": "runtime.scanblock"
+        },
+        {
+          "percent": 0.97,
+          "symbol": "encoding/xml.(*Decoder).getc"
+        },
+        {
+          "percent": 0.78,
+          "symbol": "countbody"
+        },
+        {
+          "percent": 0.78,
+          "symbol": "indexbytebody"
+        },
+        {
+          "percent": 0.77,
+          "symbol": "runtime.(*spanSet).pop"
+        },
+        {
+          "percent": 0.71,
+          "symbol": "sigs.k8s.io/yaml/goyaml%2ev2.yaml_parser_scan_plain_scalar"
+        },
+        {
+          "percent": 0.7,
+          "symbol": "runtime.(*pageAlloc).update"
+        },
+        {
+          "percent": 0.69,
+          "symbol": "encoding/xml.(*Decoder).text"
+        },
+        {
+          "percent": 0.69,
+          "symbol": "encoding/xml.(*Decoder).readName"
+        },
+        {
+          "percent": 0.69,
+          "symbol": "github.com/spf13/cobra.(*Command).CommandPath"
+        },
+        {
+          "percent": 0.68,
+          "symbol": "internal/sync.(*HashTrieMap[go.shape.interface {},go.shape.interface {}]).Swap"
+        },
+        {
+          "percent": 0.66,
+          "symbol": "runtime.mapassign"
+        },
+        {
+          "percent": 0.65,
+          "symbol": "aeshashbody"
+        },
+        {
+          "percent": 0.64,
+          "symbol": "encoding/xml.(*Decoder).Token"
+        },
+        {
+          "percent": 0.61,
+          "symbol": "bytes.(*Buffer).WriteByte"
+        },
+        {
+          "percent": 0.59,
+          "symbol": "runtime.mallocgcSmallScanHeader"
+        },
+        {
+          "percent": 0.52,
+          "symbol": "runtime.mapaccess1_fast32"
+        }
+      ]
+    },
+    {
+      "case": "p3-single-8MiB-item",
+      "mode": "heaptrack",
+      "language": "rust",
+      "repetition": 0,
+      "analysis_sha256": "84eee130ce5f64fd68aceaa7096c1d41f492129838fc8f919245a318351540ce",
+      "totals": [
+        "calls to allocation functions: 1239 (21736/s)",
+        "temporary memory allocations: 39 (684/s)",
+        "peak heap memory consumption: 38.65M",
+        "peak RSS (including heaptrack overhead): 38.66M",
+        "total memory leaked: 70.33K"
+      ]
+    },
+    {
+      "case": "p3-single-8MiB-item",
+      "mode": "heaptrack",
+      "language": "rust",
+      "repetition": 1,
+      "analysis_sha256": "1c78ce45ba139e13422704d619d6f08b1312ea8c8113e19a84db31883d0336fc",
+      "totals": [
+        "calls to allocation functions: 1307 (26140/s)",
+        "temporary memory allocations: 38 (760/s)",
+        "peak heap memory consumption: 38.34M",
+        "peak RSS (including heaptrack overhead): 38.17M",
+        "total memory leaked: 70.33K"
+      ]
+    }
+  ]
+}

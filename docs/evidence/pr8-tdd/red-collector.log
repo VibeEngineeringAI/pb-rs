@@ -1,0 +1,69 @@
+running 29 tests
+
+thread 'ingest::files::tests::missing_source_io_errors_are_retryable' (2580599) panicked at src/ingest/files_tests.rs:179:5:
+discovery must preserve transient I/O errors: disappeared-directory: entity not found
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test ingest::files::tests::canonical_non_utf8_paths_are_rejected_without_checkpoint_changes ... ok
+test ingest::files::tests::changing_start_policy_preserves_existing_saved_offsets ... ok
+test ingest::files::tests::end_skips_initial_files_but_discovers_new_files_from_beginning ... ok
+test ingest::files::tests::missing_source_io_errors_are_retryable ... FAILED
+
+thread 'ingest::files::tests::legacy_stale_alias_append_uses_latest_committed_progress' (2580595) panicked at src/ingest/files_tests.rs:96:5:
+alias switching reused a previously committed event ID: [FileRecord { payload: {"message": String("second")}, source_path: "/var/tmp/pb-pr8-tdd-evidence/sol/tmp/pb-file-collector-2580583-1792115259226203526-9/b.log", source_generation: "file-5da04e4e1c16dc57", source_sequence: 2, event_id: "file-5da04e4e1c16dc57-2" }, FileRecord { payload: {"message": String("third")}, source_path: "/var/tmp/pb-pr8-tdd-evidence/sol/tmp/pb-file-collector-2580583-1792115259226203526-9/b.log", source_generation: "file-5da04e4e1c16dc57", source_sequence: 3, event_id: "file-5da04e4e1c16dc57-3" }]test ingest::files::tests::malformed_json_and_nonobject_records_require_explicit_skip ...
+ok
+test ingest::files::tests::incomplete_lines_wait_for_newline_and_crlf_is_supported ... ok
+
+thread 'ingest::files::tests::hardlink_alias_switch_truncation_preserves_event_id_uniqueness' (2580593) panicked at src/ingest/files_tests.rs:96:5:
+alias switching reused a previously committed event ID: [FileRecord { payload: {"message": String("CHANGED")}, source_path: "/var/tmp/pb-pr8-tdd-evidence/sol/tmp/pb-file-collector-2580583-1792115259226137467-7/b.log", source_generation: "file-af02ffdda3649fda", source_sequence: 2, event_id: "file-af02ffdda3649fda-2" }]
+
+thread 'ingest::files::tests::legacy_stale_alias_truncation_uses_latest_generation_probes' (2580596) panicked at src/ingest/files_tests.rs:96:5:
+alias switching reused a previously committed event ID: [FileRecord { payload: {"message": String("CHANGED")}, source_path: "/var/tmp/pb-pr8-tdd-evidence/sol/tmp/pb-file-collector-2580583-1792115259226660462-12/b.log", source_generation: "file-d0d6281d854ad3a5", source_sequence: 2, event_id: "file-d0d6281d854ad3a5-2" }]
+
+thread 'ingest::files::tests::hardlink_alias_switch_append_survives_serialized_restart' (2580592) panicked at src/ingest/files_tests.rs:96:5:
+alias switching reused a previously committed event ID: [FileRecord { payload: {"message": String("second")}, source_path: "/var/tmp/pb-pr8-tdd-evidence/sol/tmp/pb-file-collector-2580583-1792115259226138786-8/b.log", source_generation: "file-1f94f1ab5edf064e", source_sequence: 2, event_id: "file-1f94f1ab5edf064e-2" }, FileRecord { payload: {"message": String("third")}, source_path: "/var/tmp/pb-pr8-tdd-evidence/sol/tmp/pb-file-collector-2580583-1792115259226138786-8/b.log", source_generation: "file-1f94f1ab5edf064e", source_sequence: 3, event_id: "file-1f94f1ab5edf064e-3" }]
+test ingest::files::tests::busy_first_source_cannot_starve_a_second_source ... ok
+test ingest::files::tests::legacy_stale_alias_append_uses_latest_committed_progress ... FAILED
+test ingest::files::tests::legacy_stale_alias_truncation_uses_latest_generation_probes ... FAILED
+test ingest::files::tests::end_discards_fragment_continuation_across_restarts ... ok
+test ingest::files::tests::oversized_lines_and_records_fail_without_advancing_state ... ok
+test ingest::files::tests::read_proof_tracks_bounded_prefix_and_tail_across_chunk_sizes ... ok
+test ingest::files::tests::batch_count_and_payload_bytes_bound_each_scan ... ok
+test ingest::files::tests::prior_anchor_change_fails_validation_before_refresh ... ok
+test ingest::files::tests::truncation_during_checkpoint_comparison_is_a_mismatch ... ok
+
+thread 'ingest::files::tests::recursive_glob_honors_excluded_unreadable_subtrees' (2580604) panicked at src/ingest/files_tests.rs:223:38:
+excluded unreadable directory must not abort discovery: ScanError { message: "discover files: attempting to read `/var/tmp/pb-pr8-tdd-evidence/sol/tmp/pb-file-collector-2580583-1792115259227296246-16/locked` resulted in an error: Permission denied (os error 13)", retryable: false }
+test ingest::files::tests::hardlink_alias_switch_truncation_preserves_event_id_uniqueness ... FAILED
+test ingest::files::tests::batch_limits_do_not_age_present_but_unprocessed_checkpoints ... ok
+
+thread 'ingest::files::tests::skipped_input_is_bounded_and_next_scan_serves_another_file' (2580610) panicked at src/ingest/files_tests.rs:146:5:
+assertion `left == right` failed: skipped lines must consume scan budget
+  left: 3
+ right: 1
+test ingest::files::tests::hardlink_alias_switch_append_survives_serialized_restart ... FAILED
+test ingest::files::tests::retry_restart_and_acknowledgement_preserve_identity_and_offsets ... ok
+test ingest::files::tests::recursive_glob_honors_excluded_unreadable_subtrees ... FAILED
+test ingest::files::tests::rename_rotation_reads_old_remainder_and_new_file ... ok
+test ingest::files::tests::rewritten_consumed_bytes_fail_validation_even_when_old_anchor_matches ... ok
+test ingest::files::tests::text_preserves_empty_lines_and_rejects_invalid_utf8 ... ok
+test ingest::files::tests::missing_checkpoints_expire_after_two_committed_scans ... ok
+test ingest::files::tests::saved_offsets_override_end_and_new_files_after_empty_scan_start_at_zero ... ok
+test ingest::files::tests::overlapping_includes_and_excludes_apply_on_each_discovery ... ok
+test ingest::files::tests::skipped_input_is_bounded_and_next_scan_serves_another_file ... FAILED
+test ingest::files::tests::scan_errors_distinguish_source_races_from_permanent_failures ... ok
+test ingest::files::tests::truncation_and_regrowth_start_new_generations ... ok
+
+failures:
+
+failures:
+    ingest::files::tests::hardlink_alias_switch_append_survives_serialized_restart
+    ingest::files::tests::hardlink_alias_switch_truncation_preserves_event_id_uniqueness
+    ingest::files::tests::legacy_stale_alias_append_uses_latest_committed_progress
+    ingest::files::tests::legacy_stale_alias_truncation_uses_latest_generation_probes
+    ingest::files::tests::missing_source_io_errors_are_retryable
+    ingest::files::tests::recursive_glob_honors_excluded_unreadable_subtrees
+    ingest::files::tests::skipped_input_is_bounded_and_next_scan_serves_another_file
+
+test result: FAILED. 22 passed; 7 failed; 0 ignored; 0 measured; 636 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `--lib`

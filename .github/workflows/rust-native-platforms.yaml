@@ -1,0 +1,89 @@
+name: Rust native platforms
+
+# Native evidence the Linux compatibility job cannot provide: the terminal
+# session's macOS /dev/tty select reader and the Windows CF_UNICODETEXT
+# clipboard text read, compared with atotto/clipboard v0.1.4 on the same desktop.
+# Windows intentionally accepts a successful final GlobalUnlock (0/NO_ERROR),
+# where that pinned Go package returns an error; the native test allows only
+# this precise difference and independently asserts the clipboard's text.
+
+on:
+  pull_request:
+    paths:
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - 'src/**'
+      - 'tests/**'
+      - 'go.mod'
+      - 'go.sum'
+      - '.github/workflows/rust-native-platforms.yaml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rust-native-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  native:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Select Rust toolchain
+        run: rustup toolchain install 1.96.0 --profile minimal --component clippy
+      - name: Lint every target natively
+        run: cargo +1.96.0 clippy --locked --all-targets -- -D warnings
+      - name: Terminal, input and clipboard unit tests
+        # Includes the PTY lifecycle tests, the select reader and the real
+        # controlling-terminal /dev/tty cancellation test on macOS.
+        run: cargo +1.96.0 test --locked --lib -- 'tui::' --nocapture
+      - name: Metrics terminal process test
+        if: runner.os == 'macOS'
+        run: cargo +1.96.0 test --locked --test metrics_terminal
+      - uses: actions/setup-go@v5
+        if: runner.os == 'Windows'
+        with:
+          go-version: '1.25.4'
+      - name: Build the atotto clipboard oracle
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          mkdir -p ci-clipboard-oracle
+          cat > ci-clipboard-oracle/main.go <<'EOF'
+          package main
+
+          import (
+          	"fmt"
+
+          	"github.com/atotto/clipboard"
+          )
+
+          // The bubbles Paste command's read: ok:<text> or err:<message>.
+          func main() {
+          	text, err := clipboard.ReadAll()
+          	if err != nil {
+          		fmt.Print("err:" + err.Error())
+          		return
+          	}
+          	fmt.Print("ok:" + text)
+          }
+          EOF
+          go build -o "$RUNNER_TEMP/clipboard-oracle.exe" ./ci-clipboard-oracle
+      - name: Native clipboard text and documented Go unlock difference
+        if: runner.os == 'Windows'
+        shell: bash
+        env:
+          PB_GO_CLIPBOARD_ORACLE: ${{ runner.temp }}/clipboard-oracle.exe
+        run: >-
+          cargo +1.96.0 test --locked --lib --
+          --ignored --exact tui::clipboard::native_tests::native_read_matches_atotto
+          --nocapture

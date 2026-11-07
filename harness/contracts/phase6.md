@@ -101,15 +101,13 @@ separate wire difference: raw event values and both signatures remain
 available, while `payload_auth_passed` excludes only that header. Such cases
 increment `wire_ua_divergent` and never `parity_passed`, which remains the
 strict count. CONNECT user-agent bytes are always compared exactly. No other
-diagnostic exemption is accepted except `P6-DIAG-GARBAGE-HEADER`, approved by
-the parent for the single `p6-corrupt-garbage_header` scenario. Go's exact
-slice-bounds diagnostic and Arrow-rs's exact safe-verifier alignment diagnostic
-are checked as a fixed pair; code, termination, stdout, requests and config
-still must match. It increments `diagnostic_divergent`, never strict parity.
-The exemption now checks the complete two envelope byte strings, including
-outer keys, indentation, escaped message, and final LF. Extra LF, compact JSON
-and extra outer fields remain failures. Changed diagnostics or other malformed
-scenarios remain failures.
+diagnostic exemption is accepted in live comparison. PR #7 closed
+`P6-DIAG-GARBAGE-HEADER`: the garbage-header diagnostic now matches Go byte for
+byte. `diagnostic_divergent` remains a report field for compatibility and is
+zero in the PR #7 replay. The exact old message-pair matcher exists only in
+`phase6_blocked_writer.py` to re-validate historical saved captures; it cannot
+waive a live comparison. Changed diagnostics remain failures. See the
+[remaining-difference audit](../../docs/pr7-remaining-differences.md).
 Version-specific deployed authorization, delivery
 loss and continuity are independent integration questions that a loopback
 fixture cannot answer.

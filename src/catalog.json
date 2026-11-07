@@ -10,7 +10,8 @@
     "failure_exit": "non-zero",
     "empty_lists": "[]",
     "special_cases": [
-      "pb status -o json reports an unhealthy status as JSON on stdout and exits non-zero"
+      "pb status -o json reports an unhealthy status as JSON on stdout and exits non-zero",
+      "pb observe emits JSON by default and writes local cursor receipts; --ack TOKEN advances only the local cursor"
     ]
   },
   "error_codes": [
@@ -232,6 +233,19 @@
       "streaming": true,
       "constraints": [
         "Long-running command; stop with SIGINT"
+      ]
+    },
+    {
+      "command": "pb observe <dataset> --session <session> --cursor-file <path> -o json",
+      "description": "Read bounded session events and acknowledge receipts with a local cursor",
+      "scope": "local+server",
+      "mutates": false,
+      "requires_profile": true,
+      "constraints": [
+        "Dataset access is read-only; writes pending receipts and acknowledged progress to the local cursor file",
+        "Defaults to JSON output, 100 events, a 262144-byte serialized JSON response limit, and no waiting",
+        "Repeated reads replay the pending receipt until --ack TOKEN advances the local cursor",
+        "--ack TOKEN only updates the local cursor and does not acknowledge or mutate server data"
       ]
     }
   ]

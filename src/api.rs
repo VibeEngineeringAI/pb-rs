@@ -108,7 +108,8 @@ pub enum ApiError {
     ContextDeadline,
     HttpStatus {
         status: u16,
-        reason: String,
+        /// Go's `Response.Status`.
+        status_text: String,
         body: String,
         context: String,
     },
@@ -174,9 +175,9 @@ impl fmt::Display for ApiError {
             Self::BodyCanceled => f.write_str("net/http: request canceled (Client.Timeout or context cancellation while reading body)"),
             Self::ContextDeadline => f.write_str("context deadline exceeded"),
             Self::Timeout { method, url, .. } => write!(f, "{} {:?}: context deadline exceeded (Client.Timeout exceeded while awaiting headers)", go_method(method), redact_url_password(url)),
-            Self::HttpStatus { status, reason, body, context } => {
+            Self::HttpStatus { status, status_text, body, context } => {
                 if context.is_empty() { write!(f, "HTTP {status}: {}", body.trim()) }
-                else { write!(f, "{context}: {status} {reason}: {}", body.trim()) }
+                else { write!(f, "{context}: {status_text}: {}", body.trim()) }
             }
             Self::Decode { source, context } => {
                 if !context.is_empty() { write!(f, "{context}: ")?; }
@@ -215,12 +216,13 @@ impl From<TransportError> for ApiError {
 #[derive(Debug)]
 pub struct ApiResponse {
     pub status: u16,
-    pub reason: String,
+    /// Go's `Response.Status`, printed verbatim by Go messages.
+    pub status_text: String,
     pub body: Vec<u8>,
 }
 impl ApiResponse {
     pub fn status_text(&self) -> String {
-        format!("{} {}", self.status, self.reason)
+        self.status_text.clone()
     }
     pub fn json<T: DeserializeOwned>(&self) -> Result<T, ApiError> {
         serde_json::from_slice(&self.body).map_err(|source| ApiError::Decode {
@@ -231,7 +233,7 @@ impl ApiResponse {
     pub fn status_error(&self) -> ApiError {
         ApiError::HttpStatus {
             status: self.status,
-            reason: self.reason.clone(),
+            status_text: self.status_text.clone(),
             body: String::from_utf8_lossy(&self.body).into_owned(),
             context: String::new(),
         }
@@ -245,7 +247,7 @@ pub struct PreparedRequest {
     method: Method,
     raw_endpoint: String,
     headers: HeaderMap,
-    body: Option<Vec<u8>>,
+    body: Option<Bytes>,
     timeout: Duration,
     metrics: bool,
 }
@@ -261,7 +263,8 @@ impl PreparedRequest {
 /// sending the request. Dropping it cancels the unread body without draining.
 pub struct StreamingResponse {
     pub status: u16,
-    pub reason: String,
+    /// Go's `Response.Status`.
+    pub status_text: String,
     response: Option<RawResponse>,
     deadline: Instant,
     method: Method,
@@ -271,7 +274,7 @@ impl fmt::Debug for StreamingResponse {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("StreamingResponse")
             .field("status", &self.status)
-            .field("reason", &self.reason)
+            .field("status_text", &self.status_text)
             .finish_non_exhaustive()
     }
 }
@@ -337,7 +340,7 @@ impl StreamingResponse {
         }
         Ok(ApiResponse {
             status: self.status,
-            reason: self.reason,
+            status_text: self.status_text,
             body,
         })
     }
@@ -438,6 +441,23 @@ impl ApiClient {
     ) -> Result<PreparedRequest, ApiError> {
         self.prepare_with_policy(method, &["api/v1/", path], body, STANDARD_TIMEOUT, true)
     }
+    pub(crate) fn prepare_standard_bytes(
+        &self,
+        method: Method,
+        path: &[u8],
+        body: Option<Vec<u8>>,
+    ) -> Result<PreparedRequest, ApiError> {
+        self.prepare_with_policy_bytes(method, &[b"api/v1/", path], body, STANDARD_TIMEOUT, true)
+    }
+    pub(crate) async fn standard_bytes(
+        &self,
+        method: Method,
+        path: &[u8],
+        body: Option<Vec<u8>>,
+    ) -> Result<ApiResponse, ApiError> {
+        let request = self.prepare_standard_bytes(method, path, body)?;
+        self.send_streaming(request).await?.collect().await
+    }
     /// SQL's interactive service uses NewRequest followed by URL.Query().Set,
     /// retaining the standard headers while choosing its own total deadline.
     pub(crate) fn prepare_standard_query(
@@ -475,6 +495,40 @@ impl ApiClient {
             // existing query or fragment. Preserve that observable quirk.
             raw_endpoint.push('?');
             raw_endpoint.push_str(&encode_query_pairs(pairs));
+        }
+        Ok(PreparedRequest {
+            method: Method::GET,
+            raw_endpoint,
+            headers: Auth::resolve(&profile)?.headers()?,
+            body: None,
+            timeout: METRICS_TIMEOUT,
+            metrics: true,
+        })
+    }
+    pub(crate) fn prepare_metrics_bytes(
+        &self,
+        path: &[u8],
+        pairs: &[(String, Vec<u8>)],
+    ) -> Result<PreparedRequest, ApiError> {
+        let profile = self.profile();
+        let mut raw_endpoint = append_url_bytes(&profile.url, &[path])?;
+        if !pairs.is_empty() {
+            raw_endpoint.push('?');
+            let mut sorted: Vec<_> = pairs.iter().collect();
+            sorted.sort_by(|a, b| a.0.cmp(&b.0));
+            raw_endpoint.push_str(
+                &sorted
+                    .into_iter()
+                    .map(|(key, value)| {
+                        format!(
+                            "{}={}",
+                            query_escape_bytes(key.as_bytes()),
+                            query_escape_bytes(value)
+                        )
+                    })
+                    .collect::<Vec<_>>()
+                    .join("&"),
+            );
         }
         Ok(PreparedRequest {
             method: Method::GET,
@@ -532,7 +586,35 @@ impl ApiClient {
             method,
             raw_endpoint,
             headers,
-            body,
+            body: body.map(Bytes::from),
+            timeout,
+            metrics: false,
+        })
+    }
+    fn prepare_with_policy_bytes(
+        &self,
+        method: Method,
+        paths: &[&[u8]],
+        body: Option<Vec<u8>>,
+        timeout: Duration,
+        ignore_join_error: bool,
+    ) -> Result<PreparedRequest, ApiError> {
+        let profile = self.profile();
+        let raw_endpoint = match append_url_bytes(&profile.url, paths) {
+            Ok(endpoint) => endpoint,
+            Err(_) if ignore_join_error => String::new(),
+            Err(error) => return Err(error),
+        };
+        let mut headers = Auth::resolve(&profile)?.headers()?;
+        headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/json"));
+        if ignore_join_error {
+            debug_headers(&method, &raw_endpoint, &headers);
+        }
+        Ok(PreparedRequest {
+            method,
+            raw_endpoint,
+            headers,
+            body: body.map(Bytes::from),
             timeout,
             metrics: false,
         })
@@ -601,7 +683,7 @@ impl ApiClient {
             })?;
         Ok(StreamingResponse {
             status: response.status().as_u16(),
-            reason: response.reason().to_owned(),
+            status_text: response.status_text().to_owned(),
             response: Some(response),
             deadline,
             method,
@@ -628,7 +710,7 @@ impl ApiClient {
         method: Method,
         endpoint: Endpoint,
         headers: HeaderMap,
-        body: Option<Vec<u8>>,
+        body: Option<Bytes>,
         headers_received: &AtomicBool,
         timeout_url: &Mutex<String>,
     ) -> Result<RawResponse, ApiError> {
@@ -713,7 +795,7 @@ impl ApiClient {
         method: &Method,
         endpoint: &Endpoint,
         headers: &HeaderMap,
-        body: &Option<Vec<u8>>,
+        body: &Option<Bytes>,
     ) -> Result<RawResponse, ApiError> {
         let response = send_raw(transport, method, endpoint, headers, body).await?;
         let profile = self.profile();
@@ -766,14 +848,14 @@ impl ApiClient {
             &Method::POST,
             &endpoint,
             &headers,
-            &Some(payload),
+            &Some(Bytes::from(payload)),
         )
         .await?;
         let response = buffer_response(response).await?;
         if !(200..300).contains(&response.status) {
             return Err(ApiError::HttpStatus {
                 status: response.status,
-                reason: response.reason,
+                status_text: response.status_text,
                 body: String::from_utf8_lossy(&response.body).into_owned(),
                 context: "cloud session refresh failed".into(),
             });
@@ -815,16 +897,16 @@ async fn send_raw(
     method: &Method,
     endpoint: &Endpoint,
     headers: &HeaderMap,
-    body: &Option<Vec<u8>>,
+    body: &Option<Bytes>,
 ) -> Result<RawResponse, ApiError> {
     Ok(client.send(method, &endpoint.raw, headers, body).await?)
 }
 async fn buffer_response(response: RawResponse) -> Result<ApiResponse, ApiError> {
     let status = response.status().as_u16();
-    let reason = response.reason().to_owned();
+    let status_text = response.status_text().to_owned();
     Ok(ApiResponse {
         status,
-        reason,
+        status_text,
         body: response.bytes().await?.to_vec(),
     })
 }
@@ -1245,6 +1327,14 @@ pub async fn validate_cloud_api_key(
         .validate_api_key(orchestrator_url, api_key)
         .await
 }
+pub(crate) async fn validate_cloud_api_key_bytes(
+    orchestrator_url: &str,
+    api_key: &[u8],
+) -> Result<CloudWorkspace, ApiError> {
+    CloudAuthClient::new()?
+        .validate_api_key_bytes(orchestrator_url, api_key)
+        .await
+}
 pub struct CloudAuthClient {
     transport: Client,
     token: String,
@@ -1334,6 +1424,14 @@ impl CloudAuthClient {
         orchestrator_url: &str,
         api_key: &str,
     ) -> Result<CloudWorkspace, ApiError> {
+        self.validate_api_key_bytes(orchestrator_url, api_key.as_bytes())
+            .await
+    }
+    pub(crate) async fn validate_api_key_bytes(
+        &self,
+        orchestrator_url: &str,
+        api_key: &[u8],
+    ) -> Result<CloudWorkspace, ApiError> {
         if orchestrator_url.trim().is_empty() {
             return Err(ApiError::InvalidResponse(
                 "cloud orchestrator URL is not configured".into(),
@@ -1345,7 +1443,7 @@ impl CloudAuthClient {
                 source: Box::new(source),
             })?;
         let mut headers = orchestrator_headers(&self.token)?;
-        let mut key = HeaderValue::from_str(api_key)
+        let mut key = HeaderValue::from_bytes(api_key)
             .map_err(|_| AuthError("invalid HTTP header value".into()))?;
         key.set_sensitive(true);
         headers.insert("x-api-key", key);
@@ -1395,7 +1493,7 @@ impl CloudAuthClient {
         if !(200..300).contains(&response.status) {
             return Err(ApiError::HttpStatus {
                 status: response.status,
-                reason: response.reason,
+                status_text: response.status_text,
                 body: String::from_utf8_lossy(&response.body).into_owned(),
                 context: "cloud api key validation failed".into(),
             });
@@ -1553,7 +1651,7 @@ async fn send_cloud_request(
 ) -> Result<RawResponse, ApiError> {
     let mut current = endpoint.clone();
     let mut current_method = method.clone();
-    let mut current_body = body;
+    let mut current_body = body.map(Bytes::from);
     let mut current_headers = headers.clone();
     let mut stripped = false;
     for hop in 0..10 {
@@ -1686,7 +1784,7 @@ fn set_query_values(raw: &str, updates: &[(&str, &str)]) -> String {
     result
 }
 
-fn query_escape_bytes(value: &[u8]) -> String {
+pub(crate) fn query_escape_bytes(value: &[u8]) -> String {
     let mut out = String::new();
     for &byte in value {
         match byte {
@@ -2141,7 +2239,7 @@ mod tests {
             let request = client.prepare_standard(Method::GET, "query", None).unwrap();
             let mut response = client.send_streaming(request).await.unwrap();
             assert_eq!(response.status, 200);
-            assert_eq!(response.reason, "Query Ready");
+            assert_eq!(response.status_text, "200 Query Ready");
             assert!(response.read_limited(0).await.unwrap().is_empty());
             assert_eq!(response.read_limited(3).await.unwrap(), b"abc");
             assert_eq!(response.chunk_limit(2).await.unwrap().unwrap(), b"de"[..]);
@@ -2969,6 +3067,61 @@ mod tests {
             assert!(call.contains("x-p-telemetry-type: metrics\r\n"), "{call}");
             assert!(call.contains("content-type: application/json\r\n"));
         }
+        std::fs::remove_dir_all(store.path().parent().unwrap()).unwrap();
+    }
+    #[test]
+    fn large_body_survives_307_308_and_oauth_replay_then_drops_after_303() {
+        let redirect = |status, location: &str| {
+            let mut reply = Reply::new(status, "");
+            reply.location = Some(location.into());
+            reply
+        };
+        let (workspace, calls, workspace_task) = server(vec![
+            redirect(307, "/first"),
+            redirect(308, "/second"),
+            Reply::new(401, "unauthorized"),
+            redirect(303, "/done"),
+            Reply::new(200, "{}"),
+        ]);
+        let (orchestrator, _, refresh_task) = server(vec![Reply::new(
+            200,
+            r#"{"access_token":"new-session","refresh_token":"new-refresh"}"#,
+        )]);
+        let profile = oauth(workspace, orchestrator);
+        let store = store(&profile);
+        let client =
+            ApiClient::with_orchestrator_token(profile, store.clone(), "release-token").unwrap();
+        let payload = format!("{{\"data\":\"{}\"}}", "0123456789abcdef".repeat(16384));
+        let response = runtime()
+            .block_on(client.standard(Method::POST, "query", Some(payload.as_bytes().to_vec())))
+            .unwrap();
+        assert_eq!(response.status, 200);
+        workspace_task.join().unwrap();
+        refresh_task.join().unwrap();
+        let calls = calls.lock().unwrap();
+        assert_eq!(calls.len(), 5);
+        for (index, path) in ["/api/v1/query", "/first", "/second", "/second"]
+            .iter()
+            .enumerate()
+        {
+            let (head, body) = calls[index].split_once("\r\n\r\n").unwrap();
+            assert!(head.starts_with(&format!("POST {path} HTTP/1.1")));
+            assert!(
+                head.lines()
+                    .any(|line| line == format!("content-length: {}", payload.len()))
+            );
+            assert_eq!(body, payload);
+            let token = if index < 3 {
+                "old-session"
+            } else {
+                "new-session"
+            };
+            assert!(head.contains(&format!("session={token}")));
+        }
+        let (head, body) = calls[4].split_once("\r\n\r\n").unwrap();
+        assert!(head.starts_with("GET /done HTTP/1.1"));
+        assert!(!head.contains("content-length:"));
+        assert!(body.is_empty());
         std::fs::remove_dir_all(store.path().parent().unwrap()).unwrap();
     }
     #[test]

@@ -23,7 +23,7 @@ import fcntl
 import phase7 as p7
 import phase7_workloads as workloads
 
-LOCK = Path('/home/ajs/.cache/pb-rs-performance.lock')
+LOCK = Path.home() / '.cache/pb-rs-performance.lock'
 ROOT = Path(__file__).resolve().parent.parent
 STABLE_MS = 80
 RESIZE_SIGNAL_POLICY = 'ioctl-only-changed'
@@ -64,10 +64,16 @@ def write_report(path, value):
     write_json(path, public_value(value))
 
 
+def private_prefixes():
+    # Keep existing public placeholders while resolving an overridden scratch
+    # root symmetrically. normalize replaces the longest prefix first.
+    return {'$PB_CACHE/tmp': str(p7.TMP),
+            '$PB_CACHE': str(Path.home() / '.cache/pb-phase7'),
+            '$WORKTREE': str(ROOT), '$HOME': str(Path.home())}
+
+
 def public_value(value):
-    prefixes = {str(Path('/home/ajs/.cache/pb-phase7')): '$PB_CACHE', str(ROOT): '$WORKTREE',
-                str(Path.home()): '$HOME'}
-    return p7.normalize(value, prefixes)
+    return p7.normalize(value, {path: token for token, path in private_prefixes().items()})
 
 
 def sha_file(path):
@@ -1855,7 +1861,7 @@ def retained_sample(root, record):
 
 
 def private_value(value):
-    return p7.normalize(value, {'$PB_CACHE': '/home/ajs/.cache/pb-phase7', '$WORKTREE': str(ROOT), '$HOME': str(Path.home())})
+    return p7.normalize(value, private_prefixes())
 
 
 def check_helper_files(helper):

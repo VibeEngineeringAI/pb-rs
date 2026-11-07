@@ -1,0 +1,45 @@
+{
+  "reason": "Original-path RSS differs by executable file residency; identical-byte private copies change/reverse ranking. Matched tmpfs controls isolate source differences from compressed-file inode/cache state. Original native captures remain reported.",
+  "scope": "Additional uninstrumented memory control, not a replacement for original-host results or a production tmpfs recommendation.",
+  "cpu_affinity": [
+    2,
+    4,
+    6,
+    8
+  ],
+  "fixed_cases": "same unchanged19",
+  "repetitions": 20,
+  "warmup": 3,
+  "seed": 2033,
+  "ingest": {
+    "records": 20000,
+    "record_bytes": 500,
+    "batch_size": 1000,
+    "repetitions": 9,
+    "warmup": 2,
+    "seed": 2033,
+    "probe_fail_upload": 1
+  },
+  "binaries": {
+    "base": {
+      "path": "/dev/shm/pb-perf2-rss-controls-2037/base",
+      "sha256": "6be0db3a7c5f145ed75d0522b288c8ff69289c5f0bf8fe34c1622fcb180fe37c"
+    },
+    "final": {
+      "path": "/dev/shm/pb-perf2-rss-controls-2037/final",
+      "sha256": "8124d157236e215d2068ce4dadf97ebe08043a1a1c327d5dc3a69806785e12a1"
+    }
+  },
+  "confirmation": {
+    "reason": "The matched-tmpfs incremental fixed19 CPU aggregate is neutral despite targetedSQL gains. Include original build under sameplacement to verifytotal10percenttarget; preserveallpreviouscaptures.",
+    "seed": 2034,
+    "repetitions": 20,
+    "warmup": 3,
+    "labels": [
+      "base",
+      "original",
+      "final"
+    ],
+    "suite": "same unchanged19"
+  }
+}

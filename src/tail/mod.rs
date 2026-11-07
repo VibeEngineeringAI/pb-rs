@@ -37,7 +37,7 @@ pub(crate) fn execute(
             );
         }
     };
-    let dataset = parsed.positionals.first().map(String::as_str).unwrap_or("");
+    let dataset = parsed.positional_bytes(0);
     let store = match ProfileStore::from_env() {
         Ok(store) => store,
         Err(err) => return CliError::new(err.code, err.message).render(command, path, structured),

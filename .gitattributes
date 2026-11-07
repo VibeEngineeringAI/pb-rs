@@ -1,0 +1,8 @@
+# Retain measured evidence byte-for-byte while keeping code review focused.
+docs/evidence/cli-perf*/**/*.json linguist-generated=true
+docs/evidence/cli-perf*/**/*.html linguist-generated=true
+docs/evidence/cli-perf*/**/*.csv linguist-generated=true whitespace=cr-at-eol
+docs/evidence/cli-perf*/**/*.patch linguist-generated=true whitespace=-blank-at-eol
+docs/evidence/cli-perf/perf-stat-*.txt linguist-generated=true whitespace=-blank-at-eof
+docs/evidence/cli-stress/*.json linguist-generated=true
+docs/evidence/cli-stress/*.html linguist-generated=true
