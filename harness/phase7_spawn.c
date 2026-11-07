@@ -95,7 +95,8 @@ static volatile sig_atomic_t probe_hit, probe_member;
 static void probe_signal(int number) {
     (void)number;
     const char *text = probe_member ? "MEMBER\n" : "LEADER\n";
-    write(1, text, 7);
+    ssize_t written = write(1, text, 7);
+    (void)written;
     probe_hit = 1;
 }
 static int group_probe(void) {

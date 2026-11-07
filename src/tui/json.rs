@@ -43,6 +43,14 @@ impl<T> Default for ReusedSlice<T> {
 }
 
 impl<T> ReusedSlice<T> {
+    /// A decoded array already supplies its length. Reserve its storage without
+    /// initializing or exposing slots: duplicate-array reuse still depends
+    /// exclusively on elements actually decoded earlier in this document.
+    pub(super) fn reserve_slots(&mut self, len: usize) {
+        self.slots
+            .reserve_exact(len.saturating_sub(self.slots.len()));
+    }
+
     /// Element `index` of a JSON array decoded in order from 0: a slot this
     /// document decoded before (visible or hidden) is reused, else a zero value.
     pub(super) fn slot(&mut self, index: usize, initial: impl FnOnce() -> T) -> &mut T {

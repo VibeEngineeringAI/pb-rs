@@ -1,0 +1,666 @@
+{
+  "date": "2026-11-07",
+  "scope": "Linux x86-64; fresh Boat VMs, emulated CPU instruction profiles, and older-distribution containers",
+  "native_vms": [
+    {
+      "id": "bx_qanm8eez",
+      "shape": "2 vCPU / 4 GB",
+      "model": "AMD Ryzen 7 9700X",
+      "source_sha256_verified": true
+    },
+    {
+      "id": "bx_n8tv4s27",
+      "shape": "4 vCPU / 8 GB",
+      "model": "AMD Ryzen 7 9700X",
+      "source_sha256_verified": true
+    }
+  ],
+  "original_optimized_sha256": "c0166a201147b17c568deca91814338195edbe9faf8119f38b0b4df4e1991a20",
+  "portable_static_sha256": "e946ee022d8dfc8f074a38e8a09cf2fa4c1c0e51cd690c5827bf028f9ddc0edf",
+  "native_performance": [
+    {
+      "shape": "2 vCPU / 4 GB",
+      "summaries": [
+        {
+          "case": "sql-scroll-20000-120x40-dark-resource-attribution",
+          "measured_pairs": 7,
+          "cpu_ms": {
+            "baseline": 159.73,
+            "candidate": 149.96900000000002,
+            "median_paired_ratio": 0.918363307760017,
+            "reduction_percent": 8.163669223998305,
+            "paired_ratio_bootstrap_95": [
+              0.8685919080623187,
+              0.9910784501615792
+            ],
+            "halving_target_confirmed": false
+          },
+          "peak_rss_bytes": {
+            "baseline": 11927552,
+            "candidate": 12058624,
+            "median_paired_ratio": 1.010989010989011,
+            "reduction_percent": -1.098901098901095,
+            "paired_ratio_bootstrap_95": [
+              0.989010989010989,
+              1.0222222222222221
+            ],
+            "halving_target_confirmed": false
+          },
+          "wall_ms": {
+            "baseline": 3016.998177,
+            "candidate": 3002.142885,
+            "median_paired_ratio": 0.995651714714801,
+            "reduction_percent": 0.43482852851990383,
+            "paired_ratio_bootstrap_95": [
+              0.9674551619604325,
+              1.0140794685670769
+            ],
+            "halving_target_confirmed": false
+          }
+        },
+        {
+          "case": "promql-dense-1000-120x40-dark-resource-attribution",
+          "measured_pairs": 7,
+          "cpu_ms": {
+            "baseline": 1605.536,
+            "candidate": 595.7829999999999,
+            "median_paired_ratio": 0.34377321350137674,
+            "reduction_percent": 65.62267864986234,
+            "paired_ratio_bootstrap_95": [
+              0.338113671407468,
+              0.4661281997415025
+            ],
+            "halving_target_confirmed": true
+          },
+          "peak_rss_bytes": {
+            "baseline": 195325952,
+            "candidate": 72237056,
+            "median_paired_ratio": 0.3699679036690512,
+            "reduction_percent": 63.00320963309488,
+            "paired_ratio_bootstrap_95": [
+              0.3693191346637599,
+              0.37028889866549347
+            ],
+            "halving_target_confirmed": true
+          },
+          "wall_ms": {
+            "baseline": 3617.416572,
+            "candidate": 2756.777783,
+            "median_paired_ratio": 0.7643977598275901,
+            "reduction_percent": 23.560224017240994,
+            "paired_ratio_bootstrap_95": [
+              0.7361978714869527,
+              0.8183323605803582
+            ],
+            "halving_target_confirmed": false
+          }
+        }
+      ],
+      "runs": 32,
+      "comparisons": 16,
+      "issues": 0
+    },
+    {
+      "shape": "2 vCPU / 4 GB",
+      "summaries": [
+        {
+          "case": "promql-dense-1000-120x40-light-resource-attribution",
+          "measured_pairs": 7,
+          "cpu_ms": {
+            "baseline": 2300.414,
+            "candidate": 763.2919999999999,
+            "median_paired_ratio": 0.35107501610348013,
+            "reduction_percent": 64.89249838965199,
+            "paired_ratio_bootstrap_95": [
+              0.32180953886693014,
+              0.4214136505726011
+            ],
+            "halving_target_confirmed": true
+          },
+          "peak_rss_bytes": {
+            "baseline": 195362816,
+            "candidate": 72245248,
+            "median_paired_ratio": 0.36986990132612657,
+            "reduction_percent": 63.01300986738734,
+            "paired_ratio_bootstrap_95": [
+              0.3687940288493794,
+              0.3700486740516952
+            ],
+            "halving_target_confirmed": true
+          },
+          "wall_ms": {
+            "baseline": 4569.255057,
+            "candidate": 3252.788532,
+            "median_paired_ratio": 0.74609563036536,
+            "reduction_percent": 25.390436963464,
+            "paired_ratio_bootstrap_95": [
+              0.7259741685302176,
+              0.7845421336143198
+            ],
+            "halving_target_confirmed": false
+          }
+        }
+      ],
+      "runs": 16,
+      "comparisons": 8,
+      "issues": 0
+    },
+    {
+      "shape": "4 vCPU / 8 GB",
+      "summaries": [
+        {
+          "case": "promql-dense-1000-120x40-dark-resource-attribution",
+          "measured_pairs": 7,
+          "cpu_ms": {
+            "baseline": 1641.703,
+            "candidate": 568.132,
+            "median_paired_ratio": 0.34790713282739305,
+            "reduction_percent": 65.2092867172607,
+            "paired_ratio_bootstrap_95": [
+              0.33011639169405865,
+              0.3543858803363865
+            ],
+            "halving_target_confirmed": true
+          },
+          "peak_rss_bytes": {
+            "baseline": 195186688,
+            "candidate": 72089600,
+            "median_paired_ratio": 0.36890640063712954,
+            "reduction_percent": 63.10935993628705,
+            "paired_ratio_bootstrap_95": [
+              0.3685159937073938,
+              0.36958484702127214
+            ],
+            "halving_target_confirmed": true
+          },
+          "wall_ms": {
+            "baseline": 3595.95932,
+            "candidate": 2778.556466,
+            "median_paired_ratio": 0.770289966414336,
+            "reduction_percent": 22.9710033585664,
+            "paired_ratio_bootstrap_95": [
+              0.7175789528306253,
+              0.782042283029898
+            ],
+            "halving_target_confirmed": false
+          }
+        }
+      ],
+      "runs": 16,
+      "comparisons": 8,
+      "issues": 0
+    }
+  ],
+  "static_performance": [
+    {
+      "case": "promql-dense-1000-120x40-dark-resource-attribution",
+      "measured_pairs": 7,
+      "cpu_ms": {
+        "baseline": 2281.8079999999995,
+        "candidate": 1034.204,
+        "median_paired_ratio": 0.4776568402788813,
+        "reduction_percent": 52.23431597211188,
+        "paired_ratio_bootstrap_95": [
+          0.4477301191467901,
+          0.5250555699690773
+        ],
+        "halving_target_confirmed": false
+      },
+      "peak_rss_bytes": {
+        "baseline": 195244032,
+        "candidate": 47869952,
+        "median_paired_ratio": 0.24525927168988085,
+        "reduction_percent": 75.47407283101192,
+        "paired_ratio_bootstrap_95": [
+          0.2450741503171869,
+          0.2457465332410263
+        ],
+        "halving_target_confirmed": true
+      },
+      "wall_ms": {
+        "baseline": 4589.596794,
+        "candidate": 3562.413754,
+        "median_paired_ratio": 0.814847237950367,
+        "reduction_percent": 18.515276204963303,
+        "paired_ratio_bootstrap_95": [
+          0.7833670402993357,
+          0.8413735384866793
+        ],
+        "halving_target_confirmed": false
+      }
+    }
+  ],
+  "cpu_profiles": {
+    "qemu64": {
+      "sse2": 1,
+      "sse4_1": 0,
+      "sse4_2": 0,
+      "aes": 0,
+      "avx": 0,
+      "avx2": 0,
+      "avx512f": 0,
+      "sha": 0
+    },
+    "Nehalem": {
+      "sse2": 1,
+      "sse4_1": 1,
+      "sse4_2": 1,
+      "aes": 0,
+      "avx": 0,
+      "avx2": 0,
+      "avx512f": 0,
+      "sha": 0
+    },
+    "Haswell-noTSX": {
+      "sse2": 1,
+      "sse4_1": 1,
+      "sse4_2": 1,
+      "aes": 1,
+      "avx": 1,
+      "avx2": 1,
+      "avx512f": 0,
+      "sha": 0
+    }
+  },
+  "emulated_gnu_checks": {
+    "qemu64": {
+      "effects": {
+        "report_sha256": "7e0a1a1a48afc7c3818aa91f71dd67c6324c850d2f01a200770c6260bd38136e",
+        "kind": "existing independent process/PTY effects",
+        "passed": 51,
+        "total": 51,
+        "binary": {
+          "path": "/home/user/pb-portability/wrappers/pb-qemu64",
+          "sha256": "7bdc5609c1b4dbb6990d0e40bd9cfb65c8d9938b29dd2de2517cfa6c4a0d6df5"
+        },
+        "runner_sha256": "569c54b6507ad48a9d1c02ece9881b95c8e2ff45b0d5f89c9ecd3ebcf4837f64",
+        "failures": []
+      },
+      "tls": {
+        "report_sha256": "3d3331d875892b3a3803214e94d0cdf63a64808ee630cecfe7813919581e7be6",
+        "kind": "real TLS loopback requests using the test-only CA",
+        "passed": 4,
+        "total": 4,
+        "binary": {
+          "path": "/home/user/pb-portability/wrappers/pb-qemu64",
+          "sha256": "7bdc5609c1b4dbb6990d0e40bd9cfb65c8d9938b29dd2de2517cfa6c4a0d6df5"
+        },
+        "runner_sha256": "569c54b6507ad48a9d1c02ece9881b95c8e2ff45b0d5f89c9ecd3ebcf4837f64",
+        "failures": []
+      }
+    },
+    "Nehalem": {
+      "effects": {
+        "report_sha256": "7df4dca5d3cd4bf515af9e682a4447a52f89135389c635948f12b3d2162f053f",
+        "kind": "existing independent process/PTY effects",
+        "passed": 51,
+        "total": 51,
+        "binary": {
+          "path": "/home/user/pb-portability/wrappers/pb-Nehalem",
+          "sha256": "53e49aad19ae05b202b2cd95150300a9d5268142ecfc7dd2cdaf388820d13e54"
+        },
+        "runner_sha256": "569c54b6507ad48a9d1c02ece9881b95c8e2ff45b0d5f89c9ecd3ebcf4837f64",
+        "failures": []
+      },
+      "tls": {
+        "report_sha256": "069cd4cf534c7baeaae2a2d2fe21afb5fe2356c606b9cff9d8aee71484884153",
+        "kind": "real TLS loopback requests using the test-only CA",
+        "passed": 4,
+        "total": 4,
+        "binary": {
+          "path": "/home/user/pb-portability/wrappers/pb-Nehalem",
+          "sha256": "53e49aad19ae05b202b2cd95150300a9d5268142ecfc7dd2cdaf388820d13e54"
+        },
+        "runner_sha256": "569c54b6507ad48a9d1c02ece9881b95c8e2ff45b0d5f89c9ecd3ebcf4837f64",
+        "failures": []
+      }
+    },
+    "Haswell-noTSX": {
+      "effects": {
+        "report_sha256": "08383d450c2726586d5854224da8a65e7482826f586ba1446ba69528ade4bd7b",
+        "kind": "existing independent process/PTY effects",
+        "passed": 51,
+        "total": 51,
+        "binary": {
+          "path": "/home/user/pb-portability/wrappers/pb-Haswell-noTSX",
+          "sha256": "07707df9499b7ea58447f89f7dd15977a3d259e8dd6426cd4ef369e129ce65af"
+        },
+        "runner_sha256": "569c54b6507ad48a9d1c02ece9881b95c8e2ff45b0d5f89c9ecd3ebcf4837f64",
+        "failures": []
+      },
+      "tls": {
+        "report_sha256": "89b0d7298ce7ac2de475fd8c9e5595302054d692567a468dd5b6241a63a3cfab",
+        "kind": "real TLS loopback requests using the test-only CA",
+        "passed": 4,
+        "total": 4,
+        "binary": {
+          "path": "/home/user/pb-portability/wrappers/pb-Haswell-noTSX",
+          "sha256": "07707df9499b7ea58447f89f7dd15977a3d259e8dd6426cd4ef369e129ce65af"
+        },
+        "runner_sha256": "569c54b6507ad48a9d1c02ece9881b95c8e2ff45b0d5f89c9ecd3ebcf4837f64",
+        "failures": []
+      }
+    }
+  },
+  "emulated_static_checks": {
+    "qemu64": {
+      "tls": {
+        "report_sha256": "ad98fb3fd6a6d2877e57c0c883f27a9c0e40ddd8c5eb42227e7595ff6fad4cda",
+        "kind": "real TLS loopback requests using the test-only CA",
+        "passed": 4,
+        "total": 4,
+        "binary": {
+          "path": "/home/user/pb-portability/static-wrappers/pb-qemu64",
+          "sha256": "6b31351c77b3450f5fe8c23f314e7a3443635748cd663a02fa7018547275307b"
+        },
+        "runner_sha256": "569c54b6507ad48a9d1c02ece9881b95c8e2ff45b0d5f89c9ecd3ebcf4837f64",
+        "failures": []
+      },
+      "effects": {
+        "report_sha256": "7d2c977a41d0d0675ae61f10c179731e302cfba1cb14a5bdadfa7d77c7cfe745",
+        "kind": "existing independent process/PTY effects",
+        "passed": 51,
+        "total": 51,
+        "binary": {
+          "path": "/home/user/pb-portability/static-wrappers/pb-qemu64",
+          "sha256": "6b31351c77b3450f5fe8c23f314e7a3443635748cd663a02fa7018547275307b"
+        },
+        "runner_sha256": "569c54b6507ad48a9d1c02ece9881b95c8e2ff45b0d5f89c9ecd3ebcf4837f64",
+        "failures": []
+      }
+    },
+    "Nehalem": {
+      "tls": {
+        "report_sha256": "e01ce4ea42a3a7a9e4635939fe06767f26158821179f70d8ae51114813adbbe5",
+        "kind": "real TLS loopback requests using the test-only CA",
+        "passed": 4,
+        "total": 4,
+        "binary": {
+          "path": "/home/user/pb-portability/static-wrappers/pb-Nehalem",
+          "sha256": "9fb21fd9eaa841f00d93119a8b56e1fdd0e0102173c18a49763135f33327fe0c"
+        },
+        "runner_sha256": "569c54b6507ad48a9d1c02ece9881b95c8e2ff45b0d5f89c9ecd3ebcf4837f64",
+        "failures": []
+      }
+    },
+    "Haswell-noTSX": {
+      "tls": {
+        "report_sha256": "fd1ec201983bb095e5745f4de9e39871f317aed50a497e212f4cfa2d5d02632f",
+        "kind": "real TLS loopback requests using the test-only CA",
+        "passed": 4,
+        "total": 4,
+        "binary": {
+          "path": "/home/user/pb-portability/static-wrappers/pb-Haswell-noTSX",
+          "sha256": "cbfb31bc6f777cd8f6119e0c34cc5f78f838717a76f8588d3ece17714b07a031"
+        },
+        "runner_sha256": "569c54b6507ad48a9d1c02ece9881b95c8e2ff45b0d5f89c9ecd3ebcf4837f64",
+        "failures": []
+      }
+    }
+  },
+  "native_functional": {
+    "native-effects/report.json": {
+      "report_sha256": "1cd92ca4c6c89e6051523bb9c7a6666cd61aced56e4d9f8d646b254f78114963",
+      "kind": "existing independent process/PTY effects",
+      "passed": 51,
+      "total": 51,
+      "binary": {
+        "path": "/home/user/pb-artifacts/pb-optimized",
+        "sha256": "c0166a201147b17c568deca91814338195edbe9faf8119f38b0b4df4e1991a20"
+      },
+      "runner_sha256": "569c54b6507ad48a9d1c02ece9881b95c8e2ff45b0d5f89c9ecd3ebcf4837f64",
+      "failures": []
+    },
+    "native-offline/report.json": {
+      "report_sha256": "65a34a834067a6cf2ea63360c0335d6c0cb72103448650a92565b645be0ef797",
+      "kind": "offline runtime byte parity; not historical phase-one admission",
+      "passed": 2018,
+      "total": 2018,
+      "binary": {
+        "path": "/home/user/pb-artifacts/pb-optimized",
+        "sha256": "c0166a201147b17c568deca91814338195edbe9faf8119f38b0b4df4e1991a20"
+      },
+      "runner_sha256": "569c54b6507ad48a9d1c02ece9881b95c8e2ff45b0d5f89c9ecd3ebcf4837f64",
+      "failures": []
+    },
+    "static-effects/report.json": {
+      "report_sha256": "6e76cd73415e0f40b810e290cf03dde084aa54747c73083e28869ee19be08ad9",
+      "kind": "existing independent process/PTY effects",
+      "passed": 51,
+      "total": 51,
+      "binary": {
+        "path": "/home/user/pb-artifacts/pb-portable",
+        "sha256": "e946ee022d8dfc8f074a38e8a09cf2fa4c1c0e51cd690c5827bf028f9ddc0edf"
+      },
+      "runner_sha256": "569c54b6507ad48a9d1c02ece9881b95c8e2ff45b0d5f89c9ecd3ebcf4837f64",
+      "failures": []
+    },
+    "static-offline/report.json": {
+      "report_sha256": "883e58b8e5986bf2d082d7ea8698fd0f8ed28153212af8045b41b073067f60c5",
+      "kind": "offline runtime byte parity; not historical phase-one admission",
+      "passed": 2018,
+      "total": 2018,
+      "binary": {
+        "path": "/home/user/pb-artifacts/pb-portable",
+        "sha256": "e946ee022d8dfc8f074a38e8a09cf2fa4c1c0e51cd690c5827bf028f9ddc0edf"
+      },
+      "runner_sha256": "569c54b6507ad48a9d1c02ece9881b95c8e2ff45b0d5f89c9ecd3ebcf4837f64",
+      "failures": []
+    },
+    "static-tls/report.json": {
+      "report_sha256": "07ad4568b95df2736c0efaa41ca8b1e6eb3240ab4ca883be27ddff786965de86",
+      "kind": "real TLS loopback requests using the test-only CA",
+      "passed": 4,
+      "total": 4,
+      "binary": {
+        "path": "/home/user/pb-artifacts/pb-portable",
+        "sha256": "e946ee022d8dfc8f074a38e8a09cf2fa4c1c0e51cd690c5827bf028f9ddc0edf"
+      },
+      "runner_sha256": "569c54b6507ad48a9d1c02ece9881b95c8e2ff45b0d5f89c9ecd3ebcf4837f64",
+      "failures": []
+    },
+    "native-functional/report.json": {
+      "cases": 21,
+      "comparisons": 21,
+      "runs": 42,
+      "issues": 0
+    },
+    "static-functional/report.json": {
+      "cases": 21,
+      "comparisons": 21,
+      "runs": 42,
+      "issues": 0
+    }
+  },
+  "test_runs": {
+    "cargo-test.log": {
+      "sha256": "bbaf5600e6d272fee4d4561ae9857bd23e316b6949cd8a6d7f9398c67ba9b78d",
+      "results": [
+        [
+          "FAILED",
+          "576",
+          "1",
+          "1"
+        ]
+      ],
+      "passed": 576,
+      "failed": 1,
+      "ignored": 1
+    },
+    "cargo-test-bounded.log": {
+      "sha256": "9176717e855725ba294ce6ee0e82cdf550b59f46ca349407af97211976b43f77",
+      "results": [
+        [
+          "ok",
+          "577",
+          "0",
+          "1"
+        ],
+        [
+          "ok",
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "ok",
+          "4",
+          "0",
+          "0"
+        ],
+        [
+          "ok",
+          "3",
+          "0",
+          "0"
+        ],
+        [
+          "ok",
+          "19",
+          "0",
+          "0"
+        ],
+        [
+          "ok",
+          "0",
+          "0",
+          "0"
+        ],
+        [
+          "ok",
+          "1",
+          "0",
+          "0"
+        ],
+        [
+          "ok",
+          "51",
+          "0",
+          "8"
+        ],
+        [
+          "ok",
+          "1",
+          "0",
+          "0"
+        ],
+        [
+          "ok",
+          "4",
+          "0",
+          "0"
+        ],
+        [
+          "ok",
+          "14",
+          "0",
+          "0"
+        ],
+        [
+          "ok",
+          "9",
+          "0",
+          "0"
+        ],
+        [
+          "ok",
+          "1",
+          "0",
+          "0"
+        ],
+        [
+          "ok",
+          "16",
+          "0",
+          "0"
+        ]
+      ],
+      "passed": 700,
+      "failed": 0,
+      "ignored": 9
+    },
+    "deadline-isolated.log": {
+      "sha256": "23dded5d31d1fd9adf0ebdc73a66a84536684df8120d11b311851d315e349360",
+      "results": [
+        [
+          "ok",
+          "1",
+          "0",
+          "0"
+        ],
+        [
+          "ok",
+          "1",
+          "0",
+          "0"
+        ],
+        [
+          "ok",
+          "1",
+          "0",
+          "0"
+        ]
+      ],
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0
+    }
+  },
+  "containers": {
+    "report_sha256": "beebc02b262c5cee84b430dd485cdcd60e4bcb8c25372806c655a11eec3d26fb",
+    "passed": 8,
+    "total": 8,
+    "original_gnu_control": {
+      "returncode": 1,
+      "stderr": "/artifacts/pb-optimized: /lib/x86_64-linux-gnu/libc.so.6: version `GLIBC_2.32' not found (required by /artifacts/pb-optimized)\n/artifacts/pb-optimized: /lib/x86_64-linux-gnu/libc.so.6: version `GLIBC_2.33' not found (required by /artifacts/pb-optimized)\n/artifacts/pb-optimized: /lib/x86_64-linux-gnu/libc.so.6: version `GLIBC_2.34' not found (required by /artifacts/pb-optimized)\n/artifacts/pb-optimized: /lib/x86_64-linux-gnu/libc.so.6: version `GLIBC_2.38' not found (required by /artifacts/pb-optimized)\n/artifacts/pb-optimized: /lib/x86_64-linux-gnu/libc.so.6: version `GLIBC_2.39' not found (required by /artifacts/pb-optimized)\n",
+      "expected_incompatibility_confirmed": true
+    },
+    "static_sha256": "e946ee022d8dfc8f074a38e8a09cf2fa4c1c0e51cd690c5827bf028f9ddc0edf",
+    "failures": []
+  },
+  "build": {
+    "target": "x86_64-unknown-linux-musl",
+    "profile": "release",
+    "rust": "1.97.1",
+    "linker": "musl-gcc",
+    "product_changes_during_this_validation": false
+  },
+  "limits": [
+    "Native performance remains AMD Zen 5 coverage; CPU-model emulation is functional only.",
+    "No ARM64, Windows, macOS, or older-kernel execution was performed.",
+    "Original GNU artifact requires glibc 2.39 and fails the Ubuntu 20.04 control.",
+    "Static CPU median reduction is 52.2%, but its 95% paired ratio interval crosses 0.5; the CPU halving target is not confirmed for this variant."
+  ],
+  "archives": {
+    "small": {
+      "path": "harness/results/boat-portability-20261107/small-evidence.tar.gz",
+      "sha256": "39464ee570a5307486c2cfd67b241cc15136fdc0224193e8b3fbbe572053da73"
+    },
+    "default": {
+      "path": "harness/results/boat-portability-20261107/default-evidence.tar.gz",
+      "sha256": "b4bbf2ea5107bdcba9c5e12ad109d47e44fdd5922492ab6ba159e726da384461"
+    }
+  },
+  "cleanup": {
+    "status": "removed",
+    "vm_ids": [
+      "bx_qanm8eez",
+      "bx_n8tv4s27"
+    ],
+    "verified_absent_from_boat_list": true,
+    "archive_verification": {
+      "archives": {
+        "small": {
+          "path": "harness/results/boat-portability-20261107/small-evidence.tar.gz",
+          "sha256": "39464ee570a5307486c2cfd67b241cc15136fdc0224193e8b3fbbe572053da73"
+        },
+        "default": {
+          "path": "harness/results/boat-portability-20261107/default-evidence.tar.gz",
+          "sha256": "b4bbf2ea5107bdcba9c5e12ad109d47e44fdd5922492ab6ba159e726da384461"
+        }
+      },
+      "status": "verified",
+      "static_binary_sha256": "e946ee022d8dfc8f074a38e8a09cf2fa4c1c0e51cd690c5827bf028f9ddc0edf"
+    }
+  }
+}

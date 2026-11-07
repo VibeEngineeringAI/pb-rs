@@ -1274,7 +1274,7 @@ fn extract_dataset_bytes(sql: &str) -> Result<Vec<u8>, GoPanic> {
         return Ok("—".as_bytes().to_vec());
     };
     let rest = go_trim_space(go_slice_from(sql.as_bytes(), index + 6)?);
-    for quote in [b'"', b'\''] {
+    for quote in *b"\"'" {
         if rest.first() == Some(&quote) {
             let mut out = Vec::new();
             let mut i = 1;

@@ -90,9 +90,9 @@ pub(crate) enum DisplayMode {
 /// One result row (Go table.RowData with timestamp/_timestamp_full/metric/value).
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct Row {
-    pub(crate) timestamp: String,
-    pub(crate) timestamp_full: String,
-    pub(crate) metric: String,
+    pub(crate) timestamp: Arc<str>,
+    pub(crate) timestamp_full: Arc<str>,
+    pub(crate) metric: Arc<str>,
     pub(crate) value: String,
 }
 
@@ -499,28 +499,63 @@ pub(crate) fn trim_timestamp_to_hms(value: &str) -> String {
 
 /// `promqlResultToRows`: rows, series count and the VALUE width.
 pub(crate) fn rows_from_result(
-    result: &PromqlResult,
+    result: PromqlResult,
     display: DisplayMode,
 ) -> (Vec<Row>, usize, usize) {
-    let mut rows = Vec::new();
+    let series_count = result.result.len();
+    let count = result
+        .result
+        .iter()
+        .map(|series| match result.result_type.as_str() {
+            "matrix" => series.values.iter().filter(|p| p.len() == 2).count(),
+            "vector" if series.value.len() == 2 => 1,
+            _ => 0,
+        })
+        .sum();
+    let mut rows = Vec::with_capacity(count);
+    // Series commonly share their timestamp grid. Keep a bounded cache so
+    // irregular grids do not retain a second result-sized index.
+    let mut timestamps: HashMap<u64, (Arc<str>, Arc<str>)> = HashMap::new();
     let mut value_width = 14;
-    let mut add = |metric: &str, point: &[AnyValue]| {
-        let full = format_ts(&point[0], display);
-        let value = format_any(&point[1]);
+    let mut add = |metric: &Arc<str>, mut point: Vec<AnyValue>| {
+        let key = match point[0] {
+            AnyValue::Number(n) => Some(n.to_bits()),
+            _ => None,
+        };
+        let (short, full) = if let Some(pair) = key.and_then(|k| timestamps.get(&k)) {
+            pair.clone()
+        } else {
+            let full: Arc<str> = format_ts(&point[0], display).into();
+            let short: Arc<str> = trim_timestamp_to_hms(&full).into();
+            if let Some(key) = key {
+                if timestamps.len() == 4096 {
+                    timestamps.clear();
+                }
+                timestamps.insert(key, (Arc::clone(&short), Arc::clone(&full)));
+            }
+            (short, full)
+        };
+        let value = match point.pop().expect("two-element sample") {
+            AnyValue::String(value) => value,
+            other => format_any(&other),
+        };
         value_width = value_width.max(value.len());
         rows.push(Row {
-            timestamp: trim_timestamp_to_hms(&full),
+            timestamp: short,
             timestamp_full: full,
-            metric: metric.to_owned(),
+            metric: Arc::clone(metric),
             value,
         });
     };
-    for series in &result.result {
-        let metric = format_labels(&series.metric);
+    // Consume decoded samples as each series is formatted. Existing string
+    // values move into their rows; sample buffers need not coexist with the
+    // complete formatted table.
+    for series in result.result {
+        let metric: Arc<str> = format_labels(&series.metric).into();
         match result.result_type.as_str() {
-            "vector" if series.value.len() == 2 => add(&metric, &series.value),
+            "vector" if series.value.len() == 2 => add(&metric, series.value),
             "matrix" => {
-                for point in &series.values {
+                for point in series.values {
                     if point.len() == 2 {
                         add(&metric, point);
                     }
@@ -529,7 +564,7 @@ pub(crate) fn rows_from_result(
             _ => {}
         }
     }
-    (rows, result.result.len(), value_width)
+    (rows, series_count, value_width)
 }
 
 /// `parsePromqlChartTime`: zoned layouts convert to the local zone.
@@ -1836,8 +1871,9 @@ const TABLE_INNER_DIVIDER: &str = "│";
 
 #[derive(Clone, Debug)]
 struct ResultsTable {
-    // Row payloads are immutable; table/view snapshots own only another handle.
-    rows: Arc<[Row]>,
+    // Share the Vec itself: Arc<[Row]>::from(Vec) would allocate and copy
+    // the entire row buffer while the original allocation is still live.
+    rows: Arc<Vec<Row>>,
     time_title: String,
     value_width: usize,
     /// Metric and value columns participate in filtering after the first result.
@@ -1850,6 +1886,31 @@ struct ResultsTable {
     scroll: usize,
     focused: bool,
     filter: TextInput,
+}
+
+/// Unfiltered navigation borrows the row slice directly. Filtering retains
+/// only matching references; neither path copies row payloads.
+enum VisibleRows<'a> {
+    All(&'a [Row]),
+    Filtered(Vec<&'a Row>),
+}
+
+impl<'a> VisibleRows<'a> {
+    fn len(&self) -> usize {
+        match self {
+            Self::All(rows) => rows.len(),
+            Self::Filtered(rows) => rows.len(),
+        }
+    }
+    fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
+    fn get(&self, index: usize) -> Option<&'a Row> {
+        match self {
+            Self::All(rows) => rows.get(index),
+            Self::Filtered(rows) => rows.get(index).copied(),
+        }
+    }
 }
 
 impl ResultsTable {
@@ -1869,19 +1930,21 @@ impl ResultsTable {
         }
     }
 
-    fn visible_rows(&self) -> Vec<&Row> {
+    fn visible_rows(&self) -> VisibleRows<'_> {
         let filter = self.filter.value();
         if filter.is_empty() || !self.filterable {
-            return self.rows.iter().collect();
+            return VisibleRows::All(&self.rows);
         }
         let needle = super::unicode::lower(&filter);
-        self.rows
-            .iter()
-            .filter(|row| {
-                super::unicode::lower(&row.metric).contains(&needle)
-                    || super::unicode::lower(&row.value).contains(&needle)
-            })
-            .collect()
+        VisibleRows::Filtered(
+            self.rows
+                .iter()
+                .filter(|row| {
+                    super::unicode::lower(&row.metric).contains(&needle)
+                        || super::unicode::lower(&row.value).contains(&needle)
+                })
+                .collect(),
+        )
     }
 
     fn max_pages(&self) -> usize {
@@ -1903,7 +1966,7 @@ impl ResultsTable {
         self.cursor = self.current_page * self.page_size;
     }
 
-    fn with_rows(&mut self, rows: Arc<[Row]>) {
+    fn with_rows(&mut self, rows: Arc<Vec<Row>>) {
         self.rows = rows;
         if self.cursor >= self.rows.len() {
             self.cursor = self.rows.len().saturating_sub(1);
@@ -1928,7 +1991,7 @@ impl ResultsTable {
     }
 
     fn highlighted_row(&self) -> Option<Row> {
-        self.visible_rows().get(self.cursor).map(|r| (*r).clone())
+        self.visible_rows().get(self.cursor).cloned()
     }
 
     fn update(&mut self, key: &Key) {
@@ -2159,12 +2222,13 @@ impl ResultsTable {
                     Some((false, true, true, false)),
                 ),
             ];
-            for (index, row) in visible.iter().enumerate().take(end).skip(start) {
+            for index in start..end {
+                let row = visible.get(index).expect("visible page row");
                 let highlighted = self.focused && index == self.cursor;
                 let is_last = index + 1 == end;
                 let data = [
-                    row.timestamp.as_str(),
-                    row.metric.as_str(),
+                    row.timestamp.as_ref(),
+                    row.metric.as_ref(),
                     row.value.as_str(),
                 ];
                 let mut cells = Vec::with_capacity(3);
@@ -2506,7 +2570,7 @@ fn line_high(p1: Point, p2: Point) -> Vec<Point> {
 }
 
 /// `promqlChartSeries`: label, full timestamps and parsed values.
-type RawSeries = (String, Vec<String>, Vec<f64>);
+type RawSeries = (String, Vec<Arc<str>>, Vec<f64>);
 
 #[derive(Clone, Debug, PartialEq)]
 struct TimePoint {
@@ -2936,13 +3000,14 @@ pub(crate) struct PromqlState {
     has_queried: bool,
     overlay: Overlay,
     focused: usize,
-    data_rows: Arc<[Row]>,
-    chart_rows: Arc<[Row]>,
+    data_rows: Arc<Vec<Row>>,
+    chart_rows: Arc<Vec<Row>>,
     fetch_err: String,
     last_result_type: String,
     chart_mode: bool,
     unwrap_metric: bool,
     chart_graph_width: Option<isize>,
+    chart_series_cache: std::cell::OnceCell<Arc<[ChartSeries]>>,
     chart_cursor: usize,
     chart_hover: bool,
 
@@ -3177,6 +3242,7 @@ impl PromqlState {
             chart_mode: true,
             unwrap_metric: false,
             chart_graph_width: None,
+            chart_series_cache: std::cell::OnceCell::new(),
             chart_cursor: 0,
             chart_hover: false,
             dataset,
@@ -3555,6 +3621,7 @@ impl PromqlState {
                 self.builder_values_idx = 0;
             }
             Completion::Result(result) => {
+                self.chart_series_cache.take();
                 self.loading = false;
                 match result {
                     Ok(data) => {
@@ -4080,32 +4147,39 @@ impl PromqlState {
             return None;
         }
         let mut order: Vec<String> = Vec::new();
-        let mut series: HashMap<String, (String, Vec<String>, Vec<f64>)> = HashMap::new();
+        let mut series: HashMap<&str, RawSeries> = HashMap::new();
         for row in rows.iter() {
             let value = go_parse_float(&row.value)?;
-            let label = if row.metric.is_empty() {
-                "value".to_owned()
+            let label: &str = if row.metric.is_empty() {
+                "value"
             } else {
-                row.metric.clone()
+                &row.metric
             };
-            let key = chart_label_set(&label).to_owned();
-            let entry = series.entry(key.clone()).or_insert_with(|| {
-                order.push(key.clone());
-                (label.clone(), Vec::new(), Vec::new())
+            let key = chart_label_set(label);
+            let entry = series.entry(key).or_insert_with(|| {
+                order.push(key.to_owned());
+                (label.to_owned(), Vec::new(), Vec::new())
             });
             entry.1.push(row.timestamp_full.clone());
             entry.2.push(value);
         }
         let out: Vec<_> = order
             .into_iter()
-            .filter_map(|k| series.remove(&k))
+            .filter_map(|k| series.remove(k.as_str()))
             .filter(|s| s.2.len() >= 2)
             .collect();
         if out.is_empty() { None } else { Some(out) }
     }
 
     /// `chartSeriesPoints`: sorted by last value (desc) then label.
-    fn chart_series(&self) -> Vec<ChartSeries> {
+    fn chart_series(&self) -> Arc<[ChartSeries]> {
+        Arc::clone(
+            self.chart_series_cache
+                .get_or_init(|| self.prepare_chart_series().into()),
+        )
+    }
+
+    fn prepare_chart_series(&self) -> Vec<ChartSeries> {
         let Some(raw) = self.extract_chart_data() else {
             return Vec::new();
         };
@@ -4388,7 +4462,7 @@ impl PromqlState {
     /// `moveChartCursor`.
     fn move_chart_cursor(&mut self, delta: isize) {
         let series = self.chart_series();
-        let Some(points) = series.first().map(|s| s.points.clone()) else {
+        let Some(points) = series.first().map(|s| &s.points) else {
             return;
         };
         if !self.chart_hover {
@@ -6169,7 +6243,7 @@ mod tests {
 
     fn row(ts: &str, metric: &str, value: &str) -> Row {
         Row {
-            timestamp: trim_timestamp_to_hms(ts),
+            timestamp: trim_timestamp_to_hms(ts).into(),
             timestamp_full: ts.into(),
             metric: metric.into(),
             value: value.into(),
@@ -6444,7 +6518,9 @@ mod tests {
             _ => unreachable!(),
         };
         result.chart_rows.clear();
+        let row_buffer = result.rows.as_ptr();
         s.update(Message::Done(Completion::Result(Ok(result))));
+        assert_eq!(row_buffer, s.data_rows.as_ptr());
         assert!(Arc::ptr_eq(&s.data_rows, &s.table.rows));
         assert!(Arc::ptr_eq(&s.data_rows, &s.chart_rows));
         let snapshot = s.clone();
@@ -6487,7 +6563,51 @@ mod tests {
         let series = s.extract_chart_data().unwrap();
         assert_eq!(series[0].0, "range");
         assert_eq!(series[0].2, vec![3.0, 4.0]);
-        assert_eq!(s.table.highlighted_row().unwrap().metric, "instant");
+        assert_eq!(
+            s.table.highlighted_row().unwrap().metric.as_ref(),
+            "instant"
+        );
+    }
+
+    #[test]
+    fn result_rows_share_metric_and_timestamp_grids_without_changing_text() {
+        let result = crate::tui::promql_service::decode_result(br#"{"data":{"resultType":"matrix","result":[{"metric":{"__name__":"a"},"values":[[1704067200,"1"],[1704067201,"2"]]},{"metric":{"__name__":"b"},"values":[[1704067200,"3"],[1704067201,"4"]]}]}}"#).unwrap();
+        let (rows, count, width) = rows_from_result(result, DisplayMode::Utc);
+        assert_eq!((rows.len(), count, width), (4, 2, 14));
+        assert!(Arc::ptr_eq(&rows[0].metric, &rows[1].metric));
+        assert!(!Arc::ptr_eq(&rows[0].metric, &rows[2].metric));
+        assert!(Arc::ptr_eq(&rows[0].timestamp, &rows[2].timestamp));
+        assert!(Arc::ptr_eq(
+            &rows[1].timestamp_full,
+            &rows[3].timestamp_full
+        ));
+        assert_eq!(rows[0].timestamp.as_ref(), "00:00:00");
+        assert_eq!(rows[0].timestamp_full.as_ref(), "2024-01-01T00:00:00Z");
+        assert_eq!(rows[3].value, "4");
+    }
+
+    #[test]
+    fn chart_cache_is_shared_by_snapshots_and_replaced_on_every_completion() {
+        let mut s = state("up", "m", false);
+        s.update(Message::Done(matrix(vec![
+            row("2026-01-01T00:00:00Z", "old", "1"),
+            row("2026-01-01T00:01:00Z", "old", "2"),
+        ])));
+        let first = s.chart_series();
+        assert_eq!(first[0].label, "old");
+        assert!(Arc::ptr_eq(&first, &s.chart_series()));
+        let old = s.clone();
+        assert!(Arc::ptr_eq(&first, &old.chart_series()));
+        s.update(Message::Done(matrix(vec![
+            row("2026-01-01T00:00:00Z", "new", "3"),
+            row("2026-01-01T00:01:00Z", "new", "4"),
+        ])));
+        assert_eq!(s.chart_series()[0].label, "new");
+        assert!(!Arc::ptr_eq(&first, &s.chart_series()));
+        assert_eq!(old.chart_series()[0].points[1].value, 2.0);
+        s.update(Message::Done(Completion::Result(Err("broken".into()))));
+        assert!(s.chart_series().is_empty());
+        assert_eq!(old.chart_series()[0].label, "old");
     }
 
     #[test]
@@ -6507,7 +6627,7 @@ mod tests {
         assert!(!Arc::ptr_eq(&s.data_rows, &old.data_rows));
         assert!(Arc::ptr_eq(&s.data_rows, &s.table.rows));
         assert!(s.chart_rows.is_empty());
-        assert_eq!(s.table.highlighted_row().unwrap().metric, "new");
+        assert_eq!(s.table.highlighted_row().unwrap().metric.as_ref(), "new");
         assert_eq!(old.view(), old_frame);
         assert_eq!(old.chart_rows.len(), 2);
         let replacement = s.clone();
@@ -6604,7 +6724,7 @@ mod tests {
         }
         assert_eq!(s.table.cursor, 7950);
         assert_eq!(
-            s.table.highlighted_row().unwrap().metric,
+            s.table.highlighted_row().unwrap().metric.as_ref(),
             "bench-series-0031"
         );
         let original_page = s.table.current_page;
@@ -6912,7 +7032,7 @@ mod tests {
         s.update(Message::Done(vector(second)));
         s.update(Message::Done(matrix(first)));
         // The later-arriving (earlier) run wins, as in Go.
-        assert_eq!(s.data_rows[0].metric, "up");
+        assert_eq!(s.data_rows[0].metric.as_ref(), "up");
         assert!(s.chart_mode());
         assert_eq!(s.focus(), Pane::Table);
         s.update(Message::Done(Completion::Result(Err(String::new()))));

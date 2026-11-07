@@ -65,11 +65,13 @@ impl PromqlSessionService {
             let instant = self
                 .fetch_result(&expr, &dataset, &step, &start, &end, true)
                 .await?;
-            let (rows, series_count, value_width) = rows_from_result(&instant, display);
-            let (chart_rows, _, _) = rows_from_result(&range, display);
+            let result_type = instant.result_type.clone();
+            let chart_result = range.result_type.clone();
+            let (rows, series_count, value_width) = rows_from_result(instant, display);
+            let (chart_rows, _, _) = rows_from_result(range, display);
             return Ok(ResultData {
-                result_type: instant.result_type,
-                chart_result: range.result_type,
+                result_type,
+                chart_result,
                 rows,
                 chart_rows,
                 series_count,
@@ -86,16 +88,20 @@ impl PromqlSessionService {
                 mode == QueryMode::Instant,
             )
             .await?;
-        let (rows, series_count, value_width) = rows_from_result(&result, display);
-        let matrix = result.result_type == "matrix";
+        let result_type = result.result_type.clone();
+        let matrix = result_type == "matrix";
+        let (rows, series_count, value_width) = rows_from_result(result, display);
         Ok(ResultData {
             chart_result: if matrix {
-                result.result_type.clone()
+                result_type.clone()
             } else {
                 String::new()
             },
-            chart_rows: if matrix { rows.clone() } else { Vec::new() },
-            result_type: result.result_type,
+            // Matrix charts use the same immutable rows as the table. The
+            // state shares them when chart_rows is empty; Both keeps its
+            // separate range result above.
+            chart_rows: Vec::new(),
+            result_type,
             rows,
             series_count,
             value_width,
@@ -513,6 +519,7 @@ impl Decoder {
             target.clear();
             return;
         }
+        target.reserve_slots(items.len());
         for (index, item) in items.iter().enumerate() {
             // An interface element is replaced, even if it previously held a
             // map/slice. This differs from the enclosing typed slice reuse.
@@ -527,21 +534,40 @@ fn fields(node: &Node) -> &[(String, Node)] {
 }
 
 pub(crate) fn decode_result(body: &[u8]) -> Result<PromqlResult, String> {
-    let root = gojson::decode_ordered(body)?;
     let mut decoder = Decoder { first_error: None };
     let mut result = PromqlResult::default();
     let mut series = ReusedSlice::<SeriesState>::default();
-    if !root.is_object() && !root.is_null() {
-        decoder.mismatch(&root, "", "model.promqlRespModel");
+    if body
+        .iter()
+        .copied()
+        .find(|b| !matches!(*b, b' ' | b'\t' | b'\r' | b'\n'))
+        != Some(b'{')
+    {
+        let root = gojson::decode_ordered(body)?;
+        if !root.is_null() {
+            decoder.mismatch(&root, "", "model.promqlRespModel");
+        }
+        return decoder.first_error.map_or(Ok(result), Err);
     }
-    for (key, value) in fields(&root) {
-        match json_field(key, &["status", "error", "errorType", "data"]) {
-            Some("status") => decoder.string(value, "promqlRespModel.status", &mut result.status),
-            Some("error") => decoder.string(value, "promqlRespModel.error", &mut result.error),
+    // Validate the complete response first, retaining borrowed spans instead
+    // of a second full result tree. Decode at most one series tree at a time.
+    // Input order and initialized slots still govern duplicate-field reuse.
+    for (key, bytes) in gojson::raw_members_bytes(body)? {
+        let field = json_field(&key, &["status", "error", "errorType", "data"]);
+        if field == Some("data") {
+            decode_data_bytes(&mut decoder, bytes, &mut result, &mut series)?;
+            continue;
+        }
+        if field.is_none() {
+            continue;
+        }
+        let value = gojson::decode_ordered(bytes)?;
+        match field {
+            Some("status") => decoder.string(&value, "promqlRespModel.status", &mut result.status),
+            Some("error") => decoder.string(&value, "promqlRespModel.error", &mut result.error),
             Some("errorType") => {
-                decoder.string(value, "promqlRespModel.errorType", &mut result.error_type)
+                decoder.string(&value, "promqlRespModel.errorType", &mut result.error_type)
             }
-            Some("data") => decode_data(&mut decoder, value, &mut result, &mut series),
             _ => {}
         }
     }
@@ -558,6 +584,61 @@ pub(crate) fn decode_result(body: &[u8]) -> Result<PromqlResult, String> {
     }
 }
 
+fn decode_data_bytes(
+    decoder: &mut Decoder,
+    bytes: &[u8],
+    result: &mut PromqlResult,
+    series: &mut ReusedSlice<SeriesState>,
+) -> Result<(), String> {
+    if bytes.first() != Some(&b'{') {
+        let node = gojson::decode_ordered(bytes)?;
+        if !node.is_null() {
+            decoder.mismatch(&node, "promqlRespModel.data", "model.promqlDataModel");
+        }
+        return Ok(());
+    }
+    for (key, bytes) in gojson::raw_members_bytes(bytes)? {
+        match json_field(&key, &["resultType", "result"]) {
+            Some("resultType") => {
+                let node = gojson::decode_ordered(bytes)?;
+                decoder.string(
+                    &node,
+                    "promqlDataModel.data.resultType",
+                    &mut result.result_type,
+                );
+            }
+            Some("result") if bytes.first() == Some(&b'[') => {
+                let items = gojson::raw_elements_bytes(bytes)?;
+                if items.is_empty() {
+                    series.clear();
+                } else {
+                    series.reserve_slots(items.len());
+                    for (index, item) in items.iter().enumerate() {
+                        let node = gojson::decode_ordered(item)?;
+                        decode_series(decoder, &node, series.slot(index, SeriesState::default));
+                    }
+                    series.set_len(items.len());
+                }
+            }
+            Some("result") => {
+                let node = gojson::decode_ordered(bytes)?;
+                if node.is_null() {
+                    series.clear();
+                } else {
+                    decoder.mismatch(
+                        &node,
+                        "promqlDataModel.data.result",
+                        "[]model.promqlSeriesModel",
+                    );
+                }
+            }
+            _ => {}
+        }
+    }
+    Ok(())
+}
+
+#[cfg(test)]
 fn decode_data(
     decoder: &mut Decoder,
     node: &Node,
@@ -679,6 +760,7 @@ fn decode_series(decoder: &mut Decoder, node: &Node, series: &mut SeriesState) {
                     series.values.clear();
                     continue;
                 }
+                series.values.reserve_slots(points.len());
                 for (index, point) in points.iter().enumerate() {
                     decoder.any_slice(
                         point,
@@ -744,6 +826,79 @@ fn decode_label_list(body: &[u8]) -> Result<LabelList, String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn borrowed_response_spans_match_full_tree_decoding() {
+        fn tree(body: &[u8]) -> Result<PromqlResult, String> {
+            let root = gojson::decode_ordered(body)?;
+            let mut decoder = Decoder { first_error: None };
+            let mut result = PromqlResult::default();
+            let mut series = ReusedSlice::<SeriesState>::default();
+            if !root.is_object() && !root.is_null() {
+                decoder.mismatch(&root, "", "model.promqlRespModel");
+            }
+            for (key, value) in fields(&root) {
+                match json_field(key, &["status", "error", "errorType", "data"]) {
+                    Some("status") => {
+                        decoder.string(value, "promqlRespModel.status", &mut result.status)
+                    }
+                    Some("error") => {
+                        decoder.string(value, "promqlRespModel.error", &mut result.error)
+                    }
+                    Some("errorType") => {
+                        decoder.string(value, "promqlRespModel.errorType", &mut result.error_type)
+                    }
+                    Some("data") => decode_data(&mut decoder, value, &mut result, &mut series),
+                    _ => {}
+                }
+            }
+            if let Some(error) = decoder.first_error {
+                return Err(error);
+            }
+            result.result = series
+                .finish()
+                .into_iter()
+                .map(SeriesState::finish)
+                .collect();
+            Ok(result)
+        }
+        let values = [
+            "null",
+            "false",
+            "1",
+            "1e999",
+            r#""text""#,
+            "[]",
+            "{}",
+            r#"[{"metric":{"a":"x"},"values":[[1,"2"],[2,"3"]]}]"#,
+            r#"[{"metric":{"a":null},"value":[true,{"a":1,"a":2}]}]"#,
+            r#"[{"values":[[1,"a"],[2,"b"]],"values":[[null]],"values":[null,null]}]"#,
+        ];
+        for first in values {
+            for second in values {
+                let body = format!(
+                    r#"{{"status":"success","DATA":{{"resultType":"matrix","result":{first},"result":{second}}},"data":null}}"#
+                );
+                assert_eq!(
+                    decode_result(body.as_bytes()),
+                    tree(body.as_bytes()),
+                    "{body}"
+                );
+            }
+        }
+        for bytes in [
+            b"null".as_slice(),
+            b"false",
+            b"[]",
+            b"{",
+            b"\x0c{}",
+            b"{}trailing",
+            br#"{"data":1,"status":false,"unknown":[1,]}"#,
+            b"{\"data\":{\"result\":[{\"metric\":{\"a\":\"\xff\"}}]}}",
+        ] {
+            assert_eq!(decode_result(bytes), tree(bytes), "{bytes:?}");
+        }
+    }
 
     #[test]
     fn escapes_follow_go_url_package() {
