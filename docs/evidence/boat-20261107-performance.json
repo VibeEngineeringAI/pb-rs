@@ -1,0 +1,397 @@
+{
+  "date": "2026-11-07",
+  "baseline_commit": "14ea05aad9a798a096a27c50961042ef4c85af91",
+  "scope": "interactive PromQL; 1000 series x 256 samples; 120x40",
+  "metrics": {
+    "cpu_ms": "native child wait4 user+system CPU time",
+    "peak_rss_bytes": "native child wait4 ru_maxrss converted from Linux KiB"
+  },
+  "target_ratio": 0.5,
+  "binaries": {
+    "baseline": {
+      "path": "/home/user/pb-artifacts/pb-baseline",
+      "sha256": "49ec1c6b03c4f8fcf55b391c4ee9efb91288ac79044419ae94e4734a58ffa262"
+    },
+    "candidate": {
+      "path": "/home/user/pb-artifacts/pb-optimized",
+      "sha256": "c0166a201147b17c568deca91814338195edbe9faf8119f38b0b4df4e1991a20"
+    }
+  },
+  "measurements": [
+    {
+      "host": {
+        "system": "Linux",
+        "node": "box-node-c5ce35c37ab9c7ca",
+        "release": "6.8.0-117-generic",
+        "version": "#117-Ubuntu SMP PREEMPT_DYNAMIC Tue May  5 19:26:24 UTC 2026",
+        "machine": "x86_64",
+        "processor": "x86_64"
+      },
+      "cpu_model": "AMD Ryzen 7 9700X 8-Core Processor",
+      "cpu_count": 4,
+      "memory_total": "MemTotal:        8131944 kB",
+      "warmup_pairs": 1,
+      "summaries": [
+        {
+          "case": "promql-dense-1000-120x40-dark-resource-attribution",
+          "measured_pairs": 7,
+          "cpu_ms": {
+            "baseline": 1379.341,
+            "candidate": 533.155,
+            "median_paired_ratio": 0.3722290901397591,
+            "reduction_percent": 62.777090986024085,
+            "paired_ratio_bootstrap_95": [
+              0.35842015604559013,
+              0.40819275291606644
+            ],
+            "halving_target_confirmed": true
+          },
+          "peak_rss_bytes": {
+            "baseline": 195186688,
+            "candidate": 72142848,
+            "median_paired_ratio": 0.3697353786750047,
+            "reduction_percent": 63.026462132499525,
+            "paired_ratio_bootstrap_95": [
+              0.3687244523634839,
+              0.37021642840649077
+            ],
+            "halving_target_confirmed": true
+          },
+          "wall_ms": {
+            "baseline": 3293.444575,
+            "candidate": 2631.346287,
+            "median_paired_ratio": 0.8005667767647856,
+            "reduction_percent": 19.94332232352144,
+            "paired_ratio_bootstrap_95": [
+              0.782098071925114,
+              0.8019771740048184
+            ],
+            "halving_target_confirmed": false
+          }
+        }
+      ],
+      "functional_pairs": 8,
+      "functional_issues": 0
+    },
+    {
+      "host": {
+        "system": "Linux",
+        "node": "box-node-c5ce35c37ab9c7ca",
+        "release": "6.8.0-117-generic",
+        "version": "#117-Ubuntu SMP PREEMPT_DYNAMIC Tue May  5 19:26:24 UTC 2026",
+        "machine": "x86_64",
+        "processor": "x86_64"
+      },
+      "cpu_model": "AMD Ryzen 7 9700X 8-Core Processor",
+      "cpu_count": 4,
+      "memory_total": "MemTotal:        8131944 kB",
+      "warmup_pairs": 1,
+      "summaries": [
+        {
+          "case": "promql-dense-1000-120x40-light-resource-attribution",
+          "measured_pairs": 7,
+          "cpu_ms": {
+            "baseline": 1329.2209999999998,
+            "candidate": 479.406,
+            "median_paired_ratio": 0.3667375175210175,
+            "reduction_percent": 63.326248247898256,
+            "paired_ratio_bootstrap_95": [
+              0.32764770537786353,
+              0.3747249706153815
+            ],
+            "halving_target_confirmed": true
+          },
+          "peak_rss_bytes": {
+            "baseline": 195166208,
+            "candidate": 71999488,
+            "median_paired_ratio": 0.3689346877098724,
+            "reduction_percent": 63.10653122901275,
+            "paired_ratio_bootstrap_95": [
+              0.36838459116196076,
+              0.36902990548441855
+            ],
+            "halving_target_confirmed": true
+          },
+          "wall_ms": {
+            "baseline": 3222.893377,
+            "candidate": 2573.506516,
+            "median_paired_ratio": 0.7971694246340562,
+            "reduction_percent": 20.283057536594384,
+            "paired_ratio_bootstrap_95": [
+              0.7776987120213336,
+              0.8069642065524092
+            ],
+            "halving_target_confirmed": false
+          }
+        }
+      ],
+      "functional_pairs": 8,
+      "functional_issues": 0
+    },
+    {
+      "host": {
+        "system": "Linux",
+        "node": "box-node-550061ce6b12a596",
+        "release": "6.8.0-117-generic",
+        "version": "#117-Ubuntu SMP PREEMPT_DYNAMIC Tue May  5 19:26:24 UTC 2026",
+        "machine": "x86_64",
+        "processor": "x86_64"
+      },
+      "cpu_model": "AMD Ryzen 9 9950X 16-Core Processor",
+      "cpu_count": 8,
+      "memory_total": "MemTotal:       16375780 kB",
+      "warmup_pairs": 1,
+      "summaries": [
+        {
+          "case": "sql-scroll-20000-120x40-dark-resource-attribution",
+          "measured_pairs": 5,
+          "cpu_ms": {
+            "baseline": 175.31099999999998,
+            "candidate": 169.458,
+            "median_paired_ratio": 0.9944076380045891,
+            "reduction_percent": 0.559236199541091,
+            "paired_ratio_bootstrap_95": [
+              0.8414507175631628,
+              1.0601801585526207
+            ],
+            "halving_target_confirmed": false
+          },
+          "peak_rss_bytes": {
+            "baseline": 11665408,
+            "candidate": 11796480,
+            "median_paired_ratio": 1.0,
+            "reduction_percent": 0.0,
+            "paired_ratio_bootstrap_95": [
+              0.9782608695652174,
+              1.0224719101123596
+            ],
+            "halving_target_confirmed": false
+          },
+          "wall_ms": {
+            "baseline": 3155.397438,
+            "candidate": 3144.292267,
+            "median_paired_ratio": 0.974153430240568,
+            "reduction_percent": 2.5846569759432003,
+            "paired_ratio_bootstrap_95": [
+              0.9619762687167246,
+              1.028939396277139
+            ],
+            "halving_target_confirmed": false
+          }
+        },
+        {
+          "case": "promql-dense-1-120x40-dark-resource-attribution",
+          "measured_pairs": 5,
+          "cpu_ms": {
+            "baseline": 44.661,
+            "candidate": 37.012,
+            "median_paired_ratio": 0.8535102402520679,
+            "reduction_percent": 14.64897597479321,
+            "paired_ratio_bootstrap_95": [
+              0.6718904543156692,
+              1.0298812717469255
+            ],
+            "halving_target_confirmed": false
+          },
+          "peak_rss_bytes": {
+            "baseline": 10485760,
+            "candidate": 10485760,
+            "median_paired_ratio": 1.0,
+            "reduction_percent": 0.0,
+            "paired_ratio_bootstrap_95": [
+              0.975,
+              1.0256410256410255
+            ],
+            "halving_target_confirmed": false
+          },
+          "wall_ms": {
+            "baseline": 2357.671458,
+            "candidate": 2306.170724,
+            "median_paired_ratio": 0.9811795659464064,
+            "reduction_percent": 1.882043405359357,
+            "paired_ratio_bootstrap_95": [
+              0.8789431877503907,
+              1.0129552679533325
+            ],
+            "halving_target_confirmed": false
+          }
+        },
+        {
+          "case": "promql-dense-100-120x40-dark-resource-attribution",
+          "measured_pairs": 5,
+          "cpu_ms": {
+            "baseline": 240.762,
+            "candidate": 117.314,
+            "median_paired_ratio": 0.4872612787732283,
+            "reduction_percent": 51.273872122677176,
+            "paired_ratio_bootstrap_95": [
+              0.4525708139395417,
+              1.7138553426833882
+            ],
+            "halving_target_confirmed": false
+          },
+          "peak_rss_bytes": {
+            "baseline": 31514624,
+            "candidate": 16228352,
+            "median_paired_ratio": 0.5175359130322247,
+            "reduction_percent": 48.24640869677753,
+            "paired_ratio_bootstrap_95": [
+              0.5139613778705637,
+              0.5202702702702703
+            ],
+            "halving_target_confirmed": false
+          },
+          "wall_ms": {
+            "baseline": 2570.613772,
+            "candidate": 2492.871977,
+            "median_paired_ratio": 0.9681133121230318,
+            "reduction_percent": 3.1886687876968245,
+            "paired_ratio_bootstrap_95": [
+              0.8546810204183534,
+              1.1582981602946396
+            ],
+            "halving_target_confirmed": false
+          }
+        },
+        {
+          "case": "promql-dense-1000-120x40-dark-resource-attribution",
+          "measured_pairs": 5,
+          "cpu_ms": {
+            "baseline": 2051.973,
+            "candidate": 646.92,
+            "median_paired_ratio": 0.29777682259951765,
+            "reduction_percent": 70.22231774004824,
+            "paired_ratio_bootstrap_95": [
+              0.27991030768384895,
+              0.3881410653389151
+            ],
+            "halving_target_confirmed": true
+          },
+          "peak_rss_bytes": {
+            "baseline": 195260416,
+            "candidate": 71876608,
+            "median_paired_ratio": 0.3683536598165369,
+            "reduction_percent": 63.16463401834631,
+            "paired_ratio_bootstrap_95": [
+              0.3669461328861874,
+              0.36967063417091756
+            ],
+            "halving_target_confirmed": true
+          },
+          "wall_ms": {
+            "baseline": 4081.293891,
+            "candidate": 3014.668474,
+            "median_paired_ratio": 0.7412308636285928,
+            "reduction_percent": 25.87691363714072,
+            "paired_ratio_bootstrap_95": [
+              0.6600027000224036,
+              0.8135384970625352
+            ],
+            "halving_target_confirmed": false
+          }
+        },
+        {
+          "case": "sql-editor-120x40-dark-resource-attribution",
+          "measured_pairs": 5,
+          "cpu_ms": {
+            "baseline": 27.552,
+            "candidate": 27.043,
+            "median_paired_ratio": 1.0305210918114143,
+            "reduction_percent": -3.052109181141427,
+            "paired_ratio_bootstrap_95": [
+              0.932645882190647,
+              1.2762665557997268
+            ],
+            "halving_target_confirmed": false
+          },
+          "peak_rss_bytes": {
+            "baseline": 9568256,
+            "candidate": 9699328,
+            "median_paired_ratio": 1.0,
+            "reduction_percent": 0.0,
+            "paired_ratio_bootstrap_95": [
+              1.0,
+              1.0273972602739727
+            ],
+            "halving_target_confirmed": false
+          },
+          "wall_ms": {
+            "baseline": 874.824469,
+            "candidate": 905.851206,
+            "median_paired_ratio": 1.0354662427714971,
+            "reduction_percent": -3.5466242771497125,
+            "paired_ratio_bootstrap_95": [
+              0.9003175445464587,
+              1.10403791164672
+            ],
+            "halving_target_confirmed": false
+          }
+        }
+      ],
+      "functional_pairs": 30,
+      "functional_issues": 0
+    }
+  ],
+  "validation": {
+    "rust_all_targets_passed": 700,
+    "rust_ignored": 9,
+    "python_harness_passed": 158,
+    "functional_promql_cases": 21,
+    "functional_promql_roles": 42,
+    "performance_pairs_including_warmups": 46,
+    "performance_measured_pairs": 39,
+    "performance_warmup_pairs": 7,
+    "performance_native_roles": 92,
+    "performance_comparison_issues": 0
+  },
+  "profiles": {
+    "baseline_allocations": 37616413,
+    "candidate_allocations": 6522351,
+    "baseline_peak_heap_decimal_MB": 148.91,
+    "candidate_peak_heap_decimal_MB": 44.85
+  },
+  "archives": {
+    "vm1": {
+      "path": "harness/results/boat-20261107/vm1-evidence.tar.gz",
+      "sha256": "0eed3793df7dfa3cdd6bc9d299c0c4c0fe77231f070adf3860e2e589aae8361a"
+    },
+    "vm2": {
+      "path": "harness/results/boat-20261107/vm2-evidence.tar.gz",
+      "sha256": "9dadb5c2232af65534b3802a15b269b3255e910bc008cf141aa774f5a86ba557"
+    }
+  },
+  "exploratory_sustained": {
+    "measured_pairs": 1,
+    "cpu_ms": {
+      "baseline": 2878.821,
+      "candidate": 2052.238,
+      "reduction_percent": 28.71255281241869
+    },
+    "peak_rss_bytes": {
+      "baseline": 195256320,
+      "candidate": 72286208,
+      "reduction_percent": 62.97881267044263
+    },
+    "styled_checkpoints_per_role": 70,
+    "comparison_issues": 0,
+    "halving_target_confirmed": false
+  },
+  "limitations": [
+    "Targets confirmed only for dense interactive PromQL load/chart/table workflows.",
+    "Smaller SQL and editor workloads do not halve their fixed resident footprint.",
+    "Sustained navigation remains below the CPU target in a single exploratory pair.",
+    "Warm-cache Linux VM results are not a universal platform or production-server claim."
+  ],
+  "cleanup": {
+    "created_vms": [
+      "bx_v9rgr4yz",
+      "bx_g358j3k9"
+    ],
+    "archive_sha256_verified_before_deletion": true,
+    "status": "both VMs deleted; operation completion verified",
+    "operations": [
+      "bdop_fbdc695845354da38965ce2d144727f5",
+      "bdop_1b1292ad86b940f78b602217f4f5e764"
+    ]
+  }
+}

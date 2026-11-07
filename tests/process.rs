@@ -2,10 +2,11 @@
 
 use std::ffi::OsString;
 use std::fs;
+use std::io::Read;
 use std::os::fd::{FromRawFd, OwnedFd};
 use std::os::unix::ffi::OsStringExt;
 use std::os::unix::fs::symlink;
-use std::os::unix::process::ExitStatusExt;
+use std::os::unix::process::{CommandExt, ExitStatusExt};
 use std::path::PathBuf;
 use std::process::{Command, Stdio};
 use std::sync::atomic::{AtomicUsize, Ordering};
@@ -46,15 +47,69 @@ impl Drop for Sandbox {
     }
 }
 
-fn closed_pipe() -> Stdio {
-    let mut descriptors = [-1; 2];
-    // SAFETY: pipe initializes two owned descriptors on success. The reader is
-    // closed, and ownership of the writer is transferred exactly once.
+fn close_child_output(command: &mut Command, descriptor: libc::c_int) {
+    assert!(matches!(
+        descriptor,
+        libc::STDOUT_FILENO | libc::STDERR_FILENO
+    ));
+    // SAFETY: this callback runs after fork, in the single-threaded child.
+    // Only async-signal-safe syscalls create, duplicate and close descriptors;
+    // no parent or sibling can inherit the newly created reader. Command's
+    // output setup has already opened descriptors 0, 1 and 2 before this runs.
     unsafe {
-        assert_eq!(libc::pipe(descriptors.as_mut_ptr()), 0, "create pipe");
-        drop(OwnedFd::from_raw_fd(descriptors[0]));
-        Stdio::from(OwnedFd::from_raw_fd(descriptors[1]))
+        command.pre_exec(move || {
+            let mut descriptors = [-1; 2];
+            if libc::pipe(descriptors.as_mut_ptr()) != 0 {
+                return Err(std::io::Error::last_os_error());
+            }
+            let duplicate = libc::dup2(descriptors[1], descriptor);
+            let error = (duplicate < 0).then(std::io::Error::last_os_error);
+            libc::close(descriptors[0]);
+            libc::close(descriptors[1]);
+            match error {
+                Some(error) => Err(error),
+                None => Ok(()),
+            }
+        });
     }
+}
+
+#[test]
+fn sibling_inherited_reader_does_not_change_closed_output() {
+    let sandbox = Sandbox::new();
+    let mut descriptors = [-1; 2];
+    // Intentionally inheritable, simulating the old fixture's reader leaking
+    // into a sibling. Both descriptors become owned exactly once on success.
+    let (reader, writer) = unsafe {
+        assert_eq!(libc::pipe(descriptors.as_mut_ptr()), 0);
+        (
+            OwnedFd::from_raw_fd(descriptors[0]),
+            OwnedFd::from_raw_fd(descriptors[1]),
+        )
+    };
+    let mut keeper = Command::new("/bin/sh")
+        .args(["-c", "printf ready; /bin/cat >/dev/null"])
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .spawn()
+        .unwrap();
+    let mut ready = [0; 5];
+    let readiness = keeper.stdout.as_mut().unwrap().read_exact(&mut ready);
+    drop(reader);
+    let mut command = sandbox.command();
+    command.arg("version").stdout(Stdio::from(writer));
+    close_child_output(&mut command, libc::STDOUT_FILENO);
+    let output = command.output();
+    // Release and reap the child before asserting, including on the failure
+    // path, so a regression cannot leave its blocking cat process behind.
+    drop(keeper.stdin.take());
+    let status = keeper.wait().unwrap();
+    readiness.unwrap();
+    assert_eq!(&ready, b"ready");
+    assert!(status.success());
+    let output = output.unwrap();
+    assert_eq!(output.status.signal(), Some(libc::SIGPIPE));
+    assert!(output.stderr.is_empty());
 }
 
 #[test]
@@ -124,12 +179,10 @@ fn missing_config_environment_keeps_command_error_policy() {
 #[test]
 fn closed_stdout_terminates_with_sigpipe() {
     let sandbox = Sandbox::new();
-    let output = sandbox
-        .command()
-        .arg("--help")
-        .stdout(closed_pipe())
-        .output()
-        .unwrap();
+    let mut command = sandbox.command();
+    command.arg("--help");
+    close_child_output(&mut command, libc::STDOUT_FILENO);
+    let output = command.output().unwrap();
     assert_eq!(output.status.signal(), Some(libc::SIGPIPE));
     assert!(output.stderr.is_empty());
 }
@@ -137,12 +190,10 @@ fn closed_stdout_terminates_with_sigpipe() {
 #[test]
 fn closed_stderr_terminates_with_sigpipe() {
     let sandbox = Sandbox::new();
-    let output = sandbox
-        .command()
-        .arg("nosuch")
-        .stderr(closed_pipe())
-        .output()
-        .unwrap();
+    let mut command = sandbox.command();
+    command.arg("nosuch");
+    close_child_output(&mut command, libc::STDERR_FILENO);
+    let output = command.output().unwrap();
     assert_eq!(output.status.signal(), Some(libc::SIGPIPE));
     assert!(output.stdout.is_empty());
 }
