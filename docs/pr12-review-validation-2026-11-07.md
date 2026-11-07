@@ -55,3 +55,11 @@ The [integrated evidence record](evidence/boat-20261107-pr12.json) includes ever
 The performance runner used for capture is `1c7611f`. The final TLS checker is `becd09a`; its source hash and the explicit replay procedure are retained separately. Original reports are preserved rather than relabeled as having been produced by a later checker.
 
 The local archive is `harness/results/pr-review-20261107/pr12-evidence.tar.gz`, SHA-256 `6d9411baa876fc928c5c94c2171aa9f36a89313894ee0ab6687c3c4599804be8`. Its tracked summary, raw report hashes, all four binary hashes, and current production-source inventory were verified before VM removal. Boat deletion operation `bdop_c3fb8ad1662842709641ae1157aa7476` completed at `2026-11-07T21:52:28.645Z`. Pre-existing VMs were left unchanged.
+
+## CI follow-up: closed-pipe fixture race
+
+The [compatibility run on `d2fa011`](https://github.com/VibeEngineeringAI/pb-rs/actions/runs/42418261327/job/128540933869) failed `closed_stdout_terminates_with_sigpipe`: the CLI exited normally rather than receiving SIGPIPE. The existing test fixture used raw `libc::pipe` descriptors without close-on-exec. Another concurrently spawned process could inherit the reader in the short interval before its parent closed it, keeping the pipe readable during the tested CLI's write.
+
+The new `sibling_inherited_reader_does_not_change_closed_output` regression deliberately leaks a legacy pipe reader into a blocked sibling before testing the CLI's closed output. With the child setup disabled, the CLI exits normally and the regression fails deterministically. The fixed fixture creates the actual broken pipe, duplicates its writer onto stdout or stderr, and closes both original endpoints inside the CLI child's pre-exec callback. The actual reader never exists in the parent or a sibling. Close-on-exec alone was insufficient because a forked child can retain a reader before its exec completes.
+
+All ten process tests pass with the original SIGPIPE assertions unchanged, followed by **200 eight-thread repetitions / 2,000 test executions**, zero failures. Clippy and rustfmt pass. The regression's blocked helper is released and reaped before assertions. No production code or recorded benchmark source changes for this fix. Negative-control, intermediate and passing logs are retained under `harness/results/pr12-ci-fix/`.
