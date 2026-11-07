@@ -1,0 +1,2529 @@
+{
+  "scope": "Integrated Linux x86-64 PR product sources vs main; both themes kept separate",
+  "vm_id": "bx_rjd3u7tw",
+  "shape": "8 vCPU / 16 GB",
+  "lscpu": "Architecture:                            x86_64\nCPU op-mode(s):                          32-bit, 64-bit\nAddress sizes:                           48 bits physical, 48 bits virtual\nByte Order:                              Little Endian\nCPU(s):                                  8\nOn-line CPU(s) list:                     0-7\nVendor ID:                               AuthenticAMD\nModel name:                              AMD Ryzen 9 9950X 16-Core Processor\nCPU family:                              26\nModel:                                   68\nThread(s) per core:                      1\nCore(s) per socket:                      8\nSocket(s):                               1\nStepping:                                0\nBogoMIPS:                                8583.87\nFlags:                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm rep_good nopl cpuid extd_apicid tsc_known_freq pni pclmulqdq ssse3 fma cx16 sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm cmp_legacy svm cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw perfctr_core ssbd ibrs ibpb stibp ibrs_enhanced vmmcall fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid avx512f avx512dq adx smap avx512ifma clflushopt clwb avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves avx_vnni avx512_bf16 clzero xsaveerptr wbnoinvd arat npt lbrv nrip_save tsc_scale vmcb_clean flushbyasid pausefilter pfthreshold v_vmsave_vmload vgif vnmi avx512vbmi umip pku ospke avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg avx512_vpopcntdq rdpid movdiri movdir64b fsrm avx512_vp2intersect flush_l1d arch_capabilities srso_user_kernel_no\nVirtualization:                          AMD-V\nHypervisor vendor:                       KVM\nVirtualization type:                     full\nL1d cache:                               512 KiB (8 instances)\nL1i cache:                               512 KiB (8 instances)\nL2 cache:                                4 MiB (8 instances)\nL3 cache:                                128 MiB (8 instances)\nNUMA node(s):                            1\nNUMA node0 CPU(s):                       0-7\nVulnerability Gather data sampling:      Not affected\nVulnerability Indirect target selection: Not affected\nVulnerability Itlb multihit:             Not affected\nVulnerability L1tf:                      Not affected\nVulnerability Mds:                       Not affected\nVulnerability Meltdown:                  Not affected\nVulnerability Mmio stale data:           Not affected\nVulnerability Reg file data sampling:    Not affected\nVulnerability Retbleed:                  Not affected\nVulnerability Spec rstack overflow:      Not affected\nVulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl\nVulnerability Spectre v1:                Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:                Mitigation; Enhanced / Automatic IBRS; IBPB conditional; STIBP disabled; PBRSB-eIBRS Not affected; BHI Not affected\nVulnerability Srbds:                     Not affected\nVulnerability Tsa:                       Not affected\nVulnerability Tsx async abort:           Not affected\nVulnerability Vmscape:                   Not affected\n",
+  "uname": "Linux box-node-ae327083c3c2ac0f 6.8.0-117-generic #117-Ubuntu SMP PREEMPT_DYNAMIC Tue May  5 19:26:24 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux\n",
+  "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)\nbinary: rustc\ncommit-hash: 8bab26f4f68e0e26f0bb7960be334d5b520ea452\ncommit-date: 2026-07-14\nhost: x86_64-unknown-linux-gnu\nrelease: 1.97.1\nLLVM version: 22.1.6\n",
+  "source": {
+    "baseline_commit": "998d4efca7ab4f82fe2c9b6ba85d712a352beb9d",
+    "candidate_product_commit": "8349eda980c6c0f7e692890e86c385ccaadb6928",
+    "harness_commit": "1c7611fb09cebadeb04f43a0265ae2d4004a7e0b",
+    "product_source_match": true,
+    "candidate_source_sha256": {
+      "src/LICENSE-Go.txt": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad",
+      "src/admin.rs": "e3d20e41373b8e66672f63fdc7ed6ae9cb1e9592d20f39487e179f25a23a0e57",
+      "src/admin_datasets.rs": "abd137f0c0abe9f000220322fa1fa6b7161484d15b2504bcab36d52c956a4076",
+      "src/admin_inventory/style.rs": "f1014435db977fa0aca1275860114432d411df648c474ee4739abcbc656eed39",
+      "src/admin_inventory/tests.rs": "8a0eb17d98bf20689ed9b967f6f884654a7a99030d3d6e4ae2b5dfaa6d0e54b1",
+      "src/admin_inventory/wire.rs": "bbd610ebbe4880bc94a4241ff5c5d8c108a6c1e764b4b1c4a365dc5709ce7106",
+      "src/admin_inventory.rs": "bf3687e67bd1b2f191613cbf3b8ad10784d0900a7af30fdadda76957d837f6a4",
+      "src/api.rs": "127c03fe922b91795c8acb57c9eeb2e5f97f9f0deef1f825a487643a1031c4e1",
+      "src/argv.rs": "8088e8f0c4151461d8eb71d8750e0b6350ec38475236cf534d115f8e2ccdcebf",
+      "src/auth.rs": "fe0623db3305abefb2cf1689bc99dd9e7edad2de6eb3722b152572099a4f10ce",
+      "src/catalog.json": "f84dd8429e31fe487309e6c4f98b03dbd27aec883d82b8357e2eba5b16fa506d",
+      "src/completion/LICENSE-Cobra.txt": "5e3400b93bbb099e83e52bab885e7441750673c21f97988ca3f1240639b63283",
+      "src/completion/README.md": "b677c0bbfa304f5c7164c64a4ec67f4964968bd0829b90c68c20fd17992adee9",
+      "src/completion/bash.tmpl": "39941d1d0a0f17ad28ccee1c1b6ceb9f0c4eb97d72c99a3c557f5e0b964a2a1e",
+      "src/completion/fish.tmpl": "5f2d9f4bd2f5ef4118d14bd1761d1ad6bcfd7cad0234c726e75356e01930beab",
+      "src/completion/powershell.tmpl": "edcf6d94111395bcfd4ac6919e8ead954c30d0ea115998e146eb89571638d0d7",
+      "src/completion/zsh.tmpl": "8365b494908c77055679c6f774a0bc4b4a0e8a9d0495263d3846f5ade7eb72e9",
+      "src/completion.rs": "f04fa5c6f036ebeedb365c5a35c21814b180941bc702bec944f47fa73cb7d3cb",
+      "src/config.rs": "8cb2c157afca8ab6c0bd3018fbc761a01e0686f84c51a67bca5725f9fb2aed2e",
+      "src/datasets.rs": "5d109e7671cac0f0886b7d2e92e57aa34910bf355ffad36063f71df1c4170718",
+      "src/diagnostics.rs": "2117c675cdead8fb14294def2dada41139bebc7fe889f5448b3b2d4816147189",
+      "src/error.rs": "f598ce3ab9dd7a8ecdc174da4cfea1f4e758893be17378b3f3209c6296c50a60",
+      "src/gojson.rs": "102b99cb2a04e26d0e71d993dd7f00419e72d7a0264bcfa9ff09cc9816b18963",
+      "src/ingest/files.rs": "b7da1af2805f297c1bb669916711194b2d5b8dd63be5bbd8e58d1caa1cd34853",
+      "src/ingest/files_tests.rs": "7ab80d62c48d5a323eb31677585ea73f85a0ee7a693db72e650729772fb1daa6",
+      "src/ingest/mod.rs": "cc2831c3fc017aa5d30dca332ecfc61a1434a60049f83b37768a8b608747c602",
+      "src/ingest/outbox_tests.rs": "db25e3682705ef27264b6a0a5607aa46794d27d81905510534aceeadf6763669",
+      "src/lib.rs": "365ef50fbecfd9b3d37ec1537a111a266b816e60473308ffde47000e8d7c018e",
+      "src/main.rs": "11259b68cef8a9cc909455ad90d64d6218b49968b68fb8f712e25c47533e4fec",
+      "src/metrics/mod.rs": "7a8c1a0af2a8307f0381ba41a5375d818103b27048bfaa6e86d270dc88d39d59",
+      "src/metrics/output.rs": "c8f323b3931ef3142f38059c125c795e8e14cbe79cad41b73cab7527aa5ce0fb",
+      "src/metrics/raw_json.rs": "bb534e827211540d9b4ab69300794794f3dc6a5e2237ca6c7c4b44c29fcce5c4",
+      "src/metrics/style.rs": "4c287e2c2944ae1883852d5da01502c3c44843c8f26cf64bf747732e1b5ad0e2",
+      "src/metrics/style_tests.rs": "90c726826a3e05bbb8fb1cb303620fb429b1147913140db3d93bf35f452d8bea",
+      "src/metrics/text_stream.rs": "755cb78f66e799cad462bc6401712caf560f51728083598b9932a2353ba5963b",
+      "src/observe.rs": "d7ea9b1017a5442b59318e4c7ee48ff2e8f8a0932172bc0d640ce38015e17c48",
+      "src/parser.rs": "55adb4edc58cd5e60491c7fc6360c39ad18b93d68f1627a1594df5d1537c402f",
+      "src/printable.rs": "a8b4519f95e3e9e647bc406aa2dac79f18ef1f9f99b3bcbda4f8e9f875c78e27",
+      "src/process.rs": "d4ea9d9235cd653db57cb9f93cfad7b7425e43c04fc34c1ca03fc1339f29365c",
+      "src/profile.rs": "c58c4976a210816412114b978dd8cf16bd345d62da7e68f94afd0077fb088fe4",
+      "src/render.rs": "9decf9d2bf12e8871f2386a8658cd8cf18a2a3390de0e3ef1c861a4067ce9023",
+      "src/saved_queries.rs": "fcc2553767036ce539b5820147808e8bd4d853c208005d0924090612107626a9",
+      "src/shoulder_state.rs": "f3277e6b131cafd877b3bf9f39ef3c7505dd380aaa0e626c0d7d2ff6da9cf819",
+      "src/spec.json": "97d01b11dee0a99b6a0fdc7f38e3f15d3b31e8ae0512af01d021023c2b183faf",
+      "src/spec.rs": "efd4e2a13eaa306708de01bec870bdbf2f05f04d8c81ce8c636ec8b3ca5fc83e",
+      "src/sql/mod.rs": "e425650cf921f2b2f78d1fb69d7e3fb7721ff576258ff8fed17e63e52a5cdfdf",
+      "src/sql/output.rs": "fa311f8352034142a45df9a1ed2b39b0b0939628ce426352fc0734445148ab6e",
+      "src/sql/rewrite.rs": "c96467f8ae2d8ccded78f068f2362fb6d95fa792b67552e93dd2f9ba67d0fa9d",
+      "src/sql/scan.rs": "50beaacf5531a6d1b4617550d7fc748dab48abae08b416cb9ea1251ef5459595",
+      "src/status.rs": "4352731b8b0473d1a84e407bf10f092d813d472dd70b0c9d04a42e33781996bd",
+      "src/tail/endian.rs": "f3b74665ac16be2fa24040b1b87103afdb03f813350219e8bc6766d18a9c2c82",
+      "src/tail/mod.rs": "7ecb73cedc32ca33fb416beb0fd29051382e733fbc4a30516f0e6d0dc2c454b2",
+      "src/tail/resources.rs": "8210efe689760620dd3536e2825a738acad28a51c5f17ac078933e3829d5473b",
+      "src/tail/session/tests.rs": "b269d28e890bbd78f18c5b90502a57786b4dcd4569c51bc579d3dce29c0e713a",
+      "src/tail/session.rs": "34043680e387936c33d72686bb6c4586d97472d868f08bb19b65e6d31138bcc4",
+      "src/tail/transport.rs": "49f8548ba1c05baef5bfeda7e14d3ba3f937f46e4f5fcdf17ef34a0d9b8a9352",
+      "src/tail/validation.rs": "65ebd8fab90a99937b343955affe8deca50c702aa37f72edef6f980f9425d3f6",
+      "src/tail/values.rs": "e02d7e63aec6c9cf6f53f31a927a2cda5855a648adf3e7e05735d09d10354fd5",
+      "src/time_compat.rs": "12b9a51c2f4292549cb5245fa1d06279af363115800b90ce47577b6a0f7dc51f",
+      "src/transport.rs": "33ec688619f1a643ecc11151ce03e296c6218ad120ab85cb883ce43cc4b3b822",
+      "src/tui/admin.rs": "ba116aa034d9cc43134af3c30f18defb176bb2f6c9c878b86f356e2b0f7095ed",
+      "src/tui/clipboard.rs": "b84b24af18add134446713ea55cbbd13ce41c61c16ba408732ff3a3bc211ca23",
+      "src/tui/device.rs": "2cd61ba777ea8e3d46fcc586484c2dac09f2f66e8d8b2aae731e0f65372508b6",
+      "src/tui/editor.rs": "43dd1ea2279e0e0f06f05f253d3975c1c321f94e6146e6bdf1e015543908db49",
+      "src/tui/input.rs": "f2f01eafa53f4e8c111d703b8bc6871ac5f86e8caef8dbd29c4094ce57f54cca",
+      "src/tui/json.rs": "bb07ca5f7fa8bb4e93ca550c126d156d4685f245b71305596b6fad92e93e8ef7",
+      "src/tui/login.rs": "8c5b2198ad4081e1f7ad9edd0bea456abac32325c7a55267944a3705b34383fd",
+      "src/tui/mod.rs": "e122d6f35a24b0152c08a2d526dc32f5dfae146af5492476e26a9a757c82db6e",
+      "src/tui/profile.rs": "ebde62e754490dfa759465293af2e253992ff84b7cbb6e432435025452c9e1ec",
+      "src/tui/promql.rs": "7216afb55625d3447ced2df181e43149adfc55193f0489e5f172d2ee8270eeeb",
+      "src/tui/promql_service.rs": "9cdc44ecfa9e803ebd7be1f1f98387a5ce9bb35f59b8f027c267c3b0f33b21d7",
+      "src/tui/saved.rs": "d25a3358cb60a78977d0ee9bddc239c7b83246fa8cf66d46afccf288ff032bf7",
+      "src/tui/saved_fuzzy_unicode.rs": "3a88503ae1955216f7f2da881d3a1d41d7e112dcd9fa18e0aeb8163155e2e634",
+      "src/tui/sql.rs": "d50e44ec14b665416e369dd5c964c28a3ccac6d46fba63bc53e5b9b31ea7dcb9",
+      "src/tui/sql_service.rs": "60144268e23a8bf2d630ca4385131a69de8a3d8b8696817f9e17a676364e77d2",
+      "src/tui/style.rs": "f4bf856201fde8fb1883707d59f3481ca143e1297609c5c92a706dc583d083e5",
+      "src/tui/terminal.rs": "441ae7e1b1ecf301d2649e17241d06335bad40a2d55ba5d3869ae73077c5cfab",
+      "src/tui/unicode.rs": "7f419f5d7ab6feee163ccc3f5b75a130c5a5c95e5a877d086cdda45eaf19f8f0",
+      "src/url_reference.rs": "b228c8885c77f967c31153aefd36e1800e2076d38030e3c90a21f206be9b9df2",
+      "Cargo.toml": "41d810975083cd91ed933d9538c4e345f47d6e4ff3dd9cde8d0510fec70f34bc",
+      "Cargo.lock": "5244517b130a36223c8d84af03d66e381d26aad873efa16f450961e57b2013c9",
+      "build.rs": "6c26af8912af083220c0e7233ca1abbf33848020a0893c3e0908d0d721ccf8e3"
+    }
+  },
+  "performance": {
+    "dark": {
+      "report_sha256": "673cd652e8043bf504fe228ab6775ae58dd7c55519b4834d8290cd616c6d154f",
+      "status": "completed",
+      "binaries": {
+        "baseline": {
+          "path": "/home/user/pb-pr12/artifacts/pb-main",
+          "sha256": "cf81e96f43a64f1ce9f84d58da5ad45d62a53cd0b49a61963bd9e5199deb75a1"
+        },
+        "candidate": {
+          "path": "/home/user/pb-pr12/artifacts/pb-candidate",
+          "sha256": "f48bd341aac457f3991c6db80a132a7e0c09cd52cf45d476b9c56d7b4403d36b"
+        }
+      },
+      "options": {
+        "baseline": "artifacts/pb-main",
+        "candidate": "artifacts/pb-candidate",
+        "out": "/home/user/pb-pr12/evidence/dense-dark",
+        "case": [],
+        "repetitions": 7,
+        "warmups": 1,
+        "theme": "dark",
+        "profiler": null,
+        "corpus": false
+      },
+      "case_definitions": [
+        {
+          "name": "promql-dense-1000-120x40-dark-resource-attribution",
+          "canonical_json_sha256": "942a088794fffc03f68a6f413c1e2f3188839cdcdfbd8b421ab957318e36769a"
+        }
+      ],
+      "runs": [
+        {
+          "case": "promql-dense-1000-120x40-dark-resource-attribution",
+          "role": "baseline",
+          "round": 0,
+          "warmup": true,
+          "issues": [],
+          "cpu_ms": 1532.2720000000002,
+          "peak_rss_bytes": 195633152,
+          "wall_ms": 3495.212942,
+          "stdout_bytes": 156411,
+          "frames": 6,
+          "capture": "/home/user/pb-pr12/evidence/dense-dark/promql-dense-1000-120x40-dark-resource-attribution/00-baseline"
+        },
+        {
+          "case": "promql-dense-1000-120x40-dark-resource-attribution",
+          "role": "candidate",
+          "round": 0,
+          "warmup": true,
+          "issues": [],
+          "cpu_ms": 560.31,
+          "peak_rss_bytes": 72384512,
+          "wall_ms": 2794.803347,
+          "stdout_bytes": 156411,
+          "frames": 6,
+          "capture": "/home/user/pb-pr12/evidence/dense-dark/promql-dense-1000-120x40-dark-resource-attribution/00-candidate"
+        },
+        {
+          "case": "promql-dense-1000-120x40-dark-resource-attribution",
+          "role": "baseline",
+          "round": 1,
+          "warmup": false,
+          "issues": [],
+          "cpu_ms": 1510.968,
+          "peak_rss_bytes": 195506176,
+          "wall_ms": 3488.277504,
+          "stdout_bytes": 156411,
+          "frames": 6,
+          "capture": "/home/user/pb-pr12/evidence/dense-dark/promql-dense-1000-120x40-dark-resource-attribution/01-baseline"
+        },
+        {
+          "case": "promql-dense-1000-120x40-dark-resource-attribution",
+          "role": "candidate",
+          "round": 1,
+          "warmup": false,
+          "issues": [],
+          "cpu_ms": 564.3870000000001,
+          "peak_rss_bytes": 72204288,
+          "wall_ms": 2794.454869,
+          "stdout_bytes": 156411,
+          "frames": 6,
+          "capture": "/home/user/pb-pr12/evidence/dense-dark/promql-dense-1000-120x40-dark-resource-attribution/01-candidate"
+        },
+        {
+          "case": "promql-dense-1000-120x40-dark-resource-attribution",
+          "role": "candidate",
+          "round": 2,
+          "warmup": false,
+          "issues": [],
+          "cpu_ms": 621.305,
+          "peak_rss_bytes": 72245248,
+          "wall_ms": 3001.580521,
+          "stdout_bytes": 156411,
+          "frames": 6,
+          "capture": "/home/user/pb-pr12/evidence/dense-dark/promql-dense-1000-120x40-dark-resource-attribution/02-candidate"
+        },
+        {
+          "case": "promql-dense-1000-120x40-dark-resource-attribution",
+          "role": "baseline",
+          "round": 2,
+          "warmup": false,
+          "issues": [],
+          "cpu_ms": 2022.419,
+          "peak_rss_bytes": 195506176,
+          "wall_ms": 4201.083232,
+          "stdout_bytes": 156411,
+          "frames": 6,
+          "capture": "/home/user/pb-pr12/evidence/dense-dark/promql-dense-1000-120x40-dark-resource-attribution/02-baseline"
+        },
+        {
+          "case": "promql-dense-1000-120x40-dark-resource-attribution",
+          "role": "candidate",
+          "round": 3,
+          "warmup": false,
+          "issues": [],
+          "cpu_ms": 618.278,
+          "peak_rss_bytes": 72503296,
+          "wall_ms": 3082.209281,
+          "stdout_bytes": 156411,
+          "frames": 6,
+          "capture": "/home/user/pb-pr12/evidence/dense-dark/promql-dense-1000-120x40-dark-resource-attribution/03-candidate"
+        },
+        {
+          "case": "promql-dense-1000-120x40-dark-resource-attribution",
+          "role": "baseline",
+          "round": 3,
+          "warmup": false,
+          "issues": [],
+          "cpu_ms": 1627.4589999999998,
+          "peak_rss_bytes": 195772416,
+          "wall_ms": 3743.088207,
+          "stdout_bytes": 156411,
+          "frames": 6,
+          "capture": "/home/user/pb-pr12/evidence/dense-dark/promql-dense-1000-120x40-dark-resource-attribution/03-baseline"
+        },
+        {
+          "case": "promql-dense-1000-120x40-dark-resource-attribution",
+          "role": "baseline",
+          "round": 4,
+          "warmup": false,
+          "issues": [],
+          "cpu_ms": 1552.2830000000001,
+          "peak_rss_bytes": 195637248,
+          "wall_ms": 3521.174998,
+          "stdout_bytes": 156411,
+          "frames": 6,
+          "capture": "/home/user/pb-pr12/evidence/dense-dark/promql-dense-1000-120x40-dark-resource-attribution/04-baseline"
+        },
+        {
+          "case": "promql-dense-1000-120x40-dark-resource-attribution",
+          "role": "candidate",
+          "round": 4,
+          "warmup": false,
+          "issues": [],
+          "cpu_ms": 574.658,
+          "peak_rss_bytes": 72290304,
+          "wall_ms": 2807.61451,
+          "stdout_bytes": 156411,
+          "frames": 6,
+          "capture": "/home/user/pb-pr12/evidence/dense-dark/promql-dense-1000-120x40-dark-resource-attribution/04-candidate"
+        },
+        {
+          "case": "promql-dense-1000-120x40-dark-resource-attribution",
+          "role": "candidate",
+          "round": 5,
+          "warmup": false,
+          "issues": [],
+          "cpu_ms": 546.574,
+          "peak_rss_bytes": 72638464,
+          "wall_ms": 2717.805273,
+          "stdout_bytes": 156411,
+          "frames": 6,
+          "capture": "/home/user/pb-pr12/evidence/dense-dark/promql-dense-1000-120x40-dark-resource-attribution/05-candidate"
+        },
+        {
+          "case": "promql-dense-1000-120x40-dark-resource-attribution",
+          "role": "baseline",
+          "round": 5,
+          "warmup": false,
+          "issues": [],
+          "cpu_ms": 1566.8609999999999,
+          "peak_rss_bytes": 195764224,
+          "wall_ms": 3629.352,
+          "stdout_bytes": 156411,
+          "frames": 6,
+          "capture": "/home/user/pb-pr12/evidence/dense-dark/promql-dense-1000-120x40-dark-resource-attribution/05-baseline"
+        },
+        {
+          "case": "promql-dense-1000-120x40-dark-resource-attribution",
+          "role": "candidate",
+          "round": 6,
+          "warmup": false,
+          "issues": [],
+          "cpu_ms": 582.478,
+          "peak_rss_bytes": 72511488,
+          "wall_ms": 2826.062507,
+          "stdout_bytes": 156411,
+          "frames": 6,
+          "capture": "/home/user/pb-pr12/evidence/dense-dark/promql-dense-1000-120x40-dark-resource-attribution/06-candidate"
+        },
+        {
+          "case": "promql-dense-1000-120x40-dark-resource-attribution",
+          "role": "baseline",
+          "round": 6,
+          "warmup": false,
+          "issues": [],
+          "cpu_ms": 1557.152,
+          "peak_rss_bytes": 195624960,
+          "wall_ms": 3509.414967,
+          "stdout_bytes": 156411,
+          "frames": 6,
+          "capture": "/home/user/pb-pr12/evidence/dense-dark/promql-dense-1000-120x40-dark-resource-attribution/06-baseline"
+        },
+        {
+          "case": "promql-dense-1000-120x40-dark-resource-attribution",
+          "role": "candidate",
+          "round": 7,
+          "warmup": false,
+          "issues": [],
+          "cpu_ms": 589.0269999999999,
+          "peak_rss_bytes": 72388608,
+          "wall_ms": 2981.742279,
+          "stdout_bytes": 156411,
+          "frames": 6,
+          "capture": "/home/user/pb-pr12/evidence/dense-dark/promql-dense-1000-120x40-dark-resource-attribution/07-candidate"
+        },
+        {
+          "case": "promql-dense-1000-120x40-dark-resource-attribution",
+          "role": "baseline",
+          "round": 7,
+          "warmup": false,
+          "issues": [],
+          "cpu_ms": 1799.627,
+          "peak_rss_bytes": 195633152,
+          "wall_ms": 3792.468987,
+          "stdout_bytes": 156411,
+          "frames": 6,
+          "capture": "/home/user/pb-pr12/evidence/dense-dark/promql-dense-1000-120x40-dark-resource-attribution/07-baseline"
+        }
+      ],
+      "summary": [
+        {
+          "case": "promql-dense-1000-120x40-dark-resource-attribution",
+          "measured_pairs": 7,
+          "cpu_ms": {
+            "baseline": 1566.8609999999999,
+            "candidate": 582.478,
+            "median_paired_ratio": 0.3702018253114928,
+            "reduction_percent": 62.97981746885072,
+            "paired_ratio_bootstrap_95": [
+              0.3273050471014271,
+              0.374066244014714
+            ],
+            "halving_target_confirmed": true
+          },
+          "peak_rss_bytes": {
+            "baseline": 195633152,
+            "candidate": 72388608,
+            "median_paired_ratio": 0.3700221933754868,
+            "reduction_percent": 62.99778066245132,
+            "paired_ratio_bootstrap_95": [
+              0.36951196532881103,
+              0.37066582914572865
+            ],
+            "halving_target_confirmed": true
+          },
+          "wall_ms": {
+            "baseline": 3629.352,
+            "candidate": 2826.062507,
+            "median_paired_ratio": 0.7973515975760089,
+            "reduction_percent": 20.264840242399107,
+            "paired_ratio_bootstrap_95": [
+              0.7488403640649901,
+              0.8052802343337131
+            ],
+            "halving_target_confirmed": false
+          }
+        }
+      ],
+      "comparisons": [
+        {
+          "case": "promql-dense-1000-120x40-dark-resource-attribution",
+          "round": 0,
+          "issues": []
+        },
+        {
+          "case": "promql-dense-1000-120x40-dark-resource-attribution",
+          "round": 1,
+          "issues": []
+        },
+        {
+          "case": "promql-dense-1000-120x40-dark-resource-attribution",
+          "round": 2,
+          "issues": []
+        },
+        {
+          "case": "promql-dense-1000-120x40-dark-resource-attribution",
+          "round": 3,
+          "issues": []
+        },
+        {
+          "case": "promql-dense-1000-120x40-dark-resource-attribution",
+          "round": 4,
+          "issues": []
+        },
+        {
+          "case": "promql-dense-1000-120x40-dark-resource-attribution",
+          "round": 5,
+          "issues": []
+        },
+        {
+          "case": "promql-dense-1000-120x40-dark-resource-attribution",
+          "round": 6,
+          "issues": []
+        },
+        {
+          "case": "promql-dense-1000-120x40-dark-resource-attribution",
+          "round": 7,
+          "issues": []
+        }
+      ]
+    },
+    "light": {
+      "report_sha256": "c1738f6f7ec0be82b191592d9b9a23aba34e6bbf1a6a9cf98d3806f3c756e8b5",
+      "status": "completed",
+      "binaries": {
+        "baseline": {
+          "path": "/home/user/pb-pr12/artifacts/pb-main",
+          "sha256": "cf81e96f43a64f1ce9f84d58da5ad45d62a53cd0b49a61963bd9e5199deb75a1"
+        },
+        "candidate": {
+          "path": "/home/user/pb-pr12/artifacts/pb-candidate",
+          "sha256": "f48bd341aac457f3991c6db80a132a7e0c09cd52cf45d476b9c56d7b4403d36b"
+        }
+      },
+      "options": {
+        "baseline": "artifacts/pb-main",
+        "candidate": "artifacts/pb-candidate",
+        "out": "/home/user/pb-pr12/evidence/dense-light",
+        "case": [],
+        "repetitions": 7,
+        "warmups": 1,
+        "theme": "light",
+        "profiler": null,
+        "corpus": false
+      },
+      "case_definitions": [
+        {
+          "name": "promql-dense-1000-120x40-light-resource-attribution",
+          "canonical_json_sha256": "d8e04b0b5270d479912ed655967e2d34bfeb3b119426df14b1cff98d0914f047"
+        }
+      ],
+      "runs": [
+        {
+          "case": "promql-dense-1000-120x40-light-resource-attribution",
+          "role": "baseline",
+          "round": 0,
+          "warmup": true,
+          "issues": [],
+          "cpu_ms": 2080.779,
+          "peak_rss_bytes": 195637248,
+          "wall_ms": 4136.029261,
+          "stdout_bytes": 155783,
+          "frames": 6,
+          "capture": "/home/user/pb-pr12/evidence/dense-light/promql-dense-1000-120x40-light-resource-attribution/00-baseline"
+        },
+        {
+          "case": "promql-dense-1000-120x40-light-resource-attribution",
+          "role": "candidate",
+          "round": 0,
+          "warmup": true,
+          "issues": [],
+          "cpu_ms": 721.941,
+          "peak_rss_bytes": 72511488,
+          "wall_ms": 3239.879288,
+          "stdout_bytes": 155783,
+          "frames": 6,
+          "capture": "/home/user/pb-pr12/evidence/dense-light/promql-dense-1000-120x40-light-resource-attribution/00-candidate"
+        },
+        {
+          "case": "promql-dense-1000-120x40-light-resource-attribution",
+          "role": "baseline",
+          "round": 1,
+          "warmup": false,
+          "issues": [],
+          "cpu_ms": 1640.165,
+          "peak_rss_bytes": 195506176,
+          "wall_ms": 3608.860663,
+          "stdout_bytes": 155783,
+          "frames": 6,
+          "capture": "/home/user/pb-pr12/evidence/dense-light/promql-dense-1000-120x40-light-resource-attribution/01-baseline"
+        },
+        {
+          "case": "promql-dense-1000-120x40-light-resource-attribution",
+          "role": "candidate",
+          "round": 1,
+          "warmup": false,
+          "issues": [],
+          "cpu_ms": 582.3040000000001,
+          "peak_rss_bytes": 72503296,
+          "wall_ms": 2853.583595,
+          "stdout_bytes": 155783,
+          "frames": 6,
+          "capture": "/home/user/pb-pr12/evidence/dense-light/promql-dense-1000-120x40-light-resource-attribution/01-candidate"
+        },
+        {
+          "case": "promql-dense-1000-120x40-light-resource-attribution",
+          "role": "candidate",
+          "round": 2,
+          "warmup": false,
+          "issues": [],
+          "cpu_ms": 716.47,
+          "peak_rss_bytes": 72372224,
+          "wall_ms": 3256.002642,
+          "stdout_bytes": 155783,
+          "frames": 6,
+          "capture": "/home/user/pb-pr12/evidence/dense-light/promql-dense-1000-120x40-light-resource-attribution/02-candidate"
+        },
+        {
+          "case": "promql-dense-1000-120x40-light-resource-attribution",
+          "role": "baseline",
+          "round": 2,
+          "warmup": false,
+          "issues": [],
+          "cpu_ms": 1946.638,
+          "peak_rss_bytes": 195772416,
+          "wall_ms": 4087.141944,
+          "stdout_bytes": 155783,
+          "frames": 6,
+          "capture": "/home/user/pb-pr12/evidence/dense-light/promql-dense-1000-120x40-light-resource-attribution/02-baseline"
+        },
+        {
+          "case": "promql-dense-1000-120x40-light-resource-attribution",
+          "role": "candidate",
+          "round": 3,
+          "warmup": false,
+          "issues": [],
+          "cpu_ms": 570.402,
+          "peak_rss_bytes": 72372224,
+          "wall_ms": 2849.633985,
+          "stdout_bytes": 155783,
+          "frames": 6,
+          "capture": "/home/user/pb-pr12/evidence/dense-light/promql-dense-1000-120x40-light-resource-attribution/03-candidate"
+        },
+        {
+          "case": "promql-dense-1000-120x40-light-resource-attribution",
+          "role": "baseline",
+          "round": 3,
+          "warmup": false,
+          "issues": [],
+          "cpu_ms": 1680.1840000000002,
+          "peak_rss_bytes": 195379200,
+          "wall_ms": 3665.539263,
+          "stdout_bytes": 155783,
+          "frames": 6,
+          "capture": "/home/user/pb-pr12/evidence/dense-light/promql-dense-1000-120x40-light-resource-attribution/03-baseline"
+        },
+        {
+          "case": "promql-dense-1000-120x40-light-resource-attribution",
+          "role": "baseline",
+          "round": 4,
+          "warmup": false,
+          "issues": [],
+          "cpu_ms": 1828.822,
+          "peak_rss_bytes": 195391488,
+          "wall_ms": 3861.537574,
+          "stdout_bytes": 155783,
+          "frames": 6,
+          "capture": "/home/user/pb-pr12/evidence/dense-light/promql-dense-1000-120x40-light-resource-attribution/04-baseline"
+        },
+        {
+          "case": "promql-dense-1000-120x40-light-resource-attribution",
+          "role": "candidate",
+          "round": 4,
+          "warmup": false,
+          "issues": [],
+          "cpu_ms": 637.725,
+          "peak_rss_bytes": 72388608,
+          "wall_ms": 3044.432658,
+          "stdout_bytes": 155783,
+          "frames": 6,
+          "capture": "/home/user/pb-pr12/evidence/dense-light/promql-dense-1000-120x40-light-resource-attribution/04-candidate"
+        },
+        {
+          "case": "promql-dense-1000-120x40-light-resource-attribution",
+          "role": "candidate",
+          "round": 5,
+          "warmup": false,
+          "issues": [],
+          "cpu_ms": 696.57,
+          "peak_rss_bytes": 72409088,
+          "wall_ms": 3243.157278,
+          "stdout_bytes": 155783,
+          "frames": 6,
+          "capture": "/home/user/pb-pr12/evidence/dense-light/promql-dense-1000-120x40-light-resource-attribution/05-candidate"
+        },
+        {
+          "case": "promql-dense-1000-120x40-light-resource-attribution",
+          "role": "baseline",
+          "round": 5,
+          "warmup": false,
+          "issues": [],
+          "cpu_ms": 2028.2259999999999,
+          "peak_rss_bytes": 195375104,
+          "wall_ms": 4297.362222,
+          "stdout_bytes": 155783,
+          "frames": 6,
+          "capture": "/home/user/pb-pr12/evidence/dense-light/promql-dense-1000-120x40-light-resource-attribution/05-baseline"
+        },
+        {
+          "case": "promql-dense-1000-120x40-light-resource-attribution",
+          "role": "candidate",
+          "round": 6,
+          "warmup": false,
+          "issues": [],
+          "cpu_ms": 630.9340000000001,
+          "peak_rss_bytes": 72331264,
+          "wall_ms": 2926.458041,
+          "stdout_bytes": 155783,
+          "frames": 6,
+          "capture": "/home/user/pb-pr12/evidence/dense-light/promql-dense-1000-120x40-light-resource-attribution/06-candidate"
+        },
+        {
+          "case": "promql-dense-1000-120x40-light-resource-attribution",
+          "role": "baseline",
+          "round": 6,
+          "warmup": false,
+          "issues": [],
+          "cpu_ms": 2002.4180000000001,
+          "peak_rss_bytes": 195383296,
+          "wall_ms": 4223.639996,
+          "stdout_bytes": 155783,
+          "frames": 6,
+          "capture": "/home/user/pb-pr12/evidence/dense-light/promql-dense-1000-120x40-light-resource-attribution/06-baseline"
+        },
+        {
+          "case": "promql-dense-1000-120x40-light-resource-attribution",
+          "role": "candidate",
+          "round": 7,
+          "warmup": false,
+          "issues": [],
+          "cpu_ms": 638.246,
+          "peak_rss_bytes": 72499200,
+          "wall_ms": 3155.152979,
+          "stdout_bytes": 155783,
+          "frames": 6,
+          "capture": "/home/user/pb-pr12/evidence/dense-light/promql-dense-1000-120x40-light-resource-attribution/07-candidate"
+        },
+        {
+          "case": "promql-dense-1000-120x40-light-resource-attribution",
+          "role": "baseline",
+          "round": 7,
+          "warmup": false,
+          "issues": [],
+          "cpu_ms": 1822.138,
+          "peak_rss_bytes": 195772416,
+          "wall_ms": 3883.54056,
+          "stdout_bytes": 155783,
+          "frames": 6,
+          "capture": "/home/user/pb-pr12/evidence/dense-light/promql-dense-1000-120x40-light-resource-attribution/07-baseline"
+        }
+      ],
+      "summary": [
+        {
+          "case": "promql-dense-1000-120x40-light-resource-attribution",
+          "measured_pairs": 7,
+          "cpu_ms": {
+            "baseline": 1828.822,
+            "candidate": 637.725,
+            "median_paired_ratio": 0.3487080754715331,
+            "reduction_percent": 65.1291924528467,
+            "paired_ratio_bootstrap_95": [
+              0.3394878180008856,
+              0.3550276953843059
+            ],
+            "halving_target_confirmed": true
+          },
+          "peak_rss_bytes": {
+            "baseline": 195391488,
+            "candidate": 72388608,
+            "median_paired_ratio": 0.37041928721174006,
+            "reduction_percent": 62.958071278826,
+            "paired_ratio_bootstrap_95": [
+              0.37020188256011405,
+              0.37061573617895555
+            ],
+            "halving_target_confirmed": true
+          },
+          "wall_ms": {
+            "baseline": 3883.54056,
+            "candidate": 3044.432658,
+            "median_paired_ratio": 0.7883990767041544,
+            "reduction_percent": 21.160092329584558,
+            "paired_ratio_bootstrap_95": [
+              0.7546855746524967,
+              0.796645354287211
+            ],
+            "halving_target_confirmed": false
+          }
+        }
+      ],
+      "comparisons": [
+        {
+          "case": "promql-dense-1000-120x40-light-resource-attribution",
+          "round": 0,
+          "issues": []
+        },
+        {
+          "case": "promql-dense-1000-120x40-light-resource-attribution",
+          "round": 1,
+          "issues": []
+        },
+        {
+          "case": "promql-dense-1000-120x40-light-resource-attribution",
+          "round": 2,
+          "issues": []
+        },
+        {
+          "case": "promql-dense-1000-120x40-light-resource-attribution",
+          "round": 3,
+          "issues": []
+        },
+        {
+          "case": "promql-dense-1000-120x40-light-resource-attribution",
+          "round": 4,
+          "issues": []
+        },
+        {
+          "case": "promql-dense-1000-120x40-light-resource-attribution",
+          "round": 5,
+          "issues": []
+        },
+        {
+          "case": "promql-dense-1000-120x40-light-resource-attribution",
+          "round": 6,
+          "issues": []
+        },
+        {
+          "case": "promql-dense-1000-120x40-light-resource-attribution",
+          "round": 7,
+          "issues": []
+        }
+      ]
+    }
+  },
+  "functional": {
+    "report_sha256": "ce005a082a4ab99191cda6c50b299e7d49a5dc0b46d94d687655fe3a5e24bb8c",
+    "status": "completed",
+    "cases": 21,
+    "native_roles": 42,
+    "comparisons": [
+      {
+        "case": "p7-promql-empty-quit-dark",
+        "round": 0,
+        "issues": []
+      },
+      {
+        "case": "p7-promql-signal-sigint-dark",
+        "round": 0,
+        "issues": []
+      },
+      {
+        "case": "p7-promql-signal-sigterm-dark",
+        "round": 0,
+        "issues": []
+      },
+      {
+        "case": "p7-promql-signal-sigquit-dark",
+        "round": 0,
+        "issues": []
+      },
+      {
+        "case": "p7-promql-resize-dark",
+        "round": 0,
+        "issues": []
+      },
+      {
+        "case": "p7-promql-promoted-short-dark",
+        "round": 0,
+        "issues": []
+      },
+      {
+        "case": "p7-promql-promoted-compact-json-dark",
+        "round": 0,
+        "issues": []
+      },
+      {
+        "case": "p7-promql-promoted-long-true-dark",
+        "round": 0,
+        "issues": []
+      },
+      {
+        "case": "p7-promql-builder-dark",
+        "round": 0,
+        "issues": []
+      },
+      {
+        "case": "p7-promql-table-chart-unwrap-dark",
+        "round": 0,
+        "issues": []
+      },
+      {
+        "case": "p7-promql-result-empty-dark",
+        "round": 0,
+        "issues": []
+      },
+      {
+        "case": "p7-promql-result-error-dark",
+        "round": 0,
+        "issues": []
+      },
+      {
+        "case": "p7-promql-delayed-result-unguarded-dark",
+        "round": 0,
+        "issues": []
+      },
+      {
+        "case": "p7-promql-hang-double-sigterm-dark",
+        "round": 0,
+        "issues": []
+      },
+      {
+        "case": "p7-promql-wide-legend-view-panic-dark",
+        "round": 0,
+        "issues": []
+      },
+      {
+        "case": "p7-promql-g4-z-dark",
+        "round": 0,
+        "issues": []
+      },
+      {
+        "case": "p7-promql-g4-fixed-zone-dark",
+        "round": 0,
+        "issues": []
+      },
+      {
+        "case": "p7-promql-g10-equal-time-merge-dark",
+        "round": 0,
+        "issues": []
+      },
+      {
+        "case": "p7-promql-g7-infinite-plot-amd64-dark",
+        "round": 0,
+        "issues": []
+      },
+      {
+        "case": "p7-promql-g7-huge-timestamp-amd64-dark",
+        "round": 0,
+        "issues": []
+      },
+      {
+        "case": "p7-promql-g3-duplicate-result-merge-dark",
+        "round": 0,
+        "issues": []
+      }
+    ]
+  },
+  "effects": {
+    "status": "completed",
+    "runner_sha256": "ab8a3ad9f9ae45179f5a5eb08354e590c25484f73b4138d29c78532a7eb3a409",
+    "supervisor_sha256": "ecff4ef285b4f693882935565367fadcbdab43dab9c8cbac7f363655888c4cf2",
+    "binary": {
+      "path": "/home/user/pb-pr12/artifacts/pb-candidate",
+      "sha256": "f48bd341aac457f3991c6db80a132a7e0c09cd52cf45d476b9c56d7b4403d36b"
+    },
+    "reference": null,
+    "kind": "existing independent process/PTY effects",
+    "passed": 51,
+    "total": 51
+  },
+  "tls": [
+    {
+      "path": "evidence/pb-candidate-Haswell-noTSX-tls/report.json",
+      "report_sha256": "c58d1686a88d981dc1e7e52ae56eb63a9d0305637e600824b4756dce5420029c",
+      "capture_runner_sha256": "ab8a3ad9f9ae45179f5a5eb08354e590c25484f73b4138d29c78532a7eb3a409",
+      "binary": {
+        "path": "/home/user/pb-pr12/evidence/pb-candidate-wrappers/pb-Haswell-noTSX",
+        "sha256": "4c5062b15a868d352117f8c25f44850bbe2bc8d3f30ca5c2ab55766d6e88a0a1",
+        "backing_binary": {
+          "path": "/home/user/pb-pr12/artifacts/pb-candidate",
+          "sha256": "f48bd341aac457f3991c6db80a132a7e0c09cd52cf45d476b9c56d7b4403d36b"
+        },
+        "emulator": {
+          "path": "/usr/bin/qemu-x86_64",
+          "sha256": "90e3ce3fffcc78115b792bc59f5590d9a86eaa83abe541252613a75bfce5f833"
+        },
+        "cpu_model": "Haswell-noTSX",
+        "manifest": {
+          "path": "/home/user/pb-pr12/evidence/pb-candidate-wrappers/pb-Haswell-noTSX.provenance.json",
+          "sha256": "26af369da4ea3d83112756ad866d535601df76b5e97b9dd34896488c8cfe837f"
+        }
+      },
+      "cases": [
+        {
+          "command": "sql",
+          "tls": "TLSv1.2",
+          "returncode": 0,
+          "stdout": "[\n  {\n    \"value\": 1\n  }\n]\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/api/v1/query",
+              "tls": "TLSv1.2",
+              "cipher": [
+                "ECDHE-RSA-AES128-GCM-SHA256",
+                "TLSv1.2",
+                128
+              ],
+              "method": "POST",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "content-type": "application/json",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "content-length": "109",
+                "host": "localhost:34993"
+              },
+              "body": "{\"query\":\"SELECT * FROM fixture LIMIT 1\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "promql",
+          "tls": "TLSv1.2",
+          "returncode": 0,
+          "stdout": "{\n  \"data\": {\n    \"result\": [\n      {\n        \"metric\": {\n          \"__name__\": \"up\"\n        },\n        \"values\": [\n          [\n            1704067200,\n            \"1\"\n          ]\n        ]\n      }\n    ],\n    \"resultType\": \"matrix\"\n  },\n  \"status\": \"success\"\n}\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/prometheus/api/v1/query_range?end=2024-01-01T00%3A01%3A00Z&query=up&start=2024-01-01T00%3A00%3A00Z&step=15s&stream=metrics",
+              "tls": "TLSv1.2",
+              "cipher": [
+                "ECDHE-RSA-AES128-GCM-SHA256",
+                "TLSv1.2",
+                128
+              ],
+              "method": "GET",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "host": "localhost:34993"
+              },
+              "body": "",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "sql",
+          "tls": "TLSv1.3",
+          "returncode": 0,
+          "stdout": "[\n  {\n    \"value\": 1\n  }\n]\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/api/v1/query",
+              "tls": "TLSv1.3",
+              "cipher": [
+                "TLS_AES_256_GCM_SHA384",
+                "TLSv1.3",
+                256
+              ],
+              "method": "POST",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "content-type": "application/json",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "content-length": "109",
+                "host": "localhost:39017"
+              },
+              "body": "{\"query\":\"SELECT * FROM fixture LIMIT 1\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "promql",
+          "tls": "TLSv1.3",
+          "returncode": 0,
+          "stdout": "{\n  \"data\": {\n    \"result\": [\n      {\n        \"metric\": {\n          \"__name__\": \"up\"\n        },\n        \"values\": [\n          [\n            1704067200,\n            \"1\"\n          ]\n        ]\n      }\n    ],\n    \"resultType\": \"matrix\"\n  },\n  \"status\": \"success\"\n}\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/prometheus/api/v1/query_range?end=2024-01-01T00%3A01%3A00Z&query=up&start=2024-01-01T00%3A00%3A00Z&step=15s&stream=metrics",
+              "tls": "TLSv1.3",
+              "cipher": [
+                "TLS_AES_256_GCM_SHA384",
+                "TLSv1.3",
+                256
+              ],
+              "method": "GET",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "host": "localhost:39017"
+              },
+              "body": "",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        }
+      ]
+    },
+    {
+      "path": "evidence/pb-candidate-Nehalem-tls/report.json",
+      "report_sha256": "9562345cfeaad57c431f59fd7803b01142cc71691a93abbc619617594d8e0e48",
+      "capture_runner_sha256": "ab8a3ad9f9ae45179f5a5eb08354e590c25484f73b4138d29c78532a7eb3a409",
+      "binary": {
+        "path": "/home/user/pb-pr12/evidence/pb-candidate-wrappers/pb-Nehalem",
+        "sha256": "b2854c63960485963072c8f0f3af6d8fda10d28f51f0f4734d6d5da94bcb0119",
+        "backing_binary": {
+          "path": "/home/user/pb-pr12/artifacts/pb-candidate",
+          "sha256": "f48bd341aac457f3991c6db80a132a7e0c09cd52cf45d476b9c56d7b4403d36b"
+        },
+        "emulator": {
+          "path": "/usr/bin/qemu-x86_64",
+          "sha256": "90e3ce3fffcc78115b792bc59f5590d9a86eaa83abe541252613a75bfce5f833"
+        },
+        "cpu_model": "Nehalem",
+        "manifest": {
+          "path": "/home/user/pb-pr12/evidence/pb-candidate-wrappers/pb-Nehalem.provenance.json",
+          "sha256": "e325c0ec2174e026bf903efdeeae7652b230e7b34ff89cd16b7b7919a7c93469"
+        }
+      },
+      "cases": [
+        {
+          "command": "sql",
+          "tls": "TLSv1.2",
+          "returncode": 0,
+          "stdout": "[\n  {\n    \"value\": 1\n  }\n]\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/api/v1/query",
+              "tls": "TLSv1.2",
+              "cipher": [
+                "ECDHE-RSA-AES128-GCM-SHA256",
+                "TLSv1.2",
+                128
+              ],
+              "method": "POST",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "content-type": "application/json",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "content-length": "109",
+                "host": "localhost:46395"
+              },
+              "body": "{\"query\":\"SELECT * FROM fixture LIMIT 1\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "promql",
+          "tls": "TLSv1.2",
+          "returncode": 0,
+          "stdout": "{\n  \"data\": {\n    \"result\": [\n      {\n        \"metric\": {\n          \"__name__\": \"up\"\n        },\n        \"values\": [\n          [\n            1704067200,\n            \"1\"\n          ]\n        ]\n      }\n    ],\n    \"resultType\": \"matrix\"\n  },\n  \"status\": \"success\"\n}\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/prometheus/api/v1/query_range?end=2024-01-01T00%3A01%3A00Z&query=up&start=2024-01-01T00%3A00%3A00Z&step=15s&stream=metrics",
+              "tls": "TLSv1.2",
+              "cipher": [
+                "ECDHE-RSA-AES128-GCM-SHA256",
+                "TLSv1.2",
+                128
+              ],
+              "method": "GET",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "host": "localhost:46395"
+              },
+              "body": "",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "sql",
+          "tls": "TLSv1.3",
+          "returncode": 0,
+          "stdout": "[\n  {\n    \"value\": 1\n  }\n]\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/api/v1/query",
+              "tls": "TLSv1.3",
+              "cipher": [
+                "TLS_AES_256_GCM_SHA384",
+                "TLSv1.3",
+                256
+              ],
+              "method": "POST",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "content-type": "application/json",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "content-length": "109",
+                "host": "localhost:45237"
+              },
+              "body": "{\"query\":\"SELECT * FROM fixture LIMIT 1\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "promql",
+          "tls": "TLSv1.3",
+          "returncode": 0,
+          "stdout": "{\n  \"data\": {\n    \"result\": [\n      {\n        \"metric\": {\n          \"__name__\": \"up\"\n        },\n        \"values\": [\n          [\n            1704067200,\n            \"1\"\n          ]\n        ]\n      }\n    ],\n    \"resultType\": \"matrix\"\n  },\n  \"status\": \"success\"\n}\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/prometheus/api/v1/query_range?end=2024-01-01T00%3A01%3A00Z&query=up&start=2024-01-01T00%3A00%3A00Z&step=15s&stream=metrics",
+              "tls": "TLSv1.3",
+              "cipher": [
+                "TLS_AES_256_GCM_SHA384",
+                "TLSv1.3",
+                256
+              ],
+              "method": "GET",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "host": "localhost:45237"
+              },
+              "body": "",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        }
+      ]
+    },
+    {
+      "path": "evidence/pb-candidate-native-tls/report.json",
+      "report_sha256": "713b77bf94e641199212c626209b779ec07996b3f2e4600a8df4ea5a29d960b3",
+      "capture_runner_sha256": "ab8a3ad9f9ae45179f5a5eb08354e590c25484f73b4138d29c78532a7eb3a409",
+      "binary": {
+        "path": "/home/user/pb-pr12/artifacts/pb-candidate",
+        "sha256": "f48bd341aac457f3991c6db80a132a7e0c09cd52cf45d476b9c56d7b4403d36b"
+      },
+      "cases": [
+        {
+          "command": "sql",
+          "tls": "TLSv1.2",
+          "returncode": 0,
+          "stdout": "[\n  {\n    \"value\": 1\n  }\n]\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/api/v1/query",
+              "tls": "TLSv1.2",
+              "cipher": [
+                "ECDHE-RSA-AES128-GCM-SHA256",
+                "TLSv1.2",
+                128
+              ],
+              "method": "POST",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "content-type": "application/json",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "content-length": "109",
+                "host": "localhost:38085"
+              },
+              "body": "{\"query\":\"SELECT * FROM fixture LIMIT 1\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "promql",
+          "tls": "TLSv1.2",
+          "returncode": 0,
+          "stdout": "{\n  \"data\": {\n    \"result\": [\n      {\n        \"metric\": {\n          \"__name__\": \"up\"\n        },\n        \"values\": [\n          [\n            1704067200,\n            \"1\"\n          ]\n        ]\n      }\n    ],\n    \"resultType\": \"matrix\"\n  },\n  \"status\": \"success\"\n}\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/prometheus/api/v1/query_range?end=2024-01-01T00%3A01%3A00Z&query=up&start=2024-01-01T00%3A00%3A00Z&step=15s&stream=metrics",
+              "tls": "TLSv1.2",
+              "cipher": [
+                "ECDHE-RSA-AES128-GCM-SHA256",
+                "TLSv1.2",
+                128
+              ],
+              "method": "GET",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "host": "localhost:38085"
+              },
+              "body": "",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "sql",
+          "tls": "TLSv1.3",
+          "returncode": 0,
+          "stdout": "[\n  {\n    \"value\": 1\n  }\n]\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/api/v1/query",
+              "tls": "TLSv1.3",
+              "cipher": [
+                "TLS_AES_256_GCM_SHA384",
+                "TLSv1.3",
+                256
+              ],
+              "method": "POST",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "content-type": "application/json",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "content-length": "109",
+                "host": "localhost:38799"
+              },
+              "body": "{\"query\":\"SELECT * FROM fixture LIMIT 1\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "promql",
+          "tls": "TLSv1.3",
+          "returncode": 0,
+          "stdout": "{\n  \"data\": {\n    \"result\": [\n      {\n        \"metric\": {\n          \"__name__\": \"up\"\n        },\n        \"values\": [\n          [\n            1704067200,\n            \"1\"\n          ]\n        ]\n      }\n    ],\n    \"resultType\": \"matrix\"\n  },\n  \"status\": \"success\"\n}\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/prometheus/api/v1/query_range?end=2024-01-01T00%3A01%3A00Z&query=up&start=2024-01-01T00%3A00%3A00Z&step=15s&stream=metrics",
+              "tls": "TLSv1.3",
+              "cipher": [
+                "TLS_AES_256_GCM_SHA384",
+                "TLSv1.3",
+                256
+              ],
+              "method": "GET",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "host": "localhost:38799"
+              },
+              "body": "",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        }
+      ]
+    },
+    {
+      "path": "evidence/pb-candidate-qemu64-tls/report.json",
+      "report_sha256": "7b94ea607153fe1b8f15656c0030bb09af1da7342e5a64a6c7df9b4da56c1435",
+      "capture_runner_sha256": "ab8a3ad9f9ae45179f5a5eb08354e590c25484f73b4138d29c78532a7eb3a409",
+      "binary": {
+        "path": "/home/user/pb-pr12/evidence/pb-candidate-wrappers/pb-qemu64",
+        "sha256": "ca68906de6848aa4fcdc48b2847a5abe113a1435a6a1ec022992543eaa27ba8f",
+        "backing_binary": {
+          "path": "/home/user/pb-pr12/artifacts/pb-candidate",
+          "sha256": "f48bd341aac457f3991c6db80a132a7e0c09cd52cf45d476b9c56d7b4403d36b"
+        },
+        "emulator": {
+          "path": "/usr/bin/qemu-x86_64",
+          "sha256": "90e3ce3fffcc78115b792bc59f5590d9a86eaa83abe541252613a75bfce5f833"
+        },
+        "cpu_model": "qemu64",
+        "manifest": {
+          "path": "/home/user/pb-pr12/evidence/pb-candidate-wrappers/pb-qemu64.provenance.json",
+          "sha256": "1b8523eb5b982810de31844d24022366d9e3f5515fb25c717c48ed6c07f39725"
+        }
+      },
+      "cases": [
+        {
+          "command": "sql",
+          "tls": "TLSv1.2",
+          "returncode": 0,
+          "stdout": "[\n  {\n    \"value\": 1\n  }\n]\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/api/v1/query",
+              "tls": "TLSv1.2",
+              "cipher": [
+                "ECDHE-RSA-AES128-GCM-SHA256",
+                "TLSv1.2",
+                128
+              ],
+              "method": "POST",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "content-type": "application/json",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "content-length": "109",
+                "host": "localhost:34409"
+              },
+              "body": "{\"query\":\"SELECT * FROM fixture LIMIT 1\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "promql",
+          "tls": "TLSv1.2",
+          "returncode": 0,
+          "stdout": "{\n  \"data\": {\n    \"result\": [\n      {\n        \"metric\": {\n          \"__name__\": \"up\"\n        },\n        \"values\": [\n          [\n            1704067200,\n            \"1\"\n          ]\n        ]\n      }\n    ],\n    \"resultType\": \"matrix\"\n  },\n  \"status\": \"success\"\n}\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/prometheus/api/v1/query_range?end=2024-01-01T00%3A01%3A00Z&query=up&start=2024-01-01T00%3A00%3A00Z&step=15s&stream=metrics",
+              "tls": "TLSv1.2",
+              "cipher": [
+                "ECDHE-RSA-AES128-GCM-SHA256",
+                "TLSv1.2",
+                128
+              ],
+              "method": "GET",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "host": "localhost:34409"
+              },
+              "body": "",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "sql",
+          "tls": "TLSv1.3",
+          "returncode": 0,
+          "stdout": "[\n  {\n    \"value\": 1\n  }\n]\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/api/v1/query",
+              "tls": "TLSv1.3",
+              "cipher": [
+                "TLS_AES_256_GCM_SHA384",
+                "TLSv1.3",
+                256
+              ],
+              "method": "POST",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "content-type": "application/json",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "content-length": "109",
+                "host": "localhost:43819"
+              },
+              "body": "{\"query\":\"SELECT * FROM fixture LIMIT 1\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "promql",
+          "tls": "TLSv1.3",
+          "returncode": 0,
+          "stdout": "{\n  \"data\": {\n    \"result\": [\n      {\n        \"metric\": {\n          \"__name__\": \"up\"\n        },\n        \"values\": [\n          [\n            1704067200,\n            \"1\"\n          ]\n        ]\n      }\n    ],\n    \"resultType\": \"matrix\"\n  },\n  \"status\": \"success\"\n}\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/prometheus/api/v1/query_range?end=2024-01-01T00%3A01%3A00Z&query=up&start=2024-01-01T00%3A00%3A00Z&step=15s&stream=metrics",
+              "tls": "TLSv1.3",
+              "cipher": [
+                "TLS_AES_256_GCM_SHA384",
+                "TLSv1.3",
+                256
+              ],
+              "method": "GET",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "host": "localhost:43819"
+              },
+              "body": "",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        }
+      ]
+    },
+    {
+      "path": "evidence/pb-optimized-Haswell-noTSX-tls/report.json",
+      "report_sha256": "72a1a8a0993b45b0d3de0977ea5a1d70bee8333fc1201fea2621f1f5951f920a",
+      "capture_runner_sha256": "ab8a3ad9f9ae45179f5a5eb08354e590c25484f73b4138d29c78532a7eb3a409",
+      "binary": {
+        "path": "/home/user/pb-pr12/evidence/pb-optimized-wrappers/pb-Haswell-noTSX",
+        "sha256": "23b689833f8d4e32b1cc6273511941d0cdb054e7600fa8866e5a61ed1fb6d055",
+        "backing_binary": {
+          "path": "/home/user/pb-pr12/artifacts/pb-optimized",
+          "sha256": "c0166a201147b17c568deca91814338195edbe9faf8119f38b0b4df4e1991a20"
+        },
+        "emulator": {
+          "path": "/usr/bin/qemu-x86_64",
+          "sha256": "90e3ce3fffcc78115b792bc59f5590d9a86eaa83abe541252613a75bfce5f833"
+        },
+        "cpu_model": "Haswell-noTSX",
+        "manifest": {
+          "path": "/home/user/pb-pr12/evidence/pb-optimized-wrappers/pb-Haswell-noTSX.provenance.json",
+          "sha256": "d46c5e5c8eae21c982bf72109a9ef64cb4332e19ac7cd50272df138199032290"
+        }
+      },
+      "cases": [
+        {
+          "command": "sql",
+          "tls": "TLSv1.2",
+          "returncode": 0,
+          "stdout": "[\n  {\n    \"value\": 1\n  }\n]\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/api/v1/query",
+              "tls": "TLSv1.2",
+              "cipher": [
+                "ECDHE-RSA-AES128-GCM-SHA256",
+                "TLSv1.2",
+                128
+              ],
+              "method": "POST",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "content-type": "application/json",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "content-length": "109",
+                "host": "localhost:39399"
+              },
+              "body": "{\"query\":\"SELECT * FROM fixture LIMIT 1\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "promql",
+          "tls": "TLSv1.2",
+          "returncode": 0,
+          "stdout": "{\n  \"data\": {\n    \"result\": [\n      {\n        \"metric\": {\n          \"__name__\": \"up\"\n        },\n        \"values\": [\n          [\n            1704067200,\n            \"1\"\n          ]\n        ]\n      }\n    ],\n    \"resultType\": \"matrix\"\n  },\n  \"status\": \"success\"\n}\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/prometheus/api/v1/query_range?end=2024-01-01T00%3A01%3A00Z&query=up&start=2024-01-01T00%3A00%3A00Z&step=15s&stream=metrics",
+              "tls": "TLSv1.2",
+              "cipher": [
+                "ECDHE-RSA-AES128-GCM-SHA256",
+                "TLSv1.2",
+                128
+              ],
+              "method": "GET",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "host": "localhost:39399"
+              },
+              "body": "",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "sql",
+          "tls": "TLSv1.3",
+          "returncode": 0,
+          "stdout": "[\n  {\n    \"value\": 1\n  }\n]\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/api/v1/query",
+              "tls": "TLSv1.3",
+              "cipher": [
+                "TLS_AES_256_GCM_SHA384",
+                "TLSv1.3",
+                256
+              ],
+              "method": "POST",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "content-type": "application/json",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "content-length": "109",
+                "host": "localhost:34789"
+              },
+              "body": "{\"query\":\"SELECT * FROM fixture LIMIT 1\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "promql",
+          "tls": "TLSv1.3",
+          "returncode": 0,
+          "stdout": "{\n  \"data\": {\n    \"result\": [\n      {\n        \"metric\": {\n          \"__name__\": \"up\"\n        },\n        \"values\": [\n          [\n            1704067200,\n            \"1\"\n          ]\n        ]\n      }\n    ],\n    \"resultType\": \"matrix\"\n  },\n  \"status\": \"success\"\n}\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/prometheus/api/v1/query_range?end=2024-01-01T00%3A01%3A00Z&query=up&start=2024-01-01T00%3A00%3A00Z&step=15s&stream=metrics",
+              "tls": "TLSv1.3",
+              "cipher": [
+                "TLS_AES_256_GCM_SHA384",
+                "TLSv1.3",
+                256
+              ],
+              "method": "GET",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "host": "localhost:34789"
+              },
+              "body": "",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        }
+      ]
+    },
+    {
+      "path": "evidence/pb-optimized-Nehalem-tls/report.json",
+      "report_sha256": "9042fa768aacab1f0df081d73a62e32d2a4c15c88dd2119cde490dc8ffa058e8",
+      "capture_runner_sha256": "ab8a3ad9f9ae45179f5a5eb08354e590c25484f73b4138d29c78532a7eb3a409",
+      "binary": {
+        "path": "/home/user/pb-pr12/evidence/pb-optimized-wrappers/pb-Nehalem",
+        "sha256": "e708c8254ae82527aafe2beadd59295510295ed9170238d3e3ecac6bc3910588",
+        "backing_binary": {
+          "path": "/home/user/pb-pr12/artifacts/pb-optimized",
+          "sha256": "c0166a201147b17c568deca91814338195edbe9faf8119f38b0b4df4e1991a20"
+        },
+        "emulator": {
+          "path": "/usr/bin/qemu-x86_64",
+          "sha256": "90e3ce3fffcc78115b792bc59f5590d9a86eaa83abe541252613a75bfce5f833"
+        },
+        "cpu_model": "Nehalem",
+        "manifest": {
+          "path": "/home/user/pb-pr12/evidence/pb-optimized-wrappers/pb-Nehalem.provenance.json",
+          "sha256": "f5dcd70b9d3a52cfa04511511734a2623922a9b7781046cbf57514ad88c1ab12"
+        }
+      },
+      "cases": [
+        {
+          "command": "sql",
+          "tls": "TLSv1.2",
+          "returncode": 0,
+          "stdout": "[\n  {\n    \"value\": 1\n  }\n]\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/api/v1/query",
+              "tls": "TLSv1.2",
+              "cipher": [
+                "ECDHE-RSA-AES128-GCM-SHA256",
+                "TLSv1.2",
+                128
+              ],
+              "method": "POST",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "content-type": "application/json",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "content-length": "109",
+                "host": "localhost:46531"
+              },
+              "body": "{\"query\":\"SELECT * FROM fixture LIMIT 1\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "promql",
+          "tls": "TLSv1.2",
+          "returncode": 0,
+          "stdout": "{\n  \"data\": {\n    \"result\": [\n      {\n        \"metric\": {\n          \"__name__\": \"up\"\n        },\n        \"values\": [\n          [\n            1704067200,\n            \"1\"\n          ]\n        ]\n      }\n    ],\n    \"resultType\": \"matrix\"\n  },\n  \"status\": \"success\"\n}\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/prometheus/api/v1/query_range?end=2024-01-01T00%3A01%3A00Z&query=up&start=2024-01-01T00%3A00%3A00Z&step=15s&stream=metrics",
+              "tls": "TLSv1.2",
+              "cipher": [
+                "ECDHE-RSA-AES128-GCM-SHA256",
+                "TLSv1.2",
+                128
+              ],
+              "method": "GET",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "host": "localhost:46531"
+              },
+              "body": "",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "sql",
+          "tls": "TLSv1.3",
+          "returncode": 0,
+          "stdout": "[\n  {\n    \"value\": 1\n  }\n]\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/api/v1/query",
+              "tls": "TLSv1.3",
+              "cipher": [
+                "TLS_AES_256_GCM_SHA384",
+                "TLSv1.3",
+                256
+              ],
+              "method": "POST",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "content-type": "application/json",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "content-length": "109",
+                "host": "localhost:41231"
+              },
+              "body": "{\"query\":\"SELECT * FROM fixture LIMIT 1\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "promql",
+          "tls": "TLSv1.3",
+          "returncode": 0,
+          "stdout": "{\n  \"data\": {\n    \"result\": [\n      {\n        \"metric\": {\n          \"__name__\": \"up\"\n        },\n        \"values\": [\n          [\n            1704067200,\n            \"1\"\n          ]\n        ]\n      }\n    ],\n    \"resultType\": \"matrix\"\n  },\n  \"status\": \"success\"\n}\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/prometheus/api/v1/query_range?end=2024-01-01T00%3A01%3A00Z&query=up&start=2024-01-01T00%3A00%3A00Z&step=15s&stream=metrics",
+              "tls": "TLSv1.3",
+              "cipher": [
+                "TLS_AES_256_GCM_SHA384",
+                "TLSv1.3",
+                256
+              ],
+              "method": "GET",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "host": "localhost:41231"
+              },
+              "body": "",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        }
+      ]
+    },
+    {
+      "path": "evidence/pb-optimized-native-tls/report.json",
+      "report_sha256": "c0bfd13a30fec3d3b1313b3896c1d2cdf71f9d8e2c0651be2334579f9df868e0",
+      "capture_runner_sha256": "ab8a3ad9f9ae45179f5a5eb08354e590c25484f73b4138d29c78532a7eb3a409",
+      "binary": {
+        "path": "/home/user/pb-pr12/artifacts/pb-optimized",
+        "sha256": "c0166a201147b17c568deca91814338195edbe9faf8119f38b0b4df4e1991a20"
+      },
+      "cases": [
+        {
+          "command": "sql",
+          "tls": "TLSv1.2",
+          "returncode": 0,
+          "stdout": "[\n  {\n    \"value\": 1\n  }\n]\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/api/v1/query",
+              "tls": "TLSv1.2",
+              "cipher": [
+                "ECDHE-RSA-AES128-GCM-SHA256",
+                "TLSv1.2",
+                128
+              ],
+              "method": "POST",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "content-type": "application/json",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "content-length": "109",
+                "host": "localhost:33665"
+              },
+              "body": "{\"query\":\"SELECT * FROM fixture LIMIT 1\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "promql",
+          "tls": "TLSv1.2",
+          "returncode": 0,
+          "stdout": "{\n  \"data\": {\n    \"result\": [\n      {\n        \"metric\": {\n          \"__name__\": \"up\"\n        },\n        \"values\": [\n          [\n            1704067200,\n            \"1\"\n          ]\n        ]\n      }\n    ],\n    \"resultType\": \"matrix\"\n  },\n  \"status\": \"success\"\n}\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/prometheus/api/v1/query_range?end=2024-01-01T00%3A01%3A00Z&query=up&start=2024-01-01T00%3A00%3A00Z&step=15s&stream=metrics",
+              "tls": "TLSv1.2",
+              "cipher": [
+                "ECDHE-RSA-AES128-GCM-SHA256",
+                "TLSv1.2",
+                128
+              ],
+              "method": "GET",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "host": "localhost:33665"
+              },
+              "body": "",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "sql",
+          "tls": "TLSv1.3",
+          "returncode": 0,
+          "stdout": "[\n  {\n    \"value\": 1\n  }\n]\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/api/v1/query",
+              "tls": "TLSv1.3",
+              "cipher": [
+                "TLS_AES_256_GCM_SHA384",
+                "TLSv1.3",
+                256
+              ],
+              "method": "POST",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "content-type": "application/json",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "content-length": "109",
+                "host": "localhost:37583"
+              },
+              "body": "{\"query\":\"SELECT * FROM fixture LIMIT 1\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "promql",
+          "tls": "TLSv1.3",
+          "returncode": 0,
+          "stdout": "{\n  \"data\": {\n    \"result\": [\n      {\n        \"metric\": {\n          \"__name__\": \"up\"\n        },\n        \"values\": [\n          [\n            1704067200,\n            \"1\"\n          ]\n        ]\n      }\n    ],\n    \"resultType\": \"matrix\"\n  },\n  \"status\": \"success\"\n}\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/prometheus/api/v1/query_range?end=2024-01-01T00%3A01%3A00Z&query=up&start=2024-01-01T00%3A00%3A00Z&step=15s&stream=metrics",
+              "tls": "TLSv1.3",
+              "cipher": [
+                "TLS_AES_256_GCM_SHA384",
+                "TLSv1.3",
+                256
+              ],
+              "method": "GET",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "host": "localhost:37583"
+              },
+              "body": "",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        }
+      ]
+    },
+    {
+      "path": "evidence/pb-optimized-qemu64-tls/report.json",
+      "report_sha256": "6ae8d7ec42b873791acc8446b285729b19ac368824ad342b34d17bf6eabb54da",
+      "capture_runner_sha256": "ab8a3ad9f9ae45179f5a5eb08354e590c25484f73b4138d29c78532a7eb3a409",
+      "binary": {
+        "path": "/home/user/pb-pr12/evidence/pb-optimized-wrappers/pb-qemu64",
+        "sha256": "fc11ffcaf99ce593e28bbe7008aa0d6bc4c28ad0a4a50dff6a9e9bb62f4e2433",
+        "backing_binary": {
+          "path": "/home/user/pb-pr12/artifacts/pb-optimized",
+          "sha256": "c0166a201147b17c568deca91814338195edbe9faf8119f38b0b4df4e1991a20"
+        },
+        "emulator": {
+          "path": "/usr/bin/qemu-x86_64",
+          "sha256": "90e3ce3fffcc78115b792bc59f5590d9a86eaa83abe541252613a75bfce5f833"
+        },
+        "cpu_model": "qemu64",
+        "manifest": {
+          "path": "/home/user/pb-pr12/evidence/pb-optimized-wrappers/pb-qemu64.provenance.json",
+          "sha256": "82ec071f5fda324bd3f33e29ed51cb8955b2dc6c652fa8bfabbc80b882f49197"
+        }
+      },
+      "cases": [
+        {
+          "command": "sql",
+          "tls": "TLSv1.2",
+          "returncode": 0,
+          "stdout": "[\n  {\n    \"value\": 1\n  }\n]\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/api/v1/query",
+              "tls": "TLSv1.2",
+              "cipher": [
+                "ECDHE-RSA-AES128-GCM-SHA256",
+                "TLSv1.2",
+                128
+              ],
+              "method": "POST",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "content-type": "application/json",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "content-length": "109",
+                "host": "localhost:35707"
+              },
+              "body": "{\"query\":\"SELECT * FROM fixture LIMIT 1\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "promql",
+          "tls": "TLSv1.2",
+          "returncode": 0,
+          "stdout": "{\n  \"data\": {\n    \"result\": [\n      {\n        \"metric\": {\n          \"__name__\": \"up\"\n        },\n        \"values\": [\n          [\n            1704067200,\n            \"1\"\n          ]\n        ]\n      }\n    ],\n    \"resultType\": \"matrix\"\n  },\n  \"status\": \"success\"\n}\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/prometheus/api/v1/query_range?end=2024-01-01T00%3A01%3A00Z&query=up&start=2024-01-01T00%3A00%3A00Z&step=15s&stream=metrics",
+              "tls": "TLSv1.2",
+              "cipher": [
+                "ECDHE-RSA-AES128-GCM-SHA256",
+                "TLSv1.2",
+                128
+              ],
+              "method": "GET",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "host": "localhost:35707"
+              },
+              "body": "",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "sql",
+          "tls": "TLSv1.3",
+          "returncode": 0,
+          "stdout": "[\n  {\n    \"value\": 1\n  }\n]\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/api/v1/query",
+              "tls": "TLSv1.3",
+              "cipher": [
+                "TLS_AES_256_GCM_SHA384",
+                "TLSv1.3",
+                256
+              ],
+              "method": "POST",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "content-type": "application/json",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "content-length": "109",
+                "host": "localhost:36405"
+              },
+              "body": "{\"query\":\"SELECT * FROM fixture LIMIT 1\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "promql",
+          "tls": "TLSv1.3",
+          "returncode": 0,
+          "stdout": "{\n  \"data\": {\n    \"result\": [\n      {\n        \"metric\": {\n          \"__name__\": \"up\"\n        },\n        \"values\": [\n          [\n            1704067200,\n            \"1\"\n          ]\n        ]\n      }\n    ],\n    \"resultType\": \"matrix\"\n  },\n  \"status\": \"success\"\n}\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/prometheus/api/v1/query_range?end=2024-01-01T00%3A01%3A00Z&query=up&start=2024-01-01T00%3A00%3A00Z&step=15s&stream=metrics",
+              "tls": "TLSv1.3",
+              "cipher": [
+                "TLS_AES_256_GCM_SHA384",
+                "TLSv1.3",
+                256
+              ],
+              "method": "GET",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "host": "localhost:36405"
+              },
+              "body": "",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        }
+      ]
+    },
+    {
+      "path": "evidence/pb-portable-Haswell-noTSX-tls/report.json",
+      "report_sha256": "bf3c520b70e86256300620f457e6f2ae7b137ed119cd5fe3348b2be6b57c436f",
+      "capture_runner_sha256": "ab8a3ad9f9ae45179f5a5eb08354e590c25484f73b4138d29c78532a7eb3a409",
+      "binary": {
+        "path": "/home/user/pb-pr12/evidence/pb-portable-wrappers/pb-Haswell-noTSX",
+        "sha256": "c760b651366df0359bbc52518ebef1ab3569b8c103dfe2ce22ecd0828389816a",
+        "backing_binary": {
+          "path": "/home/user/pb-pr12/artifacts/pb-portable",
+          "sha256": "e946ee022d8dfc8f074a38e8a09cf2fa4c1c0e51cd690c5827bf028f9ddc0edf"
+        },
+        "emulator": {
+          "path": "/usr/bin/qemu-x86_64",
+          "sha256": "90e3ce3fffcc78115b792bc59f5590d9a86eaa83abe541252613a75bfce5f833"
+        },
+        "cpu_model": "Haswell-noTSX",
+        "manifest": {
+          "path": "/home/user/pb-pr12/evidence/pb-portable-wrappers/pb-Haswell-noTSX.provenance.json",
+          "sha256": "e47b1e8c99a2f2215e99bedd249ef6e9c88a42971d20d88bbdc5358d2353c5b7"
+        }
+      },
+      "cases": [
+        {
+          "command": "sql",
+          "tls": "TLSv1.2",
+          "returncode": 0,
+          "stdout": "[\n  {\n    \"value\": 1\n  }\n]\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/api/v1/query",
+              "tls": "TLSv1.2",
+              "cipher": [
+                "ECDHE-RSA-AES128-GCM-SHA256",
+                "TLSv1.2",
+                128
+              ],
+              "method": "POST",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "content-type": "application/json",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "content-length": "109",
+                "host": "localhost:32833"
+              },
+              "body": "{\"query\":\"SELECT * FROM fixture LIMIT 1\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "promql",
+          "tls": "TLSv1.2",
+          "returncode": 0,
+          "stdout": "{\n  \"data\": {\n    \"result\": [\n      {\n        \"metric\": {\n          \"__name__\": \"up\"\n        },\n        \"values\": [\n          [\n            1704067200,\n            \"1\"\n          ]\n        ]\n      }\n    ],\n    \"resultType\": \"matrix\"\n  },\n  \"status\": \"success\"\n}\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/prometheus/api/v1/query_range?end=2024-01-01T00%3A01%3A00Z&query=up&start=2024-01-01T00%3A00%3A00Z&step=15s&stream=metrics",
+              "tls": "TLSv1.2",
+              "cipher": [
+                "ECDHE-RSA-AES128-GCM-SHA256",
+                "TLSv1.2",
+                128
+              ],
+              "method": "GET",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "host": "localhost:32833"
+              },
+              "body": "",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "sql",
+          "tls": "TLSv1.3",
+          "returncode": 0,
+          "stdout": "[\n  {\n    \"value\": 1\n  }\n]\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/api/v1/query",
+              "tls": "TLSv1.3",
+              "cipher": [
+                "TLS_AES_256_GCM_SHA384",
+                "TLSv1.3",
+                256
+              ],
+              "method": "POST",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "content-type": "application/json",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "content-length": "109",
+                "host": "localhost:34145"
+              },
+              "body": "{\"query\":\"SELECT * FROM fixture LIMIT 1\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "promql",
+          "tls": "TLSv1.3",
+          "returncode": 0,
+          "stdout": "{\n  \"data\": {\n    \"result\": [\n      {\n        \"metric\": {\n          \"__name__\": \"up\"\n        },\n        \"values\": [\n          [\n            1704067200,\n            \"1\"\n          ]\n        ]\n      }\n    ],\n    \"resultType\": \"matrix\"\n  },\n  \"status\": \"success\"\n}\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/prometheus/api/v1/query_range?end=2024-01-01T00%3A01%3A00Z&query=up&start=2024-01-01T00%3A00%3A00Z&step=15s&stream=metrics",
+              "tls": "TLSv1.3",
+              "cipher": [
+                "TLS_AES_256_GCM_SHA384",
+                "TLSv1.3",
+                256
+              ],
+              "method": "GET",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "host": "localhost:34145"
+              },
+              "body": "",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        }
+      ]
+    },
+    {
+      "path": "evidence/pb-portable-Nehalem-tls/report.json",
+      "report_sha256": "c65da84f4ff56c449676e9100f57c770d8f38afcbfb20eb810110e3ee21fe27a",
+      "capture_runner_sha256": "ab8a3ad9f9ae45179f5a5eb08354e590c25484f73b4138d29c78532a7eb3a409",
+      "binary": {
+        "path": "/home/user/pb-pr12/evidence/pb-portable-wrappers/pb-Nehalem",
+        "sha256": "57d23893f19213a00b9b875527b42242a16bcc0a2b2d40c93904913658a258b2",
+        "backing_binary": {
+          "path": "/home/user/pb-pr12/artifacts/pb-portable",
+          "sha256": "e946ee022d8dfc8f074a38e8a09cf2fa4c1c0e51cd690c5827bf028f9ddc0edf"
+        },
+        "emulator": {
+          "path": "/usr/bin/qemu-x86_64",
+          "sha256": "90e3ce3fffcc78115b792bc59f5590d9a86eaa83abe541252613a75bfce5f833"
+        },
+        "cpu_model": "Nehalem",
+        "manifest": {
+          "path": "/home/user/pb-pr12/evidence/pb-portable-wrappers/pb-Nehalem.provenance.json",
+          "sha256": "19d60593938504a0c742652decbae831020e1349a75562d710b8a97cc6b662a4"
+        }
+      },
+      "cases": [
+        {
+          "command": "sql",
+          "tls": "TLSv1.2",
+          "returncode": 0,
+          "stdout": "[\n  {\n    \"value\": 1\n  }\n]\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/api/v1/query",
+              "tls": "TLSv1.2",
+              "cipher": [
+                "ECDHE-RSA-AES128-GCM-SHA256",
+                "TLSv1.2",
+                128
+              ],
+              "method": "POST",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "content-type": "application/json",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "content-length": "109",
+                "host": "localhost:39685"
+              },
+              "body": "{\"query\":\"SELECT * FROM fixture LIMIT 1\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "promql",
+          "tls": "TLSv1.2",
+          "returncode": 0,
+          "stdout": "{\n  \"data\": {\n    \"result\": [\n      {\n        \"metric\": {\n          \"__name__\": \"up\"\n        },\n        \"values\": [\n          [\n            1704067200,\n            \"1\"\n          ]\n        ]\n      }\n    ],\n    \"resultType\": \"matrix\"\n  },\n  \"status\": \"success\"\n}\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/prometheus/api/v1/query_range?end=2024-01-01T00%3A01%3A00Z&query=up&start=2024-01-01T00%3A00%3A00Z&step=15s&stream=metrics",
+              "tls": "TLSv1.2",
+              "cipher": [
+                "ECDHE-RSA-AES128-GCM-SHA256",
+                "TLSv1.2",
+                128
+              ],
+              "method": "GET",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "host": "localhost:39685"
+              },
+              "body": "",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "sql",
+          "tls": "TLSv1.3",
+          "returncode": 0,
+          "stdout": "[\n  {\n    \"value\": 1\n  }\n]\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/api/v1/query",
+              "tls": "TLSv1.3",
+              "cipher": [
+                "TLS_AES_256_GCM_SHA384",
+                "TLSv1.3",
+                256
+              ],
+              "method": "POST",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "content-type": "application/json",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "content-length": "109",
+                "host": "localhost:35329"
+              },
+              "body": "{\"query\":\"SELECT * FROM fixture LIMIT 1\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "promql",
+          "tls": "TLSv1.3",
+          "returncode": 0,
+          "stdout": "{\n  \"data\": {\n    \"result\": [\n      {\n        \"metric\": {\n          \"__name__\": \"up\"\n        },\n        \"values\": [\n          [\n            1704067200,\n            \"1\"\n          ]\n        ]\n      }\n    ],\n    \"resultType\": \"matrix\"\n  },\n  \"status\": \"success\"\n}\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/prometheus/api/v1/query_range?end=2024-01-01T00%3A01%3A00Z&query=up&start=2024-01-01T00%3A00%3A00Z&step=15s&stream=metrics",
+              "tls": "TLSv1.3",
+              "cipher": [
+                "TLS_AES_256_GCM_SHA384",
+                "TLSv1.3",
+                256
+              ],
+              "method": "GET",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "host": "localhost:35329"
+              },
+              "body": "",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        }
+      ]
+    },
+    {
+      "path": "evidence/pb-portable-native-tls/report.json",
+      "report_sha256": "92b35b0cf3a69c46a19f37dbcc6a676f778a7824e6146f195869a3e8ce98d164",
+      "capture_runner_sha256": "ab8a3ad9f9ae45179f5a5eb08354e590c25484f73b4138d29c78532a7eb3a409",
+      "binary": {
+        "path": "/home/user/pb-pr12/artifacts/pb-portable",
+        "sha256": "e946ee022d8dfc8f074a38e8a09cf2fa4c1c0e51cd690c5827bf028f9ddc0edf"
+      },
+      "cases": [
+        {
+          "command": "sql",
+          "tls": "TLSv1.2",
+          "returncode": 0,
+          "stdout": "[\n  {\n    \"value\": 1\n  }\n]\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/api/v1/query",
+              "tls": "TLSv1.2",
+              "cipher": [
+                "ECDHE-RSA-AES128-GCM-SHA256",
+                "TLSv1.2",
+                128
+              ],
+              "method": "POST",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "content-type": "application/json",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "content-length": "109",
+                "host": "localhost:44511"
+              },
+              "body": "{\"query\":\"SELECT * FROM fixture LIMIT 1\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "promql",
+          "tls": "TLSv1.2",
+          "returncode": 0,
+          "stdout": "{\n  \"data\": {\n    \"result\": [\n      {\n        \"metric\": {\n          \"__name__\": \"up\"\n        },\n        \"values\": [\n          [\n            1704067200,\n            \"1\"\n          ]\n        ]\n      }\n    ],\n    \"resultType\": \"matrix\"\n  },\n  \"status\": \"success\"\n}\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/prometheus/api/v1/query_range?end=2024-01-01T00%3A01%3A00Z&query=up&start=2024-01-01T00%3A00%3A00Z&step=15s&stream=metrics",
+              "tls": "TLSv1.2",
+              "cipher": [
+                "ECDHE-RSA-AES128-GCM-SHA256",
+                "TLSv1.2",
+                128
+              ],
+              "method": "GET",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "host": "localhost:44511"
+              },
+              "body": "",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "sql",
+          "tls": "TLSv1.3",
+          "returncode": 0,
+          "stdout": "[\n  {\n    \"value\": 1\n  }\n]\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/api/v1/query",
+              "tls": "TLSv1.3",
+              "cipher": [
+                "TLS_AES_256_GCM_SHA384",
+                "TLSv1.3",
+                256
+              ],
+              "method": "POST",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "content-type": "application/json",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "content-length": "109",
+                "host": "localhost:46013"
+              },
+              "body": "{\"query\":\"SELECT * FROM fixture LIMIT 1\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "promql",
+          "tls": "TLSv1.3",
+          "returncode": 0,
+          "stdout": "{\n  \"data\": {\n    \"result\": [\n      {\n        \"metric\": {\n          \"__name__\": \"up\"\n        },\n        \"values\": [\n          [\n            1704067200,\n            \"1\"\n          ]\n        ]\n      }\n    ],\n    \"resultType\": \"matrix\"\n  },\n  \"status\": \"success\"\n}\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/prometheus/api/v1/query_range?end=2024-01-01T00%3A01%3A00Z&query=up&start=2024-01-01T00%3A00%3A00Z&step=15s&stream=metrics",
+              "tls": "TLSv1.3",
+              "cipher": [
+                "TLS_AES_256_GCM_SHA384",
+                "TLSv1.3",
+                256
+              ],
+              "method": "GET",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "host": "localhost:46013"
+              },
+              "body": "",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        }
+      ]
+    },
+    {
+      "path": "evidence/pb-portable-qemu64-tls/report.json",
+      "report_sha256": "a4530f4f9ae2f5dc24d6a67553a5ec78c09ccefd2d0711161a1e3e6d99f94add",
+      "capture_runner_sha256": "ab8a3ad9f9ae45179f5a5eb08354e590c25484f73b4138d29c78532a7eb3a409",
+      "binary": {
+        "path": "/home/user/pb-pr12/evidence/pb-portable-wrappers/pb-qemu64",
+        "sha256": "66c497aad72603f0e1963a66f7c7d1e2fce0bdebfce7092f031eee01011cb62f",
+        "backing_binary": {
+          "path": "/home/user/pb-pr12/artifacts/pb-portable",
+          "sha256": "e946ee022d8dfc8f074a38e8a09cf2fa4c1c0e51cd690c5827bf028f9ddc0edf"
+        },
+        "emulator": {
+          "path": "/usr/bin/qemu-x86_64",
+          "sha256": "90e3ce3fffcc78115b792bc59f5590d9a86eaa83abe541252613a75bfce5f833"
+        },
+        "cpu_model": "qemu64",
+        "manifest": {
+          "path": "/home/user/pb-pr12/evidence/pb-portable-wrappers/pb-qemu64.provenance.json",
+          "sha256": "0b6acdefca717dc69af6aed2e0bd78ed8bddc91fda5d741be399189b095729cc"
+        }
+      },
+      "cases": [
+        {
+          "command": "sql",
+          "tls": "TLSv1.2",
+          "returncode": 0,
+          "stdout": "[\n  {\n    \"value\": 1\n  }\n]\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/api/v1/query",
+              "tls": "TLSv1.2",
+              "cipher": [
+                "ECDHE-RSA-AES128-GCM-SHA256",
+                "TLSv1.2",
+                128
+              ],
+              "method": "POST",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "content-type": "application/json",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "content-length": "109",
+                "host": "localhost:41319"
+              },
+              "body": "{\"query\":\"SELECT * FROM fixture LIMIT 1\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "promql",
+          "tls": "TLSv1.2",
+          "returncode": 0,
+          "stdout": "{\n  \"data\": {\n    \"result\": [\n      {\n        \"metric\": {\n          \"__name__\": \"up\"\n        },\n        \"values\": [\n          [\n            1704067200,\n            \"1\"\n          ]\n        ]\n      }\n    ],\n    \"resultType\": \"matrix\"\n  },\n  \"status\": \"success\"\n}\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/prometheus/api/v1/query_range?end=2024-01-01T00%3A01%3A00Z&query=up&start=2024-01-01T00%3A00%3A00Z&step=15s&stream=metrics",
+              "tls": "TLSv1.2",
+              "cipher": [
+                "ECDHE-RSA-AES128-GCM-SHA256",
+                "TLSv1.2",
+                128
+              ],
+              "method": "GET",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "host": "localhost:41319"
+              },
+              "body": "",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "sql",
+          "tls": "TLSv1.3",
+          "returncode": 0,
+          "stdout": "[\n  {\n    \"value\": 1\n  }\n]\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/api/v1/query",
+              "tls": "TLSv1.3",
+              "cipher": [
+                "TLS_AES_256_GCM_SHA384",
+                "TLSv1.3",
+                256
+              ],
+              "method": "POST",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "content-type": "application/json",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "content-length": "109",
+                "host": "localhost:39379"
+              },
+              "body": "{\"query\":\"SELECT * FROM fixture LIMIT 1\",\"startTime\":\"2024-01-01T00:00:00Z\",\"endTime\":\"2024-01-01T00:01:00Z\"}",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        },
+        {
+          "command": "promql",
+          "tls": "TLSv1.3",
+          "returncode": 0,
+          "stdout": "{\n  \"data\": {\n    \"result\": [\n      {\n        \"metric\": {\n          \"__name__\": \"up\"\n        },\n        \"values\": [\n          [\n            1704067200,\n            \"1\"\n          ]\n        ]\n      }\n    ],\n    \"resultType\": \"matrix\"\n  },\n  \"status\": \"success\"\n}\n",
+          "stderr": "",
+          "observations": [
+            {
+              "path": "/prometheus/api/v1/query_range?end=2024-01-01T00%3A01%3A00Z&query=up&start=2024-01-01T00%3A00%3A00Z&step=15s&stream=metrics",
+              "tls": "TLSv1.3",
+              "cipher": [
+                "TLS_AES_256_GCM_SHA384",
+                "TLSv1.3",
+                256
+              ],
+              "method": "GET",
+              "headers": {
+                "x-api-key": "fixture-key",
+                "user-agent": "Go-http-client/1.1",
+                "accept-encoding": "gzip",
+                "host": "localhost:39379"
+              },
+              "body": "",
+              "valid_request": true
+            }
+          ],
+          "final_checker_passed": true
+        }
+      ]
+    }
+  ],
+  "final_tls_checker_sha256": "4e31517c62cd83e8555277c5ae04ecc48a7add6b8b993a5edff9da20b3e972a4",
+  "final_tls_checker_commit": "becd09a",
+  "final_tls_check_type": "Revalidate captured request observations and all 48 original stdout/stderr streams with the type-aware checker; no TLS requests rerun after the checker-only change.",
+  "artifacts": {
+    "pb-candidate": "f48bd341aac457f3991c6db80a132a7e0c09cd52cf45d476b9c56d7b4403d36b",
+    "pb-main": "cf81e96f43a64f1ce9f84d58da5ad45d62a53cd0b49a61963bd9e5199deb75a1",
+    "pb-optimized": "c0166a201147b17c568deca91814338195edbe9faf8119f38b0b4df4e1991a20",
+    "pb-portable": "e946ee022d8dfc8f074a38e8a09cf2fa4c1c0e51cd690c5827bf028f9ddc0edf"
+  },
+  "limits": [
+    "Process CPU time and peak RSS, not whole-VM utilization.",
+    "Dense load/chart/table workflow only; SQL and sustained navigation are outside this paired campaign.",
+    "GNU build; this campaign does not confirm a static-musl CPU target.",
+    "Native CPU is AMD Zen5. qemu64/Nehalem/Haswell TLS checks are emulated functional checks.",
+    "The static and original GNU artifacts predate main integration; only pb-candidate describes integrated production sources."
+  ]
+}
