@@ -2,6 +2,8 @@
 
 The frozen optimized Rust binary was rerun on two fresh Boat VMs, including the smallest 2-vCPU / 4-GB shape. Its source and SHA-256 still match the performance investigation. No production code was changed during this validation.
 
+These checks apply to the frozen sources preserved in `113e4ed`, before PR integration of `main` at `998d4ef`. The binaries and performance numbers below do not describe the subsequently integrated PR head; its validation is recorded separately in the PR.
+
 Both fresh VMs expose an AMD Ryzen 7 9700X. They extend capacity/reproducibility coverage, not native CPU-architecture coverage. Boat's [documented hardware fleet](https://boat.dev/compare/boat-vs-sail) is x86-64 AMD; older CPU instruction sets were therefore checked with QEMU inside a Boat VM. Those emulated checks establish functional compatibility, not native Intel performance. ARM64, Windows, macOS, and older kernels remain untested.
 
 ## Native results

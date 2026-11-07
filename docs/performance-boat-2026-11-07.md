@@ -1,6 +1,8 @@
 # Boat performance investigation — 2026-11-07
 
-This experiment compares the Rust CLI at commit `14ea05aad9a798a096a27c50961042ef4c85af91` with the optimized Rust CLI in this worktree. The baseline is not the Go implementation. The targets are at least 50% lower CPU time and 50% lower peak resident memory for the same workflow. Results are workload-specific; they do not establish a blanket reduction for every command.
+This experiment compares the Rust CLI at commit `14ea05aad9a798a096a27c50961042ef4c85af91` with the frozen optimized sources preserved in commit `113e4ed`. The baseline is not the Go implementation. The targets are at least 50% lower CPU time and 50% lower peak resident memory for the same workflow. Results are workload-specific; they do not establish a blanket reduction for every command.
+
+PR integration subsequently merged `main` at `998d4ef`, including other CLI changes and optimizations. The measurements and artifact hashes below describe the earlier frozen experiment, not the merged PR head or its incremental gain over current `main`. Validation of the integrated changes is recorded separately in the PR.
 
 ## Changes
 
