@@ -15,6 +15,11 @@ import portability_vm as vm
 
 
 class TlsAssertions(unittest.TestCase):
+    def test_boolean_cannot_substitute_for_a_json_numeric_sample(self):
+        observed = [{'method': 'POST', 'tls': 'TLSv1.3', 'valid_request': True}]
+        self.assertFalse(vm.valid_tls_result('sql', b'[{"value":true}]', b'', 0, observed, 'TLSv1.3'))
+        self.assertTrue(vm.valid_tls_result('sql', b'[{"value":1.0}]', b'', 0, observed, 'TLSv1.3'))
+
     def test_requests_require_method_endpoint_authentication_and_complete_query(self):
         headers = {'x-api-key': 'fixture-key', 'content-type': 'application/json'}
         body = json.dumps({'query': vm.SQL_QUERY, 'startTime': vm.START, 'endTime': vm.END}).encode()

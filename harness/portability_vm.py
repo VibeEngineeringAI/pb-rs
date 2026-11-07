@@ -157,6 +157,19 @@ def valid_request(method, path, headers, body):
                 'query': ['up'], 'stream': ['metrics'], 'start': [START], 'end': [END], 'step': ['15s']})
 
 
+def equal_json(actual, expected):
+    # Python considers True == 1. JSON booleans must never substitute for a
+    # numeric sample, while equivalent integer/float spellings are acceptable.
+    if type(actual) is not type(expected):
+        return type(actual) in (int, float) and type(expected) in (int, float) and actual == expected
+    if isinstance(expected, dict):
+        return actual.keys() == expected.keys() and all(equal_json(actual[key], value)
+                                                       for key, value in expected.items())
+    if isinstance(expected, list):
+        return len(actual) == len(expected) and all(equal_json(a, b) for a, b in zip(actual, expected))
+    return actual == expected
+
+
 def valid_tls_result(name, stdout, stderr, returncode, observed, version):
     try:
         body = json.loads(stdout)
@@ -164,7 +177,7 @@ def valid_tls_result(name, stdout, stderr, returncode, observed, version):
         return False
     method = 'POST' if name == 'sql' else 'GET'
     return (returncode == 0 and not stderr
-            and body == (SQL_RESPONSE if name == 'sql' else PROMQL_RESPONSE)
+            and equal_json(body, SQL_RESPONSE if name == 'sql' else PROMQL_RESPONSE)
             and len(observed) == 1 and observed[0]['method'] == method
             and observed[0]['tls'] == version and observed[0]['valid_request'])
 
