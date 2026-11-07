@@ -4,7 +4,7 @@
 
 ## Review findings and responses
 
-Three independent initial reviews covered production correctness, evidence accuracy, and the validation harness. The production review found no substantiated regression and reported agreement between the span and original tree decoders on 7,977 adversarial inputs. Supplemental Go 1.27 comparisons do not establish diagnostic parity with the repository's pinned Go 1.25.4 oracle.
+Three independent initial agent reviews covered production correctness, evidence accuracy, and the validation harness. The production review found no substantiated regression and reported agreement between the span and original tree decoders on 7,977 adversarial inputs. Supplemental Go 1.27 comparisons do not establish diagnostic parity with the repository's pinned Go 1.25.4 oracle.
 
 The other reviews found five P2 harness issues and one P3 reporting issue:
 
@@ -16,6 +16,8 @@ The other reviews found five P2 harness issues and one P3 reporting issue:
 - The strict 21-case corpus was incorrectly credited with table-filter coverage. The report now attributes that coverage to the Rust tests.
 
 A new follow-up reviewer confirmed all six findings closed at `1c7611f`, with no substantiated new finding. Its additional probes checked nested detached children, driver death, and rejection of a zero-exit fixture with live descendants. A subsequent checker-only correction at `becd09a` distinguishes JSON booleans from numeric samples: Python's `True == 1` must not admit a boolean SQL value. Equivalent integer/float numeric spellings remain acceptable. The final focused suite has **15 passing tests**.
+
+A second fresh follow-up agent reviewed `f9e0556` and found no substantiated new or unresolved finding. It independently recomputed the paired statistics, checked source/artifact provenance, replayed all 48 TLS captures, and verified the boolean-sample correction.
 
 ## Direct comparison with main on Boat
 
@@ -44,10 +46,12 @@ Frozen integrated artifacts:
 
 The emulated checks establish functional coverage of these CPU profiles, not native Intel performance. The static artifact still describes the pre-integration source freeze; these checks do not publish an updated static release. ARM64, macOS, Windows and older kernels are not covered by this Boat campaign.
 
-The complete Python harness rerun and final review status are recorded in the PR when finished. Initial local validation failures from `/tmp` disk quota and an unconfigured Go shim are preserved; the final rerun uses a workspace scratch directory and an explicit Go executable. No assertions or deadlines were relaxed.
+Python harness: **1,058 passed and 35 skipped across 41 modules**, taking each module's final result. The complete invocation initially returned 1 because one unchanged Git-provenance fixture expected its temporary directory to be outside any Git checkout, while the chosen scratch directory was inside this worktree. Rerunning that unchanged 29-test module with `TMPDIR=/home/ajs/.cache/pb-pr12-review-tmp` passed. Both logs are retained, and the final aggregate uses that module rerun. Earlier failures from `/tmp` disk quota and an unconfigured Go shim are also preserved. No assertions or deadlines were relaxed.
 
 ## Evidence
 
 The [integrated evidence record](evidence/boat-20261107-pr12.json) includes every measured/warmup pair's native counters, exact case-definition hashes, source inventories, artifact identities, functional comparison results, and all 48 TLS observations and output streams. Full case definitions, captures, original reports, binaries, helper sources, build logs, and host metadata are retained locally in the evidence archive under `harness/results/pr-review-20261107/`. The archive and binary are not published by this PR.
 
 The performance runner used for capture is `1c7611f`. The final TLS checker is `becd09a`; its source hash and the explicit replay procedure are retained separately. Original reports are preserved rather than relabeled as having been produced by a later checker.
+
+The local archive is `harness/results/pr-review-20261107/pr12-evidence.tar.gz`, SHA-256 `6d9411baa876fc928c5c94c2171aa9f36a89313894ee0ab6687c3c4599804be8`. Its tracked summary, raw report hashes, all four binary hashes, and current production-source inventory were verified before VM removal. Boat deletion operation `bdop_c3fb8ad1662842709641ae1157aa7476` completed at `2026-11-07T21:52:28.645Z`. Pre-existing VMs were left unchanged.
