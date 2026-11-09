@@ -5794,7 +5794,7 @@ async fn run_session(
     if let Some(fault) = state.take_fault() {
         return editor_fault(session, tasks, fault, stdout).await;
     }
-    session.draw_bytes(&view);
+    session.draw_owned(view);
     let mut inbox = Inbox::default();
     let outcome = loop {
         if let Some(panic) = tasks.reap() {
@@ -5830,7 +5830,7 @@ async fn run_session(
         if let Some(fault) = state.take_fault() {
             return editor_fault(session, tasks, fault, stdout).await;
         }
-        session.draw_bytes(&view);
+        session.draw_owned(view);
     };
     // Go renders the final view (Run, tea.go:601) and restores before
     // returning; a panic in that View is recovered like any other.

@@ -217,7 +217,7 @@ async fn drive(
     if let Some(fault) = state.take_fault() {
         return fault_end(fault).await;
     }
-    draw(session, &view);
+    draw(session, view);
     // The completion head is the only buffered message. The terminal head is
     // only peeked: it is consumed when it wins, so a later Quit/control event
     // is not accepted (nor its reader lane freed) while an earlier
@@ -267,7 +267,7 @@ async fn drive(
         if let Some(fault) = state.take_fault() {
             return fault_end(fault).await;
         }
-        draw(session, &view);
+        draw(session, view);
     }
 }
 
@@ -331,10 +331,10 @@ fn close(session: TerminalSession, frame: &Frame) -> Result<(), super::terminal:
     }
 }
 
-fn draw(session: &mut TerminalSession, frame: &Frame) {
+fn draw(session: &mut TerminalSession, frame: Frame) {
     match frame {
-        Frame::Text(text) => session.draw(text),
-        Frame::Bytes(bytes) => session.draw_bytes(bytes),
+        Frame::Text(text) => session.draw_owned(text.into_bytes()),
+        Frame::Bytes(bytes) => session.draw_owned(bytes),
     }
 }
 
