@@ -2249,9 +2249,7 @@ impl ResultsTable {
             header_count += 1;
         }
         let mut out = String::new();
-        let initial_width = join_table_cells(&headers[..header_count], &mut out);
-        let mut max_width = initial_width;
-        let mut uniform_width = true;
+        join_table_cells(&headers[..header_count], &mut out);
         if has_rows {
             let page_size = if self.page_size == 0 {
                 visible.len()
@@ -2337,13 +2335,18 @@ impl ResultsTable {
                     cell_count += 1;
                 }
                 out.push('\n');
-                let width = join_table_cells(&cells[..cell_count], &mut out);
-                max_width = max_width.max(width);
-                uniform_width &= width == initial_width;
+                join_table_cells(&cells[..cell_count], &mut out);
             }
         }
-        // Equal column geometry normally needs no vertical padding. Preserve
-        // JoinVertical for unusual content whose rendered widths differ.
+        // JoinVertical(Left) pads each line to the widest finished line.
+        // Measure the joined lines, not the sum of cell widths: without
+        // colour, a cell can end inside an escape sequence and change how
+        // the rest of its joined line is measured.
+        let mut widths = out.split('\n').map(style::width);
+        let first = widths.next().unwrap_or(0);
+        let (max_width, uniform_width) = widths.fold((first, true), |(max, uniform), width| {
+            (max.max(width), uniform && width == first)
+        });
         if uniform_width {
             return out;
         }
@@ -2559,7 +2562,7 @@ impl ResultsTable {
 /// Bottom-aligned JoinHorizontal for the table's at most three cells.
 /// Keep split iterators on the stack instead of allocating a line vector for
 /// every cell and another byte/reference vector for every join.
-fn join_table_cells(cells: &[String], out: &mut String) -> usize {
+fn join_table_cells(cells: &[String], out: &mut String) {
     let mut lines = std::array::from_fn::<_, 3, _>(|i| cells.get(i).map(|cell| cell.split('\n')));
     let heights = std::array::from_fn::<_, 3, _>(|i| {
         cells
@@ -2587,7 +2590,6 @@ fn join_table_cells(cells: &[String], out: &mut String) -> usize {
             out.extend(std::iter::repeat_n(' ', widths[i] - style::width(line)));
         }
     }
-    widths.into_iter().sum()
 }
 
 /// bubble-table `limitStr`.
@@ -7416,6 +7418,45 @@ mod tests {
                                     );
                                 }
                             }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /// Without colour no reset follows a cell, so a cell ending inside an
+    /// escape sequence changes how its whole joined line is measured. The
+    /// vertical padding must come from the finished lines, as JoinVertical's
+    /// does, not from the sum of separately measured cell widths.
+    #[test]
+    fn colourless_cells_ending_mid_escape_keep_join_vertical_padding() {
+        let cases: [(usize, [&str; 3]); 4] = [
+            (35, ["", "up", "1\x1b"]),
+            (14, ["", "a\x1b]", "1"]),
+            (40, ["2026-01-01T00:00:00Z", "up\x1b[", "2\x1b"]),
+            (60, ["\x1b", "metric{job=\"\x1b]8;;\"}", "12.5"]),
+        ];
+        for (width, [ts, metric, value]) in cases {
+            // The odd row alone, and followed by an ordinary row.
+            for extra in [false, true] {
+                let mut table = ResultsTable::new(width, 5, DisplayMode::Utc);
+                table.value_width = 1;
+                let mut rows = vec![row(ts, metric, value)];
+                if extra {
+                    rows.push(row(ts, "up", "1"));
+                }
+                table.with_rows(Arc::new(rows));
+                for profile in [style::Profile::Ascii, style::Profile::TrueColor] {
+                    for dark in [false, true] {
+                        let env = style::Env { profile, dark };
+                        for focused in [false, true] {
+                            table.focused = focused;
+                            assert_eq!(
+                                table.view_in(env),
+                                table.view_original(env),
+                                "width={width} extra={extra} profile={profile:?} dark={dark} focused={focused} row={ts:?} {metric:?} {value:?}"
+                            );
                         }
                     }
                 }
