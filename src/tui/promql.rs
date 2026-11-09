@@ -59,6 +59,24 @@ const CHART_SERIES_PALETTE: [&str; 12] = [
     "#B388FF", "#FFCC99", "#00C7BE", "#A78BFA",
 ];
 
+#[derive(PartialEq)]
+struct ControlsKey {
+    start: String,
+    end: String,
+    dataset: String,
+    step: String,
+    width: usize,
+    height: usize,
+    focus: Pane,
+    mode: QueryMode,
+    display: DisplayMode,
+    env: style::Env,
+    palette: &'static style::Palette,
+}
+thread_local! {
+    static CONTROLS_CACHE: std::cell::RefCell<Option<(ControlsKey, String)>> = const { std::cell::RefCell::new(None) };
+}
+
 // ─── public data types shared with the service ─────────────────────────────
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -1151,6 +1169,16 @@ fn promql_pane_rule(
 
 /// `paneBodyLines`.
 fn pane_body_lines(body: &str, width: usize, height: usize, border: &Style) -> Vec<String> {
+    super::chrome::pane_body_lines(body, width as i64, height as i64, border)
+}
+
+#[cfg(test)]
+fn pane_body_lines_original(
+    body: &str,
+    width: usize,
+    height: usize,
+    border: &Style,
+) -> Vec<String> {
     let inner_w = width.saturating_sub(2).max(1);
     let text_w = inner_w.saturating_sub(2).max(1);
     let mut lines: Vec<&str> = body.split('\n').collect();
@@ -5256,6 +5284,45 @@ impl PromqlState {
         width: usize,
         height: usize,
     ) -> Result<String, GoPanic> {
+        let key = ControlsKey {
+            start: start.to_owned(),
+            end: end.to_owned(),
+            dataset: dataset.to_owned(),
+            step: step.to_owned(),
+            width,
+            height,
+            focus: self.focus(),
+            mode: self.mode,
+            display: self.time_range.display,
+            env: style::Env::process(),
+            palette: style::active(),
+        };
+        if let Some(text) = CONTROLS_CACHE.with(|cache| {
+            cache
+                .borrow()
+                .as_ref()
+                .filter(|(saved, _)| *saved == key)
+                .map(|(_, text)| text.clone())
+        }) {
+            return Ok(text);
+        }
+        // Errors are deliberately not cached: each view must propagate them.
+        let text = self.controls_pane_uncached(start, end, dataset, step, width, height)?;
+        if text.len() + start.len() + end.len() + dataset.len() + step.len() <= 16384 {
+            CONTROLS_CACHE.with(|cache| *cache.borrow_mut() = Some((key, text.clone())));
+        }
+        Ok(text)
+    }
+
+    fn controls_pane_uncached(
+        &self,
+        start: &str,
+        end: &str,
+        dataset: &str,
+        step: &str,
+        width: usize,
+        height: usize,
+    ) -> Result<String, GoPanic> {
         let focus = self.focus();
         let instant = self.mode == QueryMode::Instant;
         let inner_w = width.saturating_sub(2).max(4);
@@ -6782,6 +6849,74 @@ impl Tasks {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn controls_chrome_matches_uncached_transitions() {
+        let mut s = state("up", "logs", false);
+        for width in [0, 12, 34, 100] {
+            for height in [0, 13, 40] {
+                for focus in 0..5 {
+                    s.focused = focus;
+                    for mode in [QueryMode::Range, QueryMode::Instant, QueryMode::Both] {
+                        s.mode = mode;
+                        for display in [DisplayMode::Local, DisplayMode::Utc] {
+                            s.time_range.display = display;
+                            for (start, end, dataset, step) in [
+                                ("from", "to", "logs", "auto"),
+                                ("changed", "later", "中", "\x1b[31m5m\x1b[0m"),
+                            ] {
+                                let expected = s.controls_pane_uncached(
+                                    start, end, dataset, step, width, height,
+                                );
+                                for _ in 0..2 {
+                                    assert_eq!(
+                                        s.controls_pane(start, end, dataset, step, width, height),
+                                        expected
+                                    );
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn pane_chrome_matches_original_across_transitions() {
+        let bodies = [
+            "",
+            "query",
+            "SELECT * FROM café\nWHERE x > 2",
+            "\x1b[31merror\x1b[0m",
+            "| fetching...",
+            "/ fetching...",
+            "status: 42 rows",
+            "中🙂e\u{301}\tvalue",
+            "long line with many many characters\n\nlast\n",
+        ];
+        for palette in [&style::DARK, &style::LIGHT] {
+            for focused in [false, true] {
+                let border = Style::new().fg(Color::of(
+                    palette,
+                    if focused {
+                        Role::BorderHi
+                    } else {
+                        Role::Border
+                    },
+                ));
+                for width in [0, 1, 4, 12, 34, 120] {
+                    for height in [0, 1, 3, 12] {
+                        for body in bodies {
+                            let expected = pane_body_lines_original(body, width, height, &border);
+                            assert_eq!(pane_body_lines(body, width, height, &border), expected);
+                            assert_eq!(pane_body_lines(body, width, height, &border), expected);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     fn fixed_now() -> DateTime<Local> {
         Local

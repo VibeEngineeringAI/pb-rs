@@ -3983,6 +3983,47 @@ impl QueryState {
 
     /// renderSQLControlsBox: TIME, DATASET, COLUMNS sections.
     fn controls_box(&self, dataset: &DatasetValue, width: i64, height: i64) -> Block {
+        // The open drawer has filtering, scrolling and a cursor footer. Keep
+        // that path uncached rather than retaining the column collection.
+        let DatasetValue::Text(dataset_text) = dataset else {
+            return self.controls_box_uncached(dataset, width, height);
+        };
+        if self.columns_drawer_open || width < SQL_CONTROLS_MIN_WIDTH || dataset_text.len() > 8192 {
+            return self.controls_box_uncached(dataset, width, height);
+        }
+        let utc = self.time.display_utc();
+        let key = ControlsKey {
+            start: format_control_time(self.time.start(), utc),
+            end: format_control_time(self.time.end(), utc),
+            utc,
+            dataset: dataset_text.clone(),
+            columns: self.filtered_columns.len(),
+            focus: self.current_focus(),
+            width,
+            height,
+            env: style::Env::process(),
+            palette: style::active(),
+        };
+        if let Some(text) = CONTROLS_CACHE.with(|cache| {
+            cache
+                .borrow()
+                .as_ref()
+                .filter(|(saved, _)| *saved == key)
+                .map(|(_, text)| text.clone())
+        }) {
+            return Block::Text(text);
+        }
+        let rendered = self.controls_box_uncached(dataset, width, height);
+        if let Block::Text(text) = &rendered
+            && text.len() <= 16384
+            && self.render_panics.0.borrow().is_none()
+        {
+            CONTROLS_CACHE.with(|cache| *cache.borrow_mut() = Some((key, text.clone())));
+        }
+        rendered
+    }
+
+    fn controls_box_uncached(&self, dataset: &DatasetValue, width: i64, height: i64) -> Block {
         let focus = self.current_focus();
         let inner_w = (width - 2).max(4);
         let rail = Style::new().bg(act(Role::Active)).render(" ");
@@ -4495,6 +4536,25 @@ pub(crate) enum Frame {
     Bytes(Vec<u8>),
 }
 
+// Inputs read by the closed controls drawer. Active palette and process
+// environment are immutable in production, but explicit keys document them.
+#[derive(PartialEq)]
+struct ControlsKey {
+    start: String,
+    end: String,
+    utc: bool,
+    dataset: String,
+    columns: usize,
+    focus: Focus,
+    width: i64,
+    height: i64,
+    env: style::Env,
+    palette: &'static style::Palette,
+}
+thread_local! {
+    static CONTROLS_CACHE: std::cell::RefCell<Option<(ControlsKey, String)>> = const { std::cell::RefCell::new(None) };
+}
+
 /// A rendered block that may carry raw bytes.
 enum Block {
     Text(String),
@@ -4547,6 +4607,11 @@ fn pane_body_lines_bytes(body: &[u8], width: i64, height: i64, border: &Style) -
 
 /// paneBodyLines.
 fn pane_body_lines(body: &str, width: i64, height: i64, border: &Style) -> Vec<String> {
+    super::chrome::pane_body_lines(body, width, height, border)
+}
+
+#[cfg(test)]
+fn pane_body_lines_original(body: &str, width: i64, height: i64, border: &Style) -> Vec<String> {
     let inner_w = (width - 2).max(1);
     let text_w = (inner_w - 2).max(1);
     let mut lines: Vec<String> = body
@@ -4577,6 +4642,110 @@ fn pane_body_lines(body: &str, width: i64, height: i64, border: &Style) -> Vec<S
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    #[ignore = "opt-in chrome allocation probe"]
+    fn pane_chrome_probe() {
+        let original = std::env::var_os("PB_CHROME_ORIGINAL").is_some();
+        let border = Style::new().fg(Color::hex("#555555"));
+        let body = "  FROM\n  09 Nov 2026, 10:00 | UTC\n  TO\n  09 Nov 2026, 11:00 | UTC\n\n  select-dataset";
+        for _ in 0..20_000 {
+            let lines = if original {
+                pane_body_lines_original(body, 34, 10, &border)
+            } else {
+                pane_body_lines(body, 34, 10, &border)
+            };
+            std::hint::black_box(lines);
+        }
+    }
+
+    #[test]
+    #[ignore = "opt-in controls allocation probe"]
+    fn controls_chrome_probe() {
+        let original = std::env::var_os("PB_CHROME_ORIGINAL").is_some();
+        let s = state("select * from logs");
+        let dataset = DatasetValue::Text("logs".to_owned());
+        for _ in 0..20_000 {
+            let block = if original {
+                s.controls_box_uncached(&dataset, 34, 12)
+            } else {
+                s.controls_box(&dataset, 34, 12)
+            };
+            std::hint::black_box(block);
+        }
+    }
+
+    #[test]
+    fn controls_chrome_matches_uncached_transitions() {
+        let mut s = state("select * from logs");
+        for width in [12, 34, 37, 100] {
+            for height in [0, 12, 40] {
+                for focus in 0..5 {
+                    s.focused = focus;
+                    for open in [false, true] {
+                        s.columns_drawer_open = open;
+                        for dataset in ["logs", "new dataset", "中", ""] {
+                            s.filtered_columns = vec![dataset.to_owned(); focus];
+                            let dataset = DatasetValue::Text(dataset.to_owned());
+                            let expected = s.controls_box_uncached(&dataset, width, height);
+                            for _ in 0..2 {
+                                match (s.controls_box(&dataset, width, height), &expected) {
+                                    (Block::Text(actual), Block::Text(expected)) => {
+                                        assert_eq!(&actual, expected)
+                                    }
+                                    _ => panic!("text dataset must produce text controls"),
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // A wide-rune truncation fault must be reported on every render,
+        // including when the caller consumed the preceding fault.
+        s.columns_drawer_open = false;
+        let dataset = DatasetValue::Text("中".repeat(40));
+        for _ in 0..2 {
+            s.controls_box(&dataset, 70, 12);
+            assert!(s.render_panics.take().is_some());
+        }
+    }
+
+    #[test]
+    fn pane_chrome_matches_original_across_transitions() {
+        let bodies = [
+            "",
+            "query",
+            "SELECT * FROM café\nWHERE x > 2",
+            "\x1b[31merror\x1b[0m",
+            "| fetching...",
+            "/ fetching...",
+            "status: 42 rows",
+            "中🙂e\u{301}\tvalue",
+            "long line with many many characters\n\nlast\n",
+        ];
+        for palette in [&style::DARK, &style::LIGHT] {
+            for focused in [false, true] {
+                let border = Style::new().fg(Color::of(
+                    palette,
+                    if focused {
+                        Role::BorderHi
+                    } else {
+                        Role::Border
+                    },
+                ));
+                for width in [0, 1, 4, 12, 34, 120] {
+                    for height in [0, 1, 3, 12] {
+                        for body in bodies {
+                            let expected = pane_body_lines_original(body, width, height, &border);
+                            assert_eq!(pane_body_lines(body, width, height, &border), expected);
+                            assert_eq!(pane_body_lines(body, width, height, &border), expected);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     fn key(code: KeyCode) -> Key {
         Key {
