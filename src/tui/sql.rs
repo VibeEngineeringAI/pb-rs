@@ -2200,6 +2200,9 @@ fn is_reflow_terminator(c: char) -> bool {
 /// reflow ansi.PrintableRuneWidth: go-runewidth widths; from ESC up to a
 /// terminator nothing counts.
 pub(crate) fn reflow_width(text: &str) -> usize {
+    if text.bytes().all(|b| matches!(b, 0x20..=0x7e)) {
+        return text.len();
+    }
     let mut width = 0;
     let mut in_sequence = false;
     for c in text.chars() {
@@ -2231,6 +2234,15 @@ pub(crate) fn reflow_truncate(text: &str, width: usize, tail: &str) -> String {
         return tail.to_owned();
     }
     let width = width - tail_width;
+    if text.bytes().all(|b| matches!(b, 0x20..=0x7e)) {
+        if text.len() <= width {
+            return text.to_owned();
+        }
+        let mut out = String::with_capacity(width + tail.len());
+        out.push_str(&text[..width]);
+        out.push_str(tail);
+        return out;
+    }
     let mut out = String::new();
     // truncate.Writer state.
     let mut current = 0;
@@ -2287,7 +2299,12 @@ fn limit_str(text: &str, max: i64) -> String {
     }
     let text = match text.find('\n') {
         Some(i) => format!("{}…", &text[..i]),
-        None => text.to_owned(),
+        None => {
+            if max > 0 && reflow_width(text) as i64 > max {
+                return reflow_truncate(text, max as usize, "…");
+            }
+            return text.to_owned();
+        }
     };
     if max > 0 && reflow_width(&text) as i64 > max {
         return reflow_truncate(&text, max as usize, "…");
@@ -5336,4 +5353,123 @@ mod tests {
             "\u{fffd}a".as_bytes()
         );
     }
+}
+#[cfg(test)]
+fn original_reflow_width(text: &str) -> usize {
+    let mut width = 0;
+    let mut in_sequence = false;
+    for c in text.chars() {
+        if c == '\x1b' {
+            in_sequence = true;
+        } else if in_sequence {
+            if is_reflow_terminator(c) {
+                in_sequence = false;
+            }
+        } else {
+            width += style::bubbles_rune_width(c);
+        }
+    }
+    width
+}
+#[cfg(test)]
+fn original_reflow_truncate(text: &str, width: usize, tail: &str) -> String {
+    let tail_width = reflow_width(tail);
+    if width < tail_width {
+        return tail.to_owned();
+    }
+    let width = width - tail_width;
+    let mut out = String::new();
+    // truncate.Writer state.
+    let mut current = 0;
+    let mut in_sequence = false;
+    // ansi.Writer state.
+    let mut writer_in_sequence = false;
+    let mut sequence = String::new();
+    // Only whether a non-reset SGR remains active affects the trailing reset;
+    // retain no redundant history of every prior escape sequence.
+    let mut open_style = false;
+    for c in text.chars() {
+        if c == '\x1b' {
+            in_sequence = true;
+        } else if in_sequence {
+            if is_reflow_terminator(c) {
+                in_sequence = false;
+            }
+        } else {
+            current += style::bubbles_rune_width(c);
+        }
+        if current > width {
+            out.push_str(tail);
+            if open_style {
+                out.push_str("\x1b[0m");
+            }
+            return out;
+        }
+        if c == '\x1b' {
+            writer_in_sequence = true;
+            sequence.push(c);
+        } else if writer_in_sequence {
+            sequence.push(c);
+            if is_reflow_terminator(c) {
+                writer_in_sequence = false;
+                if sequence.ends_with("[0m") {
+                    open_style = false;
+                } else if c == 'm' {
+                    open_style = true;
+                }
+                out.push_str(&sequence);
+                sequence.clear();
+            }
+        } else {
+            out.push(c);
+        }
+    }
+    out
+}
+#[cfg(test)]
+mod reflow_differential_tests {
+    use super::*;
+    #[test]
+    fn ascii_and_unicode_match_original() {
+        let mut inputs = vec![
+            "".to_owned(),
+            "abc 123".to_owned(),
+            "界e\u{301}👩‍💻".to_owned(),
+            "\x1b[31mred\x1b[0m".to_owned(),
+            "a\x1b[unfinished".to_owned(),
+        ];
+        for c in 0..=255 {
+            inputs.push(format!("a{}bc", char::from_u32(c).unwrap()));
+        }
+        for text in inputs {
+            assert_eq!(reflow_width(&text), original_reflow_width(&text));
+            for max in -1..10 {
+                assert_eq!(limit_str(&text, max), original_limit_str(&text, max));
+            }
+            for width in 0..10 {
+                for tail in ["", "…", "abc", "\x1b[31m~"] {
+                    assert_eq!(
+                        reflow_truncate(&text, width, tail),
+                        original_reflow_truncate(&text, width, tail),
+                        "{text:?} {width} {tail:?}"
+                    );
+                }
+            }
+        }
+    }
+}
+
+#[cfg(test)]
+fn original_limit_str(text: &str, max: i64) -> String {
+    if max == 0 {
+        return String::new();
+    }
+    let text = match text.find('\n') {
+        Some(i) => format!("{}…", &text[..i]),
+        None => text.to_owned(),
+    };
+    if max > 0 && reflow_width(&text) as i64 > max {
+        return reflow_truncate(&text, max as usize, "…");
+    }
+    text
 }
