@@ -26,6 +26,8 @@ use super::{
 };
 use crate::{ErrorCode, error::CliError, parser::ParsedInvocation};
 use chrono::{DateTime, Local, LocalResult, NaiveDate, NaiveDateTime, TimeZone, Utc};
+use std::borrow::Cow;
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::io::Write;
 use std::sync::Arc;
@@ -1888,20 +1890,29 @@ struct ResultsTable {
     scroll: usize,
     focused: bool,
     filter: TextInput,
+    filtered_rows: RefCell<Option<FilteredRows>>,
+}
+
+/// Immutable matches are shared by render snapshots; replacing results clears
+/// the cache, while changing the filter replaces only this table's cache slot.
+#[derive(Clone, Debug)]
+struct FilteredRows {
+    filter: String,
+    indices: Arc<Vec<usize>>,
 }
 
 /// Unfiltered navigation borrows the row slice directly. Filtering retains
 /// only matching references; neither path copies row payloads.
 enum VisibleRows<'a> {
     All(&'a [Row]),
-    Filtered(Vec<&'a Row>),
+    Filtered(&'a [Row], Arc<Vec<usize>>),
 }
 
 impl<'a> VisibleRows<'a> {
     fn len(&self) -> usize {
         match self {
             Self::All(rows) => rows.len(),
-            Self::Filtered(rows) => rows.len(),
+            Self::Filtered(_, indices) => indices.len(),
         }
     }
     fn is_empty(&self) -> bool {
@@ -1910,7 +1921,7 @@ impl<'a> VisibleRows<'a> {
     fn get(&self, index: usize) -> Option<&'a Row> {
         match self {
             Self::All(rows) => rows.get(index),
-            Self::Filtered(rows) => rows.get(index).copied(),
+            Self::Filtered(rows, indices) => indices.get(index).and_then(|&i| rows.get(i)),
         }
     }
 }
@@ -1929,6 +1940,7 @@ impl ResultsTable {
             scroll: 0,
             focused: false,
             filter: TextInput::new(),
+            filtered_rows: RefCell::default(),
         }
     }
 
@@ -1937,16 +1949,29 @@ impl ResultsTable {
         if filter.is_empty() || !self.filterable {
             return VisibleRows::All(&self.rows);
         }
+        let mut cached = self.filtered_rows.borrow_mut();
+        if let Some(previous) = cached.as_ref()
+            && previous.filter == filter
+        {
+            return VisibleRows::Filtered(&self.rows, Arc::clone(&previous.indices));
+        }
         let needle = super::unicode::lower(&filter);
-        VisibleRows::Filtered(
+        let indices = Arc::new(
             self.rows
                 .iter()
-                .filter(|row| {
-                    super::unicode::lower(&row.metric).contains(&needle)
-                        || super::unicode::lower(&row.value).contains(&needle)
+                .enumerate()
+                .filter_map(|(i, row)| {
+                    (super::unicode::lower(&row.metric).contains(&needle)
+                        || super::unicode::lower(&row.value).contains(&needle))
+                    .then_some(i)
                 })
                 .collect(),
-        )
+        );
+        *cached = Some(FilteredRows {
+            filter,
+            indices: Arc::clone(&indices),
+        });
+        VisibleRows::Filtered(&self.rows, indices)
     }
 
     fn max_pages(&self) -> usize {
@@ -1969,6 +1994,9 @@ impl ResultsTable {
     }
 
     fn with_rows(&mut self, rows: Arc<Vec<Row>>) {
+        if !Arc::ptr_eq(&self.rows, &rows) {
+            self.filtered_rows.get_mut().take();
+        }
         self.rows = rows;
         if self.cursor >= self.rows.len() {
             self.cursor = self.rows.len().saturating_sub(1);
@@ -1992,8 +2020,8 @@ impl ResultsTable {
         self.current_page = self.page_for(self.cursor);
     }
 
-    fn highlighted_row(&self) -> Option<Row> {
-        self.visible_rows().get(self.cursor).cloned()
+    fn highlighted_row(&self) -> Option<&Row> {
+        self.visible_rows().get(self.cursor)
     }
 
     fn update(&mut self, key: &Key) {
@@ -2085,7 +2113,245 @@ impl ResultsTable {
     /// (Body, or the SelRow/Accent/bold highlight), column width, left
     /// alignment; padding is never inherited.
     fn view(&self) -> String {
+        self.view_in(style::Env::process())
+    }
+
+    fn view_in(&self, env: style::Env) -> String {
         let visible = self.visible_rows();
+        let widths = self.widths();
+        let has_rows = !visible.is_empty();
+        let titles = [self.time_title.as_str(), "METRIC", "VALUE"];
+        let chars =
+            |top_left, top, top_right, right, bottom_right, bottom, bottom_left, left| Border {
+                top,
+                bottom,
+                left,
+                right,
+                top_left,
+                top_right,
+                bottom_left,
+                bottom_right,
+            };
+        // Header border styles: multi (rows present) or single row.
+        let header_borders: [Style; 3] = if has_rows {
+            [
+                Self::border_style(
+                    chars(
+                        " ",
+                        TABLE_TOP,
+                        " ",
+                        TABLE_INNER_DIVIDER,
+                        "─",
+                        TABLE_BOTTOM,
+                        " ",
+                        "",
+                    ),
+                    None,
+                ),
+                Self::border_style(
+                    chars(
+                        "",
+                        TABLE_TOP,
+                        " ",
+                        TABLE_INNER_DIVIDER,
+                        "─",
+                        TABLE_BOTTOM,
+                        "",
+                        "",
+                    ),
+                    Some((true, true, true, false)),
+                ),
+                Self::border_style(
+                    chars("", TABLE_TOP, " ", "", " ", TABLE_BOTTOM, "", ""),
+                    Some((true, true, true, false)),
+                ),
+            ]
+        } else {
+            [
+                Self::border_style(
+                    chars(
+                        " ",
+                        TABLE_TOP,
+                        " ",
+                        TABLE_INNER_DIVIDER,
+                        "─",
+                        TABLE_BOTTOM,
+                        "─",
+                        "",
+                    ),
+                    None,
+                ),
+                Self::border_style(
+                    chars(
+                        "",
+                        TABLE_TOP,
+                        " ",
+                        TABLE_INNER_DIVIDER,
+                        "─",
+                        TABLE_BOTTOM,
+                        "",
+                        "",
+                    ),
+                    Some((true, true, true, false)),
+                ),
+                Self::border_style(
+                    chars("", TABLE_TOP, " ", "", "─", TABLE_BOTTOM, "", ""),
+                    Some((true, true, true, false)),
+                ),
+            ]
+        };
+        let mut headers: [String; 3] = std::array::from_fn(|_| String::new());
+        let mut header_count = 0;
+        // Scroll whole columns, retaining their original flex widths. The
+        // generated overflow column uses the left border and a one-cell '<'.
+        let columns = (self.scroll > 0).then_some((0, 1, "<")).into_iter().chain(
+            titles
+                .into_iter()
+                .enumerate()
+                .skip(self.scroll)
+                .map(|(i, title)| (i, widths[i], title)),
+        );
+        for (i, width, title) in columns {
+            let cell = header_borders[i]
+                .fg(Color::role(Role::Accent))
+                .bold(true)
+                .width(width)
+                .align(style::LEFT);
+            headers[header_count] = cell.render_in(&limit_str(title, width), env);
+            header_count += 1;
+        }
+        let mut out = String::new();
+        let initial_width = join_table_cells(&headers[..header_count], &mut out);
+        let mut max_width = initial_width;
+        let mut uniform_width = true;
+        if has_rows {
+            let page_size = if self.page_size == 0 {
+                visible.len()
+            } else {
+                self.page_size
+            };
+            let start = page_size * self.current_page;
+            let end = (start + page_size).min(visible.len());
+            let inner = [
+                Self::border_style(
+                    chars("", "", "", TABLE_INNER_DIVIDER, "", "", "", ""),
+                    Some((false, true, false, true)),
+                ),
+                Self::border_style(
+                    chars("", "", "", TABLE_INNER_DIVIDER, "", "", "", ""),
+                    Some((false, true, false, false)),
+                ),
+                Self::border_style(
+                    chars("", "", "", "", "", "", "", ""),
+                    Some((false, true, false, false)),
+                ),
+            ];
+            let last = [
+                Self::border_style(
+                    chars("", "", "", TABLE_INNER_DIVIDER, "─", TABLE_BOTTOM, "─", ""),
+                    Some((false, true, true, true)),
+                ),
+                Self::border_style(
+                    chars("", "", "", TABLE_INNER_DIVIDER, "─", TABLE_BOTTOM, "", ""),
+                    Some((false, true, true, false)),
+                ),
+                Self::border_style(
+                    chars("", "", "", "", "─", TABLE_BOTTOM, "", ""),
+                    Some((false, true, true, false)),
+                ),
+            ];
+            // Prepare the normal/highlighted variants for each border and column.
+            let prepare = |borders: [Style; 3], highlighted: bool| {
+                std::array::from_fn::<_, 3, _>(|i| {
+                    let cell = if highlighted {
+                        borders[i]
+                            .bg(Color::role(Role::SelRow))
+                            .fg(Color::role(Role::Accent))
+                            .bold(true)
+                    } else {
+                        borders[i].fg(Color::role(Role::Body))
+                    };
+                    let width = if self.scroll > 0 && i == 0 {
+                        1
+                    } else {
+                        widths[i]
+                    };
+                    cell.height(1).width(width).align(style::LEFT)
+                })
+            };
+            let styles = [
+                prepare(inner, false),
+                prepare(inner, true),
+                prepare(last, false),
+                prepare(last, true),
+            ];
+            for index in start..end {
+                let row = visible.get(index).expect("visible page row");
+                let highlighted = self.focused && index == self.cursor;
+                let is_last = index + 1 == end;
+                let data = [
+                    row.timestamp.as_ref(),
+                    row.metric.as_ref(),
+                    row.value.as_str(),
+                ];
+                let mut cells: [String; 3] = std::array::from_fn(|_| String::new());
+                let mut cell_count = 0;
+                let row_styles = &styles[usize::from(is_last) * 2 + usize::from(highlighted)];
+                let columns = (self.scroll > 0).then_some((0, 1, "<")).into_iter().chain(
+                    data.into_iter()
+                        .enumerate()
+                        .skip(self.scroll)
+                        .map(|(i, text)| (i, widths[i], text)),
+                );
+                for (i, width, text) in columns {
+                    let cell = row_styles[i];
+                    cells[cell_count] = cell.render_in(&limit_str(text, width), env);
+                    cell_count += 1;
+                }
+                out.push('\n');
+                let width = join_table_cells(&cells[..cell_count], &mut out);
+                max_width = max_width.max(width);
+                uniform_width &= width == initial_width;
+            }
+        }
+        // Equal column geometry normally needs no vertical padding. Preserve
+        // JoinVertical for unusual content whose rendered widths differ.
+        if uniform_width {
+            return out;
+        }
+        let mut padded = String::with_capacity(out.len());
+        for (i, line) in out.split('\n').enumerate() {
+            if i > 0 {
+                padded.push('\n');
+            }
+            padded.push_str(line);
+            padded.extend(std::iter::repeat_n(' ', max_width - style::width(line)));
+        }
+        padded
+    }
+
+    #[cfg(test)]
+    fn view_original(&self, env: style::Env) -> String {
+        let filter = self.filter.value();
+        let visible = if filter.is_empty() || !self.filterable {
+            VisibleRows::All(&self.rows)
+        } else {
+            let needle = super::unicode::lower(&filter);
+            VisibleRows::Filtered(
+                &self.rows,
+                Arc::new(
+                    self.rows
+                        .iter()
+                        .enumerate()
+                        .filter_map(|(i, row)| {
+                            (super::unicode::lower(&row.metric).contains(&needle)
+                                || super::unicode::lower(&row.value).contains(&needle))
+                            .then_some(i)
+                        })
+                        .collect(),
+                ),
+            )
+        };
         let widths = self.widths();
         let has_rows = !visible.is_empty();
         let titles = [self.time_title.as_str(), "METRIC", "VALUE"];
@@ -2184,7 +2450,7 @@ impl ResultsTable {
                 .bold(true)
                 .width(width)
                 .align(style::LEFT);
-            headers.push(cell.render(&limit_str(title, width)));
+            headers.push(cell.render_in(&limit_str_original(title, width), env));
         }
         let header_refs: Vec<&str> = headers.iter().map(String::as_str).collect();
         let mut lines = vec![style::join_horizontal(1.0, &header_refs)];
@@ -2252,7 +2518,7 @@ impl ResultsTable {
                         border.fg(Color::role(Role::Body))
                     };
                     let cell = cell.height(1).width(width).align(style::LEFT);
-                    cells.push(cell.render(&limit_str(text, width)));
+                    cells.push(cell.render_in(&limit_str_original(text, width), env));
                 }
                 let refs: Vec<&str> = cells.iter().map(String::as_str).collect();
                 lines.push(style::join_horizontal(1.0, &refs));
@@ -2262,8 +2528,58 @@ impl ResultsTable {
     }
 }
 
+/// Bottom-aligned JoinHorizontal for the table's at most three cells.
+/// Keep split iterators on the stack instead of allocating a line vector for
+/// every cell and another byte/reference vector for every join.
+fn join_table_cells(cells: &[String], out: &mut String) -> usize {
+    let mut lines = std::array::from_fn::<_, 3, _>(|i| cells.get(i).map(|cell| cell.split('\n')));
+    let heights = std::array::from_fn::<_, 3, _>(|i| {
+        cells
+            .get(i)
+            .map_or(0, |cell| cell.bytes().filter(|&b| b == b'\n').count() + 1)
+    });
+    let widths = std::array::from_fn::<_, 3, _>(|i| {
+        cells.get(i).map_or(0, |cell| {
+            cell.split('\n').map(style::width).max().unwrap_or(0)
+        })
+    });
+    let height = heights.into_iter().max().unwrap_or(0);
+    out.reserve(cells.iter().map(String::len).sum::<usize>() + height);
+    for y in 0..height {
+        if y > 0 {
+            out.push('\n');
+        }
+        for i in 0..cells.len() {
+            let line = if y + heights[i] < height {
+                ""
+            } else {
+                lines[i].as_mut().and_then(Iterator::next).unwrap_or("")
+            };
+            out.push_str(line);
+            out.extend(std::iter::repeat_n(' ', widths[i] - style::width(line)));
+        }
+    }
+    widths.into_iter().sum()
+}
+
 /// bubble-table `limitStr`.
-fn limit_str(s: &str, max: usize) -> String {
+fn limit_str(s: &str, max: usize) -> Cow<'_, str> {
+    if max == 0 {
+        return Cow::Borrowed("");
+    }
+    let text = if let Some(i) = s.find('\n') {
+        Cow::Owned(format!("{}…", &s[..i]))
+    } else {
+        Cow::Borrowed(s)
+    };
+    if style::width(&text) > max {
+        return Cow::Owned(reflow_truncate(&text, max, "…"));
+    }
+    text
+}
+
+#[cfg(test)]
+fn limit_str_original(s: &str, max: usize) -> String {
     if max == 0 {
         return String::new();
     }
@@ -4849,7 +5165,7 @@ impl PromqlState {
         let Some(row) = table.highlighted_row() else {
             return Ok(String::new());
         };
-        let metric = row.metric.trim().to_owned();
+        let metric = row.metric.trim();
         if metric.is_empty() {
             return Ok(String::new());
         }
@@ -4860,7 +5176,7 @@ impl PromqlState {
             text_w = width as isize - 2;
         }
         let text_w = text_w.max(1) as usize;
-        let mut lines = wrap_visible_text(&metric, text_w);
+        let mut lines = wrap_visible_text(metric, text_w);
         if lines.is_empty() {
             return Ok(String::new());
         }
@@ -6667,6 +6983,117 @@ mod tests {
     }
 
     #[test]
+    fn table_render_matches_original_across_navigation_and_geometry() {
+        let mut table = ResultsTable::new(100, 7, DisplayMode::Utc);
+        table.filterable = true;
+        table.focused = true;
+        table.with_rows(Arc::new(
+            (0..43)
+                .map(|i| {
+                    row(
+                        "2026-01-01T00:00:00Z",
+                        &[
+                            "API α界🙂",
+                            "İstanbul",
+                            "other\nsecond",
+                            "e\u{301}",
+                            "\x1b[31mred\x1b[0m",
+                            "a\rb\tc",
+                        ][i % 6]
+                            .repeat(i % 4 + 1),
+                        &i.to_string(),
+                    )
+                })
+                .collect(),
+        ));
+        for dark in [false, true] {
+            for profile in [style::Profile::Ascii, style::Profile::TrueColor] {
+                let env = style::Env { profile, dark };
+                for filter in ["", "api", "İ", "2", "no matches"] {
+                    table.filter.set_value(filter);
+                    for width in [8, 32, 80, 120] {
+                        table.target_width = width;
+                        for page_size in [1, 7, 50] {
+                            table.with_page_size(page_size);
+                            for cursor in [0, 3, 17, 42] {
+                                table.with_highlighted_row(cursor);
+                                for scroll in 0..3 {
+                                    table.scroll = scroll;
+                                    assert_eq!(
+                                        table.view_in(env),
+                                        table.view_original(env),
+                                        "dark={dark} width={width} page={page_size} cursor={cursor} scroll={scroll} filter={filter:?}"
+                                    );
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    #[test]
+    #[ignore = "opt-in focused rendering allocation/instruction benchmark"]
+    fn benchmark_promql_table_render() {
+        let mut table = ResultsTable::new(118, 20, DisplayMode::Utc);
+        table.focused = true;
+        table.filterable = true;
+        table.with_rows(Arc::new(
+            (0..1000)
+                .map(|i| {
+                    row(
+                        "2026-01-01T00:00:00Z",
+                        &format!("up{{instance=\"series-{i}\",job=\"api\"}}"),
+                        &i.to_string(),
+                    )
+                })
+                .collect(),
+        ));
+        let original = std::env::var_os("PB_TABLE_ORIGINAL").is_some();
+        let env = style::Env {
+            profile: style::Profile::TrueColor,
+            dark: true,
+        };
+        for i in 0..2000 {
+            table.with_highlighted_row(i % 1000);
+            std::hint::black_box(if original {
+                table.view_original(env)
+            } else {
+                table.view_in(env)
+            });
+        }
+    }
+
+    #[test]
+    fn filtered_indices_survive_navigation_and_invalidate_on_replacement() {
+        let mut table = ResultsTable::new(100, 7, DisplayMode::Utc);
+        table.filterable = true;
+        table.focused = true;
+        table.with_rows(Arc::new(
+            (0..1000).map(|i| row("", "API", &i.to_string())).collect(),
+        ));
+        table.filter.set_value("api");
+        let indices = match table.visible_rows() {
+            VisibleRows::Filtered(_, indices) => indices,
+            _ => unreachable!(),
+        };
+        for _ in 0..100 {
+            table.update(&key(KeyCode::Down));
+            match table.visible_rows() {
+                VisibleRows::Filtered(_, ref current) => assert!(Arc::ptr_eq(&indices, current)),
+                _ => unreachable!(),
+            }
+        }
+        let snapshot = table.clone();
+        table.with_rows(Arc::new(vec![row("", "other", "0")]));
+        assert!(table.visible_rows().is_empty());
+        assert_eq!(snapshot.visible_rows().len(), 1000);
+        table.filter.set_value("OTHER");
+        assert_eq!(table.visible_rows().len(), 1);
+    }
+
+    #[test]
     fn shared_rows_keep_filter_selection_and_metric_detail_local() {
         let mut s = state("up", "m", false);
         s.update(Message::Done(vector(vec![
@@ -6689,7 +7116,7 @@ mod tests {
         assert_eq!((s.table.cursor, s.table.current_page), (0, 0));
         s.table.filter.blur();
         press(&mut s, key(KeyCode::Down));
-        assert_eq!(s.table.highlighted_row().unwrap(), s.data_rows[2]);
+        assert_eq!(s.table.highlighted_row().unwrap(), &s.data_rows[2]);
         let detail = s.metric_detail(&s.table, 80, 4).unwrap();
         assert!(detail.contains("api Beta"));
         assert!(!detail.contains("API Alpha"));
@@ -6697,10 +7124,10 @@ mod tests {
         let selected = s.clone();
         s.table.filter.set_value("20");
         s.table.with_highlighted_row(0);
-        assert_eq!(s.table.highlighted_row().unwrap(), s.data_rows[1]);
+        assert_eq!(s.table.highlighted_row().unwrap(), &s.data_rows[1]);
         assert_eq!(
             selected.table.highlighted_row().unwrap(),
-            selected.data_rows[2]
+            &selected.data_rows[2]
         );
         s.table.filter.set_value("00:01:00");
         assert!(s.table.visible_rows().is_empty());
