@@ -1,0 +1,548 @@
+{
+  "outcome": "Retain only capped JSONL source-line buffer reuse. Text keeps fresh buffers; SQL, tail and TUI candidates excluded.",
+  "platform": "Linux-7.2.5-3-omarchy-x86_64-with-glibc2.44",
+  "method": {
+    "affinity": "CPUs 2,4,6,8",
+    "host": "shared Linux development host, warm caches",
+    "cli_artifact_placement": "Both binaries written in 64KiB chunks, flushed, fsynced, chmod755 and fully SHA256-read before measurements",
+    "component": "Same optimized test executable; fresh/reuse modes are test-only. Native wait4 child CPU includes common setup/preflight/startup. Repeated loop isolates memory-backed source line reading and payload encoding; no filesystem durability, HTTP or checkpoint work.",
+    "component_limits": "Not an end-to-end ingestion speed or throughput result. Reuse mode keeps scratch across probe rounds; real product drops scratch at scan end. Ordinary-record component result is inconclusive."
+  },
+  "plan": {
+    "baseline_commit": "6bcdbd5055e7d4a7d3335776195aead5c2ef78db",
+    "sql": {
+      "measured_pairs": 20,
+      "warmup_pairs": 2,
+      "seed": 20261120,
+      "cases": [
+        "p3-100000-json",
+        "sql-wide-20000-json",
+        "p3-single-8MiB-item"
+      ],
+      "sink": "cached file",
+      "primary": "median paired total client CPU ratio, paired bootstrap 95% interval",
+      "retention": "At least one declared CPU workload improves >=3% with upper confidence bound <1, no >5% material CPU or peak RSS regression across guardrails; exact contracts required",
+      "confirmation": {
+        "reason": "Ordinary CPU paired reduction 2.9621%, confidence interval below parity; just below the initial 3% magnitude target. User requests retaining verified benefits, so require a separate fixed confirmation rather than discarding on rounding or claiming the original target passed.",
+        "case": "p3-100000-json",
+        "measured_pairs": 20,
+        "warmup_pairs": 2,
+        "seed": 20261122,
+        "retention": "Independent confirmation CPU paired interval upper bound <1, pooled paired median CPU reduction >=2%, and no material guardrail regression. Initial target and all initial results remain recorded."
+      }
+    },
+    "ingestion": {
+      "scope": "JSONL-only scratch reuse, release retained capacity over 64KiB; text allocates per line",
+      "component_probe": {
+        "measured_pairs": 15,
+        "warmup_pairs": 2,
+        "seed": 20261121,
+        "cases": {
+          "short": {
+            "format": "jsonl",
+            "rounds": 256
+          },
+          "ordinary": {
+            "format": "jsonl",
+            "rounds": 64
+          }
+        },
+        "primary": "median paired native process CPU ratio, paired bootstrap 95% interval",
+        "retention": "At least one declared JSONL component workload improves >=3% with interval upper bound <1; no statistically significant CPU regression on ordinary guard"
+      },
+      "end_to_end_guard": {
+        "records": 5000,
+        "record_bytes": 500,
+        "formats": [
+          "jsonl",
+          "text"
+        ],
+        "batch_size": "CLI default 1000",
+        "measured_pairs": 5,
+        "warmup_pairs": 1,
+        "probe_repetitions": 1,
+        "probe_records": 3000,
+        "strict_wire_and_state": true,
+        "retention": "No statistically significant CPU regression; no material >5% median CPU/RSS regression. End-to-end speed claims require their own clear CPU interval."
+      },
+      "limits": "Component phase measurements cannot establish whole-ingestion throughput or durable import speed."
+    }
+  },
+  "selection_cli_binaries": {
+    "baseline": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/t3-3b6a6e72-21ed226505f254a7/harness/results/perf-selective-20261110/artifacts/pb-baseline-controlled",
+      "sha256": "510e788d747de20364bf3c0ddc44d06fbb5be3d0d07fc1337108596dfc1d5a9a",
+      "size_bytes": 13648184
+    },
+    "candidate": {
+      "path": "/home/ajs/.t3/worktrees/pb-rs/t3-3b6a6e72-21ed226505f254a7/harness/results/perf-selective-20261110/artifacts/pb-candidate-controlled",
+      "sha256": "10d9e5230fc3c01e4be326320b88a0d06290c956dd10c6c1b927ec0013e01468",
+      "size_bytes": 13648504
+    }
+  },
+  "component_binary": {
+    "path": "/home/ajs/.t3/worktrees/pb-rs/t3-3b6a6e72-21ed226505f254a7/target/release/deps/pb-707a8289dc2130d7",
+    "sha256": "9d2460ecb1e60a8a4d731a15f4563f66c5732976262aee82bc9f1fcb1b6f03d0"
+  },
+  "component": {
+    "short": {
+      "fresh_cpu_median_ms": 256.394,
+      "reuse_cpu_median_ms": 238.198,
+      "paired_ratio": 0.9266854663069272,
+      "paired_ratio_ci95": [
+        0.9059700976380131,
+        0.9373856174479098
+      ],
+      "record_signature": "format=Jsonl size=short records=2097152 payload_bytes=112262912"
+    },
+    "ordinary": {
+      "fresh_cpu_median_ms": 347.019,
+      "reuse_cpu_median_ms": 339.795,
+      "paired_ratio": 0.9963952400204693,
+      "paired_ratio_ci95": [
+        0.9762849483837045,
+        1.0028938984214555
+      ],
+      "record_signature": "format=Jsonl size=ordinary records=524288 payload_bytes=243595712"
+    }
+  },
+  "ingest_exact_compatibility": {
+    "passed": true,
+    "workloads": {
+      "jsonl": {
+        "check_failures": [],
+        "observation_sha256": {
+          "baseline": [
+            "491846a8938e36720a504f79d720b61670d20e2acc79f634c45f02b5bf145e8f"
+          ],
+          "candidate": [
+            "491846a8938e36720a504f79d720b61670d20e2acc79f634c45f02b5bf145e8f"
+          ]
+        },
+        "baseline_stable": true,
+        "candidate_stable": true,
+        "exact_match": true,
+        "logical_match": true,
+        "differences": [],
+        "passed": true
+      },
+      "text": {
+        "check_failures": [],
+        "observation_sha256": {
+          "baseline": [
+            "8d61375cab364fd398914dbc7fdb485584a5b035c9e97e3f56bbe7b6b83c8efa"
+          ],
+          "candidate": [
+            "8d61375cab364fd398914dbc7fdb485584a5b035c9e97e3f56bbe7b6b83c8efa"
+          ]
+        },
+        "baseline_stable": true,
+        "candidate_stable": true,
+        "exact_match": true,
+        "logical_match": true,
+        "differences": [],
+        "passed": true
+      }
+    },
+    "probes": {
+      "retry_503:jsonl": {
+        "check_failures": [],
+        "observation_sha256": {
+          "baseline": [
+            "801756b98c9bbe3d80ee496f158a7b92d925701f05d0a7acd995a46118359bb2"
+          ],
+          "candidate": [
+            "801756b98c9bbe3d80ee496f158a7b92d925701f05d0a7acd995a46118359bb2"
+          ]
+        },
+        "baseline_stable": true,
+        "candidate_stable": true,
+        "exact_match": true,
+        "logical_match": true,
+        "differences": [],
+        "passed": true
+      },
+      "retry_503:text": {
+        "check_failures": [],
+        "observation_sha256": {
+          "baseline": [
+            "bb338929f4da44a2b04333156125352ca7aa9705f84d8007c91689608cab6bc4"
+          ],
+          "candidate": [
+            "bb338929f4da44a2b04333156125352ca7aa9705f84d8007c91689608cab6bc4"
+          ]
+        },
+        "baseline_stable": true,
+        "candidate_stable": true,
+        "exact_match": true,
+        "logical_match": true,
+        "differences": [],
+        "passed": true
+      },
+      "split_413:jsonl": {
+        "check_failures": [],
+        "observation_sha256": {
+          "baseline": [
+            "7e8d09067535dc0caf1b90056fc716792c9e7fe42f125d314e51ae0e45e379c3"
+          ],
+          "candidate": [
+            "7e8d09067535dc0caf1b90056fc716792c9e7fe42f125d314e51ae0e45e379c3"
+          ]
+        },
+        "baseline_stable": true,
+        "candidate_stable": true,
+        "exact_match": true,
+        "logical_match": true,
+        "differences": [],
+        "passed": true
+      },
+      "split_413:text": {
+        "check_failures": [],
+        "observation_sha256": {
+          "baseline": [
+            "d1829150e1415f8f29159cfeea5cd43cb080172f648c77216c2aeacf3ac6bfd4"
+          ],
+          "candidate": [
+            "d1829150e1415f8f29159cfeea5cd43cb080172f648c77216c2aeacf3ac6bfd4"
+          ]
+        },
+        "baseline_stable": true,
+        "candidate_stable": true,
+        "exact_match": true,
+        "logical_match": true,
+        "differences": [],
+        "passed": true
+      }
+    }
+  },
+  "ingest_end_to_end_resource_improvement_gate_passed": false,
+  "ingest_end_to_end_guard_passed": true,
+  "ingest_end_to_end_guards": {
+    "jsonl": {
+      "cpu_ms": {
+        "metric": "cpu_ms",
+        "n": 5,
+        "baseline": {
+          "n": 5,
+          "median": 61.197,
+          "mean": 60.369,
+          "min": 56.824,
+          "max": 63.066,
+          "p90": 62.734,
+          "stdev": 2.6183733500018684,
+          "mad": 1.8689999999999998
+        },
+        "candidate": {
+          "n": 5,
+          "median": 59.601,
+          "mean": 60.102799999999995,
+          "min": 57.471999999999994,
+          "max": 62.806999999999995,
+          "p90": 62.2362,
+          "stdev": 2.0516646168416512,
+          "mad": 1.7789999999999964
+        },
+        "status": "defined",
+        "ratio": 0.9739202902103044,
+        "improvement": 0.02607970978969565,
+        "ratio_ci95": [
+          0.9450575587479783,
+          1.048836335053484
+        ],
+        "paired_ratios": [
+          1.0114036322680557,
+          0.9682500776181838,
+          1.048836335053484,
+          0.9450575587479783,
+          1.0091747541615783
+        ],
+        "paired_median_ratio": 1.0091747541615783,
+        "candidate_better_rounds": 2
+      },
+      "peak_rss_bytes": {
+        "metric": "peak_rss_bytes",
+        "n": 5,
+        "baseline": {
+          "n": 5,
+          "median": 9981952,
+          "mean": 9931980.8,
+          "min": 9596928,
+          "max": 10182656,
+          "p90": 10154803.2,
+          "stdev": 240766.76831157575,
+          "mad": 196608
+        },
+        "candidate": {
+          "n": 5,
+          "median": 10047488,
+          "mean": 9916416,
+          "min": 9617408,
+          "max": 10092544,
+          "p90": 10082713.6,
+          "stdev": 215692.4198204471,
+          "mad": 45056
+        },
+        "status": "defined",
+        "ratio": 1.0065654493229381,
+        "improvement": -0.006565449322938122,
+        "ratio_ci95": [
+          0.9647630619684082,
+          1.049082373026035
+        ],
+        "paired_ratios": [
+          1.049082373026035,
+          0.9647630619684082,
+          1.0110791957324579,
+          0.9828380075345333,
+          0.9867256637168141
+        ],
+        "paired_median_ratio": 0.9867256637168141,
+        "candidate_better_rounds": 3
+      },
+      "wall_ms": {
+        "metric": "wall_ms",
+        "n": 5,
+        "baseline": {
+          "n": 5,
+          "median": 2309.318833,
+          "mean": 2319.1811776,
+          "min": 2289.638272,
+          "max": 2362.289144,
+          "p90": 2351.4903464,
+          "stdev": 29.497845544439777,
+          "mad": 19.68056099999967
+        },
+        "candidate": {
+          "n": 5,
+          "median": 2338.260452,
+          "mean": 2349.3027908,
+          "min": 2320.984743,
+          "max": 2411.768083,
+          "p90": 2386.1403238,
+          "stdev": 36.36830816269065,
+          "mad": 10.45846100000017
+        },
+        "status": "defined",
+        "ratio": 1.0125325349563805,
+        "improvement": -0.012532534956380514,
+        "ratio_ci95": [
+          0.9967926244260272,
+          1.0212357474080516
+        ],
+        "paired_ratios": [
+          1.009401391514586,
+          1.0166195552781863,
+          1.0212357474080516,
+          1.0209453356400813,
+          0.9967926244260272
+        ],
+        "paired_median_ratio": 1.0166195552781863,
+        "candidate_better_rounds": 1
+      }
+    },
+    "text": {
+      "cpu_ms": {
+        "metric": "cpu_ms",
+        "n": 5,
+        "baseline": {
+          "n": 5,
+          "median": 56.366,
+          "mean": 56.971,
+          "min": 55.827,
+          "max": 58.521,
+          "p90": 58.2266,
+          "stdev": 1.1311589189853042,
+          "mad": 0.5390000000000015
+        },
+        "candidate": {
+          "n": 5,
+          "median": 57.304,
+          "mean": 56.821999999999996,
+          "min": 54.187,
+          "max": 59.178,
+          "p90": 59.1232,
+          "stdev": 2.4246819379044333,
+          "mad": 1.8739999999999952
+        },
+        "status": "defined",
+        "ratio": 1.016641237625519,
+        "improvement": -0.016641237625518945,
+        "ratio_ci95": [
+          0.9615125275037264,
+          1.026456732405467
+        ],
+        "paired_ratios": [
+          0.9615125275037264,
+          0.9651208175141043,
+          1.026456732405467,
+          1.0217357445703903,
+          1.0112267391192904
+        ],
+        "paired_median_ratio": 1.0112267391192904,
+        "candidate_better_rounds": 2
+      },
+      "peak_rss_bytes": {
+        "metric": "peak_rss_bytes",
+        "n": 5,
+        "baseline": {
+          "n": 5,
+          "median": 9850880,
+          "mean": 9877094.4,
+          "min": 9662464,
+          "max": 10211328,
+          "p90": 10117939.2,
+          "stdev": 227108.33350804192,
+          "mad": 167936
+        },
+        "candidate": {
+          "n": 5,
+          "median": 9732096,
+          "mean": 9655091.2,
+          "min": 9400320,
+          "max": 9793536,
+          "p90": 9777152.0,
+          "stdev": 160383.37685433612,
+          "mad": 61440
+        },
+        "status": "defined",
+        "ratio": 0.987941787941788,
+        "improvement": 0.012058212058212003,
+        "ratio_ci95": [
+          0.9421182266009852,
+          1.0093259855871133
+        ],
+        "paired_ratios": [
+          1.0050761421319796,
+          1.0093259855871133,
+          0.9742203742203742,
+          0.9421182266009852,
+          0.9590854392298436
+        ],
+        "paired_median_ratio": 0.9742203742203742,
+        "candidate_better_rounds": 3
+      },
+      "wall_ms": {
+        "metric": "wall_ms",
+        "n": 5,
+        "baseline": {
+          "n": 5,
+          "median": 2313.547972,
+          "mean": 2329.0581979999997,
+          "min": 2302.455849,
+          "max": 2398.711187,
+          "p90": 2366.177783,
+          "stdev": 39.33116365023378,
+          "mad": 3.8297050000001036
+        },
+        "candidate": {
+          "n": 5,
+          "median": 2355.408773,
+          "mean": 2339.5740578,
+          "min": 2262.051092,
+          "max": 2414.83908,
+          "p90": 2391.8303208,
+          "stdev": 57.491578357092976,
+          "mad": 47.15461099999993
+        },
+        "status": "defined",
+        "ratio": 1.0180937683188875,
+        "improvement": -0.018093768318887538,
+        "ratio_ci95": [
+          0.9777411661122886,
+          1.0439394991688793
+        ],
+        "paired_ratios": [
+          1.0238273116176482,
+          0.996063000394562,
+          1.0439394991688793,
+          0.9777411661122886,
+          0.9819476332812885
+        ],
+        "paired_median_ratio": 0.996063000394562,
+        "candidate_better_rounds": 3
+      }
+    }
+  },
+  "sql_disposition": {
+    "retained": false,
+    "reason": "Independent confirmation alone did not meet the prospective interval criterion. Positive pooled estimate retained as exploratory evidence, not promoted to a confirmed benefit.",
+    "runs": [
+      {
+        "run": "sql",
+        "case": "p3-100000-json",
+        "pairs": 20,
+        "paired_cpu_ratio": 0.9703789048480123,
+        "paired_cpu_ratio_ci95": [
+          0.947485123881626,
+          0.9918960019895328
+        ],
+        "exact_contracts_match": true
+      },
+      {
+        "run": "sql",
+        "case": "sql-wide-20000-json",
+        "pairs": 20,
+        "paired_cpu_ratio": 0.9889772759387863,
+        "paired_cpu_ratio_ci95": [
+          0.957930728564556,
+          1.019783066790194
+        ],
+        "exact_contracts_match": true
+      },
+      {
+        "run": "sql",
+        "case": "p3-single-8MiB-item",
+        "pairs": 20,
+        "paired_cpu_ratio": 1.0182170438705982,
+        "paired_cpu_ratio_ci95": [
+          0.9848312113927943,
+          1.0467178042215837
+        ],
+        "exact_contracts_match": true
+      },
+      {
+        "run": "sql-confirm",
+        "case": "p3-100000-json",
+        "pairs": 20,
+        "paired_cpu_ratio": 0.9829215109332547,
+        "paired_cpu_ratio_ci95": [
+          0.9679542643600673,
+          1.0057733235798234
+        ],
+        "exact_contracts_match": true
+      }
+    ],
+    "pooled_ordinary_pairs": 40,
+    "pooled_ordinary_cpu_ratio": 0.9747889459923508,
+    "pooled_ordinary_cpu_ratio_ci95": [
+      0.9652908295056009,
+      0.9933872192880786
+    ]
+  },
+  "correctness_before_selection": {
+    "tests_passed": 958,
+    "tests_failed": 0,
+    "default_ignored": 18,
+    "manual_probe_run_separately": true,
+    "fmt": true,
+    "clippy_all_targets": true
+  },
+  "raw_reports": "harness/results/perf-selective-20261110 (local, gitignored)",
+  "final_validation": {
+    "tests_passed": 958,
+    "tests_failed": 0,
+    "default_ignored": 18,
+    "fmt": true,
+    "clippy_all_targets": true,
+    "release_build": true,
+    "retained_ingestion_matches_measured_source": true,
+    "retained_source_hashes": {
+      "src/ingest/files.rs": "2a66639cee4d9334456bd4dde187b30ad7802568480d906bed05a324276feb83",
+      "src/ingest/files_tests.rs": "e397ecc00c242a7779efeadc84292dd6019b4e0acdec321ad4573e7a866b8ac9"
+    },
+    "release_binary_sha256": "6415798b24b9524d93cda1885de394b1b1c6cbe4f15f78b002f6d937a63ad4cd",
+    "release_binary_size_bytes": 13649016,
+    "branch": "perf/selective-benefits",
+    "published": false
+  }
+}

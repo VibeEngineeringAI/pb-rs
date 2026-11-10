@@ -759,3 +759,81 @@ runs. Use the report commands and hashes for the exact fixture configurations.
 Further priorities are a narrower append fast path, attribution of cached-text
 and ingestion RSS, and longer sustained runs on a quieter host. No deferred
 optimization is represented as implemented.
+
+## Selective JSONL source-buffer reuse — 2026-11-10
+
+The retained follow-up reuses source-line storage only for JSONL ingestion.
+Text keeps a fresh buffer per line. Scratch whose capacity exceeds 64 KiB is
+released before the next read, or when the scan ends. A currently processed
+line can still exceed that size up to the existing configured line limit.
+Payload ownership, source reads, batch boundaries, checkpoint bytes, and every
+save/sync/rename operation retain their existing behavior.
+
+In a release-mode memory-backed line/payload probe, short JSONL records use
+**7.3% less native process CPU** (paired bootstrap 95% reduction interval
+**6.3–9.4%**). This measures source reading and payload encoding, not whole
+imports or maximum sustained throughput. Ordinary approximately 500-byte JSONL
+records have no established improvement or regression in this probe.
+
+Each size uses 15 randomized measured fresh/reuse pairs after two warmup pairs,
+within the same optimized test executable. Every short invocation processes
+2,097,152 records; ordinary invocations process 524,288. Common corpus creation,
+semantic-oracle preflight and test startup remain included in process CPU.
+The environment switches exist only in the ignored test probe, not in the CLI.
+
+The original/candidate end-to-end guard uses five measured pairs plus one
+warmup, 5,000 records of 500 bytes, both JSONL and text, and the default
+1,000-event batch limit. Exact wire/state, resume/completion, 503 replay and
+413 splitting checks pass. CPU and RSS show no detected material regression.
+The end-to-end resource-improvement gate does **not** pass: these runs do not
+establish faster durable imports. This change is retained for the isolated
+short-record CPU benefit with those behavioral and resource guards.
+
+The SQL scalar stack-check candidate is excluded. Its two 20-pair ordinary-SQL
+runs have positive CPU point estimates, but the independent confirmation's
+interval still includes parity. The pooled approximately 2.5% estimate remains
+exploratory evidence. Tail and TUI candidates are also excluded.
+
+[Compact evidence and exact selection plan](evidence/cli-perf-selective/results.json)
+retain binary identities, intervals, raw-report locations and rejected results.
+Reproduce the component test using a release-built library test executable,
+`ingest::files::tests::line_payload_cpu_probe`, with the `PB_INGEST_LINE_PROBE_*`
+variables listed in that test. The two modes must use the same executable;
+serialize timings with other builds and benchmarks on the host.
+
+### Fresh Boat VM confirmation
+
+The final ingestion-only test executable was rebuilt and replayed unchanged
+on the Intel i9-13900HK development host and a fresh Boat 4-vCPU / 8-GB VM
+reporting AMD Ryzen 7 9700X, Ubuntu 24.04 and glibc 2.39. Both hosts use the same
+binary SHA-256 and fixed 15-pair / two-warmup component plan. These are separate
+populations; neither the earlier candidate nor the two machines are pooled.
+
+| Final executable, JSONL phase | Intel CPU reduction (95% interval) | AMD VM CPU reduction (95% interval) |
+|---|---:|---:|
+| Short records | 6.9% (3.7–9.8%) | 13.3% (12.5–14.4%) |
+| Ordinary records | 2.2% (1.1–3.4%) | 1.7% (0.6–3.5%) |
+
+The VM ingestion suite passes 65 tests; its one ignored manual probe was run
+separately. All 24 end-to-end sample invocations and eight 503/413 fault probes
+pass exact behavioral checks. The end-to-end improvement gate still fails:
+JSONL CPU is inconclusive, and production throughput is not established.
+JSONL peak RSS has a roughly 0.4 MiB / 4.6% higher median, with an interval
+spanning parity. No heap-memory gain or universal nonregression is claimed.
+
+An additional independent Go-main (`07af390`) versus final-Rust comparison on
+the AMD VM passes all five workload contracts, ten measured runs per binary
+plus two warmups. Rust elapsed-time factors are 22.2× for version startup,
+2.8× for 100k raw SQL rows, 3.2× for 100k JSON SQL rows, 11.6× for 256k PromQL
+samples, and 3.3× for 100k tail events. These warm-cache loopback observations
+are separate from the historical Intel macro run, which used an earlier Rust
+artifact. Tail uses pipe capture; the other four use cached-file output.
+
+The first VM unit attempt exposed Boat API's inherited directory-read bypass
+capability: four permission-test preconditions failed. The unchanged tests and
+timings were rerun as an ordinary uid-1000 process with inherited/ambient
+capabilities cleared. The failed attempt remains in the evidence. No account
+secrets or snapshots were copied. The archive and 1,157 file hashes were
+verified locally before the created VM was deleted; Boat reports deletion
+complete. [VM evidence, intervals and cleanup receipt](evidence/cli-perf-selective/boat-validation.json)
+retain these limits and exact artifact identities.

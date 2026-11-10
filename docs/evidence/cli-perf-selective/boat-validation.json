@@ -1,0 +1,675 @@
+{
+  "date": "2026-11-10T18:52:22.284107+00:00",
+  "result": "Retained JSONL source/payload CPU benefit reproduced on both measured Linux x86-64 hosts. No general end-to-end ingestion improvement established. Five independent Go-versus-final-Rust cases on AMD retain a Rust elapsed-time advantage.",
+  "local": {
+    "cpu": "13th Gen Intel(R) Core(TM) i9-13900HK",
+    "uname": {
+      "system": "Linux",
+      "node": "ajs-mini-pc-02",
+      "release": "7.2.5-3-omarchy",
+      "version": "#1 SMP PREEMPT_DYNAMIC Mon, 14 Sep 2026 19:55:01 +0000",
+      "machine": "x86_64",
+      "processor": ""
+    },
+    "glibc": [
+      "glibc",
+      "2.44"
+    ],
+    "component": {
+      "affinity": [
+        2,
+        4,
+        6,
+        8
+      ],
+      "pairs_per_size": 15,
+      "warmup_pairs_per_size": 2,
+      "summary": {
+        "short": {
+          "fresh_cpu_median_ms": 236.434,
+          "reuse_cpu_median_ms": 223.479,
+          "paired_ratio": 0.931131293024799,
+          "paired_ratio_ci95": [
+            0.9019169030592312,
+            0.962648303821618
+          ],
+          "record_signature": "format=Jsonl size=short records=2097152 payload_bytes=112262912"
+        },
+        "ordinary": {
+          "fresh_cpu_median_ms": 331.297,
+          "reuse_cpu_median_ms": 322.204,
+          "paired_ratio": 0.9775337537013615,
+          "paired_ratio_ci95": [
+            0.9664860060477831,
+            0.9891999948494761
+          ],
+          "record_signature": "format=Jsonl size=ordinary records=524288 payload_bytes=243595712"
+        }
+      }
+    }
+  },
+  "boat": {
+    "sandbox_id": "bx_rh57ag39",
+    "type": "default, 4vCPU/8GB",
+    "cpu": "AMD Ryzen 7 9700X 8-Core Processor",
+    "host": {
+      "uname": {
+        "system": "Linux",
+        "node": "box-node-5006ab0399e26201",
+        "release": "6.8.0-117-generic",
+        "version": "#117-Ubuntu SMP PREEMPT_DYNAMIC Tue May  5 19:26:24 UTC 2026",
+        "machine": "x86_64",
+        "processor": "x86_64"
+      },
+      "glibc": [
+        "glibc",
+        "2.39"
+      ]
+    },
+    "no_account_environment": true,
+    "snapshots_disabled": true,
+    "component": {
+      "affinity": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "pairs_per_size": 15,
+      "warmup_pairs_per_size": 2,
+      "summary": {
+        "short": {
+          "fresh_cpu_median_ms": 191.251,
+          "reuse_cpu_median_ms": 165.626,
+          "paired_ratio": 0.8668323919507859,
+          "paired_ratio_ci95": [
+            0.8564081956539431,
+            0.8752634776407197
+          ],
+          "record_signature": "format=Jsonl size=short records=2097152 payload_bytes=112262912"
+        },
+        "ordinary": {
+          "fresh_cpu_median_ms": 230.82,
+          "reuse_cpu_median_ms": 226.87199999999999,
+          "paired_ratio": 0.9832343403010327,
+          "paired_ratio_ci95": [
+            0.9647951850130927,
+            0.9935089119446661
+          ],
+          "record_signature": "format=Jsonl size=ordinary records=524288 payload_bytes=243595712"
+        }
+      }
+    },
+    "ingestion_units": {
+      "passed": 65,
+      "failed": 0,
+      "default_ignored": 1,
+      "manual_probe_separately_executed": true
+    },
+    "ingestion_end_to_end": {
+      "measured_pairs_per_format": 5,
+      "warmups": 1,
+      "records": 5000,
+      "record_bytes": 500,
+      "batch_size": 1000,
+      "valid_samples_including_warmups": 24,
+      "fault_probes_passed": 8,
+      "exact_compatibility": {
+        "passed": true,
+        "workloads": {
+          "jsonl": {
+            "check_failures": [],
+            "observation_sha256": {
+              "baseline": [
+                "491846a8938e36720a504f79d720b61670d20e2acc79f634c45f02b5bf145e8f"
+              ],
+              "candidate": [
+                "491846a8938e36720a504f79d720b61670d20e2acc79f634c45f02b5bf145e8f"
+              ]
+            },
+            "baseline_stable": true,
+            "candidate_stable": true,
+            "exact_match": true,
+            "logical_match": true,
+            "differences": [],
+            "passed": true
+          },
+          "text": {
+            "check_failures": [],
+            "observation_sha256": {
+              "baseline": [
+                "8d61375cab364fd398914dbc7fdb485584a5b035c9e97e3f56bbe7b6b83c8efa"
+              ],
+              "candidate": [
+                "8d61375cab364fd398914dbc7fdb485584a5b035c9e97e3f56bbe7b6b83c8efa"
+              ]
+            },
+            "baseline_stable": true,
+            "candidate_stable": true,
+            "exact_match": true,
+            "logical_match": true,
+            "differences": [],
+            "passed": true
+          }
+        },
+        "probes": {
+          "retry_503:jsonl": {
+            "check_failures": [],
+            "observation_sha256": {
+              "baseline": [
+                "801756b98c9bbe3d80ee496f158a7b92d925701f05d0a7acd995a46118359bb2"
+              ],
+              "candidate": [
+                "801756b98c9bbe3d80ee496f158a7b92d925701f05d0a7acd995a46118359bb2"
+              ]
+            },
+            "baseline_stable": true,
+            "candidate_stable": true,
+            "exact_match": true,
+            "logical_match": true,
+            "differences": [],
+            "passed": true
+          },
+          "retry_503:text": {
+            "check_failures": [],
+            "observation_sha256": {
+              "baseline": [
+                "bb338929f4da44a2b04333156125352ca7aa9705f84d8007c91689608cab6bc4"
+              ],
+              "candidate": [
+                "bb338929f4da44a2b04333156125352ca7aa9705f84d8007c91689608cab6bc4"
+              ]
+            },
+            "baseline_stable": true,
+            "candidate_stable": true,
+            "exact_match": true,
+            "logical_match": true,
+            "differences": [],
+            "passed": true
+          },
+          "split_413:jsonl": {
+            "check_failures": [],
+            "observation_sha256": {
+              "baseline": [
+                "7e8d09067535dc0caf1b90056fc716792c9e7fe42f125d314e51ae0e45e379c3"
+              ],
+              "candidate": [
+                "7e8d09067535dc0caf1b90056fc716792c9e7fe42f125d314e51ae0e45e379c3"
+              ]
+            },
+            "baseline_stable": true,
+            "candidate_stable": true,
+            "exact_match": true,
+            "logical_match": true,
+            "differences": [],
+            "passed": true
+          },
+          "split_413:text": {
+            "check_failures": [],
+            "observation_sha256": {
+              "baseline": [
+                "d1829150e1415f8f29159cfeea5cd43cb080172f648c77216c2aeacf3ac6bfd4"
+              ],
+              "candidate": [
+                "d1829150e1415f8f29159cfeea5cd43cb080172f648c77216c2aeacf3ac6bfd4"
+              ]
+            },
+            "baseline_stable": true,
+            "candidate_stable": true,
+            "exact_match": true,
+            "logical_match": true,
+            "differences": [],
+            "passed": true
+          }
+        }
+      },
+      "resource_improvement_gate_passed": false,
+      "declared_nonregression_guards_passed": true,
+      "metrics": {
+        "jsonl": {
+          "cpu_ms": {
+            "metric": "cpu_ms",
+            "n": 5,
+            "baseline": {
+              "n": 5,
+              "median": 64.276,
+              "mean": 65.6762,
+              "min": 61.635999999999996,
+              "max": 73.304,
+              "p90": 70.9552,
+              "stdev": 4.875929880545867,
+              "mad": 2.6400000000000006
+            },
+            "candidate": {
+              "n": 5,
+              "median": 63.743,
+              "mean": 62.7394,
+              "min": 59.257,
+              "max": 65.783,
+              "p90": 65.4474,
+              "stdev": 2.954981438181975,
+              "mad": 2.039999999999999
+            },
+            "status": "defined",
+            "ratio": 0.9917076358205241,
+            "improvement": 0.008292364179475875,
+            "ratio_ci95": [
+              0.8083733493397358,
+              1.0341845674605752
+            ],
+            "paired_ratios": [
+              0.975545734962629,
+              1.0103926815607693,
+              0.8083733493397358,
+              1.0341845674605752,
+              0.9714415304618276
+            ],
+            "paired_median_ratio": 0.975545734962629,
+            "candidate_better_rounds": 3
+          },
+          "wall_ms": {
+            "metric": "wall_ms",
+            "n": 5,
+            "baseline": {
+              "n": 5,
+              "median": 7574.330842,
+              "mean": 7729.1972738,
+              "min": 7234.816632,
+              "max": 8391.983839,
+              "p90": 8306.345613,
+              "stdev": 529.7788460538992,
+              "mad": 339.5142100000003
+            },
+            "candidate": {
+              "n": 5,
+              "median": 7680.766927,
+              "mean": 7696.0151828,
+              "min": 7016.181317,
+              "max": 8250.194681,
+              "p90": 8237.901693400001,
+              "stdev": 545.4031823811401,
+              "mad": 538.6952850000007
+            },
+            "status": "defined",
+            "ratio": 1.0140522096565687,
+            "improvement": -0.014052209656568726,
+            "ratio_ci95": [
+              0.9655599853714444,
+              1.0569426223365939
+            ],
+            "paired_ratios": [
+              0.9794420925600165,
+              1.0088416966064313,
+              1.0569426223365939,
+              0.9655599853714444,
+              0.9697801166054487
+            ],
+            "paired_median_ratio": 0.9794420925600165,
+            "candidate_better_rounds": 3
+          },
+          "peak_rss_bytes": {
+            "metric": "peak_rss_bytes",
+            "n": 5,
+            "baseline": {
+              "n": 5,
+              "median": 8519680,
+              "mean": 8572108.8,
+              "min": 8519680,
+              "max": 8650752,
+              "p90": 8650752.0,
+              "stdev": 71791.09105731713,
+              "mad": 0
+            },
+            "candidate": {
+              "n": 5,
+              "median": 8912896,
+              "mean": 8755609.6,
+              "min": 8519680,
+              "max": 8912896,
+              "p90": 8912896.0,
+              "stdev": 215373.2731719514,
+              "mad": 0
+            },
+            "status": "defined",
+            "ratio": 1.0461538461538462,
+            "improvement": -0.04615384615384621,
+            "ratio_ci95": [
+              0.9848484848484849,
+              1.0461538461538462
+            ],
+            "paired_ratios": [
+              1.0,
+              1.0461538461538462,
+              1.0303030303030303,
+              0.9848484848484849,
+              1.0461538461538462
+            ],
+            "paired_median_ratio": 1.0303030303030303,
+            "candidate_better_rounds": 1
+          }
+        },
+        "text": {
+          "cpu_ms": {
+            "metric": "cpu_ms",
+            "n": 5,
+            "baseline": {
+              "n": 5,
+              "median": 63.156000000000006,
+              "mean": 60.2522,
+              "min": 55.07,
+              "max": 64.292,
+              "p90": 64.0156,
+              "stdev": 4.715290044101213,
+              "mad": 1.1359999999999957
+            },
+            "candidate": {
+              "n": 5,
+              "median": 57.036,
+              "mean": 56.2886,
+              "min": 51.218999999999994,
+              "max": 61.307,
+              "p90": 60.513000000000005,
+              "stdev": 4.317268268245561,
+              "mad": 4.271000000000001
+            },
+            "status": "defined",
+            "ratio": 0.9030970929127873,
+            "improvement": 0.09690290708721272,
+            "ratio_ci95": [
+              0.9030970929127873,
+              0.9639313847266553
+            ],
+            "paired_ratios": [
+              0.9639313847266553,
+              0.9226964474584708,
+              0.9288564070944108,
+              0.9030970929127873,
+              0.9544034864717632
+            ],
+            "paired_median_ratio": 0.9288564070944108,
+            "candidate_better_rounds": 5
+          },
+          "wall_ms": {
+            "metric": "wall_ms",
+            "n": 5,
+            "baseline": {
+              "n": 5,
+              "median": 8118.631161,
+              "mean": 8327.188362,
+              "min": 7218.748539,
+              "max": 9777.118598,
+              "p90": 9586.8471052,
+              "stdev": 1177.8642350626092,
+              "mad": 899.8826220000001
+            },
+            "candidate": {
+              "n": 5,
+              "median": 7791.535068,
+              "mean": 8254.068003,
+              "min": 7280.598572,
+              "max": 10733.83388,
+              "p90": 9711.8338404,
+              "stdev": 1436.5346694037312,
+              "mad": 505.9963539999999
+            },
+            "status": "defined",
+            "ratio": 0.9597104380635872,
+            "improvement": 0.040289561936412754,
+            "ratio_ci95": [
+              0.8365280321620582,
+              1.1539970192395586
+            ],
+            "paired_ratios": [
+              1.1539970192395586,
+              0.8365280321620582,
+              0.9597104380635872,
+              1.0090768746406809,
+              1.0085679716734623
+            ],
+            "paired_median_ratio": 1.0085679716734623,
+            "candidate_better_rounds": 2
+          },
+          "peak_rss_bytes": {
+            "metric": "peak_rss_bytes",
+            "n": 5,
+            "baseline": {
+              "n": 5,
+              "median": 8519680,
+              "mean": 8572108.8,
+              "min": 8519680,
+              "max": 8650752,
+              "p90": 8650752.0,
+              "stdev": 71791.09105731713,
+              "mad": 0
+            },
+            "candidate": {
+              "n": 5,
+              "median": 8519680,
+              "mean": 8519680,
+              "min": 8388608,
+              "max": 8650752,
+              "p90": 8598323.2,
+              "stdev": 92681.90002368316,
+              "mad": 0
+            },
+            "status": "defined",
+            "ratio": 1.0,
+            "improvement": 0.0,
+            "ratio_ci95": [
+              0.9846153846153847,
+              1.0
+            ],
+            "paired_ratios": [
+              1.0,
+              0.9848484848484849,
+              0.9846153846153847,
+              1.0,
+              1.0
+            ],
+            "paired_median_ratio": 1.0,
+            "candidate_better_rounds": 2
+          }
+        }
+      }
+    },
+    "macro_go_versus_final_rust": {
+      "go_upstream_commit": "07af390ab09bda8ac9e427ffc6310077bace0125",
+      "cases": [
+        {
+          "case": "version-text",
+          "metrics": {
+            "go": {
+              "wall_ms": 15.578858,
+              "cpu_ms": 20.3405,
+              "peak_rss_bytes": 49479680.0
+            },
+            "rust": {
+              "wall_ms": 0.700924,
+              "cpu_ms": 0.6635,
+              "peak_rss_bytes": 5308416.0
+            }
+          },
+          "elapsed_speedup": 22.226172880369344,
+          "elapsed_speedup_ci95": [
+            20.933592888014335,
+            23.947039949766058
+          ],
+          "sink": "file",
+          "exact_contracts_match": true,
+          "runs_per_binary": 10,
+          "warmups_per_binary": 2
+        },
+        {
+          "case": "p3-100000-text",
+          "metrics": {
+            "go": {
+              "wall_ms": 28.676405,
+              "cpu_ms": 27.1755,
+              "peak_rss_bytes": 51052544.0
+            },
+            "rust": {
+              "wall_ms": 10.126304000000001,
+              "cpu_ms": 6.3415,
+              "peak_rss_bytes": 9492480.0
+            }
+          },
+          "elapsed_speedup": 2.831872813614918,
+          "elapsed_speedup_ci95": [
+            2.612485221613786,
+            2.968097392734812
+          ],
+          "sink": "file",
+          "exact_contracts_match": true,
+          "runs_per_binary": 10,
+          "warmups_per_binary": 2
+        },
+        {
+          "case": "p3-100000-json",
+          "metrics": {
+            "go": {
+              "wall_ms": 388.76079649999997,
+              "cpu_ms": 446.76700000000005,
+              "peak_rss_bytes": 60727296.0
+            },
+            "rust": {
+              "wall_ms": 121.8544665,
+              "cpu_ms": 122.348,
+              "peak_rss_bytes": 9080832.0
+            }
+          },
+          "elapsed_speedup": 3.19036968989561,
+          "elapsed_speedup_ci95": [
+            3.1234699137438073,
+            3.2633086386519725
+          ],
+          "sink": "file",
+          "exact_contracts_match": true,
+          "runs_per_binary": 10,
+          "warmups_per_binary": 2
+        },
+        {
+          "case": "promql-256000-samples",
+          "metrics": {
+            "go": {
+              "wall_ms": 163.66166750000002,
+              "cpu_ms": 227.77499999999998,
+              "peak_rss_bytes": 128094208.0
+            },
+            "rust": {
+              "wall_ms": 14.145291499999999,
+              "cpu_ms": 12.045000000000002,
+              "peak_rss_bytes": 29564928.0
+            }
+          },
+          "elapsed_speedup": 11.57004558725425,
+          "elapsed_speedup_ci95": [
+            10.975832774034199,
+            12.68502790255295
+          ],
+          "sink": "file",
+          "exact_contracts_match": true,
+          "runs_per_binary": 10,
+          "warmups_per_binary": 2
+        },
+        {
+          "case": "tail-100000",
+          "metrics": {
+            "go": {
+              "wall_ms": 116.3948235,
+              "cpu_ms": 150.429,
+              "peak_rss_bytes": 63508480.0
+            },
+            "rust": {
+              "wall_ms": 35.476195,
+              "cpu_ms": 21.7525,
+              "peak_rss_bytes": 9803776.0
+            }
+          },
+          "elapsed_speedup": 3.280927492364951,
+          "elapsed_speedup_ci95": [
+            3.1184172765857063,
+            3.5180177851722663
+          ],
+          "sink": "pipe",
+          "exact_contracts_match": true,
+          "runs_per_binary": 10,
+          "warmups_per_binary": 2
+        }
+      ],
+      "scope": "Independent latest-Go-main versus final-Rust comparison within the AMD VM. Historical Intel macro data used an earlier Rust artifact, so macro populations are not pooled or described as exact-artifact machine-effect control."
+    }
+  },
+  "artifacts": {
+    "same_component_test_executable_sha256": "bb2311531586efa29d776b5c410bb699d129c64f75506f6638ce4e59c12fa787",
+    "selection_input_files": {
+      "bin/pb-baseline": {
+        "sha256": "510e788d747de20364bf3c0ddc44d06fbb5be3d0d07fc1337108596dfc1d5a9a",
+        "size": 13648184
+      },
+      "bin/pb-candidate": {
+        "sha256": "6415798b24b9524d93cda1885de394b1b1c6cbe4f15f78b002f6d937a63ad4cd",
+        "size": 13649016
+      },
+      "bin/pb-unit": {
+        "sha256": "bb2311531586efa29d776b5c410bb699d129c64f75506f6638ce4e59c12fa787",
+        "size": 20472248
+      },
+      "bin/pb-meter": {
+        "sha256": "17c3b73491b2a31e465f58eda9f210000b5cd886a4ba9fc0764dc3576899127c",
+        "size": 17232
+      }
+    },
+    "macro_input_files": {
+      "bin/pb-go": {
+        "sha256": "fae8411febf8603e7f73803ac81ab6e7303dfe9305247f0be9f9767bea262314",
+        "size": 71807160
+      },
+      "bin/pb-fixture": {
+        "sha256": "6c00c3e877e6e28cc2b3420bbe5de21b37806e2aefb21486fc76f37fc0c964d1",
+        "size": 24426404
+      },
+      "go-rust-suite.json": {
+        "sha256": "0ad6c1a2798704d0c76eb8db8c022de3a8b7873a695812111074679993e06d8a",
+        "size": 34574522
+      }
+    }
+  },
+  "method": {
+    "component": "Median of within-pair total process CPU ratios; paired bootstrap 2000 draws. Same optimized executable in both test-only modes on both hosts; common startup, corpus construction and semantic preflight included. Memory-backed line/payload processing, not whole CLI import throughput.",
+    "macro": "Ratio of per-binary median elapsed times; harness bootstrap intervals. Warm cache, fresh processes, loopback fixture. Tail uses captured pipe; other cases cached-file stdout.",
+    "population_policy": "Keep Intel and AMD observations separate; no pooling across machines. VM has host scheduling/storage noise. Two Linux x86-64 environments do not prove all-platform performance.",
+    "permissions": "First API-launched unit attempt had CAP_DAC_READ_SEARCH (CapEff4); four unchanged permission tests failed preconditions. Preserved attempt. Reran tests and all timing commands as uid1000 via setpriv --inh-caps=-all --ambient-caps=-all, with CapEff0 verified.",
+    "transfer": "SSH upload timed out; official signed HTTPS file API succeeded. No SSH or account credentials/settings changed."
+  },
+  "limits": [
+    "No end-to-end JSONL import speedup or maximum production throughput established.",
+    "JSONL VM peak RSS median is approximately4.6% higher (~0.4MiB); ratio interval0.985\u20131.046 spans parity. No heap-memory improvement claimed.",
+    "Text kept fresh per-line buffers. Its VM CPU result is not attributed to JSONL reuse.",
+    "SQL optimization remains excluded; no SQL scalar-optimization validation claimed."
+  ],
+  "evidence": {
+    "archive": "harness/results/boat-selective-20261110/evidence.tar.gz",
+    "sha256": "0d306362edb1e2702b8180aa6cf674fa5b11c4023063072d7af88a322e3c6012",
+    "bytes": 162790294,
+    "verified_file_hashes": 1157,
+    "initial_capability_failure_archive_sha256": "ba9ae62c9e01d279e1e1c7b33d4008511c2e5cd29b915a9bfcc8d372de012c8d",
+    "local_final_unit_build_log": "harness/results/boat-selective-20261110/unit-build.log",
+    "local_component_raw": "harness/results/boat-selective-20261110/component/report.json"
+  },
+  "cleanup": {
+    "deleted": true,
+    "operation": {
+      "attemptCount": 1,
+      "completedAt": "2026-11-10T18:46:23.475Z",
+      "expectedBy": null,
+      "id": "bdop_4c7d0aed72324a80ba14e243653b05dc",
+      "kind": "sandbox",
+      "reason": "explicit",
+      "requestedAt": "2026-11-10T18:46:19.062Z",
+      "stage": "completed",
+      "status": "completed",
+      "targetId": "bx_rh57ag39"
+    },
+    "confirmed_absent_from_inventory": true
+  }
+}
