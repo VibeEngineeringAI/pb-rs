@@ -62,8 +62,9 @@ impl BufRead for BodyReader {
         Ok(&self.current[self.position..])
     }
     fn consume(&mut self, count: usize) {
-        // Keep ownership of the chunk unchanged until refill. Scanners often
-        // consume one byte at a time, so slicing Bytes here would repeatedly
+        // Keep ownership of the chunk unchanged until refill. The array
+        // parser consumes delimiters one byte at a time and the element
+        // scanner one row at a time, so slicing Bytes here would repeatedly
         // clone and drop its shared allocation's reference count.
         self.position += count.min(self.current.len() - self.position);
     }
@@ -625,6 +626,94 @@ mod tests {
             Some(ApiError::BodyCanceled)
         ));
         assert!(reader.fill_buf().unwrap().is_empty());
+    }
+
+    fn chunks(parts: &[&'static [u8]]) -> Vec<Chunk> {
+        parts
+            .iter()
+            .map(|part| Ok(Bytes::from_static(part)))
+            .collect()
+    }
+
+    #[test]
+    fn json_rows_split_anywhere_pull_each_chunk_once_and_never_the_unread_tail() {
+        // Boundaries fall inside a UTF-8 sequence, an escape, a literal, a
+        // number and a delimiter run; one chunk is empty.
+        let mut body = chunks(&[
+            b" [{\"a\":\"caf\xc3",
+            b"\xa9 \\",
+            b"u00",
+            b"e9\\",
+            b"n\",\"b\":tr",
+            b"ue}",
+            b"",
+            b" , 12",
+            b"3.5e",
+            b"1,\"\xf0\x9f",
+            b"\x98\x80\"",
+            b"]",
+        ]);
+        let consumed = body.len();
+        body.push(Ok(Bytes::from_static(b"\n trailing bytes")));
+        body.push(Err(ApiError::BodyCanceled));
+        let mut reader = body_reader(body);
+        assert_eq!(reader.receiver.len(), consumed + 2);
+        let mut output = Vec::new();
+        output::stream_json(&mut reader, &mut output, "200 OK").unwrap();
+        assert_eq!(
+            String::from_utf8(output).unwrap(),
+            "[\n  {\n    \"a\": \"caf\u{e9} \u{e9}\\n\",\n    \"b\": true\n  },\n  1235,\n  \"\u{1f600}\"\n]\n"
+        );
+        // The closing delimiter ends the response: neither the trailing
+        // chunk nor the failure behind it is requested.
+        assert_eq!(reader.receiver.len(), 2);
+    }
+
+    #[test]
+    fn json_body_failure_keeps_complete_rows_and_reports_the_read_error() {
+        for (parts, emitted) in [
+            // The failure arrives inside a row, after a buffered escape.
+            (
+                [b"[{\"a\":1},{\"b\":\"x\\n".as_slice(), b"y"],
+                "[\n  {\n    \"a\": 1\n  }",
+            ),
+            // A root-level scalar row needs one byte of lookahead, so the
+            // failure behind it is observed before the row is written.
+            ([b"[{\"a\":1},", b"12"], "[\n  {\n    \"a\": 1\n  }"),
+            // A container row is written before the failure is requested.
+            (
+                [b"[{\"a\":1},", b"[2]"],
+                "[\n  {\n    \"a\": 1\n  },\n  [\n    2\n  ]",
+            ),
+        ] {
+            let mut body = chunks(&parts);
+            body.push(Err(ApiError::BodyCanceled));
+            let mut reader = body_reader(body);
+            let mut output = Vec::new();
+            let error = output::stream_json(&mut reader, &mut output, "200 OK").unwrap_err();
+            assert_eq!(String::from_utf8(output).unwrap(), emitted);
+            let output::OutputErrorKind::Io(error) = error.kind else {
+                panic!("body failure was reported as a decode error");
+            };
+            assert!(matches!(
+                error.get_ref().unwrap().downcast_ref::<ApiError>(),
+                Some(ApiError::BodyCanceled)
+            ));
+            assert_eq!(reader.receiver.len(), 0);
+        }
+        // Malformed input wins over a failure queued behind it, and the
+        // reader is not asked for that failure.
+        let mut body = chunks(&[b"[{\"a\":1},{\"b\":\"x\\q"]);
+        body.push(Err(ApiError::BodyCanceled));
+        let mut reader = body_reader(body);
+        let mut output = Vec::new();
+        let error = output::stream_json(&mut reader, &mut output, "200 OK").unwrap_err();
+        assert_eq!(output, b"[\n  {\n    \"a\": 1\n  }");
+        let output::OutputErrorKind::Decode(message) = error.kind else {
+            panic!("malformed row was reported as a read error");
+        };
+        assert_eq!(message, "invalid character 'q' in string escape code");
+        assert_eq!(reader.receiver.len(), 1);
     }
 
     struct HeldWriter {
