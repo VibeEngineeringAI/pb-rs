@@ -6,12 +6,18 @@ use crate::metrics::output::{self, RawJson};
 
 /// What JSON mode did with a 2xx body before the single-pass writer.
 fn former(body: &[u8]) -> RawJson {
-    if let Some(message) = crate::metrics::envelope_error(body) {
-        return RawJson::Envelope(message);
-    }
-    match output::former_raw_json(body) {
-        Ok(text) => RawJson::Output(text.into_bytes()),
-        Err(error) => RawJson::Invalid(error),
+    output::former_raw_json_response(body)
+}
+
+/// The single pass alone, never handing a body to the former pipeline.
+fn single_pass(body: &[u8]) -> Option<RawJson> {
+    match super::render_unbounded(body) {
+        super::Pass::Rendered(rendered) => Some(match rendered.envelope_error {
+            Some(message) => RawJson::Envelope(message),
+            None => RawJson::Output(rendered.output),
+        }),
+        super::Pass::Invalid => None,
+        super::Pass::Costly => panic!("an unbounded pass gave up"),
     }
 }
 
@@ -29,6 +35,19 @@ fn check(body: &[u8]) -> RawJson {
             show(&expected),
             show(&actual)
         );
+    }
+    // The writer itself, for bodies the entry point hands to the pipeline.
+    match single_pass(body) {
+        Some(rendered) => assert!(
+            rendered == expected,
+            "single pass {:?}",
+            String::from_utf8_lossy(body)
+        ),
+        None => assert!(
+            matches!(expected, RawJson::Invalid(_)),
+            "single pass rejected {:?}",
+            String::from_utf8_lossy(body)
+        ),
     }
     // The entry point without the envelope check.
     let expected = output::former_raw_json(body).map(String::into_bytes);
@@ -1093,4 +1112,78 @@ fn out_of_order_members_are_held_around_the_limit() {
         order[pivot + 1..].reverse();
     }
     assert_eq!(permutations, 120);
+}
+
+/// `{"k":0,"k":{"k":0,"k":…0…}}`: every level repeats a key, so every level
+/// is put in order when it closes, moving everything inside it.
+fn repeated_key_nest(depth: usize, first: &str) -> String {
+    let mut body = format!("{{{first}:0,\"k\":").repeat(depth);
+    body.push('0');
+    body.push_str(&"}".repeat(depth));
+    body
+}
+
+#[test]
+fn deeply_nested_reordering_is_handed_to_the_former_pipeline() {
+    for first in ["\"k\"", "\"z\""] {
+        // Shallow nests stay in the single pass.
+        let body = repeated_key_nest(40, first);
+        assert!(matches!(
+            super::render(body.as_bytes()),
+            super::Pass::Rendered(_)
+        ));
+        check(body.as_bytes());
+        // A deep one would move output cubic in its depth.
+        let body = repeated_key_nest(1500, first);
+        assert!(matches!(
+            super::render(body.as_bytes()),
+            super::Pass::Costly
+        ));
+        assert_eq!(
+            output::raw_json_response(body.as_bytes()),
+            former(body.as_bytes())
+        );
+        // Abandoned bodies keep the pipeline's diagnostics too.
+        for damaged in [
+            format!("{body} 1"),
+            format!("{body}}}"),
+            body[..body.len() - 1].to_owned(),
+        ] {
+            assert_eq!(
+                output::raw_json_response(damaged.as_bytes()),
+                former(damaged.as_bytes())
+            );
+            assert!(matches!(
+                output::raw_json_response(damaged.as_bytes()),
+                RawJson::Invalid(_)
+            ));
+        }
+    }
+}
+
+#[test]
+fn response_shapes_out_of_key_order_stay_in_the_single_pass() {
+    // Every object out of order at once: the envelope (a long warning list
+    // before the data), the data, each series and each label set.
+    let series: Vec<String> = (0..2_000)
+        .map(|s| {
+            let values: Vec<String> = (0..64)
+                .map(|i| format!("[{},\"{}\"]", 1_704_067_200 + 60 * i, s * 31 + i))
+                .collect();
+            format!(
+                "{{\"values\":[{}],\"metric\":{{\"job\":\"api\",\"instance\":\"10.0.0.{s}:9090\",\"__name__\":\"up\"}}}}",
+                values.join(",")
+            )
+        })
+        .collect();
+    let warnings = vec!["\"a long warning about the query\""; 20_000].join(",");
+    let body = format!(
+        "{{\"warnings\":[{warnings}],\"status\":\"success\",\"data\":{{\"resultType\":\"matrix\",\"result\":[{}],\"aaa\":1}}}}",
+        series.join(",")
+    );
+    assert!(matches!(
+        super::render(body.as_bytes()),
+        super::Pass::Rendered(_)
+    ));
+    check(body.as_bytes());
 }

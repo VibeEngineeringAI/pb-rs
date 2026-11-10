@@ -82,9 +82,42 @@ pub(super) struct Rendered {
     pub(super) envelope_error: Option<String>,
 }
 
-/// `None` when the body is not a single valid JSON value; the caller derives
-/// the diagnostic from `gojson::validate`, which rejects exactly those bodies.
-pub(super) fn render(body: &[u8]) -> Option<Rendered> {
+/// What one pass over a body came to.
+pub(super) enum Pass {
+    Rendered(Rendered),
+    /// Not a single valid JSON value; the caller derives the diagnostic from
+    /// `gojson::validate`, which rejects exactly those bodies.
+    Invalid,
+    /// Abandoned, with the body's validity undecided: putting members in key
+    /// order was moving far more output than the body produces. The caller
+    /// renders such a body with the [`former`] pipeline instead.
+    Costly,
+}
+
+/// Reordering may move this many times the output written so far, plus
+/// `REORDER_SLACK`, before the pass gives up.
+///
+/// An object out of key order moves its largest member once when it closes,
+/// so objects nested `n` deep that are all out of order move the innermost
+/// one `n` times. Responses have a handful of levels: an envelope, its data,
+/// a series, its labels. A body built to nest thousands of unsorted objects
+/// would otherwise cost time cubic in its depth, because indentation makes
+/// each level's rendering proportional to the depth as well.
+const REORDER_FACTOR: usize = 8;
+/// Small bodies are never worth abandoning.
+const REORDER_SLACK: usize = 64 * 1024;
+
+pub(super) fn render(body: &[u8]) -> Pass {
+    render_within(body, REORDER_FACTOR)
+}
+
+/// The single pass alone, however much reordering the body takes.
+#[cfg(test)]
+fn render_unbounded(body: &[u8]) -> Pass {
+    render_within(body, usize::MAX)
+}
+
+fn render_within(body: &[u8], reorder_factor: usize) -> Pass {
     // Compact sample arrays grow about threefold when indented. Capacity
     // that is never written costs no memory, and a refused estimate only
     // means the output grows as it is written.
@@ -101,11 +134,20 @@ pub(super) fn render(body: &[u8]) -> Option<Rendered> {
         held: Vec::new(),
         moved: Vec::new(),
         order: Vec::new(),
+        reordered: 0,
+        reorder_factor,
+        costly: false,
         envelope: Envelope::default(),
     };
-    writer.document()?;
+    if writer.document().is_none() {
+        return if writer.costly {
+            Pass::Costly
+        } else {
+            Pass::Invalid
+        };
+    }
     let envelope_error = writer.envelope.message();
-    Some(Rendered {
+    Pass::Rendered(Rendered {
         output: writer.out,
         envelope_error,
     })
@@ -192,6 +234,11 @@ struct Writer<'a> {
     /// Members displaced while a closing object is put in key order.
     moved: Vec<u8>,
     order: Vec<usize>,
+    /// Output bytes moved by `reorder` so far, and how many times the output
+    /// they may come to before `document` stops with `costly` set.
+    reordered: usize,
+    reorder_factor: usize,
+    costly: bool,
     envelope: Envelope,
 }
 
@@ -463,6 +510,15 @@ impl Writer<'_> {
                             let object = self.objects.pop().expect("open object");
                             if !object.sorted {
                                 self.reorder(object.members);
+                                let allowed = self
+                                    .out
+                                    .len()
+                                    .saturating_mul(self.reorder_factor)
+                                    .saturating_add(REORDER_SLACK);
+                                if self.reordered > allowed {
+                                    self.costly = true;
+                                    return None;
+                                }
                             }
                             self.members.truncate(object.members);
                             self.keys.truncate(object.keys);
@@ -761,6 +817,10 @@ impl Writer<'_> {
         self.out[region..target].copy_from_slice(&self.moved[..before]);
         self.out.truncate(target + size);
         self.out.extend_from_slice(&self.moved[before..]);
+        self.reordered = self
+            .reordered
+            .saturating_add(size)
+            .saturating_add(self.moved.len());
         if self.moved.capacity() > 1 << 20 {
             self.moved = Vec::new();
         }
@@ -772,10 +832,10 @@ fn key_bytes<'a>(body: &'a [u8], keys: &'a [u8], member: &Member) -> &'a [u8] {
     &source[member.key..member.key + member.key_len]
 }
 
-/// The former renderer, kept as the differential oracle: a serde serializer
-/// over validated input spans that re-slices each container's members and
-/// decodes each scalar on its own.
-#[cfg(test)]
+/// The former renderer: a serde serializer over validated input spans that
+/// re-slices each container's members and decodes each scalar on its own.
+/// It renders the bodies the single pass abandons as [`Pass::Costly`], and is
+/// the oracle the differential tests compare that pass with.
 pub(super) mod former {
     use crate::{gojson, render};
     use serde::Serialize;

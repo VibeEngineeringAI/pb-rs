@@ -3,6 +3,7 @@
 //! tolerance (case-insensitive fields, null retention, slice element reuse)
 //! and reproduces cmd/promql.go's formatting byte for byte, including
 //! active-query truncation that can split UTF-8 sequences.
+use super::raw_json::Pass;
 use crate::{
     gojson::{self, Node},
     parser::quote,
@@ -91,18 +92,33 @@ pub(super) enum RawJson {
 
 pub(super) fn raw_json_response(body: &[u8]) -> RawJson {
     match super::raw_json::render(body) {
-        Some(rendered) => match rendered.envelope_error {
+        Pass::Rendered(rendered) => match rendered.envelope_error {
             Some(message) => RawJson::Envelope(message),
             None => RawJson::Output(rendered.output),
         },
-        None => RawJson::Invalid(raw_json_error(body)),
+        Pass::Invalid => RawJson::Invalid(raw_json_error(body)),
+        Pass::Costly => former_raw_json_response(body),
+    }
+}
+
+/// What JSON mode did with a 2xx body before the single-pass writer: the
+/// request layer's envelope check, then validation and the re-slicing
+/// serializer.
+pub(super) fn former_raw_json_response(body: &[u8]) -> RawJson {
+    if let Some(message) = super::envelope_error(body) {
+        return RawJson::Envelope(message);
+    }
+    match former_raw_json(body) {
+        Ok(text) => RawJson::Output(text.into_bytes()),
+        Err(error) => RawJson::Invalid(error),
     }
 }
 
 fn raw_json(body: &[u8]) -> Result<Vec<u8>, String> {
     match super::raw_json::render(body) {
-        Some(rendered) => Ok(rendered.output),
-        None => Err(raw_json_error(body)),
+        Pass::Rendered(rendered) => Ok(rendered.output),
+        Pass::Invalid => Err(raw_json_error(body)),
+        Pass::Costly => former_raw_json(body).map(String::into_bytes),
     }
 }
 
@@ -129,9 +145,9 @@ fn raw_json_error(body: &[u8]) -> String {
 }
 
 /// The former implementation: validation, then a second pass that re-slices
-/// every container and decodes every scalar. Differential tests compare the
-/// single-pass writer with it.
-#[cfg(test)]
+/// every container and decodes every scalar. It renders the bodies the
+/// single-pass writer abandons, and differential tests compare that writer
+/// with it.
 pub(super) fn former_raw_json(body: &[u8]) -> Result<String, String> {
     let invalid = |e: String| format!("server returned invalid JSON: {}", stream_error(e));
     match gojson::validate(body) {
