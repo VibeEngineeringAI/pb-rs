@@ -3,6 +3,7 @@
 //! tolerance (case-insensitive fields, null retention, slice element reuse)
 //! and reproduces cmd/promql.go's formatting byte for byte, including
 //! active-query truncation that can split UTF-8 sequences.
+use super::raw_json::Pass;
 use crate::{
     gojson::{self, Node},
     parser::quote,
@@ -52,7 +53,7 @@ pub(super) fn render_styled_bytes(
     t: &Terminal,
 ) -> Result<Vec<u8>, String> {
     if json {
-        return raw_json(body).map(String::into_bytes);
+        return raw_json(body);
     }
     match operation {
         "run" => text_stream::run(body).map_or_else(|| run(body), Ok),
@@ -78,7 +79,76 @@ pub(super) fn render_styled_bytes(
 // Raw JSON (json.Decoder with UseNumber, single value, sorted re-encoding)
 // ---------------------------------------------------------------------------
 
-fn raw_json(body: &[u8]) -> Result<String, String> {
+/// JSON output for a 2xx body, decided in one pass over it.
+#[derive(Debug, PartialEq)]
+pub(super) enum RawJson {
+    /// A `status: "error"` envelope. Go's request layer fails on it before
+    /// anything is printed, so it outranks the rendered output.
+    Envelope(String),
+    Output(Vec<u8>),
+    /// Not a single JSON value (Go newInvalidResponseError).
+    Invalid(String),
+}
+
+pub(super) fn raw_json_response(body: &[u8]) -> RawJson {
+    match super::raw_json::render(body) {
+        Pass::Rendered(rendered) => match rendered.envelope_error {
+            Some(message) => RawJson::Envelope(message),
+            None => RawJson::Output(rendered.output),
+        },
+        Pass::Invalid => RawJson::Invalid(raw_json_error(body)),
+        Pass::Costly => former_raw_json_response(body),
+    }
+}
+
+/// What JSON mode did with a 2xx body before the single-pass writer: the
+/// request layer's envelope check, then validation and the re-slicing
+/// serializer.
+pub(super) fn former_raw_json_response(body: &[u8]) -> RawJson {
+    if let Some(message) = super::envelope_error(body) {
+        return RawJson::Envelope(message);
+    }
+    match former_raw_json(body) {
+        Ok(text) => RawJson::Output(text.into_bytes()),
+        Err(error) => RawJson::Invalid(error),
+    }
+}
+
+fn raw_json(body: &[u8]) -> Result<Vec<u8>, String> {
+    match super::raw_json::render(body) {
+        Pass::Rendered(rendered) => Ok(rendered.output),
+        Pass::Invalid => Err(raw_json_error(body)),
+        Pass::Costly => former_raw_json(body).map(String::into_bytes),
+    }
+}
+
+/// The json.Decoder diagnostic for a body the writer rejected.
+fn raw_json_error(body: &[u8]) -> String {
+    let invalid = |e: String| format!("server returned invalid JSON: {}", stream_error(e));
+    match gojson::validate(body) {
+        Ok(()) => unreachable!("the JSON writer accepts every body gojson::validate accepts"),
+        Err(error) if error.ends_with(" after top-level value") => {
+            // The first value is complete; Decoder.Decode then reads a second
+            // value from the remainder instead of rejecting the trailing byte.
+            let end = value_end(body);
+            match gojson::validate(&body[end..]) {
+                Ok(_) => "server returned multiple JSON values".into(),
+                Err(error) if error.ends_with(" after top-level value") => {
+                    "server returned multiple JSON values".into()
+                }
+                Err(error) => invalid(error),
+            }
+        }
+        Err(_) if body.iter().all(|b| is_space(*b)) => "server returned invalid JSON: EOF".into(),
+        Err(error) => invalid(error),
+    }
+}
+
+/// The former implementation: validation, then a second pass that re-slices
+/// every container and decodes every scalar. It renders the bodies the
+/// single-pass writer abandons, and differential tests compare that writer
+/// with it.
+pub(super) fn former_raw_json(body: &[u8]) -> Result<String, String> {
     let invalid = |e: String| format!("server returned invalid JSON: {}", stream_error(e));
     match gojson::validate(body) {
         Ok(()) => (),
@@ -99,7 +169,7 @@ fn raw_json(body: &[u8]) -> Result<String, String> {
         }
         Err(error) => return Err(invalid(error)),
     };
-    Ok(super::raw_json::render_validated(body))
+    Ok(super::raw_json::former::render_validated(body))
 }
 
 /// json.Decoder reports truncated values as io.ErrUnexpectedEOF.

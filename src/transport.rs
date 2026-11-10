@@ -1347,6 +1347,20 @@ impl AsyncWrite for ProxyStream {
         self.check_handshake(cx)?;
         Pin::new(&mut *self.io).poll_write(cx, buf)
     }
+    // Without these two, tokio's defaults report a non-vectored stream and
+    // hyper copies every request head and body into one flattened buffer
+    // before writing. Forwarding lets it queue the caller's body as is.
+    fn poll_write_vectored(
+        mut self: Pin<&mut Self>,
+        cx: &mut Context<'_>,
+        bufs: &[io::IoSlice<'_>],
+    ) -> Poll<io::Result<usize>> {
+        self.check_handshake(cx)?;
+        Pin::new(&mut *self.io).poll_write_vectored(cx, bufs)
+    }
+    fn is_write_vectored(&self) -> bool {
+        self.io.is_write_vectored()
+    }
     fn poll_flush(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<io::Result<()>> {
         Pin::new(&mut *self.io).poll_flush(cx)
     }
@@ -1376,6 +1390,10 @@ impl ProxyConnector {
         tcp.enforce_http(false);
         tcp.set_connect_timeout(timers.then(|| Duration::from_secs(30)));
         tcp.set_keepalive(Some(Duration::from_secs(30)));
+        // Go's net package disables Nagle's algorithm on every TCP connection.
+        // Without this, a TLS client's Finished record and first request wait
+        // for the server's delayed ACK of the preceding small write.
+        tcp.set_nodelay(true);
         Self {
             tcp,
             matcher,
@@ -2329,6 +2347,23 @@ mod tests {
             )
             .is_none()
         );
+    }
+    #[test]
+    fn connector_disables_nagle_on_new_connections() {
+        for timers in [true, false] {
+            let transport = Transport::metrics().unwrap();
+            let mut connector =
+                ProxyConnector::with_timers(transport.proxy.clone(), transport.tls.clone(), timers);
+            runtime().block_on(async {
+                let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+                let port = listener.local_addr().unwrap().port();
+                let accept = tokio::spawn(async move { listener.accept().await.unwrap() });
+                let uri: Uri = format!("http://127.0.0.1:{port}/").parse().unwrap();
+                let socket = connector.tcp.call(uri).await.unwrap().into_inner();
+                assert!(socket.nodelay().unwrap(), "timers={timers}");
+                accept.await.unwrap();
+            });
+        }
     }
     #[test]
     fn metrics_tls_negotiates_http1_when_server_offers_http2() {

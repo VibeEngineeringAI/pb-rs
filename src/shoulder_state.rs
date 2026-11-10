@@ -20,6 +20,13 @@ use std::{
 const MAX_STATE_BYTES: u64 = 64 * 1024 * 1024;
 static NEXT_TEMP: AtomicU64 = AtomicU64::new(0);
 
+/// A checkpoint which writes its own JSON text, because it already holds
+/// part of that text and should neither parse nor encode it again. What it
+/// writes must be the JSON its `Deserialize` implementation reads back.
+pub(crate) trait JsonDocument {
+    fn write_json<W: Write>(&self, writer: &mut W) -> serde_json::Result<()>;
+}
+
 #[derive(Debug)]
 pub(crate) struct StateFile {
     path: PathBuf,
@@ -115,16 +122,28 @@ impl StateFile {
     }
 
     pub(crate) fn save<T: Serialize>(&self, value: &T) -> Result<(), CliError> {
+        self.replace(|writer| serde_json::to_writer(writer, value))
+    }
+
+    /// `save` for a checkpoint which writes its own text: the same bound,
+    /// temporary file, syncs and rename.
+    pub(crate) fn save_document<T: JsonDocument>(&self, document: &T) -> Result<(), CliError> {
+        self.replace(|writer| document.write_json(writer))
+    }
+
+    fn replace(
+        &self,
+        write: impl FnOnce(&mut BoundedWriter<BufWriter<&mut File>>) -> serde_json::Result<()>,
+    ) -> Result<(), CliError> {
         check_target(&self.path)?;
         let mut temporary = TemporaryFile::create(&self.parent)?;
         {
             let file = temporary.file.as_mut().expect("temporary file is open");
-            let mut buffered = BufWriter::with_capacity(64 * 1024, file);
             let mut writer = BoundedWriter {
-                inner: &mut buffered,
+                inner: BufWriter::with_capacity(64 * 1024, file),
                 remaining: MAX_STATE_BYTES,
             };
-            serde_json::to_writer(&mut writer, value).map_err(|error| {
+            write(&mut writer).map_err(|error| {
                 if let Some(kind) = error.io_error_kind() {
                     io_error("write state file", &self.path, io::Error::new(kind, error))
                 } else {
@@ -222,22 +241,40 @@ fn private_no_follow(options: &mut OpenOptions) {
     }
 }
 
-struct BoundedWriter<'a> {
-    inner: &'a mut dyn Write,
+/// Generic over the sink, so the serializer's many short writes reach the
+/// buffer's inlined copy rather than a virtual call for each fragment.
+struct BoundedWriter<W> {
+    inner: W,
     remaining: u64,
 }
 
-impl Write for BoundedWriter<'_> {
-    fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
+impl<W> BoundedWriter<W> {
+    fn admit(&self, bytes: &[u8]) -> io::Result<()> {
         if bytes.len() as u64 > self.remaining {
             return Err(io::Error::new(
                 io::ErrorKind::InvalidInput,
                 "state file exceeds 64 MiB",
             ));
         }
+        Ok(())
+    }
+}
+
+impl<W: Write> Write for BoundedWriter<W> {
+    fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
+        self.admit(bytes)?;
         let written = self.inner.write(bytes)?;
         self.remaining -= written as u64;
         Ok(written)
+    }
+
+    // serde_json only ever calls write_all. The default would loop over
+    // write() above; this admits or rejects exactly the same fragments.
+    fn write_all(&mut self, bytes: &[u8]) -> io::Result<()> {
+        self.admit(bytes)?;
+        self.inner.write_all(bytes)?;
+        self.remaining -= bytes.len() as u64;
+        Ok(())
     }
 
     fn flush(&mut self) -> io::Result<()> {
@@ -385,6 +422,87 @@ mod tests {
         assert!(state.save(&SerializationFailure).is_err());
         assert_eq!(fs::read(directory.state()).unwrap(), previous);
         assert_eq!(fs::read_dir(&directory.0).unwrap().count(), 2);
+    }
+
+    /// Accepts a few bytes per call, as a file may, and can run out of room.
+    struct ShortWrites {
+        bytes: Vec<u8>,
+        step: usize,
+        room: usize,
+    }
+    impl Write for ShortWrites {
+        fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
+            let count = bytes.len().min(self.step).min(self.room);
+            if count == 0 && !bytes.is_empty() {
+                return Err(io::Error::new(io::ErrorKind::StorageFull, "device full"));
+            }
+            self.bytes.extend_from_slice(&bytes[..count]);
+            self.room -= count;
+            Ok(count)
+        }
+        fn flush(&mut self) -> io::Result<()> {
+            Ok(())
+        }
+    }
+
+    /// The former path: only `write` is forwarded, so `write_all` is the
+    /// standard library's loop over `BoundedWriter::write`.
+    struct WriteLoop<W>(W);
+    impl<W: Write> Write for WriteLoop<W> {
+        fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
+            self.0.write(bytes)
+        }
+        fn flush(&mut self) -> io::Result<()> {
+            self.0.flush()
+        }
+    }
+
+    #[test]
+    fn bounded_write_all_matches_the_write_loop_at_every_limit() {
+        let fragments: [&[u8]; 6] = [b"{", b"\"rows\":", b"", b"[1,2,3]", b"}", b"tail"];
+        let total = fragments.iter().map(|f| f.len()).sum::<usize>();
+        let outcome = |result: io::Result<()>| result.map_err(|e| (e.kind(), e.to_string()));
+        for limit in 0..=total as u64 + 1 {
+            for step in [1, 3, usize::MAX] {
+                for room in [0, 4, total - 1, usize::MAX] {
+                    let sink = || ShortWrites {
+                        bytes: Vec::new(),
+                        step,
+                        room,
+                    };
+                    let mut direct = BoundedWriter {
+                        inner: sink(),
+                        remaining: limit,
+                    };
+                    let mut looped = WriteLoop(BoundedWriter {
+                        inner: sink(),
+                        remaining: limit,
+                    });
+                    for fragment in fragments {
+                        let (actual, expected) =
+                            (direct.write_all(fragment), looped.write_all(fragment));
+                        let failed = expected.is_err();
+                        assert_eq!(outcome(actual), outcome(expected), "{limit} {step} {room}");
+                        assert_eq!(direct.inner.bytes, looped.0.inner.bytes);
+                        if failed {
+                            // A failed save is abandoned; the count no longer matters.
+                            break;
+                        }
+                        assert_eq!(direct.remaining, looped.0.remaining);
+                    }
+                }
+            }
+        }
+        // The limit itself is admitted and one byte more is refused.
+        let mut writer = BoundedWriter {
+            inner: Vec::new(),
+            remaining: 4,
+        };
+        writer.write_all(b"1234").unwrap();
+        let error = writer.write_all(b"5").unwrap_err();
+        assert_eq!(error.kind(), io::ErrorKind::InvalidInput);
+        assert_eq!(error.to_string(), "state file exceeds 64 MiB");
+        assert_eq!(writer.inner, b"1234");
     }
 
     #[test]

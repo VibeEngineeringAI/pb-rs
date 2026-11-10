@@ -441,6 +441,18 @@ impl ApiClient {
     ) -> Result<PreparedRequest, ApiError> {
         self.prepare_with_policy(method, &["api/v1/", path], body, STANDARD_TIMEOUT, true)
     }
+    /// Like `prepare_standard`, for a body the caller keeps a handle to:
+    /// the request shares that allocation instead of taking a copy.
+    pub(crate) fn prepare_standard_shared(
+        &self,
+        method: Method,
+        path: &str,
+        body: Bytes,
+    ) -> Result<PreparedRequest, ApiError> {
+        let mut request = self.prepare_standard(method, path, None)?;
+        request.body = Some(body);
+        Ok(request)
+    }
     pub(crate) fn prepare_standard_bytes(
         &self,
         method: Method,

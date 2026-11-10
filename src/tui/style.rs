@@ -29,7 +29,7 @@
 //! generated tables. Full upstream copyright and license notices, exact
 //! versions and fixture provenance: docs/evidence/phase7/style-notices.txt.
 
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
 use std::rc::Rc;
 use std::sync::{Mutex, OnceLock};
@@ -1093,11 +1093,7 @@ impl Style {
 
     /// Style.Render for an explicit renderer.
     pub(crate) fn render_in(&self, text: &str, env: Env) -> String {
-        let bytes = self.render_impl(text.as_bytes(), env, true);
-        match String::from_utf8(bytes) {
-            Ok(text) => text,
-            Err(error) => String::from_utf8_lossy(error.as_bytes()).into_owned(),
-        }
+        lossy_string(self.render_impl(text.as_bytes(), env, true))
     }
 
     /// Style.Render preserving Go string bytes through layout and emission.
@@ -1150,16 +1146,23 @@ impl Style {
         if !self.inline && self.width > 0 {
             let wrap_at = self.width as isize - pad_left as isize - pad_right as isize;
             if wrap_at >= 1 {
-                // Tab/newline replacement preserves valid UTF-8 for the
-                // string facade. Keep its established lossy boundary after
-                // wrapping; byte callers retain Go's raw output instead.
-                str = if string_contract {
-                    let text = std::str::from_utf8(&str)
-                        .expect("string renderer input remains valid UTF-8 before wrapping");
-                    wrap(text, wrap_at as usize, "").into_bytes()
+                if let Some(kept) = wrap_unchanged_len(&str, wrap_at as usize) {
+                    // Nothing to wrap: ansi.Wrap would copy the text and drop
+                    // the spaces that end it. Such text is valid UTF-8, so the
+                    // string and byte contracts agree.
+                    str.truncate(kept);
                 } else {
-                    wrap_bytes(&str, wrap_at as usize, b"")
-                };
+                    // Tab/newline replacement preserves valid UTF-8 for the
+                    // string facade. Keep its established lossy boundary after
+                    // wrapping; byte callers retain Go's raw output instead.
+                    str = if string_contract {
+                        let text = std::str::from_utf8(&str)
+                            .expect("string renderer input remains valid UTF-8 before wrapping");
+                        wrap(text, wrap_at as usize, "").into_bytes()
+                    } else {
+                        wrap_bytes(&str, wrap_at as usize, b"")
+                    };
+                }
             }
         }
 
@@ -1497,7 +1500,7 @@ impl Style {
 
         let lines = str.iter().filter(|b| **b == b'\n').count();
         if !(lines == 0 && self.width == 0) {
-            str = align_horizontal_bytes(&str, self.align_h, self.width, whitespace, env);
+            str = original_align_horizontal_bytes(&str, self.align_h, self.width, whitespace, env);
         }
 
         if !self.inline {
@@ -1674,6 +1677,16 @@ fn styled_bytes(styles: &[String], s: &[u8], env: Env) -> Vec<u8> {
     out
 }
 
+/// `String::from_utf8_lossy(&bytes).into_owned()` that keeps the buffer when
+/// it is already valid UTF-8, which is every case but a layout cut inside an
+/// escape payload.
+fn lossy_string(bytes: Vec<u8>) -> String {
+    match String::from_utf8(bytes) {
+        Ok(text) => text,
+        Err(error) => String::from_utf8_lossy(error.as_bytes()).into_owned(),
+    }
+}
+
 fn replace_bytes(text: &[u8], from: &[u8], to: &[u8]) -> Vec<u8> {
     debug_assert!(!from.is_empty());
     let mut out = Vec::with_capacity(text.len());
@@ -1751,7 +1764,7 @@ fn align_horizontal_bytes(
     style: Option<&[String]>,
     env: Env,
 ) -> Vec<u8> {
-    let (lines, widest) = get_lines_bytes(str);
+    let (lines, widest) = measured_lines_bytes(str);
     let fill = |n: usize| {
         let spaces = " ".repeat(n);
         match style {
@@ -1761,8 +1774,7 @@ fn align_horizontal_bytes(
     };
     let mut out = Vec::with_capacity(str.len());
     let count = lines.len();
-    for (index, line) in lines.into_iter().enumerate() {
-        let line_width = width_bytes(line);
+    for (index, (line, line_width)) in lines.into_iter().enumerate() {
         let mut short = widest - line_width;
         short += (width as isize - (short + line_width) as isize).max(0) as usize;
         if short > 0 {
@@ -1864,7 +1876,7 @@ pub(crate) fn block_width(s: &str) -> usize {
 /// lipgloss.JoinHorizontal.
 pub(crate) fn join_horizontal(position: impl Into<f64>, blocks: &[&str]) -> String {
     let bytes: Vec<&[u8]> = blocks.iter().map(|s| s.as_bytes()).collect();
-    String::from_utf8_lossy(&join_horizontal_bytes(position, &bytes)).into_owned()
+    lossy_string(join_horizontal_bytes(position, &bytes))
 }
 
 /// lipgloss byte join; layout uses the raw ANSI parser width of each line.
@@ -1915,7 +1927,7 @@ pub(crate) fn join_horizontal_bytes(position: impl Into<f64>, blocks: &[&[u8]]) 
 /// lipgloss.JoinVertical.
 pub(crate) fn join_vertical(position: impl Into<f64>, blocks: &[&str]) -> String {
     let bytes: Vec<&[u8]> = blocks.iter().map(|s| s.as_bytes()).collect();
-    String::from_utf8_lossy(&join_vertical_bytes(position, &bytes)).into_owned()
+    lossy_string(join_vertical_bytes(position, &bytes))
 }
 
 /// lipgloss byte join; layout uses the raw ANSI parser width of each line.
@@ -2026,14 +2038,13 @@ pub(crate) fn place_with(
     env: Env,
 ) -> String {
     let horizontal = place_horizontal_bytes(width, hpos, s.as_bytes(), whitespace, env);
-    String::from_utf8_lossy(&place_vertical_bytes(
+    lossy_string(place_vertical_bytes(
         height,
         vpos,
         &horizontal,
         whitespace,
         env,
     ))
-    .into_owned()
 }
 
 /// lipgloss.Place on Go string bytes with default (unstyled space) whitespace.
@@ -2388,6 +2399,86 @@ pub(crate) fn width_bytes(bytes: &[u8]) -> usize {
     if bytes.iter().all(|b| matches!(b, 0x20..=0x7e)) {
         return bytes.len();
     }
+    if (WIDTH_MEMO_MIN_LEN..=WIDTH_MEMO_MAX_LEN).contains(&bytes.len()) {
+        return memoised_width_bytes(bytes);
+    }
+    scan_width_bytes(bytes)
+}
+
+/// Shorter lines are measured about as fast as they are hashed and compared.
+const WIDTH_MEMO_MIN_LEN: usize = 24;
+/// Longer lines are never retained, so one thread's memo holds at most
+/// `WIDTH_MEMO_SLOTS * WIDTH_MEMO_MAX_LEN` bytes (4 MiB) of line text, and
+/// that only if every slot holds a line of the greatest length. A 240-column
+/// line with a true-colour sequence around every cell is about 6 KiB.
+///
+/// Two threads measure lines in an interactive session, the model thread and
+/// the terminal writer (`terminal.rs` clips and measures frame lines), so
+/// the process bound is twice that.
+const WIDTH_MEMO_MAX_LEN: usize = 8192;
+/// With 128 slots sustained navigation of a 120x40 frame ran 12-16% more
+/// instructions than with 512, and peak memory did not measurably differ.
+const WIDTH_MEMO_SLOTS: usize = 512;
+
+#[derive(Default)]
+struct WidthMemoEntry {
+    hash: u64,
+    line: Vec<u8>,
+    width: usize,
+}
+
+thread_local! {
+    // Composition measures the same styled lines again at every level of a
+    // frame, and most lines survive from one frame to the next. Direct mapped
+    // and allocated on first use: a colliding line replaces the slot's entry.
+    static WIDTH_MEMO: RefCell<Vec<WidthMemoEntry>> = const { RefCell::new(Vec::new()) };
+}
+
+/// Chooses a slot and rejects most mismatches before the byte comparison. A
+/// hit is always confirmed against the stored bytes, so a collision costs a
+/// measurement, never a wrong width.
+fn line_hash(bytes: &[u8]) -> u64 {
+    const MULTIPLIER: u64 = 0x9E37_79B9_7F4A_7C15;
+    let mix = |hash: u64, word: u64| (hash.rotate_left(5) ^ word).wrapping_mul(MULTIPLIER);
+    let mut chunks = bytes.chunks_exact(8);
+    let mut hash = bytes.len() as u64;
+    for chunk in &mut chunks {
+        hash = mix(
+            hash,
+            u64::from_le_bytes(chunk.try_into().expect("eight-byte chunk")),
+        );
+    }
+    let mut tail = [0u8; 8];
+    tail[..chunks.remainder().len()].copy_from_slice(chunks.remainder());
+    mix(hash, u64::from_le_bytes(tail))
+}
+
+/// `scan_width_bytes` through the calling thread's memo. The width is a pure
+/// function of the bytes, so the complete line is the key.
+fn memoised_width_bytes(bytes: &[u8]) -> usize {
+    let hash = line_hash(bytes);
+    WIDTH_MEMO.with(|memo| {
+        let mut memo = memo.borrow_mut();
+        if memo.is_empty() {
+            memo.resize_with(WIDTH_MEMO_SLOTS, WidthMemoEntry::default);
+        }
+        // The multiplication leaves the best-mixed bits at the top.
+        let entry = &mut memo[(hash >> 32) as usize % WIDTH_MEMO_SLOTS];
+        if entry.hash == hash && entry.line == bytes {
+            return entry.width;
+        }
+        let width = scan_width_bytes(bytes);
+        entry.hash = hash;
+        entry.line.clear();
+        // Exact, so a slot never holds more than `WIDTH_MEMO_MAX_LEN` bytes.
+        entry.line.reserve_exact(bytes.len());
+        entry.line.extend_from_slice(bytes);
+        entry.width = width;
+        width
+    })
+}
+
+fn scan_width_bytes(bytes: &[u8]) -> usize {
     let mut state = GROUND;
     let mut total = 0;
     let mut i = 0;
@@ -2412,7 +2503,7 @@ pub(crate) fn width_bytes(bytes: &[u8]) -> usize {
 /// ansi.Truncate: keep at most `length` cells, appending `tail` when cut;
 /// escape sequences after the cut are retained.
 pub(crate) fn truncate(s: &str, length: usize, tail: &str) -> String {
-    String::from_utf8_lossy(&truncate_bytes(s.as_bytes(), length, tail.as_bytes())).into_owned()
+    lossy_string(truncate_bytes(s.as_bytes(), length, tail.as_bytes()))
 }
 
 /// ansi.Truncate over Go string bytes. Retained clusters and escapes are copied
@@ -2475,7 +2566,87 @@ pub(crate) fn truncate_bytes(bytes: &[u8], length: usize, tail: &[u8]) -> Vec<u8
 /// ansi.Wrap: word wrap at `limit` cells, hard-wrapping words longer than
 /// the limit; `-` and any rune in `breakpoints` are break opportunities.
 pub(crate) fn wrap(s: &str, limit: usize, breakpoints: &str) -> String {
-    String::from_utf8_lossy(&wrap_bytes(s.as_bytes(), limit, breakpoints.as_bytes())).into_owned()
+    lossy_string(wrap_bytes(s.as_bytes(), limit, breakpoints.as_bytes()))
+}
+
+/// The length of the prefix of `bytes` that `wrap_bytes(bytes, limit, b"")`
+/// returns, when the text is of a kind the wrapper provably copies; `None`
+/// when the wrapper has to run.
+///
+/// Accepted text consists only of printable ASCII, newlines, complete SGR
+/// sequences (`ESC [`, digits and semicolons, `m`) and non-ASCII runes that
+/// are not whitespace and form a grapheme cluster on their own (class Any,
+/// followed by nothing that extends a cluster), with no line wider than
+/// `limit` cells. For such text the wrapper keeps, on every line,
+/// `current + space.len() + word_len` equal to the cells read so far, and
+/// `buf`, `space`, `word` in that order equal to the bytes read so far:
+///
+/// - a space is one byte and one cell, the only kind `space.len()` counts
+///   correctly, and joins `space` after the pending word is flushed;
+/// - a word rune, a hyphen or a cluster would only break the line when the
+///   cells read so far exceed `limit`, and otherwise appends in order;
+/// - SGR bytes take no PRINT or EXECUTE transition and join `word` at no
+///   width;
+/// - a newline flushes `space` and `word` and is copied.
+///
+/// At the end of the input a pending word is appended behind its spaces, and
+/// spaces with no word behind them are dropped. Those are exactly the spaces
+/// that end the text, so the result is the text without them.
+fn wrap_unchanged_len(bytes: &[u8], limit: usize) -> Option<usize> {
+    if limit < 1 {
+        // ansi.Wrap returns its input, trailing spaces included.
+        return Some(bytes.len());
+    }
+    let mut cells = 0;
+    let mut i = 0;
+    while i < bytes.len() {
+        match bytes[i] {
+            b'\n' => {
+                cells = 0;
+                i += 1;
+            }
+            0x20..=0x7E => {
+                cells += 1;
+                i += 1;
+            }
+            0x1B => {
+                if bytes.get(i + 1) != Some(&b'[') {
+                    return None;
+                }
+                i += 2;
+                while matches!(bytes.get(i), Some(b'0'..=b'9' | b';')) {
+                    i += 1;
+                }
+                if bytes.get(i) != Some(&b'm') {
+                    return None;
+                }
+                i += 1;
+            }
+            0xC2..=0xF4 => {
+                let (c, len) = decode_rune(&bytes[i..]);
+                // U+FFFD is also what a malformed sequence decodes to.
+                if c == '\u{FFFD}' || c.is_whitespace() {
+                    return None;
+                }
+                let (property, width) = rune_info(c);
+                if property != Gcb::Any {
+                    return None;
+                }
+                cells += width;
+                i += len;
+            }
+            _ => return None,
+        }
+        if cells > limit {
+            return None;
+        }
+    }
+    Some(
+        bytes
+            .iter()
+            .rposition(|b| *b != b' ')
+            .map_or(0, |last| last + 1),
+    )
 }
 
 /// ansi.Wrap over Go string bytes. Execute bytes are re-encoded with WriteRune
@@ -3885,6 +4056,54 @@ fn property_width(c: char, property: Gcb) -> usize {
     }
 }
 
+/// Slots in each thread's [`rune_info`] memo. A frame draws its non-ASCII text
+/// from a small repertoire (box drawing, block elements, a few symbols), so a
+/// few hundred direct-mapped slots keep it resident; 512 slots are 4 KiB.
+const RUNE_MEMO_SLOTS: usize = 512;
+
+#[derive(Clone, Copy)]
+struct RuneInfo {
+    rune: char,
+    property: Gcb,
+    // 0..=4, see `property_width`.
+    width: u8,
+}
+
+thread_local! {
+    // Fixed size and direct mapped: a colliding rune replaces the slot's entry.
+    static RUNE_MEMO: [Cell<Option<RuneInfo>>; RUNE_MEMO_SLOTS] =
+        const { [const { Cell::new(None) }; RUNE_MEMO_SLOTS] };
+}
+
+// Fold the high bits into the index so runes at the same offset in different
+// blocks, whose low nine bits coincide, land in different slots.
+fn rune_memo_slot(c: char) -> usize {
+    let cp = u32::from(c);
+    (cp ^ (cp >> 9)) as usize % RUNE_MEMO_SLOTS
+}
+
+/// `grapheme_property(c)` and `property_width(c, property)`, memoised per
+/// thread. Both are pure functions of the code point and of compile-time
+/// tables, so the rune is the whole key and an entry never goes stale.
+fn rune_info(c: char) -> (Gcb, usize) {
+    RUNE_MEMO.with(|memo| {
+        let slot = &memo[rune_memo_slot(c)];
+        if let Some(hit) = slot.get()
+            && hit.rune == c
+        {
+            return (hit.property, usize::from(hit.width));
+        }
+        let property = grapheme_property(c);
+        let width = property_width(c, property);
+        slot.set(Some(RuneInfo {
+            rune: c,
+            property,
+            width: width as u8,
+        }));
+        (property, width)
+    })
+}
+
 /// uniseg grapheme parser states (graphemerules.go).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum GrState {
@@ -3965,24 +4184,40 @@ fn first_cluster(s: &str) -> (usize, usize) {
 
 /// utf8.DecodeRune: malformed sequences consume one byte and yield RuneError.
 fn decode_rune(bytes: &[u8]) -> (char, usize) {
+    const INVALID: (char, usize) = ('\u{FFFD}', 1);
     let Some(&first) = bytes.first() else {
         return ('\u{FFFD}', 0);
     };
     if first < 0x80 {
         return (char::from(first), 1);
     }
-    let len = match first {
-        0xC2..=0xDF => 2,
-        0xE0..=0xEF => 3,
-        0xF0..=0xF4 => 4,
-        _ => return ('\u{FFFD}', 1),
+    // Well-formed sequences (Unicode table 3-7, Go's acceptRanges): the lead
+    // byte fixes the length and the range of the second byte, which is what
+    // excludes overlong forms, surrogates and values above U+10FFFF.
+    let (len, second) = match first {
+        0xC2..=0xDF => (2, 0x80..=0xBF),
+        0xE0 => (3, 0xA0..=0xBF),
+        0xED => (3, 0x80..=0x9F),
+        0xE1..=0xEC | 0xEE..=0xEF => (3, 0x80..=0xBF),
+        0xF0 => (4, 0x90..=0xBF),
+        0xF4 => (4, 0x80..=0x8F),
+        0xF1..=0xF3 => (4, 0x80..=0xBF),
+        _ => return INVALID,
     };
-    if let Some(prefix) = bytes.get(..len)
-        && let Ok(text) = std::str::from_utf8(prefix)
-    {
-        return (text.chars().next().unwrap_or('\u{FFFD}'), len);
+    let Some(sequence) = bytes.get(..len) else {
+        return INVALID;
+    };
+    if !second.contains(&sequence[1]) {
+        return INVALID;
     }
-    ('\u{FFFD}', 1)
+    let mut cp = u32::from(first) & (0x7F >> len);
+    for &byte in &sequence[1..] {
+        if byte & 0xC0 != 0x80 {
+            return INVALID;
+        }
+        cp = cp << 6 | u32::from(byte & 0x3F);
+    }
+    char::from_u32(cp).map_or(INVALID, |c| (c, len))
 }
 
 fn go_runes(bytes: &[u8]) -> impl Iterator<Item = (usize, char)> {
@@ -4001,17 +4236,22 @@ fn go_runes(bytes: &[u8]) -> impl Iterator<Item = (usize, char)> {
 /// uniseg FirstGraphemeCluster over bytes. RuneError affects segmentation and
 /// width, but the returned length always selects the original input bytes.
 fn first_cluster_bytes(bytes: &[u8]) -> (usize, usize) {
-    let mut chars = go_runes(bytes);
-    let Some((_, first)) = chars.next() else {
+    if bytes.is_empty() {
         return (0, 0);
-    };
-    let first_property = grapheme_property(first);
+    }
+    let (first, mut end) = decode_rune(bytes);
+    let (first_property, mut width) = rune_info(first);
     // Initial state -1: only the any-state transition can match.
     let mut state = gr_transition(GrState::Any, first_property).map_or(GrState::Any, |t| t.0);
-    let mut width = property_width(first, first_property);
-    let mut end = decode_rune(bytes).1;
-    for (index, c) in chars {
-        let property = grapheme_property(c);
+    // Most clusters are one rune followed by ASCII or by nothing. In the Any
+    // state every ASCII rune (class Any, CR, LF or Control) is a boundary, so
+    // the scan below would stop on its first step.
+    if state == GrState::Any && bytes.get(end).is_none_or(u8::is_ascii) {
+        return (end, width);
+    }
+    while end < bytes.len() {
+        let (c, len) = decode_rune(&bytes[end..]);
+        let (property, rune_width) = rune_info(c);
         let (next, boundary) = gr_step(state, property);
         if boundary {
             break;
@@ -4024,9 +4264,9 @@ fn first_cluster_bytes(bytes: &[u8]) -> (usize, usize) {
                 width = 2;
             }
         } else if first_property != Gcb::Ri && first_property != Gcb::L {
-            width += property_width(c, property);
+            width += rune_width;
         }
-        end = index + decode_rune(&bytes[index..]).1;
+        end += len;
     }
     (end, width)
 }
@@ -4219,7 +4459,7 @@ impl std::fmt::Display for GoPanic {
 /// the capacity appends NUL runes. A cut beyond it panics with
 /// `slice bounds out of range`, returned here as `Err(GoPanic)`.
 pub(crate) fn ui_truncate(s: &str, n: isize) -> Result<String, GoPanic> {
-    ui_truncate_bytes(s.as_bytes(), n).map(|out| String::from_utf8_lossy(&out).into_owned())
+    ui_truncate_bytes(s.as_bytes(), n).map(lossy_string)
 }
 
 /// ui.Truncate on Go string bytes: retain raw input unless clipping is needed;
@@ -6605,7 +6845,7 @@ fn original_width_bytes(bytes: &[u8]) -> usize {
     while i < bytes.len() {
         let (next, action) = transition(state, bytes[i]);
         if next == UTF8 {
-            let (len, w) = first_cluster_bytes(&bytes[i..]);
+            let (len, w) = original_first_cluster_bytes(&bytes[i..]);
             total += w;
             i += len.max(1);
             state = GROUND;
@@ -6717,6 +6957,715 @@ fn original_bubbles_rune_width(c: char) -> usize {
 #[cfg(test)]
 mod primitive_differential_tests {
     use super::*;
+
+    /// SplitMix64: reproducible fuzz input without a dependency.
+    struct TestRng(u64);
+
+    impl TestRng {
+        fn next(&mut self) -> u64 {
+            self.0 = self.0.wrapping_add(0x9E37_79B9_7F4A_7C15);
+            let mut z = self.0;
+            z = (z ^ (z >> 30)).wrapping_mul(0xBF58_476D_1CE4_E5B9);
+            z = (z ^ (z >> 27)).wrapping_mul(0x94D0_49BB_1331_11EB);
+            z ^ (z >> 31)
+        }
+
+        fn below(&mut self, n: usize) -> usize {
+            (self.next() % n as u64) as usize
+        }
+
+        fn pick<'a, T: ?Sized>(&mut self, items: &[&'a T]) -> &'a T {
+            items[self.below(items.len())]
+        }
+    }
+
+    /// At least one rune of every grapheme class and width that the cluster
+    /// scanner distinguishes, the ASCII bytes it treats specially, and
+    /// malformed UTF-8.
+    const CLUSTER_TOKENS: &[&[u8]] = &[
+        b"a",
+        b" ",
+        b"-",
+        b"\n",
+        b"\r",
+        b"\t",
+        b"\x1b",
+        b"\x7f",
+        b"\0",
+        "\u{E9}".as_bytes(),    // Any, narrow
+        "\u{2502}".as_bytes(),  // Any, box drawing
+        "\u{754C}".as_bytes(),  // Any, wide
+        "\u{2E3A}".as_bytes(),  // Any, three cells
+        "\u{2E3B}".as_bytes(),  // Any, four cells
+        "\u{A0}".as_bytes(),    // Any, no-break space
+        "\u{FFFD}".as_bytes(),  // Any, a literal replacement character
+        "\u{85}".as_bytes(),    // Control
+        "\u{200B}".as_bytes(),  // Control, zero width space
+        "\u{2028}".as_bytes(),  // Control, line separator
+        "\u{FEFF}".as_bytes(),  // Control
+        "\u{301}".as_bytes(),   // Extend
+        "\u{200C}".as_bytes(),  // Extend, zero width non-joiner
+        "\u{FE0E}".as_bytes(),  // Extend, text presentation
+        "\u{FE0F}".as_bytes(),  // Extend, emoji presentation
+        "\u{1F3FB}".as_bytes(), // Extend, skin tone
+        "\u{200D}".as_bytes(),  // ZWJ
+        "\u{1F1FA}".as_bytes(), // Regional indicator
+        "\u{1F1F8}".as_bytes(), // Regional indicator
+        "\u{600}".as_bytes(),   // Prepend
+        "\u{903}".as_bytes(),   // SpacingMark
+        "\u{1100}".as_bytes(),  // L
+        "\u{1161}".as_bytes(),  // V
+        "\u{11A8}".as_bytes(),  // T
+        "\u{AC00}".as_bytes(),  // LV
+        "\u{AC01}".as_bytes(),  // LVT
+        "\u{A9}".as_bytes(),    // Pictographic, text presentation
+        "\u{2764}".as_bytes(),  // Pictographic, text presentation
+        "\u{1F469}".as_bytes(), // Pictographic, emoji presentation
+        b"\x80",
+        b"\xff",
+        b"\xc0",
+        b"\xe2\x94",
+    ];
+
+    /// Text the wrap shortcut accepts when no line is wider than the limit.
+    const WRAP_PLAIN: &[&[u8]] = &[
+        b"a",
+        b"word",
+        b"x1",
+        b"~",
+        b" ",
+        b"  ",
+        b"-",
+        b"--",
+        b"a-b",
+        b"\n",
+        b"\x1b[m",
+        b"\x1b[0m",
+        b"\x1b[1;4m",
+        b"\x1b[38;2;10;20;30m",
+        b"\x1b[;m",
+        "\u{E9}".as_bytes(),   // narrow
+        "\u{2502}".as_bytes(), // box drawing
+        "\u{2500}".as_bytes(), // box drawing
+        "\u{754C}".as_bytes(), // wide
+        "\u{FF37}".as_bytes(), // fullwidth
+        "\u{2E3A}".as_bytes(), // three cells
+        "\u{2010}".as_bytes(), // a hyphen that is not a breakpoint
+    ];
+
+    /// Text that must send the wrap shortcut to the wrapper, or that the
+    /// wrapper treats differently from a word rune.
+    const WRAP_HOSTILE: &[&[u8]] = &[
+        // Whitespace that is not one byte and one cell.
+        "\u{A0}".as_bytes(),
+        "\u{85}".as_bytes(),
+        "\u{1680}".as_bytes(),
+        "\u{2000}".as_bytes(),
+        "\u{2003}".as_bytes(),
+        "\u{2028}".as_bytes(),
+        "\u{2029}".as_bytes(),
+        "\u{202F}".as_bytes(),
+        "\u{205F}".as_bytes(),
+        "\u{3000}".as_bytes(),
+        b"\t",
+        b"\r",
+        b"\r\n",
+        b"\x0b",
+        b"\x0c",
+        // Raw C1 bytes: executes, string and CSI introducers.
+        b"\x80",
+        b"\x85",
+        b"\x8b",
+        b"\x90",
+        b"\x98",
+        b"\x99",
+        b"\x9a",
+        b"\x9b",
+        b"\x9b31m",
+        b"\x9c",
+        b"\x9d",
+        b"\x9e",
+        b"\x9f",
+        // Other C0 controls.
+        b"\0",
+        b"\x07",
+        b"\x18",
+        b"\x1a",
+        b"\x7f",
+        // Escape sequences that are not a complete SGR.
+        b"\x1b",
+        b"\x1b[",
+        b"\x1b[3",
+        b"\x1b[31",
+        b"\x1b[31\n",
+        b"\x1b[31 m",
+        b"\x1b[1:2m",
+        b"\x1b[?25h",
+        b"\x1b[2J",
+        b"\x1b[<1m",
+        b"\x1bm",
+        b"\x1b(B",
+        b"\x1b\x1b[0m",
+        b"\x1b]8;;http://x\x07",
+        b"\x1b]0;t\x1b\\",
+        b"\x1bP1q\x1b\\",
+        b"\x1b_x",
+        // Zero width, combining and cluster-extending runes.
+        "\u{200B}".as_bytes(),
+        "\u{200C}".as_bytes(),
+        "\u{200D}".as_bytes(),
+        "\u{FEFF}".as_bytes(),
+        "\u{AD}".as_bytes(),
+        "\u{301}".as_bytes(),
+        "\u{308}".as_bytes(),
+        "\u{20E3}".as_bytes(),
+        "\u{903}".as_bytes(),
+        "\u{600}".as_bytes(),
+        "\u{FE0E}".as_bytes(),
+        "\u{FE0F}".as_bytes(),
+        "\u{1F3FB}".as_bytes(),
+        // Emoji, flags and Hangul jamo.
+        "\u{1F469}".as_bytes(),
+        "\u{1F469}\u{200D}\u{1F4BB}".as_bytes(),
+        "\u{1F1FA}".as_bytes(),
+        "\u{1F1F8}".as_bytes(),
+        "\u{2764}".as_bytes(),
+        "\u{A9}".as_bytes(),
+        "\u{1100}".as_bytes(),
+        "\u{1161}".as_bytes(),
+        "\u{11A8}".as_bytes(),
+        "\u{AC00}".as_bytes(),
+        "\u{AC01}".as_bytes(),
+        "\u{2E3B}".as_bytes(),
+        // Malformed UTF-8 and the replacement character itself.
+        b"\xc0",
+        b"\xc2",
+        b"\xe2\x94",
+        b"\xed\xa0\x80",
+        b"\xf4\x90\x80\x80",
+        b"\xff",
+        "\u{FFFD}".as_bytes(),
+    ];
+
+    /// How a wrap fuzz case ends: the wrapper only drops spaces that end the
+    /// input, so spaces sit before, after and instead of the final content.
+    const WRAP_ENDINGS: &[&[u8]] = &[
+        b"",
+        b"",
+        b" ",
+        b"    ",
+        b"-",
+        b" -",
+        b"- ",
+        b"\n",
+        b" \n",
+        b"\n ",
+        b"\n\n",
+        b"\x1b[0m",
+        b" \x1b[0m",
+        b"\x1b[0m ",
+        b"  \x1b[0m  ",
+        "\u{754C}".as_bytes(),
+        "\u{754C} ".as_bytes(),
+    ];
+
+    /// One wrap fuzz input: mostly text the shortcut accepts, often with one
+    /// or two hostile tokens in it, sometimes arbitrary.
+    fn wrap_fuzz_text(rng: &mut TestRng, out: &mut Vec<u8>) {
+        out.clear();
+        let hostile_one_in = match rng.below(20) {
+            0..9 => usize::MAX,
+            9..17 => 6,
+            _ => 2,
+        };
+        for _ in 0..rng.below(9) {
+            if hostile_one_in != usize::MAX && rng.below(hostile_one_in) == 0 {
+                if rng.below(6) == 0 {
+                    out.push(rng.next() as u8);
+                } else {
+                    out.extend_from_slice(rng.pick(WRAP_HOSTILE));
+                }
+            } else {
+                out.extend_from_slice(rng.pick(WRAP_PLAIN));
+            }
+        }
+        out.extend_from_slice(rng.pick(WRAP_ENDINGS));
+    }
+
+    /// A limit weighted towards the edges: none, one cell, and exactly, just
+    /// under and just over the widest line.
+    fn wrap_fuzz_limit(rng: &mut TestRng, text: &[u8]) -> usize {
+        let widest = original_get_lines_bytes(text).1;
+        match rng.below(16) {
+            0 => 0,
+            1 => 1,
+            2 => 2,
+            3..8 => widest,
+            8..10 => widest.saturating_sub(1),
+            10..12 => widest + 1,
+            12 => widest + 1 + rng.below(40),
+            13 => text.len(),
+            _ => 1 + rng.below(12),
+        }
+    }
+
+    #[test]
+    fn wrap_shortcut_matches_wrap_bytes() {
+        // What the shortcut's argument assumes of the parser: SGR bytes are
+        // collected without printing or executing and end in the ground
+        // state, and printable ASCII prints there.
+        let mut state = GROUND;
+        for &byte in b"\x1b[0123456789;m" {
+            let (next, action) = transition(state, byte);
+            assert!(action != PRINT && action != EXECUTE, "{byte:#x}");
+            state = next;
+        }
+        assert_eq!(state, GROUND);
+        for byte in 0x20..=0x7Eu8 {
+            assert_eq!(transition(GROUND, byte), (GROUND, PRINT));
+        }
+
+        const CASES: usize = 1_000_000;
+        let mut rng = TestRng(0x5EED_F3A9);
+        let mut text = Vec::new();
+        let (mut skipped, mut trimmed, mut wrapped, mut at_limit) = (0, 0, 0, 0);
+        for _ in 0..CASES {
+            wrap_fuzz_text(&mut rng, &mut text);
+            let limit = wrap_fuzz_limit(&mut rng, &text);
+            let expected = wrap_bytes(&text, limit, b"");
+            match wrap_unchanged_len(&text, limit) {
+                Some(kept) => {
+                    assert_eq!(
+                        expected,
+                        &text[..kept],
+                        "{text:x?} limit={limit} kept={kept}"
+                    );
+                    skipped += 1;
+                    trimmed += usize::from(kept < text.len());
+                    at_limit += usize::from(limit == original_get_lines_bytes(&text).1);
+                }
+                None => wrapped += usize::from(expected != text),
+            }
+        }
+        // The comparison is not vacuous: the shortcut fires on a large share
+        // of the cases, including exact-fit lines and trimmed endings, and
+        // declines many texts the wrapper does change.
+        assert!(skipped > CASES / 5, "{skipped}");
+        assert!(trimmed > CASES / 50, "{trimmed}");
+        assert!(at_limit > CASES / 20, "{at_limit}");
+        assert!(wrapped > CASES / 5, "{wrapped}");
+    }
+
+    #[test]
+    fn wrap_shortcut_declines_each_hostile_token() {
+        // Every hostile token, in every position of a line that otherwise
+        // fits: the shortcut must agree with the wrapper or stand aside.
+        let lines: [&[u8]; 4] = [
+            b"ab cd",
+            b"\x1b[1mab\x1b[0m cd  ",
+            "\u{2502} a-b \u{2502}".as_bytes(),
+            b"ab\ncd \n e",
+        ];
+        for line in lines {
+            for token in WRAP_HOSTILE {
+                for at in 0..=line.len() {
+                    let text = [&line[..at], token, &line[at..]].concat();
+                    for limit in 0..=text.len() + 1 {
+                        if let Some(kept) = wrap_unchanged_len(&text, limit) {
+                            assert_eq!(
+                                wrap_bytes(&text, limit, b""),
+                                &text[..kept],
+                                "{text:x?} limit={limit}"
+                            );
+                        }
+                    }
+                }
+                // On its own the token is never accepted at a real limit,
+                // apart from the one that decodes to an ordinary word rune.
+                if *token != "\u{2E3B}".as_bytes() {
+                    assert_eq!(wrap_unchanged_len(token, 80), None, "{token:x?}");
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn width_render_matches_reference_through_wrap_shortcut() {
+        const CASES: usize = 120_000;
+        let mut rng = TestRng(0x5EED_3E4D);
+        let mut text = Vec::new();
+        let mut skipped = 0;
+        for case in 0..CASES {
+            wrap_fuzz_text(&mut rng, &mut text);
+            let env = Env {
+                profile: [
+                    Profile::Ascii,
+                    Profile::Ansi,
+                    Profile::Ansi256,
+                    Profile::TrueColor,
+                ][case % 4],
+                dark: case % 8 < 4,
+            };
+            let width = wrap_fuzz_limit(&mut rng, &text);
+            let mut style = Style::new().width(width);
+            match rng.below(8) {
+                0 => style = style.padding(&[0, 1]),
+                1 => style = style.padding(&[1, 2, 0, 1]),
+                2 => style = style.padding(&[0, width]),
+                _ => {}
+            }
+            match rng.below(8) {
+                0 => style = style.fg(Role::Text).bg(Role::Panel),
+                1 => style = style.bg(Color::hex("#123456")).align(Align::Right),
+                2 => {
+                    style.underline = true;
+                    style = style.align(CENTER);
+                }
+                3 => style = style.border(Border::ROUNDED).height(3),
+                4 => style = style.inline(true),
+                5 => style = style.max_width(width.saturating_sub(1)).reverse(true),
+                _ => {}
+            }
+            let [_, pad_right, _, pad_left] = style.padding;
+            if !style.inline
+                && width > pad_left + pad_right
+                && wrap_unchanged_len(&text, width - pad_left - pad_right).is_some()
+                && !text.contains(&b'\t')
+            {
+                skipped += 1;
+            }
+            assert_eq!(
+                style.render_bytes_in(&text, env),
+                style.render_impl_reference(&text, env, false),
+                "{text:x?} {style:?} {env:?}"
+            );
+            if let Ok(text) = std::str::from_utf8(&text) {
+                assert_eq!(
+                    style.render_in(text, env),
+                    String::from_utf8_lossy(&style.render_impl_reference(
+                        text.as_bytes(),
+                        env,
+                        true
+                    )),
+                    "{text:?} {style:?} {env:?}"
+                );
+            }
+        }
+        assert!(skipped > CASES / 8, "{skipped}");
+    }
+
+    #[test]
+    fn width_memo_matches_original_and_stays_bounded() {
+        fn check(line: &[u8]) {
+            assert_eq!(width_bytes(line), original_width_bytes(line), "{line:x?}");
+        }
+        // Four times as many distinct lines as slots, at every length class
+        // the memo distinguishes: too short, each end of the retained range
+        // and too long.
+        let mut rng = TestRng(0x5EED_3E30);
+        let lengths = [
+            WIDTH_MEMO_MIN_LEN - 1,
+            WIDTH_MEMO_MIN_LEN,
+            WIDTH_MEMO_MIN_LEN + 1,
+            WIDTH_MEMO_MAX_LEN - 1,
+            WIDTH_MEMO_MAX_LEN,
+            WIDTH_MEMO_MAX_LEN + 1,
+        ];
+        let mut corpus: Vec<Vec<u8>> = Vec::new();
+        for index in 0..WIDTH_MEMO_SLOTS * 4 {
+            let target = match index % 16 {
+                n @ 0..6 => lengths[n],
+                _ => WIDTH_MEMO_MIN_LEN + rng.below(400),
+            };
+            let mut line = Vec::new();
+            while line.len() < target {
+                match rng.below(8) {
+                    0 => line.push(rng.next() as u8),
+                    1 => line.extend_from_slice(b"\x1b[38;2;9;8;7m"),
+                    2 => line.extend_from_slice(b"\x1b[0m"),
+                    3 => line.extend_from_slice(b"plain text"),
+                    _ => line.extend_from_slice(rng.pick(CLUSTER_TOKENS)),
+                }
+            }
+            line.truncate(target);
+            corpus.push(line);
+        }
+        // Cold, warm, and in an order that revisits each slot only after
+        // other lines have been through it.
+        for round in 0..3 {
+            for index in 0..corpus.len() {
+                let line = &corpus[(index * (2 * round + 1)) % corpus.len()];
+                check(line);
+                check(line);
+            }
+        }
+        // The whole line is the key: lines of one length that differ in a
+        // single byte, anywhere, are measured separately.
+        let base = b"\x1b[38;2;1;2;3m\xe2\x94\x82 cell value \xe2\x94\x82\x1b[0m tail";
+        for _ in 0..2 {
+            for position in 0..base.len() {
+                for byte in [0x00, b'\n', 0x1b, b' ', b'm', 0x80, 0x94, 0x9b, 0xe2, 0xff] {
+                    let mut line = base.to_vec();
+                    line[position] = byte;
+                    check(&line);
+                    check(base);
+                }
+            }
+        }
+        // One line alternating with every other: whichever lines share its
+        // slot keep replacing it.
+        let rival = &corpus[WIDTH_MEMO_MIN_LEN];
+        for line in &corpus {
+            check(rival);
+            check(line);
+        }
+
+        WIDTH_MEMO.with(|memo| {
+            let memo = memo.borrow();
+            assert_eq!(memo.len(), WIDTH_MEMO_SLOTS);
+            let mut used = 0;
+            for entry in memo.iter() {
+                assert!(entry.line.capacity() <= WIDTH_MEMO_MAX_LEN);
+                if !entry.line.is_empty() {
+                    used += 1;
+                    assert!(entry.line.len() >= WIDTH_MEMO_MIN_LEN);
+                    assert_eq!(entry.hash, line_hash(&entry.line));
+                    assert_eq!(entry.width, original_width_bytes(&entry.line));
+                }
+            }
+            // The hash spreads the corpus over the table.
+            assert!(used > WIDTH_MEMO_SLOTS * 9 / 10, "{used}");
+        });
+    }
+
+    #[test]
+    fn align_horizontal_matches_original() {
+        let whitespace = ["7".to_owned(), "48;2;1;2;3".to_owned()];
+        let no_sequences: [String; 0] = [];
+        let styles = [None, Some(&whitespace[..]), Some(&no_sequences[..])];
+        let mut rng = TestRng(0x5EED_A116);
+        let mut input = Vec::new();
+        for case in 0..40_000 {
+            input.clear();
+            for _ in 0..rng.below(4) {
+                for _ in 0..rng.below(6) {
+                    match rng.below(8) {
+                        0 => input.push(rng.next() as u8),
+                        1 => input.extend_from_slice(b"\x1b[38;2;9;8;7m"),
+                        2 => input.extend_from_slice(b"plain text"),
+                        _ => input.extend_from_slice(rng.pick(CLUSTER_TOKENS)),
+                    }
+                }
+                input.push(b'\n');
+            }
+            if rng.below(2) == 0 {
+                input.pop();
+            }
+            let widest = original_get_lines_bytes(&input).1;
+            let width = match rng.below(4) {
+                0 => 0,
+                1 => widest,
+                2 => widest + 1 + rng.below(5),
+                _ => rng.below(widest + 2),
+            };
+            let env = Env {
+                profile: [
+                    Profile::Ascii,
+                    Profile::Ansi,
+                    Profile::Ansi256,
+                    Profile::TrueColor,
+                ][case % 4],
+                dark: case % 8 < 4,
+            };
+            for position in [LEFT, CENTER, RIGHT, 0.25] {
+                for style in styles {
+                    assert_eq!(
+                        align_horizontal_bytes(&input, position, width, style, env),
+                        original_align_horizontal_bytes(&input, position, width, style, env),
+                        "{input:x?} width={width} position={position} {env:?}"
+                    );
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn string_facades_match_lossy_copies() {
+        fn lossy(bytes: &[u8]) -> String {
+            String::from_utf8_lossy(bytes).into_owned()
+        }
+        let mut rng = TestRng(0x5EED_105F);
+        let mut invalid = 0;
+        for _ in 0..50_000 {
+            let mut input = Vec::new();
+            for _ in 0..rng.below(10) {
+                if rng.below(6) == 0 {
+                    input.push(rng.next() as u8);
+                } else {
+                    input.extend_from_slice(rng.pick(CLUSTER_TOKENS));
+                }
+            }
+            invalid += usize::from(std::str::from_utf8(&input).is_err());
+            assert_eq!(lossy_string(input.clone()), lossy(&input), "{input:x?}");
+        }
+        assert!(invalid > 10_000, "{invalid}");
+
+        // The facades take valid text; only a cut inside an escape payload
+        // (the third input) makes their byte result invalid.
+        let texts = [
+            "",
+            "plain words here",
+            "x\x1b]0;t\u{2705}y z",
+            "\x1b[1mbold words\x1b[0m\nsecond line",
+            "\u{754C}e\u{301} \u{1F469}\u{200D}\u{1F4BB}\n\u{2502} cell \u{2502}",
+            "tab\tand\u{85}next  ",
+        ];
+        assert!(std::str::from_utf8(&wrap_bytes(texts[2].as_bytes(), 3, b"")).is_err());
+        for text in texts {
+            let bytes = text.as_bytes();
+            for n in 0..12 {
+                assert_eq!(wrap(text, n, ""), lossy(&wrap_bytes(bytes, n, b"")));
+                assert_eq!(wrap(text, n, "/"), lossy(&wrap_bytes(bytes, n, b"/")));
+                assert_eq!(
+                    truncate(text, n, "\u{2026}"),
+                    lossy(&truncate_bytes(bytes, n, "\u{2026}".as_bytes()))
+                );
+                assert_eq!(
+                    ui_truncate(text, n as isize).map_err(|e| e.to_string()),
+                    ui_truncate_bytes(bytes, n as isize)
+                        .map(|out| lossy(&out))
+                        .map_err(|e| e.to_string())
+                );
+                let env = Env {
+                    profile: Profile::TrueColor,
+                    dark: true,
+                };
+                let style = Style::new().width(n).fg(Role::Text);
+                assert_eq!(
+                    style.render_in(text, env),
+                    lossy(&style.render_impl(bytes, env, true))
+                );
+                for position in [0.0, 0.5, 1.0] {
+                    let ws = Whitespace::default();
+                    let horizontal = place_horizontal_bytes(n * 3, position, bytes, ws, env);
+                    assert_eq!(
+                        place_with(n * 3, n, position, position, text, ws, env),
+                        lossy(&place_vertical_bytes(n, position, &horizontal, ws, env))
+                    );
+                }
+            }
+            for other in texts {
+                for position in [0.0, 0.5, 1.0] {
+                    let blocks = [bytes, other.as_bytes()];
+                    assert_eq!(
+                        join_horizontal(position, &[text, other]),
+                        lossy(&join_horizontal_bytes(position, &blocks))
+                    );
+                    assert_eq!(
+                        join_vertical(position, &[text, other]),
+                        lossy(&join_vertical_bytes(position, &blocks))
+                    );
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn rune_info_matches_uncached_for_every_code_point() {
+        fn check(c: char) {
+            let property = grapheme_property(c);
+            assert_eq!(
+                rune_info(c),
+                (property, property_width(c, property)),
+                "{c:?}"
+            );
+        }
+        // Ascending: each rune first misses, evicting the previous owner of
+        // its slot, and then hits.
+        for c in '\0'..=char::MAX {
+            check(c);
+            check(c);
+        }
+        // A permutation of the code space (the multiplier is coprime to
+        // 0x110000), so slots are read while holding unrelated runes.
+        for i in 0..0x11_0000u64 {
+            if let Some(c) = char::from_u32((i * 1_000_003 % 0x11_0000) as u32) {
+                check(c);
+            }
+        }
+        // Two runes that share a slot and differ in their answers keep
+        // evicting each other.
+        let a = '\u{2502}';
+        let b = ('\0'..=char::MAX)
+            .find(|&c| rune_memo_slot(c) == rune_memo_slot(a) && rune_info(c) != rune_info(a))
+            .expect("a colliding rune with different properties");
+        for _ in 0..4 {
+            check(a);
+            check(b);
+            check(b);
+            check(a);
+        }
+    }
+
+    #[test]
+    fn first_cluster_matches_original() {
+        fn check(bytes: &[u8]) {
+            assert_eq!(
+                first_cluster_bytes(bytes),
+                original_first_cluster_bytes(bytes),
+                "{bytes:x?}"
+            );
+        }
+        check(b"");
+        // The single-rune shortcut: an ASCII rune ends any cluster that is in
+        // the Any state, and every ASCII byte is tried after every token.
+        for byte in 0..=0x7Fu8 {
+            let property = grapheme_property(char::from(byte));
+            assert!(gr_step(GrState::Any, property).1, "{byte:#x}");
+            for token in CLUSTER_TOKENS {
+                check(&[token, &[byte][..]].concat());
+                check(&[token, &[byte, b'x'][..]].concat());
+            }
+        }
+        // Every sequence of four tokens; their suffixes are the prefixes of
+        // other sequences, so every cluster start is covered too.
+        let mut input = Vec::new();
+        for a in CLUSTER_TOKENS {
+            for b in CLUSTER_TOKENS {
+                for c in CLUSTER_TOKENS {
+                    for d in CLUSTER_TOKENS {
+                        input.clear();
+                        for token in [a, b, c, d] {
+                            input.extend_from_slice(token);
+                        }
+                        check(&input);
+                    }
+                }
+            }
+            check(a);
+        }
+        // Longer runs, scanned from every byte offset including the middle
+        // of a rune, and raw random bytes.
+        let mut rng = TestRng(0x5EED_C1A5);
+        for _ in 0..20_000 {
+            input.clear();
+            for _ in 0..1 + rng.below(12) {
+                if rng.below(8) == 0 {
+                    input.push(rng.next() as u8);
+                } else {
+                    input.extend_from_slice(rng.pick(CLUSTER_TOKENS));
+                }
+            }
+            for start in 0..input.len() {
+                check(&input[start..]);
+            }
+            assert_eq!(
+                width_bytes(&input),
+                original_width_bytes(&input),
+                "{input:x?}"
+            );
+        }
+    }
     #[test]
     #[ignore = "focused performance campaign benchmark"]
     fn text_primitives_microbenchmark() {
@@ -6798,6 +7747,167 @@ mod primitive_differential_tests {
             }
         }
     }
+
+    #[test]
+    fn decode_rune_matches_original() {
+        fn check(bytes: &[u8]) {
+            assert_eq!(
+                decode_rune(bytes),
+                original_decode_rune(bytes),
+                "{bytes:x?}"
+            );
+        }
+        check(b"");
+        // Every scalar value, alone and followed by a continuation byte.
+        let mut buf = [0u8; 5];
+        for c in '\0'..=char::MAX {
+            let len = c.encode_utf8(&mut buf).len();
+            assert_eq!(decode_rune(&buf[..len]), (c, len));
+            check(&buf[..len]);
+            buf[len] = 0x80;
+            check(&buf[..=len]);
+        }
+        // Every two-byte prefix, extended by each class of third and fourth
+        // byte (ASCII, the edges of every second-byte range, lead bytes,
+        // invalid bytes), and every truncation of those sequences.
+        const TAIL: [u8; 10] = [0x00, 0x7F, 0x80, 0x8F, 0x90, 0x9F, 0xA0, 0xBF, 0xC2, 0xFF];
+        for first in 0..=255u8 {
+            check(&[first]);
+            for second in 0..=255u8 {
+                check(&[first, second]);
+                for third in TAIL {
+                    check(&[first, second, third]);
+                    for fourth in TAIL {
+                        check(&[first, second, third, fourth]);
+                        check(&[first, second, third, fourth, 0x80]);
+                    }
+                }
+            }
+        }
+        // Every three-byte sequence: all of the three-byte forms and every
+        // four-byte form cut one byte short.
+        for first in 0xE0..=0xF7u8 {
+            for second in 0..=255u8 {
+                for third in 0..=255u8 {
+                    check(&[first, second, third]);
+                }
+            }
+        }
+    }
+}
+
+/// The cluster scanner before it memoised rune properties: the unchanged
+/// property and width tables, read through the original decoder.
+#[cfg(test)]
+fn original_first_cluster_bytes(bytes: &[u8]) -> (usize, usize) {
+    let mut index = 0;
+    let mut chars = std::iter::from_fn(move || {
+        if index >= bytes.len() {
+            return None;
+        }
+        let start = index;
+        let (rune, len) = original_decode_rune(&bytes[index..]);
+        index += len;
+        Some((start, rune))
+    });
+    let Some((_, first)) = chars.next() else {
+        return (0, 0);
+    };
+    let first_property = grapheme_property(first);
+    // Initial state -1: only the any-state transition can match.
+    let mut state = gr_transition(GrState::Any, first_property).map_or(GrState::Any, |t| t.0);
+    let mut width = property_width(first, first_property);
+    let mut end = original_decode_rune(bytes).1;
+    for (index, c) in chars {
+        let property = grapheme_property(c);
+        let (next, boundary) = gr_step(state, property);
+        if boundary {
+            break;
+        }
+        state = next;
+        if first_property == Gcb::Pict {
+            if c == '\u{FE0E}' {
+                width = 1;
+            } else if c == '\u{FE0F}' {
+                width = 2;
+            }
+        } else if first_property != Gcb::Ri && first_property != Gcb::L {
+            width += property_width(c, property);
+        }
+        end = index + original_decode_rune(&bytes[index..]).1;
+    }
+    (end, width)
+}
+
+/// The decoder before it stopped validating through `str::from_utf8`.
+#[cfg(test)]
+fn original_decode_rune(bytes: &[u8]) -> (char, usize) {
+    let Some(&first) = bytes.first() else {
+        return ('\u{FFFD}', 0);
+    };
+    if first < 0x80 {
+        return (char::from(first), 1);
+    }
+    let len = match first {
+        0xC2..=0xDF => 2,
+        0xE0..=0xEF => 3,
+        0xF0..=0xF4 => 4,
+        _ => return ('\u{FFFD}', 1),
+    };
+    if let Some(prefix) = bytes.get(..len)
+        && let Ok(text) = std::str::from_utf8(prefix)
+    {
+        return (text.chars().next().unwrap_or('\u{FFFD}'), len);
+    }
+    ('\u{FFFD}', 1)
+}
+
+/// Horizontal alignment before it reused the widths found while looking for
+/// the widest line.
+#[cfg(test)]
+fn original_align_horizontal_bytes(
+    str: &[u8],
+    position: f64,
+    width: usize,
+    style: Option<&[String]>,
+    env: Env,
+) -> Vec<u8> {
+    let (lines, widest) = original_get_lines_bytes(str);
+    let fill = |n: usize| {
+        let spaces = " ".repeat(n);
+        match style {
+            Some(style) => styled_bytes(style, spaces.as_bytes(), env),
+            None => spaces.into_bytes(),
+        }
+    };
+    let mut out = Vec::with_capacity(str.len());
+    let count = lines.len();
+    for (index, line) in lines.into_iter().enumerate() {
+        let line_width = original_width_bytes(line);
+        let mut short = widest - line_width;
+        short += (width as isize - (short + line_width) as isize).max(0) as usize;
+        if short > 0 {
+            if position == RIGHT {
+                out.extend(fill(short));
+                out.extend_from_slice(line);
+            } else if position == CENTER {
+                let left = short / 2;
+                let right = left + short % 2;
+                out.extend(fill(left));
+                out.extend_from_slice(line);
+                out.extend(fill(right));
+            } else {
+                out.extend_from_slice(line);
+                out.extend(fill(short));
+            }
+        } else {
+            out.extend_from_slice(line);
+        }
+        if index < count - 1 {
+            out.push(b'\n');
+        }
+    }
+    out
 }
 
 #[cfg(test)]

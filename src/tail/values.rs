@@ -1224,7 +1224,207 @@ fn marshal_run(
 /// `\r`, `\t` short escapes, `<>&` and other C0 controls as `\u00xx`, each
 /// invalid UTF-8 byte as `�`, and U+2028/U+2029 escaped. DEL and other
 /// valid UTF-8 pass through raw.
+///
+/// Most strings need no escaping at all, so that case is one word-at-a-time
+/// scan and one copy; anything else continues in [`write_escaped`].
 fn write_str(out: &mut Vec<u8>, s: &[u8]) {
+    out.push(b'"');
+    let plain = plain_prefix(s);
+    if plain == s.len() {
+        out.extend_from_slice(s);
+    } else {
+        write_escaped(out, s, plain);
+    }
+    out.push(b'"');
+}
+
+/// The rest of [`write_str`] for a string with something to escape; its
+/// first `plain` bytes need none. Kept out of line so the nothing-to-escape
+/// path stays small.
+#[inline(never)]
+fn write_escaped(out: &mut Vec<u8>, s: &[u8], plain: usize) {
+    // `s[start..j]` is scanned text still to be copied verbatim.
+    let mut start = 0;
+    let mut j = plain;
+    while let Some(&c) = s.get(j) {
+        if c.is_ascii() {
+            // The scan stops only at bytes with an escape, but the table has
+            // every ASCII byte, so this does not depend on that.
+            out.extend_from_slice(&s[start..j]);
+            ASCII_ENCODED[usize::from(c)].append_to(out);
+            j += 1;
+            start = j;
+        } else {
+            // Stay here for a whole run of non-ASCII text: the word scan
+            // would stop at each of its bytes.
+            while j < s.len() && !s[j].is_ascii() {
+                let (state, size) = decode_rune(&s[j..]);
+                let replacement: &[u8; 6] = match state {
+                    RuneState::Valid => {
+                        j += size;
+                        continue;
+                    }
+                    RuneState::Error => b"\\ufffd",
+                    RuneState::LineSep => b"\\u2028",
+                    RuneState::ParagraphSep => b"\\u2029",
+                };
+                out.extend_from_slice(&s[start..j]);
+                out.extend_from_slice(replacement);
+                j += size;
+                start = j;
+            }
+        }
+        j += plain_prefix(&s[j..]);
+    }
+    out.extend_from_slice(&s[start..]);
+}
+
+/// Whether [`write_str`] copies `byte` verbatim without looking at its
+/// neighbours: printable ASCII and DEL, minus the five escaped characters.
+const fn is_plain(byte: u8) -> bool {
+    matches!(byte, 0x20..=0x7f) && !matches!(byte, b'"' | b'\\' | b'<' | b'>' | b'&')
+}
+
+/// [`is_plain`] as a lookup, for the bytes the word scan does not cover.
+static PLAIN: [bool; 256] = {
+    let mut table = [false; 256];
+    let mut byte = 0;
+    while byte < table.len() {
+        table[byte] = is_plain(byte as u8);
+        byte += 1;
+    }
+    table
+};
+
+/// The length of the longest prefix of `s` that is all [`is_plain`] bytes.
+#[inline]
+fn plain_prefix(s: &[u8]) -> usize {
+    let (words, tail) = s.as_chunks::<8>();
+    let mut len = 0;
+    for word in words {
+        // Little-endian, so the lowest flag belongs to the earliest byte.
+        let flags = special_bytes(u64::from_le_bytes(*word));
+        if flags != 0 {
+            return len + (flags.trailing_zeros() / 8) as usize;
+        }
+        len += 8;
+    }
+    let plain_tail = tail.iter().take_while(|&&byte| PLAIN[usize::from(byte)]);
+    len + plain_tail.count()
+}
+
+/// Tests the eight bytes of `word` at once. The result is zero when every
+/// byte [`is_plain`]; otherwise its lowest set bit is the high bit of the
+/// lowest byte that is not. Bits above that one are not exact and must not
+/// be used.
+///
+/// Each term sets a byte's high bit for one class of special byte: `word`
+/// itself for 0x80 and up, and a subtraction that underflows for the others,
+/// either `byte - 0x20` for a control or `x - 1` where `x` is the byte XORed
+/// with the character sought, zero on a match. (`"` 0x22 and `&` 0x26 differ
+/// in one bit, as do `<` 0x3c and `>` 0x3e, so clearing that bit first finds
+/// either of a pair.) The subtractions are 64 bits wide, so an underflowing
+/// byte borrows from the byte above it and can flag that one wrongly, which
+/// is why only the lowest flag is exact: a byte below 0x80 underflows without
+/// a borrow coming in only when it is special, and a byte from 0x80 up is
+/// flagged by `word` whatever the subtractions do, and never underflows.
+#[inline]
+fn special_bytes(word: u64) -> u64 {
+    const fn splat(byte: u8) -> u64 {
+        u64::from_ne_bytes([byte; 8])
+    }
+    let quote_or_ampersand = (word & !splat(0x04)) ^ splat(b'"');
+    let angle_bracket = (word & !splat(0x02)) ^ splat(b'<');
+    let backslash = word ^ splat(b'\\');
+    (word
+        | word.wrapping_sub(splat(0x20))
+        | quote_or_ampersand.wrapping_sub(splat(0x01))
+        | angle_bracket.wrapping_sub(splat(0x01))
+        | backslash.wrapping_sub(splat(0x01)))
+        & splat(0x80)
+}
+
+/// What [`write_str`] emits for one ASCII byte: the byte itself when it
+/// [`is_plain`], else its escape.
+#[derive(Clone, Copy)]
+struct Encoded {
+    bytes: [u8; 6],
+    len: u8,
+}
+
+impl Encoded {
+    const fn new(text: &[u8]) -> Self {
+        let mut bytes = [0; 6];
+        let mut at = 0;
+        while at < text.len() {
+            bytes[at] = text[at];
+            at += 1;
+        }
+        Self {
+            bytes,
+            len: text.len() as u8,
+        }
+    }
+
+    /// Appends all six bytes, then drops the unused ones: appending a fixed
+    /// six bytes compiles to two stores, appending `len` to a `memcpy` call.
+    ///
+    /// Without six spare bytes it repeats the byte loop's appends instead, so
+    /// the buffer grows exactly where that loop grew it. Callers decide
+    /// whether to keep a buffer from its capacity, which must not depend on
+    /// the padding.
+    #[inline]
+    fn append_to(&self, out: &mut Vec<u8>) {
+        let len = usize::from(self.len);
+        if out.capacity() - out.len() >= self.bytes.len() {
+            out.extend_from_slice(&self.bytes);
+            out.truncate(out.len() - (self.bytes.len() - len));
+        } else {
+            self.append_growing(out);
+        }
+    }
+
+    /// The byte loop appended a `\u00xx` escape as its four-byte prefix and
+    /// two pushed digits, and every other escape in one piece.
+    #[cold]
+    fn append_growing(&self, out: &mut Vec<u8>) {
+        let text = &self.bytes[..usize::from(self.len)];
+        if let [prefix @ .., high, low] = text
+            && prefix.len() == 4
+        {
+            out.extend_from_slice(prefix);
+            out.push(*high);
+            out.push(*low);
+        } else {
+            out.extend_from_slice(text);
+        }
+    }
+}
+
+static ASCII_ENCODED: [Encoded; 128] = {
+    const HEX: &[u8; 16] = b"0123456789abcdef";
+    let mut table = [Encoded::new(b""); 128];
+    let mut index = 0;
+    while index < table.len() {
+        let byte = index as u8;
+        table[index] = match byte {
+            b'"' => Encoded::new(b"\\\""),
+            b'\\' => Encoded::new(b"\\\\"),
+            b'\n' => Encoded::new(b"\\n"),
+            b'\r' => Encoded::new(b"\\r"),
+            b'\t' => Encoded::new(b"\\t"),
+            _ if is_plain(byte) => Encoded::new(&[byte]),
+            _ => Encoded::new(&[b'\\', b'u', b'0', b'0', HEX[index >> 4], HEX[index & 0xf]]),
+        };
+        index += 1;
+    }
+    table
+};
+
+/// The byte-at-a-time encoder that [`write_str`] replaced, kept as the
+/// specification the differential tests hold it to.
+#[cfg(test)]
+fn original_write_str(out: &mut Vec<u8>, s: &[u8]) {
     out.push(b'"');
     let mut start = 0;
     let mut j = 0;
@@ -2122,6 +2322,449 @@ mod tests {
             String::from_utf8(out).unwrap(),
             "\"\\u003ca\\u0026b\\u003e\\\"\\\\\\n\\r\\t\\u0000\\u0008\\u000c\\u001f\x7f\\u2028\\u2029\\ufffd\\ufffd\\ufffd\\ufffd\\ufffd\\ufffd\\ufffd\\ufffd😀/\""
         );
+    }
+
+    /// Runs `write_str` and the byte loop it replaced over the same input.
+    #[derive(Default)]
+    struct EscapeCheck {
+        expected: Vec<u8>,
+        actual: Vec<u8>,
+        checked: usize,
+    }
+
+    impl EscapeCheck {
+        fn check(&mut self, s: &[u8]) {
+            // A non-empty buffer: both encoders append.
+            for out in [&mut self.expected, &mut self.actual] {
+                out.clear();
+                out.extend_from_slice(b"{\"k\":");
+            }
+            original_write_str(&mut self.expected, s);
+            write_str(&mut self.actual, s);
+            assert!(
+                self.actual == self.expected,
+                "write_str differs from the original for {s:?}: {:?} instead of {:?}",
+                String::from_utf8_lossy(&self.actual),
+                String::from_utf8_lossy(&self.expected)
+            );
+            self.checked += 1;
+        }
+    }
+
+    /// The bytes the original loop does not copy verbatim on their own.
+    fn escape_worthy() -> Vec<u8> {
+        let mut out = Vec::new();
+        let bytes: Vec<u8> = (0..=u8::MAX)
+            .filter(|&byte| {
+                out.clear();
+                original_write_str(&mut out, &[byte]);
+                out != [b'"', byte, b'"']
+            })
+            .collect();
+        assert_eq!(bytes.len(), 32 + 5 + 128);
+        bytes
+    }
+
+    /// Plain bytes next to an escaped one in value, which a borrow out of a
+    /// lower byte can flag in the word scan, and two ordinary ones.
+    const PLAIN_NEIGHBOURS: [u8; 10] =
+        [b' ', b'!', b'#', b'\'', b'=', b'?', b'[', b']', 0x7f, b'a'];
+
+    /// Escaped ASCII, whole and broken UTF-8 sequences, and plain text.
+    const FRAGMENTS: [&[u8]; 40] = [
+        b"\"",
+        b"\\",
+        b"<",
+        b">",
+        b"&",
+        b"\n",
+        b"\r",
+        b"\t",
+        b"\x00",
+        b"\x1f",
+        b"\x7f",
+        b" ",
+        b"a",
+        b"~",
+        "é".as_bytes(),
+        "日".as_bytes(),
+        "😀".as_bytes(),
+        "\u{2028}".as_bytes(),
+        "\u{2029}".as_bytes(),
+        "\u{2027}".as_bytes(),
+        "\u{202a}".as_bytes(),
+        "\u{80}".as_bytes(),
+        "\u{9f}".as_bytes(),
+        "\u{7ff}".as_bytes(),
+        "\u{800}".as_bytes(),
+        "\u{d7ff}".as_bytes(),
+        "\u{e000}".as_bytes(),
+        "\u{ffff}".as_bytes(),
+        "\u{10000}".as_bytes(),
+        "\u{10ffff}".as_bytes(),
+        b"\x80",
+        b"\xbf",
+        b"\xc0\xaf",
+        b"\xc2",
+        b"\xe2\x80",
+        b"\xed\xa0\x80",
+        b"\xf0\x9f\x98",
+        b"\xf4\x90\x80\x80",
+        b"\xf8\x88\x80\x80\x80",
+        b"\xff",
+    ];
+
+    struct Random(u64);
+
+    impl Random {
+        fn next(&mut self) -> u64 {
+            // xorshift64*: deterministic, dependency-free test input.
+            self.0 ^= self.0 >> 12;
+            self.0 ^= self.0 << 25;
+            self.0 ^= self.0 >> 27;
+            self.0.wrapping_mul(0x2545_f491_4f6c_dd1d)
+        }
+
+        fn below(&mut self, bound: usize) -> usize {
+            (self.next() % bound as u64) as usize
+        }
+
+        fn pick<'a>(&mut self, items: &[&'a [u8]]) -> &'a [u8] {
+            items[self.below(items.len())]
+        }
+    }
+
+    /// `session.rs` and the list scratch slots keep or release a buffer by its
+    /// capacity, so the encoder must grow a buffer exactly where the byte
+    /// loop did, not merely write the same bytes.
+    #[test]
+    fn string_escaping_grows_buffers_exactly_like_the_original() {
+        const SHORT: &[u8] = b"\"\\\n\r\t";
+        let mut random = Random(0x6361_7061_6369_7479);
+        let (mut differing_lengths, mut grown) = (0usize, 0usize);
+        for round in 0..4_000 {
+            // Each round is one staging buffer filled by many rows.
+            let (mut expected, mut actual) = (Vec::new(), Vec::new());
+            if round % 4 == 1 {
+                let capacity = random.below(70);
+                expected = Vec::with_capacity(capacity);
+                actual = Vec::with_capacity(capacity);
+            }
+            for _ in 0..1 + random.below(40) {
+                let mut s = Vec::new();
+                for _ in 0..random.below(6) {
+                    let run = match random.below(8) {
+                        0 => random.below(5_000),
+                        1 => 0,
+                        _ => random.below(24),
+                    };
+                    s.extend((0..run).map(|_| b'a' + random.below(26) as u8));
+                    match random.below(6) {
+                        0 => s.push(random.below(0x20) as u8),
+                        1 => s.extend_from_slice(random.pick(&[b"<", b">", b"&"])),
+                        2 => s.extend_from_slice(random.pick(&[
+                            "\u{2028}".as_bytes(),
+                            "\u{2029}".as_bytes(),
+                            b"\xff",
+                            "\u{e9}".as_bytes(),
+                        ])),
+                        _ => s.push(SHORT[random.below(SHORT.len())]),
+                    }
+                }
+                // Framing between strings, as rows and list elements add it.
+                let framing = random.pick(&[b"", b",", b"\"]", b"}\n", b",\"key\":"]);
+                for (out, original) in [(&mut expected, true), (&mut actual, false)] {
+                    let before = out.capacity();
+                    if original {
+                        original_write_str(out, &s);
+                    } else {
+                        write_str(out, &s);
+                    }
+                    out.extend_from_slice(framing);
+                    grown += usize::from(original && out.capacity() != before);
+                }
+                assert_eq!(actual, expected);
+                assert_eq!(
+                    actual.capacity(),
+                    expected.capacity(),
+                    "capacity differs after {:?} at length {}",
+                    String::from_utf8_lossy(&s),
+                    actual.len()
+                );
+                differing_lengths += usize::from(actual.len() != actual.capacity());
+            }
+        }
+        assert!(grown > 10_000 && differing_lengths > 10_000);
+    }
+
+    /// The reviewer's case: a two-byte escape two to five bytes below
+    /// capacity, then a plain run longer than the buffer.
+    #[test]
+    fn short_escape_near_capacity_does_not_double_the_buffer_early() {
+        for filler in 10..=15 {
+            let (mut expected, mut actual) = (Vec::with_capacity(16), Vec::with_capacity(16));
+            let mut s = vec![b'a'; filler - 1];
+            s.push(b'\t');
+            s.extend_from_slice(&[b'b'; 100]);
+            original_write_str(&mut expected, &s);
+            write_str(&mut actual, &s);
+            assert_eq!(actual, expected);
+            assert_eq!(actual.capacity(), expected.capacity(), "filler {filler}");
+        }
+        // A list element ending in an escape exactly fills its scratch slot.
+        let (mut expected, mut actual) = (Vec::new(), Vec::new());
+        for out in [&mut expected, &mut actual] {
+            out.extend_from_slice(b"[");
+        }
+        original_write_str(&mut expected, b"aaaaaaaaaa\n");
+        write_str(&mut actual, b"aaaaaaaaaa\n");
+        for out in [&mut expected, &mut actual] {
+            out.extend_from_slice(b"]");
+        }
+        assert_eq!(actual, expected);
+        assert_eq!((actual.len(), actual.capacity()), (16, expected.capacity()));
+    }
+
+    #[test]
+    fn string_escaping_matches_original_for_every_byte_and_adjacent_pair() {
+        let mut check = EscapeCheck::default();
+        // One byte at each position of three words, among each neighbour.
+        for fill in PLAIN_NEIGHBOURS {
+            for position in 0..24 {
+                for byte in 0..=u8::MAX {
+                    let mut s = [fill; 24];
+                    s[position] = byte;
+                    check.check(&s);
+                }
+            }
+        }
+        // Every pair at each alignment within a word, across the boundary
+        // between two words, and then in a string too short to hold a word.
+        for position in 0..15 {
+            for pair in 0..=u16::MAX {
+                let mut s = [b'a'; 16];
+                s[position..position + 2].copy_from_slice(&pair.to_be_bytes());
+                check.check(&s);
+            }
+        }
+        for len in 2..8 {
+            for pair in 0..=u16::MAX {
+                let mut s = [b'a'; 7];
+                s[len - 2..len].copy_from_slice(&pair.to_be_bytes());
+                check.check(&s[..len]);
+            }
+        }
+        assert_eq!(check.checked, 10 * 24 * 256 + (15 + 6) * 65_536);
+    }
+
+    #[test]
+    fn string_escaping_matches_original_for_escapes_at_each_word_position() {
+        let mut check = EscapeCheck::default();
+        let escaped = escape_worthy();
+        let dirty = [
+            b'"', b'\\', b'<', b'&', b'\n', 0x00, 0x1f, 0x80, 0xc3, 0xe2, 0xff,
+        ];
+        for &byte in &escaped {
+            for position in 0..8 {
+                // The whole word, and the words either side, made of one
+                // clean or dirty neighbour.
+                for fill in PLAIN_NEIGHBOURS.into_iter().chain(dirty) {
+                    let mut s = [fill; 24];
+                    s[8 + position] = byte;
+                    check.check(&s);
+                }
+                // Any second byte anywhere else in the word, then a tail.
+                for other in (0..8).filter(|&other| other != position) {
+                    for second in 0..=u8::MAX {
+                        let mut s = [b'a'; 9];
+                        s[position] = byte;
+                        s[other] = second;
+                        check.check(&s);
+                    }
+                }
+            }
+        }
+        assert_eq!(check.checked, 165 * 8 * (21 + 7 * 256));
+    }
+
+    #[test]
+    fn string_escaping_matches_original_for_lengths_0_to_40() {
+        let mut check = EscapeCheck::default();
+        let escaped = escape_worthy();
+        let mut s = Vec::new();
+        for len in 0..=40 {
+            for fill in PLAIN_NEIGHBOURS {
+                check.check(&vec![fill; len]);
+            }
+            for &byte in &escaped {
+                check.check(&vec![byte; len]);
+            }
+            // One fragment at each position, and the same string cut short
+            // so the fragment is also split by the end.
+            for fragment in FRAGMENTS {
+                for fill in [b'a', b' '] {
+                    for position in 0..len {
+                        s.clear();
+                        s.resize(position, fill);
+                        s.extend_from_slice(fragment);
+                        s.resize(len.max(s.len()), fill);
+                        check.check(&s);
+                        check.check(&s[..len]);
+                    }
+                }
+            }
+            // Nothing but fragments.
+            for fragment in FRAGMENTS {
+                s.clear();
+                while s.len() < len {
+                    s.extend_from_slice(fragment);
+                }
+                check.check(&s);
+                check.check(&s[..len]);
+            }
+        }
+        assert_eq!(
+            check.checked,
+            41 * (10 + 165 + 2 * 40) + (0..=40).sum::<usize>() * 40 * 2 * 2
+        );
+    }
+
+    #[test]
+    fn string_escaping_matches_original_for_random_valid_and_invalid_utf8() {
+        let mut check = EscapeCheck::default();
+        let mut random = Random(0x9e37_79b9_7f4a_7c15);
+        let mut s = Vec::new();
+        for round in 0..400_000 {
+            // Mostly short, with some strings of many words.
+            let len = match round % 64 {
+                0 => random.below(2_000),
+                _ => random.below(41),
+            };
+            s.clear();
+            while s.len() < len {
+                match round % 6 {
+                    // Arbitrary bytes: mostly invalid UTF-8.
+                    0 => s.push(random.next() as u8),
+                    // Printable ASCII and DEL, escaped characters included.
+                    1 => s.push(0x20 + random.below(0x60) as u8),
+                    // Valid UTF-8 from every plane and encoded length.
+                    2 => {
+                        let limit = [0x80, 0x800, 0x1_0000, 0x11_0000][random.below(4)];
+                        let scalar = random.below(limit) as u32;
+                        let c = char::from_u32(scalar).unwrap_or('\u{2028}');
+                        s.extend_from_slice(c.encode_utf8(&mut [0; 4]).as_bytes());
+                    }
+                    // Fragments back to back.
+                    3 => s.extend_from_slice(random.pick(&FRAGMENTS)),
+                    // Words of text with the occasional fragment.
+                    4 if random.below(6) == 0 => s.extend_from_slice(random.pick(&FRAGMENTS)),
+                    4 => s.push(b'a' + random.below(26) as u8),
+                    // Valid UTF-8 damaged one byte at a time.
+                    _ => {
+                        let c = char::from_u32(random.below(0x11_0000) as u32).unwrap_or('é');
+                        let at = s.len();
+                        s.extend_from_slice(c.encode_utf8(&mut [0; 4]).as_bytes());
+                        if random.below(3) == 0 {
+                            let damaged = at + random.below(s.len() - at);
+                            s[damaged] = random.next() as u8;
+                        }
+                    }
+                }
+            }
+            check.check(&s);
+            // Any cut can split a sequence at the end of the string.
+            check.check(&s[..random.below(s.len() + 1)]);
+        }
+        assert_eq!(check.checked, 800_000);
+    }
+
+    #[test]
+    fn string_escaping_matches_original_for_long_runs() {
+        let mut check = EscapeCheck::default();
+        let mut random = Random(2026);
+        for len in [63, 64, 65, 1_023, 1_024, 1_025, 16_384, 65_537] {
+            let alphabet = b"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_ ";
+            let plain: Vec<u8> = (0..len)
+                .map(|_| alphabet[random.below(alphabet.len())])
+                .collect();
+            check.check(&plain);
+            // One fragment in an otherwise plain run: at the start, around
+            // the middle, and at each of the last sixteen positions.
+            let positions = (0..2).chain(len / 2 - 4..len / 2 + 5).chain(len - 16..len);
+            for position in positions {
+                for fragment in FRAGMENTS {
+                    let mut s = plain.clone();
+                    let end = (position + fragment.len()).min(len);
+                    s[position..end].copy_from_slice(&fragment[..end - position]);
+                    check.check(&s);
+                }
+            }
+            // A fragment every few bytes, at a stride that drifts across
+            // the word alignment.
+            for stride in [3, 8, 9, 31, 100] {
+                for fragment in FRAGMENTS {
+                    let mut s = plain.clone();
+                    for position in (stride - 1..len - fragment.len()).step_by(stride) {
+                        s[position..position + fragment.len()].copy_from_slice(fragment);
+                    }
+                    check.check(&s);
+                }
+            }
+            // The fragment alone, repeated for the whole length.
+            for fragment in FRAGMENTS {
+                let run: Vec<u8> = fragment.iter().copied().cycle().take(len).collect();
+                check.check(&run);
+            }
+        }
+        assert_eq!(check.checked, 8 * (1 + (2 + 9 + 16) * 40 + 5 * 40 + 40));
+    }
+
+    #[test]
+    fn word_scan_flags_exactly_the_first_escape_worthy_byte() {
+        let escaped = escape_worthy();
+        let mut plain = [true; 256];
+        for &byte in &escaped {
+            plain[usize::from(byte)] = false;
+        }
+        for byte in 0..=u8::MAX {
+            assert_eq!(is_plain(byte), plain[usize::from(byte)], "{byte:#04x}");
+            assert_eq!(
+                PLAIN[usize::from(byte)],
+                plain[usize::from(byte)],
+                "{byte:#04x}"
+            );
+        }
+        // Every pair of bytes at every pair of positions in a word, among
+        // neighbours that a borrow does and does not flag.
+        let mut checked = 0;
+        for fill in [b'a', b' ', b'#', b']'] {
+            for first in 0..8 {
+                for second in first + 1..8 {
+                    for pair in 0..=u16::MAX {
+                        let mut word = [fill; 8];
+                        [word[first], word[second]] = pair.to_be_bytes();
+                        let expected = word.iter().position(|&byte| !plain[usize::from(byte)]);
+                        let flags = special_bytes(u64::from_le_bytes(word));
+                        assert_eq!(flags & !0x8080_8080_8080_8080, 0, "{word:?}");
+                        let flagged = (flags != 0).then(|| (flags.trailing_zeros() / 8) as usize);
+                        assert_eq!(flagged, expected, "{word:?}");
+                        assert_eq!(plain_prefix(&word), expected.unwrap_or(8), "{word:?}");
+                        checked += 1;
+                    }
+                }
+            }
+        }
+        assert_eq!(checked, 4 * 28 * 65_536);
+        // Words of one repeated byte: every byte flagged or none.
+        for byte in 0..=u8::MAX {
+            let flags = special_bytes(u64::from_le_bytes([byte; 8]));
+            assert_eq!(
+                flags.trailing_zeros() == 7,
+                !plain[usize::from(byte)],
+                "{byte:#04x}"
+            );
+            assert_eq!(flags == 0, plain[usize::from(byte)], "{byte:#04x}");
+        }
     }
 
     #[test]

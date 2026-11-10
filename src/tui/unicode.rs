@@ -28,6 +28,51 @@ pub(super) fn lower(value: &str) -> String {
     value.chars().map(lower_rune).collect()
 }
 
+/// Haystacks up to this many bytes are searched in place. The in-place search
+/// is quadratic in the worst case, so longer ones are folded into the scratch
+/// buffer and handed to the standard linear search.
+const LOWER_CONTAINS_IN_PLACE: usize = 64;
+
+/// `lower(haystack).contains(needle)` for every pair of strings, without
+/// allocating: `scratch` is overwritten and keeps its capacity between calls.
+///
+/// The needle is compared as given (callers pass an already `lower`ed one).
+/// Only all-ASCII haystacks take a byte path: `lower` maps an ASCII rune with
+/// `to_ascii_lowercase` and nothing else, so the folded haystack is the same
+/// bytes folded one by one, and it cannot contain a needle with a non-ASCII
+/// byte. Any haystack with a non-ASCII rune is folded rune by rune through
+/// `lower_rune`, exactly as `lower` does (U+212A, U+0130 and U+023A change
+/// encoded length when folded).
+pub(super) fn lower_contains(haystack: &str, needle: &str, scratch: &mut String) -> bool {
+    if !haystack.is_ascii() {
+        scratch.clear();
+        scratch.extend(haystack.chars().map(lower_rune));
+        return scratch.contains(needle);
+    }
+    if needle.len() > haystack.len() {
+        return false;
+    }
+    if needle.is_empty() {
+        return true;
+    }
+    if !needle.is_ascii() {
+        return false;
+    }
+    if haystack.len() <= LOWER_CONTAINS_IN_PLACE {
+        let needle = needle.as_bytes();
+        return haystack.as_bytes().windows(needle.len()).any(|window| {
+            window
+                .iter()
+                .zip(needle)
+                .all(|(byte, expected)| byte.to_ascii_lowercase() == *expected)
+        });
+    }
+    scratch.clear();
+    scratch.push_str(haystack);
+    scratch.make_ascii_lowercase();
+    scratch.contains(needle)
+}
+
 pub(super) fn upper_rune(c: char) -> char {
     if c.is_ascii() {
         return c.to_ascii_uppercase();
@@ -452,5 +497,130 @@ mod tests {
         );
         assert_eq!(lower("ABC\u{10400}\u{10427}"), "abc\u{10428}\u{1044f}");
         assert_eq!(lower("123_你好🦀"), "123_你好🦀");
+    }
+
+    #[test]
+    fn lower_contains_equals_lowering_then_searching() {
+        // Runes whose simple lowercase changes encoded length or lands in
+        // ASCII, runes Go leaves alone (ß, ς, U+A7CB), and plain ASCII.
+        const ALPHABET: &[char] = &[
+            'a',
+            'A',
+            'b',
+            'B',
+            'k',
+            'K',
+            'i',
+            'I',
+            's',
+            'S',
+            'z',
+            'Z',
+            '0',
+            '9',
+            '_',
+            '-',
+            '{',
+            '"',
+            ' ',
+            '\u{130}',
+            '\u{131}',
+            'ß',
+            '\u{1e9e}',
+            'ς',
+            'σ',
+            'Σ',
+            '\u{212a}',
+            '\u{212b}',
+            'å',
+            'Å',
+            '\u{23a}',
+            '\u{2c65}',
+            '\u{a7cb}',
+            '\u{10400}',
+            '\u{10428}',
+            'é',
+            'É',
+            '你',
+            '🦀',
+            '@',
+            '[',
+            '`',
+            '\u{7f}',
+            '\u{80}',
+        ];
+        let mut seed = 0x9e37_79b9_7f4a_7c15_u64;
+        let mut next = |bound: usize| {
+            seed ^= seed << 13;
+            seed ^= seed >> 7;
+            seed ^= seed << 17;
+            (seed % bound as u64) as usize
+        };
+        let mut scratch = String::new();
+        let (mut cases, mut hits, mut long) = (0, 0, 0);
+        for round in 0..60_000 {
+            // Bias towards ASCII-only strings and towards needles cut from
+            // the haystack, so both outcomes of every branch are exercised.
+            let ascii_only = next(3) != 0;
+            let span = if ascii_only { 19 } else { ALPHABET.len() };
+            let length = if round % 8 == 0 {
+                50 + next(120)
+            } else {
+                next(12)
+            };
+            let haystack: String = (0..length).map(|_| ALPHABET[next(span)]).collect();
+            let needle: String = match next(4) {
+                0 => {
+                    let span = if next(2) == 0 { 19 } else { ALPHABET.len() };
+                    (0..next(5)).map(|_| ALPHABET[next(span)]).collect()
+                }
+                kind => {
+                    let runes: Vec<char> = haystack.chars().collect();
+                    let start = next(runes.len() + 1);
+                    let end = (start + next(6)).min(runes.len());
+                    let cut: String = runes[start..end].iter().collect();
+                    // Folded (a real filter needle), raw, or upper-cased.
+                    match kind {
+                        1 => lower(&cut),
+                        2 => cut,
+                        _ => upper(&cut),
+                    }
+                }
+            };
+            let expected = lower(&haystack).contains(&needle);
+            assert_eq!(
+                lower_contains(&haystack, &needle, &mut scratch),
+                expected,
+                "haystack {haystack:?} needle {needle:?}"
+            );
+            cases += 1;
+            hits += usize::from(expected);
+            long += usize::from(haystack.len() > LOWER_CONTAINS_IN_PLACE);
+        }
+        assert!(hits > cases / 10 && hits < cases * 9 / 10, "{hits}/{cases}");
+        assert!(long > cases / 20, "{long}/{cases}");
+        // Boundaries of the in-place search and of the needle length.
+        for length in [0, 1, 63, 64, 65, 66, 200] {
+            let haystack = "aB".repeat(length).chars().take(length).collect::<String>();
+            for needle in ["", "a", "ab", "ba", "abab", "bb", "AB", "\u{212a}", "k"] {
+                assert_eq!(
+                    lower_contains(&haystack, needle, &mut scratch),
+                    lower(&haystack).contains(needle),
+                    "{length} {needle:?}"
+                );
+            }
+            let whole = lower(&haystack);
+            assert!(lower_contains(&haystack, &whole, &mut scratch));
+            assert!(!lower_contains(
+                &haystack,
+                &format!("{whole}a"),
+                &mut scratch
+            ));
+        }
+        assert!(lower_contains("\u{212a}elvin", "kelvin", &mut scratch));
+        assert!(lower_contains("\u{130}STANBUL", "istanbul", &mut scratch));
+        assert!(!lower_contains("STRASSE", "straße", &mut scratch));
+        assert!(!lower_contains("ΟΣ", "ος", &mut scratch));
+        assert!(lower_contains("ΟΣ", "οσ", &mut scratch));
     }
 }

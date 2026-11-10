@@ -286,6 +286,7 @@ pub(crate) fn execute(
             .map_err(|e| CliError::new(ErrorCode::CommandFailed, format!("invalid --from: {e}")))?;
             return crate::tui::promql::execute(parsed, stdout, stderr);
         }
+        let json = format == "json";
         let operation_request = invocation(parsed, operation)?;
         let request_result = (|| -> Result<Vec<u8>, CliError> {
             let store = ProfileStore::from_env().map_err(|e| CliError::new(e.code, e.message))?;
@@ -322,12 +323,13 @@ pub(crate) fn execute(
                     &response.body,
                 ));
             }
-            if let Some(message) = envelope_error(&response.body) {
+            // JSON output makes this check in its single pass over the body.
+            if !json && let Some(message) = envelope_error(&response.body) {
                 return Err(CliError::new(ErrorCode::CommandFailed, message));
             }
             Ok(response.body)
         })();
-        let body = request_result.map_err(|mut e| {
+        let request_error = |mut e: CliError| {
             if operation == "run" {
                 e.prefix_message("request failed: ");
                 // Wrapped typed HTTP errors retain their original public message.
@@ -336,24 +338,40 @@ pub(crate) fn execute(
                 }
             }
             e
-        })?;
+        };
+        let body = request_result.map_err(request_error)?;
         let label = if operation == "tsdb" {
             parsed.text_bytes("focus-label")
         } else {
             parsed.positional_bytes(0)
         };
-        let bytes = output::style::with_process_render(|| {
-            output::render_styled_bytes(
-                operation,
-                &body,
-                format == "json",
-                label,
-                &output::style::Terminal::from_process(),
-            )
-        })
-        .map_err(|e| CliError::new(ErrorCode::InvalidResponse, e))?;
+        let bytes = if json {
+            match output::raw_json_response(&body) {
+                output::RawJson::Envelope(message) => {
+                    return Err(request_error(CliError::new(
+                        ErrorCode::CommandFailed,
+                        message,
+                    )));
+                }
+                output::RawJson::Output(bytes) => bytes,
+                output::RawJson::Invalid(message) => {
+                    return Err(CliError::new(ErrorCode::InvalidResponse, message));
+                }
+            }
+        } else {
+            output::style::with_process_render(|| {
+                output::render_styled_bytes(
+                    operation,
+                    &body,
+                    false,
+                    label,
+                    &output::style::Terminal::from_process(),
+                )
+            })
+            .map_err(|e| CliError::new(ErrorCode::InvalidResponse, e))?
+        };
         if let Err(e) = stdout.write_all(&bytes)
-            && format == "json"
+            && json
         {
             return Err(CliError::output("failed to encode JSON output", e));
         }
