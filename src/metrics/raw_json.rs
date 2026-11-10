@@ -10,6 +10,25 @@
 //! the result; any other unsorted or repeated key has the object's rendered
 //! members permuted when it closes. Nesting is tracked on an explicit stack,
 //! so the depth limit needs no native recursion.
+//!
+//! # Rules repeated from elsewhere
+//!
+//! This module restates rules that other code owns, and must change with
+//! them. The differential tests in `raw_json_tests.rs` compare it with the
+//! [`former`] pipeline, which calls that code directly, so a drift fails
+//! there first:
+//!
+//! - The grammar (`document`, `member`, `number_end`, `literal`, the escape
+//!   checks in `decode`) and `MAX_DEPTH` must accept exactly what
+//!   `gojson::validate` accepts. `output::raw_json_error` asks that
+//!   validator for the diagnostic of every body rejected here and treats its
+//!   acceptance of one as unreachable.
+//! - `decode` is `gojson`'s string decoder (escapes, surrogate pairing,
+//!   replacement of invalid UTF-8).
+//! - `quote`, the `ESCAPE` table and the indentation are `crate::render::json`
+//!   without HTML escaping: serde_json's pretty output plus the U+2028 and
+//!   U+2029 escapes.
+//! - `Envelope` is `metrics::envelope_error`, which text mode still calls.
 use crate::gojson;
 
 /// encoding/json's nesting limit, as enforced by `gojson::validate`.
