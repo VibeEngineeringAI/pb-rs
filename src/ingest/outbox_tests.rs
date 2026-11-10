@@ -36,6 +36,75 @@ fn legacy_row(row: &EventRow<'_>) -> Value {
     value
 }
 
+fn batch(rows: &[EventRow<'_>]) -> OutboxRows {
+    let mut builder = RowsBuilder::with_capacity(rows.len(), 0);
+    for row in rows {
+        builder.push(row).unwrap();
+    }
+    assert_eq!(builder.encoded_len(), builder.json.len() + 1);
+    builder.finish()
+}
+
+/// The former outbox, one owned JSON text per row, kept as the oracle for
+/// request sizes, request bodies and the order in which an upload splits.
+mod former {
+    use super::super::{EventRow, MAX_REQUEST};
+    use serde_json::value::RawValue;
+
+    pub(super) fn row(row: &EventRow<'_>) -> Box<RawValue> {
+        serde_json::value::to_raw_value(row).unwrap()
+    }
+
+    pub(super) fn encoded_rows_len(rows: &[Box<RawValue>]) -> usize {
+        rows.iter()
+            .fold(2 + rows.len().saturating_sub(1), |len, row| {
+                len.saturating_add(row.get().len())
+            })
+    }
+
+    pub(super) fn encode_rows(rows: &[Box<RawValue>]) -> Vec<u8> {
+        let mut body = Vec::with_capacity(encoded_rows_len(rows));
+        body.push(b'[');
+        for (index, row) in rows.iter().enumerate() {
+            if index != 0 {
+                body.push(b',');
+            }
+            body.extend_from_slice(row.get().as_bytes());
+        }
+        body.push(b']');
+        body
+    }
+
+    /// The former upload loop with the destination replaced by `status`.
+    /// Returns every request body in order and whether the upload succeeded.
+    pub(super) fn upload(
+        rows: &[Box<RawValue>],
+        mut status: impl FnMut(&[u8]) -> u16,
+    ) -> (Vec<Vec<u8>>, bool) {
+        let mut requests = Vec::new();
+        let mut pieces = vec![rows];
+        while let Some(piece) = pieces.pop() {
+            if encoded_rows_len(piece) > MAX_REQUEST && piece.len() > 1 {
+                let (left, right) = piece.split_at(piece.len() / 2);
+                pieces.extend([right, left]);
+                continue;
+            }
+            let body = encode_rows(piece);
+            let status = status(&body);
+            requests.push(body);
+            if status == 413 && piece.len() > 1 {
+                let (left, right) = piece.split_at(piece.len() / 2);
+                pieces.extend([right, left]);
+                continue;
+            }
+            if !(200..300).contains(&status) {
+                return (requests, false);
+            }
+        }
+        (requests, true)
+    }
+}
+
 #[test]
 fn cached_rows_match_legacy_wire_bytes_lengths_and_event_count() {
     let payloads = [
@@ -43,21 +112,27 @@ fn cached_rows_match_legacy_wire_bytes_lengths_and_event_count() {
         r#"{"b":3,"a":2,"large":123456789012345678901234567890,"decimal":0.1000000000000000055511151231257827}"#,
         "{\"message\":\"\\\"\\\\\\t\\u0001é😀\"}",
     ];
-    let mut rows = Vec::new();
-    let mut legacy = Vec::new();
-    for (payload, kind) in payloads.into_iter().zip(["event", "event", "complete"]) {
-        let row = event(payload, kind);
-        legacy.push(legacy_row(&row));
-        rows.push(OutboxRow::new(&row).unwrap());
-    }
-    for range in [0..0, 0..1, 0..2, 0..3, 1..3] {
+    let events: Vec<EventRow<'_>> = payloads
+        .into_iter()
+        .zip(["event", "event", "complete"])
+        .map(|(payload, kind)| event(payload, kind))
+        .collect();
+    let legacy: Vec<Value> = events.iter().map(legacy_row).collect();
+    let former: Vec<_> = events.iter().map(former::row).collect();
+    let rows = batch(&events);
+    for range in [0..0, 0..1, 0..2, 0..3, 1..3, 1..2, 2..3, 1..1, 3..3] {
         let expected = serde_json::to_vec(&legacy[range.clone()]).unwrap();
-        let piece = &rows[range];
-        assert_eq!(encode_rows(piece), expected);
-        assert_eq!(serde_json::to_vec(piece).unwrap(), expected);
-        assert_eq!(encoded_rows_len(piece), expected.len());
+        assert_eq!(former::encode_rows(&former[range.clone()]), expected);
+        // A piece of the whole batch, as sent after a request is split.
+        assert_eq!(rows.body(&range), expected);
+        assert_eq!(rows.encoded_len(&range), expected.len());
+        // The same rows as a batch of their own, as checkpointed and sent.
+        let piece = batch(&events[range]);
+        assert_eq!(piece.body(&piece.whole()), expected);
+        assert_eq!(serde_json::to_vec(&piece).unwrap(), expected);
+        assert_eq!(piece.encoded_len(&piece.whole()), expected.len());
     }
-    assert_eq!(rows.iter().filter(|row| row.is_event).count(), 2);
+    assert_eq!(rows.events, 2);
 }
 
 #[test]
@@ -68,12 +143,18 @@ fn legacy_rows_normalize_and_preserve_unknown_fields_and_number_lexemes() {
         null, [], true, "event", 123456789012345678901234567890
     ]"#;
     let legacy: Vec<Value> = serde_json::from_str(saved).unwrap();
-    let rows: Vec<OutboxRow> = serde_json::from_str(saved).unwrap();
+    let rows: OutboxRows = serde_json::from_str(saved).unwrap();
     let expected = serde_json::to_vec(&legacy).unwrap();
-    assert_eq!(encode_rows(&rows), expected);
+    assert_eq!(rows.len(), legacy.len());
+    assert_eq!(rows.body(&rows.whole()), expected);
     assert_eq!(serde_json::to_vec(&rows).unwrap(), expected);
-    assert_eq!(encoded_rows_len(&rows), expected.len());
-    assert_eq!(rows.iter().filter(|row| row.is_event).count(), 1);
+    assert_eq!(rows.encoded_len(&rows.whole()), expected.len());
+    for index in 0..legacy.len() {
+        let expected = serde_json::to_vec(&legacy[index..=index]).unwrap();
+        assert_eq!(rows.body(&(index..index + 1)), expected);
+        assert_eq!(rows.encoded_len(&(index..index + 1)), expected.len());
+    }
+    assert_eq!(rows.events, 1);
 }
 
 #[test]
@@ -83,17 +164,307 @@ fn legacy_row_decode_retains_recursion_limit_and_syntax_errors() {
         r#"[{"pb_payload":"\uD800"}]"#.into(),
         r#"[{"pb_seq":1e}]"#.into(),
         r#"[{"pb_kind":"event",}]"#.into(),
+        r#"[{"pb_kind":"event"},"#.into(),
+        r#"{"pb_kind":"event"}"#.into(),
+        "null".into(),
+        "\"rows\"".into(),
+        "7".into(),
     ] {
         let before = serde_json::from_str::<Vec<Value>>(&document)
             .err()
             .unwrap()
             .to_string();
-        let after = serde_json::from_str::<Vec<OutboxRow>>(&document)
+        let after = serde_json::from_str::<OutboxRows>(&document)
             .err()
             .unwrap()
             .to_string();
         assert_eq!(after, before);
     }
+}
+
+#[test]
+fn whole_batch_request_shares_the_checkpointed_buffer() {
+    let events = ["{}", "{\"n\":1}"].map(|payload| event(payload, "event"));
+    let rows = batch(&events);
+    assert_eq!(rows.body(&rows.whole()).as_ptr(), rows.json.as_ptr());
+    assert_ne!(rows.body(&(0..1)).as_ptr(), rows.json.as_ptr());
+    let empty = batch(&[]);
+    assert_eq!(empty.len(), 0);
+    assert_eq!(empty.body(&empty.whole()), "[]");
+    assert_eq!(empty.encoded_len(&empty.whole()), 2);
+    assert_eq!(serde_json::to_string(&empty).unwrap(), "[]");
+}
+
+fn checkpoint(pending: Option<Outbox>) -> Checkpoint {
+    let files = serde_json::json!({
+        "initialized": true, "revision": 3, "next_generation": 2,
+        "files": {"/tmp/é\"x\\.log": {
+            "identity": "1:2", "generation_number": 1, "generation": "file-00",
+            "offset": 10, "sequence": 2, "discard_fragment": false,
+            "anchor": [1, 2], "prefix": [3], "missing_scans": 0
+        }}
+    });
+    Checkpoint {
+        version: 1,
+        binding: Binding {
+            endpoint: "http://fixture".into(),
+            tenant_id: "tenant \"é\"".into(),
+            workspace_id: String::new(),
+            dataset: "logs".into(),
+            session: "session\n".into(),
+            directory: "/tmp".into(),
+            includes: vec!["*.log".into(), "\"rows\":null".into()],
+            excludes: vec![],
+            format: "jsonl".into(),
+        },
+        collector: "collector".into(),
+        host: "host\tname".into(),
+        next_sequence: 7,
+        files: serde_json::from_value(files).unwrap(),
+        complete: pending.as_ref().is_some_and(|pending| pending.complete),
+        pending,
+    }
+}
+
+#[test]
+fn checkpoint_document_is_its_derived_serialization() {
+    let directory = std::env::temp_dir().join(format!("pb-outbox-test-{}", uuid::Uuid::new_v4()));
+    std::fs::create_dir(&directory).unwrap();
+    let path = directory.join("state.json");
+    let state = StateFile::lock(&path).unwrap();
+    let payloads: Vec<String> = (0..40)
+        .map(|n| {
+            format!(
+                "{{\"n\":{n},\"text\":\"{}\"}}",
+                "\\\"é\t\u{1}😀".repeat(n % 7)
+            )
+        })
+        .collect();
+    let events: Vec<EventRow<'_>> = payloads
+        .iter()
+        .map(|payload| event(payload, "event"))
+        .collect();
+    let legacy = r#"[{"pb_kind":"event","pb_seq":1e+20,"z":{"a":1,"a":2}},null,[],-0,"event"]"#;
+    let pending = |rows, complete, skipped_lines| Outbox {
+        rows,
+        next_files: serde_json::from_str(r#"{"initialized":true,"revision":9}"#).unwrap(),
+        next_sequence: 47,
+        complete,
+        skipped_lines,
+    };
+    for checkpoint in [
+        checkpoint(None),
+        checkpoint(Some(pending(batch(&events), false, 0))),
+        checkpoint(Some(pending(batch(&events[..1]), true, u64::MAX))),
+        checkpoint(Some(pending(batch(&[]), false, 3))),
+        checkpoint(Some(pending(
+            serde_json::from_str(legacy).unwrap(),
+            false,
+            1,
+        ))),
+    ] {
+        // The derived serialization parses and re-encodes pending rows; the
+        // document copies them. The bytes are the same.
+        let derived = serde_json::to_vec(&checkpoint).unwrap();
+        let mut document = Vec::new();
+        checkpoint.write_json(&mut document).unwrap();
+        assert!(document == derived);
+        // Saved either way it is that document, and loads back to it.
+        state.save_document(&checkpoint).unwrap();
+        assert!(std::fs::read(&path).unwrap() == derived);
+        state.save(&checkpoint).unwrap();
+        assert!(std::fs::read(&path).unwrap() == derived);
+        let loaded = state.load::<Checkpoint>().unwrap().unwrap();
+        assert!(serde_json::to_vec(&loaded).unwrap() == derived);
+        assert_eq!(
+            loaded.pending.as_ref().map(|pending| pending.rows.events),
+            checkpoint
+                .pending
+                .as_ref()
+                .map(|pending| pending.rows.events)
+        );
+    }
+    // A write failure is reported as one, not as a serialization fault.
+    struct Full;
+    impl Write for Full {
+        fn write(&mut self, _: &[u8]) -> std::io::Result<usize> {
+            Err(std::io::ErrorKind::StorageFull.into())
+        }
+        fn flush(&mut self) -> std::io::Result<()> {
+            Ok(())
+        }
+    }
+    for pending in [None, Some(pending(batch(&events), false, 0))] {
+        let error = checkpoint(pending).write_json(&mut Full).unwrap_err();
+        assert_eq!(error.io_error_kind(), Some(std::io::ErrorKind::StorageFull));
+    }
+    drop(state);
+    std::fs::remove_dir_all(directory).unwrap();
+}
+
+#[test]
+fn serialized_rows_are_checked_json() {
+    // The general serde route parses the batch text before copying it, so
+    // text which is not one JSON value cannot be serialized through it.
+    for (json, starts) in [
+        (&b"[{\"pb_kind\":}]"[..], vec![1]),
+        (b"[{\"pb_kind\":\"event\"}", vec![1]),
+        (b"[{}]]", vec![1]),
+        (b"[{\"pb_payload\":\"\xff\"}]", vec![1]),
+        (b"", vec![]),
+    ] {
+        let rows = OutboxRows {
+            json: Bytes::copy_from_slice(json),
+            starts,
+            events: 0,
+        };
+        assert!(serde_json::to_vec(&rows).is_err());
+    }
+}
+
+/// Serve `count` ingest requests, answering each with `status(body)`, and
+/// return the request bodies in arrival order.
+fn destination(
+    count: usize,
+    status: impl Fn(&[u8]) -> u16 + Send + 'static,
+) -> (String, std::thread::JoinHandle<Vec<Vec<u8>>>) {
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let endpoint = format!("http://{}", listener.local_addr().unwrap());
+    let worker = std::thread::spawn(move || {
+        let mut requests = Vec::new();
+        for _ in 0..count {
+            let (mut stream, _) = listener.accept().unwrap();
+            stream
+                .set_read_timeout(Some(Duration::from_secs(30)))
+                .unwrap();
+            let mut head = Vec::new();
+            while !head.ends_with(b"\r\n\r\n") {
+                let mut byte = [0];
+                stream.read_exact(&mut byte).unwrap();
+                head.push(byte[0]);
+            }
+            let head = String::from_utf8(head).unwrap();
+            let length = head
+                .lines()
+                .find_map(|line| {
+                    let (name, value) = line.split_once(':')?;
+                    name.eq_ignore_ascii_case("content-length")
+                        .then(|| value.trim().parse::<usize>().unwrap())
+                })
+                .unwrap();
+            let mut body = vec![0; length];
+            stream.read_exact(&mut body).unwrap();
+            let status = status(&body);
+            requests.push(body);
+            write!(
+                stream,
+                "HTTP/1.1 {status} Status\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+            )
+            .unwrap();
+        }
+        requests
+    });
+    (endpoint, worker)
+}
+
+/// Upload `events` through the real client and compare every request body,
+/// in order, with what the former per-row upload loop sends for `status`.
+fn check_upload_matches_former(events: &[EventRow<'_>], status: fn(&[u8]) -> u16) -> usize {
+    let former: Vec<_> = events.iter().map(former::row).collect();
+    let (expected, succeeds) = former::upload(&former, status);
+    let rows = batch(events);
+    assert_eq!(
+        rows.encoded_len(&rows.whole()),
+        former::encoded_rows_len(&former)
+    );
+    let (endpoint, worker) = destination(expected.len(), status);
+    let directory = std::env::temp_dir().join(format!("pb-outbox-test-{}", uuid::Uuid::new_v4()));
+    std::fs::create_dir(&directory).unwrap();
+    let client = ApiClient::new(
+        crate::config::ProfileRecord {
+            url: endpoint,
+            api_key: "key".into(),
+            ..Default::default()
+        },
+        ProfileStore::new(directory.join("config.toml")),
+    )
+    .unwrap();
+    let runtime = tokio::runtime::Builder::new_current_thread()
+        .enable_all()
+        .build()
+        .unwrap();
+    let result = runtime.block_on(upload(
+        &client,
+        http::HeaderValue::from_static("logs"),
+        &rows,
+    ));
+    assert_eq!(result.is_ok(), succeeds);
+    let requests = worker.join().unwrap();
+    assert_eq!(requests.len(), expected.len());
+    for (index, (actual, expected)) in requests.iter().zip(&expected).enumerate() {
+        assert!(actual == expected, "request {index} differs");
+    }
+    std::fs::remove_dir_all(directory).unwrap();
+    requests.len()
+}
+
+fn row_count(body: &[u8]) -> usize {
+    serde_json::from_slice::<Vec<Value>>(body).unwrap().len()
+}
+
+#[test]
+fn rejected_requests_split_in_the_former_order_with_the_former_bodies() {
+    let payloads: Vec<String> = (0..13)
+        .map(|n| format!("{{\"n\":{n},\"pad\":\"{}\"}}", "\\\"é\t".repeat(n * 7 % 5)))
+        .collect();
+    let events: Vec<EventRow<'_>> = payloads
+        .iter()
+        .enumerate()
+        .map(|(n, payload)| event(payload, if n == 12 { "complete" } else { "event" }))
+        .collect();
+    // Every size of batch, against destinations which accept at most three
+    // rows, exactly one row, and nothing but a single row they then refuse.
+    for count in 0..=events.len() {
+        check_upload_matches_former(&events[..count], |body| {
+            if row_count(body) > 3 { 413 } else { 200 }
+        });
+    }
+    let requests =
+        check_upload_matches_former(&events, |body| if row_count(body) > 1 { 413 } else { 200 });
+    assert_eq!(requests, 25);
+    // A single row cannot be split: its 413 is the failure, after 13, 6, 3, 1.
+    let requests = check_upload_matches_former(&events, |_| 413);
+    assert_eq!(requests, 4);
+    // A 503 part-way leaves later pieces unsent.
+    check_upload_matches_former(&events, |body| match row_count(body) {
+        13 | 6 => 413,
+        3 => 200,
+        _ => 503,
+    });
+}
+
+#[test]
+fn request_byte_budget_splits_before_sending_at_the_former_boundary() {
+    // Two rows whose combined body is exactly the budget go as one request;
+    // one more byte and they are split without asking the destination.
+    let fixed = batch(&[event("", "event"), event("", "event")]);
+    let padding = MAX_REQUEST - fixed.encoded_len(&fixed.whole());
+    for (extra, expected_requests) in [(0, 1), (1, 2)] {
+        let first = "a".repeat(padding / 2);
+        let second = "b".repeat(padding - padding / 2 + extra);
+        let events = [event(&first, "event"), event(&second, "event")];
+        let rows = batch(&events);
+        assert_eq!(rows.encoded_len(&rows.whole()), MAX_REQUEST + extra);
+        assert_eq!(
+            check_upload_matches_former(&events, |_| 200),
+            expected_requests
+        );
+    }
+    // Four rows over the budget twice: halved, then each half sent whole.
+    let quarter = "c".repeat(MAX_REQUEST / 3);
+    let events = [(); 4].map(|()| event(&quarter, "event"));
+    assert!(batch(&events).encoded_len(&(0..4)) < MAX_UPLOAD);
+    assert_eq!(check_upload_matches_former(&events, |_| 200), 2);
 }
 
 #[test]
@@ -120,7 +491,7 @@ fn version_one_pending_checkpoint_replays_full_rows_after_partial_failure() {
     let state = StateFile::lock(&path).unwrap();
     let checkpoint = state.load::<Checkpoint>().unwrap().unwrap();
     // Saving a version-1 legacy checkpoint keeps rows as ordinary JSON objects.
-    state.save(&checkpoint).unwrap();
+    state.save_document(&checkpoint).unwrap();
     let durable_before = std::fs::read(&path).unwrap();
     let disk: Value = serde_json::from_slice(&durable_before).unwrap();
     assert_eq!(disk["pending"]["rows"], saved["pending"]["rows"]);
@@ -199,7 +570,7 @@ fn version_one_pending_checkpoint_replays_full_rows_after_partial_failure() {
     assert_eq!(pending.skipped_lines, 2);
     replay.files = pending.next_files;
     replay.next_sequence = pending.next_sequence;
-    state.save(&replay).unwrap();
+    state.save_document(&replay).unwrap();
     let acknowledged = state.load::<Checkpoint>().unwrap().unwrap();
     assert_eq!(acknowledged.next_sequence, 4);
     assert!(acknowledged.pending.is_none());

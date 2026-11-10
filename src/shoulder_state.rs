@@ -20,6 +20,13 @@ use std::{
 const MAX_STATE_BYTES: u64 = 64 * 1024 * 1024;
 static NEXT_TEMP: AtomicU64 = AtomicU64::new(0);
 
+/// A checkpoint which writes its own JSON text, because it already holds
+/// part of that text and should neither parse nor encode it again. What it
+/// writes must be the JSON its `Deserialize` implementation reads back.
+pub(crate) trait JsonDocument {
+    fn write_json<W: Write>(&self, writer: &mut W) -> serde_json::Result<()>;
+}
+
 #[derive(Debug)]
 pub(crate) struct StateFile {
     path: PathBuf,
@@ -115,6 +122,19 @@ impl StateFile {
     }
 
     pub(crate) fn save<T: Serialize>(&self, value: &T) -> Result<(), CliError> {
+        self.replace(|writer| serde_json::to_writer(writer, value))
+    }
+
+    /// `save` for a checkpoint which writes its own text: the same bound,
+    /// temporary file, syncs and rename.
+    pub(crate) fn save_document<T: JsonDocument>(&self, document: &T) -> Result<(), CliError> {
+        self.replace(|writer| document.write_json(writer))
+    }
+
+    fn replace(
+        &self,
+        write: impl FnOnce(&mut BoundedWriter<BufWriter<&mut File>>) -> serde_json::Result<()>,
+    ) -> Result<(), CliError> {
         check_target(&self.path)?;
         let mut temporary = TemporaryFile::create(&self.parent)?;
         {
@@ -123,7 +143,7 @@ impl StateFile {
                 inner: BufWriter::with_capacity(64 * 1024, file),
                 remaining: MAX_STATE_BYTES,
             };
-            serde_json::to_writer(&mut writer, value).map_err(|error| {
+            write(&mut writer).map_err(|error| {
                 if let Some(kind) = error.io_error_kind() {
                     io_error("write state file", &self.path, io::Error::new(kind, error))
                 } else {
