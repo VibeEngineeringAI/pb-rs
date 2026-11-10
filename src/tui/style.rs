@@ -1093,11 +1093,7 @@ impl Style {
 
     /// Style.Render for an explicit renderer.
     pub(crate) fn render_in(&self, text: &str, env: Env) -> String {
-        let bytes = self.render_impl(text.as_bytes(), env, true);
-        match String::from_utf8(bytes) {
-            Ok(text) => text,
-            Err(error) => String::from_utf8_lossy(error.as_bytes()).into_owned(),
-        }
+        lossy_string(self.render_impl(text.as_bytes(), env, true))
     }
 
     /// Style.Render preserving Go string bytes through layout and emission.
@@ -1674,6 +1670,16 @@ fn styled_bytes(styles: &[String], s: &[u8], env: Env) -> Vec<u8> {
     out
 }
 
+/// `String::from_utf8_lossy(&bytes).into_owned()` that keeps the buffer when
+/// it is already valid UTF-8, which is every case but a layout cut inside an
+/// escape payload.
+fn lossy_string(bytes: Vec<u8>) -> String {
+    match String::from_utf8(bytes) {
+        Ok(text) => text,
+        Err(error) => String::from_utf8_lossy(error.as_bytes()).into_owned(),
+    }
+}
+
 fn replace_bytes(text: &[u8], from: &[u8], to: &[u8]) -> Vec<u8> {
     debug_assert!(!from.is_empty());
     let mut out = Vec::with_capacity(text.len());
@@ -1864,7 +1870,7 @@ pub(crate) fn block_width(s: &str) -> usize {
 /// lipgloss.JoinHorizontal.
 pub(crate) fn join_horizontal(position: impl Into<f64>, blocks: &[&str]) -> String {
     let bytes: Vec<&[u8]> = blocks.iter().map(|s| s.as_bytes()).collect();
-    String::from_utf8_lossy(&join_horizontal_bytes(position, &bytes)).into_owned()
+    lossy_string(join_horizontal_bytes(position, &bytes))
 }
 
 /// lipgloss byte join; layout uses the raw ANSI parser width of each line.
@@ -1915,7 +1921,7 @@ pub(crate) fn join_horizontal_bytes(position: impl Into<f64>, blocks: &[&[u8]]) 
 /// lipgloss.JoinVertical.
 pub(crate) fn join_vertical(position: impl Into<f64>, blocks: &[&str]) -> String {
     let bytes: Vec<&[u8]> = blocks.iter().map(|s| s.as_bytes()).collect();
-    String::from_utf8_lossy(&join_vertical_bytes(position, &bytes)).into_owned()
+    lossy_string(join_vertical_bytes(position, &bytes))
 }
 
 /// lipgloss byte join; layout uses the raw ANSI parser width of each line.
@@ -2026,14 +2032,13 @@ pub(crate) fn place_with(
     env: Env,
 ) -> String {
     let horizontal = place_horizontal_bytes(width, hpos, s.as_bytes(), whitespace, env);
-    String::from_utf8_lossy(&place_vertical_bytes(
+    lossy_string(place_vertical_bytes(
         height,
         vpos,
         &horizontal,
         whitespace,
         env,
     ))
-    .into_owned()
 }
 
 /// lipgloss.Place on Go string bytes with default (unstyled space) whitespace.
@@ -2412,7 +2417,7 @@ pub(crate) fn width_bytes(bytes: &[u8]) -> usize {
 /// ansi.Truncate: keep at most `length` cells, appending `tail` when cut;
 /// escape sequences after the cut are retained.
 pub(crate) fn truncate(s: &str, length: usize, tail: &str) -> String {
-    String::from_utf8_lossy(&truncate_bytes(s.as_bytes(), length, tail.as_bytes())).into_owned()
+    lossy_string(truncate_bytes(s.as_bytes(), length, tail.as_bytes()))
 }
 
 /// ansi.Truncate over Go string bytes. Retained clusters and escapes are copied
@@ -2475,7 +2480,7 @@ pub(crate) fn truncate_bytes(bytes: &[u8], length: usize, tail: &[u8]) -> Vec<u8
 /// ansi.Wrap: word wrap at `limit` cells, hard-wrapping words longer than
 /// the limit; `-` and any rune in `breakpoints` are break opportunities.
 pub(crate) fn wrap(s: &str, limit: usize, breakpoints: &str) -> String {
-    String::from_utf8_lossy(&wrap_bytes(s.as_bytes(), limit, breakpoints.as_bytes())).into_owned()
+    lossy_string(wrap_bytes(s.as_bytes(), limit, breakpoints.as_bytes()))
 }
 
 /// ansi.Wrap over Go string bytes. Execute bytes are re-encoded with WriteRune
@@ -4288,7 +4293,7 @@ impl std::fmt::Display for GoPanic {
 /// the capacity appends NUL runes. A cut beyond it panics with
 /// `slice bounds out of range`, returned here as `Err(GoPanic)`.
 pub(crate) fn ui_truncate(s: &str, n: isize) -> Result<String, GoPanic> {
-    ui_truncate_bytes(s.as_bytes(), n).map(|out| String::from_utf8_lossy(&out).into_owned())
+    ui_truncate_bytes(s.as_bytes(), n).map(lossy_string)
 }
 
 /// ui.Truncate on Go string bytes: retain raw input unless clipping is needed;
@@ -6855,6 +6860,87 @@ mod primitive_differential_tests {
         b"\xc0",
         b"\xe2\x94",
     ];
+
+    #[test]
+    fn string_facades_match_lossy_copies() {
+        fn lossy(bytes: &[u8]) -> String {
+            String::from_utf8_lossy(bytes).into_owned()
+        }
+        let mut rng = TestRng(0x5EED_105F);
+        let mut invalid = 0;
+        for _ in 0..50_000 {
+            let mut input = Vec::new();
+            for _ in 0..rng.below(10) {
+                if rng.below(6) == 0 {
+                    input.push(rng.next() as u8);
+                } else {
+                    input.extend_from_slice(rng.pick(CLUSTER_TOKENS));
+                }
+            }
+            invalid += usize::from(std::str::from_utf8(&input).is_err());
+            assert_eq!(lossy_string(input.clone()), lossy(&input), "{input:x?}");
+        }
+        assert!(invalid > 10_000, "{invalid}");
+
+        // The facades take valid text; only a cut inside an escape payload
+        // (the third input) makes their byte result invalid.
+        let texts = [
+            "",
+            "plain words here",
+            "x\x1b]0;t\u{2705}y z",
+            "\x1b[1mbold words\x1b[0m\nsecond line",
+            "\u{754C}e\u{301} \u{1F469}\u{200D}\u{1F4BB}\n\u{2502} cell \u{2502}",
+            "tab\tand\u{85}next  ",
+        ];
+        assert!(std::str::from_utf8(&wrap_bytes(texts[2].as_bytes(), 3, b"")).is_err());
+        for text in texts {
+            let bytes = text.as_bytes();
+            for n in 0..12 {
+                assert_eq!(wrap(text, n, ""), lossy(&wrap_bytes(bytes, n, b"")));
+                assert_eq!(wrap(text, n, "/"), lossy(&wrap_bytes(bytes, n, b"/")));
+                assert_eq!(
+                    truncate(text, n, "\u{2026}"),
+                    lossy(&truncate_bytes(bytes, n, "\u{2026}".as_bytes()))
+                );
+                assert_eq!(
+                    ui_truncate(text, n as isize).map_err(|e| e.to_string()),
+                    ui_truncate_bytes(bytes, n as isize)
+                        .map(|out| lossy(&out))
+                        .map_err(|e| e.to_string())
+                );
+                let env = Env {
+                    profile: Profile::TrueColor,
+                    dark: true,
+                };
+                let style = Style::new().width(n).fg(Role::Text);
+                assert_eq!(
+                    style.render_in(text, env),
+                    lossy(&style.render_impl(bytes, env, true))
+                );
+                for position in [0.0, 0.5, 1.0] {
+                    let ws = Whitespace::default();
+                    let horizontal = place_horizontal_bytes(n * 3, position, bytes, ws, env);
+                    assert_eq!(
+                        place_with(n * 3, n, position, position, text, ws, env),
+                        lossy(&place_vertical_bytes(n, position, &horizontal, ws, env))
+                    );
+                }
+            }
+            for other in texts {
+                for position in [0.0, 0.5, 1.0] {
+                    let blocks = [bytes, other.as_bytes()];
+                    assert_eq!(
+                        join_horizontal(position, &[text, other]),
+                        lossy(&join_horizontal_bytes(position, &blocks))
+                    );
+                    assert_eq!(
+                        join_vertical(position, &[text, other]),
+                        lossy(&join_vertical_bytes(position, &blocks))
+                    );
+                }
+            }
+        }
+    }
 
     #[test]
     fn rune_info_matches_uncached_for_every_code_point() {
