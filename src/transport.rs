@@ -1347,6 +1347,20 @@ impl AsyncWrite for ProxyStream {
         self.check_handshake(cx)?;
         Pin::new(&mut *self.io).poll_write(cx, buf)
     }
+    // Without these two, tokio's defaults report a non-vectored stream and
+    // hyper copies every request head and body into one flattened buffer
+    // before writing. Forwarding lets it queue the caller's body as is.
+    fn poll_write_vectored(
+        mut self: Pin<&mut Self>,
+        cx: &mut Context<'_>,
+        bufs: &[io::IoSlice<'_>],
+    ) -> Poll<io::Result<usize>> {
+        self.check_handshake(cx)?;
+        Pin::new(&mut *self.io).poll_write_vectored(cx, bufs)
+    }
+    fn is_write_vectored(&self) -> bool {
+        self.io.is_write_vectored()
+    }
     fn poll_flush(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<io::Result<()>> {
         Pin::new(&mut *self.io).poll_flush(cx)
     }
