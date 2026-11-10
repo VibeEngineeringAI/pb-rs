@@ -1376,6 +1376,10 @@ impl ProxyConnector {
         tcp.enforce_http(false);
         tcp.set_connect_timeout(timers.then(|| Duration::from_secs(30)));
         tcp.set_keepalive(Some(Duration::from_secs(30)));
+        // Go's net package disables Nagle's algorithm on every TCP connection.
+        // Without this, a TLS client's Finished record and first request wait
+        // for the server's delayed ACK of the preceding small write.
+        tcp.set_nodelay(true);
         Self {
             tcp,
             matcher,
@@ -2329,6 +2333,23 @@ mod tests {
             )
             .is_none()
         );
+    }
+    #[test]
+    fn connector_disables_nagle_on_new_connections() {
+        for timers in [true, false] {
+            let transport = Transport::metrics().unwrap();
+            let mut connector =
+                ProxyConnector::with_timers(transport.proxy.clone(), transport.tls.clone(), timers);
+            runtime().block_on(async {
+                let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+                let port = listener.local_addr().unwrap().port();
+                let accept = tokio::spawn(async move { listener.accept().await.unwrap() });
+                let uri: Uri = format!("http://127.0.0.1:{port}/").parse().unwrap();
+                let socket = connector.tcp.call(uri).await.unwrap().into_inner();
+                assert!(socket.nodelay().unwrap(), "timers={timers}");
+                accept.await.unwrap();
+            });
+        }
     }
     #[test]
     fn metrics_tls_negotiates_http1_when_server_offers_http2() {
