@@ -397,7 +397,9 @@ const MOUSE_OFF: &str = "\x1b[?1002l\x1b[?1003l\x1b[?1006l";
 pub(crate) struct Renderer {
     /// The last view's bytes (a Go string; not necessarily UTF-8).
     last_render: Vec<u8>,
-    last_lines: Vec<Vec<u8>>,
+    // Ranges into last_render, retaining capacity across frames.
+    last_lines: Vec<std::ops::Range<usize>>,
+    next_lines: Vec<std::ops::Range<usize>>,
     lines_rendered: usize,
     width: usize,
     height: usize,
@@ -444,30 +446,35 @@ impl Renderer {
 
     /// write(view) followed by flush() over the view's bytes (a Go string):
     /// the bytes to send, or None when the view equals the last rendered one.
-    pub(crate) fn frame(&mut self, view: &[u8]) -> Option<Vec<u8>> {
-        let view = if view.is_empty() {
-            b" ".as_slice()
-        } else {
-            view
-        };
-        if view == self.last_render.as_slice() {
+    pub(crate) fn frame(&mut self, mut view: Vec<u8>) -> Option<Vec<u8>> {
+        if view.is_empty() {
+            view.push(b' ');
+        }
+        if view == self.last_render {
             return None;
         }
         let mut out = Vec::new();
         if self.lines_rendered > 1 {
             out.extend_from_slice(cursor_up(self.lines_rendered - 1).as_bytes());
         }
-        let mut lines: Vec<&[u8]> = view.split(|byte| *byte == b'\n').collect();
-        if self.height > 0 && lines.len() > self.height {
-            lines.drain(..lines.len() - self.height);
+        self.next_lines.clear();
+        let mut offset = 0;
+        for line in view.split(|byte| *byte == b'\n') {
+            self.next_lines.push(offset..offset + line.len());
+            offset += line.len() + 1;
         }
-        let last = lines.len() - 1;
-        for (i, line) in lines.iter().enumerate() {
-            if self
+        if self.height > 0 && self.next_lines.len() > self.height {
+            self.next_lines.drain(..self.next_lines.len() - self.height);
+        }
+        let line_count = self.next_lines.len();
+        let last = line_count - 1;
+        for (i, range) in self.next_lines.iter().enumerate() {
+            let line = &view[range.clone()];
+            let unchanged = self
                 .last_lines
                 .get(i)
-                .is_some_and(|previous| previous.as_slice() == *line)
-            {
+                .is_some_and(|previous| self.last_render[previous.clone()] == *line);
+            if unchanged {
                 if i < last {
                     out.extend_from_slice(CURSOR_DOWN.as_bytes());
                 }
@@ -491,17 +498,17 @@ impl Renderer {
                 out.extend_from_slice(b"\r\n");
             }
         }
-        if self.lines_rendered > lines.len() {
+        if self.lines_rendered > line_count {
             out.extend_from_slice(ERASE_SCREEN_BELOW.as_bytes());
         }
-        self.lines_rendered = lines.len();
+        self.lines_rendered = line_count;
         if self.alt {
             out.extend_from_slice(format!("\x1b[{};0H", self.lines_rendered).as_bytes());
         } else {
             out.extend_from_slice(cursor_left(self.width).as_bytes());
         }
-        self.last_lines = lines.iter().map(|line| line.to_vec()).collect();
-        self.last_render = view.to_vec();
+        std::mem::swap(&mut self.last_lines, &mut self.next_lines);
+        self.last_render = view;
         Some(out)
     }
 }
@@ -699,16 +706,15 @@ fn write_loop(slot: &(Mutex<Slot>, Condvar), output: sys::Output, alt: bool) {
         if let Some(size) = resize {
             renderer.resize(size);
         }
-        let mut bytes = Vec::new();
-        match &stop {
-            Some(Stop::Quit(view)) => bytes.extend(renderer.frame(view).unwrap_or_default()),
-            Some(Stop::Kill) => {}
-            None => bytes.extend(
-                view.and_then(|view| renderer.frame(&view))
-                    .unwrap_or_default(),
-            ),
-        }
-        if stop.is_some() {
+        let stopping = stop.is_some();
+        let mut bytes = match stop {
+            Some(Stop::Quit(view)) => renderer.frame(view).unwrap_or_default(),
+            Some(Stop::Kill) => Vec::new(),
+            None => view
+                .and_then(|view| renderer.frame(view))
+                .unwrap_or_default(),
+        };
+        if stopping {
             bytes.extend_from_slice(ERASE_ENTIRE_LINE.as_bytes());
             bytes.push(b'\r');
         }
@@ -719,7 +725,7 @@ fn write_loop(slot: &(Mutex<Slot>, Condvar), output: sys::Output, alt: bool) {
                 sys::write_all(output, &bytes);
             }
         }
-        if stop.is_some() {
+        if stopping {
             return;
         }
     }
@@ -875,7 +881,19 @@ impl TerminalSession {
     /// `draw`.
     pub(crate) fn draw_bytes(&mut self, view: &[u8]) {
         if let Some(writer) = &self.writer {
-            writer.update(|slot| slot.view = Some(view.to_vec()));
+            writer.update(|slot| {
+                let buffer = slot.view.get_or_insert_with(Vec::new);
+                buffer.clear();
+                buffer.extend_from_slice(view);
+            });
+        }
+    }
+
+    /// Transfer a completed view without copying it. This changes neither
+    /// notification nor acceptance timing; only an unconsumed slot is replaced.
+    pub(crate) fn draw_owned(&mut self, view: Vec<u8>) {
+        if let Some(writer) = &self.writer {
+            writer.update(|slot| slot.view = Some(view));
         }
     }
 
@@ -1801,7 +1819,7 @@ mod tests {
     pub(super) static RAISE_QUIT_BEFORE_RAW_RESTORE: AtomicBool = AtomicBool::new(false);
 
     fn frames(renderer: &mut Renderer, view: &str) -> String {
-        String::from_utf8(renderer.frame(view.as_bytes()).unwrap_or_default()).unwrap()
+        String::from_utf8(renderer.frame(view.as_bytes().to_vec()).unwrap_or_default()).unwrap()
     }
 
     /// Raw byte views reach the terminal unchanged: no lossy conversion
@@ -1811,10 +1829,10 @@ mod tests {
         let mut renderer = Renderer::new(false);
         // Unknown width: no clip/measure; invalid UTF-8 passes verbatim.
         assert_eq!(
-            renderer.frame(b"a\xff\x1b[1mb\nok"),
+            renderer.frame(b"a\xff\x1b[1mb\nok".to_vec()),
             Some(b"\ra\xff\x1b[1mb\r\nok\x1b[D".to_vec())
         );
-        assert_eq!(renderer.frame(b"a\xff\x1b[1mb\nok"), None);
+        assert_eq!(renderer.frame(b"a\xff\x1b[1mb\nok".to_vec()), None);
         // The `&str` view of an unchanged line diffs against the byte cache.
         assert_eq!(frames(&mut renderer, "a\nok"), "\x1b[Aa\r\n\x1b[D");
     }
@@ -1831,7 +1849,7 @@ mod tests {
             frames(&mut renderer, "a\nb\n"),
             "\ra\x1b[0K\r\nb\x1b[0K\r\n\x1b[0K\x1b[100D"
         );
-        assert_eq!(renderer.frame(b"a\nb\n"), None);
+        assert_eq!(renderer.frame(b"a\nb\n".to_vec()), None);
         // Unchanged lines are skipped with cursor-down moves.
         assert_eq!(
             frames(&mut renderer, "a\nc\n"),
@@ -1868,6 +1886,52 @@ mod tests {
         assert_eq!(
             frames(&mut renderer, "a\nb"),
             "\x1b[A\ra\x1b[0K\r\nb\x1b[0K\x1b[5D"
+        );
+    }
+
+    #[test]
+    fn frame_cache_owns_the_view_and_reuses_line_ranges() {
+        let mut renderer = Renderer::new(false);
+        let view = b"long first line\nshort\n".to_vec();
+        let buffer = view.as_ptr();
+        renderer.frame(view).unwrap();
+        assert_eq!(renderer.last_render.as_ptr(), buffer);
+        let ranges = renderer.last_lines.as_ptr();
+        // Moving the first newline must not invalidate the comparison of
+        // later lines, whose old offsets still refer to the previous view.
+        assert_eq!(
+            frames(&mut renderer, "x\nshort\n"),
+            "\x1b[2Ax\r\n\x1b[B\x1b[D"
+        );
+        assert_eq!(renderer.last_lines, [0..1, 2..7, 8..8]);
+        assert_eq!(frames(&mut renderer, "x"), "\x1b[2A\x1b[0J\x1b[D");
+        assert_eq!(renderer.last_lines.len(), 1);
+        assert_eq!(renderer.last_lines[0], 0..1);
+        assert_eq!(renderer.last_lines.as_ptr(), ranges);
+    }
+
+    #[test]
+    fn cached_ranges_follow_visible_tail_and_resize_repaint() {
+        let mut renderer = Renderer::new(true);
+        renderer.resize(Size {
+            width: 0,
+            height: 2,
+        });
+        assert_eq!(frames(&mut renderer, "hidden\na\nb"), "\ra\r\nb\x1b[2;0H");
+        // A changed hidden prefix shifts both visible ranges; neither visible
+        // line changes, but the standard renderer still emits cursor moves.
+        assert_eq!(
+            frames(&mut renderer, "longer hidden\na\nb"),
+            "\x1b[A\x1b[B\x1b[2;0H"
+        );
+        assert_eq!(renderer.last_lines, [14..15, 16..17]);
+        renderer.resize(Size {
+            width: 0,
+            height: 3,
+        });
+        assert_eq!(
+            frames(&mut renderer, "longer hidden\na\nb"),
+            "\x1b[A\rlonger hidden\r\na\r\nb\x1b[3;0H"
         );
     }
 

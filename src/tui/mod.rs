@@ -6,6 +6,7 @@
 //! terminal/editor/theme implementations; workflow modules keep private
 //! layout helpers but never their own guards, renderers or palettes.
 
+mod chrome;
 pub(crate) mod clipboard;
 pub(crate) mod editor;
 pub(crate) mod input;

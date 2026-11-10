@@ -26,6 +26,8 @@ use super::{
 };
 use crate::{ErrorCode, error::CliError, parser::ParsedInvocation};
 use chrono::{DateTime, Local, LocalResult, NaiveDate, NaiveDateTime, TimeZone, Utc};
+use std::borrow::Cow;
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::io::Write;
 use std::sync::Arc;
@@ -56,6 +58,24 @@ const CHART_SERIES_PALETTE: [&str; 12] = [
     "#FF3B30", "#00E5FF", "#FF2D55", "#BF5AF2", "#FF6B00", "#64D2FF", "#5E5CE6", "#FF7AB6",
     "#B388FF", "#FFCC99", "#00C7BE", "#A78BFA",
 ];
+
+#[derive(PartialEq)]
+struct ControlsKey {
+    start: String,
+    end: String,
+    dataset: String,
+    step: String,
+    width: usize,
+    height: usize,
+    focus: Pane,
+    mode: QueryMode,
+    display: DisplayMode,
+    env: style::Env,
+    palette: &'static style::Palette,
+}
+thread_local! {
+    static CONTROLS_CACHE: std::cell::RefCell<Option<(ControlsKey, String)>> = const { std::cell::RefCell::new(None) };
+}
 
 // ─── public data types shared with the service ─────────────────────────────
 
@@ -1149,6 +1169,16 @@ fn promql_pane_rule(
 
 /// `paneBodyLines`.
 fn pane_body_lines(body: &str, width: usize, height: usize, border: &Style) -> Vec<String> {
+    super::chrome::pane_body_lines(body, width as i64, height as i64, border)
+}
+
+#[cfg(test)]
+fn pane_body_lines_original(
+    body: &str,
+    width: usize,
+    height: usize,
+    border: &Style,
+) -> Vec<String> {
     let inner_w = width.saturating_sub(2).max(1);
     let text_w = inner_w.saturating_sub(2).max(1);
     let mut lines: Vec<&str> = body.split('\n').collect();
@@ -1888,20 +1918,29 @@ struct ResultsTable {
     scroll: usize,
     focused: bool,
     filter: TextInput,
+    filtered_rows: RefCell<Option<FilteredRows>>,
+}
+
+/// Immutable matches are shared by render snapshots; replacing results clears
+/// the cache, while changing the filter replaces only this table's cache slot.
+#[derive(Clone, Debug)]
+struct FilteredRows {
+    filter: String,
+    indices: Arc<Vec<usize>>,
 }
 
 /// Unfiltered navigation borrows the row slice directly. Filtering retains
 /// only matching references; neither path copies row payloads.
 enum VisibleRows<'a> {
     All(&'a [Row]),
-    Filtered(Vec<&'a Row>),
+    Filtered(&'a [Row], Arc<Vec<usize>>),
 }
 
 impl<'a> VisibleRows<'a> {
     fn len(&self) -> usize {
         match self {
             Self::All(rows) => rows.len(),
-            Self::Filtered(rows) => rows.len(),
+            Self::Filtered(_, indices) => indices.len(),
         }
     }
     fn is_empty(&self) -> bool {
@@ -1910,7 +1949,7 @@ impl<'a> VisibleRows<'a> {
     fn get(&self, index: usize) -> Option<&'a Row> {
         match self {
             Self::All(rows) => rows.get(index),
-            Self::Filtered(rows) => rows.get(index).copied(),
+            Self::Filtered(rows, indices) => indices.get(index).and_then(|&i| rows.get(i)),
         }
     }
 }
@@ -1929,6 +1968,7 @@ impl ResultsTable {
             scroll: 0,
             focused: false,
             filter: TextInput::new(),
+            filtered_rows: RefCell::default(),
         }
     }
 
@@ -1937,16 +1977,29 @@ impl ResultsTable {
         if filter.is_empty() || !self.filterable {
             return VisibleRows::All(&self.rows);
         }
+        let mut cached = self.filtered_rows.borrow_mut();
+        if let Some(previous) = cached.as_ref()
+            && previous.filter == filter
+        {
+            return VisibleRows::Filtered(&self.rows, Arc::clone(&previous.indices));
+        }
         let needle = super::unicode::lower(&filter);
-        VisibleRows::Filtered(
+        let indices = Arc::new(
             self.rows
                 .iter()
-                .filter(|row| {
-                    super::unicode::lower(&row.metric).contains(&needle)
-                        || super::unicode::lower(&row.value).contains(&needle)
+                .enumerate()
+                .filter_map(|(i, row)| {
+                    (super::unicode::lower(&row.metric).contains(&needle)
+                        || super::unicode::lower(&row.value).contains(&needle))
+                    .then_some(i)
                 })
                 .collect(),
-        )
+        );
+        *cached = Some(FilteredRows {
+            filter,
+            indices: Arc::clone(&indices),
+        });
+        VisibleRows::Filtered(&self.rows, indices)
     }
 
     fn max_pages(&self) -> usize {
@@ -1969,6 +2022,9 @@ impl ResultsTable {
     }
 
     fn with_rows(&mut self, rows: Arc<Vec<Row>>) {
+        if !Arc::ptr_eq(&self.rows, &rows) {
+            self.filtered_rows.get_mut().take();
+        }
         self.rows = rows;
         if self.cursor >= self.rows.len() {
             self.cursor = self.rows.len().saturating_sub(1);
@@ -1992,8 +2048,8 @@ impl ResultsTable {
         self.current_page = self.page_for(self.cursor);
     }
 
-    fn highlighted_row(&self) -> Option<Row> {
-        self.visible_rows().get(self.cursor).cloned()
+    fn highlighted_row(&self) -> Option<&Row> {
+        self.visible_rows().get(self.cursor)
     }
 
     fn update(&mut self, key: &Key) {
@@ -2085,7 +2141,248 @@ impl ResultsTable {
     /// (Body, or the SelRow/Accent/bold highlight), column width, left
     /// alignment; padding is never inherited.
     fn view(&self) -> String {
+        self.view_in(style::Env::process())
+    }
+
+    fn view_in(&self, env: style::Env) -> String {
         let visible = self.visible_rows();
+        let widths = self.widths();
+        let has_rows = !visible.is_empty();
+        let titles = [self.time_title.as_str(), "METRIC", "VALUE"];
+        let chars =
+            |top_left, top, top_right, right, bottom_right, bottom, bottom_left, left| Border {
+                top,
+                bottom,
+                left,
+                right,
+                top_left,
+                top_right,
+                bottom_left,
+                bottom_right,
+            };
+        // Header border styles: multi (rows present) or single row.
+        let header_borders: [Style; 3] = if has_rows {
+            [
+                Self::border_style(
+                    chars(
+                        " ",
+                        TABLE_TOP,
+                        " ",
+                        TABLE_INNER_DIVIDER,
+                        "─",
+                        TABLE_BOTTOM,
+                        " ",
+                        "",
+                    ),
+                    None,
+                ),
+                Self::border_style(
+                    chars(
+                        "",
+                        TABLE_TOP,
+                        " ",
+                        TABLE_INNER_DIVIDER,
+                        "─",
+                        TABLE_BOTTOM,
+                        "",
+                        "",
+                    ),
+                    Some((true, true, true, false)),
+                ),
+                Self::border_style(
+                    chars("", TABLE_TOP, " ", "", " ", TABLE_BOTTOM, "", ""),
+                    Some((true, true, true, false)),
+                ),
+            ]
+        } else {
+            [
+                Self::border_style(
+                    chars(
+                        " ",
+                        TABLE_TOP,
+                        " ",
+                        TABLE_INNER_DIVIDER,
+                        "─",
+                        TABLE_BOTTOM,
+                        "─",
+                        "",
+                    ),
+                    None,
+                ),
+                Self::border_style(
+                    chars(
+                        "",
+                        TABLE_TOP,
+                        " ",
+                        TABLE_INNER_DIVIDER,
+                        "─",
+                        TABLE_BOTTOM,
+                        "",
+                        "",
+                    ),
+                    Some((true, true, true, false)),
+                ),
+                Self::border_style(
+                    chars("", TABLE_TOP, " ", "", "─", TABLE_BOTTOM, "", ""),
+                    Some((true, true, true, false)),
+                ),
+            ]
+        };
+        let mut headers: [String; 3] = std::array::from_fn(|_| String::new());
+        let mut header_count = 0;
+        // Scroll whole columns, retaining their original flex widths. The
+        // generated overflow column uses the left border and a one-cell '<'.
+        let columns = (self.scroll > 0).then_some((0, 1, "<")).into_iter().chain(
+            titles
+                .into_iter()
+                .enumerate()
+                .skip(self.scroll)
+                .map(|(i, title)| (i, widths[i], title)),
+        );
+        for (i, width, title) in columns {
+            let cell = header_borders[i]
+                .fg(Color::role(Role::Accent))
+                .bold(true)
+                .width(width)
+                .align(style::LEFT);
+            headers[header_count] = cell.render_in(&limit_str(title, width), env);
+            header_count += 1;
+        }
+        let mut out = String::new();
+        join_table_cells(&headers[..header_count], &mut out);
+        if has_rows {
+            let page_size = if self.page_size == 0 {
+                visible.len()
+            } else {
+                self.page_size
+            };
+            let start = page_size * self.current_page;
+            let end = (start + page_size).min(visible.len());
+            let inner = [
+                Self::border_style(
+                    chars("", "", "", TABLE_INNER_DIVIDER, "", "", "", ""),
+                    Some((false, true, false, true)),
+                ),
+                Self::border_style(
+                    chars("", "", "", TABLE_INNER_DIVIDER, "", "", "", ""),
+                    Some((false, true, false, false)),
+                ),
+                Self::border_style(
+                    chars("", "", "", "", "", "", "", ""),
+                    Some((false, true, false, false)),
+                ),
+            ];
+            let last = [
+                Self::border_style(
+                    chars("", "", "", TABLE_INNER_DIVIDER, "─", TABLE_BOTTOM, "─", ""),
+                    Some((false, true, true, true)),
+                ),
+                Self::border_style(
+                    chars("", "", "", TABLE_INNER_DIVIDER, "─", TABLE_BOTTOM, "", ""),
+                    Some((false, true, true, false)),
+                ),
+                Self::border_style(
+                    chars("", "", "", "", "─", TABLE_BOTTOM, "", ""),
+                    Some((false, true, true, false)),
+                ),
+            ];
+            // Prepare the normal/highlighted variants for each border and column.
+            let prepare = |borders: [Style; 3], highlighted: bool| {
+                std::array::from_fn::<_, 3, _>(|i| {
+                    let cell = if highlighted {
+                        borders[i]
+                            .bg(Color::role(Role::SelRow))
+                            .fg(Color::role(Role::Accent))
+                            .bold(true)
+                    } else {
+                        borders[i].fg(Color::role(Role::Body))
+                    };
+                    let width = if self.scroll > 0 && i == 0 {
+                        1
+                    } else {
+                        widths[i]
+                    };
+                    cell.height(1).width(width).align(style::LEFT)
+                })
+            };
+            let styles = [
+                prepare(inner, false),
+                prepare(inner, true),
+                prepare(last, false),
+                prepare(last, true),
+            ];
+            for index in start..end {
+                let row = visible.get(index).expect("visible page row");
+                let highlighted = self.focused && index == self.cursor;
+                let is_last = index + 1 == end;
+                let data = [
+                    row.timestamp.as_ref(),
+                    row.metric.as_ref(),
+                    row.value.as_str(),
+                ];
+                let mut cells: [String; 3] = std::array::from_fn(|_| String::new());
+                let mut cell_count = 0;
+                let row_styles = &styles[usize::from(is_last) * 2 + usize::from(highlighted)];
+                let columns = (self.scroll > 0).then_some((0, 1, "<")).into_iter().chain(
+                    data.into_iter()
+                        .enumerate()
+                        .skip(self.scroll)
+                        .map(|(i, text)| (i, widths[i], text)),
+                );
+                for (i, width, text) in columns {
+                    let cell = row_styles[i];
+                    cells[cell_count] = cell.render_in(&limit_str(text, width), env);
+                    cell_count += 1;
+                }
+                out.push('\n');
+                join_table_cells(&cells[..cell_count], &mut out);
+            }
+        }
+        // JoinVertical(Left) pads each line to the widest finished line.
+        // Measure the joined lines, not the sum of cell widths: without
+        // colour, a cell can end inside an escape sequence and change how
+        // the rest of its joined line is measured.
+        let mut widths = out.split('\n').map(style::width);
+        let first = widths.next().unwrap_or(0);
+        let (max_width, uniform_width) = widths.fold((first, true), |(max, uniform), width| {
+            (max.max(width), uniform && width == first)
+        });
+        if uniform_width {
+            return out;
+        }
+        let mut padded = String::with_capacity(out.len());
+        for (i, line) in out.split('\n').enumerate() {
+            if i > 0 {
+                padded.push('\n');
+            }
+            padded.push_str(line);
+            padded.extend(std::iter::repeat_n(' ', max_width - style::width(line)));
+        }
+        padded
+    }
+
+    #[cfg(test)]
+    fn view_original(&self, env: style::Env) -> String {
+        let filter = self.filter.value();
+        let visible = if filter.is_empty() || !self.filterable {
+            VisibleRows::All(&self.rows)
+        } else {
+            let needle = super::unicode::lower(&filter);
+            VisibleRows::Filtered(
+                &self.rows,
+                Arc::new(
+                    self.rows
+                        .iter()
+                        .enumerate()
+                        .filter_map(|(i, row)| {
+                            (super::unicode::lower(&row.metric).contains(&needle)
+                                || super::unicode::lower(&row.value).contains(&needle))
+                            .then_some(i)
+                        })
+                        .collect(),
+                ),
+            )
+        };
         let widths = self.widths();
         let has_rows = !visible.is_empty();
         let titles = [self.time_title.as_str(), "METRIC", "VALUE"];
@@ -2184,7 +2481,7 @@ impl ResultsTable {
                 .bold(true)
                 .width(width)
                 .align(style::LEFT);
-            headers.push(cell.render(&limit_str(title, width)));
+            headers.push(cell.render_in(&limit_str_original(title, width), env));
         }
         let header_refs: Vec<&str> = headers.iter().map(String::as_str).collect();
         let mut lines = vec![style::join_horizontal(1.0, &header_refs)];
@@ -2252,7 +2549,7 @@ impl ResultsTable {
                         border.fg(Color::role(Role::Body))
                     };
                     let cell = cell.height(1).width(width).align(style::LEFT);
-                    cells.push(cell.render(&limit_str(text, width)));
+                    cells.push(cell.render_in(&limit_str_original(text, width), env));
                 }
                 let refs: Vec<&str> = cells.iter().map(String::as_str).collect();
                 lines.push(style::join_horizontal(1.0, &refs));
@@ -2262,8 +2559,57 @@ impl ResultsTable {
     }
 }
 
+/// Bottom-aligned JoinHorizontal for the table's at most three cells.
+/// Keep split iterators on the stack instead of allocating a line vector for
+/// every cell and another byte/reference vector for every join.
+fn join_table_cells(cells: &[String], out: &mut String) {
+    let mut lines = std::array::from_fn::<_, 3, _>(|i| cells.get(i).map(|cell| cell.split('\n')));
+    let heights = std::array::from_fn::<_, 3, _>(|i| {
+        cells
+            .get(i)
+            .map_or(0, |cell| cell.bytes().filter(|&b| b == b'\n').count() + 1)
+    });
+    let widths = std::array::from_fn::<_, 3, _>(|i| {
+        cells.get(i).map_or(0, |cell| {
+            cell.split('\n').map(style::width).max().unwrap_or(0)
+        })
+    });
+    let height = heights.into_iter().max().unwrap_or(0);
+    out.reserve(cells.iter().map(String::len).sum::<usize>() + height);
+    for y in 0..height {
+        if y > 0 {
+            out.push('\n');
+        }
+        for i in 0..cells.len() {
+            let line = if y + heights[i] < height {
+                ""
+            } else {
+                lines[i].as_mut().and_then(Iterator::next).unwrap_or("")
+            };
+            out.push_str(line);
+            out.extend(std::iter::repeat_n(' ', widths[i] - style::width(line)));
+        }
+    }
+}
+
 /// bubble-table `limitStr`.
-fn limit_str(s: &str, max: usize) -> String {
+fn limit_str(s: &str, max: usize) -> Cow<'_, str> {
+    if max == 0 {
+        return Cow::Borrowed("");
+    }
+    let text = if let Some(i) = s.find('\n') {
+        Cow::Owned(format!("{}…", &s[..i]))
+    } else {
+        Cow::Borrowed(s)
+    };
+    if style::width(&text) > max {
+        return Cow::Owned(reflow_truncate(&text, max, "…"));
+    }
+    text
+}
+
+#[cfg(test)]
+fn limit_str_original(s: &str, max: usize) -> String {
     if max == 0 {
         return String::new();
     }
@@ -2344,19 +2690,59 @@ impl Canvas {
     }
     /// canvas.Model.View: every cell rendered with its own style.
     fn view(&self) -> String {
-        let mut cache: HashMap<Option<CellColorKey>, Style> = HashMap::new();
+        self.view_in(style::Env::process())
+    }
+
+    fn view_in(&self, env: style::Env) -> String {
+        // Keep each cell's ANSI sequence intact, but render repeated glyph/style
+        // pairs only once per frame. Borrow hex colors rather than cloning them.
+        let mut cache: HashMap<(char, Option<CellColorKey<'_>>), String> = HashMap::new();
         let mut out = String::new();
         for y in 0..self.height {
             for x in 0..self.width {
                 let cell = &self.cells[y * self.width + x];
                 let text = if cell.ch == '\0' { ' ' } else { cell.ch };
-                let key = cell.color.as_ref().map(CellColorKey::from);
+                let key = (text, cell.color.as_ref().map(CellColorKey::from));
+                let rendered = cache.entry(key).or_insert_with(|| {
+                    let style = match &cell.color {
+                        None => st(),
+                        Some(CellColor::Role(role)) => st().fgr(*role),
+                        Some(CellColor::Hex(hex)) => st().fg_hex(hex),
+                    };
+                    let mut bytes = [0; 4];
+                    style.render_in(text.encode_utf8(&mut bytes), env)
+                });
+                out.push_str(rendered);
+            }
+            if y + 1 != self.height {
+                out.push('\n');
+            }
+        }
+        out
+    }
+    #[cfg(test)]
+    fn view_reference(&self, env: style::Env) -> String {
+        #[derive(PartialEq, Eq, Hash)]
+        enum OriginalKey {
+            Role(String),
+            Hex(String),
+        }
+        let mut cache: HashMap<Option<OriginalKey>, Style> = HashMap::new();
+        let mut out = String::new();
+        for y in 0..self.height {
+            for x in 0..self.width {
+                let cell = &self.cells[y * self.width + x];
+                let text = if cell.ch == '\0' { ' ' } else { cell.ch };
+                let key = cell.color.as_ref().map(|color| match color {
+                    CellColor::Role(role) => OriginalKey::Role(format!("{role:?}")),
+                    CellColor::Hex(hex) => OriginalKey::Hex(hex.clone()),
+                });
                 let style = cache.entry(key).or_insert_with(|| match &cell.color {
                     None => st(),
                     Some(CellColor::Role(role)) => st().fgr(*role),
                     Some(CellColor::Hex(hex)) => st().fg_hex(hex),
                 });
-                out.push_str(&style.render(&text.to_string()));
+                out.push_str(&style.render_in(&text.to_string(), env));
             }
             if y + 1 != self.height {
                 out.push('\n');
@@ -2367,15 +2753,15 @@ impl Canvas {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
-enum CellColorKey {
-    Role(String),
-    Hex(String),
+enum CellColorKey<'a> {
+    Role(std::mem::Discriminant<Role>),
+    Hex(&'a str),
 }
-impl From<&CellColor> for CellColorKey {
-    fn from(color: &CellColor) -> Self {
+impl<'a> From<&'a CellColor> for CellColorKey<'a> {
+    fn from(color: &'a CellColor) -> Self {
         match color {
-            CellColor::Role(role) => Self::Role(format!("{role:?}")),
-            CellColor::Hex(hex) => Self::Hex(hex.clone()),
+            CellColor::Role(role) => Self::Role(std::mem::discriminant(role)),
+            CellColor::Hex(hex) => Self::Hex(hex),
         }
     }
 }
@@ -2597,6 +2983,17 @@ struct Chart {
     view_max_x: f64,
     view_min_y: f64,
     view_max_y: f64,
+}
+
+#[derive(Clone)]
+struct ChartGeometry {
+    series: Arc<[ChartSeries]>,
+    width: isize,
+    height: isize,
+    duration: i64,
+    display: DisplayMode,
+    clock: Option<i64>,
+    chart: Arc<Chart>,
 }
 
 fn unix_time(seconds: f64) -> DateTime<Local> {
@@ -3011,6 +3408,7 @@ pub(crate) struct PromqlState {
     unwrap_metric: bool,
     chart_graph_width: Option<isize>,
     chart_series_cache: std::cell::OnceCell<Arc<[ChartSeries]>>,
+    chart_geometry_cache: std::cell::RefCell<Vec<ChartGeometry>>,
     chart_cursor: usize,
     chart_hover: bool,
 
@@ -3248,6 +3646,7 @@ impl PromqlState {
             unwrap_metric: false,
             chart_graph_width: None,
             chart_series_cache: std::cell::OnceCell::new(),
+            chart_geometry_cache: std::cell::RefCell::new(Vec::new()),
             chart_cursor: 0,
             chart_hover: false,
             dataset,
@@ -3636,6 +4035,7 @@ impl PromqlState {
             }
             Completion::Result(result) => {
                 self.chart_series_cache.take();
+                self.chart_geometry_cache.get_mut().clear();
                 self.loading = false;
                 match result {
                     Ok(data) => {
@@ -4242,7 +4642,71 @@ impl PromqlState {
         }
     }
 
-    fn build_chart(&self, width: isize, height: isize, series: &[ChartSeries]) -> Option<Chart> {
+    fn build_chart(
+        &self,
+        width: isize,
+        height: isize,
+        series: &Arc<[ChartSeries]>,
+    ) -> Option<Arc<Chart>> {
+        let width = width.max(20);
+        let height = height.max(8);
+        let (start, end) = (self.time_range.start.time, self.time_range.end.time);
+        let duration = if end.instant > start.instant {
+            go_between(start, end)
+        } else {
+            0
+        };
+        let mut cache = self.chart_geometry_cache.borrow_mut();
+        let hit = cache.iter().position(|entry| {
+            Arc::ptr_eq(&entry.series, series)
+                && entry.width == width
+                && entry.height == height
+                && entry.duration == duration
+                && entry.display == self.time_range.display
+                && entry
+                    .clock
+                    .is_none_or(|clock| clock == self.now().timestamp())
+        });
+        let mut chart = if let Some(index) = hit {
+            Arc::clone(&cache[index].chart)
+        } else {
+            let chart = Arc::new(self.build_chart_geometry(width, height, series)?);
+            let first = series
+                .iter()
+                .flat_map(|s| &s.points)
+                .map(|p| p.time.timestamp())
+                .min()?;
+            let last = series
+                .iter()
+                .flat_map(|s| &s.points)
+                .map(|p| p.time.timestamp())
+                .max()?;
+            if cache.len() == 2 {
+                cache.remove(0);
+            }
+            cache.push(ChartGeometry {
+                series: Arc::clone(series),
+                width,
+                height,
+                duration,
+                display: self.time_range.display,
+                clock: (first >= last).then(|| go_f64_to_i64(chart.view_min_x)),
+                chart: Arc::clone(&chart),
+            });
+            chart
+        };
+        if series.len() == 1 && self.chart_hover {
+            self.draw_cursor(Arc::make_mut(&mut chart), &series[0].points);
+        }
+        Some(chart)
+    }
+
+    fn build_chart_geometry(
+        &self,
+        width: isize,
+        height: isize,
+        series: &[ChartSeries],
+    ) -> Option<Chart> {
         let all: Vec<TimePoint> = series
             .iter()
             .flat_map(|s| s.points.iter().cloned())
@@ -4338,13 +4802,150 @@ impl PromqlState {
             }
         }
         self.draw_x_labels(&mut chart, first, last, time_range);
+        Some(chart)
+    }
+
+    fn canvas_points(&self, chart: &Chart, points: &[TimePoint]) -> Vec<Point> {
+        let min = unix_time(chart.view_min_x);
+        let max = unix_time(chart.view_max_x);
+        // x is bounded by the canvas width. A dense array avoids hashing every
+        // sample and naturally visits the occupied buckets in sorted order.
+        let mut buckets = vec![(0isize, 0isize); chart.canvas.width];
+        for p in points {
+            if p.time < min || p.time > max {
+                continue;
+            }
+            let x = chart.origin.x + chart_graph_x(p.time, min, max, chart.graph_width);
+            let y = chart.canvas_y(p.value);
+            if x < chart.origin.x || x >= chart.canvas.width as isize || y < 0 || y > chart.origin.y
+            {
+                continue;
+            }
+            let bucket = &mut buckets[x as usize];
+            bucket.0 += y;
+            bucket.1 += 1;
+        }
+        buckets
+            .into_iter()
+            .enumerate()
+            .filter(|(_, (_, count))| *count != 0)
+            .map(|(x, (sum, count))| Point {
+                x: x as isize,
+                y: round_go(sum as f64 / count as f64),
+            })
+            .collect()
+    }
+
+    #[cfg(test)]
+    fn build_chart_reference(
+        &self,
+        width: isize,
+        height: isize,
+        series: &[ChartSeries],
+    ) -> Option<Chart> {
+        let all: Vec<TimePoint> = series
+            .iter()
+            .flat_map(|s| s.points.iter().cloned())
+            .collect();
+        let first = all.iter().map(|p| p.time).min()?;
+        let last = all.iter().map(|p| p.time).max()?;
+        if all.len() < 2 {
+            return None;
+        }
+        let width = width.max(20);
+        let height = height.max(8);
+        let (min_y, max_y, row_step) = y_axis_scale(&all, height);
+        let time_range = self.selected_duration(first, last);
+        let x_step = (width / 8).max(8);
+        let _ = x_step;
+        // timeserieslinechart.New: X view starts at now..now+1s and only
+        // moves to [first, last] when that range is non-empty.
+        let now = self.now().timestamp() as f64;
+        let (mut view_min_x, mut view_max_x) = (now, now + 1.0);
+        let (first_s, last_s) = (first.timestamp() as f64, last.timestamp() as f64);
+        if first_s < last_s {
+            view_min_x = first_s;
+            view_max_x = last_s;
+        }
+        let (mut view_min_y, mut view_max_y) = (0.0, 1.0);
+        if min_y < max_y {
+            view_min_y = min_y;
+            view_max_y = max_y;
+        }
+        let (origin, graph_width) = graph_size(
+            width,
+            height,
+            view_min_y,
+            view_max_y,
+            row_step,
+            format_compact,
+        );
+        let mut chart = Chart {
+            canvas: Canvas::new(width as usize, height as usize),
+            origin,
+            graph_width,
+            view_min_x,
+            view_max_x,
+            view_min_y,
+            view_max_y,
+        };
+        let axis = Some(CellColor::Role(Role::Faint));
+        // DrawXYAxisAndLabel
+        chart.canvas.set(origin, '└', axis.clone());
+        for y in (0..origin.y).rev() {
+            chart
+                .canvas
+                .set(Point { x: origin.x, y }, '│', axis.clone());
+        }
+        for x in origin.x + 1..width {
+            chart
+                .canvas
+                .set(Point { x, y: origin.y }, '─', axis.clone());
+        }
+        let graph_height = height - 2;
+        let increment = (view_max_y - view_min_y) / graph_height as f64;
+        let mut last_label = String::new();
+        let mut i = 0;
+        while i <= graph_height {
+            let s = format_compact(view_min_y + increment * i as f64);
+            if s != last_label {
+                chart.canvas.set_string(
+                    Point {
+                        x: origin.x - s.len() as isize,
+                        y: origin.y - i,
+                    },
+                    &s,
+                    axis.clone(),
+                );
+                last_label = s;
+            }
+            i += row_step;
+        }
+        // drawChartSeriesSegments
+        for s in series {
+            let color = CellColor::Hex(s.color.clone());
+            let points = self.canvas_points_reference(&chart, &s.points);
+            if points.len() == 1 {
+                chart.canvas.set(points[0], '─', Some(color));
+                continue;
+            }
+            for j in 1..points.len() {
+                if points[j - 1] == points[j] {
+                    continue;
+                }
+                let line = line_points(points[j - 1], points[j]);
+                draw_line_points(&mut chart.canvas, &line, &color);
+            }
+        }
+        self.draw_x_labels(&mut chart, first, last, time_range);
         if series.len() == 1 {
             self.draw_cursor(&mut chart, &series[0].points);
         }
         Some(chart)
     }
 
-    fn canvas_points(&self, chart: &Chart, points: &[TimePoint]) -> Vec<Point> {
+    #[cfg(test)]
+    fn canvas_points_reference(&self, chart: &Chart, points: &[TimePoint]) -> Vec<Point> {
         let min = unix_time(chart.view_min_x);
         let max = unix_time(chart.view_max_x);
         let mut order: Vec<isize> = Vec::new();
@@ -4685,6 +5286,45 @@ impl PromqlState {
         width: usize,
         height: usize,
     ) -> Result<String, GoPanic> {
+        let key = ControlsKey {
+            start: start.to_owned(),
+            end: end.to_owned(),
+            dataset: dataset.to_owned(),
+            step: step.to_owned(),
+            width,
+            height,
+            focus: self.focus(),
+            mode: self.mode,
+            display: self.time_range.display,
+            env: style::Env::process(),
+            palette: style::active(),
+        };
+        if let Some(text) = CONTROLS_CACHE.with(|cache| {
+            cache
+                .borrow()
+                .as_ref()
+                .filter(|(saved, _)| *saved == key)
+                .map(|(_, text)| text.clone())
+        }) {
+            return Ok(text);
+        }
+        // Errors are deliberately not cached: each view must propagate them.
+        let text = self.controls_pane_uncached(start, end, dataset, step, width, height)?;
+        if text.len() + start.len() + end.len() + dataset.len() + step.len() <= 16384 {
+            CONTROLS_CACHE.with(|cache| *cache.borrow_mut() = Some((key, text.clone())));
+        }
+        Ok(text)
+    }
+
+    fn controls_pane_uncached(
+        &self,
+        start: &str,
+        end: &str,
+        dataset: &str,
+        step: &str,
+        width: usize,
+        height: usize,
+    ) -> Result<String, GoPanic> {
         let focus = self.focus();
         let instant = self.mode == QueryMode::Instant;
         let inner_w = width.saturating_sub(2).max(4);
@@ -4849,7 +5489,7 @@ impl PromqlState {
         let Some(row) = table.highlighted_row() else {
             return Ok(String::new());
         };
-        let metric = row.metric.trim().to_owned();
+        let metric = row.metric.trim();
         if metric.is_empty() {
             return Ok(String::new());
         }
@@ -4860,7 +5500,7 @@ impl PromqlState {
             text_w = width as isize - 2;
         }
         let text_w = text_w.max(1) as usize;
-        let mut lines = wrap_visible_text(&metric, text_w);
+        let mut lines = wrap_visible_text(metric, text_w);
         if lines.is_empty() {
             return Ok(String::new());
         }
@@ -5794,7 +6434,7 @@ async fn run_session(
     if let Some(fault) = state.take_fault() {
         return editor_fault(session, tasks, fault, stdout).await;
     }
-    session.draw_bytes(&view);
+    session.draw_owned(view);
     let mut inbox = Inbox::default();
     let outcome = loop {
         if let Some(panic) = tasks.reap() {
@@ -5830,7 +6470,7 @@ async fn run_session(
         if let Some(fault) = state.take_fault() {
             return editor_fault(session, tasks, fault, stdout).await;
         }
-        session.draw_bytes(&view);
+        session.draw_owned(view);
     };
     // Go renders the final view (Run, tea.go:601) and restores before
     // returning; a panic in that View is recovered like any other.
@@ -6211,6 +6851,74 @@ impl Tasks {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn controls_chrome_matches_uncached_transitions() {
+        let mut s = state("up", "logs", false);
+        for width in [0, 12, 34, 100] {
+            for height in [0, 13, 40] {
+                for focus in 0..5 {
+                    s.focused = focus;
+                    for mode in [QueryMode::Range, QueryMode::Instant, QueryMode::Both] {
+                        s.mode = mode;
+                        for display in [DisplayMode::Local, DisplayMode::Utc] {
+                            s.time_range.display = display;
+                            for (start, end, dataset, step) in [
+                                ("from", "to", "logs", "auto"),
+                                ("changed", "later", "中", "\x1b[31m5m\x1b[0m"),
+                            ] {
+                                let expected = s.controls_pane_uncached(
+                                    start, end, dataset, step, width, height,
+                                );
+                                for _ in 0..2 {
+                                    assert_eq!(
+                                        s.controls_pane(start, end, dataset, step, width, height),
+                                        expected
+                                    );
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn pane_chrome_matches_original_across_transitions() {
+        let bodies = [
+            "",
+            "query",
+            "SELECT * FROM café\nWHERE x > 2",
+            "\x1b[31merror\x1b[0m",
+            "| fetching...",
+            "/ fetching...",
+            "status: 42 rows",
+            "中🙂e\u{301}\tvalue",
+            "long line with many many characters\n\nlast\n",
+        ];
+        for palette in [&style::DARK, &style::LIGHT] {
+            for focused in [false, true] {
+                let border = Style::new().fg(Color::of(
+                    palette,
+                    if focused {
+                        Role::BorderHi
+                    } else {
+                        Role::Border
+                    },
+                ));
+                for width in [0, 1, 4, 12, 34, 120] {
+                    for height in [0, 1, 3, 12] {
+                        for body in bodies {
+                            let expected = pane_body_lines_original(body, width, height, &border);
+                            assert_eq!(pane_body_lines(body, width, height, &border), expected);
+                            assert_eq!(pane_body_lines(body, width, height, &border), expected);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     fn fixed_now() -> DateTime<Local> {
         Local
@@ -6667,6 +7375,156 @@ mod tests {
     }
 
     #[test]
+    fn table_render_matches_original_across_navigation_and_geometry() {
+        let mut table = ResultsTable::new(100, 7, DisplayMode::Utc);
+        table.filterable = true;
+        table.focused = true;
+        table.with_rows(Arc::new(
+            (0..43)
+                .map(|i| {
+                    row(
+                        "2026-01-01T00:00:00Z",
+                        &[
+                            "API α界🙂",
+                            "İstanbul",
+                            "other\nsecond",
+                            "e\u{301}",
+                            "\x1b[31mred\x1b[0m",
+                            "a\rb\tc",
+                        ][i % 6]
+                            .repeat(i % 4 + 1),
+                        &i.to_string(),
+                    )
+                })
+                .collect(),
+        ));
+        for dark in [false, true] {
+            for profile in [style::Profile::Ascii, style::Profile::TrueColor] {
+                let env = style::Env { profile, dark };
+                for filter in ["", "api", "İ", "2", "no matches"] {
+                    table.filter.set_value(filter);
+                    for width in [8, 32, 80, 120] {
+                        table.target_width = width;
+                        for page_size in [1, 7, 50] {
+                            table.with_page_size(page_size);
+                            for cursor in [0, 3, 17, 42] {
+                                table.with_highlighted_row(cursor);
+                                for scroll in 0..3 {
+                                    table.scroll = scroll;
+                                    assert_eq!(
+                                        table.view_in(env),
+                                        table.view_original(env),
+                                        "dark={dark} width={width} page={page_size} cursor={cursor} scroll={scroll} filter={filter:?}"
+                                    );
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /// Without colour no reset follows a cell, so a cell ending inside an
+    /// escape sequence changes how its whole joined line is measured. The
+    /// vertical padding must come from the finished lines, as JoinVertical's
+    /// does, not from the sum of separately measured cell widths.
+    #[test]
+    fn colourless_cells_ending_mid_escape_keep_join_vertical_padding() {
+        let cases: [(usize, [&str; 3]); 4] = [
+            (35, ["", "up", "1\x1b"]),
+            (14, ["", "a\x1b]", "1"]),
+            (40, ["2026-01-01T00:00:00Z", "up\x1b[", "2\x1b"]),
+            (60, ["\x1b", "metric{job=\"\x1b]8;;\"}", "12.5"]),
+        ];
+        for (width, [ts, metric, value]) in cases {
+            // The odd row alone, and followed by an ordinary row.
+            for extra in [false, true] {
+                let mut table = ResultsTable::new(width, 5, DisplayMode::Utc);
+                table.value_width = 1;
+                let mut rows = vec![row(ts, metric, value)];
+                if extra {
+                    rows.push(row(ts, "up", "1"));
+                }
+                table.with_rows(Arc::new(rows));
+                for profile in [style::Profile::Ascii, style::Profile::TrueColor] {
+                    for dark in [false, true] {
+                        let env = style::Env { profile, dark };
+                        for focused in [false, true] {
+                            table.focused = focused;
+                            assert_eq!(
+                                table.view_in(env),
+                                table.view_original(env),
+                                "width={width} extra={extra} profile={profile:?} dark={dark} focused={focused} row={ts:?} {metric:?} {value:?}"
+                            );
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    #[test]
+    #[ignore = "opt-in focused rendering allocation/instruction benchmark"]
+    fn benchmark_promql_table_render() {
+        let mut table = ResultsTable::new(118, 20, DisplayMode::Utc);
+        table.focused = true;
+        table.filterable = true;
+        table.with_rows(Arc::new(
+            (0..1000)
+                .map(|i| {
+                    row(
+                        "2026-01-01T00:00:00Z",
+                        &format!("up{{instance=\"series-{i}\",job=\"api\"}}"),
+                        &i.to_string(),
+                    )
+                })
+                .collect(),
+        ));
+        let original = std::env::var_os("PB_TABLE_ORIGINAL").is_some();
+        let env = style::Env {
+            profile: style::Profile::TrueColor,
+            dark: true,
+        };
+        for i in 0..2000 {
+            table.with_highlighted_row(i % 1000);
+            std::hint::black_box(if original {
+                table.view_original(env)
+            } else {
+                table.view_in(env)
+            });
+        }
+    }
+
+    #[test]
+    fn filtered_indices_survive_navigation_and_invalidate_on_replacement() {
+        let mut table = ResultsTable::new(100, 7, DisplayMode::Utc);
+        table.filterable = true;
+        table.focused = true;
+        table.with_rows(Arc::new(
+            (0..1000).map(|i| row("", "API", &i.to_string())).collect(),
+        ));
+        table.filter.set_value("api");
+        let indices = match table.visible_rows() {
+            VisibleRows::Filtered(_, indices) => indices,
+            _ => unreachable!(),
+        };
+        for _ in 0..100 {
+            table.update(&key(KeyCode::Down));
+            match table.visible_rows() {
+                VisibleRows::Filtered(_, ref current) => assert!(Arc::ptr_eq(&indices, current)),
+                _ => unreachable!(),
+            }
+        }
+        let snapshot = table.clone();
+        table.with_rows(Arc::new(vec![row("", "other", "0")]));
+        assert!(table.visible_rows().is_empty());
+        assert_eq!(snapshot.visible_rows().len(), 1000);
+        table.filter.set_value("OTHER");
+        assert_eq!(table.visible_rows().len(), 1);
+    }
+
+    #[test]
     fn shared_rows_keep_filter_selection_and_metric_detail_local() {
         let mut s = state("up", "m", false);
         s.update(Message::Done(vector(vec![
@@ -6689,7 +7547,7 @@ mod tests {
         assert_eq!((s.table.cursor, s.table.current_page), (0, 0));
         s.table.filter.blur();
         press(&mut s, key(KeyCode::Down));
-        assert_eq!(s.table.highlighted_row().unwrap(), s.data_rows[2]);
+        assert_eq!(s.table.highlighted_row().unwrap(), &s.data_rows[2]);
         let detail = s.metric_detail(&s.table, 80, 4).unwrap();
         assert!(detail.contains("api Beta"));
         assert!(!detail.contains("API Alpha"));
@@ -6697,10 +7555,10 @@ mod tests {
         let selected = s.clone();
         s.table.filter.set_value("20");
         s.table.with_highlighted_row(0);
-        assert_eq!(s.table.highlighted_row().unwrap(), s.data_rows[1]);
+        assert_eq!(s.table.highlighted_row().unwrap(), &s.data_rows[1]);
         assert_eq!(
             selected.table.highlighted_row().unwrap(),
-            selected.data_rows[2]
+            &selected.data_rows[2]
         );
         s.table.filter.set_value("00:01:00");
         assert!(s.table.visible_rows().is_empty());
@@ -7745,6 +8603,96 @@ mod tests {
         s.view_fault
             .set(Some(super::super::editor::EditorFault::Hang));
         assert_eq!(s.take_fault(), Some(Fault::Hang));
+    }
+
+    fn chart_fixture(count: usize, span: i64, exceptional: bool) -> Arc<[ChartSeries]> {
+        (0..count)
+            .map(|i| ChartSeries {
+                label: format!("series-{i}"),
+                color: chart_series_color(i),
+                points: (0..16)
+                    .map(|j| TimePoint {
+                        time: add_nanos(fixed_now(), j * span),
+                        value: if exceptional {
+                            match j % 8 {
+                                0 => f64::NAN,
+                                1 => f64::INFINITY,
+                                2 => f64::NEG_INFINITY,
+                                3 => f64::from_bits(0x7ff0000000000002), // Prometheus stale NaN
+                                _ => (i + j as usize) as f64,
+                            }
+                        } else {
+                            (i + j as usize) as f64
+                        },
+                    })
+                    .collect(),
+            })
+            .collect::<Vec<_>>()
+            .into()
+    }
+
+    #[test]
+    fn chart_cached_dense_geometry_matches_original_styled_output() {
+        let mut s = state("up", "m", false);
+        for count in [1, 100, 1000] {
+            for span in [0, NANOS_PER_SECOND, 24 * HOUR_NANOS] {
+                for exceptional in [false, true] {
+                    let series = chart_fixture(count, span, exceptional);
+                    s.time_range.end.time = go_add(s.time_range.start.time, span * 16);
+                    for (width, height) in [(20, 8), (80, 24), (120, 40)] {
+                        for display in [DisplayMode::Local, DisplayMode::Utc] {
+                            s.time_range.display = display;
+                            for cursor in [None, Some(0), Some(7), Some(15)] {
+                                s.chart_hover = cursor.is_some();
+                                s.chart_cursor = cursor.unwrap_or(0);
+                                let actual = s.build_chart(width, height, &series).unwrap();
+                                let expected =
+                                    s.build_chart_reference(width, height, &series).unwrap();
+                                for dark in [false, true] {
+                                    let env = style::Env {
+                                        profile: style::Profile::TrueColor,
+                                        dark,
+                                    };
+                                    assert_eq!(
+                                        actual.canvas.view_in(env),
+                                        expected.canvas.view_reference(env),
+                                        "count={count}, span={span}, exceptional={exceptional}, size={width}x{height}, cursor={cursor:?}, dark={dark}"
+                                    );
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Run the same sustained chart redraws against the retained original using
+    // PB_CHART_REFERENCE=1. External perf/heaptrack can compare identical work.
+    #[test]
+    #[ignore]
+    fn chart_redraw_microbenchmark() {
+        let mut s = state("up", "m", false);
+        let series = chart_fixture(1000, NANOS_PER_SECOND, false);
+        let reference = std::env::var_os("PB_CHART_REFERENCE").is_some();
+        for cursor in 0..100 {
+            s.chart_hover = true;
+            s.chart_cursor = cursor % 16;
+            let chart = if reference {
+                Arc::new(s.build_chart_reference(120, 30, &series).unwrap())
+            } else {
+                s.build_chart(120, 30, &series).unwrap()
+            };
+            let env = style::Env {
+                profile: style::Profile::TrueColor,
+                dark: true,
+            };
+            std::hint::black_box(if reference {
+                chart.canvas.view_reference(env)
+            } else {
+                chart.canvas.view_in(env)
+            });
+        }
     }
 
     #[test]

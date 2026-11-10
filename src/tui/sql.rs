@@ -217,7 +217,7 @@ async fn drive(
     if let Some(fault) = state.take_fault() {
         return fault_end(fault).await;
     }
-    draw(session, &view);
+    draw(session, view);
     // The completion head is the only buffered message. The terminal head is
     // only peeked: it is consumed when it wins, so a later Quit/control event
     // is not accepted (nor its reader lane freed) while an earlier
@@ -267,7 +267,7 @@ async fn drive(
         if let Some(fault) = state.take_fault() {
             return fault_end(fault).await;
         }
-        draw(session, &view);
+        draw(session, view);
     }
 }
 
@@ -331,10 +331,10 @@ fn close(session: TerminalSession, frame: &Frame) -> Result<(), super::terminal:
     }
 }
 
-fn draw(session: &mut TerminalSession, frame: &Frame) {
+fn draw(session: &mut TerminalSession, frame: Frame) {
     match frame {
-        Frame::Text(text) => session.draw(text),
-        Frame::Bytes(bytes) => session.draw_bytes(bytes),
+        Frame::Text(text) => session.draw_owned(text.into_bytes()),
+        Frame::Bytes(bytes) => session.draw_owned(bytes),
     }
 }
 
@@ -1742,6 +1742,7 @@ enum Part {
 
 /// Edge strings of one lipgloss bordered cell: (top l,m,r), left, right,
 /// (bottom l,m,r).
+#[derive(Clone, Copy)]
 struct Edges {
     top: Option<(&'static str, &'static str, &'static str)>,
     left: &'static str,
@@ -1795,8 +1796,15 @@ impl Table {
             })
             .collect()
     }
+    fn visible_row_count(&self) -> usize {
+        if self.filter.value().is_empty() {
+            self.rows.len()
+        } else {
+            self.visible_rows().len()
+        }
+    }
     fn max_pages(&self) -> i64 {
-        let total = self.visible_rows().len() as i64;
+        let total = self.visible_row_count() as i64;
         if self.page_size == 0 || total == 0 {
             1
         } else {
@@ -1831,7 +1839,7 @@ impl Table {
         }
     }
     fn set_highlighted(&mut self, index: i64) {
-        let visible = self.visible_rows().len() as i64;
+        let visible = self.visible_row_count() as i64;
         self.cursor = index.min(visible - 1).max(0);
         self.page = self.expected_page(self.cursor);
     }
@@ -1879,7 +1887,23 @@ impl Table {
             self.page_first();
             return;
         }
-        let visible = self.visible_rows().len() as i64;
+        let vertical = key.is(&[
+            "down",
+            "s",
+            "up",
+            "w",
+            "shift+down",
+            "S",
+            "pgdown",
+            "shift+up",
+            "W",
+            "pgup",
+        ]);
+        let visible = if vertical {
+            self.visible_row_count() as i64
+        } else {
+            0
+        };
         if key.is(&["down", "s"]) {
             self.cursor += 1;
             if self.cursor >= visible {
@@ -1897,7 +1921,12 @@ impl Table {
         if key.is(&["shift+down", "S", "pgdown"]) && self.page_size != 0 && visible > self.page_size
         {
             self.page += 1;
-            if self.page > self.max_pages() - 1 {
+            let last_page = if visible == 0 {
+                0
+            } else {
+                (visible - 1) / self.page_size
+            };
+            if self.page > last_page {
                 self.page = 0;
             }
             self.cursor = self.page * self.page_size;
@@ -1905,7 +1934,11 @@ impl Table {
         if key.is(&["shift+up", "W", "pgup"]) && self.page_size != 0 && visible > self.page_size {
             self.page -= 1;
             if self.page < 0 {
-                self.page = self.max_pages() - 1;
+                self.page = if visible == 0 {
+                    0
+                } else {
+                    (visible - 1) / self.page_size
+                };
             }
             self.cursor = self.page * self.page_size;
         }
@@ -1930,8 +1963,7 @@ impl Table {
         }
     }
 
-    fn header_edges(&self, part: Part) -> Edges {
-        let has_rows = !self.visible_rows().is_empty();
+    fn header_edges(&self, part: Part, has_rows: bool) -> Edges {
         if self.columns.len() == 1 {
             let bottom = if has_rows {
                 (" ", "─", " ")
@@ -1996,8 +2028,205 @@ impl Table {
         }
     }
 
+    /// Assemble a horizontal band into reusable line buffers. Only styled
+    /// content needs a temporary allocation; borders append directly.
+    fn render_line_into(
+        &self,
+        lines: &mut [String; 4],
+        edges_for: impl Fn(Part) -> Edges,
+        content_for: impl Fn(&str, &str, i64, Option<i64>) -> String,
+    ) -> usize {
+        for line in lines.iter_mut() {
+            line.clear();
+        }
+        let (lines, scratch) = lines.split_at_mut(3);
+        let scratch = &mut scratch[0];
+        let mut rendered_width = |edges: &Edges, content: &str, width: usize| {
+            scratch.clear();
+            scratch.push_str(edges.left);
+            scratch.push_str(content);
+            scratch.push_str(edges.right);
+            let body = style::width(scratch);
+            if edges.top.is_some() || edges.bottom.is_some() {
+                body.max(width + 1 + usize::from(!edges.left.is_empty()))
+            } else {
+                body
+            }
+        };
+        let mut height = 0;
+        let mut total = 0i64;
+        let mut populated = false;
+        let mut append = |edges: Edges, content: &str, width: usize| {
+            let mut line = 0;
+            let mut edge = |(l, m, r): (&str, &str, &str), line: usize| {
+                lines[line].push_str(l);
+                for _ in 0..width {
+                    lines[line].push_str(m);
+                }
+                lines[line].push_str(r);
+            };
+            if let Some(top) = edges.top {
+                edge(top, line);
+                line += 1;
+            }
+            // All cells in a band share its top/bottom presence, so the
+            // legacy JoinHorizontal(Bottom) never needs vertical padding.
+            lines[line].push_str(edges.left);
+            lines[line].push_str(content);
+            lines[line].push_str(edges.right);
+            line += 1;
+            if let Some((l, m, r)) = edges.bottom {
+                lines[line].push_str(l);
+                for _ in 0..width {
+                    lines[line].push_str(m);
+                }
+                lines[line].push_str(r);
+                line += 1;
+            }
+            height = line;
+        };
+        for (index, column) in self.columns.iter().enumerate() {
+            if self.scroll > 0 && index == 0 {
+                let content = content_for("___overflow_l__", "<", 1, None);
+                let width = style::width(&content);
+                let edges = edges_for(Part::Left);
+                total += rendered_width(&edges, &content, width) as i64;
+                append(edges, &content, width);
+                populated = true;
+            }
+            if (index as i64) < self.scroll {
+                continue;
+            }
+            let part = if !populated {
+                Part::Left
+            } else if index < self.columns.len() - 1 {
+                Part::Inner
+            } else {
+                Part::Right
+            };
+            let content = content_for(&column.key, &column.title, column.width, None);
+            let width = style::width(&content);
+            let edges = edges_for(part);
+            if self.max_total_width != 0 {
+                // Measure the bordered content too: malformed ANSI can absorb
+                // an edge, and tabs can produce multiple physical lines.
+                let rendered = rendered_width(&edges, &content, width) as i64;
+                let target = if index == self.columns.len() - 1 {
+                    self.max_total_width
+                } else {
+                    self.max_total_width - 2
+                };
+                if total + rendered > target {
+                    let overflow = self.max_total_width - total - 1;
+                    let content = content_for("___overflow_r___", ">", overflow, Some(overflow));
+                    let width = style::width(&content);
+                    append(edges_for(Part::Right), &content, width);
+                    break;
+                }
+                total += rendered;
+            }
+            append(edges, &content, width);
+            populated = true;
+        }
+        height
+    }
+
+    /// table.View(). Buffers retain their capacity across the page's rows;
+    /// styles and filtered rows are resolved just once for the frame.
+    fn view(&self) -> String {
+        if self.columns.is_empty() {
+            return String::new();
+        }
+        let visible = if self.filter.value().is_empty() {
+            None
+        } else {
+            Some(self.visible_rows())
+        };
+        let total = visible.as_ref().map_or(self.rows.len(), Vec::len) as i64;
+        let start = self.page_size * self.page;
+        let end = (start + self.page_size - 1).min(total - 1);
+        let header = Style::new().fg(ad(Role::Accent)).bold(true);
+        let normal = Style::new().fg(ad(Role::Body));
+        let highlighted = normal.bg(ad(Role::SelRow)).fg(ad(Role::Accent)).bold(true);
+        let missing = normal.fg(ad(Role::Border));
+        let highlighted_missing = highlighted.fg(ad(Role::Border));
+        let parts = [Part::Left, Part::Inner, Part::Right];
+        let header_edges = parts.map(|part| self.header_edges(part, total != 0));
+        let row_edges = parts.map(|part| self.row_edges(part, false));
+        let last_edges = parts.map(|part| self.row_edges(part, true));
+        let mut lines = std::array::from_fn(|_| String::new());
+        let mut frame = String::new();
+        let height = self.render_line_into(
+            &mut lines,
+            |part| header_edges[part as usize],
+            |_, title, width, overflow| cell_content(&header, title, width, overflow),
+        );
+        for line in &lines[..height] {
+            if !frame.is_empty() {
+                frame.push('\n');
+            }
+            frame.push_str(line);
+        }
+        let mut index = start;
+        while index <= end {
+            let row = visible
+                .as_ref()
+                .map_or_else(|| &self.rows[index as usize], |rows| rows[index as usize]);
+            let selected = self.focused && index == self.cursor;
+            let (body, absent) = if selected {
+                (&highlighted, &highlighted_missing)
+            } else {
+                (&normal, &missing)
+            };
+            let edges = if index == end {
+                &last_edges
+            } else {
+                &row_edges
+            };
+            let height = self.render_line_into(
+                &mut lines,
+                |part| edges[part as usize],
+                |key, _, width, overflow| {
+                    let (style, text) = match key {
+                        "___overflow_r___" => (body, ">"),
+                        "___overflow_l__" => (body, "<"),
+                        key => match row.get(key) {
+                            Some(cell) => (body, cell.display()),
+                            None => (absent, "—"),
+                        },
+                    };
+                    cell_content(style, text, width, overflow)
+                },
+            );
+            for line in &lines[..height] {
+                frame.push('\n');
+                frame.push_str(line);
+            }
+            index += 1;
+        }
+        // JoinVertical(Left) pads to the widest physical line when there
+        // are rows. Usually every line already has the same width.
+        if start <= end {
+            let widths: Vec<_> = frame.split('\n').map(style::width).collect();
+            let max = widths.iter().copied().max().unwrap_or(0);
+            if widths.iter().any(|&w| w != max) {
+                let mut padded = String::with_capacity(frame.len());
+                for (index, (line, width)) in frame.split('\n').zip(widths).enumerate() {
+                    if index != 0 {
+                        padded.push('\n');
+                    }
+                    padded.push_str(line);
+                    padded.extend(std::iter::repeat_n(' ', max - width));
+                }
+                return padded;
+            }
+        }
+        frame
+    }
+
     /// Render one bordered cell block (lines) around styled `content`.
-    fn block(edges: &Edges, content: &str) -> Vec<String> {
+    #[cfg(test)]
+    fn legacy_block(edges: &Edges, content: &str) -> Vec<String> {
         let width = style::width(content);
         let mut lines = Vec::new();
         let edge = |(l, m, r): (&str, &str, &str)| format!("{l}{}{r}", m.repeat(width));
@@ -2013,7 +2242,8 @@ impl Table {
 
     /// Shared column walk of renderHeaders / renderRowData: the left
     /// overflow marker, scrolled-out columns and right overflow cut.
-    fn render_line(
+    #[cfg(test)]
+    fn legacy_render_line(
         &self,
         edges_for: impl Fn(Part) -> Edges,
         content_for: impl Fn(&Column, Option<i64>) -> String,
@@ -2029,7 +2259,7 @@ impl Table {
                     width: 1,
                     filterable: false,
                 };
-                let block = Self::block(&edges_for(Part::Left), &content_for(&marker, None));
+                let block = Self::legacy_block(&edges_for(Part::Left), &content_for(&marker, None));
                 total += block.iter().map(|l| style::width(l)).max().unwrap_or(0) as i64;
                 blocks.push(block);
             }
@@ -2043,7 +2273,7 @@ impl Table {
             } else {
                 Part::Right
             };
-            let block = Self::block(&edges_for(part), &content_for(column, None));
+            let block = Self::legacy_block(&edges_for(part), &content_for(column, None));
             if self.max_total_width != 0 {
                 let rendered = block.iter().map(|l| style::width(l)).max().unwrap_or(0) as i64;
                 let target = if index == count - 1 {
@@ -2059,7 +2289,7 @@ impl Table {
                         width: overflow,
                         filterable: false,
                     };
-                    blocks.push(Self::block(
+                    blocks.push(Self::legacy_block(
                         &edges_for(Part::Right),
                         &content_for(&marker, Some(overflow)),
                     ));
@@ -2089,18 +2319,20 @@ impl Table {
             .join("\n")
     }
 
-    fn render_headers(&self) -> String {
-        self.render_line(
-            |part| self.header_edges(part),
+    #[cfg(test)]
+    fn legacy_render_headers(&self) -> String {
+        self.legacy_render_line(
+            |part| self.header_edges(part, !self.visible_rows().is_empty()),
             |column, overflow| {
                 let style = Style::new().fg(ad(Role::Accent)).bold(true);
-                cell_content(&style, &column.title, column.width, overflow)
+                legacy_cell_content(&style, &column.title, column.width, overflow)
             },
         )
     }
 
-    fn render_row(&self, row: &Row, highlighted: bool, last: bool) -> String {
-        self.render_line(
+    #[cfg(test)]
+    fn legacy_render_row(&self, row: &Row, highlighted: bool, last: bool) -> String {
+        self.legacy_render_line(
             |part| self.row_edges(part, last),
             |column, overflow| {
                 let mut style = Style::new().fg(ad(Role::Body));
@@ -2119,13 +2351,14 @@ impl Table {
                         }
                     },
                 };
-                cell_content(&style, &text, column.width, overflow)
+                legacy_cell_content(&style, &text, column.width, overflow)
             },
         )
     }
 
     /// table.View().
-    fn view(&self) -> String {
+    #[cfg(test)]
+    fn legacy_view(&self) -> String {
         if self.columns.is_empty() {
             return String::new();
         }
@@ -2133,12 +2366,12 @@ impl Table {
         let total = visible.len() as i64;
         let start = self.page_size * self.page;
         let end = (start + self.page_size - 1).min(total - 1);
-        let mut parts = vec![self.render_headers()];
+        let mut parts = vec![self.legacy_render_headers()];
         let mut index = start;
         while index <= end {
             let row = visible[index as usize];
             let highlighted = self.focused && index == self.cursor;
-            parts.push(self.render_row(row, highlighted, index == end));
+            parts.push(self.legacy_render_row(row, highlighted, index == end));
             index += 1;
         }
         style::join_vertical(0.0, &parts.iter().map(String::as_str).collect::<Vec<_>>())
@@ -2148,6 +2381,32 @@ impl Table {
 /// renderRowColumnData content: limitStr then the column's Width; overflow
 /// markers right-align inside their border width.
 fn cell_content(style: &Style, text: &str, width: i64, overflow: Option<i64>) -> String {
+    let limited = |width| {
+        if !text.contains('\n') && reflow_width(text) as i64 <= width {
+            std::borrow::Cow::Borrowed(text)
+        } else {
+            std::borrow::Cow::Owned(limit_str(text, width))
+        }
+    };
+    match overflow {
+        Some(w) if w > 0 => (*style)
+            .width(w as usize)
+            .align(Align::Right)
+            .render(&limited(w)),
+        Some(0) => style.render(""),
+        Some(_) => style.render(text),
+        None if text == "<" && width == 1 => style.render("<"),
+        None => {
+            if width <= 0 {
+                return style.render("");
+            }
+            (*style).width(width as usize).render(&limited(width))
+        }
+    }
+}
+
+#[cfg(test)]
+fn legacy_cell_content(style: &Style, text: &str, width: i64, overflow: Option<i64>) -> String {
     match overflow {
         Some(w) if w > 0 => (*style)
             .width(w as usize)
@@ -2200,6 +2459,9 @@ fn is_reflow_terminator(c: char) -> bool {
 /// reflow ansi.PrintableRuneWidth: go-runewidth widths; from ESC up to a
 /// terminator nothing counts.
 pub(crate) fn reflow_width(text: &str) -> usize {
+    if text.bytes().all(|b| matches!(b, 0x20..=0x7e)) {
+        return text.len();
+    }
     let mut width = 0;
     let mut in_sequence = false;
     for c in text.chars() {
@@ -2231,6 +2493,15 @@ pub(crate) fn reflow_truncate(text: &str, width: usize, tail: &str) -> String {
         return tail.to_owned();
     }
     let width = width - tail_width;
+    if text.bytes().all(|b| matches!(b, 0x20..=0x7e)) {
+        if text.len() <= width {
+            return text.to_owned();
+        }
+        let mut out = String::with_capacity(width + tail.len());
+        out.push_str(&text[..width]);
+        out.push_str(tail);
+        return out;
+    }
     let mut out = String::new();
     // truncate.Writer state.
     let mut current = 0;
@@ -2287,7 +2558,12 @@ fn limit_str(text: &str, max: i64) -> String {
     }
     let text = match text.find('\n') {
         Some(i) => format!("{}…", &text[..i]),
-        None => text.to_owned(),
+        None => {
+            if max > 0 && reflow_width(text) as i64 > max {
+                return reflow_truncate(text, max as usize, "…");
+            }
+            return text.to_owned();
+        }
     };
     if max > 0 && reflow_width(&text) as i64 > max {
         return reflow_truncate(&text, max as usize, "…");
@@ -3013,8 +3289,27 @@ impl QueryState {
             return Vec::new();
         }
         self.global_offset = next;
+        let previous_start = self.viewport_start;
         self.clamp_viewport();
-        self.refresh_visible_rows();
+        if self.viewport_start != previous_start {
+            self.refresh_visible_rows();
+        } else {
+            // Preserve refresh_visible_rows' LRU touches without cloning or
+            // formatting records when the displayed viewport is unchanged.
+            for offset in 0..self.data_rows.len() as i64 {
+                let absolute = self.viewport_start + offset;
+                let window_index = absolute / self.window_size;
+                let local = (absolute % self.window_size) as usize;
+                if let Some(window) = self.windows.get_mut(&window_index)
+                    && local < window.data.len()
+                {
+                    self.cache_clock += 1;
+                    window.last_used = self.cache_clock;
+                }
+            }
+            self.table
+                .set_highlighted(self.global_offset - self.viewport_start);
+        }
         let mut effects: Vec<Effect> = self.ensure_current_window().into_iter().collect();
         effects.extend(self.prefetch_if_needed());
         effects
@@ -3688,6 +3983,47 @@ impl QueryState {
 
     /// renderSQLControlsBox: TIME, DATASET, COLUMNS sections.
     fn controls_box(&self, dataset: &DatasetValue, width: i64, height: i64) -> Block {
+        // The open drawer has filtering, scrolling and a cursor footer. Keep
+        // that path uncached rather than retaining the column collection.
+        let DatasetValue::Text(dataset_text) = dataset else {
+            return self.controls_box_uncached(dataset, width, height);
+        };
+        if self.columns_drawer_open || width < SQL_CONTROLS_MIN_WIDTH || dataset_text.len() > 8192 {
+            return self.controls_box_uncached(dataset, width, height);
+        }
+        let utc = self.time.display_utc();
+        let key = ControlsKey {
+            start: format_control_time(self.time.start(), utc),
+            end: format_control_time(self.time.end(), utc),
+            utc,
+            dataset: dataset_text.clone(),
+            columns: self.filtered_columns.len(),
+            focus: self.current_focus(),
+            width,
+            height,
+            env: style::Env::process(),
+            palette: style::active(),
+        };
+        if let Some(text) = CONTROLS_CACHE.with(|cache| {
+            cache
+                .borrow()
+                .as_ref()
+                .filter(|(saved, _)| *saved == key)
+                .map(|(_, text)| text.clone())
+        }) {
+            return Block::Text(text);
+        }
+        let rendered = self.controls_box_uncached(dataset, width, height);
+        if let Block::Text(text) = &rendered
+            && text.len() <= 16384
+            && self.render_panics.0.borrow().is_none()
+        {
+            CONTROLS_CACHE.with(|cache| *cache.borrow_mut() = Some((key, text.clone())));
+        }
+        rendered
+    }
+
+    fn controls_box_uncached(&self, dataset: &DatasetValue, width: i64, height: i64) -> Block {
         let focus = self.current_focus();
         let inner_w = (width - 2).max(4);
         let rail = Style::new().bg(act(Role::Active)).render(" ");
@@ -4200,6 +4536,25 @@ pub(crate) enum Frame {
     Bytes(Vec<u8>),
 }
 
+// Inputs read by the closed controls drawer. Active palette and process
+// environment are immutable in production, but explicit keys document them.
+#[derive(PartialEq)]
+struct ControlsKey {
+    start: String,
+    end: String,
+    utc: bool,
+    dataset: String,
+    columns: usize,
+    focus: Focus,
+    width: i64,
+    height: i64,
+    env: style::Env,
+    palette: &'static style::Palette,
+}
+thread_local! {
+    static CONTROLS_CACHE: std::cell::RefCell<Option<(ControlsKey, String)>> = const { std::cell::RefCell::new(None) };
+}
+
 /// A rendered block that may carry raw bytes.
 enum Block {
     Text(String),
@@ -4252,6 +4607,11 @@ fn pane_body_lines_bytes(body: &[u8], width: i64, height: i64, border: &Style) -
 
 /// paneBodyLines.
 fn pane_body_lines(body: &str, width: i64, height: i64, border: &Style) -> Vec<String> {
+    super::chrome::pane_body_lines(body, width, height, border)
+}
+
+#[cfg(test)]
+fn pane_body_lines_original(body: &str, width: i64, height: i64, border: &Style) -> Vec<String> {
     let inner_w = (width - 2).max(1);
     let text_w = (inner_w - 2).max(1);
     let mut lines: Vec<String> = body
@@ -4282,6 +4642,110 @@ fn pane_body_lines(body: &str, width: i64, height: i64, border: &Style) -> Vec<S
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    #[ignore = "opt-in chrome allocation probe"]
+    fn pane_chrome_probe() {
+        let original = std::env::var_os("PB_CHROME_ORIGINAL").is_some();
+        let border = Style::new().fg(Color::hex("#555555"));
+        let body = "  FROM\n  09 Nov 2026, 10:00 | UTC\n  TO\n  09 Nov 2026, 11:00 | UTC\n\n  select-dataset";
+        for _ in 0..20_000 {
+            let lines = if original {
+                pane_body_lines_original(body, 34, 10, &border)
+            } else {
+                pane_body_lines(body, 34, 10, &border)
+            };
+            std::hint::black_box(lines);
+        }
+    }
+
+    #[test]
+    #[ignore = "opt-in controls allocation probe"]
+    fn controls_chrome_probe() {
+        let original = std::env::var_os("PB_CHROME_ORIGINAL").is_some();
+        let s = state("select * from logs");
+        let dataset = DatasetValue::Text("logs".to_owned());
+        for _ in 0..20_000 {
+            let block = if original {
+                s.controls_box_uncached(&dataset, 34, 12)
+            } else {
+                s.controls_box(&dataset, 34, 12)
+            };
+            std::hint::black_box(block);
+        }
+    }
+
+    #[test]
+    fn controls_chrome_matches_uncached_transitions() {
+        let mut s = state("select * from logs");
+        for width in [12, 34, 37, 100] {
+            for height in [0, 12, 40] {
+                for focus in 0..5 {
+                    s.focused = focus;
+                    for open in [false, true] {
+                        s.columns_drawer_open = open;
+                        for dataset in ["logs", "new dataset", "中", ""] {
+                            s.filtered_columns = vec![dataset.to_owned(); focus];
+                            let dataset = DatasetValue::Text(dataset.to_owned());
+                            let expected = s.controls_box_uncached(&dataset, width, height);
+                            for _ in 0..2 {
+                                match (s.controls_box(&dataset, width, height), &expected) {
+                                    (Block::Text(actual), Block::Text(expected)) => {
+                                        assert_eq!(&actual, expected)
+                                    }
+                                    _ => panic!("text dataset must produce text controls"),
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // A wide-rune truncation fault must be reported on every render,
+        // including when the caller consumed the preceding fault.
+        s.columns_drawer_open = false;
+        let dataset = DatasetValue::Text("中".repeat(40));
+        for _ in 0..2 {
+            s.controls_box(&dataset, 70, 12);
+            assert!(s.render_panics.take().is_some());
+        }
+    }
+
+    #[test]
+    fn pane_chrome_matches_original_across_transitions() {
+        let bodies = [
+            "",
+            "query",
+            "SELECT * FROM café\nWHERE x > 2",
+            "\x1b[31merror\x1b[0m",
+            "| fetching...",
+            "/ fetching...",
+            "status: 42 rows",
+            "中🙂e\u{301}\tvalue",
+            "long line with many many characters\n\nlast\n",
+        ];
+        for palette in [&style::DARK, &style::LIGHT] {
+            for focused in [false, true] {
+                let border = Style::new().fg(Color::of(
+                    palette,
+                    if focused {
+                        Role::BorderHi
+                    } else {
+                        Role::Border
+                    },
+                ));
+                for width in [0, 1, 4, 12, 34, 120] {
+                    for height in [0, 1, 3, 12] {
+                        for body in bodies {
+                            let expected = pane_body_lines_original(body, width, height, &border);
+                            assert_eq!(pane_body_lines(body, width, height, &border), expected);
+                            assert_eq!(pane_body_lines(body, width, height, &border), expected);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     fn key(code: KeyCode) -> Key {
         Key {
@@ -4351,6 +4815,162 @@ mod tests {
             }),
             fixed_now(),
         )
+    }
+
+    fn assembly_fixture() -> Table {
+        let mut table = Table::new(6, 80);
+        table.set_columns(
+            (0..5)
+                .map(|i| Column {
+                    key: format!("c{i}"),
+                    title: ["ID", "界 wide", "a\nb", "\x1b[31mred\x1b[0m", "LAST"][i].into(),
+                    width: [3, 9, 0, 7, 5][i],
+                    filterable: true,
+                })
+                .collect(),
+        );
+        table.set_rows(
+            (0..13)
+                .map(|i| {
+                    (0..5)
+                        .filter(|c| (i + c) % 4 != 0)
+                        .map(|c| {
+                            (
+                                format!("c{c}"),
+                                Cell::Value(
+                                    [
+                                        "",
+                                        "hello",
+                                        "界界 long text",
+                                        "a\nb",
+                                        "\x1b[32mgreen\x1b[0m",
+                                        "e\u{301}",
+                                        "a\tb",
+                                        "\x1b[",
+                                        "\x1b]8;;https://example.test\x07link",
+                                        "a\r\nb",
+                                    ][i % 10]
+                                        .into(),
+                                ),
+                            )
+                        })
+                        .collect()
+                })
+                .collect(),
+        );
+        table
+    }
+
+    #[test]
+    fn table_assembly_matches_legacy_across_navigation_and_resize() {
+        let mut table = assembly_fixture();
+        for columns in [0, 1, 2, 5] {
+            table.columns = assembly_fixture().columns[..columns].to_vec();
+            for width in [-1, 0, 1, 2, 3, 7, 12, 24, 40, 80] {
+                table.set_max_total_width(width);
+                for scroll in 0..=columns as i64 {
+                    table.scroll = scroll;
+                    for (page_size, page, cursor, focused, filter) in [
+                        (6, 0, 0, true, ""),
+                        (6, 0, 3, true, ""),
+                        (6, 1, 7, false, ""),
+                        (6, 2, 12, true, ""),
+                        (1, 4, 4, true, ""),
+                        (0, 0, 0, true, ""),
+                        (6, 0, 0, true, "hello"),
+                        (6, 0, 0, false, "no matches"),
+                    ] {
+                        table.page_size = page_size;
+                        table.page = page;
+                        table.cursor = cursor;
+                        table.focused = focused;
+                        table.filter.set_value(filter);
+                        assert_eq!(
+                            table.view(),
+                            table.legacy_view(),
+                            "columns={columns} width={width} scroll={scroll} page={page} size={page_size} cursor={cursor} focused={focused} filter={filter:?}"
+                        );
+                    }
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn table_assembly_matches_legacy_in_light_and_dark_processes() {
+        for (theme, background) in [("dark", "0"), ("light", "15")] {
+            let output = std::process::Command::new(std::env::current_exe().unwrap())
+                .args([
+                    "--exact",
+                    "tui::sql::tests::table_assembly_matches_legacy_across_navigation_and_resize",
+                ])
+                .env("PB_THEME", theme)
+                .env("COLORFGBG", format!("7;{background}"))
+                .env("CLICOLOR_FORCE", "1")
+                .env_remove("NO_COLOR")
+                .output()
+                .unwrap();
+            assert!(
+                output.status.success(),
+                "{theme}: {}{}",
+                String::from_utf8_lossy(&output.stdout),
+                String::from_utf8_lossy(&output.stderr)
+            );
+        }
+    }
+
+    #[test]
+    fn cursor_only_move_matches_full_viewport_refresh() {
+        let mut optimized = state("select * from logs limit 700");
+        let first = windows(&optimized.init());
+        complete(&mut optimized, &first[0], 500);
+        let mut reference = state("select * from logs limit 700");
+        let first = windows(&reference.init());
+        complete(&mut reference, &first[0], 500);
+        for delta in [1, 1, -1, 5, 30, -2, -25, 480, -1, -1, 1] {
+            let total = reference.current_total();
+            let next = (reference.global_offset + delta).clamp(0, total - 1);
+            if next == reference.global_offset {
+                assert!(optimized.move_cursor(delta).is_empty());
+                continue;
+            }
+            reference.global_offset = next;
+            reference.clamp_viewport();
+            reference.refresh_visible_rows();
+            let mut effects: Vec<_> = reference.ensure_current_window().into_iter().collect();
+            effects.extend(reference.prefetch_if_needed());
+            assert_eq!(optimized.move_cursor(delta), effects);
+            assert_eq!(optimized.table.view(), reference.table.legacy_view());
+            assert_eq!(optimized.data_rows, reference.data_rows);
+            assert_eq!(optimized.cache_clock, reference.cache_clock);
+            assert_eq!(optimized.viewport_start, reference.viewport_start);
+            for (index, window) in &reference.windows {
+                assert_eq!(optimized.windows[index].last_used, window.last_used);
+            }
+        }
+    }
+
+    // Run each renderer in a separate process for perf/heaptrack comparison.
+    #[test]
+    #[ignore = "focused SQL assembly performance probe"]
+    fn table_assembly_performance_probe() {
+        let mut table = assembly_fixture();
+        table.columns[2].width = 8;
+        table.page_size = 13;
+        table.focused = true;
+        let legacy = std::env::var_os("PB_SQL_LEGACY").is_some();
+        let iterations = std::env::var("PB_SQL_ITERATIONS")
+            .ok()
+            .and_then(|s| s.parse::<usize>().ok())
+            .unwrap_or(10_000);
+        for i in 0..iterations {
+            table.cursor = (i % 13) as i64;
+            std::hint::black_box(if legacy {
+                table.legacy_view()
+            } else {
+                table.view()
+            });
+        }
     }
 
     #[test]
@@ -4789,7 +5409,7 @@ mod tests {
             );
             assert_eq!(s.table.columns[0].title, expected, "header for {field:?}");
             assert!(
-                s.table.render_headers().contains(expected),
+                s.table.view().contains(expected),
                 "rendered header for {field:?}"
             );
             assert_eq!(
@@ -5336,4 +5956,123 @@ mod tests {
             "\u{fffd}a".as_bytes()
         );
     }
+}
+#[cfg(test)]
+fn original_reflow_width(text: &str) -> usize {
+    let mut width = 0;
+    let mut in_sequence = false;
+    for c in text.chars() {
+        if c == '\x1b' {
+            in_sequence = true;
+        } else if in_sequence {
+            if is_reflow_terminator(c) {
+                in_sequence = false;
+            }
+        } else {
+            width += style::bubbles_rune_width(c);
+        }
+    }
+    width
+}
+#[cfg(test)]
+fn original_reflow_truncate(text: &str, width: usize, tail: &str) -> String {
+    let tail_width = reflow_width(tail);
+    if width < tail_width {
+        return tail.to_owned();
+    }
+    let width = width - tail_width;
+    let mut out = String::new();
+    // truncate.Writer state.
+    let mut current = 0;
+    let mut in_sequence = false;
+    // ansi.Writer state.
+    let mut writer_in_sequence = false;
+    let mut sequence = String::new();
+    // Only whether a non-reset SGR remains active affects the trailing reset;
+    // retain no redundant history of every prior escape sequence.
+    let mut open_style = false;
+    for c in text.chars() {
+        if c == '\x1b' {
+            in_sequence = true;
+        } else if in_sequence {
+            if is_reflow_terminator(c) {
+                in_sequence = false;
+            }
+        } else {
+            current += style::bubbles_rune_width(c);
+        }
+        if current > width {
+            out.push_str(tail);
+            if open_style {
+                out.push_str("\x1b[0m");
+            }
+            return out;
+        }
+        if c == '\x1b' {
+            writer_in_sequence = true;
+            sequence.push(c);
+        } else if writer_in_sequence {
+            sequence.push(c);
+            if is_reflow_terminator(c) {
+                writer_in_sequence = false;
+                if sequence.ends_with("[0m") {
+                    open_style = false;
+                } else if c == 'm' {
+                    open_style = true;
+                }
+                out.push_str(&sequence);
+                sequence.clear();
+            }
+        } else {
+            out.push(c);
+        }
+    }
+    out
+}
+#[cfg(test)]
+mod reflow_differential_tests {
+    use super::*;
+    #[test]
+    fn ascii_and_unicode_match_original() {
+        let mut inputs = vec![
+            "".to_owned(),
+            "abc 123".to_owned(),
+            "界e\u{301}👩‍💻".to_owned(),
+            "\x1b[31mred\x1b[0m".to_owned(),
+            "a\x1b[unfinished".to_owned(),
+        ];
+        for c in 0..=255 {
+            inputs.push(format!("a{}bc", char::from_u32(c).unwrap()));
+        }
+        for text in inputs {
+            assert_eq!(reflow_width(&text), original_reflow_width(&text));
+            for max in -1..10 {
+                assert_eq!(limit_str(&text, max), original_limit_str(&text, max));
+            }
+            for width in 0..10 {
+                for tail in ["", "…", "abc", "\x1b[31m~"] {
+                    assert_eq!(
+                        reflow_truncate(&text, width, tail),
+                        original_reflow_truncate(&text, width, tail),
+                        "{text:?} {width} {tail:?}"
+                    );
+                }
+            }
+        }
+    }
+}
+
+#[cfg(test)]
+fn original_limit_str(text: &str, max: i64) -> String {
+    if max == 0 {
+        return String::new();
+    }
+    let text = match text.find('\n') {
+        Some(i) => format!("{}…", &text[..i]),
+        None => text.to_owned(),
+    };
+    if max > 0 && reflow_width(&text) as i64 > max {
+        return reflow_truncate(&text, max as usize, "…");
+    }
+    text
 }

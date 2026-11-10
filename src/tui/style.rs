@@ -29,7 +29,9 @@
 //! generated tables. Full upstream copyright and license notices, exact
 //! versions and fixture provenance: docs/evidence/phase7/style-notices.txt.
 
+use std::cell::RefCell;
 use std::collections::HashMap;
+use std::rc::Rc;
 use std::sync::{Mutex, OnceLock};
 
 pub(crate) use crate::metrics::output::style::Profile;
@@ -252,7 +254,7 @@ fn go_lower(s: &str) -> String {
 // ── Colors (lipgloss TerminalColor → termenv) ───────────────────────────────
 
 /// A lipgloss color.
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash)]
 pub(crate) enum Color {
     /// lipgloss.NoColor / unset.
     #[default]
@@ -803,6 +805,42 @@ pub(crate) struct Style {
     tab_width: Option<isize>,
 }
 
+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
+struct SgrKey {
+    flags: u16,
+    fg: Color,
+    bg: Color,
+    profile: u8,
+    dark: bool,
+}
+
+struct RenderSgr {
+    text: String,
+    space: String,
+    whitespace: Vec<String>,
+}
+
+thread_local! {
+    // Bound retained chart colors; thread-local storage avoids a lock per cell.
+    static RENDER_SGR: RefCell<HashMap<SgrKey, Rc<RenderSgr>>> = RefCell::new(HashMap::new());
+}
+
+fn sgr_prefix(styles: &[String], env: Env) -> String {
+    if env.profile == Profile::Ascii || styles.is_empty() {
+        String::new()
+    } else {
+        format!("\x1b[{}m", styles.join(";"))
+    }
+}
+
+fn append_styled(out: &mut Vec<u8>, prefix: &str, text: &[u8]) {
+    out.extend_from_slice(prefix.as_bytes());
+    out.extend_from_slice(text);
+    if !prefix.is_empty() {
+        out.extend_from_slice(b"\x1b[0m");
+    }
+}
+
 /// lipgloss whichSides*: 1 → all, 2 → vertical/horizontal, 3 → top,
 /// horizontal, bottom, 4 → top/right/bottom/left; other counts are ignored.
 fn which_sides<T: Copy>(values: &[T]) -> Option<[T; 4]> {
@@ -1055,7 +1093,11 @@ impl Style {
 
     /// Style.Render for an explicit renderer.
     pub(crate) fn render_in(&self, text: &str, env: Env) -> String {
-        String::from_utf8_lossy(&self.render_impl(text.as_bytes(), env, true)).into_owned()
+        let bytes = self.render_impl(text.as_bytes(), env, true);
+        match String::from_utf8(bytes) {
+            Ok(text) => text,
+            Err(error) => String::from_utf8_lossy(error.as_bytes()).into_owned(),
+        }
     }
 
     /// Style.Render preserving Go string bytes through layout and emission.
@@ -1069,6 +1111,257 @@ impl Style {
     }
 
     fn render_impl(&self, text: &[u8], env: Env, string_contract: bool) -> Vec<u8> {
+        if self.props == 0 {
+            return self.convert_tabs_bytes(text);
+        }
+        let underline_spaces = self.underline_spaces.unwrap_or(self.underline);
+        let strikethrough_spaces = self.strikethrough_spaces.unwrap_or(self.strikethrough);
+        let style_whitespace = self.reverse;
+        // lipgloss: (u && !us) || (s && !ss) || us || ss, which reduces to:
+        let use_space_styler =
+            self.underline || underline_spaces || self.strikethrough || strikethrough_spaces;
+        let color_whitespace = self.color_whitespace.unwrap_or(true);
+
+        let sgr = self.render_sgr(env);
+
+        // Most table cells have no layout. Emit directly from the borrowed
+        // payload, preserving the general path for newlines and rune styling.
+        if !use_space_styler
+            && self.width == 0
+            && self.height == 0
+            && self.max_width == 0
+            && self.max_height == 0
+            && (self.inline
+                || (self.padding == [0; 4]
+                    && self.margin == [0; 4]
+                    && (self.border == Border::NONE || !self.sides_on().into_iter().any(|on| on))))
+            && !text.iter().any(|b| matches!(b, b'\t' | b'\r' | b'\n'))
+        {
+            let mut out = Vec::with_capacity(text.len() + sgr.text.len() + 4);
+            append_styled(&mut out, &sgr.text, text);
+            return out;
+        }
+
+        let mut str = replace_bytes(&self.convert_tabs_bytes(text), b"\r\n", b"\n");
+        if self.inline {
+            str.retain(|b| *b != b'\n');
+        }
+        let [pad_top, pad_right, pad_bottom, pad_left] = self.padding;
+        if !self.inline && self.width > 0 {
+            let wrap_at = self.width as isize - pad_left as isize - pad_right as isize;
+            if wrap_at >= 1 {
+                // Tab/newline replacement preserves valid UTF-8 for the
+                // string facade. Keep its established lossy boundary after
+                // wrapping; byte callers retain Go's raw output instead.
+                str = if string_contract {
+                    let text = std::str::from_utf8(&str)
+                        .expect("string renderer input remains valid UTF-8 before wrapping");
+                    wrap(text, wrap_at as usize, "").into_bytes()
+                } else {
+                    wrap_bytes(&str, wrap_at as usize, b"")
+                };
+            }
+        }
+
+        // Core text.
+        let mut core = Vec::with_capacity(str.len());
+        for (index, line) in str.split(|b| *b == b'\n').enumerate() {
+            if index != 0 {
+                core.push(b'\n');
+            }
+            if use_space_styler {
+                let mut buf = [0u8; 4];
+                for (_, c) in go_runes(line) {
+                    let piece = c.encode_utf8(&mut buf);
+                    if c.is_whitespace() {
+                        append_styled(&mut core, &sgr.space, piece.as_bytes());
+                    } else {
+                        append_styled(&mut core, &sgr.text, piece.as_bytes());
+                    }
+                }
+            } else {
+                append_styled(&mut core, &sgr.text, line);
+            }
+        }
+        str = core;
+
+        let whitespace =
+            (color_whitespace || style_whitespace).then_some(sgr.whitespace.as_slice());
+        if !self.inline {
+            if pad_left > 0 {
+                str = pad_bytes(&str, pad_left, true, whitespace, env);
+            }
+            if pad_right > 0 {
+                str = pad_bytes(&str, pad_right, false, whitespace, env);
+            }
+            if pad_top > 0 {
+                str.splice(..0, std::iter::repeat_n(b'\n', pad_top));
+            }
+            if pad_bottom > 0 {
+                str.extend(std::iter::repeat_n(b'\n', pad_bottom));
+            }
+        }
+
+        if self.height > 0 {
+            str = align_vertical_bytes(&str, self.align_v, self.height);
+        }
+
+        let lines = str.iter().filter(|b| **b == b'\n').count();
+        if !(lines == 0 && self.width == 0) {
+            str = align_horizontal_bytes(&str, self.align_h, self.width, whitespace, env);
+        }
+
+        if !self.inline {
+            if self.border != Border::NONE && self.sides_on().into_iter().any(|on| on) {
+                str = self.apply_border_bytes(&str, env);
+            }
+            if self.margin != [0; 4] {
+                str = self.apply_margins_bytes(&str, env);
+            }
+        }
+
+        if self.max_width > 0 {
+            str = str
+                .split(|b| *b == b'\n')
+                .map(|line| truncate_bytes(line, self.max_width, b""))
+                .collect::<Vec<_>>()
+                .join(&b'\n');
+        }
+        if self.max_height > 0 {
+            let lines: Vec<&[u8]> = str.split(|b| *b == b'\n').collect();
+            let height = self.max_height.min(lines.len());
+            str = lines[..height].join(&b'\n');
+        }
+        str
+    }
+
+    fn render_sgr(&self, env: Env) -> Rc<RenderSgr> {
+        let underline_spaces = self.underline_spaces.unwrap_or(self.underline);
+        let strikethrough_spaces = self.strikethrough_spaces.unwrap_or(self.strikethrough);
+        let style_whitespace = self.reverse;
+        let use_space_styler =
+            self.underline || underline_spaces || self.strikethrough || strikethrough_spaces;
+        let color_whitespace = self.color_whitespace.unwrap_or(true);
+        let flags = [
+            self.bold,
+            self.italic,
+            self.underline,
+            self.reverse,
+            self.blink,
+            self.faint,
+            self.strikethrough,
+            underline_spaces,
+            strikethrough_spaces,
+            color_whitespace,
+        ]
+        .into_iter()
+        .enumerate()
+        .fold(0, |flags, (i, on)| flags | (u16::from(on) << i));
+        let key = SgrKey {
+            flags,
+            fg: self.fg,
+            bg: self.bg,
+            profile: env.profile as u8,
+            dark: env.dark,
+        };
+        RENDER_SGR.with(|cache| {
+            if let Some(hit) = cache.borrow().get(&key) {
+                return Rc::clone(hit);
+            }
+            let value = Rc::new(self.prepare_sgr(
+                env,
+                underline_spaces,
+                strikethrough_spaces,
+                style_whitespace,
+                use_space_styler,
+                color_whitespace,
+            ));
+            let mut cache = cache.borrow_mut();
+            if cache.len() >= 256 {
+                cache.clear();
+            }
+            cache.insert(key, Rc::clone(&value));
+            value
+        })
+    }
+
+    fn prepare_sgr(
+        &self,
+        env: Env,
+        underline_spaces: bool,
+        strikethrough_spaces: bool,
+        style_whitespace: bool,
+        use_space_styler: bool,
+        color_whitespace: bool,
+    ) -> RenderSgr {
+        let mut te: Vec<String> = Vec::new();
+        let mut te_space: Vec<String> = Vec::new();
+        let mut te_whitespace: Vec<String> = Vec::new();
+        let attr = |list: &mut Vec<String>, seq: &str| list.push(seq.to_owned());
+        if self.bold {
+            attr(&mut te, "1");
+        }
+        if self.italic {
+            attr(&mut te, "3");
+        }
+        if self.underline {
+            attr(&mut te, "4");
+        }
+        if self.reverse {
+            attr(&mut te_whitespace, "7");
+            attr(&mut te, "7");
+        }
+        if self.blink {
+            attr(&mut te, "5");
+        }
+        if self.faint {
+            attr(&mut te, "2");
+        }
+        if self.fg != Color::None
+            && let Some(seq) = self.fg.sequence(false, env)
+        {
+            te.push(seq.clone());
+            if style_whitespace {
+                te_whitespace.push(seq.clone());
+            }
+            if use_space_styler {
+                te_space.push(seq);
+            }
+        }
+        if self.bg != Color::None
+            && let Some(seq) = self.bg.sequence(true, env)
+        {
+            te.push(seq.clone());
+            if color_whitespace {
+                te_whitespace.push(seq.clone());
+            }
+            if use_space_styler {
+                te_space.push(seq);
+            }
+        }
+        // lipgloss appends underline a second time here.
+        if self.underline {
+            attr(&mut te, "4");
+        }
+        if self.strikethrough {
+            attr(&mut te, "9");
+        }
+        if underline_spaces {
+            attr(&mut te_space, "4");
+        }
+        if strikethrough_spaces {
+            attr(&mut te_space, "9");
+        }
+
+        RenderSgr {
+            text: sgr_prefix(&te, env),
+            space: sgr_prefix(&te_space, env),
+            whitespace: te_whitespace,
+        }
+    }
+
+    #[cfg(test)]
+    fn render_impl_reference(&self, text: &[u8], env: Env, string_contract: bool) -> Vec<u8> {
         if self.props == 0 {
             return self.convert_tabs_bytes(text);
         }
@@ -1228,6 +1521,9 @@ impl Style {
     }
 
     fn convert_tabs_bytes(&self, text: &[u8]) -> Vec<u8> {
+        if !text.contains(&b'\t') {
+            return text.to_vec();
+        }
         match self.tab_width.unwrap_or(4) {
             -1 => text.to_vec(),
             n => replace_bytes(text, b"\t", &vec![b' '; n.max(0) as usize]),
@@ -1420,7 +1716,21 @@ fn pad_bytes(str: &[u8], n: usize, left: bool, style: Option<&[String]>, env: En
 /// lipgloss getLines: lines and the widest ansi.StringWidth.
 fn get_lines(s: &str) -> (Vec<&str>, usize) {
     let lines: Vec<&str> = s.split('\n').collect();
-    let widest = get_lines_bytes(s.as_bytes()).1;
+    let widest = lines.iter().map(|line| width(line)).max().unwrap_or(0);
+    (lines, widest)
+}
+
+// Keep each measurement beside its borrowed line for layout reuse.
+fn measured_lines_bytes(s: &[u8]) -> (Vec<(&[u8], usize)>, usize) {
+    let mut widest = 0;
+    let lines = s
+        .split(|b| *b == b'\n')
+        .map(|line| {
+            let width = width_bytes(line);
+            widest = widest.max(width);
+            (line, width)
+        })
+        .collect();
     (lines, widest)
 }
 
@@ -1565,7 +1875,7 @@ pub(crate) fn join_horizontal_bytes(position: impl Into<f64>, blocks: &[&[u8]]) 
         [only] => return (*only).to_owned(),
         _ => {}
     }
-    let mut split: Vec<(Vec<&[u8]>, usize)> = blocks.iter().map(|s| get_lines_bytes(s)).collect();
+    let mut split: Vec<_> = blocks.iter().map(|s| measured_lines_bytes(s)).collect();
     let max_height = split
         .iter()
         .map(|(lines, _)| lines.len())
@@ -1584,16 +1894,16 @@ pub(crate) fn join_horizontal_bytes(position: impl Into<f64>, blocks: &[&[u8]]) 
         } else {
             (n as f64 * position.clamp(0.0, 1.0)).round() as usize
         };
-        let mut padded = vec![&b""[..]; above];
+        let mut padded = vec![(&b""[..], 0); above];
         padded.append(lines);
-        padded.extend(std::iter::repeat_n(&b""[..], n - above));
+        padded.extend(std::iter::repeat_n((&b""[..], 0), n - above));
         *lines = padded;
     }
     let mut out = Vec::new();
     for row in 0..max_height {
         for (lines, widest) in &split {
-            out.extend_from_slice(lines[row]);
-            out.extend(std::iter::repeat_n(b' ', widest - width_bytes(lines[row])));
+            out.extend_from_slice(lines[row].0);
+            out.extend(std::iter::repeat_n(b' ', widest - lines[row].1));
         }
         if row < max_height - 1 {
             out.push(b'\n');
@@ -1616,16 +1926,12 @@ pub(crate) fn join_vertical_bytes(position: impl Into<f64>, blocks: &[&[u8]]) ->
         [only] => return (*only).to_owned(),
         _ => {}
     }
-    let split: Vec<Vec<&[u8]>> = blocks.iter().map(|s| get_lines_bytes(s).0).collect();
-    let max_width = blocks
-        .iter()
-        .map(|s| get_lines_bytes(s).1)
-        .max()
-        .unwrap_or(0);
+    let split: Vec<_> = blocks.iter().map(|s| measured_lines_bytes(s)).collect();
+    let max_width = split.iter().map(|(_, widest)| *widest).max().unwrap_or(0);
     let mut out = Vec::new();
-    for (i, block) in split.iter().enumerate() {
-        for (j, line) in block.iter().enumerate() {
-            let w = max_width - width_bytes(line);
+    for (i, (block, _)) in split.iter().enumerate() {
+        for (j, &(line, line_width)) in block.iter().enumerate() {
+            let w = max_width - line_width;
             if position == LEFT {
                 out.extend_from_slice(line);
                 out.extend(std::iter::repeat_n(b' ', w));
@@ -2079,6 +2385,9 @@ pub(crate) fn width(s: &str) -> usize {
 
 /// ansi.StringWidth over Go string bytes, including malformed UTF-8 and C1.
 pub(crate) fn width_bytes(bytes: &[u8]) -> usize {
+    if bytes.iter().all(|b| matches!(b, 0x20..=0x7e)) {
+        return bytes.len();
+    }
     let mut state = GROUND;
     let mut total = 0;
     let mut i = 0;
@@ -2922,8 +3231,32 @@ const GRAPHEME: &[(u32, u32, Gcb)] = {
     ]
 };
 
+// Each Unicode page searches only ranges that can intersect its 256 code points.
+// Generated from the authoritative ranges at compile time; no runtime setup.
+static GRAPHEME_PAGES: [(u16, u16); 0x1100] = {
+    let mut pages = [(0, 0); 0x1100];
+    let mut page = 0;
+    let mut start = 0;
+    while page < pages.len() {
+        let lo = (page as u32) << 8;
+        let hi = lo + 255;
+        while start < GRAPHEME.len() && GRAPHEME[start].1 < lo {
+            start += 1;
+        }
+        let mut end = start;
+        while end < GRAPHEME.len() && GRAPHEME[end].0 <= hi {
+            end += 1;
+        }
+        pages[page] = (start as u16, end as u16);
+        page += 1;
+    }
+    pages
+};
+
 fn grapheme_class(cp: u32) -> Option<Gcb> {
-    GRAPHEME
+    let &(start, end) = GRAPHEME_PAGES.get((cp >> 8) as usize)?;
+    let ranges = &GRAPHEME[usize::from(start)..usize::from(end)];
+    ranges
         .binary_search_by(|&(lo, hi, _)| {
             if hi < cp {
                 std::cmp::Ordering::Less
@@ -2934,7 +3267,7 @@ fn grapheme_class(cp: u32) -> Option<Gcb> {
             }
         })
         .ok()
-        .map(|index| GRAPHEME[index].2)
+        .map(|index| ranges[index].2)
 }
 
 /// East Asian Width W or F as uniseg v0.4.7 sees it (EastAsianWidth 15.0.0):
@@ -3493,6 +3826,9 @@ const NARROW: &[(u32, u32)] = &[
 
 fn grapheme_property(c: char) -> Gcb {
     let cp = u32::from(c);
+    if matches!(c, ' '..='~') {
+        return Gcb::Any;
+    }
     match cp {
         0x0D => Gcb::Cr,
         0x0A => Gcb::Lf,
@@ -3716,6 +4052,9 @@ fn clusters(s: &str) -> impl Iterator<Item = &str> {
 /// RUNEWIDTH_EASTASIAN, else the CJK-locale test on LC_ALL / LC_CTYPE /
 /// LANG (computed once, as runewidth's init does); StrictEmojiNeutral true.
 pub(crate) fn bubbles_rune_width(c: char) -> usize {
+    if matches!(c, ' '..='~') {
+        return 1;
+    }
     runewidth_rune(c, default_east_asian())
 }
 
@@ -4005,6 +4344,102 @@ impl Theme {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    #[ignore = "focused Style renderer performance probe"]
+    fn renderer_performance_probe() {
+        use super::*;
+        let style = Style::new().fg(Role::Text).bg(Role::Panel).bold(true);
+        let env = Env {
+            profile: Profile::TrueColor,
+            dark: true,
+        };
+        let original = std::env::var_os("PB_STYLE_ORIGINAL").is_some();
+        for _ in 0..200_000 {
+            let output = if original {
+                style.render_impl_reference(std::hint::black_box(b"table cell value"), env, true)
+            } else {
+                style.render_impl(std::hint::black_box(b"table cell value"), env, true)
+            };
+            std::hint::black_box(output);
+        }
+    }
+
+    #[test]
+    fn cached_renderer_matches_original() {
+        use super::*;
+        let colors = [
+            Color::None,
+            Color::hex("#abc"),
+            Color::hex("#123456"),
+            Color::hex("invalid"),
+            Color::ansi256(240),
+            Color::role(Role::Text),
+            Color::dynamic("#1234extra"),
+            Color::dynamic("#f00"),
+            Color::of(&LIGHT, Role::Text),
+            Color::of(&DARK, Role::Accent),
+        ];
+        for profile in [
+            Profile::Ascii,
+            Profile::Ansi,
+            Profile::Ansi256,
+            Profile::TrueColor,
+        ] {
+            for dark in [false, true] {
+                let env = Env { profile, dark };
+                for flags in 0u16..1024 {
+                    let mut style = Style::new()
+                        .fg(colors[flags as usize % colors.len()])
+                        .bg(colors[(flags as usize / colors.len()) % colors.len()]);
+                    style.bold = flags & 1 != 0;
+                    style.italic = flags & 2 != 0;
+                    style.underline = flags & 4 != 0;
+                    style.reverse = flags & 8 != 0;
+                    style.blink = flags & 16 != 0;
+                    style.faint = flags & 32 != 0;
+                    style.strikethrough = flags & 64 != 0;
+                    style.underline_spaces = Some(flags & 128 != 0);
+                    style.strikethrough_spaces = Some(flags & 256 != 0);
+                    style.color_whitespace = Some(flags & 512 != 0);
+                    for layout in 0..4 {
+                        let style = match layout {
+                            1 => style.width(12).padding(&[1, 2]).height(5),
+                            2 => style.inline(true).max_width(7).max_height(2),
+                            3 => style
+                                .border(Border::ROUNDED)
+                                .border_fg(Role::Accent)
+                                .margin_left(2),
+                            _ => style,
+                        };
+                        for text in [
+                            b"".as_slice(),
+                            b"cell".as_slice(),
+                            b"\x1b[31mred\x1b[0m",
+                            "a \t界\r\nb\n".as_bytes(),
+                            b"\xff\t\n",
+                        ] {
+                            assert_eq!(
+                                style.render_bytes_in(text, env),
+                                style.render_impl_reference(text, env, false),
+                                "flags={flags} layout={layout} env={env:?}"
+                            );
+                            if let Ok(text) = std::str::from_utf8(text) {
+                                assert_eq!(
+                                    style.render_in(text, env),
+                                    String::from_utf8_lossy(&style.render_impl_reference(
+                                        text.as_bytes(),
+                                        env,
+                                        true
+                                    ))
+                                );
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     use super::*;
 
     const TRUE: Env = Env {
@@ -6160,4 +6595,260 @@ FFFFE FFFFF 1 1 1
 100000 10FFFD 1 1 2
 10FFFE 10FFFF 1 1 1
 ";
+}
+
+#[cfg(test)]
+fn original_width_bytes(bytes: &[u8]) -> usize {
+    let mut state = GROUND;
+    let mut total = 0;
+    let mut i = 0;
+    while i < bytes.len() {
+        let (next, action) = transition(state, bytes[i]);
+        if next == UTF8 {
+            let (len, w) = first_cluster_bytes(&bytes[i..]);
+            total += w;
+            i += len.max(1);
+            state = GROUND;
+            continue;
+        }
+        if action == PRINT {
+            total += 1;
+        }
+        state = next;
+        i += 1;
+    }
+    total
+}
+#[cfg(test)]
+fn original_join_horizontal_bytes(position: impl Into<f64>, blocks: &[&[u8]]) -> Vec<u8> {
+    let position: f64 = position.into();
+    match blocks {
+        [] => return Vec::new(),
+        [only] => return (*only).to_owned(),
+        _ => {}
+    }
+    let mut split: Vec<(Vec<&[u8]>, usize)> =
+        blocks.iter().map(|s| original_get_lines_bytes(s)).collect();
+    let max_height = split
+        .iter()
+        .map(|(lines, _)| lines.len())
+        .max()
+        .unwrap_or(0);
+    for (lines, _) in &mut split {
+        if lines.len() >= max_height {
+            continue;
+        }
+        let n = max_height - lines.len();
+        // Middle positions put round(n*pos) blank lines above.
+        let above = if position == TOP {
+            0
+        } else if position == BOTTOM {
+            n
+        } else {
+            (n as f64 * position.clamp(0.0, 1.0)).round() as usize
+        };
+        let mut padded = vec![&b""[..]; above];
+        padded.append(lines);
+        padded.extend(std::iter::repeat_n(&b""[..], n - above));
+        *lines = padded;
+    }
+    let mut out = Vec::new();
+    for row in 0..max_height {
+        for (lines, widest) in &split {
+            out.extend_from_slice(lines[row]);
+            out.extend(std::iter::repeat_n(
+                b' ',
+                widest - original_width_bytes(lines[row]),
+            ));
+        }
+        if row < max_height - 1 {
+            out.push(b'\n');
+        }
+    }
+    out
+}
+#[cfg(test)]
+fn original_join_vertical_bytes(position: impl Into<f64>, blocks: &[&[u8]]) -> Vec<u8> {
+    let position: f64 = position.into();
+    match blocks {
+        [] => return Vec::new(),
+        [only] => return (*only).to_owned(),
+        _ => {}
+    }
+    let split: Vec<Vec<&[u8]>> = blocks
+        .iter()
+        .map(|s| original_get_lines_bytes(s).0)
+        .collect();
+    let max_width = blocks
+        .iter()
+        .map(|s| original_get_lines_bytes(s).1)
+        .max()
+        .unwrap_or(0);
+    let mut out = Vec::new();
+    for (i, block) in split.iter().enumerate() {
+        for (j, line) in block.iter().enumerate() {
+            let w = max_width - original_width_bytes(line);
+            if position == LEFT {
+                out.extend_from_slice(line);
+                out.extend(std::iter::repeat_n(b' ', w));
+            } else if position == RIGHT {
+                out.extend(std::iter::repeat_n(b' ', w));
+                out.extend_from_slice(line);
+            } else if w < 1 {
+                out.extend_from_slice(line);
+            } else {
+                let left = (w as f64 * position.clamp(0.0, 1.0)).round() as usize;
+                let right = w - left;
+                out.extend(std::iter::repeat_n(b' ', left));
+                out.extend_from_slice(line);
+                out.extend(std::iter::repeat_n(b' ', right));
+            }
+            if !(i == split.len() - 1 && j == block.len() - 1) {
+                out.push(b'\n');
+            }
+        }
+    }
+    out
+}
+#[cfg(test)]
+fn original_bubbles_rune_width(c: char) -> usize {
+    runewidth_rune(c, default_east_asian())
+}
+#[cfg(test)]
+mod primitive_differential_tests {
+    use super::*;
+    #[test]
+    #[ignore = "focused performance campaign benchmark"]
+    fn text_primitives_microbenchmark() {
+        let original = std::env::var_os("PB_TEXT_ORIGINAL").is_some();
+        let blocks: [&[u8]; 3] = [
+            b"timestamp           value\n2026-11-09 12:34:56 123.456\n2026-11-09 12:34:57 789.123",
+            b"\x1b[31mmetric_name\x1b[0m\nhttp_requests_total\nprocess_cpu_seconds_total",
+            "界 e\u{301} 👩‍💻\nASCII label\nmore data".as_bytes(),
+        ];
+        let plain = b"2026-11-09T12:34:56Z metric_name=12345.6789 instance=localhost:9090";
+        let mut checksum = 0usize;
+        for _ in 0..100_000 {
+            let plain = std::hint::black_box(plain.as_slice());
+            if original {
+                checksum += original_width_bytes(plain);
+                checksum += original_join_vertical_bytes(0.5, &blocks).len();
+                checksum += original_join_horizontal_bytes(0.5, &blocks).len();
+            } else {
+                checksum += width_bytes(plain);
+                checksum += join_vertical_bytes(0.5, &blocks).len();
+                checksum += join_horizontal_bytes(0.5, &blocks).len();
+            }
+        }
+        println!("checksum: {}", std::hint::black_box(checksum));
+    }
+
+    #[test]
+    fn widths_and_joins_match_original() {
+        let mut inputs: Vec<Vec<u8>> = vec![
+            b"".to_vec(),
+            b"plain ASCII 123".to_vec(),
+            b"a\nb\n".to_vec(),
+            "界e\u{301}👩‍💻".as_bytes().to_vec(),
+            b"\x1b[31mred\x1b[0m".to_vec(),
+            b"\x1b[unfinished".to_vec(),
+        ];
+        for b in 0..=255u8 {
+            inputs.push(vec![b, b'a', b'\n', b]);
+        }
+        for input in &inputs {
+            let (measured, widest) = measured_lines_bytes(input);
+            let (original_lines, original_widest) = get_lines_bytes(input);
+            assert_eq!(widest, original_widest);
+            assert_eq!(
+                measured.iter().map(|(line, _)| *line).collect::<Vec<_>>(),
+                original_lines
+            );
+            if let Ok(text) = std::str::from_utf8(input) {
+                let (lines, width) = get_lines(text);
+                assert_eq!(width, original_widest);
+                assert_eq!(
+                    lines.iter().map(|line| line.as_bytes()).collect::<Vec<_>>(),
+                    original_lines
+                );
+            }
+            assert_eq!(width_bytes(input), original_width_bytes(input), "{input:?}");
+        }
+        for pair in inputs.windows(2) {
+            let blocks = [pair[0].as_slice(), pair[1].as_slice()];
+            for pos in [0.0, 0.3, 0.5, 1.0] {
+                assert_eq!(
+                    join_horizontal_bytes(pos, &blocks),
+                    original_join_horizontal_bytes(pos, &blocks)
+                );
+                assert_eq!(
+                    join_vertical_bytes(pos, &blocks),
+                    original_join_vertical_bytes(pos, &blocks)
+                );
+            }
+        }
+        for c in ' '..='~' {
+            assert_eq!(runewidth_rune(c, true), 1);
+        }
+        for cp in 0..=0x10ffff {
+            assert_eq!(grapheme_class(cp), original_grapheme_class(cp));
+            if let Some(c) = char::from_u32(cp) {
+                assert_eq!(grapheme_property(c), original_grapheme_property(c));
+                assert_eq!(bubbles_rune_width(c), original_bubbles_rune_width(c));
+            }
+        }
+    }
+}
+
+#[cfg(test)]
+fn original_get_lines_bytes(s: &[u8]) -> (Vec<&[u8]>, usize) {
+    let lines: Vec<&[u8]> = s.split(|b| *b == b'\n').collect();
+    let widest = lines
+        .iter()
+        .map(|line| original_width_bytes(line))
+        .max()
+        .unwrap_or(0);
+    (lines, widest)
+}
+
+#[cfg(test)]
+fn original_grapheme_class(cp: u32) -> Option<Gcb> {
+    GRAPHEME
+        .binary_search_by(|&(lo, hi, _)| {
+            if hi < cp {
+                std::cmp::Ordering::Less
+            } else if lo > cp {
+                std::cmp::Ordering::Greater
+            } else {
+                std::cmp::Ordering::Equal
+            }
+        })
+        .ok()
+        .map(|index| GRAPHEME[index].2)
+}
+
+#[cfg(test)]
+fn original_grapheme_property(c: char) -> Gcb {
+    let cp = u32::from(c);
+    match cp {
+        0x0D => Gcb::Cr,
+        0x0A => Gcb::Lf,
+        0x200D => Gcb::Zwj,
+        0x1F1E6..=0x1F1FF => Gcb::Ri,
+        0x1100..=0x115F | 0xA960..=0xA97C => Gcb::L,
+        0x1160..=0x11A7 | 0xD7B0..=0xD7C6 => Gcb::V,
+        0x11A8..=0x11FF | 0xD7CB..=0xD7FB => Gcb::T,
+        0xAC00..=0xD7A3 => {
+            if (cp - 0xAC00) % 28 == 0 {
+                Gcb::Lv
+            } else {
+                Gcb::Lvt
+            }
+        }
+        _ => match original_grapheme_class(cp) {
+            Some(class) => class,
+            None if in_ranges(cp, PICTOGRAPHIC) => Gcb::Pict,
+            None => Gcb::Any,
+        },
+    }
 }
