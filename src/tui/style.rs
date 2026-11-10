@@ -1493,7 +1493,7 @@ impl Style {
 
         let lines = str.iter().filter(|b| **b == b'\n').count();
         if !(lines == 0 && self.width == 0) {
-            str = align_horizontal_bytes(&str, self.align_h, self.width, whitespace, env);
+            str = original_align_horizontal_bytes(&str, self.align_h, self.width, whitespace, env);
         }
 
         if !self.inline {
@@ -1757,7 +1757,7 @@ fn align_horizontal_bytes(
     style: Option<&[String]>,
     env: Env,
 ) -> Vec<u8> {
-    let (lines, widest) = get_lines_bytes(str);
+    let (lines, widest) = measured_lines_bytes(str);
     let fill = |n: usize| {
         let spaces = " ".repeat(n);
         match style {
@@ -1767,8 +1767,7 @@ fn align_horizontal_bytes(
     };
     let mut out = Vec::with_capacity(str.len());
     let count = lines.len();
-    for (index, line) in lines.into_iter().enumerate() {
-        let line_width = width_bytes(line);
+    for (index, (line, line_width)) in lines.into_iter().enumerate() {
         let mut short = widest - line_width;
         short += (width as isize - (short + line_width) as isize).max(0) as usize;
         if short > 0 {
@@ -6862,6 +6861,57 @@ mod primitive_differential_tests {
     ];
 
     #[test]
+    fn align_horizontal_matches_original() {
+        let whitespace = ["7".to_owned(), "48;2;1;2;3".to_owned()];
+        let no_sequences: [String; 0] = [];
+        let styles = [None, Some(&whitespace[..]), Some(&no_sequences[..])];
+        let mut rng = TestRng(0x5EED_A116);
+        let mut input = Vec::new();
+        for case in 0..40_000 {
+            input.clear();
+            for _ in 0..rng.below(4) {
+                for _ in 0..rng.below(6) {
+                    match rng.below(8) {
+                        0 => input.push(rng.next() as u8),
+                        1 => input.extend_from_slice(b"\x1b[38;2;9;8;7m"),
+                        2 => input.extend_from_slice(b"plain text"),
+                        _ => input.extend_from_slice(rng.pick(CLUSTER_TOKENS)),
+                    }
+                }
+                input.push(b'\n');
+            }
+            if rng.below(2) == 0 {
+                input.pop();
+            }
+            let widest = original_get_lines_bytes(&input).1;
+            let width = match rng.below(4) {
+                0 => 0,
+                1 => widest,
+                2 => widest + 1 + rng.below(5),
+                _ => rng.below(widest + 2),
+            };
+            let env = Env {
+                profile: [
+                    Profile::Ascii,
+                    Profile::Ansi,
+                    Profile::Ansi256,
+                    Profile::TrueColor,
+                ][case % 4],
+                dark: case % 8 < 4,
+            };
+            for position in [LEFT, CENTER, RIGHT, 0.25] {
+                for style in styles {
+                    assert_eq!(
+                        align_horizontal_bytes(&input, position, width, style, env),
+                        original_align_horizontal_bytes(&input, position, width, style, env),
+                        "{input:x?} width={width} position={position} {env:?}"
+                    );
+                }
+            }
+        }
+    }
+
+    #[test]
     fn string_facades_match_lossy_copies() {
         fn lossy(bytes: &[u8]) -> String {
             String::from_utf8_lossy(bytes).into_owned()
@@ -7232,6 +7282,54 @@ fn original_decode_rune(bytes: &[u8]) -> (char, usize) {
         return (text.chars().next().unwrap_or('\u{FFFD}'), len);
     }
     ('\u{FFFD}', 1)
+}
+
+/// Horizontal alignment before it reused the widths found while looking for
+/// the widest line.
+#[cfg(test)]
+fn original_align_horizontal_bytes(
+    str: &[u8],
+    position: f64,
+    width: usize,
+    style: Option<&[String]>,
+    env: Env,
+) -> Vec<u8> {
+    let (lines, widest) = original_get_lines_bytes(str);
+    let fill = |n: usize| {
+        let spaces = " ".repeat(n);
+        match style {
+            Some(style) => styled_bytes(style, spaces.as_bytes(), env),
+            None => spaces.into_bytes(),
+        }
+    };
+    let mut out = Vec::with_capacity(str.len());
+    let count = lines.len();
+    for (index, line) in lines.into_iter().enumerate() {
+        let line_width = original_width_bytes(line);
+        let mut short = widest - line_width;
+        short += (width as isize - (short + line_width) as isize).max(0) as usize;
+        if short > 0 {
+            if position == RIGHT {
+                out.extend(fill(short));
+                out.extend_from_slice(line);
+            } else if position == CENTER {
+                let left = short / 2;
+                let right = left + short % 2;
+                out.extend(fill(left));
+                out.extend_from_slice(line);
+                out.extend(fill(right));
+            } else {
+                out.extend_from_slice(line);
+                out.extend(fill(short));
+            }
+        } else {
+            out.extend_from_slice(line);
+        }
+        if index < count - 1 {
+            out.push(b'\n');
+        }
+    }
+    out
 }
 
 #[cfg(test)]
