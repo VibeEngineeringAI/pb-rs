@@ -4065,15 +4065,21 @@ fn go_runes(bytes: &[u8]) -> impl Iterator<Item = (usize, char)> {
 /// uniseg FirstGraphemeCluster over bytes. RuneError affects segmentation and
 /// width, but the returned length always selects the original input bytes.
 fn first_cluster_bytes(bytes: &[u8]) -> (usize, usize) {
-    let mut chars = go_runes(bytes);
-    let Some((_, first)) = chars.next() else {
+    if bytes.is_empty() {
         return (0, 0);
-    };
+    }
+    let (first, mut end) = decode_rune(bytes);
     let (first_property, mut width) = rune_info(first);
     // Initial state -1: only the any-state transition can match.
     let mut state = gr_transition(GrState::Any, first_property).map_or(GrState::Any, |t| t.0);
-    let mut end = decode_rune(bytes).1;
-    for (index, c) in chars {
+    // Most clusters are one rune followed by ASCII or by nothing. In the Any
+    // state every ASCII rune (class Any, CR, LF or Control) is a boundary, so
+    // the scan below would stop on its first step.
+    if state == GrState::Any && bytes.get(end).is_none_or(u8::is_ascii) {
+        return (end, width);
+    }
+    while end < bytes.len() {
+        let (c, len) = decode_rune(&bytes[end..]);
         let (property, rune_width) = rune_info(c);
         let (next, boundary) = gr_step(state, property);
         if boundary {
@@ -4089,7 +4095,7 @@ fn first_cluster_bytes(bytes: &[u8]) -> (usize, usize) {
         } else if first_property != Gcb::Ri && first_property != Gcb::L {
             width += rune_width;
         }
-        end = index + decode_rune(&bytes[index..]).1;
+        end += len;
     }
     (end, width)
 }
@@ -6897,6 +6903,16 @@ mod primitive_differential_tests {
             );
         }
         check(b"");
+        // The single-rune shortcut: an ASCII rune ends any cluster that is in
+        // the Any state, and every ASCII byte is tried after every token.
+        for byte in 0..=0x7Fu8 {
+            let property = grapheme_property(char::from(byte));
+            assert!(gr_step(GrState::Any, property).1, "{byte:#x}");
+            for token in CLUSTER_TOKENS {
+                check(&[token, &[byte][..]].concat());
+                check(&[token, &[byte, b'x'][..]].concat());
+            }
+        }
         // Every sequence of four tokens; their suffixes are the prefixes of
         // other sequences, so every cluster start is covered too.
         let mut input = Vec::new();
