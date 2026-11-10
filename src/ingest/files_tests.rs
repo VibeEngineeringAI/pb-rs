@@ -417,6 +417,313 @@ fn retry_restart_and_acknowledgement_preserve_identity_and_offsets() {
 }
 
 #[test]
+fn reusable_line_buffer_matches_standard_line_reader() {
+    use std::io::{BufReader, Cursor};
+
+    // read_until is an independent line-boundary oracle. Vary the BufReader
+    // boundary, line limit and EOF position while reusing a dirty buffer.
+    let mut rng = Rng::new(0x1a11_0ca1);
+    for case in 0..303 {
+        let bytes = match case {
+            0 => Vec::new(),
+            1 => b"\n\r\nshort\r\n\nunterminated".to_vec(),
+            2 => b"a\n12345678\n123456789\nlast\r\n".to_vec(),
+            _ => (0..rng.below(200))
+                .map(|_| match rng.below(12) {
+                    0 => b'\n',
+                    1 => b'\r',
+                    _ => rng.next() as u8,
+                })
+                .collect(),
+        };
+        for capacity in [1, 2, 7, 64] {
+            for limit in [0, 1, 8, 200] {
+                let mut reader = BufReader::with_capacity(capacity, Cursor::new(&bytes));
+                let mut oracle = Cursor::new(&bytes);
+                let mut buffer = b"previous contents must be cleared".to_vec();
+                loop {
+                    let mut expected = Vec::new();
+                    let consumed = oracle.read_until(b'\n', &mut expected).unwrap();
+                    let complete = expected.last() == Some(&b'\n');
+                    if complete {
+                        expected.pop();
+                    }
+                    let got = read_line(&mut reader, limit, &mut buffer);
+                    if expected.len() > limit {
+                        assert_eq!(
+                            got.err().unwrap().to_string(),
+                            format!("line exceeds the {limit} byte line limit"),
+                            "case {case}, capacity {capacity}"
+                        );
+                        break;
+                    }
+                    let (got, incomplete) = got.unwrap();
+                    if complete {
+                        let got = got.unwrap();
+                        assert_eq!(got.bytes, expected);
+                        assert_eq!(got.consumed, consumed as u64);
+                        assert!(!incomplete);
+                    } else {
+                        assert!(got.is_none());
+                        assert_eq!(incomplete, !expected.is_empty());
+                        break;
+                    }
+                }
+            }
+        }
+    }
+}
+
+#[test]
+fn oversized_line_scratch_is_released_before_the_next_read() {
+    use std::io::Cursor;
+
+    let length = LINE_RETAIN_BYTES + 1;
+    let mut input = vec![b'x'; length];
+    input.extend_from_slice(b"\nshort\r\n");
+    let mut reader = Cursor::new(input);
+    let mut buffer = Vec::new();
+    {
+        let (line, incomplete) = read_line(&mut reader, length, &mut buffer).unwrap();
+        let line = line.unwrap();
+        assert_eq!(line.bytes, vec![b'x'; length]);
+        assert_eq!(line.consumed, length as u64 + 1);
+        assert!(!incomplete);
+    }
+    assert!(buffer.capacity() > LINE_RETAIN_BYTES);
+    {
+        let (line, incomplete) = read_line(&mut reader, length, &mut buffer).unwrap();
+        let line = line.unwrap();
+        assert_eq!(line.bytes, b"short\r");
+        assert_eq!(line.consumed, 7);
+        assert!(!incomplete);
+    }
+    assert!(buffer.capacity() <= LINE_RETAIN_BYTES);
+
+    // EOF also clears previously retained oversized, incomplete source bytes.
+    buffer.resize(length, b'x');
+    let (line, incomplete) = read_line(&mut reader, length, &mut buffer).unwrap();
+    assert!(line.is_none());
+    assert!(!incomplete);
+    assert_eq!(buffer.capacity(), 0);
+}
+
+#[test]
+fn line_scratch_at_the_retention_limit_is_reused() {
+    use std::io::Cursor;
+
+    // A boxed slice gives the Vec exactly the boundary capacity, independent
+    // of any extra capacity an allocator initially provides.
+    let mut buffer = vec![b'x'; LINE_RETAIN_BYTES].into_boxed_slice().into_vec();
+    assert_eq!(buffer.capacity(), LINE_RETAIN_BYTES);
+    let allocation = buffer.as_ptr();
+    let mut reader = Cursor::new(b"short\r\n");
+    let (line, incomplete) = read_line(&mut reader, LINE_RETAIN_BYTES, &mut buffer).unwrap();
+    let line = line.unwrap();
+    assert_eq!(line.bytes, b"short\r");
+    assert_eq!(line.consumed, 7);
+    assert!(!incomplete);
+    assert_eq!(buffer.capacity(), LINE_RETAIN_BYTES);
+    assert_eq!(buffer.as_ptr(), allocation);
+
+    let (line, incomplete) = read_line(&mut reader, LINE_RETAIN_BYTES, &mut buffer).unwrap();
+    assert!(line.is_none());
+    assert!(!incomplete);
+    assert!(buffer.is_empty());
+    assert_eq!(buffer.capacity(), LINE_RETAIN_BYTES);
+    assert_eq!(buffer.as_ptr(), allocation);
+}
+
+#[test]
+fn reusable_line_buffer_preserves_read_errors_after_complete_and_partial_lines() {
+    use std::io::{BufReader, Cursor, Error, ErrorKind, Read};
+
+    struct FailsAtEnd {
+        input: Cursor<&'static [u8]>,
+        kind: ErrorKind,
+    }
+
+    impl Read for FailsAtEnd {
+        fn read(&mut self, out: &mut [u8]) -> std::io::Result<usize> {
+            let read = self.input.read(out)?;
+            if read == 0 {
+                Err(Error::new(self.kind, "injected source read failure"))
+            } else {
+                Ok(read)
+            }
+        }
+    }
+
+    for (kind, retryable) in [(ErrorKind::UnexpectedEof, true), (ErrorKind::Other, false)] {
+        for capacity in [1, 4, 64] {
+            let mut reader = BufReader::with_capacity(
+                capacity,
+                FailsAtEnd {
+                    input: Cursor::new(b"complete\r\npartial"),
+                    kind,
+                },
+            );
+            let mut buffer = b"stale source bytes".to_vec();
+            let (line, incomplete) = read_line(&mut reader, 100, &mut buffer).unwrap();
+            let line = line.unwrap();
+            assert_eq!(line.bytes, b"complete\r");
+            assert_eq!(line.consumed, 10);
+            assert!(!incomplete);
+
+            let error = read_line(&mut reader, 100, &mut buffer).err().unwrap();
+            assert_eq!(error.to_string(), "injected source read failure");
+            assert_eq!(error.retryable(), retryable);
+            assert_eq!(buffer, b"partial");
+
+            // A retry starts with a cleared buffer even if fill_buf fails
+            // immediately, retaining the original error and retry policy.
+            let error = read_line(&mut reader, 100, &mut buffer).err().unwrap();
+            assert_eq!(error.to_string(), "injected source read failure");
+            assert_eq!(error.retryable(), retryable);
+            assert!(buffer.is_empty());
+        }
+    }
+}
+
+#[test]
+fn large_incomplete_jsonl_source_does_not_leak_into_the_next_file_or_resume() {
+    let dir = Directory::new();
+    let value = "x".repeat(LINE_RETAIN_BYTES + 1);
+    let large_line = format!("{{\"large\":\"{value}\"}}");
+    let large = dir.file("a.log", &large_line);
+    let small = dir.file("b.log", "{\"small\":1}\n");
+    let mut options = dir.options();
+    options.max_line_bytes = 1 << 20;
+    options.max_batch_bytes = 1 << 20;
+    let mut collector = FileCollector::new(options, FileState::default()).unwrap();
+
+    let first = collector.scan().unwrap();
+    assert!(first.has_incomplete_lines);
+    assert_eq!(first.records.len(), 1);
+    assert_eq!(first.records[0].payload, "{\"small\":1}");
+    assert_eq!(first.records[0].source_path, path_key(&small).unwrap());
+    assert_eq!(first.next_state.files[&path_key(&large).unwrap()].offset, 0);
+    collector.commit(&first).unwrap();
+    collector = restart(&collector);
+    append(&large, "\n");
+
+    let resumed = collector.scan().unwrap();
+    assert!(!resumed.has_incomplete_lines);
+    assert_eq!(resumed.records.len(), 1);
+    assert_eq!(resumed.records[0].payload, large_line);
+    assert_eq!(resumed.records[0].source_path, path_key(&large).unwrap());
+    assert_eq!(resumed.records[0].source_sequence, 1);
+    collector.commit(&resumed).unwrap();
+    assert!(collector.scan().unwrap().records.is_empty());
+}
+
+#[test]
+#[ignore = "manual release CPU probe; requires PB_INGEST_LINE_PROBE_MODE, FORMAT and SIZE"]
+fn line_payload_cpu_probe() {
+    use std::hint::black_box;
+    use std::io::Cursor;
+
+    let reuse = match std::env::var("PB_INGEST_LINE_PROBE_MODE").unwrap().as_str() {
+        "fresh" => false,
+        "reuse" => true,
+        other => panic!("unknown line probe mode {other}"),
+    };
+    let format = match std::env::var("PB_INGEST_LINE_PROBE_FORMAT")
+        .unwrap()
+        .as_str()
+    {
+        "jsonl" => FileFormat::Jsonl,
+        "text" => FileFormat::Text,
+        other => panic!("unknown line probe format {other}"),
+    };
+    let size = std::env::var("PB_INGEST_LINE_PROBE_SIZE").unwrap();
+    let (message, default_rounds) = match size.as_str() {
+        "short" => ("ordinary log event café".to_owned(), "1024"),
+        "ordinary" => (
+            "ordinary log message café quote\" slash\\ tab\t ".repeat(8),
+            "128",
+        ),
+        other => panic!("unknown line probe size {other}"),
+    };
+    let rounds: usize = std::env::var("PB_INGEST_LINE_PROBE_ROUNDS")
+        .unwrap_or_else(|_| default_rounds.into())
+        .parse()
+        .unwrap();
+    assert!((1..=10_000).contains(&rounds));
+    const RECORDS: usize = 8192;
+    let mut corpus = Vec::new();
+    for index in 0..RECORDS {
+        let line = match format {
+            FileFormat::Jsonl if size == "short" => serde_json::to_string(&serde_json::json!({
+                "i": index, "ok": index % 3 == 0, "msg": message,
+            }))
+            .unwrap(),
+            FileFormat::Jsonl => serde_json::to_string(&serde_json::json!({
+                "i": index, "ok": index % 3 == 0, "msg": message,
+                "nested": {"a": index % 11, "b": null, "c": [1, "x", true]},
+            }))
+            .unwrap(),
+            FileFormat::Text => format!("{index}: {message}"),
+        };
+        corpus.extend_from_slice(line.as_bytes());
+        corpus.extend_from_slice(if index % 2 == 0 { b"\r\n" } else { b"\n" });
+    }
+
+    // Exact preflight, outside the repeated workload: independently split the
+    // source and encode each payload through the semantic serde_json oracle.
+    let mut reader = Cursor::new(&corpus);
+    let mut scratch = Vec::new();
+    let mut seen = 0;
+    for expected in corpus.split_inclusive(|&byte| byte == b'\n') {
+        let expected = &expected[..expected.len() - 1];
+        let (line, incomplete) = read_line(&mut reader, 1 << 20, &mut scratch).unwrap();
+        let line = line.unwrap();
+        assert!(!incomplete);
+        assert_eq!(line.bytes, expected);
+        assert_eq!(line.consumed, expected.len() as u64 + 1);
+        let contents = expected.strip_suffix(b"\r").unwrap_or(expected);
+        let value = match format {
+            FileFormat::Jsonl => serde_json::from_slice::<Value>(contents).unwrap(),
+            FileFormat::Text => serde_json::json!({
+                "message": String::from_utf8_lossy(contents),
+            }),
+        };
+        assert_eq!(
+            line_payload(format, contents).unwrap().unwrap(),
+            serde_json::to_string(&value).unwrap()
+        );
+        seen += 1;
+    }
+    assert_eq!(seen, RECORDS);
+
+    let mut records = 0usize;
+    let mut payload_bytes = 0usize;
+    let mut jsonl_scratch = Vec::new();
+    for _ in 0..rounds {
+        let mut reader = Cursor::new(black_box(&corpus));
+        loop {
+            let mut fresh = Vec::new();
+            let buffer = if reuse && format == FileFormat::Jsonl {
+                &mut jsonl_scratch
+            } else {
+                &mut fresh
+            };
+            let (line, incomplete) = read_line(&mut reader, 1 << 20, buffer).unwrap();
+            let Some(line) = line else {
+                assert!(!incomplete);
+                break;
+            };
+            let contents = line.bytes.strip_suffix(b"\r").unwrap_or(line.bytes);
+            let payload = line_payload(format, black_box(contents)).unwrap().unwrap();
+            payload_bytes = payload_bytes.wrapping_add(black_box(payload.as_bytes()).len());
+            records += 1;
+        }
+    }
+    assert_eq!(records, RECORDS * rounds);
+    println!("format={format:?} size={size} records={records} payload_bytes={payload_bytes}");
+}
+
+#[test]
 fn incomplete_lines_wait_for_newline_and_crlf_is_supported() {
     let dir = Directory::new();
     let path = dir.file("run.log", "{\"n\":1}\r\n{\"n\":");

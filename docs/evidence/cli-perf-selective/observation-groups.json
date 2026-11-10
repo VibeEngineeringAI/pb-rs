@@ -1,0 +1,1093 @@
+{
+  "schema": 1,
+  "samples_file": "observations.jsonl",
+  "samples_sha256": "fcd5bc435dc2a516bae8db0b76091f88bcda925d97e802969182e833666fd8f3",
+  "observations": 512,
+  "bootstrap_draws": 2000,
+  "groups": [
+    {
+      "datasets": [
+        "selection-component"
+      ],
+      "case": "short",
+      "roles": [
+        "fresh",
+        "reuse"
+      ],
+      "pairs": 15,
+      "seed": 20261121,
+      "method": "paired_median",
+      "metrics": {
+        "cpu_ms": {
+          "point": {
+            "file": "results.json",
+            "path": [
+              "component",
+              "short",
+              "paired_ratio"
+            ],
+            "inverse": false
+          },
+          "interval": {
+            "file": "results.json",
+            "path": [
+              "component",
+              "short",
+              "paired_ratio_ci95"
+            ],
+            "inverse": false
+          }
+        }
+      }
+    },
+    {
+      "datasets": [
+        "selection-component"
+      ],
+      "case": "ordinary",
+      "roles": [
+        "fresh",
+        "reuse"
+      ],
+      "pairs": 15,
+      "seed": 20261121,
+      "method": "paired_median",
+      "metrics": {
+        "cpu_ms": {
+          "point": {
+            "file": "results.json",
+            "path": [
+              "component",
+              "ordinary",
+              "paired_ratio"
+            ],
+            "inverse": false
+          },
+          "interval": {
+            "file": "results.json",
+            "path": [
+              "component",
+              "ordinary",
+              "paired_ratio_ci95"
+            ],
+            "inverse": false
+          }
+        }
+      }
+    },
+    {
+      "datasets": [
+        "final-intel-component"
+      ],
+      "case": "short",
+      "roles": [
+        "fresh",
+        "reuse"
+      ],
+      "pairs": 15,
+      "seed": 20261121,
+      "method": "paired_median",
+      "metrics": {
+        "cpu_ms": {
+          "point": {
+            "file": "boat-validation.json",
+            "path": [
+              "local",
+              "component",
+              "summary",
+              "short",
+              "paired_ratio"
+            ],
+            "inverse": false
+          },
+          "interval": {
+            "file": "boat-validation.json",
+            "path": [
+              "local",
+              "component",
+              "summary",
+              "short",
+              "paired_ratio_ci95"
+            ],
+            "inverse": false
+          }
+        }
+      }
+    },
+    {
+      "datasets": [
+        "final-intel-component"
+      ],
+      "case": "ordinary",
+      "roles": [
+        "fresh",
+        "reuse"
+      ],
+      "pairs": 15,
+      "seed": 20261121,
+      "method": "paired_median",
+      "metrics": {
+        "cpu_ms": {
+          "point": {
+            "file": "boat-validation.json",
+            "path": [
+              "local",
+              "component",
+              "summary",
+              "ordinary",
+              "paired_ratio"
+            ],
+            "inverse": false
+          },
+          "interval": {
+            "file": "boat-validation.json",
+            "path": [
+              "local",
+              "component",
+              "summary",
+              "ordinary",
+              "paired_ratio_ci95"
+            ],
+            "inverse": false
+          }
+        }
+      }
+    },
+    {
+      "datasets": [
+        "final-amd-component"
+      ],
+      "case": "short",
+      "roles": [
+        "fresh",
+        "reuse"
+      ],
+      "pairs": 15,
+      "seed": 20261121,
+      "method": "paired_median",
+      "metrics": {
+        "cpu_ms": {
+          "point": {
+            "file": "boat-validation.json",
+            "path": [
+              "boat",
+              "component",
+              "summary",
+              "short",
+              "paired_ratio"
+            ],
+            "inverse": false
+          },
+          "interval": {
+            "file": "boat-validation.json",
+            "path": [
+              "boat",
+              "component",
+              "summary",
+              "short",
+              "paired_ratio_ci95"
+            ],
+            "inverse": false
+          }
+        }
+      }
+    },
+    {
+      "datasets": [
+        "final-amd-component"
+      ],
+      "case": "ordinary",
+      "roles": [
+        "fresh",
+        "reuse"
+      ],
+      "pairs": 15,
+      "seed": 20261121,
+      "method": "paired_median",
+      "metrics": {
+        "cpu_ms": {
+          "point": {
+            "file": "boat-validation.json",
+            "path": [
+              "boat",
+              "component",
+              "summary",
+              "ordinary",
+              "paired_ratio"
+            ],
+            "inverse": false
+          },
+          "interval": {
+            "file": "boat-validation.json",
+            "path": [
+              "boat",
+              "component",
+              "summary",
+              "ordinary",
+              "paired_ratio_ci95"
+            ],
+            "inverse": false
+          }
+        }
+      }
+    },
+    {
+      "datasets": [
+        "selection-intel-ingest"
+      ],
+      "case": "jsonl",
+      "roles": [
+        "baseline",
+        "candidate"
+      ],
+      "pairs": 5,
+      "seed": 20261017,
+      "method": "paired_ratio_of_medians",
+      "metrics": {
+        "cpu_ms": {
+          "point": {
+            "file": "results.json",
+            "path": [
+              "ingest_end_to_end_guards",
+              "jsonl",
+              "cpu_ms",
+              "ratio"
+            ],
+            "inverse": false
+          },
+          "interval": {
+            "file": "results.json",
+            "path": [
+              "ingest_end_to_end_guards",
+              "jsonl",
+              "cpu_ms",
+              "ratio_ci95"
+            ],
+            "inverse": false
+          },
+          "paired_point": {
+            "file": "results.json",
+            "path": [
+              "ingest_end_to_end_guards",
+              "jsonl",
+              "cpu_ms",
+              "paired_median_ratio"
+            ],
+            "inverse": false
+          }
+        },
+        "peak_rss_bytes": {
+          "point": {
+            "file": "results.json",
+            "path": [
+              "ingest_end_to_end_guards",
+              "jsonl",
+              "peak_rss_bytes",
+              "ratio"
+            ],
+            "inverse": false
+          },
+          "interval": {
+            "file": "results.json",
+            "path": [
+              "ingest_end_to_end_guards",
+              "jsonl",
+              "peak_rss_bytes",
+              "ratio_ci95"
+            ],
+            "inverse": false
+          },
+          "paired_point": {
+            "file": "results.json",
+            "path": [
+              "ingest_end_to_end_guards",
+              "jsonl",
+              "peak_rss_bytes",
+              "paired_median_ratio"
+            ],
+            "inverse": false
+          }
+        },
+        "wall_ms": {
+          "point": {
+            "file": "results.json",
+            "path": [
+              "ingest_end_to_end_guards",
+              "jsonl",
+              "wall_ms",
+              "ratio"
+            ],
+            "inverse": false
+          },
+          "interval": {
+            "file": "results.json",
+            "path": [
+              "ingest_end_to_end_guards",
+              "jsonl",
+              "wall_ms",
+              "ratio_ci95"
+            ],
+            "inverse": false
+          },
+          "paired_point": {
+            "file": "results.json",
+            "path": [
+              "ingest_end_to_end_guards",
+              "jsonl",
+              "wall_ms",
+              "paired_median_ratio"
+            ],
+            "inverse": false
+          }
+        }
+      }
+    },
+    {
+      "datasets": [
+        "selection-intel-ingest"
+      ],
+      "case": "text",
+      "roles": [
+        "baseline",
+        "candidate"
+      ],
+      "pairs": 5,
+      "seed": 20261018,
+      "method": "paired_ratio_of_medians",
+      "metrics": {
+        "cpu_ms": {
+          "point": {
+            "file": "results.json",
+            "path": [
+              "ingest_end_to_end_guards",
+              "text",
+              "cpu_ms",
+              "ratio"
+            ],
+            "inverse": false
+          },
+          "interval": {
+            "file": "results.json",
+            "path": [
+              "ingest_end_to_end_guards",
+              "text",
+              "cpu_ms",
+              "ratio_ci95"
+            ],
+            "inverse": false
+          },
+          "paired_point": {
+            "file": "results.json",
+            "path": [
+              "ingest_end_to_end_guards",
+              "text",
+              "cpu_ms",
+              "paired_median_ratio"
+            ],
+            "inverse": false
+          }
+        },
+        "peak_rss_bytes": {
+          "point": {
+            "file": "results.json",
+            "path": [
+              "ingest_end_to_end_guards",
+              "text",
+              "peak_rss_bytes",
+              "ratio"
+            ],
+            "inverse": false
+          },
+          "interval": {
+            "file": "results.json",
+            "path": [
+              "ingest_end_to_end_guards",
+              "text",
+              "peak_rss_bytes",
+              "ratio_ci95"
+            ],
+            "inverse": false
+          },
+          "paired_point": {
+            "file": "results.json",
+            "path": [
+              "ingest_end_to_end_guards",
+              "text",
+              "peak_rss_bytes",
+              "paired_median_ratio"
+            ],
+            "inverse": false
+          }
+        },
+        "wall_ms": {
+          "point": {
+            "file": "results.json",
+            "path": [
+              "ingest_end_to_end_guards",
+              "text",
+              "wall_ms",
+              "ratio"
+            ],
+            "inverse": false
+          },
+          "interval": {
+            "file": "results.json",
+            "path": [
+              "ingest_end_to_end_guards",
+              "text",
+              "wall_ms",
+              "ratio_ci95"
+            ],
+            "inverse": false
+          },
+          "paired_point": {
+            "file": "results.json",
+            "path": [
+              "ingest_end_to_end_guards",
+              "text",
+              "wall_ms",
+              "paired_median_ratio"
+            ],
+            "inverse": false
+          }
+        }
+      }
+    },
+    {
+      "datasets": [
+        "final-amd-ingest"
+      ],
+      "case": "jsonl",
+      "roles": [
+        "baseline",
+        "candidate"
+      ],
+      "pairs": 5,
+      "seed": 20261017,
+      "method": "paired_ratio_of_medians",
+      "metrics": {
+        "cpu_ms": {
+          "point": {
+            "file": "boat-validation.json",
+            "path": [
+              "boat",
+              "ingestion_end_to_end",
+              "metrics",
+              "jsonl",
+              "cpu_ms",
+              "ratio"
+            ],
+            "inverse": false
+          },
+          "interval": {
+            "file": "boat-validation.json",
+            "path": [
+              "boat",
+              "ingestion_end_to_end",
+              "metrics",
+              "jsonl",
+              "cpu_ms",
+              "ratio_ci95"
+            ],
+            "inverse": false
+          },
+          "paired_point": {
+            "file": "boat-validation.json",
+            "path": [
+              "boat",
+              "ingestion_end_to_end",
+              "metrics",
+              "jsonl",
+              "cpu_ms",
+              "paired_median_ratio"
+            ],
+            "inverse": false
+          }
+        },
+        "peak_rss_bytes": {
+          "point": {
+            "file": "boat-validation.json",
+            "path": [
+              "boat",
+              "ingestion_end_to_end",
+              "metrics",
+              "jsonl",
+              "peak_rss_bytes",
+              "ratio"
+            ],
+            "inverse": false
+          },
+          "interval": {
+            "file": "boat-validation.json",
+            "path": [
+              "boat",
+              "ingestion_end_to_end",
+              "metrics",
+              "jsonl",
+              "peak_rss_bytes",
+              "ratio_ci95"
+            ],
+            "inverse": false
+          },
+          "paired_point": {
+            "file": "boat-validation.json",
+            "path": [
+              "boat",
+              "ingestion_end_to_end",
+              "metrics",
+              "jsonl",
+              "peak_rss_bytes",
+              "paired_median_ratio"
+            ],
+            "inverse": false
+          }
+        },
+        "wall_ms": {
+          "point": {
+            "file": "boat-validation.json",
+            "path": [
+              "boat",
+              "ingestion_end_to_end",
+              "metrics",
+              "jsonl",
+              "wall_ms",
+              "ratio"
+            ],
+            "inverse": false
+          },
+          "interval": {
+            "file": "boat-validation.json",
+            "path": [
+              "boat",
+              "ingestion_end_to_end",
+              "metrics",
+              "jsonl",
+              "wall_ms",
+              "ratio_ci95"
+            ],
+            "inverse": false
+          },
+          "paired_point": {
+            "file": "boat-validation.json",
+            "path": [
+              "boat",
+              "ingestion_end_to_end",
+              "metrics",
+              "jsonl",
+              "wall_ms",
+              "paired_median_ratio"
+            ],
+            "inverse": false
+          }
+        }
+      }
+    },
+    {
+      "datasets": [
+        "final-amd-ingest"
+      ],
+      "case": "text",
+      "roles": [
+        "baseline",
+        "candidate"
+      ],
+      "pairs": 5,
+      "seed": 20261018,
+      "method": "paired_ratio_of_medians",
+      "metrics": {
+        "cpu_ms": {
+          "point": {
+            "file": "boat-validation.json",
+            "path": [
+              "boat",
+              "ingestion_end_to_end",
+              "metrics",
+              "text",
+              "cpu_ms",
+              "ratio"
+            ],
+            "inverse": false
+          },
+          "interval": {
+            "file": "boat-validation.json",
+            "path": [
+              "boat",
+              "ingestion_end_to_end",
+              "metrics",
+              "text",
+              "cpu_ms",
+              "ratio_ci95"
+            ],
+            "inverse": false
+          },
+          "paired_point": {
+            "file": "boat-validation.json",
+            "path": [
+              "boat",
+              "ingestion_end_to_end",
+              "metrics",
+              "text",
+              "cpu_ms",
+              "paired_median_ratio"
+            ],
+            "inverse": false
+          }
+        },
+        "peak_rss_bytes": {
+          "point": {
+            "file": "boat-validation.json",
+            "path": [
+              "boat",
+              "ingestion_end_to_end",
+              "metrics",
+              "text",
+              "peak_rss_bytes",
+              "ratio"
+            ],
+            "inverse": false
+          },
+          "interval": {
+            "file": "boat-validation.json",
+            "path": [
+              "boat",
+              "ingestion_end_to_end",
+              "metrics",
+              "text",
+              "peak_rss_bytes",
+              "ratio_ci95"
+            ],
+            "inverse": false
+          },
+          "paired_point": {
+            "file": "boat-validation.json",
+            "path": [
+              "boat",
+              "ingestion_end_to_end",
+              "metrics",
+              "text",
+              "peak_rss_bytes",
+              "paired_median_ratio"
+            ],
+            "inverse": false
+          }
+        },
+        "wall_ms": {
+          "point": {
+            "file": "boat-validation.json",
+            "path": [
+              "boat",
+              "ingestion_end_to_end",
+              "metrics",
+              "text",
+              "wall_ms",
+              "ratio"
+            ],
+            "inverse": false
+          },
+          "interval": {
+            "file": "boat-validation.json",
+            "path": [
+              "boat",
+              "ingestion_end_to_end",
+              "metrics",
+              "text",
+              "wall_ms",
+              "ratio_ci95"
+            ],
+            "inverse": false
+          },
+          "paired_point": {
+            "file": "boat-validation.json",
+            "path": [
+              "boat",
+              "ingestion_end_to_end",
+              "metrics",
+              "text",
+              "wall_ms",
+              "paired_median_ratio"
+            ],
+            "inverse": false
+          }
+        }
+      }
+    },
+    {
+      "datasets": [
+        "selection-sql"
+      ],
+      "case": "p3-100000-json",
+      "roles": [
+        "baseline",
+        "candidate"
+      ],
+      "pairs": 20,
+      "seed": 20261120,
+      "method": "paired_median",
+      "metrics": {
+        "cpu_ms": {
+          "point": {
+            "file": "results.json",
+            "path": [
+              "sql_disposition",
+              "runs",
+              0,
+              "paired_cpu_ratio"
+            ],
+            "inverse": false
+          },
+          "interval": {
+            "file": "results.json",
+            "path": [
+              "sql_disposition",
+              "runs",
+              0,
+              "paired_cpu_ratio_ci95"
+            ],
+            "inverse": false
+          }
+        }
+      }
+    },
+    {
+      "datasets": [
+        "selection-sql"
+      ],
+      "case": "sql-wide-20000-json",
+      "roles": [
+        "baseline",
+        "candidate"
+      ],
+      "pairs": 20,
+      "seed": 20261120,
+      "method": "paired_median",
+      "metrics": {
+        "cpu_ms": {
+          "point": {
+            "file": "results.json",
+            "path": [
+              "sql_disposition",
+              "runs",
+              1,
+              "paired_cpu_ratio"
+            ],
+            "inverse": false
+          },
+          "interval": {
+            "file": "results.json",
+            "path": [
+              "sql_disposition",
+              "runs",
+              1,
+              "paired_cpu_ratio_ci95"
+            ],
+            "inverse": false
+          }
+        }
+      }
+    },
+    {
+      "datasets": [
+        "selection-sql"
+      ],
+      "case": "p3-single-8MiB-item",
+      "roles": [
+        "baseline",
+        "candidate"
+      ],
+      "pairs": 20,
+      "seed": 20261120,
+      "method": "paired_median",
+      "metrics": {
+        "cpu_ms": {
+          "point": {
+            "file": "results.json",
+            "path": [
+              "sql_disposition",
+              "runs",
+              2,
+              "paired_cpu_ratio"
+            ],
+            "inverse": false
+          },
+          "interval": {
+            "file": "results.json",
+            "path": [
+              "sql_disposition",
+              "runs",
+              2,
+              "paired_cpu_ratio_ci95"
+            ],
+            "inverse": false
+          }
+        }
+      }
+    },
+    {
+      "datasets": [
+        "confirmation-sql"
+      ],
+      "case": "p3-100000-json",
+      "roles": [
+        "baseline",
+        "candidate"
+      ],
+      "pairs": 20,
+      "seed": 20261122,
+      "method": "paired_median",
+      "metrics": {
+        "cpu_ms": {
+          "point": {
+            "file": "results.json",
+            "path": [
+              "sql_disposition",
+              "runs",
+              3,
+              "paired_cpu_ratio"
+            ],
+            "inverse": false
+          },
+          "interval": {
+            "file": "results.json",
+            "path": [
+              "sql_disposition",
+              "runs",
+              3,
+              "paired_cpu_ratio_ci95"
+            ],
+            "inverse": false
+          }
+        }
+      }
+    },
+    {
+      "datasets": [
+        "selection-sql",
+        "confirmation-sql"
+      ],
+      "case": "p3-100000-json",
+      "roles": [
+        "baseline",
+        "candidate"
+      ],
+      "pairs": 40,
+      "seed": 20261122,
+      "method": "paired_median",
+      "metrics": {
+        "cpu_ms": {
+          "point": {
+            "file": "results.json",
+            "path": [
+              "sql_disposition",
+              "pooled_ordinary_cpu_ratio"
+            ],
+            "inverse": false
+          },
+          "interval": {
+            "file": "results.json",
+            "path": [
+              "sql_disposition",
+              "pooled_ordinary_cpu_ratio_ci95"
+            ],
+            "inverse": false
+          }
+        }
+      }
+    },
+    {
+      "datasets": [
+        "final-amd-macro"
+      ],
+      "case": "version-text",
+      "roles": [
+        "go",
+        "rust"
+      ],
+      "pairs": 10,
+      "seed": 20261110,
+      "method": "independent_ratio_of_medians",
+      "metrics": {
+        "wall_ms": {
+          "point": {
+            "file": "boat-validation.json",
+            "path": [
+              "boat",
+              "macro_go_versus_final_rust",
+              "cases",
+              0,
+              "elapsed_speedup"
+            ],
+            "inverse": true
+          },
+          "interval": {
+            "file": "boat-validation.json",
+            "path": [
+              "boat",
+              "macro_go_versus_final_rust",
+              "cases",
+              0,
+              "elapsed_speedup_ci95"
+            ],
+            "inverse": true
+          }
+        }
+      }
+    },
+    {
+      "datasets": [
+        "final-amd-macro"
+      ],
+      "case": "p3-100000-text",
+      "roles": [
+        "go",
+        "rust"
+      ],
+      "pairs": 10,
+      "seed": 20261110,
+      "method": "independent_ratio_of_medians",
+      "metrics": {
+        "wall_ms": {
+          "point": {
+            "file": "boat-validation.json",
+            "path": [
+              "boat",
+              "macro_go_versus_final_rust",
+              "cases",
+              1,
+              "elapsed_speedup"
+            ],
+            "inverse": true
+          },
+          "interval": {
+            "file": "boat-validation.json",
+            "path": [
+              "boat",
+              "macro_go_versus_final_rust",
+              "cases",
+              1,
+              "elapsed_speedup_ci95"
+            ],
+            "inverse": true
+          }
+        }
+      }
+    },
+    {
+      "datasets": [
+        "final-amd-macro"
+      ],
+      "case": "p3-100000-json",
+      "roles": [
+        "go",
+        "rust"
+      ],
+      "pairs": 10,
+      "seed": 20261110,
+      "method": "independent_ratio_of_medians",
+      "metrics": {
+        "wall_ms": {
+          "point": {
+            "file": "boat-validation.json",
+            "path": [
+              "boat",
+              "macro_go_versus_final_rust",
+              "cases",
+              2,
+              "elapsed_speedup"
+            ],
+            "inverse": true
+          },
+          "interval": {
+            "file": "boat-validation.json",
+            "path": [
+              "boat",
+              "macro_go_versus_final_rust",
+              "cases",
+              2,
+              "elapsed_speedup_ci95"
+            ],
+            "inverse": true
+          }
+        }
+      }
+    },
+    {
+      "datasets": [
+        "final-amd-macro"
+      ],
+      "case": "promql-256000-samples",
+      "roles": [
+        "go",
+        "rust"
+      ],
+      "pairs": 10,
+      "seed": 20261110,
+      "method": "independent_ratio_of_medians",
+      "metrics": {
+        "wall_ms": {
+          "point": {
+            "file": "boat-validation.json",
+            "path": [
+              "boat",
+              "macro_go_versus_final_rust",
+              "cases",
+              3,
+              "elapsed_speedup"
+            ],
+            "inverse": true
+          },
+          "interval": {
+            "file": "boat-validation.json",
+            "path": [
+              "boat",
+              "macro_go_versus_final_rust",
+              "cases",
+              3,
+              "elapsed_speedup_ci95"
+            ],
+            "inverse": true
+          }
+        }
+      }
+    },
+    {
+      "datasets": [
+        "final-amd-macro"
+      ],
+      "case": "tail-100000",
+      "roles": [
+        "go",
+        "rust"
+      ],
+      "pairs": 10,
+      "seed": 20261110,
+      "method": "independent_ratio_of_medians",
+      "metrics": {
+        "wall_ms": {
+          "point": {
+            "file": "boat-validation.json",
+            "path": [
+              "boat",
+              "macro_go_versus_final_rust",
+              "cases",
+              4,
+              "elapsed_speedup"
+            ],
+            "inverse": true
+          },
+          "interval": {
+            "file": "boat-validation.json",
+            "path": [
+              "boat",
+              "macro_go_versus_final_rust",
+              "cases",
+              4,
+              "elapsed_speedup_ci95"
+            ],
+            "inverse": true
+          }
+        }
+      }
+    }
+  ],
+  "samples_digest_encoding": "UTF-8 JSONL with LF line endings; verifier normalizes CRLF checkout line endings"
+}

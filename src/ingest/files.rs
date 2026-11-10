@@ -397,6 +397,10 @@ impl FileCollector {
         let mut payload_bytes = 0;
         let mut skipped_lines = 0;
         let mut has_incomplete_lines = false;
+        // Reuse source storage only for JSONL, where processing probes showed
+        // a CPU benefit. Text keeps its prior per-line allocation strategy.
+        // Both encoders own their payload bytes before this buffer is reused.
+        let mut jsonl_line_buffer = Vec::new();
         for (path, key) in sources {
             if records.len() as u64 + skipped_lines >= self.options.max_events as u64
                 || payload_bytes >= self.options.max_batch_bytes
@@ -452,10 +456,15 @@ impl FileCollector {
                     continue;
                 }
                 let line_start = checkpoint.offset;
-                let (line, incomplete) = read_line(&mut reader, self.options.max_line_bytes)
-                    .map_err(|error| {
-                        error.context(format!("{} at byte {line_start}", path.display()))
-                    })?;
+                let mut text_line_buffer = Vec::new();
+                let line_buffer = match self.options.format {
+                    FileFormat::Jsonl => &mut jsonl_line_buffer,
+                    FileFormat::Text => &mut text_line_buffer,
+                };
+                let (line, incomplete) =
+                    read_line(&mut reader, self.options.max_line_bytes, line_buffer).map_err(
+                        |error| error.context(format!("{} at byte {line_start}", path.display())),
+                    )?;
                 has_incomplete_lines |= incomplete;
                 let Some(CompleteLine {
                     bytes: line,
@@ -464,7 +473,7 @@ impl FileCollector {
                 else {
                     break;
                 };
-                let contents = line.strip_suffix(b"\r").unwrap_or(&line);
+                let contents = line.strip_suffix(b"\r").unwrap_or(line);
                 let parsed = line_payload(self.options.format, contents);
                 let payload = match parsed {
                     Ok(payload) => payload,
@@ -473,7 +482,7 @@ impl FileCollector {
                             && self.options.invalid_json == InvalidJsonPolicy::Skip =>
                     {
                         skipped_lines += 1;
-                        proof.consume(&line);
+                        proof.consume(line);
                         proof.consume(b"\n");
                         checkpoint.offset += consumed;
                         checkpoint.sequence += 1;
@@ -499,7 +508,7 @@ impl FileCollector {
                     break;
                 }
                 checkpoint.offset += consumed;
-                proof.consume(&line);
+                proof.consume(line);
                 proof.consume(b"\n");
                 checkpoint.sequence += 1;
                 payload_bytes += bytes;
@@ -803,16 +812,26 @@ fn refresh_anchor(file: &mut File, checkpoint: &mut Checkpoint) -> std::io::Resu
 }
 
 /// A partial final line is deliberately left uncheckpointed and reread later.
-struct CompleteLine {
-    bytes: Vec<u8>,
+struct CompleteLine<'a> {
+    bytes: &'a [u8],
     consumed: u64,
 }
 
-fn read_line(
+/// Bound scratch retained between JSONL records. A larger line may contain
+/// up to the configured line limit, but its buffer is released on the next
+/// read (or at the end of this scan).
+const LINE_RETAIN_BYTES: usize = 64 << 10;
+
+fn read_line<'a>(
     reader: &mut impl BufRead,
     limit: usize,
-) -> Result<(Option<CompleteLine>, bool), ScanError> {
-    let mut line = Vec::new();
+    line: &'a mut Vec<u8>,
+) -> Result<(Option<CompleteLine<'a>>, bool), ScanError> {
+    if line.capacity() > LINE_RETAIN_BYTES {
+        *line = Vec::new();
+    } else {
+        line.clear();
+    }
     loop {
         let available = reader.fill_buf().map_err(ScanError::read)?;
         if available.is_empty() {
