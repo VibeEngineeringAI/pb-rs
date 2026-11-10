@@ -509,6 +509,32 @@ fn oversized_line_scratch_is_released_before_the_next_read() {
 }
 
 #[test]
+fn line_scratch_at_the_retention_limit_is_reused() {
+    use std::io::Cursor;
+
+    // A boxed slice gives the Vec exactly the boundary capacity, independent
+    // of any extra capacity an allocator initially provides.
+    let mut buffer = vec![b'x'; LINE_RETAIN_BYTES].into_boxed_slice().into_vec();
+    assert_eq!(buffer.capacity(), LINE_RETAIN_BYTES);
+    let allocation = buffer.as_ptr();
+    let mut reader = Cursor::new(b"short\r\n");
+    let (line, incomplete) = read_line(&mut reader, LINE_RETAIN_BYTES, &mut buffer).unwrap();
+    let line = line.unwrap();
+    assert_eq!(line.bytes, b"short\r");
+    assert_eq!(line.consumed, 7);
+    assert!(!incomplete);
+    assert_eq!(buffer.capacity(), LINE_RETAIN_BYTES);
+    assert_eq!(buffer.as_ptr(), allocation);
+
+    let (line, incomplete) = read_line(&mut reader, LINE_RETAIN_BYTES, &mut buffer).unwrap();
+    assert!(line.is_none());
+    assert!(!incomplete);
+    assert!(buffer.is_empty());
+    assert_eq!(buffer.capacity(), LINE_RETAIN_BYTES);
+    assert_eq!(buffer.as_ptr(), allocation);
+}
+
+#[test]
 fn reusable_line_buffer_preserves_read_errors_after_complete_and_partial_lines() {
     use std::io::{BufReader, Cursor, Error, ErrorKind, Read};
 

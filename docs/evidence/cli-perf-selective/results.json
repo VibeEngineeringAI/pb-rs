@@ -1,5 +1,5 @@
 {
-  "outcome": "Retain only capped JSONL source-line buffer reuse. Text keeps fresh buffers; SQL, tail and TUI candidates excluded.",
+  "outcome": "Retain capped JSONL source-line buffer reuse; final-artifact measurements are in boat-validation.json. This file preserves earlier selection evidence, including discarded SQL code. Text keeps fresh buffers; SQL, tail and TUI candidates are excluded.",
   "platform": "Linux-7.2.5-3-omarchy-x86_64-with-glibc2.44",
   "method": {
     "affinity": "CPUs 2,4,6,8",
@@ -70,18 +70,18 @@
   },
   "selection_cli_binaries": {
     "baseline": {
-      "path": "/home/ajs/.t3/worktrees/pb-rs/t3-3b6a6e72-21ed226505f254a7/harness/results/perf-selective-20261110/artifacts/pb-baseline-controlled",
+      "path": "harness/results/perf-selective-20261110/artifacts/pb-baseline-controlled",
       "sha256": "510e788d747de20364bf3c0ddc44d06fbb5be3d0d07fc1337108596dfc1d5a9a",
       "size_bytes": 13648184
     },
     "candidate": {
-      "path": "/home/ajs/.t3/worktrees/pb-rs/t3-3b6a6e72-21ed226505f254a7/harness/results/perf-selective-20261110/artifacts/pb-candidate-controlled",
+      "path": "harness/results/perf-selective-20261110/artifacts/pb-candidate-controlled",
       "sha256": "10d9e5230fc3c01e4be326320b88a0d06290c956dd10c6c1b927ec0013e01468",
       "size_bytes": 13648504
     }
   },
   "component_binary": {
-    "path": "/home/ajs/.t3/worktrees/pb-rs/t3-3b6a6e72-21ed226505f254a7/target/release/deps/pb-707a8289dc2130d7",
+    "path": "target/release/deps/pb-707a8289dc2130d7",
     "sha256": "9d2460ecb1e60a8a4d731a15f4563f66c5732976262aee82bc9f1fcb1b6f03d0"
   },
   "component": {
@@ -257,7 +257,14 @@
           1.0091747541615783
         ],
         "paired_median_ratio": 1.0091747541615783,
-        "candidate_better_rounds": 2
+        "candidate_better_rounds": 2,
+        "point_estimator": "ratio of marginal medians",
+        "paired_point_estimator": "median of within-round candidate/baseline ratios",
+        "interval_method": "nominal percentile paired bootstrap of the ratio of marginal medians; 2000 draws; five pairs",
+        "observed_pair_ratio_range": [
+          0.9450575587479783,
+          1.048836335053484
+        ]
       },
       "peak_rss_bytes": {
         "metric": "peak_rss_bytes",
@@ -297,7 +304,14 @@
           0.9867256637168141
         ],
         "paired_median_ratio": 0.9867256637168141,
-        "candidate_better_rounds": 3
+        "candidate_better_rounds": 3,
+        "point_estimator": "ratio of marginal medians",
+        "paired_point_estimator": "median of within-round candidate/baseline ratios",
+        "interval_method": "nominal percentile paired bootstrap of the ratio of marginal medians; 2000 draws; five pairs",
+        "observed_pair_ratio_range": [
+          0.9647630619684082,
+          1.049082373026035
+        ]
       },
       "wall_ms": {
         "metric": "wall_ms",
@@ -337,7 +351,14 @@
           0.9967926244260272
         ],
         "paired_median_ratio": 1.0166195552781863,
-        "candidate_better_rounds": 1
+        "candidate_better_rounds": 1,
+        "point_estimator": "ratio of marginal medians",
+        "paired_point_estimator": "median of within-round candidate/baseline ratios",
+        "interval_method": "nominal percentile paired bootstrap of the ratio of marginal medians; 2000 draws; five pairs",
+        "observed_pair_ratio_range": [
+          0.9967926244260272,
+          1.0212357474080516
+        ]
       }
     },
     "text": {
@@ -379,7 +400,14 @@
           1.0112267391192904
         ],
         "paired_median_ratio": 1.0112267391192904,
-        "candidate_better_rounds": 2
+        "candidate_better_rounds": 2,
+        "point_estimator": "ratio of marginal medians",
+        "paired_point_estimator": "median of within-round candidate/baseline ratios",
+        "interval_method": "nominal percentile paired bootstrap of the ratio of marginal medians; 2000 draws; five pairs",
+        "observed_pair_ratio_range": [
+          0.9615125275037264,
+          1.026456732405467
+        ]
       },
       "peak_rss_bytes": {
         "metric": "peak_rss_bytes",
@@ -419,7 +447,14 @@
           0.9590854392298436
         ],
         "paired_median_ratio": 0.9742203742203742,
-        "candidate_better_rounds": 3
+        "candidate_better_rounds": 3,
+        "point_estimator": "ratio of marginal medians",
+        "paired_point_estimator": "median of within-round candidate/baseline ratios",
+        "interval_method": "nominal percentile paired bootstrap of the ratio of marginal medians; 2000 draws; five pairs",
+        "observed_pair_ratio_range": [
+          0.9421182266009852,
+          1.0093259855871133
+        ]
       },
       "wall_ms": {
         "metric": "wall_ms",
@@ -459,7 +494,14 @@
           0.9819476332812885
         ],
         "paired_median_ratio": 0.996063000394562,
-        "candidate_better_rounds": 3
+        "candidate_better_rounds": 3,
+        "point_estimator": "ratio of marginal medians",
+        "paired_point_estimator": "median of within-round candidate/baseline ratios",
+        "interval_method": "nominal percentile paired bootstrap of the ratio of marginal medians; 2000 draws; five pairs",
+        "observed_pair_ratio_range": [
+          0.9777411661122886,
+          1.0439394991688793
+        ]
       }
     }
   },
@@ -543,6 +585,41 @@
     "release_binary_sha256": "6415798b24b9524d93cda1885de394b1b1c6cbe4f15f78b002f6d937a63ad4cd",
     "release_binary_size_bytes": 13649016,
     "branch": "perf/selective-benefits",
-    "published": false
+    "published_at_validation_time": false
+  },
+  "evidence_snapshot": {
+    "reviewed_commit": "cf4a38bef6430bd79c2a914ad8165da04e1c6b50",
+    "scope": "Earlier selection artifacts also contained the subsequently discarded SQL candidate. final_validation attests the retained ingestion files matching the reviewed commit, not identity of the entire selection candidate and final binaries.",
+    "source_hash_limit": "Source hashes are builder attestations, not independently reproduced binary/source proofs."
+  },
+  "public_observations": {
+    "file": "observations.jsonl",
+    "groups": "observation-groups.json",
+    "verify": "python3 harness/verify_selective_evidence.py",
+    "scope": "Numeric observations reproduce published CPU/wall/RSS arithmetic. Full payloads, fixtures, logs and functional checks remain in the locally retained hash-verified archives."
+  },
+  "small_sample_limit": {
+    "end_to_end_pairs": 5,
+    "interpretation": "Exploratory screening only, not an equivalence or noninferiority result. No A/A noise floor or minimum detectable regression was calibrated.",
+    "intervals": "ratio_ci95 retains the actual percentile bootstrap calculation, nominally 95%. At five pairs these quantiles coincide with the observed paired-ratio range; coverage is not established. They cannot rule out small regressions.",
+    "text_control": "Text keeps fresh allocations but uses the refactored reader and a differently linked binary. It is not an unchanged-code A/A control; its timing difference does not establish a 10% measurement-noise floor."
+  },
+  "ingest_end_to_end_guard_interpretation": "The Boolean records that five observed pairs passed the declared screening rule; it is not proof of performance equivalence or absence of a material regression.",
+  "review_followup": {
+    "reviewed_head": "cf4a38bef6430bd79c2a914ad8165da04e1c6b50",
+    "runtime_logic_changes": false,
+    "changes": [
+      "Clarified selection versus final artifact results and estimator scope",
+      "Published numeric observations and deterministic statistic recalculation",
+      "Sanitized machine-specific metadata",
+      "Documented exact probe environment and round counts",
+      "Clarified buffer policy comment and added exact-retention-boundary test"
+    ],
+    "local_tests_passed": 959,
+    "default_ignored": 18,
+    "fmt_and_all_target_clippy_passed": true,
+    "observations_verified": 512,
+    "metric_summaries_verified": 28,
+    "crlf_checkout_verified": true
   }
 }

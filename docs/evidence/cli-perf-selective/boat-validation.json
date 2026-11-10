@@ -5,7 +5,7 @@
     "cpu": "13th Gen Intel(R) Core(TM) i9-13900HK",
     "uname": {
       "system": "Linux",
-      "node": "ajs-mini-pc-02",
+      "node": "intel-development-host",
       "release": "7.2.5-3-omarchy",
       "version": "#1 SMP PREEMPT_DYNAMIC Mon, 14 Sep 2026 19:55:01 +0000",
       "machine": "x86_64",
@@ -49,13 +49,12 @@
     }
   },
   "boat": {
-    "sandbox_id": "bx_rh57ag39",
     "type": "default, 4vCPU/8GB",
     "cpu": "AMD Ryzen 7 9700X 8-Core Processor",
     "host": {
       "uname": {
         "system": "Linux",
-        "node": "box-node-5006ab0399e26201",
+        "node": "validation-vm",
         "release": "6.8.0-117-generic",
         "version": "#117-Ubuntu SMP PREEMPT_DYNAMIC Tue May  5 19:26:24 UTC 2026",
         "machine": "x86_64",
@@ -265,7 +264,14 @@
               0.9714415304618276
             ],
             "paired_median_ratio": 0.975545734962629,
-            "candidate_better_rounds": 3
+            "candidate_better_rounds": 3,
+            "point_estimator": "ratio of marginal medians",
+            "paired_point_estimator": "median of within-round candidate/baseline ratios",
+            "interval_method": "nominal percentile paired bootstrap of the ratio of marginal medians; 2000 draws; five pairs",
+            "observed_pair_ratio_range": [
+              0.8083733493397358,
+              1.0341845674605752
+            ]
           },
           "wall_ms": {
             "metric": "wall_ms",
@@ -305,7 +311,14 @@
               0.9697801166054487
             ],
             "paired_median_ratio": 0.9794420925600165,
-            "candidate_better_rounds": 3
+            "candidate_better_rounds": 3,
+            "point_estimator": "ratio of marginal medians",
+            "paired_point_estimator": "median of within-round candidate/baseline ratios",
+            "interval_method": "nominal percentile paired bootstrap of the ratio of marginal medians; 2000 draws; five pairs",
+            "observed_pair_ratio_range": [
+              0.9655599853714444,
+              1.0569426223365939
+            ]
           },
           "peak_rss_bytes": {
             "metric": "peak_rss_bytes",
@@ -345,7 +358,14 @@
               1.0461538461538462
             ],
             "paired_median_ratio": 1.0303030303030303,
-            "candidate_better_rounds": 1
+            "candidate_better_rounds": 1,
+            "point_estimator": "ratio of marginal medians",
+            "paired_point_estimator": "median of within-round candidate/baseline ratios",
+            "interval_method": "nominal percentile paired bootstrap of the ratio of marginal medians; 2000 draws; five pairs",
+            "observed_pair_ratio_range": [
+              0.9848484848484849,
+              1.0461538461538462
+            ]
           }
         },
         "text": {
@@ -387,7 +407,14 @@
               0.9544034864717632
             ],
             "paired_median_ratio": 0.9288564070944108,
-            "candidate_better_rounds": 5
+            "candidate_better_rounds": 5,
+            "point_estimator": "ratio of marginal medians",
+            "paired_point_estimator": "median of within-round candidate/baseline ratios",
+            "interval_method": "nominal percentile paired bootstrap of the ratio of marginal medians; 2000 draws; five pairs",
+            "observed_pair_ratio_range": [
+              0.9030970929127873,
+              0.9639313847266553
+            ]
           },
           "wall_ms": {
             "metric": "wall_ms",
@@ -427,7 +454,14 @@
               1.0085679716734623
             ],
             "paired_median_ratio": 1.0085679716734623,
-            "candidate_better_rounds": 2
+            "candidate_better_rounds": 2,
+            "point_estimator": "ratio of marginal medians",
+            "paired_point_estimator": "median of within-round candidate/baseline ratios",
+            "interval_method": "nominal percentile paired bootstrap of the ratio of marginal medians; 2000 draws; five pairs",
+            "observed_pair_ratio_range": [
+              0.8365280321620582,
+              1.1539970192395586
+            ]
           },
           "peak_rss_bytes": {
             "metric": "peak_rss_bytes",
@@ -467,10 +501,18 @@
               1.0
             ],
             "paired_median_ratio": 1.0,
-            "candidate_better_rounds": 2
+            "candidate_better_rounds": 2,
+            "point_estimator": "ratio of marginal medians",
+            "paired_point_estimator": "median of within-round candidate/baseline ratios",
+            "interval_method": "nominal percentile paired bootstrap of the ratio of marginal medians; 2000 draws; five pairs",
+            "observed_pair_ratio_range": [
+              0.9846153846153847,
+              1.0
+            ]
           }
         }
-      }
+      },
+      "guard_interpretation": "Observed screening policy passed; five pairs and no A/A calibration do not establish equivalence or exclude material regressions."
     },
     "macro_go_versus_final_rust": {
       "go_upstream_commit": "07af390ab09bda8ac9e427ffc6310077bace0125",
@@ -597,7 +639,8 @@
         }
       ],
       "scope": "Independent latest-Go-main versus final-Rust comparison within the AMD VM. Historical Intel macro data used an earlier Rust artifact, so macro populations are not pooled or described as exact-artifact machine-effect control."
-    }
+    },
+    "machine_label": "amd-validation-vm"
   },
   "artifacts": {
     "same_component_test_executable_sha256": "bb2311531586efa29d776b5c410bb699d129c64f75506f6638ce4e59c12fa787",
@@ -662,14 +705,46 @@
       "attemptCount": 1,
       "completedAt": "2026-11-10T18:46:23.475Z",
       "expectedBy": null,
-      "id": "bdop_4c7d0aed72324a80ba14e243653b05dc",
       "kind": "sandbox",
       "reason": "explicit",
       "requestedAt": "2026-11-10T18:46:19.062Z",
       "stage": "completed",
-      "status": "completed",
-      "targetId": "bx_rh57ag39"
+      "status": "completed"
     },
     "confirmed_absent_from_inventory": true
+  },
+  "evidence_snapshot": {
+    "reviewed_commit": "cf4a38bef6430bd79c2a914ad8165da04e1c6b50",
+    "scope": "Final ingestion-only source/artifacts matching the reviewed commit. Later review follow-up changes comments, tests and evidence presentation, not executable ingestion logic.",
+    "source_hash_limit": "Source hashes are builder attestations, not independently reproduced binary/source proofs."
+  },
+  "public_observations": {
+    "file": "observations.jsonl",
+    "groups": "observation-groups.json",
+    "verify": "python3 harness/verify_selective_evidence.py",
+    "scope": "Numeric observations reproduce published CPU/wall/RSS arithmetic. Full payloads, fixtures, logs and functional checks remain in the locally retained hash-verified archives."
+  },
+  "small_sample_limit": {
+    "end_to_end_pairs": 5,
+    "interpretation": "Exploratory screening only, not an equivalence or noninferiority result. No A/A noise floor or minimum detectable regression was calibrated.",
+    "intervals": "ratio_ci95 retains the actual percentile bootstrap calculation, nominally 95%. At five pairs these quantiles coincide with the observed paired-ratio range; coverage is not established. They cannot rule out small regressions.",
+    "text_control": "Text keeps fresh allocations but uses the refactored reader and a differently linked binary. It is not an unchanged-code A/A control; its timing difference does not establish a 10% measurement-noise floor."
+  },
+  "review_followup": {
+    "reviewed_head": "cf4a38bef6430bd79c2a914ad8165da04e1c6b50",
+    "runtime_logic_changes": false,
+    "changes": [
+      "Clarified selection versus final artifact results and estimator scope",
+      "Published numeric observations and deterministic statistic recalculation",
+      "Sanitized machine-specific metadata",
+      "Documented exact probe environment and round counts",
+      "Clarified buffer policy comment and added exact-retention-boundary test"
+    ],
+    "local_tests_passed": 959,
+    "default_ignored": 18,
+    "fmt_and_all_target_clippy_passed": true,
+    "observations_verified": 512,
+    "metric_summaries_verified": 28,
+    "crlf_checkout_verified": true
   }
 }

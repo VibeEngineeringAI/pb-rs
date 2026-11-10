@@ -397,8 +397,9 @@ impl FileCollector {
         let mut payload_bytes = 0;
         let mut skipped_lines = 0;
         let mut has_incomplete_lines = false;
-        // JSONL encoding owns its result, so its source bytes can reuse one
-        // scan-local buffer. Text retains a fresh buffer for every line.
+        // Reuse source storage only for JSONL, where processing probes showed
+        // a CPU benefit. Text keeps its prior per-line allocation strategy.
+        // Both encoders own their payload bytes before this buffer is reused.
         let mut jsonl_line_buffer = Vec::new();
         for (path, key) in sources {
             if records.len() as u64 + skipped_lines >= self.options.max_events as u64
