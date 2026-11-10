@@ -1146,16 +1146,23 @@ impl Style {
         if !self.inline && self.width > 0 {
             let wrap_at = self.width as isize - pad_left as isize - pad_right as isize;
             if wrap_at >= 1 {
-                // Tab/newline replacement preserves valid UTF-8 for the
-                // string facade. Keep its established lossy boundary after
-                // wrapping; byte callers retain Go's raw output instead.
-                str = if string_contract {
-                    let text = std::str::from_utf8(&str)
-                        .expect("string renderer input remains valid UTF-8 before wrapping");
-                    wrap(text, wrap_at as usize, "").into_bytes()
+                if let Some(kept) = wrap_unchanged_len(&str, wrap_at as usize) {
+                    // Nothing to wrap: ansi.Wrap would copy the text and drop
+                    // the spaces that end it. Such text is valid UTF-8, so the
+                    // string and byte contracts agree.
+                    str.truncate(kept);
                 } else {
-                    wrap_bytes(&str, wrap_at as usize, b"")
-                };
+                    // Tab/newline replacement preserves valid UTF-8 for the
+                    // string facade. Keep its established lossy boundary after
+                    // wrapping; byte callers retain Go's raw output instead.
+                    str = if string_contract {
+                        let text = std::str::from_utf8(&str)
+                            .expect("string renderer input remains valid UTF-8 before wrapping");
+                        wrap(text, wrap_at as usize, "").into_bytes()
+                    } else {
+                        wrap_bytes(&str, wrap_at as usize, b"")
+                    };
+                }
             }
         }
 
@@ -2556,6 +2563,86 @@ pub(crate) fn truncate_bytes(bytes: &[u8], length: usize, tail: &[u8]) -> Vec<u8
 /// the limit; `-` and any rune in `breakpoints` are break opportunities.
 pub(crate) fn wrap(s: &str, limit: usize, breakpoints: &str) -> String {
     lossy_string(wrap_bytes(s.as_bytes(), limit, breakpoints.as_bytes()))
+}
+
+/// The length of the prefix of `bytes` that `wrap_bytes(bytes, limit, b"")`
+/// returns, when the text is of a kind the wrapper provably copies; `None`
+/// when the wrapper has to run.
+///
+/// Accepted text consists only of printable ASCII, newlines, complete SGR
+/// sequences (`ESC [`, digits and semicolons, `m`) and non-ASCII runes that
+/// are not whitespace and form a grapheme cluster on their own (class Any,
+/// followed by nothing that extends a cluster), with no line wider than
+/// `limit` cells. For such text the wrapper keeps, on every line,
+/// `current + space.len() + word_len` equal to the cells read so far, and
+/// `buf`, `space`, `word` in that order equal to the bytes read so far:
+///
+/// - a space is one byte and one cell, the only kind `space.len()` counts
+///   correctly, and joins `space` after the pending word is flushed;
+/// - a word rune, a hyphen or a cluster would only break the line when the
+///   cells read so far exceed `limit`, and otherwise appends in order;
+/// - SGR bytes take no PRINT or EXECUTE transition and join `word` at no
+///   width;
+/// - a newline flushes `space` and `word` and is copied.
+///
+/// At the end of the input a pending word is appended behind its spaces, and
+/// spaces with no word behind them are dropped. Those are exactly the spaces
+/// that end the text, so the result is the text without them.
+fn wrap_unchanged_len(bytes: &[u8], limit: usize) -> Option<usize> {
+    if limit < 1 {
+        // ansi.Wrap returns its input, trailing spaces included.
+        return Some(bytes.len());
+    }
+    let mut cells = 0;
+    let mut i = 0;
+    while i < bytes.len() {
+        match bytes[i] {
+            b'\n' => {
+                cells = 0;
+                i += 1;
+            }
+            0x20..=0x7E => {
+                cells += 1;
+                i += 1;
+            }
+            0x1B => {
+                if bytes.get(i + 1) != Some(&b'[') {
+                    return None;
+                }
+                i += 2;
+                while matches!(bytes.get(i), Some(b'0'..=b'9' | b';')) {
+                    i += 1;
+                }
+                if bytes.get(i) != Some(&b'm') {
+                    return None;
+                }
+                i += 1;
+            }
+            0xC2..=0xF4 => {
+                let (c, len) = decode_rune(&bytes[i..]);
+                // U+FFFD is also what a malformed sequence decodes to.
+                if c == '\u{FFFD}' || c.is_whitespace() {
+                    return None;
+                }
+                let (property, width) = rune_info(c);
+                if property != Gcb::Any {
+                    return None;
+                }
+                cells += width;
+                i += len;
+            }
+            _ => return None,
+        }
+        if cells > limit {
+            return None;
+        }
+    }
+    Some(
+        bytes
+            .iter()
+            .rposition(|b| *b != b' ')
+            .map_or(0, |last| last + 1),
+    )
 }
 
 /// ansi.Wrap over Go string bytes. Execute bytes are re-encoded with WriteRune
@@ -6935,6 +7022,333 @@ mod primitive_differential_tests {
         b"\xc0",
         b"\xe2\x94",
     ];
+
+    /// Text the wrap shortcut accepts when no line is wider than the limit.
+    const WRAP_PLAIN: &[&[u8]] = &[
+        b"a",
+        b"word",
+        b"x1",
+        b"~",
+        b" ",
+        b"  ",
+        b"-",
+        b"--",
+        b"a-b",
+        b"\n",
+        b"\x1b[m",
+        b"\x1b[0m",
+        b"\x1b[1;4m",
+        b"\x1b[38;2;10;20;30m",
+        b"\x1b[;m",
+        "\u{E9}".as_bytes(),   // narrow
+        "\u{2502}".as_bytes(), // box drawing
+        "\u{2500}".as_bytes(), // box drawing
+        "\u{754C}".as_bytes(), // wide
+        "\u{FF37}".as_bytes(), // fullwidth
+        "\u{2E3A}".as_bytes(), // three cells
+        "\u{2010}".as_bytes(), // a hyphen that is not a breakpoint
+    ];
+
+    /// Text that must send the wrap shortcut to the wrapper, or that the
+    /// wrapper treats differently from a word rune.
+    const WRAP_HOSTILE: &[&[u8]] = &[
+        // Whitespace that is not one byte and one cell.
+        "\u{A0}".as_bytes(),
+        "\u{85}".as_bytes(),
+        "\u{1680}".as_bytes(),
+        "\u{2000}".as_bytes(),
+        "\u{2003}".as_bytes(),
+        "\u{2028}".as_bytes(),
+        "\u{2029}".as_bytes(),
+        "\u{202F}".as_bytes(),
+        "\u{205F}".as_bytes(),
+        "\u{3000}".as_bytes(),
+        b"\t",
+        b"\r",
+        b"\r\n",
+        b"\x0b",
+        b"\x0c",
+        // Raw C1 bytes: executes, string and CSI introducers.
+        b"\x80",
+        b"\x85",
+        b"\x8b",
+        b"\x90",
+        b"\x98",
+        b"\x99",
+        b"\x9a",
+        b"\x9b",
+        b"\x9b31m",
+        b"\x9c",
+        b"\x9d",
+        b"\x9e",
+        b"\x9f",
+        // Other C0 controls.
+        b"\0",
+        b"\x07",
+        b"\x18",
+        b"\x1a",
+        b"\x7f",
+        // Escape sequences that are not a complete SGR.
+        b"\x1b",
+        b"\x1b[",
+        b"\x1b[3",
+        b"\x1b[31",
+        b"\x1b[31\n",
+        b"\x1b[31 m",
+        b"\x1b[1:2m",
+        b"\x1b[?25h",
+        b"\x1b[2J",
+        b"\x1b[<1m",
+        b"\x1bm",
+        b"\x1b(B",
+        b"\x1b\x1b[0m",
+        b"\x1b]8;;http://x\x07",
+        b"\x1b]0;t\x1b\\",
+        b"\x1bP1q\x1b\\",
+        b"\x1b_x",
+        // Zero width, combining and cluster-extending runes.
+        "\u{200B}".as_bytes(),
+        "\u{200C}".as_bytes(),
+        "\u{200D}".as_bytes(),
+        "\u{FEFF}".as_bytes(),
+        "\u{AD}".as_bytes(),
+        "\u{301}".as_bytes(),
+        "\u{308}".as_bytes(),
+        "\u{20E3}".as_bytes(),
+        "\u{903}".as_bytes(),
+        "\u{600}".as_bytes(),
+        "\u{FE0E}".as_bytes(),
+        "\u{FE0F}".as_bytes(),
+        "\u{1F3FB}".as_bytes(),
+        // Emoji, flags and Hangul jamo.
+        "\u{1F469}".as_bytes(),
+        "\u{1F469}\u{200D}\u{1F4BB}".as_bytes(),
+        "\u{1F1FA}".as_bytes(),
+        "\u{1F1F8}".as_bytes(),
+        "\u{2764}".as_bytes(),
+        "\u{A9}".as_bytes(),
+        "\u{1100}".as_bytes(),
+        "\u{1161}".as_bytes(),
+        "\u{11A8}".as_bytes(),
+        "\u{AC00}".as_bytes(),
+        "\u{AC01}".as_bytes(),
+        "\u{2E3B}".as_bytes(),
+        // Malformed UTF-8 and the replacement character itself.
+        b"\xc0",
+        b"\xc2",
+        b"\xe2\x94",
+        b"\xed\xa0\x80",
+        b"\xf4\x90\x80\x80",
+        b"\xff",
+        "\u{FFFD}".as_bytes(),
+    ];
+
+    /// How a wrap fuzz case ends: the wrapper only drops spaces that end the
+    /// input, so spaces sit before, after and instead of the final content.
+    const WRAP_ENDINGS: &[&[u8]] = &[
+        b"",
+        b"",
+        b" ",
+        b"    ",
+        b"-",
+        b" -",
+        b"- ",
+        b"\n",
+        b" \n",
+        b"\n ",
+        b"\n\n",
+        b"\x1b[0m",
+        b" \x1b[0m",
+        b"\x1b[0m ",
+        b"  \x1b[0m  ",
+        "\u{754C}".as_bytes(),
+        "\u{754C} ".as_bytes(),
+    ];
+
+    /// One wrap fuzz input: mostly text the shortcut accepts, often with one
+    /// or two hostile tokens in it, sometimes arbitrary.
+    fn wrap_fuzz_text(rng: &mut TestRng, out: &mut Vec<u8>) {
+        out.clear();
+        let hostile_one_in = match rng.below(20) {
+            0..9 => usize::MAX,
+            9..17 => 6,
+            _ => 2,
+        };
+        for _ in 0..rng.below(9) {
+            if hostile_one_in != usize::MAX && rng.below(hostile_one_in) == 0 {
+                if rng.below(6) == 0 {
+                    out.push(rng.next() as u8);
+                } else {
+                    out.extend_from_slice(rng.pick(WRAP_HOSTILE));
+                }
+            } else {
+                out.extend_from_slice(rng.pick(WRAP_PLAIN));
+            }
+        }
+        out.extend_from_slice(rng.pick(WRAP_ENDINGS));
+    }
+
+    /// A limit weighted towards the edges: none, one cell, and exactly, just
+    /// under and just over the widest line.
+    fn wrap_fuzz_limit(rng: &mut TestRng, text: &[u8]) -> usize {
+        let widest = original_get_lines_bytes(text).1;
+        match rng.below(16) {
+            0 => 0,
+            1 => 1,
+            2 => 2,
+            3..8 => widest,
+            8..10 => widest.saturating_sub(1),
+            10..12 => widest + 1,
+            12 => widest + 1 + rng.below(40),
+            13 => text.len(),
+            _ => 1 + rng.below(12),
+        }
+    }
+
+    #[test]
+    fn wrap_shortcut_matches_wrap_bytes() {
+        // What the shortcut's argument assumes of the parser: SGR bytes are
+        // collected without printing or executing and end in the ground
+        // state, and printable ASCII prints there.
+        let mut state = GROUND;
+        for &byte in b"\x1b[0123456789;m" {
+            let (next, action) = transition(state, byte);
+            assert!(action != PRINT && action != EXECUTE, "{byte:#x}");
+            state = next;
+        }
+        assert_eq!(state, GROUND);
+        for byte in 0x20..=0x7Eu8 {
+            assert_eq!(transition(GROUND, byte), (GROUND, PRINT));
+        }
+
+        const CASES: usize = 1_000_000;
+        let mut rng = TestRng(0x5EED_F3A9);
+        let mut text = Vec::new();
+        let (mut skipped, mut trimmed, mut wrapped, mut at_limit) = (0, 0, 0, 0);
+        for _ in 0..CASES {
+            wrap_fuzz_text(&mut rng, &mut text);
+            let limit = wrap_fuzz_limit(&mut rng, &text);
+            let expected = wrap_bytes(&text, limit, b"");
+            match wrap_unchanged_len(&text, limit) {
+                Some(kept) => {
+                    assert_eq!(
+                        expected,
+                        &text[..kept],
+                        "{text:x?} limit={limit} kept={kept}"
+                    );
+                    skipped += 1;
+                    trimmed += usize::from(kept < text.len());
+                    at_limit += usize::from(limit == original_get_lines_bytes(&text).1);
+                }
+                None => wrapped += usize::from(expected != text),
+            }
+        }
+        // The comparison is not vacuous: the shortcut fires on a large share
+        // of the cases, including exact-fit lines and trimmed endings, and
+        // declines many texts the wrapper does change.
+        assert!(skipped > CASES / 5, "{skipped}");
+        assert!(trimmed > CASES / 50, "{trimmed}");
+        assert!(at_limit > CASES / 20, "{at_limit}");
+        assert!(wrapped > CASES / 5, "{wrapped}");
+    }
+
+    #[test]
+    fn wrap_shortcut_declines_each_hostile_token() {
+        // Every hostile token, in every position of a line that otherwise
+        // fits: the shortcut must agree with the wrapper or stand aside.
+        let lines: [&[u8]; 4] = [
+            b"ab cd",
+            b"\x1b[1mab\x1b[0m cd  ",
+            "\u{2502} a-b \u{2502}".as_bytes(),
+            b"ab\ncd \n e",
+        ];
+        for line in lines {
+            for token in WRAP_HOSTILE {
+                for at in 0..=line.len() {
+                    let text = [&line[..at], token, &line[at..]].concat();
+                    for limit in 0..=text.len() + 1 {
+                        if let Some(kept) = wrap_unchanged_len(&text, limit) {
+                            assert_eq!(
+                                wrap_bytes(&text, limit, b""),
+                                &text[..kept],
+                                "{text:x?} limit={limit}"
+                            );
+                        }
+                    }
+                }
+                // On its own the token is never accepted at a real limit,
+                // apart from the one that decodes to an ordinary word rune.
+                if *token != "\u{2E3B}".as_bytes() {
+                    assert_eq!(wrap_unchanged_len(token, 80), None, "{token:x?}");
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn width_render_matches_reference_through_wrap_shortcut() {
+        const CASES: usize = 120_000;
+        let mut rng = TestRng(0x5EED_3E4D);
+        let mut text = Vec::new();
+        let mut skipped = 0;
+        for case in 0..CASES {
+            wrap_fuzz_text(&mut rng, &mut text);
+            let env = Env {
+                profile: [
+                    Profile::Ascii,
+                    Profile::Ansi,
+                    Profile::Ansi256,
+                    Profile::TrueColor,
+                ][case % 4],
+                dark: case % 8 < 4,
+            };
+            let width = wrap_fuzz_limit(&mut rng, &text);
+            let mut style = Style::new().width(width);
+            match rng.below(8) {
+                0 => style = style.padding(&[0, 1]),
+                1 => style = style.padding(&[1, 2, 0, 1]),
+                2 => style = style.padding(&[0, width]),
+                _ => {}
+            }
+            match rng.below(8) {
+                0 => style = style.fg(Role::Text).bg(Role::Panel),
+                1 => style = style.bg(Color::hex("#123456")).align(Align::Right),
+                2 => {
+                    style.underline = true;
+                    style = style.align(CENTER);
+                }
+                3 => style = style.border(Border::ROUNDED).height(3),
+                4 => style = style.inline(true),
+                5 => style = style.max_width(width.saturating_sub(1)).reverse(true),
+                _ => {}
+            }
+            let [_, pad_right, _, pad_left] = style.padding;
+            if !style.inline
+                && width > pad_left + pad_right
+                && wrap_unchanged_len(&text, width - pad_left - pad_right).is_some()
+                && !text.contains(&b'\t')
+            {
+                skipped += 1;
+            }
+            assert_eq!(
+                style.render_bytes_in(&text, env),
+                style.render_impl_reference(&text, env, false),
+                "{text:x?} {style:?} {env:?}"
+            );
+            if let Ok(text) = std::str::from_utf8(&text) {
+                assert_eq!(
+                    style.render_in(text, env),
+                    String::from_utf8_lossy(&style.render_impl_reference(
+                        text.as_bytes(),
+                        env,
+                        true
+                    )),
+                    "{text:?} {style:?} {env:?}"
+                );
+            }
+        }
+        assert!(skipped > CASES / 8, "{skipped}");
+    }
 
     #[test]
     fn width_memo_matches_original_and_stays_bounded() {
