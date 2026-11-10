@@ -1,4 +1,5 @@
 //! File ingestion owns a single durable outbox and a contiguous session sequence.
+mod canonical;
 mod encode;
 mod files;
 #[cfg(test)]

@@ -836,6 +836,120 @@ fn seeded_text_file_scans_to_the_serde_payloads_and_byte_budget() {
     }
 }
 
+#[test]
+fn seeded_jsonl_lines_match_the_serde_payload_encoder() {
+    let mut rng = Rng::new(13);
+    let (mut records, mut invalid) = (0, 0);
+    for _ in 0..150_000 {
+        let line = fuzz::jsonl_line(&mut rng);
+        match line_payload(FileFormat::Jsonl, &line) {
+            Ok(_) => records += 1,
+            Err(_) => invalid += 1,
+        }
+        // Payload text and both kinds of error message, serde's included.
+        assert_payload_matches_serde(FileFormat::Jsonl, &line);
+    }
+    assert!(records > 50_000, "{records} records");
+    assert!(invalid > 20_000, "{invalid} invalid lines");
+    assert_eq!(
+        line_payload(FileFormat::Jsonl, b"{\"a\":1,}")
+            .err()
+            .unwrap(),
+        "invalid JSONL: trailing comma at line 1 column 8"
+    );
+    assert_eq!(
+        line_payload(FileFormat::Jsonl, b"[]").err().unwrap(),
+        "JSONL records must be JSON objects"
+    );
+}
+
+#[test]
+fn seeded_jsonl_file_scans_to_the_serde_payloads_skips_and_byte_budget() {
+    let mut rng = Rng::new(14);
+    let mut contents = Vec::new();
+    let mut expected = Vec::new();
+    let mut first_error = None;
+    let (mut skipped, mut last_record) = (0, 0);
+    for case in 0..6_000 {
+        let line = fuzz::jsonl_line(&mut rng);
+        let offset = contents.len();
+        contents.extend_from_slice(&line);
+        contents.extend_from_slice(if case % 5 == 0 { b"\r\n" } else { b"\n" });
+        // The line as the collector sees it, less one carriage return.
+        let line = &contents[offset..contents.len() - 1];
+        match serde_line_payload(FileFormat::Jsonl, line.strip_suffix(b"\r").unwrap_or(line)) {
+            Ok(payload) => {
+                expected.push(payload.unwrap());
+                last_record = case + 1;
+            }
+            Err(error) => {
+                skipped += 1;
+                first_error.get_or_insert((offset, error));
+            }
+        }
+    }
+    let dir = Directory::new();
+    let path = dir.0.join("run.log");
+    fs::write(&path, &contents).unwrap();
+    let mut options = dir.options();
+    options.max_line_bytes = 1 << 20;
+    options.max_events = usize::MAX;
+    options.max_batch_bytes = usize::MAX;
+
+    // Without skipping, the first invalid line is reported in serde's words.
+    let (offset, error) = first_error.unwrap();
+    let strict = FileCollector::new(options.clone(), FileState::default()).unwrap();
+    assert_eq!(
+        strict.scan().err().unwrap().to_string(),
+        format!(
+            "{} at byte {offset}: {error}",
+            fs::canonicalize(&path).unwrap().display()
+        )
+    );
+
+    options.invalid_json = InvalidJsonPolicy::Skip;
+    let batch = FileCollector::new(options.clone(), FileState::default())
+        .unwrap()
+        .scan()
+        .unwrap();
+    assert!(skipped > 500 && expected.len() > 2_000);
+    assert_eq!(batch.skipped_lines, skipped);
+    let payloads: Vec<&str> = batch.records.iter().map(|r| r.payload.as_str()).collect();
+    assert!(payloads == expected.iter().map(String::as_str).collect::<Vec<_>>());
+    assert_eq!(
+        batch.payload_bytes,
+        expected.iter().map(String::len).sum::<usize>()
+    );
+    // Skipped lines still advance the source sequence.
+    assert_eq!(batch.records.last().unwrap().source_sequence, last_record);
+
+    // Byte budgets cut where the serde sizes say, to the byte.
+    let largest = expected.iter().map(String::len).max().unwrap();
+    for records in [100, 1_000, expected.len() - 1] {
+        let exact = expected[..records].iter().map(String::len).sum::<usize>();
+        assert!(exact > largest);
+        for budget in [exact - 1, exact, exact + 1] {
+            options.max_batch_bytes = budget;
+            let batch = FileCollector::new(options.clone(), FileState::default())
+                .unwrap()
+                .scan()
+                .unwrap();
+            let mut bytes = 0;
+            let fits = expected
+                .iter()
+                .take_while(|payload| {
+                    bytes += payload.len();
+                    bytes <= budget
+                })
+                .count();
+            assert_eq!(batch.records.len(), fits, "budget {budget}");
+            let counted = batch.records.iter().map(|r| r.payload.len()).sum::<usize>();
+            assert_eq!(batch.payload_bytes, counted);
+            assert_eq!(batch.scan_limit_reached, counted == budget);
+        }
+    }
+}
+
 #[cfg(unix)]
 #[test]
 fn canonical_non_utf8_paths_are_rejected_without_checkpoint_changes() {

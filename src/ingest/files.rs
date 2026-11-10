@@ -14,7 +14,7 @@ use std::path::{Path, PathBuf};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-use super::encode;
+use super::{canonical, encode};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum FileFormat {
@@ -106,8 +106,7 @@ fn text_payload(line: &[u8]) -> Option<String> {
 /// input, which `--on-invalid=skip` may skip; the inner one never is.
 fn line_payload(format: FileFormat, contents: &[u8]) -> Result<serde_json::Result<String>, String> {
     let direct = match format {
-        // JSONL has no direct encoder.
-        FileFormat::Jsonl => None,
+        FileFormat::Jsonl => canonical::object(contents),
         FileFormat::Text => text_payload(contents),
     };
     match direct {
