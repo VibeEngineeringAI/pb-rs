@@ -30,7 +30,8 @@ use std::borrow::Cow;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::io::Write;
-use std::sync::Arc;
+use std::rc::Rc;
+use std::sync::{Arc, Weak};
 
 // ─── constants ──────────────────────────────────────────────────────────────
 
@@ -1918,15 +1919,72 @@ struct ResultsTable {
     scroll: usize,
     focused: bool,
     filter: TextInput,
-    filtered_rows: RefCell<Option<FilteredRows>>,
+    /// Shared with every copy of this table, so a result computed by the
+    /// per-frame render copy is still there for the next key and frame.
+    filtered_rows: Rc<RefCell<Option<FilteredRows>>>,
+    /// Answer from `visible_rows_original`: the differential tests' oracle.
+    #[cfg(test)]
+    original_filter: bool,
 }
 
-/// Immutable matches are shared by render snapshots; replacing results clears
-/// the cache, while changing the filter replaces only this table's cache slot.
-#[derive(Clone, Debug)]
+/// The one retained filter result: at most one index per row of one result.
+///
+/// It is keyed on everything the match reads. `rows` identifies the result
+/// (a `Weak` pins the allocation, so its address cannot be reused while the
+/// entry lives, without keeping the row payloads alive); `filter` is the
+/// filter text, and `needle` its `unicode::lower` form, which is all the match
+/// takes from it. Replacing the rows gives the table a fresh slot, and an
+/// empty filter drops the entry.
+#[derive(Debug)]
 struct FilteredRows {
+    rows: Weak<Vec<Row>>,
     filter: String,
+    needle: String,
     indices: Arc<Vec<usize>>,
+    #[cfg(test)]
+    path: FilterPath,
+}
+
+/// How an entry was produced. Recorded in test builds only, where the
+/// differential tests check that every path is exercised.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum FilterPath {
+    Rescan,
+    SameNeedle,
+    NarrowedInPlace,
+    NarrowedCopy,
+}
+
+/// The table filter's row predicate: the folded METRIC or VALUE contains the
+/// folded filter text. Rows of one series share their metric `Arc`, so that
+/// half is evaluated once per run of rows holding the same allocation.
+struct RowMatcher<'a> {
+    needle: &'a str,
+    metric: Option<(&'a Arc<str>, bool)>,
+    scratch: String,
+}
+
+impl<'a> RowMatcher<'a> {
+    fn new(needle: &'a str) -> Self {
+        Self {
+            needle,
+            metric: None,
+            scratch: String::new(),
+        }
+    }
+
+    fn matches(&mut self, row: &'a Row) -> bool {
+        let metric = match self.metric {
+            Some((previous, matched)) if Arc::ptr_eq(previous, &row.metric) => matched,
+            _ => {
+                let matched =
+                    super::unicode::lower_contains(&row.metric, self.needle, &mut self.scratch);
+                self.metric = Some((&row.metric, matched));
+                matched
+            }
+        };
+        metric || super::unicode::lower_contains(&row.value, self.needle, &mut self.scratch)
+    }
 }
 
 /// Unfiltered navigation borrows the row slice directly. Filtering retains
@@ -1968,38 +2026,115 @@ impl ResultsTable {
             scroll: 0,
             focused: false,
             filter: TextInput::new(),
-            filtered_rows: RefCell::default(),
+            filtered_rows: Rc::default(),
+            #[cfg(test)]
+            original_filter: false,
         }
     }
 
     fn visible_rows(&self) -> VisibleRows<'_> {
+        #[cfg(test)]
+        if self.original_filter {
+            return self.visible_rows_original();
+        }
+        let filter = self.filter.value();
+        let mut cached = self.filtered_rows.borrow_mut();
+        if filter.is_empty() || !self.filterable {
+            cached.take();
+            return VisibleRows::All(&self.rows);
+        }
+        let same_rows =
+            |entry: &FilteredRows| std::ptr::eq(entry.rows.as_ptr(), Arc::as_ptr(&self.rows));
+        if let Some(entry) = cached.as_ref()
+            && same_rows(entry)
+            && entry.filter == filter
+        {
+            return VisibleRows::Filtered(&self.rows, Arc::clone(&entry.indices));
+        }
+        let previous = cached.take().filter(same_rows);
+        let needle = super::unicode::lower(&filter);
+        let rows: &[Row] = &self.rows;
+        let mut matcher = RowMatcher::new(&needle);
+        let (indices, _path) = match previous {
+            // Folding is per rune, so texts that differ only in case filter alike.
+            Some(previous) if previous.needle == needle => {
+                (previous.indices, FilterPath::SameNeedle)
+            }
+            // A row whose folded cell contains the new needle also contains
+            // every substring of it, so the new matches are a subset of the
+            // previous ones whenever the previous needle is such a substring
+            // (typing at either end, or a paste around the old text).
+            Some(previous) if needle.contains(&previous.needle) => {
+                match Arc::try_unwrap(previous.indices) {
+                    Ok(mut indices) => {
+                        indices.retain(|&i| matcher.matches(&rows[i]));
+                        if indices.len() <= indices.capacity() / 2 {
+                            indices.shrink_to_fit();
+                        }
+                        (Arc::new(indices), FilterPath::NarrowedInPlace)
+                    }
+                    // Still held by a caller: leave that copy untouched.
+                    Err(shared) => (
+                        Arc::new(
+                            shared
+                                .iter()
+                                .copied()
+                                .filter(|&i| matcher.matches(&rows[i]))
+                                .collect(),
+                        ),
+                        FilterPath::NarrowedCopy,
+                    ),
+                }
+            }
+            // Any other edit rescans every row; the old indices are released
+            // before the replacement is built.
+            other => {
+                drop(other);
+                (
+                    Arc::new(
+                        rows.iter()
+                            .enumerate()
+                            .filter_map(|(i, row)| matcher.matches(row).then_some(i))
+                            .collect(),
+                    ),
+                    FilterPath::Rescan,
+                )
+            }
+        };
+        *cached = Some(FilteredRows {
+            rows: Arc::downgrade(&self.rows),
+            filter,
+            needle,
+            indices: Arc::clone(&indices),
+            #[cfg(test)]
+            path: _path,
+        });
+        VisibleRows::Filtered(&self.rows, indices)
+    }
+
+    /// The filter as it was before the result cache: every row folded and
+    /// searched on every call. Kept as the oracle for `visible_rows`.
+    #[cfg(test)]
+    fn visible_rows_original(&self) -> VisibleRows<'_> {
         let filter = self.filter.value();
         if filter.is_empty() || !self.filterable {
             return VisibleRows::All(&self.rows);
         }
-        let mut cached = self.filtered_rows.borrow_mut();
-        if let Some(previous) = cached.as_ref()
-            && previous.filter == filter
-        {
-            return VisibleRows::Filtered(&self.rows, Arc::clone(&previous.indices));
-        }
         let needle = super::unicode::lower(&filter);
-        let indices = Arc::new(
-            self.rows
-                .iter()
-                .enumerate()
-                .filter_map(|(i, row)| {
-                    (super::unicode::lower(&row.metric).contains(&needle)
-                        || super::unicode::lower(&row.value).contains(&needle))
-                    .then_some(i)
-                })
-                .collect(),
-        );
-        *cached = Some(FilteredRows {
-            filter,
-            indices: Arc::clone(&indices),
-        });
-        VisibleRows::Filtered(&self.rows, indices)
+        VisibleRows::Filtered(
+            &self.rows,
+            Arc::new(
+                self.rows
+                    .iter()
+                    .enumerate()
+                    .filter_map(|(i, row)| {
+                        (super::unicode::lower(&row.metric).contains(&needle)
+                            || super::unicode::lower(&row.value).contains(&needle))
+                        .then_some(i)
+                    })
+                    .collect(),
+            ),
+        )
     }
 
     fn max_pages(&self) -> usize {
@@ -2023,7 +2158,9 @@ impl ResultsTable {
 
     fn with_rows(&mut self, rows: Arc<Vec<Row>>) {
         if !Arc::ptr_eq(&self.rows, &rows) {
-            self.filtered_rows.get_mut().take();
+            // A fresh slot rather than clearing the shared one: copies that
+            // still show the previous result keep their entry.
+            self.filtered_rows = Rc::default();
         }
         self.rows = rows;
         if self.cursor >= self.rows.len() {
@@ -2363,26 +2500,7 @@ impl ResultsTable {
 
     #[cfg(test)]
     fn view_original(&self, env: style::Env) -> String {
-        let filter = self.filter.value();
-        let visible = if filter.is_empty() || !self.filterable {
-            VisibleRows::All(&self.rows)
-        } else {
-            let needle = super::unicode::lower(&filter);
-            VisibleRows::Filtered(
-                &self.rows,
-                Arc::new(
-                    self.rows
-                        .iter()
-                        .enumerate()
-                        .filter_map(|(i, row)| {
-                            (super::unicode::lower(&row.metric).contains(&needle)
-                                || super::unicode::lower(&row.value).contains(&needle))
-                            .then_some(i)
-                        })
-                        .collect(),
-                ),
-            )
-        };
+        let visible = self.visible_rows_original();
         let widths = self.widths();
         let has_rows = !visible.is_empty();
         let titles = [self.time_title.as_str(), "METRIC", "VALUE"];
@@ -7522,6 +7640,688 @@ mod tests {
         assert_eq!(snapshot.visible_rows().len(), 1000);
         table.filter.set_value("OTHER");
         assert_eq!(table.visible_rows().len(), 1);
+    }
+
+    /// xorshift64: the seeded source for the filter differential tests.
+    struct FilterRng(u64);
+
+    impl FilterRng {
+        fn below(&mut self, bound: usize) -> usize {
+            self.0 ^= self.0 << 13;
+            self.0 ^= self.0 >> 7;
+            self.0 ^= self.0 << 17;
+            (self.0 % bound as u64) as usize
+        }
+        fn pick<T: Copy>(&mut self, items: &[T]) -> T {
+            items[self.below(items.len())]
+        }
+    }
+
+    /// Mixed-case ASCII on both sides of the in-place search limit, and
+    /// non-ASCII text whose simple lowercase is special: İ → i, ẞ → ß (while
+    /// ß stays), Σ → σ (ς stays), Kelvin → k, Angstrom → å, Ⱥ → ⱥ (longer).
+    const FILTER_METRICS: &[&str] = &[
+        "http_Requests_Total{job=\"API\", instance=\"Host-01\", region=\"EU-West-1\", zone=\"A\"}",
+        "http_requests_total{job=\"api\"}",
+        "UP",
+        "up",
+        "",
+        "İstanbul_ıSı",
+        "STRASSE straße ẞ",
+        "ΟΔΟΣ οδος σ",
+        "\u{212a}elvin K k",
+        "Å\u{212b}å",
+        "Ⱥⱥ café CAFÉ",
+        "node_cpu{mode=\"İdle\", note=\"a non-ASCII label value running past the in-place limit ß\"}",
+        "日志 🦀 metric",
+    ];
+    const FILTER_VALUES: &[&str] = &[
+        "0", "1", "42", "3.14", "NaN", "+Inf", "-inf", "1e-05", "0xAB", "ß", "K", "\u{212a}", "",
+        "1024", "999", "İ",
+    ];
+    const FILTER_RUNES: &[char] = &[
+        'a', 'A', 'p', 'P', 'i', 'I', 's', 'S', 'k', 'K', 'e', 'E', 't', 'u', '0', '1', '4', '9',
+        '_', '{', '"', ' ', '.', 'İ', 'ı', 'ß', 'ẞ', 'ς', 'σ', 'Σ', '\u{212a}', '\u{212b}', 'å',
+        'é', 'É', 'Ⱥ', 'ⱥ', '日',
+    ];
+
+    /// Row sets in the shapes the filter must not tell apart: series whose
+    /// rows share one metric `Arc` in a run (matrix results), the same sharing
+    /// interleaved, and equal metric text held by separate allocations.
+    fn filter_fuzz_rows(rng: &mut FilterRng) -> Vec<Row> {
+        let series = [0, 1, 1, 2, 3, 5, 8][rng.below(7)];
+        let points = [0, 1, 2, 4, 9][rng.below(5)];
+        let metrics: Vec<Arc<str>> = (0..series)
+            .map(|i| {
+                let metric = rng.pick(FILTER_METRICS);
+                if rng.below(3) == 0 {
+                    format!("{metric}{i}").into()
+                } else {
+                    metric.into()
+                }
+            })
+            .collect();
+        let shape = rng.below(3);
+        let mut rows = Vec::new();
+        for outer in 0..if shape == 1 { points } else { series } {
+            for inner in 0..if shape == 1 { series } else { points } {
+                let (series, point) = if shape == 1 {
+                    (inner, outer)
+                } else {
+                    (outer, inner)
+                };
+                let value = if rng.below(2) == 0 {
+                    rng.pick(FILTER_VALUES).to_owned()
+                } else {
+                    (series * 37 + point * 101).to_string()
+                };
+                rows.push(Row {
+                    timestamp: "00:00:00".into(),
+                    timestamp_full: "2026-01-01T00:00:00Z".into(),
+                    metric: if shape == 2 {
+                        Arc::from(metrics[series].as_ref())
+                    } else {
+                        Arc::clone(&metrics[series])
+                    },
+                    value,
+                });
+            }
+        }
+        rows
+    }
+
+    /// A filter text likely to match: part of a cell, folded, raw or upper-cased.
+    fn filter_fuzz_text(rng: &mut FilterRng, rows: &[Row]) -> String {
+        if rows.is_empty() || rng.below(5) == 0 {
+            return (0..rng.below(4)).map(|_| rng.pick(FILTER_RUNES)).collect();
+        }
+        let row = &rows[rng.below(rows.len())];
+        let cell: Vec<char> = if rng.below(3) == 0 {
+            row.value.chars().collect()
+        } else {
+            row.metric.chars().collect()
+        };
+        let start = rng.below(cell.len() + 1);
+        let end = (start + 1 + rng.below(4)).min(cell.len());
+        let cut: String = cell[start..end].iter().collect();
+        match rng.below(3) {
+            0 => crate::tui::unicode::lower(&cut),
+            1 => crate::tui::unicode::upper(&cut),
+            _ => cut,
+        }
+    }
+
+    fn filter_indices(table: &ResultsTable) -> Option<Vec<usize>> {
+        match table.visible_rows() {
+            VisibleRows::All(_) => None,
+            VisibleRows::Filtered(_, indices) => Some(indices.to_vec()),
+        }
+    }
+
+    /// Everything a filter result decides: the matched rows, the selection,
+    /// the page count and the styled table, on the table itself and on the
+    /// per-frame copy `results_table` renders from.
+    fn assert_filter_matches_oracle(
+        fast: &ResultsTable,
+        oracle: &ResultsTable,
+        page_size: usize,
+        context: &str,
+    ) {
+        let env = style::Env {
+            profile: style::Profile::TrueColor,
+            dark: true,
+        };
+        assert!(oracle.original_filter && !fast.original_filter);
+        assert_eq!(fast.filter.value(), oracle.filter.value(), "{context}");
+        assert!(Arc::ptr_eq(&fast.rows, &oracle.rows), "{context}");
+        // The steps `results_table` applies to its copy before rendering.
+        let mut copies = (fast.clone(), oracle.clone());
+        for copy in [&mut copies.0, &mut copies.1] {
+            let rows = Arc::clone(&copy.rows);
+            copy.with_rows(rows);
+            copy.with_page_size(page_size);
+            copy.with_highlighted_row(copy.cursor);
+        }
+        for (rendered, fast, oracle) in [(false, fast, oracle), (true, &copies.0, &copies.1)] {
+            assert_eq!(filter_indices(fast), filter_indices(oracle), "{context}");
+            assert_eq!(
+                (
+                    fast.cursor,
+                    fast.current_page,
+                    fast.scroll,
+                    fast.max_pages()
+                ),
+                (
+                    oracle.cursor,
+                    oracle.current_page,
+                    oracle.scroll,
+                    oracle.max_pages()
+                ),
+                "{context}"
+            );
+            assert_eq!(
+                fast.highlighted_row().map(std::ptr::from_ref),
+                oracle.highlighted_row().map(std::ptr::from_ref),
+                "{context}"
+            );
+            if rendered {
+                assert_eq!(fast.view_in(env), oracle.view_original(env), "{context}");
+            }
+        }
+        // The copies share the table's slot: whatever they computed is kept.
+        let filtered = !fast.filter.value().is_empty() && fast.filterable;
+        assert_eq!(fast.filtered_rows.borrow().is_some(), filtered, "{context}");
+        assert!(oracle.filtered_rows.borrow().is_none(), "{context}");
+    }
+
+    #[test]
+    fn filter_cache_matches_original_filter_across_seeded_edit_sequences() {
+        use std::collections::HashMap;
+        const SEQUENCES: u64 = 400;
+        const STEPS: usize = 60;
+        let mut paths: HashMap<&'static str, usize> = HashMap::new();
+        let (mut hits, mut non_ascii, mut empty_results, mut refreshes) = (0, 0, 0, 0);
+        for seed in 1..=SEQUENCES {
+            let mut rng = FilterRng(seed.wrapping_mul(0x9e37_79b9_7f4a_7c15) | 1);
+            let mut fast =
+                ResultsTable::new(40 + rng.below(60), 1 + rng.below(6), DisplayMode::Utc);
+            fast.filterable = true;
+            fast.focused = true;
+            let mut oracle = fast.clone();
+            oracle.filtered_rows = Rc::default();
+            oracle.original_filter = true;
+            let mut tables = [fast, oracle];
+            let rows = Arc::new(filter_fuzz_rows(&mut rng));
+            for table in &mut tables {
+                table.with_rows(Arc::clone(&rows));
+            }
+            // An index list a caller still holds (with its expected content),
+            // and copies of both tables taken before a later change.
+            let mut held: Option<(Arc<Vec<usize>>, Vec<usize>)> = None;
+            let mut snapshot: Option<[ResultsTable; 2]> = None;
+            let mut seen: Option<(String, *const Vec<Row>, *const Vec<usize>)> = None;
+            for step in 0..STEPS {
+                let rows = Arc::clone(&tables[0].rows);
+                let value = tables[0].filter.value();
+                let focused = tables[0].filter.focused();
+                let mut keys: Vec<Key> = Vec::new();
+                let mut set_value: Option<String> = None;
+                let mut new_rows: Option<Arc<Vec<Row>>> = None;
+                let mut focus: Option<bool> = None;
+                let choice = rng.below(100);
+                let op = match choice {
+                    // Result replaced: same content in a new allocation, new
+                    // content, or the empty result of a failed query.
+                    0..=2 => {
+                        new_rows = Some(Arc::new(rows.to_vec()));
+                        "refresh"
+                    }
+                    3..=5 => {
+                        new_rows = Some(Arc::new(filter_fuzz_rows(&mut rng)));
+                        "new result"
+                    }
+                    6 => {
+                        new_rows = Some(Arc::default());
+                        "failed refresh"
+                    }
+                    7..=11 => {
+                        focus = Some(!focused);
+                        "focus"
+                    }
+                    12..=14 => {
+                        snapshot = Some([tables[0].clone(), tables[1].clone()]);
+                        "snapshot"
+                    }
+                    _ if focused => match choice {
+                        15..=39 => {
+                            keys.push(rune(rng.pick(FILTER_RUNES)));
+                            "type"
+                        }
+                        40..=51 => {
+                            // Extend at the end towards a text that matches.
+                            keys.push(key(KeyCode::End));
+                            let text = filter_fuzz_text(&mut rng, &rows);
+                            keys.extend(text.chars().take(2).map(rune));
+                            "append"
+                        }
+                        52..=59 => {
+                            keys.push(Key::runes(&filter_fuzz_text(&mut rng, &rows)));
+                            "paste"
+                        }
+                        60..=69 => {
+                            keys.push(key(KeyCode::Backspace));
+                            "backspace"
+                        }
+                        70..=73 => {
+                            keys.push(key(KeyCode::Delete));
+                            "delete"
+                        }
+                        74..=83 => {
+                            keys.push(key(rng.pick(&[
+                                KeyCode::Left,
+                                KeyCode::Right,
+                                KeyCode::Home,
+                                KeyCode::End,
+                                KeyCode::Down,
+                                KeyCode::PgDown,
+                            ])));
+                            "cursor"
+                        }
+                        84..=87 => {
+                            // ctrl+k, ctrl+u, ctrl+w.
+                            keys.push(key(KeyCode::Ctrl(rng.pick(&[11, 21, 23]))));
+                            "kill"
+                        }
+                        _ => {
+                            // Replace the whole text through the input.
+                            keys.push(key(KeyCode::Ctrl(21)));
+                            keys.push(key(KeyCode::Ctrl(11)));
+                            keys.push(Key::runes(&filter_fuzz_text(&mut rng, &rows)));
+                            "replace"
+                        }
+                    },
+                    15..=54 => {
+                        keys.push(key(rng.pick(&[
+                            KeyCode::Down,
+                            KeyCode::Down,
+                            KeyCode::Up,
+                            KeyCode::PgDown,
+                            KeyCode::PgUp,
+                            KeyCode::Home,
+                            KeyCode::End,
+                            KeyCode::Right,
+                            KeyCode::Left,
+                        ])));
+                        "navigate"
+                    }
+                    55..=66 => {
+                        set_value = Some(filter_fuzz_text(&mut rng, &rows));
+                        "set"
+                    }
+                    67..=76 => {
+                        // Same folded text, different case.
+                        let upper = crate::tui::unicode::upper(&value);
+                        set_value = Some(if upper == value {
+                            crate::tui::unicode::lower(&value)
+                        } else {
+                            upper
+                        });
+                        "recase"
+                    }
+                    77..=86 => {
+                        // Wrap the current text: narrowing with a blurred input.
+                        let (before, after) = (rng.pick(FILTER_RUNES), rng.pick(FILTER_RUNES));
+                        set_value = Some(match rng.below(3) {
+                            0 => format!("{before}{value}"),
+                            1 => format!("{value}{after}"),
+                            _ => format!("{before}{value}{after}"),
+                        });
+                        "wrap"
+                    }
+                    87..=90 => {
+                        set_value = Some(String::new());
+                        "clear"
+                    }
+                    91..=94 => {
+                        keys.push(key(KeyCode::Esc));
+                        "esc"
+                    }
+                    _ => {
+                        keys.push(rune('/'));
+                        "slash"
+                    }
+                };
+                for table in &mut tables {
+                    if let Some(rows) = &new_rows {
+                        table.with_rows(Arc::clone(rows));
+                    }
+                    match focus {
+                        Some(true) => table.filter.focus(),
+                        Some(false) => table.filter.blur(),
+                        None => {}
+                    }
+                    if let Some(value) = &set_value {
+                        table.filter.set_value(value);
+                        table.with_highlighted_row(table.cursor);
+                    }
+                    for key in &keys {
+                        table.update(key);
+                    }
+                }
+                let context = format!(
+                    "seed {seed} step {step} {op}: {value:?} -> {:?}",
+                    tables[0].filter.value()
+                );
+                let page_size = 1 + rng.below(7);
+                assert_filter_matches_oracle(&tables[0], &tables[1], page_size, &context);
+                if let Some((indices, expected)) = &held {
+                    assert_eq!(
+                        indices.as_ref(),
+                        expected,
+                        "{context}: held indices changed"
+                    );
+                }
+                if let Some([fast, oracle]) = &snapshot {
+                    assert_filter_matches_oracle(fast, oracle, page_size, &context);
+                    // The live table's entry is back in the slot afterwards.
+                    assert_filter_matches_oracle(&tables[0], &tables[1], page_size, &context);
+                }
+                // Tally how each new entry was produced, and repeat lookups.
+                let [fast, oracle] = &tables;
+                let entry = fast.filtered_rows.borrow().as_ref().map(|entry| {
+                    (
+                        entry.filter.clone(),
+                        entry.rows.as_ptr(),
+                        Arc::as_ptr(&entry.indices),
+                        entry.path,
+                    )
+                });
+                if let Some((filter, entry_rows, indices, path)) = entry {
+                    assert_eq!(filter, fast.filter.value(), "{context}");
+                    assert_eq!(entry_rows, Arc::as_ptr(&fast.rows), "{context}");
+                    let current = (filter, entry_rows, indices);
+                    if seen.as_ref() == Some(&current) {
+                        hits += 1;
+                    } else if snapshot.is_none() {
+                        *paths
+                            .entry(match path {
+                                FilterPath::Rescan => "rescan",
+                                FilterPath::SameNeedle => "same needle",
+                                FilterPath::NarrowedInPlace => "narrowed in place",
+                                FilterPath::NarrowedCopy => "narrowed copy",
+                            })
+                            .or_default() += 1;
+                    }
+                    seen = Some(current);
+                    non_ascii += usize::from(!fast.filter.value().is_ascii());
+                    empty_results += usize::from(oracle.visible_rows().is_empty());
+                } else {
+                    seen = None;
+                }
+                refreshes += usize::from(new_rows.is_some());
+                if snapshot.is_some() && rng.below(4) == 0 {
+                    snapshot = None;
+                }
+                held = match fast.visible_rows() {
+                    VisibleRows::Filtered(_, indices) if rng.below(3) == 0 => {
+                        let expected = filter_indices(oracle).expect("filtered oracle");
+                        Some((indices, expected))
+                    }
+                    _ => None,
+                };
+            }
+        }
+        // Every way of producing a result, and each kind of input, was hit
+        // often enough for the comparison above to mean something.
+        for (path, least) in [
+            ("rescan", 2000),
+            ("same needle", 300),
+            ("narrowed in place", 1000),
+            ("narrowed copy", 300),
+        ] {
+            let count = paths.get(path).copied().unwrap_or(0);
+            assert!(count >= least, "{path}: {count} {paths:?}");
+        }
+        assert!(hits >= 3000, "cache hits: {hits}");
+        assert!(non_ascii >= 2000, "non-ASCII filters: {non_ascii}");
+        assert!(
+            empty_results >= 1000,
+            "filters matching nothing: {empty_results}"
+        );
+        assert!(refreshes >= 1000, "replaced results: {refreshes}");
+    }
+    fn filter_entry(s: &PromqlState) -> (Arc<Vec<usize>>, FilterPath) {
+        let entry = s.table.filtered_rows.borrow();
+        let entry = entry.as_ref().expect("retained filter result");
+        (Arc::clone(&entry.indices), entry.path)
+    }
+
+    #[test]
+    fn filter_result_outlives_the_frame_and_keys_that_leave_the_text_alone() {
+        let series: Vec<Arc<str>> = (0..40)
+            .map(|i| format!("bench-Series-{i:04}{{job=\"api\"}}").into())
+            .collect();
+        let rows = |series: &[Arc<str>]| -> Vec<Row> {
+            (0..640)
+                .map(|i| Row {
+                    timestamp: "00:00:00".into(),
+                    timestamp_full: "2026-01-01T00:00:00Z".into(),
+                    metric: Arc::clone(&series[i / 16]),
+                    value: i.to_string(),
+                })
+                .collect()
+        };
+        let mut s = state("up", "m", false);
+        s.update(Message::Resize {
+            width: 120,
+            height: 40,
+        });
+        s.update(Message::Done(vector(rows(&series))));
+        press(&mut s, rune('/'));
+        for c in "SERIES-000".chars() {
+            press(&mut s, rune(c));
+        }
+        // The focused input takes every key, so only a frame asks for the
+        // rows; the frame's table copy must leave its answer with the state.
+        assert!(s.table.filter.focused());
+        assert!(s.table.filtered_rows.borrow().is_none());
+        let frame = s.view();
+        let (indices, path) = filter_entry(&s);
+        assert_eq!(path, FilterPath::Rescan);
+        assert_eq!(*indices, (0..160).collect::<Vec<_>>());
+        assert_eq!(s.view(), frame);
+        for code in [
+            KeyCode::Left,
+            KeyCode::Left,
+            KeyCode::Right,
+            KeyCode::Home,
+            KeyCode::End,
+            KeyCode::Down,
+            KeyCode::PgDown,
+            KeyCode::Up,
+        ] {
+            press(&mut s, key(code));
+            s.view();
+            assert!(Arc::ptr_eq(&indices, &filter_entry(&s).0), "{code:?}");
+            assert!(Arc::ptr_eq(&indices, &{
+                match s.table.visible_rows() {
+                    VisibleRows::Filtered(_, indices) => indices,
+                    VisibleRows::All(_) => unreachable!(),
+                }
+            }));
+        }
+        drop(indices);
+        // Typing at the end narrows the previous matches; deleting rescans.
+        press(&mut s, rune('3'));
+        s.view();
+        let (indices, path) = filter_entry(&s);
+        assert_eq!(path, FilterPath::NarrowedInPlace);
+        assert_eq!(*indices, (48..64).collect::<Vec<_>>());
+        drop(indices);
+        press(&mut s, key(KeyCode::Backspace));
+        s.view();
+        let (indices, path) = filter_entry(&s);
+        assert_eq!(path, FilterPath::Rescan);
+        assert_eq!(indices.len(), 160);
+
+        // A refresh with equal rows, a failed refresh and a new result each
+        // start from an empty slot (`with_rows` then asks for the new rows'
+        // matches itself), and the retained entry names the result it is for.
+        let entry_rows = |s: &PromqlState| {
+            let entry = s.table.filtered_rows.borrow();
+            entry
+                .as_ref()
+                .expect("retained filter result")
+                .rows
+                .as_ptr()
+        };
+        let slot = Rc::clone(&s.table.filtered_rows);
+        let old = s.clone();
+        assert_eq!(entry_rows(&s), Arc::as_ptr(&s.data_rows));
+        s.update(Message::Done(vector(rows(&series))));
+        assert!(!Rc::ptr_eq(&slot, &s.table.filtered_rows));
+        assert!(!Arc::ptr_eq(&old.data_rows, &s.data_rows));
+        let (refreshed, path) = filter_entry(&s);
+        assert_eq!(path, FilterPath::Rescan);
+        assert!(!Arc::ptr_eq(&indices, &refreshed));
+        assert_eq!(indices, refreshed);
+        assert_eq!(entry_rows(&s), Arc::as_ptr(&s.data_rows));
+        assert_ne!(entry_rows(&s), entry_rows(&old));
+        s.view();
+        assert!(Arc::ptr_eq(&refreshed, &filter_entry(&s).0));
+        let before_failure = Rc::clone(&s.table.filtered_rows);
+        s.update(Message::Done(Completion::Result(Err("broken".into()))));
+        assert!(!Rc::ptr_eq(&before_failure, &s.table.filtered_rows));
+        s.view();
+        assert!(filter_entry(&s).0.is_empty());
+        assert_eq!(entry_rows(&s), Arc::as_ptr(&s.data_rows));
+        let other: Vec<Arc<str>> = (0..40)
+            .map(|i| {
+                if i == 7 {
+                    "new-series-0007"
+                } else {
+                    "unrelated"
+                }
+                .into()
+            })
+            .collect();
+        s.update(Message::Done(vector(rows(&other))));
+        s.view();
+        assert_eq!(filter_entry(&s).0.len(), 16);
+        assert_eq!(entry_rows(&s), Arc::as_ptr(&s.data_rows));
+        // The copy taken before the refreshes still has its own result.
+        assert!(Rc::ptr_eq(&slot, &old.table.filtered_rows));
+        assert_eq!(old.view(), frame);
+        assert!(Arc::ptr_eq(&indices, &filter_entry(&old).0));
+
+        // An entry is never trusted for rows it was not computed from, even
+        // when they are swapped in behind `with_rows`.
+        let mut table = s.table.clone();
+        table.rows = Arc::new(rows(&series));
+        assert_eq!(table.visible_rows().len(), 160);
+        assert_eq!(s.table.visible_rows().len(), 16);
+        // Clearing the text releases the entry.
+        s.table.filter.set_value("");
+        assert_eq!(s.table.visible_rows().len(), 640);
+        assert!(s.table.filtered_rows.borrow().is_none());
+    }
+
+    #[test]
+    fn filtered_frames_match_original_filter_across_seeded_sessions() {
+        const SESSIONS: u64 = 16;
+        const STEPS: usize = 30;
+        let mut filtered_frames = 0;
+        for seed in 1..=SESSIONS {
+            let mut rng = FilterRng(seed.wrapping_mul(0xd6e8_feb8_6659_fd93) | 1);
+            let mut states = [state("up", "m", false), state("up", "m", false)];
+            states[1].table.original_filter = true;
+            let mut rows = filter_fuzz_rows(&mut rng);
+            for s in &mut states {
+                s.update(Message::Resize {
+                    width: 120,
+                    height: 40,
+                });
+                s.update(Message::Done(vector(rows.clone())));
+                press(s, rune('/'));
+            }
+            for step in 0..STEPS {
+                let mut messages: Vec<Message> = Vec::new();
+                let mut result: Option<Result<Vec<Row>, String>> = None;
+                let op = match rng.below(100) {
+                    0..=29 => {
+                        messages.push(Message::Key(rune(rng.pick(FILTER_RUNES))));
+                        "type"
+                    }
+                    30..=44 => {
+                        messages.push(Message::Key(key(KeyCode::End)));
+                        let text = filter_fuzz_text(&mut rng, &rows);
+                        messages.extend(text.chars().take(2).map(|c| Message::Key(rune(c))));
+                        "append"
+                    }
+                    45..=51 => {
+                        let text = filter_fuzz_text(&mut rng, &rows);
+                        messages.push(Message::Key(Key::runes(&text)));
+                        "paste"
+                    }
+                    52..=63 => {
+                        messages.push(Message::Key(key(KeyCode::Backspace)));
+                        "backspace"
+                    }
+                    64..=75 => {
+                        messages.push(Message::Key(key(rng.pick(&[
+                            KeyCode::Left,
+                            KeyCode::Right,
+                            KeyCode::Home,
+                            KeyCode::End,
+                            KeyCode::Down,
+                            KeyCode::Delete,
+                        ]))));
+                        "cursor"
+                    }
+                    76..=79 => {
+                        // ctrl+k, ctrl+u, ctrl+w.
+                        messages.push(Message::Key(key(KeyCode::Ctrl(rng.pick(&[11, 21, 23])))));
+                        "kill"
+                    }
+                    80..=83 => {
+                        // Metric detail under the table follows the selection.
+                        messages.push(Message::Key(rune('w')));
+                        "detail"
+                    }
+                    84..=87 => {
+                        messages.push(Message::Resize {
+                            width: 60 + rng.below(100),
+                            height: 14 + rng.below(40),
+                        });
+                        "resize"
+                    }
+                    88..=91 => {
+                        result = Some(Ok(rows.clone()));
+                        "refresh"
+                    }
+                    92..=96 => {
+                        rows = filter_fuzz_rows(&mut rng);
+                        result = Some(Ok(rows.clone()));
+                        "new result"
+                    }
+                    _ => {
+                        rows = Vec::new();
+                        result = Some(Err("fixture error".into()));
+                        "failed refresh"
+                    }
+                };
+                let frames = states.each_mut().map(|s| {
+                    for message in &messages {
+                        s.update(match message {
+                            Message::Key(key) => Message::Key(key.clone()),
+                            Message::Resize { width, height } => Message::Resize {
+                                width: *width,
+                                height: *height,
+                            },
+                            Message::Done(_) => unreachable!(),
+                        });
+                    }
+                    if let Some(result) = &result {
+                        s.update(Message::Done(match result {
+                            Ok(rows) => vector(rows.clone()),
+                            Err(error) => Completion::Result(Err(error.clone())),
+                        }));
+                    }
+                    let frame = s.view();
+                    assert!(s.take_fault().is_none());
+                    (frame, s.table.cursor, s.table.current_page)
+                });
+                let [fast, oracle] = &states;
+                let filter = fast.table.filter.value();
+                assert_eq!(filter, oracle.table.filter.value());
+                assert!(
+                    frames[0] == frames[1],
+                    "seed {seed} step {step} {op}: filter {filter:?}"
+                );
+                filtered_frames += usize::from(!filter.is_empty());
+            }
+        }
+        assert!(filtered_frames >= 300, "{filtered_frames}");
     }
 
     #[test]
