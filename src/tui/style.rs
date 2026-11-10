@@ -3965,24 +3965,40 @@ fn first_cluster(s: &str) -> (usize, usize) {
 
 /// utf8.DecodeRune: malformed sequences consume one byte and yield RuneError.
 fn decode_rune(bytes: &[u8]) -> (char, usize) {
+    const INVALID: (char, usize) = ('\u{FFFD}', 1);
     let Some(&first) = bytes.first() else {
         return ('\u{FFFD}', 0);
     };
     if first < 0x80 {
         return (char::from(first), 1);
     }
-    let len = match first {
-        0xC2..=0xDF => 2,
-        0xE0..=0xEF => 3,
-        0xF0..=0xF4 => 4,
-        _ => return ('\u{FFFD}', 1),
+    // Well-formed sequences (Unicode table 3-7, Go's acceptRanges): the lead
+    // byte fixes the length and the range of the second byte, which is what
+    // excludes overlong forms, surrogates and values above U+10FFFF.
+    let (len, second) = match first {
+        0xC2..=0xDF => (2, 0x80..=0xBF),
+        0xE0 => (3, 0xA0..=0xBF),
+        0xED => (3, 0x80..=0x9F),
+        0xE1..=0xEC | 0xEE..=0xEF => (3, 0x80..=0xBF),
+        0xF0 => (4, 0x90..=0xBF),
+        0xF4 => (4, 0x80..=0x8F),
+        0xF1..=0xF3 => (4, 0x80..=0xBF),
+        _ => return INVALID,
     };
-    if let Some(prefix) = bytes.get(..len)
-        && let Ok(text) = std::str::from_utf8(prefix)
-    {
-        return (text.chars().next().unwrap_or('\u{FFFD}'), len);
+    let Some(sequence) = bytes.get(..len) else {
+        return INVALID;
+    };
+    if !second.contains(&sequence[1]) {
+        return INVALID;
     }
-    ('\u{FFFD}', 1)
+    let mut cp = u32::from(first) & (0x7F >> len);
+    for &byte in &sequence[1..] {
+        if byte & 0xC0 != 0x80 {
+            return INVALID;
+        }
+        cp = cp << 6 | u32::from(byte & 0x3F);
+    }
+    char::from_u32(cp).map_or(INVALID, |c| (c, len))
 }
 
 fn go_runes(bytes: &[u8]) -> impl Iterator<Item = (usize, char)> {
@@ -6798,6 +6814,76 @@ mod primitive_differential_tests {
             }
         }
     }
+
+    #[test]
+    fn decode_rune_matches_original() {
+        fn check(bytes: &[u8]) {
+            assert_eq!(
+                decode_rune(bytes),
+                original_decode_rune(bytes),
+                "{bytes:x?}"
+            );
+        }
+        check(b"");
+        // Every scalar value, alone and followed by a continuation byte.
+        let mut buf = [0u8; 5];
+        for c in '\0'..=char::MAX {
+            let len = c.encode_utf8(&mut buf).len();
+            assert_eq!(decode_rune(&buf[..len]), (c, len));
+            check(&buf[..len]);
+            buf[len] = 0x80;
+            check(&buf[..=len]);
+        }
+        // Every two-byte prefix, extended by each class of third and fourth
+        // byte (ASCII, the edges of every second-byte range, lead bytes,
+        // invalid bytes), and every truncation of those sequences.
+        const TAIL: [u8; 10] = [0x00, 0x7F, 0x80, 0x8F, 0x90, 0x9F, 0xA0, 0xBF, 0xC2, 0xFF];
+        for first in 0..=255u8 {
+            check(&[first]);
+            for second in 0..=255u8 {
+                check(&[first, second]);
+                for third in TAIL {
+                    check(&[first, second, third]);
+                    for fourth in TAIL {
+                        check(&[first, second, third, fourth]);
+                        check(&[first, second, third, fourth, 0x80]);
+                    }
+                }
+            }
+        }
+        // Every three-byte sequence: all of the three-byte forms and every
+        // four-byte form cut one byte short.
+        for first in 0xE0..=0xF7u8 {
+            for second in 0..=255u8 {
+                for third in 0..=255u8 {
+                    check(&[first, second, third]);
+                }
+            }
+        }
+    }
+}
+
+/// The decoder before it stopped validating through `str::from_utf8`.
+#[cfg(test)]
+fn original_decode_rune(bytes: &[u8]) -> (char, usize) {
+    let Some(&first) = bytes.first() else {
+        return ('\u{FFFD}', 0);
+    };
+    if first < 0x80 {
+        return (char::from(first), 1);
+    }
+    let len = match first {
+        0xC2..=0xDF => 2,
+        0xE0..=0xEF => 3,
+        0xF0..=0xF4 => 4,
+        _ => return ('\u{FFFD}', 1),
+    };
+    if let Some(prefix) = bytes.get(..len)
+        && let Ok(text) = std::str::from_utf8(prefix)
+    {
+        return (text.chars().next().unwrap_or('\u{FFFD}'), len);
+    }
+    ('\u{FFFD}', 1)
 }
 
 #[cfg(test)]
