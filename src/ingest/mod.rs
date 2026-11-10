@@ -291,17 +291,31 @@ impl EventRow<'_> {
             out.extend_from_slice(lead.as_bytes());
             encode::push_u64(out, value);
         };
-        string(out, "{\"pb_session\":", self.pb_session);
-        string(out, ",\"pb_collector\":", self.pb_collector);
-        number(out, ",\"pb_seq\":", self.pb_seq);
-        string(out, ",\"pb_event_id\":", self.pb_event_id);
-        string(out, ",\"pb_kind\":", self.pb_kind);
-        string(out, ",\"pb_source\":", self.pb_source);
-        string(out, ",\"pb_generation\":", self.pb_generation);
-        number(out, ",\"pb_source_seq\":", self.pb_source_seq);
-        string(out, ",\"pb_host\":", self.pb_host);
-        string(out, ",\"pb_collected_at\":", self.pb_collected_at);
-        string(out, ",\"pb_payload\":", self.pb_payload);
+        // Exhaustive, so a new field does not compile until it is written.
+        let Self {
+            pb_session,
+            pb_collector,
+            pb_seq,
+            pb_event_id,
+            pb_kind,
+            pb_source,
+            pb_generation,
+            pb_source_seq,
+            pb_host,
+            pb_collected_at,
+            pb_payload,
+        } = *self;
+        string(out, "{\"pb_session\":", pb_session);
+        string(out, ",\"pb_collector\":", pb_collector);
+        number(out, ",\"pb_seq\":", pb_seq);
+        string(out, ",\"pb_event_id\":", pb_event_id);
+        string(out, ",\"pb_kind\":", pb_kind);
+        string(out, ",\"pb_source\":", pb_source);
+        string(out, ",\"pb_generation\":", pb_generation);
+        number(out, ",\"pb_source_seq\":", pb_source_seq);
+        string(out, ",\"pb_host\":", pb_host);
+        string(out, ",\"pb_collected_at\":", pb_collected_at);
+        string(out, ",\"pb_payload\":", pb_payload);
         out.push(b'}');
     }
 }
