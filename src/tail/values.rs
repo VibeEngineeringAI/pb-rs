@@ -2603,6 +2603,54 @@ mod tests {
     }
 
     #[test]
+    fn word_scan_flags_exactly_the_first_escape_worthy_byte() {
+        let escaped = escape_worthy();
+        let mut plain = [true; 256];
+        for &byte in &escaped {
+            plain[usize::from(byte)] = false;
+        }
+        for byte in 0..=u8::MAX {
+            assert_eq!(is_plain(byte), plain[usize::from(byte)], "{byte:#04x}");
+            assert_eq!(
+                PLAIN[usize::from(byte)],
+                plain[usize::from(byte)],
+                "{byte:#04x}"
+            );
+        }
+        // Every pair of bytes at every pair of positions in a word, among
+        // neighbours that a borrow does and does not flag.
+        let mut checked = 0;
+        for fill in [b'a', b' ', b'#', b']'] {
+            for first in 0..8 {
+                for second in first + 1..8 {
+                    for pair in 0..=u16::MAX {
+                        let mut word = [fill; 8];
+                        [word[first], word[second]] = pair.to_be_bytes();
+                        let expected = word.iter().position(|&byte| !plain[usize::from(byte)]);
+                        let flags = special_bytes(u64::from_le_bytes(word));
+                        assert_eq!(flags & !0x8080_8080_8080_8080, 0, "{word:?}");
+                        let flagged = (flags != 0).then(|| (flags.trailing_zeros() / 8) as usize);
+                        assert_eq!(flagged, expected, "{word:?}");
+                        assert_eq!(plain_prefix(&word), expected.unwrap_or(8), "{word:?}");
+                        checked += 1;
+                    }
+                }
+            }
+        }
+        assert_eq!(checked, 4 * 28 * 65_536);
+        // Words of one repeated byte: every byte flagged or none.
+        for byte in 0..=u8::MAX {
+            let flags = special_bytes(u64::from_le_bytes([byte; 8]));
+            assert_eq!(
+                flags.trailing_zeros() == 7,
+                !plain[usize::from(byte)],
+                "{byte:#04x}"
+            );
+            assert_eq!(flags == 0, plain[usize::from(byte)], "{byte:#04x}");
+        }
+    }
+
+    #[test]
     fn float64_error_truncates_after_complete_rows() {
         let b = batch(vec![(
             "x",
