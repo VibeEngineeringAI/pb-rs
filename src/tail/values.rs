@@ -1368,10 +1368,36 @@ impl Encoded {
 
     /// Appends all six bytes, then drops the unused ones: appending a fixed
     /// six bytes compiles to two stores, appending `len` to a `memcpy` call.
+    ///
+    /// Without six spare bytes it repeats the byte loop's appends instead, so
+    /// the buffer grows exactly where that loop grew it. Callers decide
+    /// whether to keep a buffer from its capacity, which must not depend on
+    /// the padding.
     #[inline]
     fn append_to(&self, out: &mut Vec<u8>) {
-        out.extend_from_slice(&self.bytes);
-        out.truncate(out.len() - (self.bytes.len() - usize::from(self.len)));
+        let len = usize::from(self.len);
+        if out.capacity() - out.len() >= self.bytes.len() {
+            out.extend_from_slice(&self.bytes);
+            out.truncate(out.len() - (self.bytes.len() - len));
+        } else {
+            self.append_growing(out);
+        }
+    }
+
+    /// The byte loop appended a `\u00xx` escape as its four-byte prefix and
+    /// two pushed digits, and every other escape in one piece.
+    #[cold]
+    fn append_growing(&self, out: &mut Vec<u8>) {
+        let text = &self.bytes[..usize::from(self.len)];
+        if let [prefix @ .., high, low] = text
+            && prefix.len() == 4
+        {
+            out.extend_from_slice(prefix);
+            out.push(*high);
+            out.push(*low);
+        } else {
+            out.extend_from_slice(text);
+        }
     }
 }
 
@@ -2406,6 +2432,97 @@ mod tests {
         fn pick<'a>(&mut self, items: &[&'a [u8]]) -> &'a [u8] {
             items[self.below(items.len())]
         }
+    }
+
+    /// `session.rs` and the list scratch slots keep or release a buffer by its
+    /// capacity, so the encoder must grow a buffer exactly where the byte
+    /// loop did, not merely write the same bytes.
+    #[test]
+    fn string_escaping_grows_buffers_exactly_like_the_original() {
+        const SHORT: &[u8] = b"\"\\\n\r\t";
+        let mut random = Random(0x6361_7061_6369_7479);
+        let (mut differing_lengths, mut grown) = (0usize, 0usize);
+        for round in 0..4_000 {
+            // Each round is one staging buffer filled by many rows.
+            let (mut expected, mut actual) = (Vec::new(), Vec::new());
+            if round % 4 == 1 {
+                let capacity = random.below(70);
+                expected = Vec::with_capacity(capacity);
+                actual = Vec::with_capacity(capacity);
+            }
+            for _ in 0..1 + random.below(40) {
+                let mut s = Vec::new();
+                for _ in 0..random.below(6) {
+                    let run = match random.below(8) {
+                        0 => random.below(5_000),
+                        1 => 0,
+                        _ => random.below(24),
+                    };
+                    s.extend((0..run).map(|_| b'a' + random.below(26) as u8));
+                    match random.below(6) {
+                        0 => s.push(random.below(0x20) as u8),
+                        1 => s.extend_from_slice(random.pick(&[b"<", b">", b"&"])),
+                        2 => s.extend_from_slice(random.pick(&[
+                            "\u{2028}".as_bytes(),
+                            "\u{2029}".as_bytes(),
+                            b"\xff",
+                            "\u{e9}".as_bytes(),
+                        ])),
+                        _ => s.push(SHORT[random.below(SHORT.len())]),
+                    }
+                }
+                // Framing between strings, as rows and list elements add it.
+                let framing = random.pick(&[b"", b",", b"\"]", b"}\n", b",\"key\":"]);
+                for (out, original) in [(&mut expected, true), (&mut actual, false)] {
+                    let before = out.capacity();
+                    if original {
+                        original_write_str(out, &s);
+                    } else {
+                        write_str(out, &s);
+                    }
+                    out.extend_from_slice(framing);
+                    grown += usize::from(original && out.capacity() != before);
+                }
+                assert_eq!(actual, expected);
+                assert_eq!(
+                    actual.capacity(),
+                    expected.capacity(),
+                    "capacity differs after {:?} at length {}",
+                    String::from_utf8_lossy(&s),
+                    actual.len()
+                );
+                differing_lengths += usize::from(actual.len() != actual.capacity());
+            }
+        }
+        assert!(grown > 10_000 && differing_lengths > 10_000);
+    }
+
+    /// The reviewer's case: a two-byte escape two to five bytes below
+    /// capacity, then a plain run longer than the buffer.
+    #[test]
+    fn short_escape_near_capacity_does_not_double_the_buffer_early() {
+        for filler in 10..=15 {
+            let (mut expected, mut actual) = (Vec::with_capacity(16), Vec::with_capacity(16));
+            let mut s = vec![b'a'; filler - 1];
+            s.push(b'\t');
+            s.extend_from_slice(&[b'b'; 100]);
+            original_write_str(&mut expected, &s);
+            write_str(&mut actual, &s);
+            assert_eq!(actual, expected);
+            assert_eq!(actual.capacity(), expected.capacity(), "filler {filler}");
+        }
+        // A list element ending in an escape exactly fills its scratch slot.
+        let (mut expected, mut actual) = (Vec::new(), Vec::new());
+        for out in [&mut expected, &mut actual] {
+            out.extend_from_slice(b"[");
+        }
+        original_write_str(&mut expected, b"aaaaaaaaaa\n");
+        write_str(&mut actual, b"aaaaaaaaaa\n");
+        for out in [&mut expected, &mut actual] {
+            out.extend_from_slice(b"]");
+        }
+        assert_eq!(actual, expected);
+        assert_eq!((actual.len(), actual.capacity()), (16, expected.capacity()));
     }
 
     #[test]
