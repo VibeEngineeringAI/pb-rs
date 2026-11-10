@@ -14,6 +14,8 @@ use std::path::{Path, PathBuf};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
+use super::encode;
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum FileFormat {
     Jsonl,
@@ -86,10 +88,58 @@ pub(crate) struct FileRecord {
     pub event_id: String,
 }
 
-/// Serializes exactly like a one-entry `message` map without allocating one.
-#[derive(Serialize)]
-struct TextPayload<'a> {
-    message: &'a str,
+/// `{"message":<line>}`, exactly as serde_json serializes a one-entry
+/// `message` map, or `None` if the line is not UTF-8. The line is checked
+/// once, as the finished payload: escaping only swaps ASCII bytes for ASCII
+/// text, so the payload is valid exactly when the line is.
+fn text_payload(line: &[u8]) -> Option<String> {
+    const OPEN: &[u8] = b"{\"message\":";
+    // Room for the quotes, the brace and an escape in every eighth byte.
+    let mut payload = Vec::with_capacity(OPEN.len() + line.len() + line.len() / 8 + 3);
+    payload.extend_from_slice(OPEN);
+    encode::push_string(&mut payload, line);
+    payload.push(b'}');
+    String::from_utf8(payload).ok()
+}
+
+/// One complete source line as payload text. The outer error is invalid
+/// input, which `--on-invalid=skip` may skip; the inner one never is.
+fn line_payload(format: FileFormat, contents: &[u8]) -> Result<serde_json::Result<String>, String> {
+    let direct = match format {
+        // JSONL has no direct encoder.
+        FileFormat::Jsonl => None,
+        FileFormat::Text => text_payload(contents),
+    };
+    match direct {
+        Some(payload) => Ok(Ok(payload)),
+        // Anything unusual, and every error, is serde_json's to decide.
+        None => serde_line_payload(format, contents),
+    }
+}
+
+/// The payload by way of serde_json. This defines the payload text, writes
+/// every error message, and is the oracle the direct encoders are tested
+/// against. JSONL goes through a tree: a duplicate key keeps its first
+/// position and last value, and numbers keep their lexemes.
+fn serde_line_payload(
+    format: FileFormat,
+    contents: &[u8],
+) -> Result<serde_json::Result<String>, String> {
+    /// Serializes exactly like a one-entry `message` map without allocating one.
+    #[derive(Serialize)]
+    struct TextPayload<'a> {
+        message: &'a str,
+    }
+    match format {
+        FileFormat::Jsonl => match serde_json::from_slice::<Value>(contents) {
+            Ok(Value::Object(object)) => Ok(serde_json::to_string(&object)),
+            Ok(_) => Err("JSONL records must be JSON objects".to_owned()),
+            Err(error) => Err(format!("invalid JSONL: {error}")),
+        },
+        FileFormat::Text => std::str::from_utf8(contents)
+            .map(|message| serde_json::to_string(&TextPayload { message }))
+            .map_err(|error| format!("invalid UTF-8 text: {error}")),
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -416,16 +466,7 @@ impl FileCollector {
                     break;
                 };
                 let contents = line.strip_suffix(b"\r").unwrap_or(&line);
-                let parsed = match self.options.format {
-                    FileFormat::Jsonl => match serde_json::from_slice::<Value>(contents) {
-                        Ok(Value::Object(object)) => Ok(serde_json::to_string(&object)),
-                        Ok(_) => Err("JSONL records must be JSON objects".to_owned()),
-                        Err(error) => Err(format!("invalid JSONL: {error}")),
-                    },
-                    FileFormat::Text => std::str::from_utf8(contents)
-                        .map(|message| serde_json::to_string(&TextPayload { message }))
-                        .map_err(|error| format!("invalid UTF-8 text: {error}")),
-                };
+                let parsed = line_payload(self.options.format, contents);
                 let payload = match parsed {
                     Ok(payload) => payload,
                     Err(_error)

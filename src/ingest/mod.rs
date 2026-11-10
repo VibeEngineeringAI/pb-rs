@@ -1,5 +1,8 @@
 //! File ingestion owns a single durable outbox and a contiguous session sequence.
+mod encode;
 mod files;
+#[cfg(test)]
+mod fuzz;
 
 use crate::{
     ErrorCode, Outcome,
@@ -138,9 +141,9 @@ impl RowsBuilder {
         self.events += usize::from(is_event);
     }
 
-    fn push(&mut self, row: &EventRow<'_>) -> Result<(), serde_json::Error> {
+    fn push(&mut self, row: &EventRow<'_>) {
         self.begin_row(row.pb_kind == "event");
-        serde_json::to_writer(&mut self.json, row)
+        row.encode(&mut self.json);
     }
 
     /// Size of the finished document, including the bracket not yet written.
@@ -260,7 +263,8 @@ impl<'de> Deserialize<'de> for OutboxRows {
 }
 
 // Field order matches the former json! rows, including pb_payload appended last.
-#[derive(Serialize)]
+// The derived serialization is the former encoder, kept as the test oracle.
+#[cfg_attr(test, derive(Serialize))]
 struct EventRow<'a> {
     pb_session: &'a str,
     pb_collector: &'a str,
@@ -273,6 +277,32 @@ struct EventRow<'a> {
     pb_host: &'a str,
     pb_collected_at: &'a str,
     pb_payload: &'a str,
+}
+
+impl EventRow<'_> {
+    /// Append this row as compact JSON, exactly as serde_json serializes it.
+    fn encode(&self, out: &mut Vec<u8>) {
+        let string = |out: &mut Vec<u8>, lead: &str, value: &str| {
+            out.extend_from_slice(lead.as_bytes());
+            encode::push_string(out, value.as_bytes());
+        };
+        let number = |out: &mut Vec<u8>, lead: &str, value: u64| {
+            out.extend_from_slice(lead.as_bytes());
+            encode::push_u64(out, value);
+        };
+        string(out, "{\"pb_session\":", self.pb_session);
+        string(out, ",\"pb_collector\":", self.pb_collector);
+        number(out, ",\"pb_seq\":", self.pb_seq);
+        string(out, ",\"pb_event_id\":", self.pb_event_id);
+        string(out, ",\"pb_kind\":", self.pb_kind);
+        string(out, ",\"pb_source\":", self.pb_source);
+        string(out, ",\"pb_generation\":", self.pb_generation);
+        number(out, ",\"pb_source_seq\":", self.pb_source_seq);
+        string(out, ",\"pb_host\":", self.pb_host);
+        string(out, ",\"pb_collected_at\":", self.pb_collected_at);
+        string(out, ",\"pb_payload\":", self.pb_payload);
+        out.push(b'}');
+    }
 }
 
 /// A slightly generous guess at one encoded row, so that reserving a batch
@@ -553,12 +583,17 @@ fn run(
                     bytes.saturating_add(row_size_hint(&checkpoint, record))
                 }),
             );
+            // Every event ID is the collector, a colon, and the source's own.
+            let mut event_id = format!("{}:", checkpoint.collector);
+            let collector_prefix = event_id.len();
             for record in records {
+                event_id.truncate(collector_prefix);
+                event_id.push_str(&record.event_id);
                 rows.push(&EventRow {
                     pb_session: &checkpoint.binding.session,
                     pb_collector: &checkpoint.collector,
                     pb_seq: sequence,
-                    pb_event_id: &format!("{}:{}", checkpoint.collector, record.event_id),
+                    pb_event_id: &event_id,
                     pb_kind: "event",
                     pb_source: &record.source_path,
                     pb_generation: &record.source_generation,
@@ -566,8 +601,7 @@ fn run(
                     pb_host: &checkpoint.host,
                     pb_collected_at: &collected_at,
                     pb_payload: &record.payload,
-                })
-                .map_err(|e| invalid(e.to_string()))?;
+                });
                 sequence = sequence
                     .checked_add(1)
                     .filter(|n| *n <= MAX_SEQUENCE)
@@ -626,8 +660,7 @@ fn run(
                 pb_host: &checkpoint.host,
                 pb_collected_at: &chrono::Utc::now().to_rfc3339(),
                 pb_payload: "{}",
-            })
-            .map_err(|e| invalid(e.to_string()))?;
+            });
             checkpoint.pending = Some(Outbox {
                 rows: rows.finish(),
                 next_files: checkpoint.files.clone(),

@@ -1,3 +1,4 @@
+use super::fuzz::{self, Rng};
 use super::*;
 use serde_json::Value;
 use std::{io::Read, net::TcpListener};
@@ -39,7 +40,7 @@ fn legacy_row(row: &EventRow<'_>) -> Value {
 fn batch(rows: &[EventRow<'_>]) -> OutboxRows {
     let mut builder = RowsBuilder::with_capacity(rows.len(), 0);
     for row in rows {
-        builder.push(row).unwrap();
+        builder.push(row);
     }
     assert_eq!(builder.encoded_len(), builder.json.len() + 1);
     builder.finish()
@@ -133,6 +134,62 @@ fn cached_rows_match_legacy_wire_bytes_lengths_and_event_count() {
         assert_eq!(piece.encoded_len(&piece.whole()), expected.len());
     }
     assert_eq!(rows.events, 2);
+}
+
+#[test]
+fn seeded_rows_match_the_derived_serialization() {
+    let mut rng = Rng::new(21);
+    let mut rows = Vec::new();
+    for case in 0..20_000 {
+        let mut field = |pieces| {
+            let pieces = rng.below(pieces);
+            fuzz::text(&mut rng, pieces)
+        };
+        let strings = [
+            field(4),
+            field(4),
+            field(6),
+            field(2),
+            field(8),
+            field(3),
+            field(4),
+            field(4),
+            field(if case % 500 == 0 { 3_000 } else { 30 }),
+        ];
+        let row = EventRow {
+            pb_session: &strings[0],
+            pb_collector: &strings[1],
+            pb_seq: rng.next() >> rng.below(64),
+            pb_event_id: &strings[2],
+            pb_kind: if rng.chance(90) { "event" } else { &strings[3] },
+            pb_source: &strings[4],
+            pb_generation: &strings[5],
+            pb_source_seq: rng.next() >> rng.below(64),
+            pb_host: &strings[6],
+            pb_collected_at: &strings[7],
+            pb_payload: &strings[8],
+        };
+        let expected = former::row(&row);
+        let mut actual = Vec::new();
+        row.encode(&mut actual);
+        assert!(actual == expected.get().as_bytes(), "case {case}");
+        if case % 40 == 0 {
+            rows.push(expected);
+        }
+        if rows.len() == 7 {
+            // Whole batches of the same rows: one document, former bytes.
+            let document = former::encode_rows(&rows);
+            let decoded: OutboxRows = serde_json::from_slice(&document).unwrap();
+            assert_eq!(decoded.body(&decoded.whole()), document);
+            assert_eq!(serde_json::to_vec(&decoded).unwrap(), document);
+            assert_eq!(
+                decoded.encoded_len(&(2..5)),
+                former::encoded_rows_len(&rows[2..5])
+            );
+            assert_eq!(decoded.body(&(2..5)), former::encode_rows(&rows[2..5]));
+            rows.clear();
+        }
+    }
 }
 
 #[test]
@@ -232,14 +289,8 @@ fn checkpoint_document_is_its_derived_serialization() {
     std::fs::create_dir(&directory).unwrap();
     let path = directory.join("state.json");
     let state = StateFile::lock(&path).unwrap();
-    let payloads: Vec<String> = (0..40)
-        .map(|n| {
-            format!(
-                "{{\"n\":{n},\"text\":\"{}\"}}",
-                "\\\"é\t\u{1}😀".repeat(n % 7)
-            )
-        })
-        .collect();
+    let mut rng = Rng::new(22);
+    let payloads: Vec<String> = (0..40).map(|_| fuzz::text(&mut rng, 12)).collect();
     let events: Vec<EventRow<'_>> = payloads
         .iter()
         .map(|payload| event(payload, "event"))
