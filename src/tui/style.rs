@@ -29,7 +29,7 @@
 //! generated tables. Full upstream copyright and license notices, exact
 //! versions and fixture provenance: docs/evidence/phase7/style-notices.txt.
 
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
 use std::rc::Rc;
 use std::sync::{Mutex, OnceLock};
@@ -3885,6 +3885,54 @@ fn property_width(c: char, property: Gcb) -> usize {
     }
 }
 
+/// Slots in each thread's [`rune_info`] memo. A frame draws its non-ASCII text
+/// from a small repertoire (box drawing, block elements, a few symbols), so a
+/// few hundred direct-mapped slots keep it resident; 512 slots are 4 KiB.
+const RUNE_MEMO_SLOTS: usize = 512;
+
+#[derive(Clone, Copy)]
+struct RuneInfo {
+    rune: char,
+    property: Gcb,
+    // 0..=4, see `property_width`.
+    width: u8,
+}
+
+thread_local! {
+    // Fixed size and direct mapped: a colliding rune replaces the slot's entry.
+    static RUNE_MEMO: [Cell<Option<RuneInfo>>; RUNE_MEMO_SLOTS] =
+        const { [const { Cell::new(None) }; RUNE_MEMO_SLOTS] };
+}
+
+// Fold the high bits into the index so runes at the same offset in different
+// blocks, whose low nine bits coincide, land in different slots.
+fn rune_memo_slot(c: char) -> usize {
+    let cp = u32::from(c);
+    (cp ^ (cp >> 9)) as usize % RUNE_MEMO_SLOTS
+}
+
+/// `grapheme_property(c)` and `property_width(c, property)`, memoised per
+/// thread. Both are pure functions of the code point and of compile-time
+/// tables, so the rune is the whole key and an entry never goes stale.
+fn rune_info(c: char) -> (Gcb, usize) {
+    RUNE_MEMO.with(|memo| {
+        let slot = &memo[rune_memo_slot(c)];
+        if let Some(hit) = slot.get()
+            && hit.rune == c
+        {
+            return (hit.property, usize::from(hit.width));
+        }
+        let property = grapheme_property(c);
+        let width = property_width(c, property);
+        slot.set(Some(RuneInfo {
+            rune: c,
+            property,
+            width: width as u8,
+        }));
+        (property, width)
+    })
+}
+
 /// uniseg grapheme parser states (graphemerules.go).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum GrState {
@@ -4021,13 +4069,12 @@ fn first_cluster_bytes(bytes: &[u8]) -> (usize, usize) {
     let Some((_, first)) = chars.next() else {
         return (0, 0);
     };
-    let first_property = grapheme_property(first);
+    let (first_property, mut width) = rune_info(first);
     // Initial state -1: only the any-state transition can match.
     let mut state = gr_transition(GrState::Any, first_property).map_or(GrState::Any, |t| t.0);
-    let mut width = property_width(first, first_property);
     let mut end = decode_rune(bytes).1;
     for (index, c) in chars {
-        let property = grapheme_property(c);
+        let (property, rune_width) = rune_info(c);
         let (next, boundary) = gr_step(state, property);
         if boundary {
             break;
@@ -4040,7 +4087,7 @@ fn first_cluster_bytes(bytes: &[u8]) -> (usize, usize) {
                 width = 2;
             }
         } else if first_property != Gcb::Ri && first_property != Gcb::L {
-            width += property_width(c, property);
+            width += rune_width;
         }
         end = index + decode_rune(&bytes[index..]).1;
     }
@@ -6621,7 +6668,7 @@ fn original_width_bytes(bytes: &[u8]) -> usize {
     while i < bytes.len() {
         let (next, action) = transition(state, bytes[i]);
         if next == UTF8 {
-            let (len, w) = first_cluster_bytes(&bytes[i..]);
+            let (len, w) = original_first_cluster_bytes(&bytes[i..]);
             total += w;
             i += len.max(1);
             state = GROUND;
@@ -6733,6 +6780,162 @@ fn original_bubbles_rune_width(c: char) -> usize {
 #[cfg(test)]
 mod primitive_differential_tests {
     use super::*;
+
+    /// SplitMix64: reproducible fuzz input without a dependency.
+    struct TestRng(u64);
+
+    impl TestRng {
+        fn next(&mut self) -> u64 {
+            self.0 = self.0.wrapping_add(0x9E37_79B9_7F4A_7C15);
+            let mut z = self.0;
+            z = (z ^ (z >> 30)).wrapping_mul(0xBF58_476D_1CE4_E5B9);
+            z = (z ^ (z >> 27)).wrapping_mul(0x94D0_49BB_1331_11EB);
+            z ^ (z >> 31)
+        }
+
+        fn below(&mut self, n: usize) -> usize {
+            (self.next() % n as u64) as usize
+        }
+
+        fn pick<'a, T: ?Sized>(&mut self, items: &[&'a T]) -> &'a T {
+            items[self.below(items.len())]
+        }
+    }
+
+    /// At least one rune of every grapheme class and width that the cluster
+    /// scanner distinguishes, the ASCII bytes it treats specially, and
+    /// malformed UTF-8.
+    const CLUSTER_TOKENS: &[&[u8]] = &[
+        b"a",
+        b" ",
+        b"-",
+        b"\n",
+        b"\r",
+        b"\t",
+        b"\x1b",
+        b"\x7f",
+        b"\0",
+        "\u{E9}".as_bytes(),    // Any, narrow
+        "\u{2502}".as_bytes(),  // Any, box drawing
+        "\u{754C}".as_bytes(),  // Any, wide
+        "\u{2E3A}".as_bytes(),  // Any, three cells
+        "\u{2E3B}".as_bytes(),  // Any, four cells
+        "\u{A0}".as_bytes(),    // Any, no-break space
+        "\u{FFFD}".as_bytes(),  // Any, a literal replacement character
+        "\u{85}".as_bytes(),    // Control
+        "\u{200B}".as_bytes(),  // Control, zero width space
+        "\u{2028}".as_bytes(),  // Control, line separator
+        "\u{FEFF}".as_bytes(),  // Control
+        "\u{301}".as_bytes(),   // Extend
+        "\u{200C}".as_bytes(),  // Extend, zero width non-joiner
+        "\u{FE0E}".as_bytes(),  // Extend, text presentation
+        "\u{FE0F}".as_bytes(),  // Extend, emoji presentation
+        "\u{1F3FB}".as_bytes(), // Extend, skin tone
+        "\u{200D}".as_bytes(),  // ZWJ
+        "\u{1F1FA}".as_bytes(), // Regional indicator
+        "\u{1F1F8}".as_bytes(), // Regional indicator
+        "\u{600}".as_bytes(),   // Prepend
+        "\u{903}".as_bytes(),   // SpacingMark
+        "\u{1100}".as_bytes(),  // L
+        "\u{1161}".as_bytes(),  // V
+        "\u{11A8}".as_bytes(),  // T
+        "\u{AC00}".as_bytes(),  // LV
+        "\u{AC01}".as_bytes(),  // LVT
+        "\u{A9}".as_bytes(),    // Pictographic, text presentation
+        "\u{2764}".as_bytes(),  // Pictographic, text presentation
+        "\u{1F469}".as_bytes(), // Pictographic, emoji presentation
+        b"\x80",
+        b"\xff",
+        b"\xc0",
+        b"\xe2\x94",
+    ];
+
+    #[test]
+    fn rune_info_matches_uncached_for_every_code_point() {
+        fn check(c: char) {
+            let property = grapheme_property(c);
+            assert_eq!(
+                rune_info(c),
+                (property, property_width(c, property)),
+                "{c:?}"
+            );
+        }
+        // Ascending: each rune first misses, evicting the previous owner of
+        // its slot, and then hits.
+        for c in '\0'..=char::MAX {
+            check(c);
+            check(c);
+        }
+        // A permutation of the code space (the multiplier is coprime to
+        // 0x110000), so slots are read while holding unrelated runes.
+        for i in 0..0x11_0000u64 {
+            if let Some(c) = char::from_u32((i * 1_000_003 % 0x11_0000) as u32) {
+                check(c);
+            }
+        }
+        // Two runes that share a slot and differ in their answers keep
+        // evicting each other.
+        let a = '\u{2502}';
+        let b = ('\0'..=char::MAX)
+            .find(|&c| rune_memo_slot(c) == rune_memo_slot(a) && rune_info(c) != rune_info(a))
+            .expect("a colliding rune with different properties");
+        for _ in 0..4 {
+            check(a);
+            check(b);
+            check(b);
+            check(a);
+        }
+    }
+
+    #[test]
+    fn first_cluster_matches_original() {
+        fn check(bytes: &[u8]) {
+            assert_eq!(
+                first_cluster_bytes(bytes),
+                original_first_cluster_bytes(bytes),
+                "{bytes:x?}"
+            );
+        }
+        check(b"");
+        // Every sequence of four tokens; their suffixes are the prefixes of
+        // other sequences, so every cluster start is covered too.
+        let mut input = Vec::new();
+        for a in CLUSTER_TOKENS {
+            for b in CLUSTER_TOKENS {
+                for c in CLUSTER_TOKENS {
+                    for d in CLUSTER_TOKENS {
+                        input.clear();
+                        for token in [a, b, c, d] {
+                            input.extend_from_slice(token);
+                        }
+                        check(&input);
+                    }
+                }
+            }
+            check(a);
+        }
+        // Longer runs, scanned from every byte offset including the middle
+        // of a rune, and raw random bytes.
+        let mut rng = TestRng(0x5EED_C1A5);
+        for _ in 0..20_000 {
+            input.clear();
+            for _ in 0..1 + rng.below(12) {
+                if rng.below(8) == 0 {
+                    input.push(rng.next() as u8);
+                } else {
+                    input.extend_from_slice(rng.pick(CLUSTER_TOKENS));
+                }
+            }
+            for start in 0..input.len() {
+                check(&input[start..]);
+            }
+            assert_eq!(
+                width_bytes(&input),
+                original_width_bytes(&input),
+                "{input:x?}"
+            );
+        }
+    }
     #[test]
     #[ignore = "focused performance campaign benchmark"]
     fn text_primitives_microbenchmark() {
@@ -6861,6 +7064,49 @@ mod primitive_differential_tests {
             }
         }
     }
+}
+
+/// The cluster scanner before it memoised rune properties: the unchanged
+/// property and width tables, read through the original decoder.
+#[cfg(test)]
+fn original_first_cluster_bytes(bytes: &[u8]) -> (usize, usize) {
+    let mut index = 0;
+    let mut chars = std::iter::from_fn(move || {
+        if index >= bytes.len() {
+            return None;
+        }
+        let start = index;
+        let (rune, len) = original_decode_rune(&bytes[index..]);
+        index += len;
+        Some((start, rune))
+    });
+    let Some((_, first)) = chars.next() else {
+        return (0, 0);
+    };
+    let first_property = grapheme_property(first);
+    // Initial state -1: only the any-state transition can match.
+    let mut state = gr_transition(GrState::Any, first_property).map_or(GrState::Any, |t| t.0);
+    let mut width = property_width(first, first_property);
+    let mut end = original_decode_rune(bytes).1;
+    for (index, c) in chars {
+        let property = grapheme_property(c);
+        let (next, boundary) = gr_step(state, property);
+        if boundary {
+            break;
+        }
+        state = next;
+        if first_property == Gcb::Pict {
+            if c == '\u{FE0E}' {
+                width = 1;
+            } else if c == '\u{FE0F}' {
+                width = 2;
+            }
+        } else if first_property != Gcb::Ri && first_property != Gcb::L {
+            width += property_width(c, property);
+        }
+        end = index + original_decode_rune(&bytes[index..]).1;
+    }
+    (end, width)
 }
 
 /// The decoder before it stopped validating through `str::from_utf8`.
