@@ -2392,6 +2392,82 @@ pub(crate) fn width_bytes(bytes: &[u8]) -> usize {
     if bytes.iter().all(|b| matches!(b, 0x20..=0x7e)) {
         return bytes.len();
     }
+    if (WIDTH_MEMO_MIN_LEN..=WIDTH_MEMO_MAX_LEN).contains(&bytes.len()) {
+        return memoised_width_bytes(bytes);
+    }
+    scan_width_bytes(bytes)
+}
+
+/// Shorter lines are measured about as fast as they are hashed and compared.
+const WIDTH_MEMO_MIN_LEN: usize = 24;
+/// Longer lines are never retained, so one thread's memo holds at most
+/// `WIDTH_MEMO_SLOTS * WIDTH_MEMO_MAX_LEN` bytes (4 MiB) of line text, and
+/// that only if every slot holds a line of the greatest length. A 240-column
+/// line with a true-colour sequence around every cell is about 6 KiB.
+const WIDTH_MEMO_MAX_LEN: usize = 8192;
+/// With 128 slots sustained navigation of a 120x40 frame ran 12-16% more
+/// instructions than with 512, and peak memory did not measurably differ.
+const WIDTH_MEMO_SLOTS: usize = 512;
+
+#[derive(Default)]
+struct WidthMemoEntry {
+    hash: u64,
+    line: Vec<u8>,
+    width: usize,
+}
+
+thread_local! {
+    // Composition measures the same styled lines again at every level of a
+    // frame, and most lines survive from one frame to the next. Direct mapped
+    // and allocated on first use: a colliding line replaces the slot's entry.
+    static WIDTH_MEMO: RefCell<Vec<WidthMemoEntry>> = const { RefCell::new(Vec::new()) };
+}
+
+/// Chooses a slot and rejects most mismatches before the byte comparison. A
+/// hit is always confirmed against the stored bytes, so a collision costs a
+/// measurement, never a wrong width.
+fn line_hash(bytes: &[u8]) -> u64 {
+    const MULTIPLIER: u64 = 0x9E37_79B9_7F4A_7C15;
+    let mix = |hash: u64, word: u64| (hash.rotate_left(5) ^ word).wrapping_mul(MULTIPLIER);
+    let mut chunks = bytes.chunks_exact(8);
+    let mut hash = bytes.len() as u64;
+    for chunk in &mut chunks {
+        hash = mix(
+            hash,
+            u64::from_le_bytes(chunk.try_into().expect("eight-byte chunk")),
+        );
+    }
+    let mut tail = [0u8; 8];
+    tail[..chunks.remainder().len()].copy_from_slice(chunks.remainder());
+    mix(hash, u64::from_le_bytes(tail))
+}
+
+/// `scan_width_bytes` through the calling thread's memo. The width is a pure
+/// function of the bytes, so the complete line is the key.
+fn memoised_width_bytes(bytes: &[u8]) -> usize {
+    let hash = line_hash(bytes);
+    WIDTH_MEMO.with(|memo| {
+        let mut memo = memo.borrow_mut();
+        if memo.is_empty() {
+            memo.resize_with(WIDTH_MEMO_SLOTS, WidthMemoEntry::default);
+        }
+        // The multiplication leaves the best-mixed bits at the top.
+        let entry = &mut memo[(hash >> 32) as usize % WIDTH_MEMO_SLOTS];
+        if entry.hash == hash && entry.line == bytes {
+            return entry.width;
+        }
+        let width = scan_width_bytes(bytes);
+        entry.hash = hash;
+        entry.line.clear();
+        // Exact, so a slot never holds more than `WIDTH_MEMO_MAX_LEN` bytes.
+        entry.line.reserve_exact(bytes.len());
+        entry.line.extend_from_slice(bytes);
+        entry.width = width;
+        width
+    })
+}
+
+fn scan_width_bytes(bytes: &[u8]) -> usize {
     let mut state = GROUND;
     let mut total = 0;
     let mut i = 0;
@@ -6859,6 +6935,90 @@ mod primitive_differential_tests {
         b"\xc0",
         b"\xe2\x94",
     ];
+
+    #[test]
+    fn width_memo_matches_original_and_stays_bounded() {
+        fn check(line: &[u8]) {
+            assert_eq!(width_bytes(line), original_width_bytes(line), "{line:x?}");
+        }
+        // Four times as many distinct lines as slots, at every length class
+        // the memo distinguishes: too short, each end of the retained range
+        // and too long.
+        let mut rng = TestRng(0x5EED_3E30);
+        let lengths = [
+            WIDTH_MEMO_MIN_LEN - 1,
+            WIDTH_MEMO_MIN_LEN,
+            WIDTH_MEMO_MIN_LEN + 1,
+            WIDTH_MEMO_MAX_LEN - 1,
+            WIDTH_MEMO_MAX_LEN,
+            WIDTH_MEMO_MAX_LEN + 1,
+        ];
+        let mut corpus: Vec<Vec<u8>> = Vec::new();
+        for index in 0..WIDTH_MEMO_SLOTS * 4 {
+            let target = match index % 16 {
+                n @ 0..6 => lengths[n],
+                _ => WIDTH_MEMO_MIN_LEN + rng.below(400),
+            };
+            let mut line = Vec::new();
+            while line.len() < target {
+                match rng.below(8) {
+                    0 => line.push(rng.next() as u8),
+                    1 => line.extend_from_slice(b"\x1b[38;2;9;8;7m"),
+                    2 => line.extend_from_slice(b"\x1b[0m"),
+                    3 => line.extend_from_slice(b"plain text"),
+                    _ => line.extend_from_slice(rng.pick(CLUSTER_TOKENS)),
+                }
+            }
+            line.truncate(target);
+            corpus.push(line);
+        }
+        // Cold, warm, and in an order that revisits each slot only after
+        // other lines have been through it.
+        for round in 0..3 {
+            for index in 0..corpus.len() {
+                let line = &corpus[(index * (2 * round + 1)) % corpus.len()];
+                check(line);
+                check(line);
+            }
+        }
+        // The whole line is the key: lines of one length that differ in a
+        // single byte, anywhere, are measured separately.
+        let base = b"\x1b[38;2;1;2;3m\xe2\x94\x82 cell value \xe2\x94\x82\x1b[0m tail";
+        for _ in 0..2 {
+            for position in 0..base.len() {
+                for byte in [0x00, b'\n', 0x1b, b' ', b'm', 0x80, 0x94, 0x9b, 0xe2, 0xff] {
+                    let mut line = base.to_vec();
+                    line[position] = byte;
+                    check(&line);
+                    check(base);
+                }
+            }
+        }
+        // One line alternating with every other: whichever lines share its
+        // slot keep replacing it.
+        let rival = &corpus[WIDTH_MEMO_MIN_LEN];
+        for line in &corpus {
+            check(rival);
+            check(line);
+        }
+
+        WIDTH_MEMO.with(|memo| {
+            let memo = memo.borrow();
+            assert_eq!(memo.len(), WIDTH_MEMO_SLOTS);
+            let mut used = 0;
+            for entry in memo.iter() {
+                assert!(entry.line.capacity() <= WIDTH_MEMO_MAX_LEN);
+                if !entry.line.is_empty() {
+                    used += 1;
+                    assert!(entry.line.len() >= WIDTH_MEMO_MIN_LEN);
+                    assert_eq!(entry.hash, line_hash(&entry.line));
+                    assert_eq!(entry.width, original_width_bytes(&entry.line));
+                }
+            }
+            // The hash spreads the corpus over the table.
+            assert!(used > WIDTH_MEMO_SLOTS * 9 / 10, "{used}");
+        });
+    }
 
     #[test]
     fn align_horizontal_matches_original() {
