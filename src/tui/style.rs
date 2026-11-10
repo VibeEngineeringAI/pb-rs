@@ -2411,6 +2411,10 @@ const WIDTH_MEMO_MIN_LEN: usize = 24;
 /// `WIDTH_MEMO_SLOTS * WIDTH_MEMO_MAX_LEN` bytes (4 MiB) of line text, and
 /// that only if every slot holds a line of the greatest length. A 240-column
 /// line with a true-colour sequence around every cell is about 6 KiB.
+///
+/// Two threads measure lines in an interactive session, the model thread and
+/// the terminal writer (`terminal.rs` clips and measures frame lines), so
+/// the process bound is twice that.
 const WIDTH_MEMO_MAX_LEN: usize = 8192;
 /// With 128 slots sustained navigation of a 120x40 frame ran 12-16% more
 /// instructions than with 512, and peak memory did not measurably differ.
